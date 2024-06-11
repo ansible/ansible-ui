@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
+import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -14,32 +17,29 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { useDeleteRequest } from '../../../common/crud/useDeleteRequest';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { useDeleteRequest } from '../../../common/crud/useDeleteRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { AwxPageForm } from '../../common/AwxPageForm';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { useAwxGetAllPages } from '../../common/useAwxGetAllPages';
 import { Credential } from '../../interfaces/Credential';
+import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
 import { CredentialInputField, CredentialType } from '../../interfaces/CredentialType';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { BecomeMethodField } from './components/BecomeMethodField';
 import { CredentialMultilineInput } from './components/CredentialMultilineInput';
-import { Button, Icon } from '@patternfly/react-core';
-import { KeyIcon } from '@patternfly/react-icons';
+import { GCEUploadField } from './components/GCEUploadField';
 import { PageFormSelectCredentialType } from './components/PageFormSelectCredentialType';
 import {
   CredentialPluginsInputSource,
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
-import { CredentialInputSource } from '../../interfaces/CredentialInputSource';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
-import { useSWRConfig } from 'swr';
 import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
-import { GCEUploadField } from './components/GCEUploadField';
 
 interface CredentialForm extends Credential {
   user?: number;
@@ -261,6 +261,7 @@ export function EditCredential() {
   const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
   const [isTestButtonEnabledSubForm, setIsTestButtonEnabledSubForm] = useState(false);
   const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
+  const [fieldEncryptedID, setFieldEncryptedID] = useState<string[]>([]);
 
   const { data: credential, isLoading: isLoadingCredential } = useGet<Credential>(
     awxAPI`/credentials/${id.toString()}/`
@@ -369,6 +370,14 @@ export function EditCredential() {
         delete editedCredential[key as keyof CredentialForm];
       }
     });
+    // The field's value was set to ENCRYPTED as a placeholder, so it must be
+    // reverted to the original value
+    Object.keys(pluginInputs).forEach((key) => {
+      if (fieldEncryptedID?.includes(key)) {
+        pluginInputs[key as keyof CredentialForm] = '$encrypted$';
+      }
+    });
+
     const modifiedCredential = { ...editedCredential, inputs: pluginInputs };
     const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
       ...credentialInputSource,
@@ -466,6 +475,7 @@ export function EditCredential() {
           setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
           setWatchedSubFormFields={setWatchedSubFormFields}
           initialValues={initialValues}
+          setFieldEncryptedID={setFieldEncryptedID}
         />
       </AwxPageForm>
     </PageLayout>
@@ -484,6 +494,7 @@ function CredentialInputs({
   setIsTestButtonEnabled,
   setIsTestButtonEnabledSubForm,
   setWatchedSubFormFields,
+  setFieldEncryptedID,
   initialValues,
 }: {
   isEditMode?: boolean;
@@ -497,6 +508,7 @@ function CredentialInputs({
   setIsTestButtonEnabled: (enabled: boolean) => void;
   setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
   setWatchedSubFormFields: (fields: unknown[]) => void;
+  setFieldEncryptedID?: React.Dispatch<React.SetStateAction<string[]>>;
   initialValues?: initialValues;
 }) {
   const { t } = useTranslation();
@@ -568,12 +580,13 @@ function CredentialInputs({
           credentialType={credentialTypes[credentialTypeID]}
           setCredentialPluginValues={setCredentialPluginValues}
           isEditMode={isEditMode}
+          initialValues={initialValues}
           accumulatedPluginValues={accumulatedPluginValues ? accumulatedPluginValues : []}
           setAccumulatedPluginValues={setAccumulatedPluginValues}
           setPluginsToDelete={setPluginsToDelete}
           setIsTestButtonEnabledSubForm={setIsTestButtonEnabledSubForm}
           setWatchedSubFormFields={setWatchedSubFormFields}
-          initialValues={initialValues}
+          setFieldEncryptedID={setFieldEncryptedID}
         />
       ) : null}
     </>
@@ -588,6 +601,7 @@ function CredentialSubForm({
   setPluginsToDelete,
   setIsTestButtonEnabledSubForm,
   setWatchedSubFormFields,
+  setFieldEncryptedID,
   initialValues,
 }: {
   credentialType: CredentialType;
@@ -598,6 +612,7 @@ function CredentialSubForm({
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
   setIsTestButtonEnabledSubForm: (enabled: boolean) => void;
   setWatchedSubFormFields: (fields: unknown[]) => void;
+  setFieldEncryptedID?: React.Dispatch<React.SetStateAction<string[]>>;
   initialValues?: initialValues;
 }) {
   const { t } = useTranslation();
@@ -679,11 +694,14 @@ function CredentialSubForm({
           } else {
             return (
               <CredentialTextInput
+                setFieldEncryptedID={setFieldEncryptedID}
                 accumulatedPluginValues={accumulatedPluginValues}
                 setAccumulatedPluginValues={setAccumulatedPluginValues}
                 setPluginsToDelete={setPluginsToDelete}
                 key={field.id}
                 field={field}
+                credentialType={credentialType}
+                fieldInitialValue={initialValues && initialValues[field?.id]}
                 isDisabled={
                   field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
                 }
@@ -724,7 +742,6 @@ function CredentialSubForm({
     </PageFormSection>
   ) : null;
 }
-
 function CredentialTextInput({
   credentialType,
   field,
@@ -734,6 +751,8 @@ function CredentialTextInput({
   accumulatedPluginValues,
   setAccumulatedPluginValues,
   setPluginsToDelete,
+  setFieldEncryptedID,
+  fieldInitialValue,
 }: {
   credentialType?: CredentialType | undefined;
   field: CredentialInputField;
@@ -743,82 +762,32 @@ function CredentialTextInput({
   accumulatedPluginValues: CredentialPluginsInputSource[];
   setAccumulatedPluginValues?: (values: CredentialPluginsInputSource[]) => void;
   setPluginsToDelete?: React.Dispatch<React.SetStateAction<string[]>>;
+  setFieldEncryptedID?: React.Dispatch<React.SetStateAction<string[]>>;
+  fieldInitialValue?: string | boolean | number | null | undefined;
 }) {
   const { t } = useTranslation();
   const { setValue, clearErrors, getValues } = useFormContext();
-  const isPromptOnLaunchChecked = useWatch({ name: `ask_${field.id}` }) as boolean;
+  const [isRevert, setIsRevert] = useState(false);
+  const encryptedPlaceholder = '$encrypted$';
+  const ASK_VALUE = 'ASK';
+  const isSecretField = field.secret;
+  const isInitialValueEncrypted = fieldInitialValue === encryptedPlaceholder;
+  const [shouldHideField, setShouldHideField] = useState(isSecretField && isInitialValueEncrypted);
+  const [isCurrentFieldValueEncrypted, setIsCurrentFieldValueEncrypted] = useState(false);
+
+  const isPromptOnLaunchChecked = useWatch({
+    name: `ask_${field.id}`,
+    defaultValue: fieldInitialValue === ASK_VALUE,
+  }) as boolean;
+
   const useGetSourceCredential = (id: number) => {
     const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
     return data;
   };
+
   const sourceCredential = useGetSourceCredential(
     accumulatedPluginValues.filter((cp) => cp.input_field_name === field.id)[0]?.source_credential
   );
-  const onClear = () => {
-    setValue(field.id, '', { shouldDirty: false });
-    clearErrors(field.id);
-    setAccumulatedPluginValues?.(
-      accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
-    );
-    setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
-  };
-
-  useEffect(() => {
-    if (isPromptOnLaunchChecked) {
-      // mark any credential plugins previously set for deletion
-      if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
-        setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
-        setAccumulatedPluginValues?.(
-          accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
-        );
-      }
-      setValue(field.id, 'ASK', { shouldDirty: true });
-      clearErrors(field.id);
-    } else if (!isPromptOnLaunchChecked && getValues(field.id) === 'ASK') {
-      setValue(field.id, field.default || '', { shouldDirty: true });
-    }
-  }, [
-    getValues,
-    isPromptOnLaunchChecked,
-    field,
-    setValue,
-    setPluginsToDelete,
-    accumulatedPluginValues,
-    setAccumulatedPluginValues,
-    clearErrors,
-  ]);
-
-  const handleIsRequired = (): boolean => {
-    if (isPromptOnLaunchChecked) {
-      return false;
-    }
-    if (isRequired) {
-      return true;
-    }
-    return false;
-  };
-
-  const handleIsDisabled = (field: CredentialInputField): boolean => {
-    let isDisabled = false;
-    accumulatedPluginValues.forEach((cp) => {
-      if (cp.input_field_name === field.id) {
-        isDisabled = true;
-      }
-    });
-    return isDisabled;
-  };
-
-  const handleHelperText = (field: CredentialInputField): string => {
-    let helperText = '';
-    accumulatedPluginValues.forEach((cp) => {
-      if (cp.input_field_name === field.id) {
-        helperText = t(
-          'This field will be retrieved from an external secret management system using the specified credential.'
-        );
-      }
-    });
-    return helperText;
-  };
 
   const renderFieldValue = useCallback(
     (field: CredentialInputField): string => {
@@ -833,31 +802,159 @@ function CredentialTextInput({
     [accumulatedPluginValues, sourceCredential, t]
   );
 
+  const clearFieldValue = useCallback(() => {
+    if (getValues(field.id) !== ASK_VALUE) {
+      setValue(field.id, '', { shouldDirty: false });
+    }
+    clearErrors(field.id);
+    setAccumulatedPluginValues?.(
+      accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+    );
+    setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
+  }, [
+    getValues,
+    setValue,
+    clearErrors,
+    field.id,
+    accumulatedPluginValues,
+    setAccumulatedPluginValues,
+    setPluginsToDelete,
+  ]);
+
   useEffect(() => {
-    // mark field as managed by a credential plugin
+    if (isPromptOnLaunchChecked) {
+      // mark any credential plugins previously set for deletion
+      if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
+        setPluginsToDelete?.((prev: string[]) => [...prev, field.id]);
+        setAccumulatedPluginValues?.(
+          accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+        );
+      }
+      setValue(field.id, ASK_VALUE, { shouldDirty: true });
+      clearErrors(field.id);
+    } else if (!isPromptOnLaunchChecked && getValues(field.id) === ASK_VALUE) {
+      setValue(field.id, '', { shouldDirty: true });
+    }
+  }, [
+    getValues,
+    isPromptOnLaunchChecked,
+    field,
+    setValue,
+    setPluginsToDelete,
+    accumulatedPluginValues,
+    setAccumulatedPluginValues,
+    clearErrors,
+  ]);
+
+  useEffect(() => {
+    if (isPromptOnLaunchChecked) {
+      clearFieldValue();
+      setIsRevert(true);
+      setShouldHideField(false);
+    }
+  }, [isPromptOnLaunchChecked, clearFieldValue]);
+
+  useEffect(() => {
     if (accumulatedPluginValues.some((cp) => cp.input_field_name === field.id)) {
       setValue(field.id, renderFieldValue(field), { shouldDirty: true });
     }
   }, [setValue, accumulatedPluginValues, renderFieldValue, field]);
+
+  const handleIsRequired = (): boolean => {
+    if (isPromptOnLaunchChecked) {
+      return false;
+    }
+    return isRequired;
+  };
+
+  const handleIsDisabled = (field: CredentialInputField): boolean => {
+    return accumulatedPluginValues.some((cp) => cp.input_field_name === field.id);
+  };
+
+  const handleHelperText = (field: CredentialInputField): string => {
+    let helperText = '';
+    accumulatedPluginValues.forEach((cp) => {
+      if (cp.input_field_name === field.id) {
+        helperText = t(
+          'This field will be retrieved from an external secret management system using the specified credential.'
+        );
+      }
+    });
+    return helperText;
+  };
+
+  const clearField = () => {
+    setValue(field.id, '', { shouldDirty: false });
+    setShouldHideField(false);
+  };
+
+  const revertInitialValue = () => {
+    setValue(field.id, fieldInitialValue, { shouldDirty: true });
+    setAccumulatedPluginValues?.(
+      accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
+    );
+    setShouldHideField(true);
+  };
+
+  useEffect(() => {
+    if (
+      field?.id &&
+      shouldHideField &&
+      isSecretField &&
+      isInitialValueEncrypted &&
+      !isPromptOnLaunchChecked
+    ) {
+      setValue(field.id, t('ENCRYPTED'), { shouldDirty: false });
+      setFieldEncryptedID &&
+        setFieldEncryptedID((prev: string[]) =>
+          prev.includes(field.id) ? prev : [...prev, field.id]
+        );
+      setIsCurrentFieldValueEncrypted(true);
+    } else {
+      setIsCurrentFieldValueEncrypted(false);
+      setFieldEncryptedID &&
+        setFieldEncryptedID((prev: string[]) => prev.filter((id) => id !== field.id));
+    }
+  }, [
+    setFieldEncryptedID,
+    shouldHideField,
+    isSecretField,
+    isInitialValueEncrypted,
+    isPromptOnLaunchChecked,
+    field.id,
+    setValue,
+    t,
+  ]);
+
+  const shouldShowRevertButton = !isPromptOnLaunchChecked && isInitialValueEncrypted;
+
+  const inputType =
+    getValues(field.id) === ASK_VALUE || (field.secret && !isCurrentFieldValueEncrypted)
+      ? 'password'
+      : 'text';
+
   return (
-    <>
-      <PageFormTextInput
-        key={field.id}
-        name={field.id}
-        label={field.label}
-        placeholder={(field?.default || t('Enter value')).toString()}
-        type={field.secret ? 'password' : 'text'}
-        isRequired={handleIsRequired()}
-        isDisabled={!!isPromptOnLaunchChecked || isDisabled}
-        isReadOnly={handleIsDisabled(field)}
-        labelHelp={field.help_text}
-        helperText={handleHelperText(field)}
-        button={
-          credentialType?.kind !== 'external' ? (
-            <>
+    <PageFormTextInput
+      key={field.id}
+      name={field.id}
+      label={field.label}
+      placeholder={(field?.default || t('Enter value')).toString()}
+      type={inputType}
+      isRequired={handleIsRequired()}
+      isDisabled={isDisabled || !!isPromptOnLaunchChecked || isCurrentFieldValueEncrypted}
+      isReadOnly={handleIsDisabled(field)}
+      labelHelp={field.help_text}
+      helperText={handleHelperText(field)}
+      button={
+        credentialType?.kind !== 'external' ? (
+          <>
+            <Tooltip
+              flipBehavior={['top', 'bottom']}
+              content={t('Populate field from an external secret management system')}
+            >
               <Button
-                isDisabled={isDisabled}
-                data-cy={'secret-management-input'}
+                isDisabled={isDisabled || !!isPromptOnLaunchChecked || isCurrentFieldValueEncrypted}
+                data-cy="secret-management-input"
                 variant="control"
                 icon={
                   <Icon>
@@ -865,25 +962,74 @@ function CredentialTextInput({
                   </Icon>
                 }
                 onClick={handleModalToggle}
-              ></Button>
-              {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) ? (
-                <Button
-                  data-cy={'clear-secret-management-input'}
-                  variant="control"
-                  onClick={onClear}
-                >
-                  {t(`Clear`)}
-                </Button>
-              ) : null}
-            </>
-          ) : undefined
-        }
-        additionalControls={
-          field?.ask_at_runtime && (
-            <PageFormCheckbox name={`ask_${field.id}`} label={t('Prompt on launch')} />
-          )
-        }
-      />
-    </>
+              />
+            </Tooltip>
+            {accumulatedPluginValues.some((cp) => cp.input_field_name === field.id) && (
+              <Button
+                data-cy="clear-secret-management-input"
+                variant="control"
+                onClick={clearFieldValue}
+              >
+                {t('Clear')}
+              </Button>
+            )}
+            {shouldShowRevertButton ? (
+              <RevertReplaceButton
+                clearField={clearField}
+                isRevert={isRevert}
+                revertField={revertInitialValue}
+                setIsRevert={setIsRevert}
+              />
+            ) : null}
+          </>
+        ) : shouldShowRevertButton ? (
+          <RevertReplaceButton
+            clearField={clearField}
+            isRevert={isRevert}
+            revertField={revertInitialValue}
+            setIsRevert={setIsRevert}
+          />
+        ) : null
+      }
+      additionalControls={
+        field?.ask_at_runtime && (
+          <PageFormCheckbox name={`ask_${field.id}`} label={t('Prompt on launch')} />
+        )
+      }
+    />
   );
 }
+
+const RevertReplaceButton = ({
+  clearField,
+  revertField,
+  isRevert,
+  setIsRevert,
+}: {
+  clearField: () => void;
+  revertField: () => void;
+  isRevert: boolean;
+  setIsRevert: (isRevert: boolean) => void;
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Tooltip content={isRevert ? t('Revert') : t('Replace')}>
+      <Button
+        id="credential-replace-button"
+        aria-label={
+          isRevert ? t('Revert field to previously saved value') : t('Replace field with new value')
+        }
+        variant={ButtonVariant.control}
+        icon={<UndoIcon />}
+        onClick={() => {
+          if (isRevert) {
+            revertField();
+          } else {
+            clearField();
+          }
+          setIsRevert(!isRevert);
+        }}
+      />
+    </Tooltip>
+  );
+};
