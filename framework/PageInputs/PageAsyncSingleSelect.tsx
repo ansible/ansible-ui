@@ -21,6 +21,8 @@ export interface PageAsyncSingleSelectProps<ValueT>
   queryErrorText?: PageAsyncQueryErrorText;
 
   onBrowse?: () => void;
+
+  writeInOption?: (query: string) => PageSelectOption<ValueT>;
 }
 
 /**
@@ -47,7 +49,7 @@ export function PageAsyncSingleSelect<
 >(props: PageAsyncSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
 
-  const { queryOptions } = props;
+  const { queryOptions, writeInOption } = props;
   const [loading, setLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(false);
   const [loadingError, setLoadingError] = useState<Error>();
@@ -116,6 +118,9 @@ export function PageAsyncSingleSelect<
               onSelect(newOptions[0].value);
             }
             setTotal(result.remaining + newOptions.length);
+            if (writeInOption && result.remaining + newOptions.length === 0) {
+              newOptions.push(writeInOption(searchValue));
+            }
             return newOptions;
           });
         })
@@ -130,7 +135,7 @@ export function PageAsyncSingleSelect<
       return true;
     });
     return () => abortController.abort();
-  }, [onSelect, queryOptions, searchValue, t]);
+  }, [onSelect, queryOptions, searchValue, t, writeInOption]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
