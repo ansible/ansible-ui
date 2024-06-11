@@ -62,7 +62,6 @@ export function CreateInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      credential: values?.credentialIdPath,
       source_path: values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
@@ -108,7 +107,11 @@ export function CreateInventorySource() {
         submitText={t('Save')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{}}
+        defaultValue={{
+          name: '',
+          description: '',
+          credential: null,
+        }}
       >
         <InventorySourceInputs />
       </AwxPageForm>
@@ -134,9 +137,9 @@ export function EditInventorySource() {
     () => ({
       name: inventorySource?.name,
       description: inventorySource?.description ?? '',
-      execution_environment: inventorySource?.summary_fields?.execution_environment.id,
+      execution_environment: inventorySource?.summary_fields?.execution_environment?.id,
       source: inventorySource?.source,
-      credential: inventorySource?.summary_fields?.credential?.name,
+      credential: inventorySource?.credential ?? null,
       source_project: inventorySource?.summary_fields?.source_project,
       source_path: {
         name: inventorySource?.source_path,
@@ -158,7 +161,6 @@ export function EditInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      credential: values?.credentialIdPath,
       source_path: values?.source_path?.name ?? '',
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
@@ -242,7 +244,7 @@ function InventorySourceInputs() {
   useEffect(() => {
     formContext.clearErrors();
     if (sourceType !== source) {
-      formContext.resetField('credential', { defaultValue: '' });
+      formContext.resetField('credential', { defaultValue: null });
       formContext.resetField('source_project', { defaultValue: {} });
       formContext.resetField('source_path', { defaultValue: '' });
       setSourceType(source);
