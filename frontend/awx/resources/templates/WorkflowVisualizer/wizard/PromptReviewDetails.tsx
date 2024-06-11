@@ -5,7 +5,7 @@ import { AwxRoute } from '../../../../main/AwxRoutes';
 import { PageDetail, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
+import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
 import { useGet } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
@@ -14,11 +14,61 @@ import type { Credential } from '../../../../interfaces/Credential';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import type { WizardFormValues } from '../types';
+import type { Survey } from '../../../../interfaces/Survey';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
   survey: { [key: string]: string | string[] };
+}
+
+function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
+  if (!template) return '';
+  switch (template?.type) {
+    case 'job_template':
+      return awxAPI`/job_templates/${template?.id.toString()}/survey_spec/`;
+    case 'workflow_job_template':
+      return awxAPI`/workflow_job_templates/${template?.id.toString()}/survey_spec/`;
+    default:
+      return '';
+  }
+}
+
+function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+  const updated = { ...vars };
+  passwordKeys.forEach((key) => {
+    if (typeof updated[key] !== 'undefined') {
+      updated[key] = '$encrypted$';
+    }
+  });
+  return updated;
+}
+
+function processSurvey(
+  extra_vars: string | null,
+  survey: { [key: string]: string | string[] },
+  surveyConfig: Survey | null
+): string {
+  const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+
+  if (surveyConfig?.spec) {
+    const passwordFields = surveyConfig.spec
+      .filter((q) => q.type === 'password')
+      .map((q) => q.variable);
+
+    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
+      updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
+    });
+  }
+
+  const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+    ...extraVarsObj,
+    ...updatedSurvey,
+  };
+
+  return jsonToYaml(JSON.stringify(mergedData));
 }
 
 export function PromptReviewDetails() {
@@ -29,6 +79,7 @@ export function PromptReviewDetails() {
   } = usePageWizard() as {
     wizardData: PromptWizardFormValues;
   };
+  const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
 
   const {
     inventory,
@@ -60,23 +111,7 @@ export function PromptReviewDetails() {
 
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
-    const jsonObj: { [key: string]: string } = {};
-
-    if (extra_vars) {
-      const lines = extra_vars.split('\n');
-      lines.forEach((line) => {
-        if (!line) return;
-        const [key, value] = line.split(':').map((part) => part.trim());
-        jsonObj[key] = value;
-      });
-    }
-
-    const mergedData: { [key: string]: string | string[] } = {
-      ...jsonObj,
-      ...survey,
-    };
-
-    extraVarDetails = jsonToYaml(JSON.stringify(mergedData));
+    extraVarDetails = processSurvey(extra_vars, survey, surveyConfig ?? null);
   }
 
   if (!template) return null;
