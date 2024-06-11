@@ -21,9 +21,12 @@ import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { Organization } from '../../../interfaces/Organization';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTemplateActions } from '../hooks/useTemplateActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function TemplatePage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
+
   const { activeAwxUser } = useAwxActiveUser();
   const params = useParams<{ id: string }>();
   const {
@@ -74,7 +77,7 @@ export function TemplatePage() {
         ]}
         headerActions={
           <PageActions<JobTemplate>
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={template}
           />
