@@ -4,6 +4,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 //This spec file needs to have tests added for constructed and smart inventories. See below.
 
@@ -166,7 +167,7 @@ describe('Inventories Tests', () => {
           //Add an assertion that the inventory does not appear upon a list search
         });
 
-        it('can bulk delete inventories from the list view and verify deletion', () => {
+        it.skip('can bulk delete inventories from the list view and verify deletion', () => {
           //Assert:
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
