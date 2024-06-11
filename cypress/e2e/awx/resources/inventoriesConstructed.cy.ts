@@ -12,6 +12,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   let instanceGroup: InstanceGroup;
   const invToDelete: Inventory[] = [];
   const constrInvToDelete: Inventory[] = [];
+  const invToCreate: number = 3;
 
   before(() => {
     cy.awxLogin();
@@ -28,8 +29,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   beforeEach(() => {
     inventoriesList = [];
     invNames = [];
-    // creates 3 inventories
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < invToCreate; i++) {
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventoriesList.push(inv);
       });
@@ -67,14 +67,31 @@ describe('Constructed Inventories CRUD Tests', () => {
     });
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
+    cy.intercept({
+      method: 'GET',
+      pathname: awxAPI`/organizations/`,
+      query: { name__icontains: organization.name },
+    }).as('filterOrg');
     cy.singleSelectBy('[data-cy="organization"]', organization.name);
+    cy.wait('@filterOrg');
     // this can be simplified if we include data-cy to the search button of instance groups
     cy.getByDataCy('instance-group-select-form-group').find('[aria-label="Options menu"]').click();
+    cy.intercept({
+      method: 'GET',
+      pathname: awxAPI`/instance_groups/`,
+      query: { name: instanceGroup.name },
+    }).as('filterInstanceG');
     cy.filterTableByMultiSelect('name', [instanceGroup.name]);
+    cy.wait('@filterInstanceG');
     cy.getByDataCy('checkbox-column-cell').click();
     cy.clickModalButton('Confirm');
-
+    cy.intercept({
+      method: 'GET',
+      pathname: awxAPI`/inventories/`,
+      query: { name__icontains: invNames[invToCreate - 1] },
+    }).as('filterInputInventories');
     cy.multiSelectBy('[data-cy="inventories"]', invNames);
+    cy.wait('@filterInputInventories');
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
     // FIXME: when verbosity is 0 the filed remains empty
@@ -97,14 +114,27 @@ describe('Constructed Inventories CRUD Tests', () => {
       cy.clickButton(/^Delete inventory/);
     });
 
+    // Assert the inventory doesn't exist anymore
+    cy.intercept({
+      method: 'GET',
+      pathname: awxAPI`/inventories/`,
+      query: { name__icontains: constInvName },
+    }).as('filterInventory');
     cy.filterTableBySingleSelect('name', constInvName, true);
+    cy.wait('@filterInventory');
   });
 
   it('can edit and run a sync on the edited constructed inventory', () => {
     cy.intercept('PATCH', awxAPI`/constructed_inventories/*`).as('saveInv');
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInv');
     cy.navigateTo('awx', 'inventories');
+    cy.intercept({
+      method: 'GET',
+      pathname: awxAPI`/inventories/`,
+      query: { name__icontains: constructedInv.name },
+    }).as('filterConstInventory');
     cy.filterTableBySingleSelect('name', constructedInv.name);
+    cy.wait('@filterConstInventory');
     cy.clickTableRowLink('name', constructedInv.name, { disableFilter: true });
     cy.verifyPageTitle(constructedInv.name);
 
