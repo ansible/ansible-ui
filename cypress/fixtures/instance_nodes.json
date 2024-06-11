@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "hostname": "E2EInstance1",
+      "node_type": "control",
+      "node_state": "ready",
+      "enabled": true
+    },
+    {
+      "id": 21,
+      "hostname": "E2EInstance2",
+      "node_type": "execution",
+      "node_state": "unavailable",
+      "enabled": false
+    },
+    {
+      "id": 13,
+      "hostname": "E2EInstance3",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 2,
+      "hostname": "E2EInstance4",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 3,
+      "hostname": "E2EInstance5",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 46,
+      "hostname": "E2EInstance6",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": false
+    },
+    {
+      "id": 45,
+      "hostname": "E2EInstance7",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 36,
+      "hostname": "E2EInstance8",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 35,
+      "hostname": "E2EInstance9",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": true
+    },
+    {
+      "id": 47,
+      "hostname": "E2EInstance10",
+      "node_type": "execution",
+      "node_state": "installed",
+      "enabled": false
+    }
+  ],
+  "links": []
+}
