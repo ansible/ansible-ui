@@ -217,9 +217,6 @@ function ExecutionEnvironmentInputs(props: {
         label={t('Description')}
         placeholder={t('Enter a description')}
         isDisabled={props?.executionEnv?.managed || false}
-        helperText={t(
-          'Leave this field blank to make the execution environment globally available.'
-        )}
       />
       {props.mode === 'edit' && isOrgGloballyAvailable ? (
         <PageFormSelectOrganization<ExecutionEnvironment>
