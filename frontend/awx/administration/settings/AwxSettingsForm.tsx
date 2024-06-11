@@ -1,3 +1,4 @@
+import { FormGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -64,14 +65,17 @@ interface IOptionBooleanAction extends IOptionActionBase {
 
 interface IOptionListAction extends IOptionActionBase {
   type: 'list';
+  default?: string;
 }
 
 interface IOptionObjectAction extends IOptionActionBase {
   type: 'nested object';
+  default?: string;
 }
 
 interface IOptionCertificateAction extends IOptionActionBase {
   type: 'certificate';
+  default?: string;
 }
 
 interface IOptionChoiceAction extends IOptionActionBase {
@@ -82,6 +86,7 @@ interface IOptionChoiceAction extends IOptionActionBase {
 
 interface IOptionDateTimeAction extends IOptionActionBase {
   type: 'datetime';
+  default?: string;
 }
 
 export function AwxSettingsForm(props: {
@@ -139,6 +144,20 @@ export function AwxSettingsForm(props: {
     return { options, groups };
   }, [props.options]);
 
+  const booleanOptions = Object.entries(options)
+    .filter(([, option]) => option.type === 'boolean')
+    .reduce<Record<string, AwxSettingsOptionsAction>>((acc, [key, option]) => {
+      acc[key] = option;
+      return acc;
+    }, {});
+
+  const otherOptions = Object.entries(options)
+    .filter(([, option]) => option.type !== 'boolean')
+    .reduce<Record<string, AwxSettingsOptionsAction>>((acc, [key, option]) => {
+      acc[key] = option;
+      return acc;
+    }, {});
+
   return (
     <AwxPageForm
       defaultValue={props.data}
@@ -146,9 +165,17 @@ export function AwxSettingsForm(props: {
       onCancel={() => navigate('..')}
       onSubmit={onSubmit}
     >
-      {Object.entries(options).map(([key, option]) => {
+      {Object.entries(otherOptions).map(([key, option]) => {
         return <OptionActionsFormInput key={key} name={key} option={option} />;
       })}
+      {Object.keys(booleanOptions).length > 0 && (
+        <FormGroup label={t('Options')} isStack role="group">
+          {Object.entries(booleanOptions).map(([key, option]) => {
+            return <OptionActionsFormInput key={key} name={key} option={option} />;
+          })}
+        </FormGroup>
+      )}
+
       {groups.map((group) => {
         return (
           <PageFormSection
@@ -213,6 +240,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelpTitle={option.label}
           labelHelp={option.help_text}
           isRequired={option.required}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
     case 'integer':
@@ -226,6 +256,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           isRequired={option.required}
           min={option.min_value}
           max={option.max_value}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
     case 'boolean':
@@ -236,6 +269,8 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             name={props.name}
             labelHelpTitle={option.label}
             labelHelp={option.help_text}
+            defaultValue={option.default}
+            enableReset
           />
         </PageFormSection>
       );
@@ -250,6 +285,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             format="object"
             isRequired={option.required}
             isArray
+            defaultValue={option.default}
+            enableUndo
+            enableReset
           />
         </PageFormSection>
       );
@@ -263,6 +301,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             labelHelp={option.help_text}
             format="object"
             isRequired={option.required}
+            defaultValue={option.default}
+            enableUndo
+            enableReset
           />
         </PageFormSection>
       );
@@ -276,6 +317,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             labelHelp={option.help_text}
             format="object"
             isRequired={option.required}
+            defaultValue={option.default}
+            enableUndo
+            enableReset
           />
         </PageFormSection>
       );
@@ -288,6 +332,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelp={option.help_text}
           options={option.choices.map((choice) => ({ value: choice[0], label: choice[1] }))}
           isRequired={option.required}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
     case 'datetime':
@@ -299,6 +346,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           labelHelp={option.help_text}
           type="datetime-local"
           isRequired={option.required}
+          defaultValue={option.default}
+          enableUndo
+          enableReset
         />
       );
 
