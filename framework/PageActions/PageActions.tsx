@@ -1,4 +1,4 @@
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { ButtonVariant, Flex, FlexItem } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import {
   ComponentClass,
@@ -40,6 +40,8 @@ interface PageActionProps<T extends object> {
 
   /** Called when a dropdown is opened, allowing the parent to handle the z-index needed */
   onOpen?: (open: boolean) => void;
+
+  variant?: ButtonVariant;
 }
 
 /**

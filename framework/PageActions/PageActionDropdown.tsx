@@ -98,7 +98,6 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
 
   if (actions.length === 0) return <></>;
   const Icon = icon;
-  const toggleIcon = Icon ? <Icon /> : label;
   const isPrimary =
     variant === ButtonVariant.primary || (hasBulkActions && !!selectedItems?.length);
   /** Turn primary button to secondary if there are items selected */
@@ -126,9 +125,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
         toggleVariant={isPrimary ? 'primary' : undefined}
         style={isPrimary && !label ? { color: 'var(--pf-v5-global--Color--light-100)' } : {}}
         data-cy={id}
-      >
-        {toggleIcon}
-      </KebabToggle>
+      />
     );
   const dropdown = (
     <Dropdown
@@ -150,7 +147,10 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
       ))}
       position={position}
       // ZIndex 400 is needed for PF table stick headers
-      style={{ zIndex: dropdownOpen ? 400 : undefined }}
+      style={{ zIndex: dropdownOpen ? 400 : undefined, padding: 0 }}
+      className={
+        props.variant === ButtonVariant.control ? 'pf-v5-c-button pf-m-control' : undefined
+      }
     />
   );
   let tooltipContent;
