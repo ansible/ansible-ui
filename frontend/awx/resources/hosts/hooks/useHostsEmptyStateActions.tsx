@@ -62,7 +62,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        label: t('Existing host'),
+        label: t('Add existing host'),
         isPinned: true,
         onClick: () =>
           setDialog(
@@ -77,7 +77,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        label: t('New host'),
+        label: t('Create host'),
         isPinned: true,
         onClick: () =>
           params?.group_id
