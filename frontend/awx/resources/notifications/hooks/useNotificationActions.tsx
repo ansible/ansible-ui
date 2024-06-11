@@ -108,9 +108,9 @@ export function useNotificationActions({
       createNotificationAction('failure', 'Failure', 'error', notificationError),
     ];
 
-    if (resourceType === 'organizations') {
+    if (resourceType === 'organizations' || resourceType === 'workflow_job_templates') {
       notificationArray.unshift(
-        createNotificationAction('approval', 'Apply', 'approvals', notificationApproval)
+        createNotificationAction('approval', 'Approval', 'approvals', notificationApproval)
       );
     }
     return notificationArray;
