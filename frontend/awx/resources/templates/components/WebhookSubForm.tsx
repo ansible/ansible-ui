@@ -7,11 +7,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { postRequest, requestGet } from '../../../../common/crud/Data';
-import { useGet } from '../../../../common/crud/useGet';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { CredentialType } from '../../../interfaces/CredentialType';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';
 import { WorkflowJobTemplateForm } from '../../../interfaces/WorkflowJobTemplate';
 import { useWebhookServiceOptions } from './WebhookService';
@@ -33,13 +30,6 @@ export function WebhookSubForm(props: {
 
   const { pathname } = useLocation();
   const webhookServices = useWebhookServiceOptions();
-
-  const { data: webhookCredentialType } = useGet<AwxItemsResponse<CredentialType>>(
-    awxAPI`/credential_types/`,
-    {
-      namespace: `${webhookService}_token`,
-    }
-  );
 
   useEffect(() => {
     async function handleFetchWebhookKey() {
@@ -117,15 +107,16 @@ export function WebhookSubForm(props: {
           </Button>
         }
       />
-      {webhookCredentialType?.results.length ? (
+      {webhookService ? (
         <PageFormCredentialSelect<JobTemplateForm | WorkflowJobTemplateForm>
+          id="webhook_credential"
+          name="webhook_credential"
           label={t('Webhook credential')}
-          credentialType={webhookCredentialType?.results[0].id as unknown as number}
-          name="webhook_credential.name"
-          credentialIdPath="webhook_credential.id"
-          isDisabled={!webhookService}
-          placeholder={t('Add webhook credential')}
-          labelHelpTitle={t('Webhook credential')}
+          placeholder={t('Select webhook credential')}
+          isDisabled={!webhookService ? t('Disabled') : undefined}
+          queryParams={{
+            credential_type__namespace: `${webhookService}_token`,
+          }}
         />
       ) : null}
     </PageFormSection>
