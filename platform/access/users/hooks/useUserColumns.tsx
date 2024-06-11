@@ -39,7 +39,11 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
         header: t('User type'),
         type: 'text',
         value: (user) => {
-          if (user.is_superuser) return t('System administrator');
+          if (user.is_superuser) {
+            return t('System administrator');
+          } else if (user.is_system_auditor) {
+            return t('Platform auditor');
+          }
           return t('Normal user');
         },
         card: 'subtitle',
