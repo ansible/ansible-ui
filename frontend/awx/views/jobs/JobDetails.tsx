@@ -15,6 +15,7 @@ import { StatusCell } from '../../../common/Status';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { Job } from '../../interfaces/Job';
+import { useVerbosityString } from '../../common/useVerbosityString';
 
 export function JobDetails() {
   const { t } = useTranslation();
@@ -22,6 +23,9 @@ export function JobDetails() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { job } = useOutletContext<{ job: Job }>();
+
+  const verbosity = useVerbosityString(job.verbosity || 0);
+  const timeoutDefaultText = t`No timeout specified`;
 
   return (
     <PageDetails>
@@ -82,24 +86,27 @@ export function JobDetails() {
           {job.summary_fields?.instance_group?.name}
         </Link>
       </PageDetail>
-      <PageDetail isEmpty={!job.forks} label={t('Forks')}>
+      <PageDetail
+        label={t('Forks')}
+        helpText={t(
+          'The number of parallel or simultaneous processes to use while executing the playbook. An empty value, or a value less than 1 will use the Ansible default which is usually 5. The default number of forks can be overwritten with a change to ansible.cfg. Refer to the Ansible documentation for details about the configuration file.'
+        )}
+      >
         {job.forks}
       </PageDetail>
       <PageDetail
-        isEmpty={!job.timeout}
         label={t('Timeout')}
         helpText={t(
           'The amount of time (in seconds) to run before the job is canceled. Defaults to 0 for no job timeout.'
         )}
       >
-        {job.timeout}
+        {job.timeout === 0 ? timeoutDefaultText : job.timeout}
       </PageDetail>
       <PageDetail
-        isEmpty={!job.verbosity}
         label={t('Verbosity')}
         helpText={t('Control the level of output ansible will produce as the playbook executes.')}
       >
-        {job.verbosity}
+        {verbosity}
       </PageDetail>
       <PageDetail
         label={t('Job tags')}
