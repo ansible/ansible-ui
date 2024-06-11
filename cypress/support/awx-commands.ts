@@ -397,9 +397,11 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
     .should((_) => {})
     .then(($elements) => {
       if ($elements.length) {
-        cy.get('svg[data-cy="lookup-button"]').click({ force: true });
+        cy.get(`${menuSelector}`).find('svg[data-cy="lookup-button"]').click();
         cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.searchAndDisplayResource(itemName);
+          //wait for table to load
+          cy.get('table').should('exist');
+          cy.filterTableBySingleSelect('name', itemName);
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
