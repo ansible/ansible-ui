@@ -76,17 +76,16 @@ describe('Inventory Sources', () => {
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
       cy.selectDropdownOptionByResourceName('project', project.name);
       cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-      cy.getBy('[data-cy="execution-environment-select-form-group"]').within(() => {
-        cy.getBy('[data-ouia-component-id="lookup-execution_environment-button"]').click();
-      });
-      cy.getBy('[data-ouia-component-id="Select an execution environment-dialog"]').within(() => {
-        cy.filterTableBySingleSelect('name', executionEnvironment.name);
-        cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-          cy.get('[data-cy="checkbox-column-cell"] input').click();
+      cy.singleSelectBy('[data-cy="executionEnvironment-form-group"]', executionEnvironment.name);
+      cy.get('[data-cy="credential-select-form-group"]')
+        .click()
+        .within(() => {
+          cy.get('button[aria-label="Options menu"]').click();
         });
-        cy.contains('button', 'Confirm').click();
+      cy.getModal().within(() => {
+        cy.selectTableRowByCheckbox('name', credentialName);
+        cy.getBy('#submit').click();
       });
-      cy.selectItemFromLookupModal('credential-select', credentialName);
       cy.getBy('[data-cy="host-filter"]').type('/^test$/');
       cy.getBy('[data-cy="verbosity"]').type('1');
       cy.getBy('[data-cy="enabled-var"]').type('foo.bar');

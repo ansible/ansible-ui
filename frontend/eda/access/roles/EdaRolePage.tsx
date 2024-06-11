@@ -20,6 +20,7 @@ import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteEdaRoles } from './hooks/useDeleteEdaRoles';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function EdaRolePage(props: {
   breadcrumbLabelForPreviousPage?: string;
@@ -44,6 +45,7 @@ export function EdaRolePage(props: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Edit role'),
         isDisabled: (role) =>
