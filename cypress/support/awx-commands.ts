@@ -401,7 +401,7 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
         cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
           //wait for table to load
           cy.get('table').should('exist');
-          cy.searchAndDisplayResource(itemName);
+          cy.filterTableBySingleSelect('name', itemName);
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
