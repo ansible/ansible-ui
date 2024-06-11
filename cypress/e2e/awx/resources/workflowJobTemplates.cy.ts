@@ -169,11 +169,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.getByDataCy('description').should('contain', 'this is a new description');
     });
 
-    it.skip('can edit a WFJT to add, save, and then remove a webhook credential for github', () => {
-      //Utilize a workflow job template created in the beforeEach block
-      //Create a github credential
-      //Assert original values on the WFJT
-      //After edit, intercept the API response and assert the edited values
+    it('can edit a WFJT to add, save, and then remove a webhook credential for github', () => {
       cy.createAWXCredential({
         kind: 'github-token',
         organization: organization.id,
@@ -182,23 +178,95 @@ describe('Workflow Job Templates Tests', () => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
         cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+
+        //Assert original values
+        expect(workflowJobTemplate.webhook_service).equals('');
+
+        //Edit WFJT to add webhook credential
         cy.clickTableRowAction('name', workflowJobTemplate.name, 'edit-template', {
           disableFilter: true,
         });
         cy.get('[data-cy="isWebhookEnabled"]').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
         cy.get('[data-cy="credential-select"]').type(tokenCredential.name);
-        //cy.intercept
+        cy.intercept(
+          'PATCH',
+          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+        ).as('editWFJT');
         cy.clickButton(/^Save workflow job template$/);
+        cy.wait('@editWFJT')
+          .its('response.body')
+          .then((editedWFJT: WorkflowJobTemplate) => {
+            expect(editedWFJT.webhook_service).contains('github');
+          });
+
+        //Edit to remove webhook credential
+        cy.clickLink('Edit template');
+        cy.get('[data-cy="isWebhookEnabled"]').click();
+        cy.intercept(
+          'PATCH',
+          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+        ).as('editWFJT');
+        cy.clickButton(/^Save workflow job template$/);
+        cy.wait('@editWFJT')
+          .its('response.body')
+          .then((editedWFJT: WorkflowJobTemplate) => {
+            expect(editedWFJT.webhook_service).contains('');
+          });
+
+        //Delete credential
         cy.deleteAwxCredential(tokenCredential, { failOnStatusCode: false });
       });
     });
 
-    it.skip('can edit a WFJT to add, save, and then remove a webhook credential for gitlab', () => {
-      //Utilize a workflow job template created in the beforeEach block
-      //Create a gitlab credential
-      //Assert original values on the WFJT
-      //After edit, intercept the API response and assert the edited values
+    it('can edit a WFJT to add, save, and then remove a webhook credential for gitlab', () => {
+      cy.createAWXCredential({
+        kind: 'gitlab-token',
+        organization: organization.id,
+        credential_type: 12,
+      }).then((cred) => {
+        tokenCredential = cred;
+        cy.navigateTo('awx', 'templates');
+        cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+
+        //Assert original values
+        expect(workflowJobTemplate.webhook_service).equals('');
+
+        //Edit WFJT to add webhook credential
+        cy.clickTableRowAction('name', workflowJobTemplate.name, 'edit-template', {
+          disableFilter: true,
+        });
+        cy.get('[data-cy="isWebhookEnabled"]').click();
+        cy.selectDropdownOptionByResourceName('webhook-service', 'GitLab');
+        cy.get('[data-cy="credential-select"]').type(tokenCredential.name);
+        cy.intercept(
+          'PATCH',
+          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+        ).as('editWFJT');
+        cy.clickButton(/^Save workflow job template$/);
+        cy.wait('@editWFJT')
+          .its('response.body')
+          .then((editedWFJT: WorkflowJobTemplate) => {
+            expect(editedWFJT.webhook_service).contains('gitlab');
+          });
+
+        //Edit to remove webhook credential
+        cy.clickLink('Edit template');
+        cy.get('[data-cy="isWebhookEnabled"]').click();
+        cy.intercept(
+          'PATCH',
+          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+        ).as('editWFJT');
+        cy.clickButton(/^Save workflow job template$/);
+        cy.wait('@editWFJT')
+          .its('response.body')
+          .then((editedWFJT: WorkflowJobTemplate) => {
+            expect(editedWFJT.webhook_service).contains('');
+          });
+
+        //Delete credential
+        cy.deleteAwxCredential(tokenCredential, { failOnStatusCode: false });
+      });
     });
 
     it('can edit a workflow job template from the list row', () => {
@@ -366,11 +434,7 @@ describe('Workflow Job Templates Tests', () => {
         });
     });
 
-    it.skip('can bulk delete multiple workflow job templates from the list toolbar', () => {
-      //Utilize a workflow job template created in the beforeEach block
-      //have this test create one additional WFJT
-      //Assert the presence of the two WFJTs on the list view
-      //After delete, intercept the API response and assert the deletion of the two WFJTs
+    it('can bulk delete multiple workflow job templates from the list toolbar', () => {
       let newWorkflowJobTemplate: WorkflowJobTemplate;
       cy.createAwxWorkflowJobTemplate({
         organization: organization.id,
@@ -384,6 +448,28 @@ describe('Workflow Job Templates Tests', () => {
         ]);
         cy.selectTableRowByCheckbox('name', workflowJobTemplate.name, { disableFilter: true });
         cy.selectTableRowByCheckbox('name', newWorkflowJobTemplate.name, { disableFilter: true });
+        cy.clickToolbarKebabAction('delete-selected-templates');
+        cy.clickModalConfirmCheckbox();
+        cy.intercept(
+          'DELETE',
+          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+        ).as('deleteWFJT');
+        cy.intercept(
+          'DELETE',
+          awxAPI`/workflow_job_templates/${newWorkflowJobTemplate.id.toString()}/`
+        ).as('deleteWFJT2');
+        cy.clickModalButton('Delete template');
+        cy.wait('@deleteWFJT')
+          .its('response')
+          .then((response) => {
+            expect(response?.statusCode).to.eql(204);
+          });
+        cy.wait('@deleteWFJT2').then((deletedWFJT2) => {
+          expect(deletedWFJT2?.response?.statusCode).to.eql(204);
+        });
+        cy.assertModalSuccess();
+        cy.clickButton(/^Close$/);
+        cy.clearAllFilters();
       });
     });
 
