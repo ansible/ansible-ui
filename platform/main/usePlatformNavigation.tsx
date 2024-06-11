@@ -208,7 +208,12 @@ export function usePlatformNavigation() {
       navigationItems.push(analytics);
     }
 
-    const platformAccessRouteChildren = [authenticators, organizations, teams, users];
+    const platformAccessRouteChildren = [organizations, teams, users];
+
+    if (activePlatformUser?.is_superuser || activePlatformUser?.is_system_auditor) {
+      platformAccessRouteChildren.unshift(authenticators);
+    }
+
     if (awxService || edaService || hubService) {
       platformAccessRouteChildren.push(...roles);
     }
