@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { FormHelperText, HelperTextItem } from '@patternfly/react-core';
 
 interface GCEFileContents {
   project_id?: string;
@@ -14,12 +15,16 @@ export function GCEUploadField() {
   const { setValue, clearErrors } = useFormContext();
   const [GCEFileContents, setGCEFileContents] = useState<GCEFileContents>({});
   const [uploadError, setUploadError] = useState<Error | undefined>(undefined);
+  const [isRejected, setIsRejected] = useState(false);
   const onClear = () => {
     setGCEFileContents({});
     setUploadError(undefined);
     setValue('project', '');
     setValue('username', '');
     setValue('ssh_key_data', '');
+  };
+  const handleFileRejected = () => {
+    setIsRejected(true);
   };
 
   useEffect(() => {
@@ -49,7 +54,6 @@ export function GCEUploadField() {
         helperText={t(
           'Select a JSON formatted service account key to autopopulate the following fields.'
         )}
-        accept=".json"
         validated={uploadError ? 'error' : 'default'}
         onInputChange={async (file) => {
           try {
@@ -60,6 +64,17 @@ export function GCEUploadField() {
             setUploadError(error as Error);
           }
         }}
+        dropzoneProps={{
+          accept: { 'text/json': ['.json'] },
+          onDropRejected: handleFileRejected,
+        }}
+        additionalHelperText={
+          <FormHelperText>
+            <HelperTextItem variant={isRejected ? 'error' : 'default'}>
+              {isRejected ? t('File upload rejected. Please select a single .json file.') : null}
+            </HelperTextItem>
+          </FormHelperText>
+        }
       />
     </>
   );
