@@ -137,7 +137,7 @@ export function EditInventorySource() {
     () => ({
       name: inventorySource?.name,
       description: inventorySource?.description ?? '',
-      execution_environment: inventorySource?.summary_fields?.execution_environment.id,
+      execution_environment: inventorySource?.summary_fields?.execution_environment?.id,
       source: inventorySource?.source,
       credential: inventorySource?.credential ?? null,
       source_project: inventorySource?.summary_fields?.source_project,
