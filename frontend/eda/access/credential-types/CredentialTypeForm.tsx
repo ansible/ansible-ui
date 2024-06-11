@@ -176,11 +176,9 @@ function CredentialTypeInputs() {
             variant={'secondary'}
             size={'sm'}
             style={{ maxWidth: 150 }}
-            onClick={() =>
-              injectorGenerated ? clearInjectorsExtraVars() : setInjectorsExtraVars()
-            }
+            onClick={() => setInjectorsExtraVars()}
           >
-            {injectorGenerated ? t('Clear extra vars') : t('Generate extra vars')}
+            {t('Generate extra vars')}
           </Button>
         </PageFormSection>
       )}
@@ -210,6 +208,17 @@ function CredentialTypeInputs() {
             isReadOnly
             isRequired
           />
+          <PageFormSection>
+            <Button
+              id={'generate-injector'}
+              variant={'secondary'}
+              size={'sm'}
+              style={{ maxWidth: 150 }}
+              onClick={() => clearInjectorsExtraVars()}
+            >
+              {t('Clear extra vars')}
+            </Button>
+          </PageFormSection>
         </PageFormSection>
       )}
     </>
