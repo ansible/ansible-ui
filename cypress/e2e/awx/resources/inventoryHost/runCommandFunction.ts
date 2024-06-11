@@ -83,7 +83,15 @@ export function runCommand(params: {
 
         cy.getByDataCy('Submit').click();
         cy.get(`a[role="tab"]`).contains('Output').click();
-        //
+        cy.get(`a[role="tab"]`).contains('Detail').click();
+
+        // review tab
+        cy.getByDataCy('name').contains(params.module);
+        cy.getByDataCy('module-arguments').contains('echo "Hello World"');
+        cy.getByDataCy('forks').contains(params.forks.toString());
+
+        // this should be uncommented once the ee selection problem is fixed
+        //cy.getByDataCy('execution-environment').contains(executionEnvironment.name);
       });
     }
   );
