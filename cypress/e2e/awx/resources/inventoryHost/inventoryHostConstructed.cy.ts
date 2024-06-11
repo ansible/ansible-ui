@@ -3,6 +3,8 @@ import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 //import { createAndEditAndDeleteHost} from '../../../support/hostsfunctions';
+import { runCommand } from './runCommandFunction';
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
@@ -30,12 +32,35 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
   });
 
   //tests
-  it.skip(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
+  it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     //1) Use the inventory created in before, access the host tab of that inventory
     //2) Use a host, EE, and credential - these resources are needed to run a command against a host
     //3) Assert redirect to the job output screen
     //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
+    cy.navigateTo('awx', 'inventories');
+    cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.wait('@getInventories');
+
+    cy.contains('a', inventory.name).click();
+    cy.contains(`a[role="tab"]`, 'Hosts').click();
+
+    /*cy.intercept('get', awxAPI`/inventories/${inventory.id.toString()}/hosts/?name=${host.name}*`).as('getHost');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.wait('@getInventories');*/
+
+    cy.getByDataCy('run-command').click();
+
+    runCommand({
+      selections: 'all',
+      module: 'shell',
+      verbosity: '0-(normal)',
+      forks: 2,
+      show_changes: true,
+      become_enabled: true,
+      organization,
+    });
   });
 
   it.skip('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
