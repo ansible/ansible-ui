@@ -23,6 +23,7 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUsers } from '../hooks/useDeleteUsers';
+import { useViewActivityStream } from '../../common/useViewActivityStream';
 
 export function UserPage() {
   const { t } = useTranslation();
@@ -36,9 +37,10 @@ export function UserPage() {
       pageNavigate(AwxRoute.Users);
     }
   });
-
+  const activityStream = useViewActivityStream();
   const itemActions: IPageAction<AwxUser>[] = useMemo(() => {
     const itemActions: IPageAction<AwxUser>[] = [
+      ...activityStream,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -59,7 +61,7 @@ export function UserPage() {
       },
     ];
     return itemActions;
-  }, [t, pageNavigate, deleteUsers]);
+  }, [t, pageNavigate, deleteUsers, activityStream]);
 
   const getPageUrl = useGetPageUrl();
 

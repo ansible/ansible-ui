@@ -16,9 +16,11 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInstanceGroupRowActions } from '../hooks/useInstanceGroupActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function InstanceGroupPage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const {
@@ -48,7 +50,7 @@ export function InstanceGroupPage() {
         ]}
         headerActions={
           <PageActions
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={instanceGroup}
           />

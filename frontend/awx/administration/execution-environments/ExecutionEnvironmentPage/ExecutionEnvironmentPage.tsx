@@ -14,6 +14,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useExecutionEnvRowActions } from '../hooks/useExecutionEnvRowActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function ExecutionEnvironmentPage() {
   const params = useParams<{ id: string }>();
@@ -31,6 +32,7 @@ export function ExecutionEnvironmentPage() {
     onCopy: (res: ExecutionEnvironment) =>
       pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: res.id } }),
   });
+  const activityStream = useViewActivityStream();
 
   return (
     <PageLayout>
@@ -42,7 +44,7 @@ export function ExecutionEnvironmentPage() {
         ]}
         headerActions={
           <PageActions<ExecutionEnvironment>
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={executionEnvironment}
           />
