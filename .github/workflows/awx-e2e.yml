@@ -117,7 +117,8 @@ jobs:
           config-file: cypress.awx.config.ts
           tag: "!flaky"
         env:
-          AWX_SERVER: https://awx.ci-ui-20240610.gcp.testing.ansible.com
+          # test that
+          AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
