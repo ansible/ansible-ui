@@ -221,7 +221,12 @@ function ExecutionEnvironmentInputs(props: {
       {props.mode === 'edit' && isOrgGloballyAvailable ? (
         <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
-          isDisabled={t('Disabled')}
+          isDisabled={t(
+            'Globally available execution environment can not be reassigned to a specific Organization.'
+          )}
+          helperText={t(
+            'Leave this field blank to make the execution environment globally available.'
+          )}
         />
       ) : undefined}
       {props.mode === 'edit' && !isOrgGloballyAvailable ? (

@@ -16,9 +16,11 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Application } from '../../../interfaces/Application';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useApplicationActions } from '../hooks/useApplicationActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function ApplicationPage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
   const params = useParams<{ id: string }>();
   const {
     error,
@@ -46,7 +48,7 @@ export function ApplicationPage() {
         ]}
         headerActions={
           <PageActions
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={application}
           />

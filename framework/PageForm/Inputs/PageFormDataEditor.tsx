@@ -424,24 +424,22 @@ export function objectToString(obj: object, language: DataEditorLanguages): stri
   if (obj === null || obj === undefined) {
     return '';
   }
-  try {
-    switch (language) {
-      case 'json':
-        return JSON.stringify(obj, null, 2);
-      case 'yaml': {
-        const yaml = jsyaml.dump(obj).trimEnd();
-        switch (yaml) {
-          case 'null':
-          case '{}':
-          case '[]':
-            return '';
-          default:
-            return yaml;
-        }
+
+  switch (language) {
+    case 'json':
+      return JSON.stringify(obj, null, 2);
+    case 'yaml': {
+      const yaml = jsyaml.dump(obj).trimEnd();
+      switch (yaml) {
+        case 'null':
+        case '{}':
+        case '[]':
+          return '';
+        default:
+          return yaml;
       }
     }
-  } catch {
-    // do nothing
+    default:
+      return '';
   }
-  return '';
 }
