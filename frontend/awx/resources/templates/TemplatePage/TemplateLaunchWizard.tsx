@@ -32,34 +32,6 @@ import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 
-const addSurveyQuestionsToExtraVars = (
-  config: LaunchConfiguration,
-  extra_vars: string = '',
-  formValues: TemplateLaunch,
-  setValue: <K extends keyof LaunchPayload>(key: K, value: LaunchPayload[K]) => void
-) => {
-  let stringValue = '';
-  config.variables_needed_to_start.forEach((key, index) => {
-    const value = formValues.survey[key];
-    if (Array.isArray(value)) {
-      const outputString = value.join(',');
-      stringValue += `${key}: [${outputString}]`;
-    } else {
-      stringValue += `${key}: ${formValues.survey[key] as string}`;
-    }
-
-    if (index !== config.variables_needed_to_start.length - 1) {
-      stringValue += '\n';
-    }
-  });
-
-  if (extra_vars.endsWith('\n')) {
-    setValue('extra_vars', extra_vars + stringValue);
-  } else {
-    setValue('extra_vars', extra_vars + '\n' + stringValue);
-  }
-};
-
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
   inventory: 'ask_inventory_on_launch',
@@ -168,6 +140,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
         labels,
         limit,
         skip_tags,
+        survey,
         timeout,
         verbosity,
       } = formValues;
@@ -223,7 +196,11 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
         }
 
         if (config.survey_enabled && jobType === 'job_templates') {
-          addSurveyQuestionsToExtraVars(config, extra_vars, formValues, setValue);
+          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          setValue('extra_vars', {
+            ...extraVarsObj,
+            ...survey,
+          });
         }
 
         if (jobType === 'workflow_job_templates') {
@@ -231,7 +208,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
 
           payload = {
             ...payload,
-            extra_vars: { ...extraVarsObj, ...formValues.survey },
+            extra_vars: { ...extraVarsObj, ...survey },
           };
         }
 
