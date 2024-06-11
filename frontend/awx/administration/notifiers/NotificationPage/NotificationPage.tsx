@@ -19,11 +19,12 @@ import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useNotificationsWatch } from '../hooks/useNotificationsWatch';
 import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-
+  const activityStream = useViewActivityStream();
   const { runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch();
 
   // set refresh interval to be faster when test is running
@@ -70,7 +71,7 @@ export function NotificationPage() {
         ]}
         headerActions={
           <PageActions<NotificationTemplate>
-            actions={pageActions}
+            actions={[...activityStream, ...pageActions]}
             position={DropdownPosition.right}
             selectedItem={notificationTemplate}
           />
