@@ -55,7 +55,7 @@ export const useProcessSchedule = () => {
         if (params.schedule_id && params.id) {
           return updateSchedule(awxAPI`/schedules/${params.schedule_id.toString()}/`, {
             ...payload,
-            unified_job_template: parseInt(params?.id, 10),
+            unified_job_template: resource.id,
           });
         }
         return postSchedule(endPoint, payload);
