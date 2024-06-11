@@ -76,19 +76,27 @@ export function useAwxNavigation() {
       id: AwxRoute.Infrastructure,
       label: t('Infrastructure'),
       path: 'infrastructure',
-      children: [
-        {
-          id: AwxRoute.TopologyView,
-          label: t('Topology View'),
-          path: 'topology',
-          element: <Topology />,
-        },
-        awxInventoryRoutes,
-        awxHostRoutes,
-        awxInstanceGroupsRoutes,
-        awxInstancesRoutes,
-        awxExecutionEnvironmentsRoutes,
-      ],
+      children: activeAwxUser?.is_superuser
+        ? [
+            {
+              id: AwxRoute.TopologyView,
+              label: t('Topology View'),
+              path: 'topology',
+              element: <Topology />,
+            },
+            awxInventoryRoutes,
+            awxHostRoutes,
+            awxInstanceGroupsRoutes,
+            awxInstancesRoutes,
+            awxExecutionEnvironmentsRoutes,
+          ]
+        : [
+            awxInventoryRoutes,
+            awxHostRoutes,
+            awxInstanceGroupsRoutes,
+            awxInstancesRoutes,
+            awxExecutionEnvironmentsRoutes,
+          ],
     },
     {
       id: AwxRoute.Analytics,
