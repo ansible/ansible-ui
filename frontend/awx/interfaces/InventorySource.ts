@@ -79,7 +79,7 @@ export interface InventorySourceCreate {
   inventory: number;
   source_path: string | undefined | null;
   source_script?: string | undefined;
-  execution_environment?: number;
+  execution_environment?: number | null;
   description: string;
   name: string | undefined;
   overwrite: boolean | undefined | null;
@@ -102,8 +102,7 @@ export interface InventorySourceForm {
   inventory?: number;
   source_path: { name: string | undefined | null };
   source_script?: string;
-  execution_environment?: string;
-  execution_environmentIdPath?: number;
+  execution_environment?: number;
   description: string;
   name: string | undefined;
   overwrite: boolean | undefined | null;

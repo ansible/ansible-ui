@@ -74,6 +74,7 @@ export function useCredentialTypeRowActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit credential type'),
