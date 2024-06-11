@@ -173,14 +173,14 @@ function CredentialTypeInputs() {
         <PageFormSection>
           <Button
             id={'generate-injector'}
-            variant={'primary'}
+            variant={'secondary'}
             size={'sm'}
             style={{ maxWidth: 150 }}
             onClick={() =>
               injectorGenerated ? clearInjectorsExtraVars() : setInjectorsExtraVars()
             }
           >
-            {injectorGenerated ? t('Enter extra vars') : t('Generate extra vars')}
+            {injectorGenerated ? t('Clear extra vars') : t('Generate extra vars')}
           </Button>
         </PageFormSection>
       )}
