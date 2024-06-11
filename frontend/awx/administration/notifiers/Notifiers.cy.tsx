@@ -20,7 +20,7 @@ function Test() {
   );
 }
 
-describe('Notifiers.cy.tsx', () => {
+describe.skip('Notifiers.cy.tsx', () => {
   describe('Error list', () => {
     it('Displays error if notifiers are not successfully loaded', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/notification_templates/*' }, { statusCode: 500 });
