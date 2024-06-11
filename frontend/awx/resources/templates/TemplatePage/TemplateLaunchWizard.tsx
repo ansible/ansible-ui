@@ -93,14 +93,14 @@ interface LaunchPayload {
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 
-export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
+export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
 
   const postRequest = usePostRequest<Partial<LaunchPayload>, UnifiedJob>();
   const createLabelPayload = useLabelPayload();
 
   const alertToaster = usePageAlertToaster();
-  const getPageUrl = useGetPageUrl();
+
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const resourceId = params.id?.toString() ?? '';
@@ -225,7 +225,29 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       }
     }
   };
+  return (
+    <LaunchWizard
+      template={template}
+      config={config}
+      handleSubmit={handleSubmit}
+      jobType={jobType}
+    />
+  );
+}
 
+export function LaunchWizard({
+  template,
+  config,
+  handleSubmit,
+  jobType,
+}: {
+  template: JobTemplate;
+  config: LaunchConfiguration;
+  handleSubmit: (values: TemplateLaunch) => Promise<void>;
+  jobType: string;
+}) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const steps: PageWizardStep[] = [
     {
       id: 'inventory',
@@ -282,7 +304,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
 
         return !showCredentialPasswordsStep;
       },
-      inputs: <CredentialPasswordsStep config={config} />,
+      inputs: <CredentialPasswordsStep<LaunchConfiguration> config={config} />,
     },
     {
       id: 'execution-environment',
@@ -328,7 +350,6 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
   ];
 
   const { defaults } = config;
-
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
     isReadOnly: true,
@@ -373,7 +394,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           {
             label: template.name,
-            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: resourceId } }),
+            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: template.id } }),
           },
         ]}
       />

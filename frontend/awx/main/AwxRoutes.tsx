@@ -8,6 +8,7 @@ export enum AwxRoute {
   JobPage = 'awx-job-page',
   JobOutput = 'awx-job-output',
   JobDetails = 'awx-job-details',
+  TemplateLaunchWithPasswordsWizard = 'awx-template-relaunch-with-passwords-wizard',
 
   Schedules = 'awx-schedules',
   CreateSchedule = 'awx-create-schedule',
