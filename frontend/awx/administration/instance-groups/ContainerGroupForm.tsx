@@ -71,10 +71,10 @@ export function CreateContainerGroup() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Container Group')}
+        title={t('Create container group')}
         breadcrumbs={[
           { label: t('Instance Groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
-          { label: t('Create Container Group') },
+          { label: t('Create container group') },
         ]}
       />
       <AwxPageForm
@@ -145,10 +145,14 @@ export function EditContainerGroup() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Container Group')}
+        title={containerGroup?.name ? `${t('Edit')} ${containerGroup?.name}` : t('Container Group')}
         breadcrumbs={[
-          { label: t('Instance Groups'), to: getPageUrl(AwxRoute.InstanceGroups) },
-          { label: t('Edit Container Group') },
+          { label: t('Container Group'), to: getPageUrl(AwxRoute.InstanceGroups) },
+          {
+            label: containerGroup?.name
+              ? `${t('Edit')} ${containerGroup?.name}`
+              : t('Container Group'),
+          },
         ]}
       />
       <AwxPageForm
