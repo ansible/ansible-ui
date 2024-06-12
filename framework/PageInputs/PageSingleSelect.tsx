@@ -224,6 +224,7 @@ export function PageSingleSelect<
         {!props.isRequired && selectedLabel && (
           <Button
             variant="control"
+            data-cy="reset"
             onClick={() => {
               setOpen(false);
               onSelect(null);

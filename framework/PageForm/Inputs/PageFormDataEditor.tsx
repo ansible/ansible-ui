@@ -1,16 +1,27 @@
 import { Flex, FlexItem, Icon, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
+import isDeepEqual from 'fast-deep-equal';
+import getValue from 'get-value';
 import jsyaml from 'js-yaml';
 import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
   Controller,
+  FieldPath,
   FieldPathByValue,
   FieldValues,
+  PathValue,
   Validate,
   useFormContext,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster, usePageSettings } from '../..';
+import {
+  PageActionSelection,
+  PageActionType,
+  PageActions,
+  usePageAlertToaster,
+  usePageSettings,
+} from '../..';
 import { DataEditor, DataEditorLanguages } from '../../components/DataEditor';
 import { DropZone } from '../../components/DropZone';
 import { IconButton } from '../../components/IconButton';
@@ -57,6 +68,11 @@ export type PageFormDataEditorInputProps<
 
   /** Defaults empty value to array for json */
   isArray?: boolean;
+
+  defaultValue?: string | object;
+
+  enableUndo?: boolean;
+  enableReset?: boolean;
 };
 
 export function PageFormDataEditor<
@@ -131,14 +147,24 @@ export function PageFormDataEditor<
     setDataEditorValue(value);
   }, [getValues, isArray, language, name]);
 
+  const {
+    setValue,
+    formState: { defaultValues },
+  } = useFormContext<TFieldValues>();
+
   const required = useRequiredValidationRule(props.label, props.isRequired);
+
+  const undoValue = getValue(defaultValues as object, props.name) as PathValue<
+    TFieldValues,
+    TFieldName
+  >;
 
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
-      render={({ field: { name, onChange }, fieldState: { error } }) => {
+      render={({ field: { value, name, onChange }, fieldState: { error } }) => {
         function handleChange(stringValue: string) {
           switch (valueFormat) {
             case 'object':
@@ -174,28 +200,77 @@ export function PageFormDataEditor<
             isRequired={props.isRequired}
           >
             {isExpanded && (
-              <DropZone
-                onDrop={onDrop}
-                isDisabled={isSubmitting || props.isReadOnly}
-                inputRef={dropZoneInputRef}
-              >
-                <DataEditor
-                  data-cy={id}
-                  id={id}
-                  name={name}
-                  language={language}
-                  value={dataEditorValue}
-                  onChange={handleChange}
-                  setError={(error) => {
-                    if (!error) clearErrors(name);
-                    else setError(name, { message: error });
-                  }}
-                  isReadOnly={props.isReadOnly || isSubmitting}
-                  className={
-                    props.isReadOnly ? `pf-v5-c-form-control pf-m-disabled` : `pf-v5-c-form-control`
-                  }
+              <div style={{ display: 'flex' }}>
+                <DropZone
+                  onDrop={onDrop}
+                  isDisabled={isSubmitting || props.isReadOnly}
+                  inputRef={dropZoneInputRef}
+                >
+                  <DataEditor
+                    data-cy={id}
+                    id={id}
+                    name={name}
+                    language={language}
+                    value={dataEditorValue}
+                    onChange={handleChange}
+                    setError={(error) => {
+                      if (!error) clearErrors(name);
+                      else setError(name, { message: error });
+                    }}
+                    isReadOnly={props.isReadOnly || isSubmitting}
+                    className={
+                      props.isReadOnly
+                        ? `pf-v5-c-form-control pf-m-disabled`
+                        : `pf-v5-c-form-control`
+                    }
+                  />
+                </DropZone>
+                <PageActions
+                  actions={[
+                    {
+                      label: t('Undo changes'),
+                      type: PageActionType.Button,
+                      selection: PageActionSelection.None,
+                      onClick: () => {
+                        setValue(
+                          props.name,
+                          undoValue as unknown as PathValue<TFieldValues, TFieldName>
+                        );
+                        setDataEditorValue('');
+                        setTimeout(() => {
+                          setDataEditorValue(
+                            objectToString(valueToObject(undoValue, isArray), language)
+                          );
+                        }, 0);
+                      },
+                      isHidden: () => !props.enableUndo || isDeepEqual(value, undoValue),
+                    },
+                    {
+                      label: t('Reset to default'),
+                      type: PageActionType.Button,
+                      selection: PageActionSelection.None,
+                      onClick: () => {
+                        setValue(
+                          props.name as FieldPath<TFieldValues>,
+                          props.defaultValue as unknown as PathValue<
+                            TFieldValues,
+                            FieldPath<TFieldValues>
+                          >
+                        );
+                        setDataEditorValue('');
+                        setTimeout(() => {
+                          setDataEditorValue(
+                            objectToString(valueToObject(props.defaultValue, isArray), language)
+                          );
+                        }, 0);
+                      },
+                      isHidden: () => !props.enableReset || isDeepEqual(value, props.defaultValue),
+                    },
+                  ]}
+                  // variant={ButtonVariant.control}
+                  position={DropdownPosition.right}
                 />
-              </DropZone>
+              </div>
             )}
             {!isExpanded && <div className="pf-v5-c-form-control" />}
           </PageFormGroup>
@@ -349,24 +424,22 @@ export function objectToString(obj: object, language: DataEditorLanguages): stri
   if (obj === null || obj === undefined) {
     return '';
   }
-  try {
-    switch (language) {
-      case 'json':
-        return JSON.stringify(obj, null, 2);
-      case 'yaml': {
-        const yaml = jsyaml.dump(obj).trimEnd();
-        switch (yaml) {
-          case 'null':
-          case '{}':
-          case '[]':
-            return '';
-          default:
-            return yaml;
-        }
+
+  switch (language) {
+    case 'json':
+      return JSON.stringify(obj, null, 2);
+    case 'yaml': {
+      const yaml = jsyaml.dump(obj).trimEnd();
+      switch (yaml) {
+        case 'null':
+        case '{}':
+        case '[]':
+          return '';
+        default:
+          return yaml;
       }
     }
-  } catch {
-    // do nothing
+    default:
+      return '';
   }
-  return '';
 }

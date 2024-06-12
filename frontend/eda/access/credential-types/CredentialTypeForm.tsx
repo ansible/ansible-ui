@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormDataEditor,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -23,7 +24,7 @@ import {
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { Button } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export function CreateCredentialType() {
   const { t } = useTranslation();
@@ -32,8 +33,12 @@ export function CreateCredentialType() {
 
   const postRequest = usePostRequest<EdaCredentialType, EdaCredentialType>();
 
-  const onSubmit: PageFormSubmitHandler<EdaCredentialType> = async (credentialType) => {
-    const newCredentialType = await postRequest(edaAPI`/credential-types/`, credentialType);
+  const onSubmit: PageFormSubmitHandler<IEdaCredentialType> = async (credentialType) => {
+    const credentialTypeInput =
+      !credentialType.injectors && credentialType.injectors_g
+        ? { ...credentialType, injectors: JSON.parse(credentialType.injectors_g) as never }
+        : credentialType;
+    const newCredentialType = await postRequest(edaAPI`/credential-types/`, credentialTypeInput);
     pageNavigate(EdaRoute.CredentialTypePage, { params: { id: newCredentialType.id } });
   };
 
@@ -71,8 +76,15 @@ export function EditCredentialType() {
 
   const patchRequest = usePatchRequest<EdaCredentialType, EdaCredentialType>();
 
-  const handleSubmit: PageFormSubmitHandler<EdaCredentialType> = async (editedCredentialType) => {
-    await patchRequest(edaAPI`/credential-types/` + `${params?.id}/`, editedCredentialType);
+  const handleSubmit: PageFormSubmitHandler<IEdaCredentialType> = async (editedCredentialType) => {
+    const editedCredentialTypeInput =
+      !editedCredentialType.injectors && editedCredentialType.injectors_g
+        ? {
+            ...editedCredentialType,
+            injectors: JSON.parse(editedCredentialType.injectors_g) as never,
+          }
+        : editedCredentialType;
+    await patchRequest(edaAPI`/credential-types/` + `${params?.id}/`, editedCredentialTypeInput);
     pageNavigate(EdaRoute.CredentialTypeDetails, { params: { id: params?.id } });
   };
 
@@ -104,19 +116,15 @@ export function EditCredentialType() {
 function CredentialTypeInputs() {
   const { t } = useTranslation();
   const { setValue } = useFormContext();
+  const [injectorGenerated, setInjectorGenerated] = useState<boolean>(false);
 
   const credentialInputs = useWatch<EdaCredentialTypeCreate>({
     name: 'inputs',
     defaultValue: undefined,
   }) as EdaCredentialTypeInputs;
 
-  const credentialInjectors = useWatch<EdaCredentialTypeCreate>({
-    name: 'injectors',
-    defaultValue: undefined,
-  }) as EdaCredentialTypeCreate;
-
   const setInjectorsExtraVars = useCallback(() => {
-    const fields = credentialInputs?.fields;
+    const fields = Array.isArray(credentialInputs?.fields) ? credentialInputs?.fields : [];
     let extraVarFields = '';
     fields?.map((field, idx) => {
       if (idx > 0) {
@@ -125,8 +133,15 @@ function CredentialTypeInputs() {
       extraVarFields += `"${field.id}" : "{{${field.id}}}"`;
     });
     const extraVars = `{"extra_vars": { ${extraVarFields}}}`;
-    setValue('injectors', JSON.parse(extraVars), { shouldValidate: true });
+    setValue('injectors_g', extraVars);
+    setValue('injectors', undefined);
+    setInjectorGenerated(true);
   }, [credentialInputs, setValue]);
+
+  const clearInjectorsExtraVars = useCallback(() => {
+    setValue('injectors_g', undefined);
+    setInjectorGenerated(false);
+  }, [setValue]);
 
   return (
     <>
@@ -153,34 +168,58 @@ function CredentialTypeInputs() {
           format="object"
         />
       </PageFormSection>
-      {credentialInputs &&
-        Object.keys(credentialInputs).length !== 0 &&
-        (!credentialInjectors ||
-          (credentialInjectors && Object.keys(credentialInjectors).length === 0)) && (
+      {credentialInputs && Object.keys(credentialInputs).length !== 0 && (
+        <PageFormSection>
+          <Button
+            id={'generate-injector'}
+            variant={'secondary'}
+            size={'sm'}
+            style={{ maxWidth: 150 }}
+            onClick={() => setInjectorsExtraVars()}
+          >
+            {t('Generate extra vars')}
+          </Button>
+        </PageFormSection>
+      )}
+      {!injectorGenerated && (
+        <PageFormSection singleColumn>
+          <PageFormDataEditor
+            name="injectors"
+            label={t('Injector configuration')}
+            labelHelpTitle={t('Injector configuration')}
+            labelHelp={t(
+              `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+            )}
+            isRequired
+            format="object"
+          />
+        </PageFormSection>
+      )}
+      {injectorGenerated && (
+        <PageFormSection singleColumn>
+          <PageFormTextArea
+            name="injectors_g"
+            label={t('Injector configuration')}
+            labelHelpTitle={t('Injector configuration')}
+            labelHelp={t(
+              `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+            )}
+            isReadOnly
+            isRequired
+          />
           <PageFormSection>
             <Button
               id={'generate-injector'}
-              variant={'primary'}
+              variant={'secondary'}
               size={'sm'}
               style={{ maxWidth: 150 }}
-              onClick={() => setInjectorsExtraVars()}
+              onClick={() => clearInjectorsExtraVars()}
             >
-              {t('Generate extra vars')}
+              {t('Clear extra vars')}
             </Button>
           </PageFormSection>
-        )}
-      <PageFormSection singleColumn>
-        <PageFormDataEditor
-          name="injectors"
-          label={t('Injector configuration')}
-          labelHelpTitle={t('Injector configuration')}
-          labelHelp={t(
-            `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
-          )}
-          isRequired
-          format="object"
-        />
-      </PageFormSection>
+        </PageFormSection>
+      )}
     </>
   );
 }
@@ -191,3 +230,7 @@ function getInitialFormValues(credentialType?: EdaCredentialType) {
   }
   return credentialType;
 }
+
+type IEdaCredentialType = EdaCredentialType & {
+  injectors_g?: string;
+};

@@ -23,6 +23,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
+import { useViewActivityStream } from '../../common/useViewActivityStream';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -40,8 +41,10 @@ export function OrganizationPage() {
     }
   });
 
+  const activityStream = useViewActivityStream();
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
+      ...activityStream,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -66,7 +69,7 @@ export function OrganizationPage() {
       },
     ];
     return itemActions;
-  }, [deleteOrganizations, pageNavigate, t]);
+  }, [deleteOrganizations, pageNavigate, t, activityStream]);
 
   const getPageUrl = useGetPageUrl();
 
