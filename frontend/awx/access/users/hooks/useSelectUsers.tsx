@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -39,7 +39,7 @@ function SelectUsers(props: {
 }
 
 export function useSelectUsers() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const openSelectUsers = useCallback(
     (
       title: string,
@@ -47,7 +47,7 @@ export function useSelectUsers() {
       confirmText?: string,
       accessUrl?: string
     ) => {
-      setDialog(
+      pushDialog(
         <SelectUsers
           accessUrl={accessUrl}
           title={title}
@@ -56,7 +56,7 @@ export function useSelectUsers() {
         />
       );
     },
-    [setDialog]
+    [pushDialog]
   );
   return openSelectUsers;
 }

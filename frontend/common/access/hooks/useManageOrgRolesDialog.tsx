@@ -2,7 +2,7 @@ import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-co
 import { OrgRolesList, OrgRolesListProps } from '../components/OrgRolesList';
 import { Trans, useTranslation } from 'react-i18next';
 import { useCallback, useState } from 'react';
-import { usePageDialog } from '../../../../framework';
+import { usePageDialogs } from '../../../../framework';
 import { CogIcon } from '@patternfly/react-icons';
 
 type ViewOrgRolesProps = {
@@ -14,8 +14,8 @@ type ViewOrgRolesProps = {
 export function ManageOrgRoles(props: ViewOrgRolesProps) {
   const { t } = useTranslation();
   const { orgListsOptions, onManageRolesClick, userOrTeamName } = props;
-  const [_, setDialog] = usePageDialog();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const { popDialog } = usePageDialogs();
+  const onClose = useCallback(() => popDialog(), [popDialog]);
   const [orgListIsEmpty, setOrgListIsEmpty] = useState<boolean[]>(
     orgListsOptions.map((_) => false)
   );
@@ -73,14 +73,14 @@ export function ManageOrgRoles(props: ViewOrgRolesProps) {
 }
 
 export function useManageOrgRoles() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const openManageOrgRoles = useCallback(
     (manageOrgRolesOptions: {
       orgListsOptions: OrgRolesListProps[];
       onManageRolesClick: () => void;
       userOrTeamName: string;
     }) => {
-      setDialog(
+      pushDialog(
         <ManageOrgRoles
           orgListsOptions={manageOrgRolesOptions.orgListsOptions}
           onManageRolesClick={manageOrgRolesOptions.onManageRolesClick}
@@ -88,7 +88,7 @@ export function useManageOrgRoles() {
         />
       );
     },
-    [setDialog]
+    [pushDialog]
   );
   return openManageOrgRoles;
 }

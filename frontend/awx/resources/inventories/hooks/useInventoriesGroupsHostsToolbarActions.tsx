@@ -9,7 +9,7 @@ import {
   PageActionSelection,
   usePageNavigate,
   usePageAlertToaster,
-  usePageDialog,
+  usePageDialogs,
 } from '../../../../../framework';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -23,7 +23,7 @@ import { HostSelectDialog } from '../../hosts/hooks/useHostSelectDialog';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 
 export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>) {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const disassociateHosts = useDisassociateHosts(view.unselectItemsAndRefresh);
@@ -54,9 +54,9 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
           });
         }
       }
-      setDialog(undefined);
+      popDialog();
     },
-    [setDialog, params.group_id, view, alertToaster, t]
+    [popDialog, params.group_id, view, alertToaster, t]
   );
 
   return useMemo<IPageAction<AwxHost>[]>(() => {
@@ -75,7 +75,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
             selection: PageActionSelection.None,
             label: t('Add existing host'),
             onClick: () =>
-              setDialog(
+              pushDialog(
                 <HostSelectDialog
                   inventoryId={params.id as string}
                   groupId={params.group_id as string}
@@ -125,7 +125,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
     t,
     disassociateHosts,
     view.selectedItems.length,
-    setDialog,
+    pushDialog,
     params.id,
     params.group_id,
     params.inventory_type,

@@ -5,7 +5,7 @@ import {
   PageFormSwitch,
   errorToAlertProps,
   usePageAlertToaster,
-  usePageDialog,
+  usePageDialogs,
 } from '../../../../../framework';
 import { HubPageForm } from '../../../common/HubPageForm';
 import { pulpAPI } from '../../../common/api/formatPath';
@@ -20,15 +20,15 @@ interface SyncFormProps {
 
 export function useSyncRepositories() {
   const { t } = useTranslation();
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const alertToaster = usePageAlertToaster();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const onClose = useCallback(() => popDialog(), [popDialog]);
   const syncFormValues: SyncFormProps = {
     mirror: true,
     optimize: true,
   };
   return (repository: Repository) => {
-    setDialog(
+    pushDialog(
       <Modal
         title={t(`Sync repository ${repository.name}`)}
         aria-label={t(`Sync repository ${repository.name}`)}

@@ -13,15 +13,15 @@ import { PulpItemsResponse, HubItemsResponse, useHubView } from '../../common/us
 import { AnsibleAnsibleRepositoryResponse } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { SigningServiceResponse } from '../../interfaces/generated/SigningServiceResponse';
 import { CollectionVersionSearch } from '../Collection';
-import { usePageDialog } from './../../../../framework';
+import { usePageDialogs } from './../../../../framework';
 import { PageTable } from './../../../../framework/PageTable/PageTable';
 import { requestGet } from './../../../common/crud/Data';
 import { useGetRequest } from './../../../common/crud/useGet';
 import { TFunction } from 'i18next';
 
 export function useCopyToRepository(refresh: (collections: CollectionVersionSearch[]) => void) {
-  const [_, setDialog] = usePageDialog();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const { popDialog, pushDialog } = usePageDialogs();
+  const onClose = useCallback(() => popDialog(), [popDialog]);
   const context = useHubContext();
 
   return (
@@ -29,7 +29,7 @@ export function useCopyToRepository(refresh: (collections: CollectionVersionSear
     operation: 'approve' | 'copy',
     displayDefaultError?: string
   ) => {
-    setDialog(
+    pushDialog(
       <CopyToRepositoryModal
         collection={collection}
         onClose={() => {

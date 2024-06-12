@@ -6,8 +6,7 @@ import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
-import { usePageDialog } from './PageDialog';
-
+import { usePageDialogs } from './PageDialog';
 export type SingleSelectDialogProps<T extends object> = {
   title: string;
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined };
@@ -23,8 +22,8 @@ export type SingleSelectDialogProps<T extends object> = {
 
 export function SingleSelectDialog<T extends object>(props: SingleSelectDialogProps<T>) {
   const { title, view, tableColumns, toolbarFilters, confirmText, cancelText, onSelect } = props;
-  const [_, setDialog] = usePageDialog();
-  let onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const { popDialog } = usePageDialogs();
+  let onClose = useCallback(() => popDialog(), [popDialog]);
   if (props.onClose) {
     onClose = props.onClose;
   }

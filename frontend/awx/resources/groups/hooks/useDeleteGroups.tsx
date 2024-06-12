@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import {
   Button,
   HelperText,
@@ -137,10 +137,10 @@ function DeleteGroupsDialog(props: {
 }
 
 export function useDeleteGroups(onDelete: () => void) {
-  const [_, setDialog] = usePageDialog();
-  const onClose = () => setDialog(undefined);
+  const { popDialog, pushDialog } = usePageDialogs();
+  const onClose = () => popDialog();
   const deleteGroups = (groups: InventoryGroup[]) => {
-    setDialog(<DeleteGroupsDialog groups={groups} onClose={onClose} onDelete={onDelete} />);
+    pushDialog(<DeleteGroupsDialog groups={groups} onClose={onClose} onDelete={onDelete} />);
   };
   return deleteGroups;
 }

@@ -1,6 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, MultiSelectDialog, usePageDialog } from '../../../framework';
+import {
+  ITableColumn,
+  IToolbarFilter,
+  MultiSelectDialog,
+  usePageDialogs,
+} from '../../../framework';
 import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
 import { useID } from '../../../framework/hooks/useID';
@@ -82,13 +87,13 @@ export function PageFormMultiSelectAwxResource<
     [props.url, props.queryParams]
   );
 
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
 
   const { setValue } = useFormContext<FormData>();
   const value = useWatch<FormData>({ name: props.name }) as Value[];
   const openSelectDialog = useCallback(
     (onSelect: (resources: Resource[]) => void) => {
-      setDialog(
+      pushDialog(
         <SelectResource<Resource>
           title={props.label}
           url={props.url}
@@ -111,7 +116,7 @@ export function PageFormMultiSelectAwxResource<
       props.tableColumns,
       props.toolbarFilters,
       props.url,
-      setDialog,
+      pushDialog,
       value,
       props.queryParams,
     ]

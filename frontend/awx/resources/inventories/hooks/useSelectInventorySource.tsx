@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -37,11 +37,11 @@ function SelectInventorySource(props: {
 }
 
 export function useSelectInventorySource(inventoryId?: number) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectInventory = useCallback(
     (onSelect: (inventory: InventorySource) => void) => {
-      setDialog(
+      pushDialog(
         <SelectInventorySource
           title={t('Select inventory source')}
           inventoryId={inventoryId}
@@ -49,7 +49,7 @@ export function useSelectInventorySource(inventoryId?: number) {
         />
       );
     },
-    [setDialog, inventoryId, t]
+    [pushDialog, inventoryId, t]
   );
   return openSelectInventory;
 }

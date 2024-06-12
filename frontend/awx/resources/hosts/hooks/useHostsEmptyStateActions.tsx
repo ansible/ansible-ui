@@ -6,7 +6,7 @@ import {
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
-  usePageDialog,
+  usePageDialogs,
   usePageNavigate,
 } from '../../../../../framework';
 import { ButtonVariant } from '@patternfly/react-core';
@@ -20,7 +20,7 @@ import { postRequest } from '../../../../common/crud/Data';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const params = useParams<{
     id: string;
@@ -51,9 +51,9 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
           });
         }
       }
-      setDialog(undefined);
+      popDialog();
     },
-    [setDialog, params.group_id, alertToaster, t, view]
+    [popDialog, params.group_id, alertToaster, t, view]
   );
 
   return useMemo<IPageAction<AwxHost>[]>(
@@ -65,7 +65,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         label: t('Add existing host'),
         isPinned: true,
         onClick: () =>
-          setDialog(
+          pushDialog(
             <HostSelectDialog
               inventoryId={params.id as string}
               groupId={params.group_id as string}
@@ -104,7 +104,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
       params.group_id,
       params.id,
       params.inventory_type,
-      setDialog,
+      pushDialog,
       t,
     ]
   );

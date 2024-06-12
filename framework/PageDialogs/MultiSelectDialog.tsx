@@ -5,7 +5,7 @@ import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { IView } from '../useView';
-import { usePageDialog } from './PageDialog';
+import { usePageDialogs } from './PageDialog';
 import { PageMultiSelectList } from '../PageTable/PageMultiSelectList';
 
 export type MultiSelectDialogProps<T extends object> = {
@@ -40,8 +40,8 @@ export function MultiSelectDialog<T extends object>(props: MultiSelectDialogProp
     maxSelections,
     allowZeroSelections,
   } = props;
-  const [_, setDialog] = usePageDialog();
-  let onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const { popDialog } = usePageDialogs();
+  let onClose = useCallback(() => popDialog(), [popDialog]);
   if (props.onClose) {
     onClose = props.onClose;
   }
