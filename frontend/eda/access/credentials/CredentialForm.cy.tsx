@@ -24,7 +24,7 @@ describe('Create credential ', () => {
 
   it('Component renders', () => {
     cy.mount(<CreateCredential />);
-    cy.verifyPageTitle('Create Credential');
+    cy.verifyPageTitle('Create credential');
   });
 
   it('Validates properly', () => {

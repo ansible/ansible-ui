@@ -59,10 +59,10 @@ export function CreateUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create User')}
+        title={t('Create user')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(EdaRoute.Users) },
-          { label: t('Create User') },
+          { label: t('Create user') },
         ]}
       />
       <EdaPageForm<UserInput>
