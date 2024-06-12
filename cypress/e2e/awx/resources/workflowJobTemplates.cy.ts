@@ -188,7 +188,7 @@ describe('Workflow Job Templates Tests', () => {
         });
         cy.get('[data-cy="isWebhookEnabled"]').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
-        cy.get('[data-cy="credential-select"]').type(tokenCredential.name);
+        cy.singleSelectByDataCy('webhook_credential', tokenCredential.name);
         cy.intercept(
           'PATCH',
           awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
@@ -238,7 +238,7 @@ describe('Workflow Job Templates Tests', () => {
         });
         cy.get('[data-cy="isWebhookEnabled"]').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitLab');
-        cy.get('[data-cy="credential-select"]').type(tokenCredential.name);
+        cy.singleSelectByDataCy('webhook_credential', tokenCredential.name);
         cy.intercept(
           'PATCH',
           awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
