@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
@@ -6,6 +7,7 @@ import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 
 export function PageFormPlatformTeamNameSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -21,6 +23,15 @@ export function PageFormPlatformTeamNameSelect<
     valueKey: 'name',
     orderQuery: 'order_by',
   });
+  const writeInOption = useCallback(
+    (searchString: string) =>
+      ({
+        label: searchString,
+        value: searchString,
+      }) as PageSelectOption<PathValue<TFieldValues, TFieldName>>,
+    []
+  );
+
   return (
     <PageFormAsyncSingleSelect<TFieldValues, TFieldName>
       name={props.name}
@@ -32,6 +43,7 @@ export function PageFormPlatformTeamNameSelect<
       queryErrorText={t('Error loading teams')}
       queryLabel={(id: number) => <AsyncQueryLabel id={id} url={gatewayAPI`/teams/`} />}
       isRequired={props.isRequired}
+      writeInOption={writeInOption}
     />
   );
 }
