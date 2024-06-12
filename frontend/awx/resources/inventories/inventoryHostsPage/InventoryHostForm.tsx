@@ -132,13 +132,13 @@ export function CreateHost() {
         label: t('Hosts'),
         to: getPageUrl(AwxRoute.Hosts),
       },
-      { label: t('Create') },
+      { label: t('Create host') },
     ];
   }
 
   return (
     <PageLayout>
-      <PageHeader breadcrumbs={breadcrumbs} title={t('Create Host')} />
+      <PageHeader breadcrumbs={breadcrumbs} title={t('Create host')} />
       <AwxPageForm
         submitText={t('Create host')}
         onSubmit={onSubmit}
@@ -269,6 +269,7 @@ export function EditHost() {
       { label: t('Edit') },
     ];
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     breadcrumbs = [
       {
         label: t('Hosts'),
@@ -280,7 +281,13 @@ export function EditHost() {
 
   return (
     <PageLayout>
-      <PageHeader breadcrumbs={breadcrumbs} title={t('Edit host')} />
+      <PageHeader
+        title={host?.name ? `${t('Edit')} ${host?.name}` : t('Host')}
+        breadcrumbs={[
+          { label: t('Host'), to: getPageUrl(AwxRoute.Hosts) },
+          { label: host?.name ? `${t('Edit')} ${host?.name}` : t('Host') },
+        ]}
+      />
       <AwxPageForm<IHostInput>
         submitText={t('Save host')}
         onSubmit={onSubmit}

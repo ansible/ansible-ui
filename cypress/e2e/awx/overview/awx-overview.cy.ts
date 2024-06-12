@@ -99,7 +99,7 @@ describe.skip('AWX Overview', () => {
             'Create a job by clicking the button below.'
           );
           cy.clickButton(/^Create job$/);
-          cy.get('[data-cy="Create Job Template"]').should('contain', 'Create Job Template');
+          cy.get('[data-cy="Create job template"]').should('contain', 'Create job template');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Jobs')
@@ -172,7 +172,7 @@ describe.skip('AWX Overview', () => {
             'Create an inventory by clicking the button below.'
           );
           cy.clickButton(/^Create inventory$/);
-          cy.verifyPageTitle('Create Inventory$');
+          cy.verifyPageTitle('Create inventory$');
         } else if (results.count >= 1) {
           cy.log('non empty state check');
           cy.contains('h3', 'Inventories')
