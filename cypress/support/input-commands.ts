@@ -11,6 +11,7 @@ Cypress.Commands.add('singleSelectBy', (selector: string, value: string, exactMa
       cy.getByDataCy('search-input').type(value);
       const regExp = new RegExp('^' + value + '$');
       cy.contains('.pf-v5-c-menu__item-text', exactMatch ? regExp : value)
+        .should('be.visible')
         .parent()
         .click();
     });
