@@ -9,9 +9,10 @@ describe('Platform Teams - create, edit and delete with existing global platform
   let platformTeam: PlatformTeam;
 
   beforeEach(function () {
+    const globalPlatformOrganization = this.globalPlatformOrganization as PlatformOrganization;
     cy.platformLogin();
     cy.createPlatformTeam({
-      organization: (this.globalPlatformOrganization as PlatformOrganization).id,
+      organization: globalPlatformOrganization.id,
     }).then((testPlatformTeam: PlatformTeam) => {
       platformTeam = testPlatformTeam;
     });
