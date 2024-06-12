@@ -27,7 +27,7 @@ describe('Applications', () => {
       // Create application
       cy.navigateTo('awx', 'applications');
       cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -74,7 +74,7 @@ describe('Applications', () => {
       // Create application
       cy.navigateTo('awx', 'applications');
       cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -110,7 +110,7 @@ describe('Applications', () => {
       // Create application
       cy.navigateTo('awx', 'applications');
       cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
@@ -172,7 +172,7 @@ describe('Applications', () => {
       cy.navigateTo('awx', 'applications');
       // Create Application
       cy.clickButton('Create application');
-      cy.verifyPageTitle('Create Application');
+      cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
       cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);

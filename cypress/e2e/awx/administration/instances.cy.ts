@@ -21,7 +21,7 @@ describe('Instances: Add/Edit', () => {
   it('can add a new instance and navigate to the details page', () => {
     const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
     cy.getByDataCy('add-instance').click();
-    cy.getByDataCy('page-title').should('contain', 'Add instance');
+    cy.getByDataCy('page-title').should('contain', 'Create instance');
     cy.getByDataCy('hostname').type(instanceHostname);
     cy.getByDataCy('listener-port').type('9999');
     cy.getByDataCy('managed_by_policy').click();

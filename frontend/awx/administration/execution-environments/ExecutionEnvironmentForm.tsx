@@ -49,10 +49,10 @@ export function CreateExecutionEnvironment() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Execution Environment')}
+        title={t('Create execution environment')}
         breadcrumbs={[
           { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
-          { label: t('Create Execution Environment') },
+          { label: t('Create execution environment') },
         ]}
       />
       <AwxPageForm<ExecutionEnvironment>
@@ -107,10 +107,16 @@ export function EditExecutionEnvironment() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Execution Environment')}
+        title={
+          execution_env?.name ? `${t('Edit')} ${execution_env?.name}` : t('Execution Environment')
+        }
         breadcrumbs={[
-          { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
-          { label: t('Edit Execution Environment') },
+          { label: t('Execution Environment'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
+          {
+            label: execution_env?.name
+              ? `${t('Edit')} ${execution_env?.name}`
+              : t('Execution Environment'),
+          },
         ]}
       />
       <AwxPageForm<ExecutionEnvironment>
