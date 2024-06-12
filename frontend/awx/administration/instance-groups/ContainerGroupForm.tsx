@@ -22,22 +22,20 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { useWatch } from 'react-hook-form';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { SummaryFieldCredential } from '../../interfaces/summary-fields/summary-fields';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { jsonToYaml } from '../../../../framework/utils/codeEditorUtils';
 
 type ContainerGroupForm = {
-  credential: SummaryFieldCredential | null;
+  credential: number | null;
   name: string;
   max_forks: number;
   max_concurrent_jobs: number;
   override: boolean;
   pod_spec_override: string;
 };
-type ContainerFormPayload = Omit<ContainerGroupForm, 'override' | 'credential'> & {
-  credential?: number;
+type ContainerFormPayload = Omit<ContainerGroupForm, 'override'> & {
   is_container_group: true;
 };
 export function CreateContainerGroup() {
@@ -53,11 +51,10 @@ export function CreateContainerGroup() {
     pageNavigate(AwxRoute.InstanceGroups);
   };
   const onSubmit: PageFormSubmitHandler<ContainerGroupForm> = async (data) => {
-    const { override, pod_spec_override, credential, ...rest } = data;
+    const { override, pod_spec_override, ...rest } = data;
     const podSpecForSubmit = override ? pod_spec_override : '';
     const containerGroup = await postRequest(awxAPI`/instance_groups/`, {
       ...rest,
-      credential: credential?.id,
       pod_spec_override: podSpecForSubmit,
       is_container_group: true,
     });
@@ -130,7 +127,7 @@ export function EditContainerGroup() {
     return <LoadingPage />;
   }
   const onSubmit: PageFormSubmitHandler<ContainerGroupForm> = async (data) => {
-    const { override, pod_spec_override, credential, ...rest } = data;
+    const { override, pod_spec_override, ...rest } = data;
 
     const podSpecForSubmit = override ? pod_spec_override : '';
     const updateContainerGroup = await patchRequest(
@@ -138,7 +135,6 @@ export function EditContainerGroup() {
       {
         ...rest,
         pod_spec_override: podSpecForSubmit,
-        credential: credential?.id,
         is_container_group: true,
       }
     );
@@ -162,6 +158,7 @@ export function EditContainerGroup() {
         onCancel={onCancel}
         defaultValue={{
           name: containerGroup.name,
+          credential: containerGroup.credential ?? null,
           max_concurrent_jobs: containerGroup.max_concurrent_jobs || 0,
           max_forks: containerGroup.max_forks || 0,
           pod_spec_override: containerGroup?.pod_spec_override.length
@@ -191,10 +188,14 @@ export function ContainerGroupInputs() {
         maxLength={150}
       />
       <PageFormCredentialSelect<ContainerGroupForm>
-        name="credential.name"
-        credentialIdPath="credential.id"
-        credentialType={17}
+        name="credential"
         label={t('Credential')}
+        labelHelp={t(
+          `Credential to authenticate with Kubernetes or OpenShift. Must be of type "Kubernetes/OpenShift API Bearer Token". If left blank, the underlying Pod's service account will be used.`
+        )}
+        queryParams={{
+          credential_type__kind: 'kubernetes',
+        }}
       />
       <PageFormTextInput<ContainerGroupForm>
         name="max_concurrent_jobs"
@@ -214,7 +215,7 @@ export function ContainerGroupInputs() {
         min={0}
         label={t('Max forks')}
       />
-      <PageFormCheckbox<{ override: boolean }> label={t('Cutomize pod spec')} name="override" />
+      <PageFormCheckbox<{ override: boolean }> label={t('Customize pod spec')} name="override" />
       {hasOverride && (
         <PageFormHidden hidden={(hasOverride) => !hasOverride} watch="override">
           <PageFormSection singleColumn>

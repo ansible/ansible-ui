@@ -14,6 +14,7 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
+import { useParams } from 'react-router-dom';
 
 export function useDisableCreateInstanceGroup() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/instance_groups/`);
@@ -80,7 +81,7 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteInstanceGroups = useDeleteInstanceGroups(onComplete);
-
+  const params = useParams<{ id?: string }>();
   return useMemo<IPageAction<InstanceGroup>[]>(
     () => [
       {
@@ -88,6 +89,7 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         isPinned: true,
+        variant: params.id ? ButtonVariant.primary : ButtonVariant.plain,
         label: t('Edit instance group'),
         isDisabled: (instanceGroup) =>
           instanceGroup.summary_fields?.user_capabilities?.edit
@@ -103,6 +105,7 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        variant: params.id ? ButtonVariant.primary : ButtonVariant.plain,
         isPinned: true,
         label: t('Edit container group'),
         isDisabled: (instanceGroup) =>
@@ -147,6 +150,6 @@ export function useInstanceGroupRowActions(onComplete: (instanceGroups: Instance
         isDanger: true,
       },
     ],
-    [deleteInstanceGroups, pageNavigate, t]
+    [deleteInstanceGroups, pageNavigate, t, params.id]
   );
 }

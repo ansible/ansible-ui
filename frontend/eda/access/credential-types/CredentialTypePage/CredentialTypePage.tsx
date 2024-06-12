@@ -23,6 +23,7 @@ import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteCredentialTypes } from '../hooks/useDeleteCredentialTypes';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ export function CredentialTypePage() {
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit credential type'),
         isDisabled: (credentialType: EdaCredentialType) =>
           cannotEditManagedCredentialType(credentialType),

@@ -10,14 +10,14 @@ export function AwxSelectResourceTypeStep() {
   const { t } = useTranslation();
   const { wizardData, setStepData, setWizardData } = usePageWizard();
   const { data, isLoading } = useOptions<{
-    actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
+    actions: { GET: { content_type: { choices: ContentTypeOption[] } } };
   }>(awxAPI`/role_definitions/`);
 
   if (isLoading || !data) {
     return <LoadingPage />;
   }
 
-  const options: ContentTypeOption[] = data?.actions?.POST?.content_type?.choices || [];
+  const options: ContentTypeOption[] = data?.actions?.GET?.content_type?.choices || [];
 
   return (
     <PageFormSelect
