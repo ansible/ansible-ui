@@ -194,7 +194,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
               'createSchedule'
             );
             cy.getByDataCy('create-schedule').click();
-            cy.verifyPageTitle('Create Schedule');
+            cy.verifyPageTitle('Create schedule');
             cy.getByDataCy('name').type(scheduleName, { delay: 0 });
             cy.getByDataCy('description').type('description');
             if (['Cleanup Activity Stream', 'Cleanup Job Details'].includes(jobName)) {
@@ -280,7 +280,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
               'createSchedule'
             );
             cy.getByDataCy('create-schedule').click();
-            cy.verifyPageTitle('Create Schedule');
+            cy.verifyPageTitle('Create schedule');
             cy.get('[data-cy="name"]').type(scheduleName, { delay: 0 });
             cy.get('[data-cy="description"]').type('description');
             if (['Cleanup Activity Stream', 'Cleanup Job Details'].includes(jobName)) {

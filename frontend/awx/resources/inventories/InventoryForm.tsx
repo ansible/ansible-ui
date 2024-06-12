@@ -98,10 +98,10 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
   const getPageUrl = useGetPageUrl();
   const title =
     inventoryKind === ''
-      ? t('Create Inventory')
+      ? t('Create inventory')
       : inventoryKind === 'smart'
-        ? t('Create Smart Inventory')
-        : t('Create Constructed Inventory');
+        ? t('Create smart inventory')
+        : t('Create constructed inventory');
 
   const defaultValue =
     inventoryKind === 'smart'
@@ -245,9 +245,12 @@ export function EditInventory() {
     return (
       <PageLayout>
         <PageHeader
+          title={inventory?.name ? `${t('Edit')} ${inventory?.name}` : t('Inventory')}
           breadcrumbs={[
-            { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-            { label: t('Edit Inventory') },
+            { label: t('Inventory'), to: getPageUrl(AwxRoute.Inventories) },
+            {
+              label: inventory?.name ? `${t('Edit')} ${inventory?.name}` : t('Inventory'),
+            },
           ]}
         />
         {!isLoaded && !isError && <LoadingPage></LoadingPage>}
@@ -257,13 +260,6 @@ export function EditInventory() {
       </PageLayout>
     );
   }
-
-  const title =
-    inventory.kind === ''
-      ? t('Edit Inventory')
-      : inventory.kind === 'smart'
-        ? t('Edit Smart Inventory')
-        : t('Edit Constructed Inventory');
 
   const defaultValue =
     inventory.kind === 'smart'
@@ -283,10 +279,12 @@ export function EditInventory() {
   return (
     <PageLayout>
       <PageHeader
-        title={title}
+        title={inventory?.name ? `${t('Edit')} ${inventory?.name}` : t('Inventory')}
         breadcrumbs={[
-          { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          { label: title },
+          { label: t('Inventory'), to: getPageUrl(AwxRoute.Inventories) },
+          {
+            label: inventory?.name ? `${t('Edit')} ${inventory?.name}` : t('Inventory'),
+          },
         ]}
       />
       <AwxPageForm<InventoryCreate>

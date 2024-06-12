@@ -31,7 +31,7 @@ describe('Create job template ', () => {
 
   it('Component renders', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
-    cy.verifyPageTitle('Create Workflow Job Template');
+    cy.verifyPageTitle('Create workflow job template');
   });
   it('Validates properly', () => {
     cy.mount(<CreateWorkflowJobTemplate />);

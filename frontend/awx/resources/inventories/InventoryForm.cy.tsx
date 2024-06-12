@@ -47,7 +47,7 @@ describe('Create Edit Inventory Form', () => {
 
   const kinds: ('' | 'smart' | 'constructed')[] = ['', 'smart'];
 
-  describe('Create Inventory', () => {
+  describe('Create inventory', () => {
     beforeEach(() => {
       cy.intercept(
         { method: 'GET', url: '/api/v2/organizations/*' },

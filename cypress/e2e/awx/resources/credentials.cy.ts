@@ -616,7 +616,7 @@ describe('Credentials Tabbed View - Job Templates', function () {
     cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
     cy.clickTab('Job Templates', true);
     cy.getByDataCy('create-template').click();
-    cy.verifyPageTitle('Create Job Template');
+    cy.verifyPageTitle('Create job template');
     cy.getByDataCy('name').type(jobTemplateName);
     cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
