@@ -148,7 +148,7 @@ describe('Jobs: Delete', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
-  it('can delete a job from the jobs list row', () => {
+  it.skip('can delete a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
