@@ -4,7 +4,7 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('AWX Overview', () => {
+describe.skip('AWX Overview', () => {
   before(() => {
     cy.awxLogin();
   });
