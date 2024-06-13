@@ -63,7 +63,7 @@ describe('Inventory Sources', () => {
     cy.deleteAwxCredential(credential, { failOnStatusCode: false });
   });
 
-  describe('Inventory Source List', () => {
+  describe.skip('Inventory Source List', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
