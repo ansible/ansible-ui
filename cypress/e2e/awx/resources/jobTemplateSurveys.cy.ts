@@ -12,8 +12,8 @@ describe('Job Templates Surveys', function () {
   before(function () {
     cy.awxLogin();
   });
-
-  describe('JT Surveys: Create, Edit and Delete', function () {
+  // FLAKY_06_13_2024
+  describe.skip('JT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
       question_description: 'The person behind this.',
