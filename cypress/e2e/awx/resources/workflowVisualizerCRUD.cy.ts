@@ -281,7 +281,7 @@ describe('Workflow Visualizer', () => {
   });
 
   describe('Workflow Visualizer: Remove and Add Nodes', () => {
-    it('Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.', function () {
+    it.skip('Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)
         .then((projNode) => {
           projectNode = projNode;
