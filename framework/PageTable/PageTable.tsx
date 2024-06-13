@@ -274,31 +274,33 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
     return (
-      <EmptyStateNoData
-        title={props.emptyStateTitle}
-        description={props.emptyStateDescription}
-        button={
-          (props.emptyStateButtonClick && (
-            <Button
-              data-cy={
-                props.emptyStateButtonText
-                  ? convertString(props.emptyStateButtonText)
-                  : 'create-resource'
-              }
-              variant="primary"
-              onClick={props.emptyStateButtonClick}
-              icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
-            >
-              {props.emptyStateButtonText}
-            </Button>
-          )) ||
-          (props.emptyStateActions && (
-            <Flex justifyContent={{ default: 'justifyContentCenter' }}>
-              <PageActions actions={props.emptyStateActions} />
-            </Flex>
-          ))
-        }
-      />
+      <div data-cy="page-table">
+        <EmptyStateNoData
+          title={props.emptyStateTitle}
+          description={props.emptyStateDescription}
+          button={
+            (props.emptyStateButtonClick && (
+              <Button
+                data-cy={
+                  props.emptyStateButtonText
+                    ? convertString(props.emptyStateButtonText)
+                    : 'create-resource'
+                }
+                variant="primary"
+                onClick={props.emptyStateButtonClick}
+                icon={props.emptyStateButtonIcon ? props.emptyStateButtonIcon : null}
+              >
+                {props.emptyStateButtonText}
+              </Button>
+            )) ||
+            (props.emptyStateActions && (
+              <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+                <PageActions actions={props.emptyStateActions} />
+              </Flex>
+            ))
+          }
+        />
+      </div>
     );
   }
 
@@ -319,45 +321,36 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
 
   return (
     <>
-      <PageToolbar
-        {...props}
-        openColumnModal={props.id ? openColumnManagement : undefined}
-        showSelect={showSelect}
-        viewType={viewType}
-        setViewType={setViewType}
-        sortOptions={sortOptions}
-        limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
-      />
-      {viewType === PageTableViewTypeE.Table && (
-        <>
-          {props.scrollTopContent ? (
-            <Scrollable>
-              {topContent}
-              {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
-            </Scrollable>
-          ) : (
-            <>
-              {topContent}
-              {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
-            </>
-          )}
-        </>
-      )}
-      {viewType === PageTableViewTypeE.List && (
-        <>
-          {props.scrollTopContent ? (
-            <Scrollable>
-              {topContent}
-              <PageSection padding={{ default: 'noPadding' }}>
-                {!props.hideTable && (
-                  <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
-                )}
-              </PageSection>
-            </Scrollable>
-          ) : (
-            <>
-              {topContent}
+      <div data-cy="page-table">
+        <PageToolbar
+          {...props}
+          openColumnModal={props.id ? openColumnManagement : undefined}
+          showSelect={showSelect}
+          viewType={viewType}
+          setViewType={setViewType}
+          sortOptions={sortOptions}
+          limitFiltersToOneOrOperation={props.limitFiltersToOneOrOperation}
+        />
+        {viewType === PageTableViewTypeE.Table && (
+          <>
+            {props.scrollTopContent ? (
               <Scrollable>
+                {topContent}
+                {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
+              </Scrollable>
+            ) : (
+              <>
+                {topContent}
+                {!props.hideTable && <PageTableView {...props} tableColumns={managedColumns} />}
+              </>
+            )}
+          </>
+        )}
+        {viewType === PageTableViewTypeE.List && (
+          <>
+            {props.scrollTopContent ? (
+              <Scrollable>
+                {topContent}
                 <PageSection padding={{ default: 'noPadding' }}>
                   {!props.hideTable && (
                     <PageTableList
@@ -368,23 +361,29 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                   )}
                 </PageSection>
               </Scrollable>
-            </>
-          )}
-        </>
-      )}
-      {viewType === PageTableViewTypeE.Cards && (
-        <>
-          {props.scrollTopContent ? (
-            <Scrollable>
-              {topContent}
-              {!props.hideTable && (
-                <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
-              )}
-            </Scrollable>
-          ) : (
-            <>
-              {topContent}
+            ) : (
+              <>
+                {topContent}
+                <Scrollable>
+                  <PageSection padding={{ default: 'noPadding' }}>
+                    {!props.hideTable && (
+                      <PageTableList
+                        {...props}
+                        showSelect={showSelect}
+                        tableColumns={managedColumns}
+                      />
+                    )}
+                  </PageSection>
+                </Scrollable>
+              </>
+            )}
+          </>
+        )}
+        {viewType === PageTableViewTypeE.Cards && (
+          <>
+            {props.scrollTopContent ? (
               <Scrollable>
+                {topContent}
                 {!props.hideTable && (
                   <PageTableCards
                     {...props}
@@ -393,14 +392,27 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
                   />
                 )}
               </Scrollable>
-            </>
-          )}
-        </>
-      )}
-      {!props.disablePagination &&
-        (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-          <PagePagination {...props} topBorder={!props.autoHidePagination} />
+            ) : (
+              <>
+                {topContent}
+                <Scrollable>
+                  {!props.hideTable && (
+                    <PageTableCards
+                      {...props}
+                      showSelect={showSelect}
+                      tableColumns={managedColumns}
+                    />
+                  )}
+                </Scrollable>
+              </>
+            )}
+          </>
         )}
+        {!props.disablePagination &&
+          (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
+            <PagePagination {...props} topBorder={!props.autoHidePagination} />
+          )}
+      </div>
     </>
   );
 }
