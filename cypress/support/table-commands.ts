@@ -173,3 +173,23 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add(
+  'testItemIsMissingInTable',
+  (filterDataCy: string, optionLabel: string, selection: 'single' | 'multi') => {
+    cy.get('body').then((body) => {
+      if (body.find('[data-cy="empty-state-title"]').length > 0) {
+        // If the element exists let the test pass, because element is missing in table (table is empty)
+      } else {
+        // If the element does not exist
+        // Actions for the non-existence case
+        if (selection === 'single') {
+          cy.filterTableBySingleSelect(filterDataCy, optionLabel);
+        } else {
+          cy.filterTableByMultiSelect(filterDataCy, [optionLabel]);
+        }
+        cy.getByDataCy('empty-state-title').should('exist');
+      }
+    });
+  }
+);
