@@ -364,10 +364,9 @@ declare global {
        * This is used when the filter is a multi select dropdown.
        * It ensures that item is missing in table doing filtering.
        */
-      testItemIsMissingInTable(
+      testIfItemIsMissingInTable(
         filterDataCy: string,
         optionLabel: string,
-        selection: 'single' | 'multi'
       );
 
       /**

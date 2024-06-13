@@ -23,7 +23,7 @@ describe.skip('Notifications', () => {
       cy.reload();
     });
 
-    it('can edit a Notification on its details page and assert the edited info', () => {
+    it.only('can edit a Notification on its details page and assert the edited info', () => {
       //Utilize the creation of notification in a beforeEach block
       //Assert the initial info of the notification before edit
       //Assert the info of the notification after edit
