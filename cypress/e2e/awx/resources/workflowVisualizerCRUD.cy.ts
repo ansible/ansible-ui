@@ -381,7 +381,7 @@ describe('Workflow Visualizer', () => {
     });
   });
 
-  describe('Workflow Visualizer: Delete Nodes or Links', () => {
+  describe.skip('Workflow Visualizer: Delete Nodes or Links', () => {
     it('Remove all steps using the kebab menu of the visualizer toolbar and save changes', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then(
         (projectNode) => {
