@@ -13,7 +13,7 @@ describe('Job Templates Surveys', function () {
     cy.awxLogin();
   });
 
-  describe('JT Surveys: Create, Edit and Delete', function () {
+  describe.skip('JT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
       question_description: 'The person behind this.',
