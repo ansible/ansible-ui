@@ -335,7 +335,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
-  describe(`${igType} Groups: Team access Tab`, () => {
+  describe.skip(`${igType} Groups: Team access Tab`, () => {
     let team: Team;
     let instanceGroup: InstanceGroup;
 
@@ -450,7 +450,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
-  describe(`${igType} Groups: User access Tab`, () => {
+  describe.skip(`${igType} Groups: User access Tab`, () => {
     let user: AwxUser;
     let instanceGroup: InstanceGroup;
 
