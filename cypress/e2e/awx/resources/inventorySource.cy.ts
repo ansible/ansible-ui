@@ -62,7 +62,7 @@ describe('Inventory Sources', () => {
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxCredential(credential, { failOnStatusCode: false });
   });
-
+  // FLAKY_06_13_2024
   describe.skip('Inventory Source List', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       cy.navigateTo('awx', 'inventories');
@@ -640,7 +640,7 @@ describe('Inventory Sources', () => {
       });
       cy.get(`input[aria-label="Click to disable success"]`).should('exist');
     });
-
+    // FLAKY_06_13_2024
     it.skip('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
