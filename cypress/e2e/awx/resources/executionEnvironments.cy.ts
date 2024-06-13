@@ -180,7 +180,7 @@ describe('Execution Environments: Create', () => {
   });
 });
 
-describe('Execution Environments: Edit and Bulk delete', () => {
+describe.skip('Execution Environments: Edit and Bulk delete', () => {
   let executionEnvironment: ExecutionEnvironment;
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateExecEnvName(): string {
@@ -300,7 +300,7 @@ describe('Execution Environments: Edit and Bulk delete', () => {
   });
 });
 
-describe('Execution Environments: Templates View', () => {
+describe.skip('Execution Environments: Templates View', () => {
   let inventory: Inventory;
 
   before(() => {

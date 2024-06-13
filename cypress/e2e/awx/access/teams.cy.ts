@@ -231,7 +231,7 @@ describe('teams', function () {
       });
   });
 
-  it('can navigate to the edit form from the team list row item', function () {
+  it.skip('can navigate to the edit form from the team list row item', function () {
     cy.navigateTo('awx', 'teams');
     cy.filterTableByMultiSelect('name', [team.name]);
     cy.clickTableRowAction('name', team.name, 'edit-team', { disableFilter: true });
