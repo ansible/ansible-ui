@@ -2,7 +2,7 @@ import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 import { testNotification } from './notifiersSharedFunctions';
 
-describe.skip('Notifications: List View', () => {
+describe('Notifications: List View', () => {
   before(() => {
     cy.awxLogin();
   });
