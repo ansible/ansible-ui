@@ -48,7 +48,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
   });
 
   //tests
-  it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
+  it.only(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     //1) Use the inventory created in before, access the host tab of that inventory
     //2) Use a host, EE, and credential - these resources are needed to run a command against a host
     //3) Assert redirect to the job output screen
@@ -79,7 +79,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     });
   });
 
-  it.only('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
+  it('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
     //1) Use the inventory created in before, access the host tab of that inventory, visit the host details page
     //2) Use a host, EE, and credential - these resources are needed to run a command against a host
     //3) Assert redirect to the job output screen
