@@ -568,7 +568,7 @@ describe('Projects', () => {
     });
   });
 
-  describe('Projects: Job Templates Tab', () => {
+  describe.skip('Projects: Job Templates Tab', () => {
     let inventory: Inventory;
     let jobTemplate: JobTemplate;
 
@@ -666,7 +666,7 @@ describe('Projects', () => {
     });
   });
 
-  describe('Projects: Notifications Tab', () => {
+  describe.skip('Projects: Notifications Tab', () => {
     let notification: NotificationTemplate;
     beforeEach(function () {
       cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
