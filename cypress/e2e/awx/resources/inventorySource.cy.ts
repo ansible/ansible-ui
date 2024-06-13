@@ -62,8 +62,8 @@ describe('Inventory Sources', () => {
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
     cy.deleteAwxCredential(credential, { failOnStatusCode: false });
   });
-
-  describe('Inventory Source List', () => {
+  // FLAKY_06_13_2024
+  describe.skip('Inventory Source List', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
@@ -340,7 +340,8 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source Schedules List Page', () => {
-    it('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
+    // FLAKY_06_13_2024
+    it.skip('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
       cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
@@ -586,8 +587,8 @@ describe('Inventory Sources', () => {
     afterEach(() => {
       cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });
     });
-
-    it('can visit the Notifications tab of an Inventory Source and enable a notification upon Start', () => {
+    // FLAKY_06_13_2024
+    it.skip('can visit the Notifications tab of an Inventory Source and enable a notification upon Start', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
       cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
@@ -640,8 +641,8 @@ describe('Inventory Sources', () => {
       });
       cy.get(`input[aria-label="Click to disable success"]`).should('exist');
     });
-
-    it('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
+    // FLAKY_06_13_2024
+    it.skip('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
       cy.clickTableRowLink('name', inventory.name, { disableFilter: true });

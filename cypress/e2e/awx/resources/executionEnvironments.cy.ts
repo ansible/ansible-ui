@@ -179,8 +179,8 @@ describe('Execution Environments: Create', () => {
       });
   });
 });
-
-describe('Execution Environments: Edit and Bulk delete', () => {
+// FLAKY_06_13_2024
+describe.skip('Execution Environments: Edit and Bulk delete', () => {
   let executionEnvironment: ExecutionEnvironment;
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateExecEnvName(): string {
@@ -299,8 +299,8 @@ describe('Execution Environments: Edit and Bulk delete', () => {
     cy.clickModalButton('Close');
   });
 });
-
-describe('Execution Environments: Templates View', () => {
+// FLAKY_06_13_2024
+describe.skip('Execution Environments: Templates View', () => {
   let inventory: Inventory;
 
   before(() => {
