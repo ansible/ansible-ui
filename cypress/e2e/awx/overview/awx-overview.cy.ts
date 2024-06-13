@@ -3,7 +3,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-
+// FLAKY_06_13_2024
 describe.skip('AWX Overview', () => {
   before(() => {
     cy.awxLogin();

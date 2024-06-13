@@ -56,7 +56,7 @@ describe('Jobs: List', () => {
     cy.contains(jobName);
     cy.clearAllFilters();
   });
-
+  // FLAKY_06_13_2024
   it.skip('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = job.id ? job.id.toString() : '';
@@ -147,7 +147,7 @@ describe('Jobs: Delete', () => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
-
+  // FLAKY_06_13_2024
   it.skip('can delete a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
@@ -176,7 +176,7 @@ describe('Jobs: Delete', () => {
       }
     );
   });
-
+  // FLAKY_06_13_2024
   it.skip('can delete a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
@@ -242,7 +242,7 @@ describe('Jobs: Output and Details Screen', () => {
     cy.getByDataCy('status').should('contain', 'Success');
     cy.getByDataCy('type').should('contain', 'Management job');
   });
-
+  // FLAKY_06_13_2024
   it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
     const projectName = 'E2E Project Jobs ' + randomString(4);
     cy.navigateTo('awx', 'projects');

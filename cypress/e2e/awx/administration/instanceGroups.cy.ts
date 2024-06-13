@@ -335,6 +335,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
+  // FLAKY_06_13_2024
   describe.skip(`${igType} Groups: Team access Tab`, () => {
     let team: Team;
     let instanceGroup: InstanceGroup;
@@ -450,6 +451,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
+  // FLAKY_06_13_2024
   describe.skip(`${igType} Groups: User access Tab`, () => {
     let user: AwxUser;
     let instanceGroup: InstanceGroup;

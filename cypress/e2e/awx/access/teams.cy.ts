@@ -231,6 +231,7 @@ describe('teams', function () {
       });
   });
 
+  // FLAKY_06_13_2024
   it.skip('can navigate to the edit form from the team list row item', function () {
     cy.navigateTo('awx', 'teams');
     cy.filterTableByMultiSelect('name', [team.name]);

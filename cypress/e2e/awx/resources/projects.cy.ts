@@ -43,7 +43,7 @@ describe('Projects', () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
-
+    // FLAKY_06_13_2024
     it.skip('can create a project and then delete it from the project details page', function () {
       const projectName = 'E2E Project ' + randomString(4);
       cy.navigateTo('awx', 'projects');
@@ -567,7 +567,7 @@ describe('Projects', () => {
       cy.clickButton(/^Clear all filters$/);
     });
   });
-
+  // FLAKY_06_13_2024
   describe.skip('Projects: Job Templates Tab', () => {
     let inventory: Inventory;
     let jobTemplate: JobTemplate;
@@ -665,7 +665,7 @@ describe('Projects', () => {
       );
     });
   });
-
+  // FLAKY_06_13_2024
   describe.skip('Projects: Notifications Tab', () => {
     let notification: NotificationTemplate;
     beforeEach(function () {
