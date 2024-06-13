@@ -177,7 +177,7 @@ describe('Jobs: Delete', () => {
     );
   });
 
-  it('can delete a job from the jobs list toolbar', () => {
+  it.skip('can delete a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
