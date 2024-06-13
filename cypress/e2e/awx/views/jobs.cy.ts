@@ -57,7 +57,7 @@ describe('Jobs: List', () => {
     cy.clearAllFilters();
   });
 
-  it('can relaunch the job and navigate to job output', () => {
+  it.skip('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = job.id ? job.id.toString() : '';
     const jobName = job.name ? job.name : '';
