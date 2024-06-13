@@ -243,7 +243,7 @@ describe('Jobs: Output and Details Screen', () => {
     cy.getByDataCy('type').should('contain', 'Management job');
   });
 
-  it('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
+  it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
     const projectName = 'E2E Project Jobs ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');

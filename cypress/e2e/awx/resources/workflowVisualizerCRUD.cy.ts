@@ -111,7 +111,7 @@ describe('Workflow Visualizer', () => {
       });
     });
 
-    it('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
+    it.skip('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({

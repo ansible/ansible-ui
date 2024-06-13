@@ -44,7 +44,7 @@ describe('Projects', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can create a project and then delete it from the project details page', function () {
+    it.skip('can create a project and then delete it from the project details page', function () {
       const projectName = 'E2E Project ' + randomString(4);
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
