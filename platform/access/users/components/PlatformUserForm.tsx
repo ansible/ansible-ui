@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -20,7 +20,6 @@ import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useGetAll } from '../../../common/useGetAll';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -125,11 +124,7 @@ export function EditPlatformUser() {
     isLoading,
     error,
   } = useGet<PlatformUser>(gatewayV1API`/users/${id.toString()}/`);
-  const {
-    items: teams,
-    isLoading: isTeamsLoading,
-    error: teamError,
-  } = useGetAll<PlatformTeam>(gatewayV1API`/teams/`);
+
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
   const deleteRequest = useDeleteRequest();
@@ -171,25 +166,16 @@ export function EditPlatformUser() {
   );
   const getPageUrl = useGetPageUrl();
 
-  const userWithTeams = useMemo(() => {
-    if (!user) return undefined;
-    if (!teams) return undefined;
-    const teamIds = teams.filter((team) => team.users.includes(user.id)).map((team) => team.id);
-    return { ...user, teams: teamIds };
-  }, [teams, user]);
-
-  if (isLoading || isTeamsLoading || isLoadingPlatformAuditorRole)
-    return <LoadingPage breadcrumbs />;
+  if (isLoading || isLoadingPlatformAuditorRole) return <LoadingPage breadcrumbs />;
   if (error) return <AwxError error={error} />;
-  if (teamError) return <AwxError error={teamError} />;
-  if (!userWithTeams) return <PageNotFound />;
+  if (!user) return <PageNotFound />;
 
-  const { password, ...defaultUserValue } = userWithTeams;
+  const { password, ...defaultUserValue } = user;
   const defaultValue: Partial<IUserInput> = {
     ...defaultUserValue,
-    userType: userWithTeams.is_superuser
+    userType: user.is_superuser
       ? UserType.SystemAdministrator
-      : userWithTeams.is_system_auditor
+      : user.is_system_auditor
         ? UserType.PlatformAuditor
         : UserType.NormalUser,
   };
