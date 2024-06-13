@@ -55,7 +55,7 @@ export function InventoryRunCommand() {
       ...data,
       verbosity: data.verbosity,
       forks: data.forks,
-      credential: data.credentialIdPath,
+      credential: data.credential,
       execution_environment: eeId,
     };
     const result: { id: string } = await postRequest(
