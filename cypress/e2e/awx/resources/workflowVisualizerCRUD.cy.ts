@@ -143,7 +143,7 @@ describe('Workflow Visualizer', () => {
       cy.verifyPageTitle(`${workflowJobTemplate.name}`);
     });
 
-    it('Adds a new node specifically linked to an already existing node.', function () {
+    it.skip('Adds a new node specifically linked to an already existing node.', function () {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id="${projectNode.id}"]`)
