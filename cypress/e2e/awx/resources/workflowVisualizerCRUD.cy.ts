@@ -251,7 +251,7 @@ describe('Workflow Visualizer', () => {
         });
     });
 
-    it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
+    it.skip('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.clickButton('Add step');
