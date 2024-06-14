@@ -8,7 +8,6 @@ import {
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
-import { useAwxConfig } from '../../../../frontend/awx/common/useAwxConfig';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import {
@@ -23,7 +22,6 @@ export function AuthenticatorsList() {
   const toolbarFilters = useAuthenticatorsFilters();
   const tableColumns = useAuthenticatorsColumns();
   const pageNavigate = usePageNavigate();
-  const config = useAwxConfig();
 
   const view = usePlatformView<Authenticator>({
     url: gatewayV1API`/authenticators/`,
