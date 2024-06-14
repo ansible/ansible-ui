@@ -2,7 +2,7 @@ import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification, testDelete } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-// FLAKY_06_13_2024
+
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
