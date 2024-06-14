@@ -57,7 +57,7 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
   );
   const statusColumn = useMemo<ITableColumn<Inventory>>(
     () => ({
-      header: t('Status'),
+      header: t('Sync Status'),
       cell: (inventory: Inventory) => {
         if (inventory.kind !== '') {
           return null;
