@@ -80,7 +80,7 @@ describe('Projects', () => {
 
     it('can edit a project from the project list row', () => {
       cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
+      cy.verifyPageTitle('Edit project');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="edit-project"]').click();
@@ -222,7 +222,7 @@ describe('Projects', () => {
       });
       cy.verifyPageTitle(project.name);
       cy.clickButton(/^Edit project$/);
-      cy.verifyPageTitle('Edit Project');
+      cy.verifyPageTitle('Edit project');
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
       cy.clickButton(/^Save project$/);
