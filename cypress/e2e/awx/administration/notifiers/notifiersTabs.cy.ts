@@ -241,10 +241,12 @@ function testToggle(
     cy.get(`[aria-label="${type_enable}"]`).click();
 
     // reload page to check if the toggle is working and try to disable it
+    cy.wait(2000);
     cy.reload();
     cy.get(`[aria-label="${type_disable}"]`, { timeout: 15000 }).click();
 
     // check if it is disabled again
+    cy.wait(2000);
     cy.reload();
     cy.get(`[aria-label="${type_enable}"]`, { timeout: 15000 });
   });
