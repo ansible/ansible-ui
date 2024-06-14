@@ -173,21 +173,3 @@ Cypress.Commands.add(
     });
   }
 );
-
-Cypress.Commands.add(
-  'testIfItemIsMissingInTable',
-  (filterDataCy: string, optionLabel: string) => {
-    cy.get('body').then((body) => {
-      if (body.find('[data-cy="empty-state-title"]').length > 0) {
-        // If the element exists let the test pass, because element is missing in table (table is empty)
-      } else {
-        // If the element does not exist
-        // Actions for the non-existence case - filtering the item
-        cy.selectTableFilter(filterDataCy);
-        cy.getByDataCy('filter-input').click();
-        cy.get(`[aria-label="Search input"]`).type(optionLabel);
-        cy.contains(`[role="option"]`, 'No results found');
-      }
-    });
-  }
-);

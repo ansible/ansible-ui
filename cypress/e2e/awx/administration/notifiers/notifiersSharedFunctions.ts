@@ -1,5 +1,8 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
+import { AwxItemsResponse } from '../../../../../frontend/awx/common/AwxItemsResponse';
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { Notification } from '../../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 export function testNotification(
   type: string,
@@ -19,7 +22,6 @@ export function testNotification(
 
     cy.get(`[data-cy="Submit"]`).click();
 
-    /*
     // test detail
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
@@ -51,8 +53,8 @@ export function testNotification(
     if (!options?.skipMessages) {
       verifyEditedMessages(type);
     }
-*/
-    testDelete(notificationName, options);
+
+    testDelete(name2, options);
   });
 }
 
@@ -87,7 +89,11 @@ export function testDelete(name: string, options?: { details?: boolean }) {
   cy.contains(`[data-cy="page-title"]`, 'Notifiers');
   cy.contains('Configure custom notifications to be sent based on predefined events.');
 
-  cy.testIfItemIsMissingInTable('name', name);
+  cy.requestGet<AwxItemsResponse<Notification>>(awxAPI`/notification_templates/?name={name}`)
+    .its('results')
+    .then((results) => {
+      expect(results).to.have.length(0);
+    });
 }
 
 export function selectOrganization(orgName: string) {

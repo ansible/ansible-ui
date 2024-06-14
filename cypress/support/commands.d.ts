@@ -360,16 +360,6 @@ declare global {
       filterTableByMultiSelect(filterDataCy: string, optionLabels: string[]): Chainable<void>;
 
       /**
-       * Filters the table by using a filter that has a multi or single select input.
-       * This is used when the filter is a multi select dropdown.
-       * It ensures that item is missing in table doing filtering.
-       */
-      testIfItemIsMissingInTable(
-        filterDataCy: string,
-        optionLabel: string,
-      );
-
-      /**
        * Gets a table row containing the specified text for the specified column.
        *
        * @example
