@@ -146,7 +146,7 @@ describe('Execution Environments: Create', () => {
     cy.clickModalButton('Close');
   });
 
-  it('can create a new EE associated to a particular org, assign admin access to a user in that org, and login as that user to assert access to the EE', function () {
+  it('can create a new EE associated to a particular org, assign admin access to a user in that org, and login as that user to assert access to the EE', () => {
     cy.getByDataCy('create-execution-environment').click();
     cy.getByDataCy('name').type(execEnvName);
     cy.getByDataCy('image').type(image);
@@ -192,7 +192,7 @@ describe('Execution Environments: Edit and Bulk delete', () => {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxExecutionEnvironment({
@@ -274,7 +274,7 @@ describe('Execution Environments: Edit and Bulk delete', () => {
     cy.hasDetail('Organization', organization.name);
   });
 
-  it('can bulk delete multiple EEs from the list view and assert deletion', function () {
+  it('can bulk delete multiple EEs from the list view and assert deletion', () => {
     const arrayOfElementText: string[] = [];
     for (let i = 0; i < 5; i++) {
       const execEnvName = generateExecEnvName();
@@ -314,7 +314,7 @@ describe('Execution Environments: Templates View', () => {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
