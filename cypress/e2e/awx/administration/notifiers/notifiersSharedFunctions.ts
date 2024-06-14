@@ -79,13 +79,6 @@ export function testDelete(name: string, options?: { details?: boolean }) {
     cy.contains(`[role="dialog"] button`, `Close`).click();
   }
 
-  /*
-  cy.get(`[data-cy="filter"]`).click();
-  cy.get(`[data-cy="name"] button`).click();
-  cy.get(`[data-cy="filter-input"]`).click();
-  cy.get(`[aria-label="Search input"]`).type(name);
-  cy.contains('No results found');*/
-
   cy.contains(`[data-cy="page-title"]`, 'Notifiers');
   cy.contains('Configure custom notifications to be sent based on predefined events.');
 
