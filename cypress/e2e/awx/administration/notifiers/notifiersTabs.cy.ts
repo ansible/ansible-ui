@@ -3,7 +3,7 @@ import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification, testDelete } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 // FLAKY_06_13_2024
-describe.skip('Notifications', () => {
+describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
   before(() => {
