@@ -17,7 +17,7 @@ describe('Notifications', () => {
     });*/
   });
 
-  describe.skip('Notifications: Details View', () => {
+  describe('Notifications: Details View', () => {
     beforeEach(() => {
       // reloading page so the notifications dissapears
       cy.reload();
