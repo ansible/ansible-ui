@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
+import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 
 export function useNameToolbarFilter() {
   const { t } = useTranslation();
@@ -19,22 +23,31 @@ export function useNameToolbarFilter() {
 
 export function useTypeToolbarFilter() {
   const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
+  const { data: plugins, isLoading } = useGet<AuthenticatorPlugins>(
+    gatewayAPI`/authenticator_plugins/`
+  );
+  return useMemo<IToolbarFilter>(() => {
+    let options = [
+      { label: t('LDAP'), value: AuthenticatorTypeEnum.LDAP },
+      { label: t('Local'), value: AuthenticatorTypeEnum.Local },
+      { label: t('Keycloak'), value: AuthenticatorTypeEnum.Keycloak },
+      { label: t('SAML'), value: AuthenticatorTypeEnum.SAML },
+    ];
+    if (plugins?.authenticators && !isLoading) {
+      options = plugins.authenticators.map((plugin) => ({
+        label: getAuthenticatorTypeLabel(plugin.type, t),
+        value: plugin.type,
+      }));
+    }
+    return {
       key: 'type',
       label: t('Authentication type'),
       type: ToolbarFilterType.MultiSelect,
-      query: 'or__type',
-      options: [
-        { label: t('LDAP'), value: AuthenticatorTypeEnum.LDAP },
-        { label: t('Local'), value: AuthenticatorTypeEnum.Local },
-        { label: t('Keycloak'), value: AuthenticatorTypeEnum.Keycloak },
-        { label: t('SAML'), value: AuthenticatorTypeEnum.SAML },
-      ],
+      query: 'type',
+      options,
       placeholder: t('Select types'),
-    }),
-    [t]
-  );
+    };
+  }, [t, plugins, isLoading]);
 }
 
 export function useAuthenticatorsFilters() {
