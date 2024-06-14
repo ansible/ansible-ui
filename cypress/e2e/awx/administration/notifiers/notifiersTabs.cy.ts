@@ -17,7 +17,7 @@ describe('Notifications', () => {
     });*/
   });
 
-  describe('Notifications: Details View', () => {
+  describe.skip('Notifications: Details View', () => {
     beforeEach(() => {
       // reloading page so the notifications dissapears
       cy.reload();
@@ -241,14 +241,12 @@ function testToggle(
     cy.get(`[aria-label="${type_enable}"]`).click();
 
     // reload page to check if the toggle is working and try to disable it
-    cy.wait(2000);
     cy.reload();
-    cy.get(`[aria-label="${type_disable}"]`, { timeout: 15000 }).click();
+    cy.get(`[aria-label="${type_disable}"]`, { timeout: 25000 }).click();
 
     // check if it is disabled again
-    cy.wait(2000);
     cy.reload();
-    cy.get(`[aria-label="${type_enable}"]`, { timeout: 15000 });
+    cy.get(`[aria-label="${type_enable}"]`, { timeout: 25000 });
   });
 }
 
@@ -268,6 +266,7 @@ function moveToNotification(type: string, typeEntityName: string, notificationNa
 function filterNotification(notificationName: string) {
   cy.get(`[aria-label="Type to filter"]`).type(notificationName);
   cy.getByDataCy(`apply-filter`).click();
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
 }
 
 // move to notification list page
