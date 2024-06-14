@@ -140,7 +140,7 @@ describe('ProjectForm.cy.ts', () => {
     );
     cy.intercept('PATCH', 'api/v2/projects/*', { statusCode: 201 }).as('editProject');
     cy.mount(<EditProject />);
-    cy.verifyPageTitle('Edit Project');
+    cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
     cy.getByDataCy('name').should('have.value', 'Demo Project @ 10:44:51');
     cy.getByDataCy('organization').should('have.text', 'Default');
     cy.getByDataCy('signature_validation_credential').should('have.text', 'Select credential');
