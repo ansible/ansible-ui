@@ -50,7 +50,7 @@ export const useProcessSchedule = () => {
   const updateSchedule = usePatchRequest<CreateSchedulePayload, Schedule>();
   return useCallback(
     async (payloadData: StandardizedFormData) => {
-      const { resource, prompt, schedule_days_to_keep, survey, ...rest } = payloadData;
+      const { resource, prompt, schedule_days_to_keep, survey, enabled, ...rest } = payloadData;
       const request = (endPoint: string, payload: CreateSchedulePayload) => {
         if (params.schedule_id && params.id) {
           return updateSchedule(awxAPI`/schedules/${params.schedule_id.toString()}/`, {
@@ -86,7 +86,7 @@ export const useProcessSchedule = () => {
         execution_environment: execution_environment?.id,
         skip_tags: hasSkipTags ? stringifyTags(prompt?.skip_tags) : undefined,
         job_tags: hasJobTags ? stringifyTags(job_tags) : undefined,
-        enabled: true,
+        enabled: enabled,
         extra_data: extraDataObject,
       };
       switch (type) {
