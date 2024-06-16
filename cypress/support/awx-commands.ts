@@ -397,9 +397,11 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
     .should((_) => {})
     .then(($elements) => {
       if ($elements.length) {
-        cy.get('svg[data-cy="lookup-button"]').click({ force: true });
+        cy.get(`${menuSelector}`).find('svg[data-cy="lookup-button"]').click();
         cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.searchAndDisplayResource(itemName);
+          //wait for table to load
+          cy.get('table').should('exist');
+          cy.filterTableBySingleSelect('name', itemName);
           cy.get('tbody tr input').click();
           cy.clickButton('Confirm');
         });
@@ -789,11 +791,15 @@ Cypress.Commands.add('getAwxRoles', () => {
 
 Cypress.Commands.add(
   'createAwxProject',
-  (project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>, skipSync?: boolean) => {
+  (
+    project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+    scm_url?: string,
+    skipSync?: boolean
+  ) => {
     cy.awxRequestPost<Partial<Project>, Project>(awxAPI`/projects/`, {
       name: 'E2E Project ' + randomString(4),
       scm_type: 'git',
-      scm_url: 'https://github.com/ansible/ansible-ui',
+      scm_url: scm_url ? scm_url : 'https://github.com/ansible/ansible-ui',
       ...project,
     }).then((project) => {
       if (!skipSync) {
@@ -1028,6 +1034,7 @@ Cypress.Commands.add(
       Partial<Omit<JobTemplate, 'id'>>,
       'organization' | 'project' | 'inventory'
     >,
+    playbook?: string,
     instanceGroup?: InstanceGroup
   ) => {
     cy.requestPost<
@@ -1035,7 +1042,7 @@ Cypress.Commands.add(
       JobTemplate
     >(awxAPI`/job_templates/`, {
       name: 'E2E Job Template ' + randomString(4),
-      playbook: 'playbooks/hello_world.yml',
+      playbook: playbook ? playbook : 'playbooks/hello_world.yml',
       ...jobTemplate,
     }).then((jt: Partial<JobTemplate>) => {
       if (instanceGroup) {
@@ -1469,7 +1476,7 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
     cy.requestGet<Job>(awxAPI`/workflow_jobs/${jobID}/`)
       .its('status')
       .then((status) => {
-        if (status !== 'successful') {
+        if (status === 'running' || status === 'pending') {
           cy.log(`WORKFLOW JOB STATUS = ${status}`);
           cy.log(`MAX LOOPS RAN = ${maxLoops}`);
           waitForWFJobStatus(maxLoops - 1);

@@ -5,7 +5,7 @@ import { PageNavigationItem } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateJobTemplate, EditJobTemplate } from '../../resources/templates/TemplateForm';
 import { TemplateDetails } from '../../resources/templates/TemplatePage/TemplateDetails';
-import { TemplateLaunchWizard } from '../../resources/templates/TemplatePage/TemplateLaunchWizard';
+import { LaunchTemplate } from '../../resources/templates/TemplatePage/TemplateLaunchWizard';
 import { TemplatePage } from '../../resources/templates/TemplatePage/TemplatePage';
 import { Templates } from '../../resources/templates/Templates';
 import {
@@ -167,7 +167,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.TemplateLaunchWizard,
               path: ':id/launch',
-              element: <TemplateLaunchWizard jobType="job_templates" />,
+              element: <LaunchTemplate jobType="job_templates" />,
             },
           ],
         },
@@ -303,7 +303,7 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.WorkflowJobTemplateLaunchWizard,
               path: ':id/launch',
-              element: <TemplateLaunchWizard jobType="workflow_job_templates" />,
+              element: <LaunchTemplate jobType="workflow_job_templates" />,
             },
           ],
         },

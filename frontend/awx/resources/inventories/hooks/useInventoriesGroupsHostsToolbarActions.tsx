@@ -73,7 +73,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('Existing host'),
+            label: t('Add existing host'),
             onClick: () =>
               setDialog(
                 <HostSelectDialog
@@ -86,7 +86,7 @@ export function useInventoriesGroupsHostsToolbarActions(view: IAwxView<AwxHost>)
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('New host'),
+            label: t('Create host'),
             onClick: () =>
               pageNavigate(AwxRoute.InventoryGroupHostAdd, {
                 params: {

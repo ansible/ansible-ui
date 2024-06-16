@@ -4,12 +4,10 @@ import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageForm
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { Project } from '../../../interfaces/Project';
-import { useGetCredentialTypeIDs } from '../hooks/useGetCredentialTypeIDs';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
 export function SvnSubForm() {
   const { t } = useTranslation();
-  const credentialTypeIDs = useGetCredentialTypeIDs();
   const svnSourceControlUrlHelp = (
     <Trans i18nKey="svnSourceControlUrlHelp">
       <span>
@@ -47,11 +45,11 @@ export function SvnSubForm() {
           )}
         />
         <PageFormCredentialSelect<Project>
-          name="summary_fields.credential.name"
-          credentialIdPath="credential"
+          name="credential"
           label={t('Source Control Credential')}
-          selectTitle={t('Select Source Control Credential')}
-          credentialType={credentialTypeIDs.scm}
+          queryParams={{
+            credential_type__namespace: 'scm',
+          }}
         />
         <ScmTypeOptions />
       </PageFormSection>

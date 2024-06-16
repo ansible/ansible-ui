@@ -6,11 +6,18 @@ import { useAwxConfig } from '../../common/useAwxConfig';
 import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { TopologyViewLayer } from './Visualizer';
+import { EmptyStateUnauthorized } from '../../../../framework/components/EmptyStateUnauthorized';
+import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
 
 export function Topology() {
   const { t } = useTranslation();
   const config = useAwxConfig();
-  const { data } = useGet<MeshVisualizer>(awxAPI`/mesh_visualizer/`);
+
+  const { data, error } = useGet<MeshVisualizer>(awxAPI`/mesh_visualizer/`, undefined, {
+    errorRetryCount: 0,
+  });
+
+  const isUnauthorized = (error as Error & { statusCode?: number })?.statusCode === 403;
 
   return (
     <PageLayout>
@@ -25,7 +32,13 @@ export function Topology() {
         )}
         titleDocLink={`${getDocsBaseUrl(config)}/html/administration/topology_viewer.html`}
       />
-      {data && <TopologyViewLayer mesh={data} />}
+      {isUnauthorized ? (
+        <EmptyStateUnauthorized title={t('You do not have permission to perform this action.')} />
+      ) : error ? (
+        <EmptyStateError />
+      ) : (
+        data && <TopologyViewLayer mesh={data} />
+      )}
     </PageLayout>
   );
 }

@@ -1,11 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { PageFormGrid, PageFormTextInput } from '../../../../../../framework';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
 import { ConditionalField } from './ConditionalField';
+import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { RelaunchConfig } from '../RelaunchTemplateWithPasswords';
 
-export function CredentialPasswordsStep(props: { config: LaunchConfiguration }) {
+export function CredentialPasswordsStep<T extends LaunchConfiguration | RelaunchConfig>(props: {
+  config: T;
+}) {
   const { config } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
@@ -15,8 +18,12 @@ export function CredentialPasswordsStep(props: { config: LaunchConfiguration }) 
   let showCredentialPasswordPrivilegeEscalation = false;
   let showCredentialPasswordPrivateKeyPassphrase = false;
 
-  if (!config.ask_credential_on_launch && config.passwords_needed_to_start) {
-    config.passwords_needed_to_start.forEach((password) => {
+  if (
+    !('ask_credential_on_launch' in config && config.ask_credential_on_launch) &&
+    'passwords_needed_to_start' in config &&
+    config.passwords_needed_to_start
+  ) {
+    config.passwords_needed_to_start.forEach((password: string) => {
       if (password === 'ssh_password') {
         showCredentialPasswordSsh = true;
       } else if (password === 'become_password') {
@@ -30,7 +37,7 @@ export function CredentialPasswordsStep(props: { config: LaunchConfiguration }) 
     });
   } else if (credentials) {
     credentials.forEach((credential) => {
-      if (!credential.inputs) {
+      if (!credential.inputs && 'defaults' in config) {
         const launchConfigCredential = config.defaults.credentials.find(
           (defaultCred) => defaultCred.id === credential.id
         );
@@ -66,7 +73,7 @@ export function CredentialPasswordsStep(props: { config: LaunchConfiguration }) 
         }
 
         if (credential?.inputs?.vault_password === 'ASK') {
-          vaultsThatPrompt.push(credential.inputs.vault_id.toString());
+          vaultsThatPrompt.push(credential.inputs.vault_id?.toString() ?? '');
         }
       }
     });

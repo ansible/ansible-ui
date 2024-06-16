@@ -22,9 +22,11 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoryActions } from '../hooks/useInventoryActions';
 import { InventoryWithSource } from './InventoryDetails';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function InventoryPage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const urlType =
@@ -116,7 +118,7 @@ export function InventoryPage() {
         ]}
         headerActions={
           <PageActions<Inventory>
-            actions={itemActions}
+            actions={[...activityStream, ...itemActions]}
             position={DropdownPosition.right}
             selectedItem={inventory}
           />
