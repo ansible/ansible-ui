@@ -14,13 +14,11 @@ import { useURLSearchParams } from '../../../../framework/components/useURLSearc
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { getCredentialByName } from '../../access/credentials/utils/getCredentialByName';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useGetCredentialTypeIDs } from '../../resources/projects/hooks/useGetCredentialTypeIDs';
 
 const PullOption = {
   Always: 'Always pull container before running.',
@@ -37,15 +35,6 @@ export function CreateExecutionEnvironment() {
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
     executionEnvInput: ExecutionEnvironment
   ) => {
-    if (executionEnvInput.summary_fields.credential?.name) {
-      const credential = await getCredentialByName(
-        executionEnvInput.summary_fields.credential.name
-      );
-      if (credential) {
-        executionEnvInput.credential = credential.id;
-      }
-    }
-
     const newExecutionEnv = await postRequest(awxAPI`/execution_environments/`, executionEnvInput);
     pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: newExecutionEnv.id } });
   };
@@ -92,14 +81,6 @@ export function EditExecutionEnvironment() {
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
     executionEnvInput: ExecutionEnvironment
   ) => {
-    let credential;
-
-    if (executionEnvInput.summary_fields.credential?.name) {
-      credential = await getCredentialByName(executionEnvInput.summary_fields.credential.name);
-    }
-
-    executionEnvInput.credential = credential?.id ?? null;
-
     const editedExecutionEnv = await requestPatch<ExecutionEnvironment>(
       awxAPI`/execution_environments/${params.id ?? ''}/`,
       executionEnvInput
@@ -151,7 +132,6 @@ function ExecutionEnvironmentInputs(props: {
 }) {
   const { t } = useTranslation();
   const isOrgGloballyAvailable = !props.executionEnv?.organization;
-  const credentialTypeIDs = useGetCredentialTypeIDs();
 
   return (
     <>
@@ -221,7 +201,12 @@ function ExecutionEnvironmentInputs(props: {
       {props.mode === 'edit' && isOrgGloballyAvailable ? (
         <PageFormSelectOrganization<ExecutionEnvironment>
           name="organization"
-          isDisabled={t('Disabled')}
+          isDisabled={t(
+            'Globally available execution environment can not be reassigned to a specific Organization.'
+          )}
+          helperText={t(
+            'Leave this field blank to make the execution environment globally available.'
+          )}
         />
       ) : undefined}
       {props.mode === 'edit' && !isOrgGloballyAvailable ? (
@@ -243,13 +228,14 @@ function ExecutionEnvironmentInputs(props: {
       ) : undefined}
 
       <PageFormCredentialSelect<ExecutionEnvironment>
-        name="summary_fields.credential.name"
-        labelHelp={t('Credential to authenticate with a protected container registry.')}
-        credentialType={credentialTypeIDs.registry}
-        placeholder={t('Add registry credential')}
-        selectTitle={t('Select a registry credential')}
+        name="credential"
         label={t('Registry Credential')}
-        isDisabled={props?.executionEnv?.managed || false}
+        labelHelp={t('Credential to authenticate with a protected container registry.')}
+        placeholder={t('Select registry credential')}
+        isDisabled={props?.executionEnv?.managed ? t('Disabled') : undefined}
+        queryParams={{
+          credential_type__namespace: 'registry',
+        }}
       />
     </>
   );

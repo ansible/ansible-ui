@@ -15,9 +15,11 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useCredentialActions } from '../hooks/useCredentialActions';
+import { useViewActivityStream } from '../../common/useViewActivityStream';
 
 export function CredentialPage() {
   const { t } = useTranslation();
+  const activityStream = useViewActivityStream();
   const params = useParams<{ id: string }>();
   const { data: credential } = useGetItem<Credential>(awxAPI`/credentials`, params.id);
   const getPageUrl = useGetPageUrl();
@@ -35,7 +37,7 @@ export function CredentialPage() {
         ]}
         headerActions={
           <PageActions<Credential>
-            actions={actions}
+            actions={[...activityStream, ...actions]}
             position={DropdownPosition.right}
             selectedItem={credential}
           />

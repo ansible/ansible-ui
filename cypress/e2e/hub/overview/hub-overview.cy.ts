@@ -91,14 +91,14 @@ describe.skip('HUB Overview', () => {
     it('clicking on Cog icon opens the Manage view modal', () => {
       cy.navigateTo('hub', 'overview');
       cy.clickButton('Manage view');
-      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
       cy.clickModalButton('Cancel');
       cy.get('div.pf-v5-c-backdrop').should('not.exist');
     });
     it('unselecting all categories in the Manage results in an empty state UI on the dashboard', () => {
       cy.navigateTo('hub', 'overview');
       cy.clickButton('Manage view');
-      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
       cy.contains('tr', 'Cloud collections').find('input').uncheck();
       cy.contains('tr', 'Networking collections').find('input').uncheck();
       cy.contains('tr', 'Database collections').find('input').uncheck();
@@ -114,7 +114,7 @@ describe.skip('HUB Overview', () => {
         cy.contains('button', 'Manage view').should('be.visible');
         cy.clickButton('Manage view');
       });
-      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+      cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
       // Reset dashboard
       cy.contains('tr', 'Cloud collections').find('input').check();
       cy.contains('tr', 'Networking collections').find('input').check();
@@ -144,7 +144,7 @@ describe.skip('HUB Overview', () => {
       cy.get('.page-dashboard-card .pf-v5-c-card__header').then((headers) => {
         initialArray = Array.from(headers, (title) => title.innerText.split('\n')[0]);
         cy.clickButton('Manage view');
-        cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage Dashboard');
+        cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
         cy.get('#draggable-row-storage').drag('#draggable-row-eda');
         cy.clickModalButton('Apply');
       });

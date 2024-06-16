@@ -56,6 +56,7 @@ export interface ScheduleFormWizard {
   prompt: PromptFormValues;
   schedule_days_to_keep: number;
   survey: { [key: string]: string };
+  enabled: boolean;
 }
 
 export type ScheduleResourceType =

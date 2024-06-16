@@ -26,6 +26,7 @@ import {
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { InventorySourceSubForm } from './InventorySourceSubForm';
+import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 
 export interface SourceFields extends FieldValues {
   project: Omit<InventorySource, 'source'> & {
@@ -60,8 +61,7 @@ export function CreateInventorySource() {
   const onSubmit: PageFormSubmitHandler<InventorySourceForm> = async (values) => {
     const formValues: InventorySourceCreate = {
       ...values,
-      execution_environment: values?.execution_environmentIdPath,
-      credential: values?.credentialIdPath,
+      execution_environment: values?.execution_environment ? values.execution_environment : null,
       source_path: values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
@@ -107,7 +107,11 @@ export function CreateInventorySource() {
         submitText={t('Save')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
-        defaultValue={{}}
+        defaultValue={{
+          name: '',
+          description: '',
+          credential: null,
+        }}
       >
         <InventorySourceInputs />
       </AwxPageForm>
@@ -133,9 +137,9 @@ export function EditInventorySource() {
     () => ({
       name: inventorySource?.name,
       description: inventorySource?.description ?? '',
-      execution_environment: inventorySource?.summary_fields?.execution_environment?.name,
+      execution_environment: inventorySource?.summary_fields?.execution_environment?.id,
       source: inventorySource?.source,
-      credential: inventorySource?.summary_fields?.credential?.name,
+      credential: inventorySource?.credential ?? null,
       source_project: inventorySource?.summary_fields?.source_project,
       source_path: {
         name: inventorySource?.source_path,
@@ -156,8 +160,7 @@ export function EditInventorySource() {
   const onSubmit: PageFormSubmitHandler<InventorySourceForm> = async (values) => {
     const formValues: InventorySourceCreate = {
       ...values,
-      execution_environment: values?.execution_environmentIdPath,
-      credential: values?.credentialIdPath,
+      execution_environment: values?.execution_environment ? values.execution_environment : null,
       source_path: values?.source_path?.name ?? '',
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
@@ -241,7 +244,7 @@ function InventorySourceInputs() {
   useEffect(() => {
     formContext.clearErrors();
     if (sourceType !== source) {
-      formContext.resetField('credential', { defaultValue: '' });
+      formContext.resetField('credential', { defaultValue: null });
       formContext.resetField('source_project', { defaultValue: {} });
       formContext.resetField('source_path', { defaultValue: '' });
       setSourceType(source);
@@ -256,6 +259,10 @@ function InventorySourceInputs() {
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}
+      />
+      <PageFormSelectExecutionEnvironment
+        isRequired={source === 'terraform'}
+        name="execution_environment"
       />
       <PageFormSelect<SourceFields>
         isRequired

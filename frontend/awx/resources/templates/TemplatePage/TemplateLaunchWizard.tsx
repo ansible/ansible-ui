@@ -32,34 +32,6 @@ import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 
-const addSurveyQuestionsToExtraVars = (
-  config: LaunchConfiguration,
-  extra_vars: string = '',
-  formValues: TemplateLaunch,
-  setValue: <K extends keyof LaunchPayload>(key: K, value: LaunchPayload[K]) => void
-) => {
-  let stringValue = '';
-  config.variables_needed_to_start.forEach((key, index) => {
-    const value = formValues.survey[key];
-    if (Array.isArray(value)) {
-      const outputString = value.join(',');
-      stringValue += `${key}: [${outputString}]`;
-    } else {
-      stringValue += `${key}: ${formValues.survey[key] as string}`;
-    }
-
-    if (index !== config.variables_needed_to_start.length - 1) {
-      stringValue += '\n';
-    }
-  });
-
-  if (extra_vars.endsWith('\n')) {
-    setValue('extra_vars', extra_vars + stringValue);
-  } else {
-    setValue('extra_vars', extra_vars + '\n' + stringValue);
-  }
-};
-
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
   inventory: 'ask_inventory_on_launch',
@@ -121,14 +93,14 @@ interface LaunchPayload {
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 
-export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
+export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
 
   const postRequest = usePostRequest<Partial<LaunchPayload>, UnifiedJob>();
   const createLabelPayload = useLabelPayload();
 
   const alertToaster = usePageAlertToaster();
-  const getPageUrl = useGetPageUrl();
+
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const resourceId = params.id?.toString() ?? '';
@@ -168,6 +140,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
         labels,
         limit,
         skip_tags,
+        survey,
         timeout,
         verbosity,
       } = formValues;
@@ -223,7 +196,11 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
         }
 
         if (config.survey_enabled && jobType === 'job_templates') {
-          addSurveyQuestionsToExtraVars(config, extra_vars, formValues, setValue);
+          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          setValue('extra_vars', {
+            ...extraVarsObj,
+            ...survey,
+          });
         }
 
         if (jobType === 'workflow_job_templates') {
@@ -231,7 +208,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
 
           payload = {
             ...payload,
-            extra_vars: { ...extraVarsObj, ...formValues.survey },
+            extra_vars: { ...extraVarsObj, ...survey },
           };
         }
 
@@ -248,7 +225,29 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
       }
     }
   };
+  return (
+    <LaunchWizard
+      template={template}
+      config={config}
+      handleSubmit={handleSubmit}
+      jobType={jobType}
+    />
+  );
+}
 
+export function LaunchWizard({
+  template,
+  config,
+  handleSubmit,
+  jobType,
+}: {
+  template: JobTemplate;
+  config: LaunchConfiguration;
+  handleSubmit: (values: TemplateLaunch) => Promise<void>;
+  jobType: string;
+}) {
+  const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const steps: PageWizardStep[] = [
     {
       id: 'inventory',
@@ -305,7 +304,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
 
         return !showCredentialPasswordsStep;
       },
-      inputs: <CredentialPasswordsStep config={config} />,
+      inputs: <CredentialPasswordsStep<LaunchConfiguration> config={config} />,
     },
     {
       id: 'execution-environment',
@@ -351,7 +350,6 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
   ];
 
   const { defaults } = config;
-
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
     isReadOnly: true,
@@ -396,7 +394,7 @@ export function TemplateLaunchWizard({ jobType }: { jobType: string }) {
           { label: t('Templates'), to: getPageUrl(AwxRoute.Templates) },
           {
             label: template.name,
-            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: resourceId } }),
+            to: getPageUrl(AwxRoute.JobTemplateDetails, { params: { id: template.id } }),
           },
         ]}
       />
