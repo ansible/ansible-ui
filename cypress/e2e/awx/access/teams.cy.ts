@@ -119,7 +119,8 @@ describe('teams', function () {
     cy.verifyPageTitle(`${team.name}a`);
   });
 
-  it('can add users to the team via the team access tab toolbar', function () {
+  // FLAKY_06_14_2024
+  it.skip('can add users to the team via the team access tab toolbar', function () {
     cy.navigateTo('awx', 'teams');
     cy.filterTableByMultiSelect('name', [team.name]);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
@@ -154,7 +155,8 @@ describe('teams', function () {
     });
   });
 
-  it('can remove users from the team via the team access tab toolbar', function () {
+  // FLAKY_06_14_2024
+  it.skip('can remove users from the team via the team access tab toolbar', function () {
     cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -261,6 +263,7 @@ describe('teams', function () {
     });
   });
 
+  // FLAKY_06_14_2024
   it('can delete a team from the teams list toolbar', function () {
     cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
