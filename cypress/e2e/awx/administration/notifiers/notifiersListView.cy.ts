@@ -94,36 +94,38 @@ describe('Notifications: List View', () => {
     //Assert the test action and the fact that it is happening from the list view
     //Assert the behavior in the UI following the test action
     const notificationName = randomE2Ename();
-    cy.createNotificationTemplate(notificationName).then((notificationTemplate) => {
-      cy.navigateTo('awx', 'notification-templates');
-      cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
+    cy.createNotificationTemplate(notificationName, organization.id).then(
+      (notificationTemplate) => {
+        cy.navigateTo('awx', 'notification-templates');
+        cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
 
-      // test fail message
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('test-notifier').click();
-      });
-
-      cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
-
-      cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
-        req.reply((res) => {
-          res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
-            (notification: { status: string }) => {
-              if (notification.status === 'failed') {
-                notification.status = 'successful';
-              }
-            }
-          );
-          return res;
+        // test fail message
+        cy.getByDataCy('actions-column-cell').within(() => {
+          cy.getByDataCy('test-notifier').click();
         });
-      }).as('getTemplates');
 
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('test-notifier').click();
-      });
+        cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
 
-      cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
-    });
+        cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
+          req.reply((res) => {
+            res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
+              (notification: { status: string }) => {
+                if (notification.status === 'failed') {
+                  notification.status = 'successful';
+                }
+              }
+            );
+            return res;
+          });
+        }).as('getTemplates');
+
+        cy.getByDataCy('actions-column-cell').within(() => {
+          cy.getByDataCy('test-notifier').click();
+        });
+
+        cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
+      }
+    );
   });
 
   it('can copy a Notification and assert that the copy action completed successfully', () => {
