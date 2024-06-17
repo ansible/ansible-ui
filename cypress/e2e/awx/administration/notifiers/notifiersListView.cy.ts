@@ -1,10 +1,21 @@
+import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 import { testNotification } from './notifiersSharedFunctions';
 
 describe('Notifications: List View', () => {
+  let organization: Organization;
+
   before(() => {
     cy.awxLogin();
+
+    cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      organization = org;
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxOrganization(organization);
   });
 
   beforeEach(() => {
@@ -121,7 +132,7 @@ describe('Notifications: List View', () => {
     //Assert the copy action
     //Assert the existence of the copied notification as well as the original
     const name = randomE2Ename();
-    cy.createNotificationTemplate(name).then((notificationTemplate) => {
+    cy.createNotificationTemplate(name, organization.id).then((notificationTemplate) => {
       cy.navigateTo('awx', 'notification-templates');
       cy.filterTableByMultiSelect('name', [name]);
 
@@ -154,8 +165,8 @@ describe('Notifications: List View', () => {
     const name1 = randomE2Ename();
     const name2 = randomE2Ename();
 
-    cy.createNotificationTemplate(name1).then(() => {
-      cy.createNotificationTemplate(name2).then(() => {
+    cy.createNotificationTemplate(name1, organization.id).then(() => {
+      cy.createNotificationTemplate(name2, organization.id).then(() => {
         cy.navigateTo('awx', 'notification-templates');
         cy.filterTableByMultiSelect('name', [name1, name2]);
         cy.get('[data-cy="checkbox-column-cell"]')
