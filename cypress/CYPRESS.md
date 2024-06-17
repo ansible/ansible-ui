@@ -79,7 +79,62 @@ End-to-End tests for our project are located in the `cypress/e2e` directory. The
    ```
 
 3. **Test Data**:
+
    - Utilize dynamic data creation methods to avoid conflicts with existing data.
+
+4. **Resources creation**:
+
+   - Avoid creating resources in `beforeEach` or `before` blocks that are not used later in the `it` test block. For cases where the resource is not used during a `it` block then it is preferable to create a new `describe` block.
+
+   **NOT TO DO Example**:
+
+   ```javascript
+   describe('Test Click Resource', () => {
+      let resourceA: Resource;
+
+      beforeEach(() => {
+         cy.createResourceA().then((r) => {
+            resourceA = r;
+         });
+      });
+
+     it('click on the resource A button', () => {
+      //Click on the Resource A button
+       cy.getByDataCy('resource-a').should('contain', resourceA).click();
+     });
+
+     it('click on the resource B button', () => {
+      //Click on the Resource B button
+       cy.getByDataCy('resource-b').click();
+     });
+   });
+   ```
+
+   **TO DO Example**:
+
+   ```javascript
+   describe('Test Click Resource A', () => {
+      let resourceA: Resource;
+
+      beforeEach(() => {
+         cy.createResourceA().then((r) => {
+            resourceA = r;
+         });
+      });
+
+     it('click on the resource A button', () => {
+      //Click on the Resource A button
+       cy.getByDataCy('resource').should('contain', resourceA).click();
+     });
+   });
+
+   describe('Test Click Resource B', () => {
+     it('click on the resource B button', () => {
+      //Click on the Resource B button
+       cy.getByDataCy('resource-b').click();
+     });
+   });
+   ```
 
 ### Best Practices
 
