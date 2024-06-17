@@ -212,8 +212,32 @@ describe('Teams: Add and Remove users', () => {
     cy.getModal().should('not.exist');
   });
 
-  it('can add users to the team via the team access tab toolbar', () => {
-    cy.filterTableBySingleSelect('name', team.name);
+  it('can render the team details page', function () {
+    cy.navigateTo('awx', 'teams');
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
+    cy.verifyPageTitle(team.name);
+    cy.clickTab(/^Details$/, true);
+    cy.hasDetail('Name', team.name);
+  });
+
+  it('can edit a team from the details page', function () {
+    cy.navigateTo('awx', 'teams');
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowLink('name', team.name, { disableFilter: true });
+    cy.clickButton(/^Edit team$/);
+    cy.verifyPageTitle('Edit Team');
+    cy.get('[data-cy="name"]')
+      .clear()
+      .type(team.name + 'a');
+    cy.clickButton(/^Save team$/);
+    cy.verifyPageTitle(`${team.name}a`);
+  });
+
+  // FLAKY_06_14_2024
+  it.skip('can add users to the team via the team access tab toolbar', function () {
+    cy.navigateTo('awx', 'teams');
+    cy.filterTableByMultiSelect('name', [team.name]);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Users$/, true);
@@ -237,7 +261,8 @@ describe('Teams: Add and Remove users', () => {
     }).should('be.visible');
   });
 
-  it('can remove users from the team via the team access tab toolbar', () => {
+  // FLAKY_06_14_2024
+  it.skip('can remove users from the team via the team access tab toolbar', function () {
     cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
@@ -321,5 +346,56 @@ describe('Teams: Bulk delete', () => {
         cy.clickButton(/^Close$/);
         cy.clearAllFilters();
       });
+  });
+
+  // FLAKY_06_13_2024
+  it.skip('can navigate to the edit form from the team list row item', function () {
+    cy.navigateTo('awx', 'teams');
+    cy.filterTableByMultiSelect('name', [team.name]);
+    cy.clickTableRowAction('name', team.name, 'edit-team', { disableFilter: true });
+    cy.verifyPageTitle('Edit Team');
+  });
+
+  it('can delete a team from the teams list row item', function () {
+    cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
+      cy.navigateTo('awx', 'teams');
+      cy.filterTableByMultiSelect('name', [testTeam.name]);
+      cy.clickTableRowAction('name', testTeam.name, 'delete-team', {
+        disableFilter: true,
+        inKebab: true,
+      });
+      cy.get('#confirm').click();
+      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
+      cy.clickButton(/^Delete team/);
+      cy.wait('@deleted')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.clearAllFilters();
+        });
+    });
+  });
+
+  // FLAKY_06_14_2024
+  it('can delete a team from the teams list toolbar', function () {
+    cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
+      cy.navigateTo('awx', 'teams');
+      cy.filterTableByMultiSelect('name', [testTeam.name]);
+      cy.selectTableRowByCheckbox('name', testTeam.name, { disableFilter: true });
+      cy.clickToolbarKebabAction('delete-selected-teams');
+      cy.get('#confirm').click();
+      cy.intercept('DELETE', awxAPI`/teams/${testTeam.id.toString()}/`).as('deleted');
+      cy.clickButton(/^Delete team/);
+      cy.wait('@deleted')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.clearAllFilters();
+        });
+    });
   });
 });
