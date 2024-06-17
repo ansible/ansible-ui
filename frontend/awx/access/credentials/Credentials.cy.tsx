@@ -40,7 +40,7 @@ describe('Credentials.cy.ts', () => {
         const credential = results[1]; // credential with summary_fields.user_capabilities.delete: false
         cy.contains('tr', credential.name).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete credential$/).should(
+          cy.contains('li[data-cy="delete-credential"] button', /^Delete credential$/).should(
             'have.attr',
             'aria-disabled',
             'true'

@@ -111,11 +111,10 @@ describe('Workflow Approvals List', () => {
       cy.contains('tr', 'read only approval').within(() => {
         // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete workflow approval$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
+        cy.contains(
+          'li[data-cy="delete-workflow-approval"] button',
+          /^Delete workflow approval$/
+        ).should('have.attr', 'aria-disabled', 'true');
       });
     });
 
@@ -124,11 +123,10 @@ describe('Workflow Approvals List', () => {
       cy.contains('tr', 'can delete approval').within(() => {
         // user_capabilities.delete: true
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete workflow approval$/).should(
-          'have.attr',
-          'aria-disabled',
-          'false'
-        );
+        cy.contains(
+          'li[data-cy="delete-workflow-approval"] button',
+          /^Delete workflow approval$/
+        ).should('not.have.attr', 'aria-disabled', 'true');
       });
     });
 

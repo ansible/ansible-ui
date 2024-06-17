@@ -159,11 +159,11 @@ describe('projects.cy.ts', () => {
       cy.filterTableByMultiSelect('name', [' Project 1 Org 0']);
       cy.selectTableRowByCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('a', 'Cancel selected projects')
-          .click();
+        cy.get('.toggle-kebab').click();
+        cy.contains(
+          'li[data-cy="cancel-selected-projects"] button',
+          'Cancel selected projects'
+        ).click();
       });
       cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
@@ -186,11 +186,11 @@ describe('projects.cy.ts', () => {
         disableFilter: true,
       });
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('a', 'Cancel selected projects')
-          .click();
+        cy.get('.toggle-kebab').click();
+        cy.contains(
+          'li[data-cy="cancel-selected-projects"] button',
+          'Cancel selected projects'
+        ).click();
       });
       cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
@@ -212,13 +212,17 @@ describe('projects.cy.ts', () => {
         .parent()
         .within(() => {
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-v5-c-dropdown__toggle').click();
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains(/^Copy project$/)
-            .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains(/^Delete project$/)
-            .should('have.attr', 'aria-disabled', 'true');
+          cy.get('[data-cy="actions-dropdown"]').click();
+          cy.contains('li[data-cy="copy-project"] button', /^Copy project$/).should(
+            'have.attr',
+            'aria-disabled',
+            'true'
+          );
+          cy.contains('li[data-cy="delete-project"] button', /^Delete project$/).should(
+            'have.attr',
+            'aria-disabled',
+            'true'
+          );
         });
     });
 

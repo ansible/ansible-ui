@@ -47,8 +47,8 @@ instanceGroupTypes.forEach((igType) => {
     it(`can create new ${igType} Group, assert info on details page and then delete the ${igType.toLowerCase()} group from list view`, () => {
       const name = `E2E ${igType} Group` + randomString(4);
       cy.clickButton(/^Create group$/);
-      cy.clickLink(`Create ${igType.toLowerCase()} group`);
-      cy.get('[data-cy="name"]').type(name);
+      cy.clickButton(`Create ${igType.toLowerCase()} group`);
+      cy.getByDataCy('name').type(name);
       if (igType === 'Instance') {
         cy.get('[data-cy="policy-instance-minimum"]').clear();
         cy.get('[data-cy="policy-instance-minimum"]').type('1');
@@ -203,18 +203,18 @@ instanceGroupTypes.forEach((igType) => {
         cy.contains(
           'Deleting instance groups could impact other resources that rely on them.'
         ).should('be.visible');
-        cy.get('header').contains(`Permanently delete ${igType.toLowerCase()} groups`);
+        cy.get('header').contains(`Permanently delete instance groups`);
         cy.get('button')
-          .contains(`Delete ${igType.toLowerCase()} group`)
+          .contains(`Delete instance group`)
           .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
         cy.get('button')
-          .contains(`Delete ${igType.toLowerCase()} group`)
+          .contains(`Delete instance group`)
           .should('have.attr', 'aria-disabled', 'false')
           .click();
       });
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.get('header').contains(`Permanently delete ${igType.toLowerCase()} groups`);
+        cy.get('header').contains(`Permanently delete instance groups`);
         cy.get('[data-cy="name-column-cell"]').should('have.text', instanceGroup.name);
       });
       cy.assertModalSuccess();

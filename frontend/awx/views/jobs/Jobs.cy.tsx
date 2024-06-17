@@ -42,7 +42,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[5]; // job with status "running"
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should(
+          cy.contains('li[data-cy="delete-job"] button', /^Delete job$/).should(
             'have.attr',
             'aria-disabled',
             'true'
@@ -59,7 +59,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should(
+          cy.contains('li[data-cy="delete-job"] button', /^Delete job$/).should(
             'have.attr',
             'aria-disabled',
             'true'
@@ -90,7 +90,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with status "successful"
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Cancel job$/).should(
+          cy.contains('li[data-cy="cancel-job"] button', /^Cancel job$/).should(
             'have.attr',
             'aria-disabled',
             'true'
@@ -107,7 +107,7 @@ describe('Jobs.cy.ts', () => {
         const job = results[5]; // job with summary_fields.user_capabilities.start: false
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Cancel job$/).should(
+          cy.contains('li[data-cy="cancel-job"] button', /^Cancel job$/).should(
             'have.attr',
             'aria-disabled',
             'true'

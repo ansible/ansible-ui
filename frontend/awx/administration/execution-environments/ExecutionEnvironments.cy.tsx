@@ -87,11 +87,10 @@ describe('Execution Environments List', () => {
         .then(() => {
           cy.contains('tr', 'test').within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete execution environment$/).should(
-              'have.attr',
-              'aria-disabled',
-              'true'
-            );
+            cy.contains(
+              'li[data-cy="delete-execution-environment"] button',
+              /^Delete execution environment$/
+            ).should('have.attr', 'aria-disabled', 'true');
           });
         });
     });
@@ -178,11 +177,10 @@ describe('Execution Environments List', () => {
         .then(() => {
           cy.contains('tr', 'test').within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete execution environment$/).should(
-              'have.attr',
-              'aria-disabled',
-              'false'
-            );
+            cy.contains(
+              'li[data-cy="delete-execution-environment"] button',
+              /^Delete execution environment$/
+            ).should('not.have.attr', 'aria-disabled', 'true');
           });
         });
     });

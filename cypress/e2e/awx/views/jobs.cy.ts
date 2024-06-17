@@ -66,11 +66,13 @@ describe('Jobs: List', () => {
   // FLAKY_06_19_2024
   it.skip('can render the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
-    cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
-    cy.get('.pf-v5-c-dropdown__menu').within(() => {
-      cy.contains(/^Delete selected jobs$/).should('exist');
-      cy.contains(/^Cancel selected jobs$/).should('exist');
-    });
+    cy.get('[data-cy="page-toolbar"] [data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="page-toolbar"] [data-cy="actions-dropdown"]')
+      .parent()
+      .within(() => {
+        cy.contains(/^Delete selected jobs$/).should('exist');
+        cy.contains(/^Cancel selected jobs$/).should('exist');
+      });
     cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
     const jobName = job.name ? job.name : '';
     cy.contains('td', jobName)
@@ -78,8 +80,8 @@ describe('Jobs: List', () => {
       .within(() => {
         // Relaunch job
         cy.get('#relaunch-job').should('exist');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should('exist');
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.contains('li[data-cy="delete-job"] button', /^Delete job$/).should('exist');
       });
     cy.clearAllFilters();
   });

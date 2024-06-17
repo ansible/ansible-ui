@@ -34,7 +34,7 @@ describe('Instances list', () => {
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="add-instance"]').should('be.visible');
     cy.get('[data-cy="remove-instance"]').should('be.visible');
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
     cy.get('tbody').find('tr').should('have.length', 10);
   });
 
@@ -91,8 +91,8 @@ describe('Instances list', () => {
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="remove-instance"] button').should('be.visible');
+        cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
       });
   });
 
@@ -107,8 +107,12 @@ describe('Instances list', () => {
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+        cy.get('[data-cy="remove-instance"] button').should('be.visible');
+        cy.get('[data-cy="remove-instance"] button').should(
+          'not.have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 
@@ -123,8 +127,12 @@ describe('Instances list', () => {
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
+        cy.get('[data-cy="remove-instance"] button').should('be.visible');
+        cy.get('[data-cy="remove-instance"] button').should(
+          'not.have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 
@@ -139,8 +147,8 @@ describe('Instances list', () => {
       .then(() => {
         cy.get('[data-cy="checkbox-column-cell"]').first().click();
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="remove-instance"]').should('be.visible');
-        cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="remove-instance"] button').should('be.visible');
+        cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
       });
   });
 });

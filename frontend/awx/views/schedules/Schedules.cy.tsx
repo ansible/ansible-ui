@@ -126,10 +126,12 @@ describe('schedules .cy.ts', () => {
           .parent()
           .within(() => {
             cy.get('input.pf-v5-c-switch__input').should('have.attr', 'disabled');
-            cy.get('.pf-v5-c-dropdown__toggle').click();
-            cy.get('.pf-v5-c-dropdown__menu-item')
-              .contains(/^Delete schedule$/)
-              .should('have.attr', 'aria-disabled', 'true');
+            cy.get('[data-cy="actions-dropdown"]').click();
+            cy.contains('li[data-cy="delete-schedule"] button', /^Delete schedule$/).should(
+              'have.attr',
+              'aria-disabled',
+              'true'
+            );
           });
       });
     });

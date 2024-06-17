@@ -167,7 +167,7 @@ describe('Execution Environments: Create', () => {
     cy.getByDataCy('actions-dropdown')
       .click()
       .then(() => {
-        cy.get('[data-cy="delete-execution-environment"]').should(
+        cy.get('[data-cy="delete-execution-environment"] button').should(
           'have.attr',
           'aria-disabled',
           'true'

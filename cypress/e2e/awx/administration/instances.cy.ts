@@ -173,12 +173,12 @@ describe('Instances: Delete', () => {
   it('can remove an instance from instance list toolbar', () => {
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.contains('tr', instance.hostname).find('input').check();
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
-    cy.get('[data-cy="remove-instance"]').click();
+    cy.get('[data-cy="remove-instance"] button').should('not.have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"] button').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently remove instances');
       cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
@@ -204,13 +204,13 @@ describe('Instances: Delete', () => {
     arrayOfElementText.push(instance.hostname);
     cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableByMultiSelect('hostname', arrayOfElementText);
     cy.get('tbody tr').should('have.length', 6);
     cy.getByDataCy('select-all').click();
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
-    cy.get('[data-cy="remove-instance"]').click();
+    cy.get('[data-cy="remove-instance"] button').should('not.have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="remove-instance"] button').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently remove instances');
       cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
@@ -242,11 +242,11 @@ describe('Instances: Run Health Check', () => {
 
   it('can run a health check on an Instance in the instance list toolbar and assert the expected results', () => {
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="run-health-check"] button').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.contains('tr', instance.hostname).find('input').check();
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'false');
+    cy.get('[data-cy="run-health-check"] button').should('not.have.attr', 'aria-disabled', 'true');
     cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
       cy.getByDataCy('run-health-check').click();
     });
