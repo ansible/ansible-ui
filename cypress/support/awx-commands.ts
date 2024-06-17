@@ -1784,30 +1784,35 @@ Cypress.Commands.add('removeAwxInstance', (id: string) => {
   }
 });
 
-Cypress.Commands.add('createNotificationTemplate', function (notificationName: string) {
-  cy.awxRequestPost<
-    Pick<
-      NotificationTemplate,
-      'name' | 'organization' | 'notification_type' | 'notification_configuration'
-    >,
-    NotificationTemplate
-  >(awxAPI`/notification_templates/`, {
-    name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
-    organization: (this.globalOrganization as Organization).id,
-    notification_type: 'email',
-    notification_configuration: {
-      host: '127.0.0.1',
-      port: 10,
-      sender: 'sjdkfljdslf@jkdljfldjjfkjd.com',
-      timeout: 30,
-      use_ssl: false,
-      use_tls: false,
-      password: '',
-      username: '',
-      recipients: ['sdfdsfsdfsdfs'],
-    },
-  });
-});
+Cypress.Commands.add(
+  'createNotificationTemplate',
+  function (notificationName: string, organization_id?: number) {
+    cy.awxRequestPost<
+      Pick<
+        NotificationTemplate,
+        'name' | 'organization' | 'notification_type' | 'notification_configuration'
+      >,
+      NotificationTemplate
+    >(awxAPI`/notification_templates/`, {
+      name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
+      organization: organization_id
+        ? organization_id
+        : (this.globalOrganization as Organization).id,
+      notification_type: 'email',
+      notification_configuration: {
+        host: '127.0.0.1',
+        port: 10,
+        sender: 'sjdkfljdslf@jkdljfldjjfkjd.com',
+        timeout: 30,
+        use_ssl: false,
+        use_tls: false,
+        password: '',
+        username: '',
+        recipients: ['sdfdsfsdfsdfs'],
+      },
+    });
+  }
+);
 
 Cypress.Commands.add(
   'deleteNotificationTemplate',
