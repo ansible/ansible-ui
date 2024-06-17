@@ -157,7 +157,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.get('h1').should('contain', 'Credential Types');
         cy.selectTableRow(credtype1.name, false);
         cy.selectTableRow(credtype2.name, false);
-        cy.clickToolbarKebabAction('delete-selected-credential-types');
+        cy.clickToolbarKebabAction('delete-credential-types');
         cy.intercept('DELETE', edaAPI`/credential-types/${credtype1.id.toString()}/`).as(
           'credtype1'
         );
