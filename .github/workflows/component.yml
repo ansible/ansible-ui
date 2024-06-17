@@ -8,14 +8,24 @@ on:
       COMPONENT_RECORD_KEY:
         required: true
 jobs:
-  component-tests:
-    name: Component Tests
+  component:
+    name: Component
     runs-on: ubuntu-latest
-    # timeout-minutes: 15
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        containers: [1, 2, 3, 4]
+        task: [
+          "awx:access",
+          "awx:administration",
+          "awx:common",
+          "awx:overview",
+          "awx:resources",
+          "awx:views",
+          "eda",
+          "hub",
+          "common",
+          "framework"
+        ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,16 +48,5 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - name: Cypress
-        uses: cypress-io/github-action@v6
-        with:
-          component: true
-          install: false
-          record: true
-          parallel: true
-          # auto-cancel-after-failures: 1
-          config-file: cypress.config.ts
-        env:
-          CYPRESS_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
-          CYPRESS_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Cypress component tests ${{ matrix.task }}
+        run: npm run component:${{ matrix.task }}
