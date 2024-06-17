@@ -1,6 +1,8 @@
 import { Banner, Button, Flex, FlexItem } from '@patternfly/react-core';
+import debounce from 'debounce';
 import { t } from 'i18next';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import { PageApp } from '../../framework';
 import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
@@ -11,6 +13,7 @@ import { usePlatformNavigation } from './usePlatformNavigation';
 
 export function PlatformApp() {
   const navigation = usePlatformNavigation();
+  const location = useLocation();
 
   const sessionResponse = useSWR<{ expires_in_seconds: number }>(
     gatewayAPI`/session/`,
@@ -18,12 +21,13 @@ export function PlatformApp() {
     { refreshInterval: 10000 }
   );
   const session = sessionResponse.data;
+  const { mutate } = sessionResponse;
   const refreshSession = useMemo(
     () => async () => {
       await postRequest(gatewayAPI`/session/`, {});
-      void sessionResponse.mutate();
+      void mutate();
     },
-    [sessionResponse]
+    [mutate]
   );
   const sessionBanner = useMemo(() => {
     if (!session) return null;
@@ -50,6 +54,14 @@ export function PlatformApp() {
     }
     return null;
   }, [refreshSession, session]);
+
+  const debouceRefreshSession = useMemo(
+    () => debounce(refreshSession, 60 * 1000),
+    [refreshSession]
+  );
+  useEffect(() => {
+    void debouceRefreshSession();
+  }, [location.pathname, debouceRefreshSession]);
 
   const awxConfig = useAwxConfig();
   const subscriptionBanner = useMemo(() => {
