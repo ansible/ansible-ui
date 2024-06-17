@@ -1,10 +1,21 @@
+import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 import { testNotification } from './notifiersSharedFunctions';
 
-describe.skip('Notifications: List View', () => {
+describe('Notifications: List View', () => {
+  let organization: Organization;
+
   before(() => {
     cy.awxLogin();
+
+    cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      organization = org;
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxOrganization(organization);
   });
 
   beforeEach(() => {
@@ -83,36 +94,38 @@ describe.skip('Notifications: List View', () => {
     //Assert the test action and the fact that it is happening from the list view
     //Assert the behavior in the UI following the test action
     const notificationName = randomE2Ename();
-    cy.createNotificationTemplate(notificationName).then((notificationTemplate) => {
-      cy.navigateTo('awx', 'notification-templates');
-      cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
+    cy.createNotificationTemplate(notificationName, organization.id).then(
+      (notificationTemplate) => {
+        cy.navigateTo('awx', 'notification-templates');
+        cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
 
-      // test fail message
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('test-notifier').click();
-      });
-
-      cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
-
-      cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
-        req.reply((res) => {
-          res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
-            (notification: { status: string }) => {
-              if (notification.status === 'failed') {
-                notification.status = 'successful';
-              }
-            }
-          );
-          return res;
+        // test fail message
+        cy.getByDataCy('actions-column-cell').within(() => {
+          cy.getByDataCy('test-notifier').click();
         });
-      }).as('getTemplates');
 
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('test-notifier').click();
-      });
+        cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
 
-      cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
-    });
+        cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
+          req.reply((res) => {
+            res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
+              (notification: { status: string }) => {
+                if (notification.status === 'failed') {
+                  notification.status = 'successful';
+                }
+              }
+            );
+            return res;
+          });
+        }).as('getTemplates');
+
+        cy.getByDataCy('actions-column-cell').within(() => {
+          cy.getByDataCy('test-notifier').click();
+        });
+
+        cy.contains(`[data-cy="status-column-cell"]`, 'Success', { timeout: 100000 });
+      }
+    );
   });
 
   it('can copy a Notification and assert that the copy action completed successfully', () => {
@@ -120,9 +133,9 @@ describe.skip('Notifications: List View', () => {
     //Assert the existence of the notification before copy
     //Assert the copy action
     //Assert the existence of the copied notification as well as the original
-    cy.navigateTo('awx', 'notification-templates');
     const name = randomE2Ename();
-    cy.createNotificationTemplate(name).then((notificationTemplate) => {
+    cy.createNotificationTemplate(name, organization.id).then((notificationTemplate) => {
+      cy.navigateTo('awx', 'notification-templates');
       cy.filterTableByMultiSelect('name', [name]);
 
       cy.getByDataCy('actions-column-cell').within(() => {
@@ -151,12 +164,12 @@ describe.skip('Notifications: List View', () => {
     //Assert the presence of the items before deletion
     //Assert the deletion
 
-    cy.navigateTo('awx', 'notification-templates');
     const name1 = randomE2Ename();
     const name2 = randomE2Ename();
 
-    cy.createNotificationTemplate(name1).then(() => {
-      cy.createNotificationTemplate(name2).then(() => {
+    cy.createNotificationTemplate(name1, organization.id).then(() => {
+      cy.createNotificationTemplate(name2, organization.id).then(() => {
+        cy.navigateTo('awx', 'notification-templates');
         cy.filterTableByMultiSelect('name', [name1, name2]);
         cy.get('[data-cy="checkbox-column-cell"]')
           .eq(0)
