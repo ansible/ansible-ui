@@ -2,8 +2,8 @@ import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { testNotification, testDelete } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-// FLAKY_06_13_2024
-describe.skip('Notifications', () => {
+
+describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
 
   before(() => {
@@ -241,12 +241,10 @@ function testToggle(
     cy.get(`[aria-label="${type_enable}"]`).click();
 
     // reload page to check if the toggle is working and try to disable it
-    cy.reload();
-    cy.get(`[aria-label="${type_disable}"]`, { timeout: 15000 }).click();
+    cy.get(`[aria-label="${type_disable}"]`, { timeout: 5000 }).click();
 
     // check if it is disabled again
-    cy.reload();
-    cy.get(`[aria-label="${type_enable}"]`, { timeout: 15000 });
+    cy.get(`[aria-label="${type_enable}"]`, { timeout: 5000 });
   });
 }
 
@@ -266,6 +264,7 @@ function moveToNotification(type: string, typeEntityName: string, notificationNa
 function filterNotification(notificationName: string) {
   cy.get(`[aria-label="Type to filter"]`).type(notificationName);
   cy.getByDataCy(`apply-filter`).click();
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
 }
 
 // move to notification list page
