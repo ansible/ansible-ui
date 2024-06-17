@@ -2,7 +2,7 @@
   "name": "Test Google OAuth2",
   "oauth2Key": "testKey",
   "oauth2Secret": "testSecret",
-  "callbackUrl": "http://localhost/callback",
+  "callbackUrl": "https://yourapp.com/oauth/callback",
   "accessTokenUrl": "https://accounts.google.com/o/oauth2/token",
   "accessTokenMethod": "POST",
   "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
