@@ -27,6 +27,7 @@ import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../../common
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { RemoteRegistry } from './RemoteRegistry';
+import { RemoteRegistries } from './RemoteRegistries';
 
 interface SecretInput {
   onClear?: (name: string) => void;
@@ -142,9 +143,16 @@ export function EditRemoteRegistry() {
     return (
       <PageLayout>
         <PageHeader
+          title={
+            RemoteRegistries?.name ? `${t('Edit')} ${RemoteRegistries?.name}` : t('Remote Registry')
+          }
           breadcrumbs={[
             { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
-            { label: t('Edit remote registry') },
+            {
+              label: RemoteRegistries?.name
+                ? `${t('Edit')} ${RemoteRegistries?.name} `
+                : t('Remote Registry'),
+            },
           ]}
         />
         <HubError error={new Error(t('Remote registry not found'))} handleRefresh={handleRefresh} />

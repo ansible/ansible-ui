@@ -50,10 +50,10 @@ export function RemoteRegistryDetails() {
     <>
       <PageLayout>
         <PageHeader
-          title={t('Remote registry details')}
+          title={remoteRegistry?.name}
           breadcrumbs={[
             { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
-            { label: t('Remote registry details') },
+            { label: remoteRegistry?.name },
           ]}
           headerActions={
             <PageActions<RemoteRegistry>
