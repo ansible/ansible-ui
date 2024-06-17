@@ -146,7 +146,7 @@ describe('Execution Environments: Create', () => {
     cy.clickModalButton('Close');
   });
 
-  it('can create a new EE associated to a particular org, assign admin access to a user in that org, and login as that user to assert access to the EE', function () {
+  it('can create a new EE associated to a particular org, assign admin access to a user in that org, and login as that user to assert access to the EE', () => {
     cy.getByDataCy('create-execution-environment').click();
     cy.getByDataCy('name').type(execEnvName);
     cy.getByDataCy('image').type(image);
@@ -179,8 +179,9 @@ describe('Execution Environments: Create', () => {
       });
   });
 });
-// FLAKY_06_13_2024
-describe.skip('Execution Environments: Edit and Bulk delete', () => {
+
+describe('Execution Environments: Edit and Bulk delete', () => {
+  let organization: Organization;
   let executionEnvironment: ExecutionEnvironment;
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
   function generateExecEnvName(): string {
@@ -191,18 +192,23 @@ describe.skip('Execution Environments: Edit and Bulk delete', () => {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
-    cy.createAwxExecutionEnvironment({
-      organization: (this.globalOrganization as Organization).id,
-    }).then((ee) => {
-      executionEnvironment = ee;
+  beforeEach(() => {
+    cy.createAwxOrganization().then((o) => {
+      organization = o;
+      cy.createAwxExecutionEnvironment({
+        organization: organization.id,
+      }).then((ee) => {
+        executionEnvironment = ee;
+      });
     });
+
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
   });
 
   afterEach(() => {
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can edit an EE from the details view and assert edited information on details page', () => {
@@ -233,7 +239,7 @@ describe.skip('Execution Environments: Edit and Bulk delete', () => {
     cy.verifyPageTitle(executionEnvironment.name + '-edited');
     cy.hasDetail('Name', executionEnvironment.name + '-edited');
     cy.hasDetail('Image', 'executionenvimage');
-    cy.hasDetail('Organization', 'Global Organization');
+    cy.hasDetail('Organization', organization.name);
   });
 
   it('can edit an EE from the list view and assert edited information', () => {
@@ -265,15 +271,15 @@ describe.skip('Execution Environments: Edit and Bulk delete', () => {
     cy.verifyPageTitle(executionEnvironment.name + '-edited');
     cy.hasDetail('Name', executionEnvironment.name + '-edited');
     cy.hasDetail('Image', 'executionenvimage');
-    cy.hasDetail('Organization', 'Global Organization');
+    cy.hasDetail('Organization', organization.name);
   });
 
-  it('can bulk delete multiple EEs from the list view and assert deletion', function () {
+  it('can bulk delete multiple EEs from the list view and assert deletion', () => {
     const arrayOfElementText: string[] = [];
     for (let i = 0; i < 5; i++) {
       const execEnvName = generateExecEnvName();
       cy.createAwxExecutionEnvironment({
-        organization: (this.globalOrganization as Organization).id,
+        organization: organization.id,
         name: execEnvName,
       });
       arrayOfElementText.push(execEnvName);
@@ -299,26 +305,30 @@ describe.skip('Execution Environments: Edit and Bulk delete', () => {
     cy.clickModalButton('Close');
   });
 });
-// FLAKY_06_13_2024
-describe.skip('Execution Environments: Templates View', () => {
+
+describe('Execution Environments: Templates View', () => {
   let inventory: Inventory;
+  let organization: Organization;
 
   before(() => {
     cy.awxLogin();
   });
 
-  beforeEach(function () {
-    cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-      (inv) => {
+  beforeEach(() => {
+    cy.createAwxOrganization().then((o) => {
+      organization = o;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventory = inv;
-      }
-    );
+      });
+    });
+
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
   });
 
   afterEach(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can create a new JT using the existing EE, visit the templates tab of the EE to view the JT, delete the JT and then delete the EE', function () {
@@ -329,7 +339,7 @@ describe.skip('Execution Environments: Templates View', () => {
     cy.getByDataCy('create-execution-environment').click();
     cy.getByDataCy('name').type(execEnvName);
     cy.getByDataCy('image').type(image);
-    cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+    cy.singleSelectByDataCy('organization', organization.name);
     cy.intercept('POST', awxAPI`/execution_environments/`).as('createEE');
     cy.clickButton(/^Create execution environment$/);
     cy.wait('@createEE')
@@ -340,7 +350,7 @@ describe.skip('Execution Environments: Templates View', () => {
       .then((response: ExecutionEnvironment) => {
         cy.hasDetail('Name', execEnvName);
         cy.hasDetail('Image', image);
-        cy.hasDetail('Organization', (this.globalOrganization as Organization).name);
+        cy.hasDetail('Organization', organization.name);
         cy.url().then((currentUrl) => {
           expect(
             currentUrl.includes(

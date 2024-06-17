@@ -459,38 +459,44 @@ instanceGroupTypes.forEach((igType) => {
 
     let user: AwxUser;
     let instanceGroup: InstanceGroup;
+    let organization: Organization;
 
     before(() => {
       cy.awxLogin();
     });
 
     beforeEach(function () {
-      cy.createAwxInstanceGroup(
-        igType === 'Container'
-          ? {
-              name: 'E2E Container Group ' + randomString(4),
-              is_container_group: true,
-              max_concurrent_jobs: 0,
-              max_forks: 0,
-              pod_spec_override: '',
-            }
-          : {
-              name: 'E2E Instance Group ' + randomString(4),
-              percent_capacity_remaining: 100,
-              policy_instance_minimum: 0,
-            }
-      ).then((ig: InstanceGroup) => {
-        instanceGroup = ig;
+      cy.createAwxOrganization().then((o) => {
+        organization = o;
+        cy.createAwxUser(organization).then((u) => {
+          user = u;
+          cy.createAwxInstanceGroup(
+            igType === 'Container'
+              ? {
+                  name: 'E2E Container Group ' + randomString(4),
+                  is_container_group: true,
+                  max_concurrent_jobs: 0,
+                  max_forks: 0,
+                  pod_spec_override: '',
+                }
+              : {
+                  name: 'E2E Instance Group ' + randomString(4),
+                  percent_capacity_remaining: 100,
+                  policy_instance_minimum: 0,
+                }
+          ).then((ig: InstanceGroup) => {
+            instanceGroup = ig;
+          });
+        });
       });
-      cy.createAwxUser(this.globalOrganization as Organization).then((u) => {
-        user = u;
-      });
+
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
     });
 
     afterEach(() => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it(`can visit the ${igType} group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
