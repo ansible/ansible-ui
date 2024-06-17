@@ -8,6 +8,7 @@ import { PlatformEdaOrganization } from '../resource/PlatformEdaOrganization';
 import { PlatformEdaUser } from '../resource/PlatformEdaUser';
 import { PlatformResource } from '../resource/PlatformResource';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
+import { PlatformEdaCreateControllerToken } from '../resource/PlatformEdaCreateControllerToken';
 
 /*
   Routes to handle links from various service pages org/user/teams pages,
@@ -91,7 +92,7 @@ export function useGetPlatformResourceRoutes() {
       {
         id: AwxRoute.UserTokens,
         path: 'controller/user/:id/tokens',
-        element: <PlatformAwxUser route={PlatformRoute.AwxUserTokens}/>,
+        element: <PlatformAwxUser route={PlatformRoute.AwxUserTokens} />,
       },
       {
         id: AwxRoute.TeamPage,
@@ -152,6 +153,11 @@ export function useGetPlatformResourceRoutes() {
         id: EdaRoute.UserRoles,
         path: 'eda/user/:id',
         element: <PlatformEdaUser route={PlatformRoute.UserRoles} />,
+      },
+      {
+        id: EdaRoute.CreateControllerToken,
+        path: 'eda/users/tokens/create',
+        element: <PlatformEdaCreateControllerToken />,
       },
     ],
   };
