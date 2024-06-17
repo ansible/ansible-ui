@@ -942,7 +942,7 @@ Cypress.Commands.add('createAwxConstructedInventory', (organization: Organizatio
         id: invID,
       });
     });
-    void Promise.all(inputInvPromises).then((_res) => {
+    const resolvePromise = Promise.all(inputInvPromises).then((_res) => {
       cy.awxRequestPost(
         awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
         {}
@@ -950,6 +950,7 @@ Cypress.Commands.add('createAwxConstructedInventory', (organization: Organizatio
         return constructedInv;
       });
     });
+    return resolvePromise;
   });
 });
 
@@ -997,9 +998,10 @@ Cypress.Commands.add(
         const inputInvPromises = inputInv.map((inv) => {
           cy.awxRequestDelete(awxAPI`/inventories/${inv.id.toString()}/`, options);
         });
-        void Promise.all(inputInvPromises).then((_res) => {
+        const resolvePromise = Promise.all(inputInvPromises).then((_res) => {
           cy.awxRequestDelete(awxAPI`/inventories/${constructedInv.id.toString()}/`, options);
         });
+        return resolvePromise;
       });
   }
 );
