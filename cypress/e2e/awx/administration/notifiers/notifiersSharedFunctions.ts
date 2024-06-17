@@ -79,7 +79,7 @@ export function testDelete(name: string, options?: { details?: boolean }) {
     cy.contains(`[role="dialog"] button`, `Close`).click();
   }
 
-  cy.contains(`[data-cy="page-title"]`, 'Notifiers');
+  cy.verifyPageTitle('Notifiers');
   cy.contains('Configure custom notifications to be sent based on predefined events.');
 
   cy.requestGet<AwxItemsResponse<Notification>>(awxAPI`/notification_templates/?name={name}`)
