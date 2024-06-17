@@ -160,7 +160,7 @@ export function useInventoryTypeToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
-      key: 'kind',
+      key: 'type',
       label: t('Inventory type'),
       type: ToolbarFilterType.MultiSelect,
       query: 'or__kind',
