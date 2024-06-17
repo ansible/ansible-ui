@@ -335,6 +335,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
+  describe(`${igType} Groups: Team access Tab`, () => {
     let team: Team;
     let instanceGroup: InstanceGroup;
     let organization: Organization;
@@ -457,6 +458,7 @@ instanceGroupTypes.forEach((igType) => {
     });
   });
 
+  describe(`${igType} Groups: User access Tab`, () => {
     let user: AwxUser;
     let instanceGroup: InstanceGroup;
     let organization: Organization;
