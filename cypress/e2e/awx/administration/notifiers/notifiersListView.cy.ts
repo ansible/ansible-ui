@@ -120,9 +120,9 @@ describe('Notifications: List View', () => {
     //Assert the existence of the notification before copy
     //Assert the copy action
     //Assert the existence of the copied notification as well as the original
-    cy.navigateTo('awx', 'notification-templates');
     const name = randomE2Ename();
     cy.createNotificationTemplate(name).then((notificationTemplate) => {
+      cy.navigateTo('awx', 'notification-templates');
       cy.filterTableByMultiSelect('name', [name]);
 
       cy.getByDataCy('actions-column-cell').within(() => {
@@ -151,12 +151,12 @@ describe('Notifications: List View', () => {
     //Assert the presence of the items before deletion
     //Assert the deletion
 
-    cy.navigateTo('awx', 'notification-templates');
     const name1 = randomE2Ename();
     const name2 = randomE2Ename();
 
     cy.createNotificationTemplate(name1).then(() => {
       cy.createNotificationTemplate(name2).then(() => {
+        cy.navigateTo('awx', 'notification-templates');
         cy.filterTableByMultiSelect('name', [name1, name2]);
         cy.get('[data-cy="checkbox-column-cell"]')
           .eq(0)
