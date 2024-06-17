@@ -338,39 +338,47 @@ instanceGroupTypes.forEach((igType) => {
   describe(`${igType} Groups: Team access Tab`, () => {
     let team: Team;
     let instanceGroup: InstanceGroup;
+    let organization: Organization;
 
     before(() => {
       cy.awxLogin();
     });
 
     beforeEach(function () {
-      cy.createAwxInstanceGroup(
-        igType === 'Container'
-          ? {
-              name: 'E2E Container Group ' + randomString(4),
-              is_container_group: true,
-              max_concurrent_jobs: 0,
-              max_forks: 0,
-              pod_spec_override: '',
-            }
-          : {
-              name: 'E2E Instance Group ' + randomString(4),
-              percent_capacity_remaining: 100,
-              policy_instance_minimum: 0,
-            }
-      ).then((ig: InstanceGroup) => {
-        instanceGroup = ig;
+      cy.createAwxOrganization().then((o) => {
+        organization = o;
+        cy.createAwxTeam(organization).then((createdTeam) => {
+          team = createdTeam;
+          cy.createAwxInstanceGroup(
+            igType === 'Container'
+              ? {
+                  name: 'E2E Container Group ' + randomString(4),
+                  is_container_group: true,
+                  max_concurrent_jobs: 0,
+                  max_forks: 0,
+                  pod_spec_override: '',
+                  credential: null,
+                }
+              : {
+                  name: 'E2E Instance Group ' + randomString(4),
+                  policy_instance_minimum: 0,
+                  policy_instance_percentage: 0,
+                  max_concurrent_jobs: 0,
+                  max_forks: 0,
+                }
+          ).then((ig: InstanceGroup) => {
+            instanceGroup = ig;
+          });
+        });
       });
-      cy.createAwxTeam(this.globalOrganization as Organization).then((createdTeam) => {
-        team = createdTeam;
-      });
+
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
     });
 
     afterEach(() => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
-      cy.deleteAwxTeam(team, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it(`can visit the ${igType} group -> team access tab, add a team, view the team on the teams list and then delete team`, () => {
@@ -485,7 +493,6 @@ instanceGroupTypes.forEach((igType) => {
 
     afterEach(() => {
       cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
-      cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
     it(`can visit the ${igType} group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
@@ -569,6 +576,7 @@ describe('Instance Groups: Jobs Tab', () => {
   let inventory: Inventory;
   let job_template: JobTemplate;
   let instanceGroupDefault: InstanceGroup;
+  let organization: Organization;
 
   before(() => {
     cy.awxLogin();
@@ -581,24 +589,28 @@ describe('Instance Groups: Jobs Tab', () => {
         instanceGroupDefault = ig;
         cy.createAwxInventory().then((inv) => {
           inventory = inv;
-          cy.createAwxJobTemplate(
-            {
-              organization: (this.globalOrganization as Organization).id,
-              project: (this.globalProject as Project).id,
-              inventory: inventory.id,
-            },
-            'playbooks/hello_world.yml',
-            ig
-          ).then((result) => {
-            job_template = result;
+          cy.createAwxOrganization().then((o) => {
+            organization = o;
+            cy.createAwxJobTemplate(
+              {
+                organization: organization.id,
+                project: (this.globalProject as Project).id,
+                inventory: inventory.id,
+              },
+              'playbooks/hello_world.yml',
+              ig
+            ).then((result) => {
+              job_template = result;
+            });
           });
         });
       });
   });
 
   afterEach(() => {
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(job_template, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
 
   it('can visit the instance group -> jobs tab, trigger a job, let the job finish, then view the job on the jobs list tab of the IG and delete job', () => {

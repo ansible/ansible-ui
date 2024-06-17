@@ -83,7 +83,7 @@ export function testDelete(name: string, options?: { details?: boolean }) {
   cy.contains('No results found');
 }
 
-function selectOrganization(orgName: string) {
+export function selectOrganization(orgName: string) {
   cy.get(`[data-cy="organization"]`).click();
   cy.contains('button', 'Browse').click();
   cy.filterTableByMultiSelect('name', [orgName]);
