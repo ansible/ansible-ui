@@ -30,7 +30,7 @@ import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../../common
 import { useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
-import { HubRemote } from './Remotes';
+import { HubRemote, Remotes } from './Remotes';
 import { REMOTE_COMMUNITY_COLLECTIONS_URL, yamlRequirementsTemplate } from './constants';
 
 interface SecretInput {
@@ -109,10 +109,10 @@ export function CreateRemote() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Remote')}
+        title={t('Create remote')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-          { label: t('Create Remote') },
+          { label: t('Create remote') },
         ]}
       />
       <HubPageForm<HubRemote>
@@ -257,9 +257,10 @@ export function EditRemote() {
     return (
       <PageLayout>
         <PageHeader
+          title={Remotes?.name ? `${t('Edit')} ${Remotes?.name}` : t('Remote')}
           breadcrumbs={[
             { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-            { label: t('Edit Remote') },
+            { label: Remotes?.name ? `${t('Edit')} ${Remotes?.name}` : t('Remote') },
           ]}
         />
         <HubError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
