@@ -21,13 +21,13 @@ describe('Job Templates Tests', function () {
 
     beforeEach(function () {
       cy.createAwxInventory({
-        organization: (this.globalOrganization as Organization).id,
+        organization: (this.globalAwxOrganization as Organization).id,
       }).then((inv) => {
         inventory = inv;
 
         cy.createAWXCredential({
           kind: 'machine',
-          organization: (this.globalOrganization as Organization).id,
+          organization: (this.globalAwxOrganization as Organization).id,
           credential_type: 1,
         }).then((cred) => {
           machineCredential = cred;
@@ -92,11 +92,11 @@ describe('Job Templates Tests', function () {
 
     it('can create a job template that inherits the execution environment from the project', function () {
       cy.createAwxExecutionEnvironment({
-        organization: (this.globalOrganization as Organization).id,
+        organization: (this.globalAwxOrganization as Organization).id,
       }).then((ee: ExecutionEnvironment) => {
         executionEnvironment = ee;
         cy.createAwxProject({
-          organization: (this.globalOrganization as Organization).id,
+          organization: (this.globalAwxOrganization as Organization).id,
           default_environment: ee.id,
         }).then((proj: Project) => {
           project = proj;
@@ -268,11 +268,11 @@ describe('Job Templates Tests', function () {
     it('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
       const jtName = 'E2E Concurrent JT ' + randomString(4);
       cy.createAwxProject({
-        organization: (this.globalOrganization as Organization).id,
+        organization: (this.globalAwxOrganization as Organization).id,
         scm_type: 'git',
         scm_url: 'https://github.com/ansible/test-playbooks',
       }).then((gitProject: Project) => {
-        cy.createInventoryHost(this.globalOrganization as Organization, '').then(
+        cy.createInventoryHost(this.globalAwxOrganization as Organization, '').then(
           (inventoryHost) => {
             const { inventory } = inventoryHost;
             inventoryWithHost = inventory;
@@ -328,19 +328,19 @@ describe('Job Templates Tests', function () {
 
     beforeEach(function () {
       cy.createAwxInventory({
-        organization: (this.globalOrganization as Organization).id,
+        organization: (this.globalAwxOrganization as Organization).id,
       }).then((inv) => {
         inventory = inv;
 
         cy.createAWXCredential({
           kind: 'machine',
-          organization: (this.globalOrganization as Organization).id,
+          organization: (this.globalAwxOrganization as Organization).id,
           credential_type: 1,
         }).then((cred) => {
           machineCredential = cred;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jt1) => {
@@ -387,7 +387,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can assign a new inventory to a job template if the originally assigned inventory was deleted', function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory2 = inv;
 
@@ -498,7 +498,7 @@ describe('Job Templates Tests', function () {
     it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
       cy.createAWXCredential({
         kind: 'github_token',
-        organization: (this.globalOrganization as Organization).id,
+        organization: (this.globalAwxOrganization as Organization).id,
         credential_type: 11,
       }).then((ghCred) => {
         githubCredential = ghCred;
@@ -587,12 +587,12 @@ describe('Job Templates Tests', function () {
     let jobTemplate: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jt) => {
@@ -650,26 +650,26 @@ describe('Job Templates Tests', function () {
     let jobTemplateWithDeletedInventory: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAWXCredential({
             kind: 'machine',
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             credential_type: 1,
           }).then((cred) => {
             machineCredential = cred;
 
             cy.createAwxJobTemplate({
-              organization: (this.globalOrganization as Organization).id,
+              organization: (this.globalAwxOrganization as Organization).id,
               project: (this.globalProject as Project).id,
               inventory: inventory.id,
             }).then((jt1) => {
               jobTemplate = jt1;
             });
             cy.createAwxJobTemplate({
-              organization: (this.globalOrganization as Organization).id,
+              organization: (this.globalAwxOrganization as Organization).id,
               project: (this.globalProject as Project).id,
               inventory: inventory.id,
             }).then((jt2) => {
@@ -730,12 +730,12 @@ describe('Job Templates Tests', function () {
     });
 
     it('can delete a resource related to a JT and view warning on the JT', function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           deletedInventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: deletedInventory.id,
           }).then((jt) => {
@@ -838,12 +838,12 @@ describe('Job Templates Tests', function () {
     }
 
     beforeEach(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jt) => {

@@ -12,14 +12,14 @@ describe('teams', function () {
   let user2: AwxUser;
 
   beforeEach(function () {
-    cy.createAwxUser(this.globalOrganization as Organization).then((user) => {
+    cy.createAwxUser(this.globalAwxOrganization as Organization).then((user) => {
       user1 = user;
-      cy.createAwxTeam(this.globalOrganization as Organization).then((createdTeam) => {
+      cy.createAwxTeam(this.globalAwxOrganization as Organization).then((createdTeam) => {
         team = createdTeam;
         cy.giveUserTeamAccess(team.name, user1.id, 'Read');
       });
     });
-    cy.createAwxUser(this.globalOrganization as Organization).then((user) => {
+    cy.createAwxUser(this.globalAwxOrganization as Organization).then((user) => {
       user2 = user;
     });
   });
@@ -41,7 +41,7 @@ describe('teams', function () {
     cy.navigateTo('awx', 'teams');
     cy.containsBy('a', /^Create team$/).click();
     cy.getByDataCy('name').type(teamName);
-    cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+    cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
     cy.getByDataCy('Submit').click();
     cy.wait('@newTeam')
       .its('response.body')
@@ -238,7 +238,7 @@ describe('teams', function () {
   });
 
   it('can delete a team from the teams list row item', function () {
-    cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
+    cy.createAwxTeam(this.globalAwxOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.filterTableByMultiSelect('name', [testTeam.name]);
       cy.clickTableRowAction('name', testTeam.name, 'delete-team', {
@@ -261,7 +261,7 @@ describe('teams', function () {
 
   // FLAKY_06_14_2024
   it('can delete a team from the teams list toolbar', function () {
-    cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
+    cy.createAwxTeam(this.globalAwxOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.filterTableByMultiSelect('name', [testTeam.name]);
       cy.selectTableRowByCheckbox('name', testTeam.name, { disableFilter: true });

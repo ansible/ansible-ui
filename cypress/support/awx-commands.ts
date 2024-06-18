@@ -1507,14 +1507,14 @@ Cypress.Commands.add('createGlobalOrganization', function () {
         );
         cy.wait(100).then(() => cy.createGlobalOrganization());
       } else {
-        cy.wrap(orgResults[0]).as('globalOrganization');
+        cy.wrap(orgResults[0]).as('globalAwxOrganization');
       }
     });
 });
 
 /** Create a global project if it doesn't exist. */
 Cypress.Commands.add('createGlobalProject', function () {
-  const globalOrganization = this.globalOrganization as Organization;
+  const globalAwxOrganization = this.globalAwxOrganization as Organization;
   cy.requestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}`)
     .its('results')
     .then((projectResults: Project[]) => {
@@ -1522,7 +1522,7 @@ Cypress.Commands.add('createGlobalProject', function () {
         cy.requestPost<AwxItemsResponse<Project>, Partial<Project>>(awxAPI`/projects/`, {
           name: GLOBAL_PROJECT_NAME,
           description: GLOBAL_PROJECT_DESCRIPTION,
-          organization: globalOrganization.id,
+          organization: globalAwxOrganization.id,
           scm_type: 'git',
           scm_url: GLOBAL_PROJECT_SCM_URL,
         });
@@ -1792,7 +1792,7 @@ Cypress.Commands.add(
       name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
       organization: organization_id
         ? organization_id
-        : (this.globalOrganization as Organization).id,
+        : (this.globalAwxOrganization as Organization).id,
       notification_type: 'email',
       notification_configuration: {
         host: '127.0.0.1',

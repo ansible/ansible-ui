@@ -367,7 +367,7 @@ describe('Management Jobs - Notifications Tab', function () {
       cy.verifyPageTitle('Add notifier');
       cy.getByDataCy('name').type(notifierName);
       cy.getByDataCy('description').type('AWX Notifier Description');
-      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
       cy.singleSelectByDataCy('notification_type', 'Pagerduty');
       cy.getByDataCy('notification-configuration-subdomain').type('pagerduty.com');
       cy.getByDataCy('notification-configuration-token').type('token');

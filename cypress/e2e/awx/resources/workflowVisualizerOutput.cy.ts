@@ -18,7 +18,7 @@ describe.skip('Workflow Visualizer', () => {
   let jobTemplateNode: WorkflowNode;
 
   beforeEach(function () {
-    organization = this.globalOrganization as Organization;
+    organization = this.globalAwxOrganization as Organization;
     cy.createAwxInventory({ organization: organization.id })
       .then((i) => {
         inventory = i;

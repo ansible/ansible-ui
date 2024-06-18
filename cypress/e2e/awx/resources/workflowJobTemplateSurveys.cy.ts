@@ -19,12 +19,12 @@ describe('Workflow Job Templates Surveys', function () {
     };
 
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxWorkflowJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             inventory: inventory.id,
           }).then((wfjt) => {
             workflowJobTemplate = wfjt;
@@ -58,12 +58,12 @@ describe('Workflow Job Templates Surveys', function () {
 
   describe.skip('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxWorkflowJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             inventory: inventory.id,
           }).then((wfjt) => {
             workflowJobTemplate = wfjt;

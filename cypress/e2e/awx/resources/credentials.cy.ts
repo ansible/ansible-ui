@@ -538,7 +538,7 @@ describe('Create Credentials of different types', () => {
                 case 'Ansible Galaxy/Automation Hub API Token':
                   cy.singleSelectByDataCy(
                     'organization',
-                    `${(this.globalOrganization as Organization).name}`
+                    `${(this.globalAwxOrganization as Organization).name}`
                   );
                   cy.get(`[data-cy="${credentialType.dataCy}"]`).type(`${credentialType.field}`);
                   break;

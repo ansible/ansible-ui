@@ -26,7 +26,7 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
@@ -45,7 +45,7 @@ describe('Applications', () => {
           cy.getByDataCy('description').should('have.text', appDescription);
           cy.getByDataCy('organization').should(
             'have.text',
-            (this.globalOrganization as Organization).name
+            (this.globalAwxOrganization as Organization).name
           );
           cy.getByDataCy('authorization-grant-type').should('have.text', 'authorization-code');
           cy.getByDataCy('client-type').should('have.text', 'confidential');
@@ -73,7 +73,7 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
@@ -92,7 +92,7 @@ describe('Applications', () => {
           cy.getByDataCy('description').should('have.text', appDescription);
           cy.getByDataCy('organization').should(
             'have.text',
-            (this.globalOrganization as Organization).name
+            (this.globalAwxOrganization as Organization).name
           );
           cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
           cy.getByDataCy('client-type').should('have.text', 'confidential');
@@ -109,7 +109,7 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
@@ -128,7 +128,7 @@ describe('Applications', () => {
           cy.getByDataCy('description').should('have.text', appDescription);
           cy.getByDataCy('organization').should(
             'have.text',
-            (this.globalOrganization as Organization).name
+            (this.globalAwxOrganization as Organization).name
           );
           cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
           cy.getByDataCy('client-type').should('have.text', 'public');
@@ -171,7 +171,7 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create Application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
@@ -190,7 +190,7 @@ describe('Applications', () => {
           cy.getByDataCy('description').should('have.text', appDescription);
           cy.getByDataCy('organization').should(
             'have.text',
-            (this.globalOrganization as Organization).name
+            (this.globalAwxOrganization as Organization).name
           );
           cy.getByDataCy('authorization-grant-type').should('have.text', 'authorization-code');
           cy.getByDataCy('client-type').should('have.text', 'public');

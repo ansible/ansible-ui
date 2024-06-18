@@ -51,7 +51,7 @@ describe('Topology view', () => {
   });
 
   it('does not show Topology View in sidebar for non admins', function () {
-    cy.createAwxUser(this.globalOrganization as Organization).then((awxUser) => {
+    cy.createAwxUser(this.globalAwxOrganization as Organization).then((awxUser) => {
       user = awxUser;
 
       cy.awxLoginTestUser(user.username, 'pw');

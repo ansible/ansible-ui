@@ -21,12 +21,12 @@ describe('Job Templates Surveys', function () {
     };
 
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jT) => {
@@ -59,12 +59,12 @@ describe('Job Templates Surveys', function () {
 
   describe('JT Surveys: Launch JT with Survey Enabled', function () {
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jT) => {

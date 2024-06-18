@@ -15,12 +15,12 @@ describe('Jobs: List', () => {
   let job: Job;
 
   beforeEach(function () {
-    const globalOrganization = this.globalOrganization as Organization;
+    const globalAwxOrganization = this.globalAwxOrganization as Organization;
     const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
+    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
       inventory = inv;
       cy.createAwxJobTemplate({
-        organization: globalOrganization.id,
+        organization: globalAwxOrganization.id,
         project: globalProject.id,
         inventory: inv.id,
       }).then((jt) => {
@@ -112,12 +112,12 @@ describe('Jobs: Delete', () => {
   let jobList: UnifiedJobList;
 
   beforeEach(function () {
-    const globalOrganization = this.globalOrganization as Organization;
+    const globalAwxOrganization = this.globalAwxOrganization as Organization;
     const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
+    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
       inventory = inv;
       cy.createAwxJobTemplate({
-        organization: globalOrganization.id,
+        organization: globalAwxOrganization.id,
         project: globalProject.id,
         inventory: inv.id,
       }).then((jt) => {
@@ -238,7 +238,7 @@ describe('Jobs: Output and Details Screen', () => {
     cy.verifyPageTitle('Projects');
     cy.clickLink(/^Create project$/);
     cy.get('[data-cy="name"]').type(projectName);
-    cy.singleSelectByDataCy('organization', `${(this.globalOrganization as Organization).name}`);
+    cy.singleSelectByDataCy('organization', `${(this.globalAwxOrganization as Organization).name}`);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.intercept('POST', awxAPI`/projects/`).as('newProject');
