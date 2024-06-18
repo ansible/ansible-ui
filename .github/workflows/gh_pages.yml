@@ -1,0 +1,55 @@
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Quartz
+        uses: actions/checkout@v4
+        with:
+          repository: 'jackyzha0/quartz'
+
+      - name: Build Quartz Image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: quartz
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build GitHub Pages
+        run: |
+          mkdir public
+          docker run --rm \
+            -v ./docs:/usr/src/app/content \
+            -v ./public:/usr/src/app/public \
+            quartz \
+            npx quartz build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "public"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
