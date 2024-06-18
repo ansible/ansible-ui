@@ -32,7 +32,7 @@ describe('Host Tests', () => {
     // use createAndEditAndDeleteHost function in order to test stand alone hosts basic functions
     // after navigating to the right url
     cy.visit(`/infrastructure/hosts`);
-    createAndEditAndDeleteHost('stand_alone_host', inventory);
+    createAndEditAndDeleteHost('stand_alone_host', inventory, 'list');
   });
 
   it('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {

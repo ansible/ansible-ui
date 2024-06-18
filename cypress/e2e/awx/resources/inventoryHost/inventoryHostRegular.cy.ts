@@ -40,11 +40,14 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     // the test covers create, verify, edit and delete of hosts form inventory
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
-    createAndEditAndDeleteHost('inventory_host', inventory);
+    createAndEditAndDeleteHost('inventory_host', inventory, 'list');
   });
 
-  it.skip('can edit and delete inventory host action from details view', () => {
+  it('can edit and delete inventory host action from details view', () => {
     //can and delete host from details view
+    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
+    cy.clickTab(/^Hosts$/, true);
+    createAndEditAndDeleteHost('inventory_host', inventory, 'details');
   });
 
   it.skip('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
