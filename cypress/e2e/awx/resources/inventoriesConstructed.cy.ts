@@ -94,7 +94,6 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.wait('@filterInputInventories');
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
-    // FIXME: when verbosity is 0 the filed remains empty
     cy.getByDataCy('limit').type('5');
     cy.dataEditorTypeByDataCy('source-vars', 'plugin: constructed');
     cy.clickButton(/^Create inventory$/);
@@ -153,7 +152,6 @@ describe('Constructed Inventories CRUD Tests', () => {
         cy.getByDataCy('description').contains(description);
       });
     cy.clickButton(/^Sync inventory$/);
-    // let jobID: number;
     cy.wait('@syncInv')
       .then((response) => {
         expect(response.response?.statusCode).to.be.equal(202);
