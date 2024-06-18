@@ -455,52 +455,68 @@ describe('Workflow Job Templates Tests', () => {
     });
   });
 
-  describe('Workflow Job Templates: Delete without using org and inventory'),
-    function () {
-      let workflowJobTemplate: WorkflowJobTemplate;
+  describe('Workflow Job Templates: Delete without using org and inventory', function () {
+    let workflowJobTemplate: WorkflowJobTemplate;
+    let organization: Organization;
+    let inventory: Inventory;
+    before(function () {
+      organization = this.globalOrganization as Organization;
+      inventory = this.globalInventory as Inventory;
+    });
 
-      it('can delete a workflow job template from the details page', () => {
-        cy.navigateTo('awx', 'templates');
-        cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
-        cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
-        cy.clickKebabAction('actions-dropdown', 'delete-template');
-        cy.clickModalConfirmCheckbox();
-        cy.intercept(
-          'DELETE',
-          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-        ).as('deleted');
-        cy.clickButton('Delete template');
-        cy.wait('@deleted')
-          .its('response')
-          .then((response) => {
-            expect(response?.statusCode).to.eql(204);
-            cy.clearAllFilters();
-          });
-      });
+    beforeEach(function () {
+      cy.createAwxWorkflowJobTemplate({
+        organization: organization.id,
+        inventory: inventory.id,
+      }).then((wfjt) => (workflowJobTemplate = wfjt));
+    });
 
-      it('can delete a workflow job template from the list row', () => {
-        cy.navigateTo('awx', 'templates');
-        cy.intercept(
-          'DELETE',
-          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
-        ).as('deleted');
-        cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
-        cy.clickTableRowAction('name', workflowJobTemplate?.name, 'delete-template', {
-          inKebab: true,
-          disableFilter: true,
+    afterEach(() => {
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+    });
+
+    it('can delete a workflow job template from the details page', () => {
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+      cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+      cy.clickKebabAction('actions-dropdown', 'delete-template');
+      cy.clickModalConfirmCheckbox();
+      cy.intercept(
+        'DELETE',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+      ).as('deleted');
+      cy.clickButton('Delete template');
+      cy.wait('@deleted')
+        .its('response')
+        .then((response) => {
+          expect(response?.statusCode).to.eql(204);
+          cy.clearAllFilters();
         });
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete template/);
-        cy.wait('@deleted')
-          .its('response.statusCode')
-          .then((statusCode) => {
-            expect(statusCode).to.eql(204);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-            cy.clickButton(/^Clear all filters$/);
-          });
+    });
+
+    it('can delete a workflow job template from the list row', () => {
+      cy.navigateTo('awx', 'templates');
+      cy.intercept(
+        'DELETE',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
+      ).as('deleted');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
+      cy.clickTableRowAction('name', workflowJobTemplate?.name, 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
       });
-    };
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete template/);
+      cy.wait('@deleted')
+        .its('response.statusCode')
+        .then((statusCode) => {
+          expect(statusCode).to.eql(204);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Close$/);
+          cy.clickButton(/^Clear all filters$/);
+        });
+    });
+  });
 
   describe('Workflow Job Templates: Launch', function () {
     let workflowJobTemplate: WorkflowJobTemplate;
