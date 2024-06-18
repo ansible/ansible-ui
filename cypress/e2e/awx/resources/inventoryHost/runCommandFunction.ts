@@ -60,7 +60,7 @@ export function runCommand(params: {
         // Credentials tab
 
         cy.getByDataCy('credential').click();
-        cy.contains('button', 'Load more');
+        cy.get(`[role='listbox'] button`);
         cy.contains('button', 'Browse').click();
 
         cy.filterTableByMultiSelect('name', [credential.name]);
