@@ -172,7 +172,12 @@ declare global {
        * @param selector - The selector of the single select input
        * @param value - The value to select
        */
-      singleSelectBy(selector: string, value: string, exactMatch?: boolean): Chainable<void>;
+      singleSelectBy(
+        selector: string,
+        value: string,
+        exactMatch?: boolean,
+        notFound?: boolean
+      ): Chainable<void>;
 
       /**
        * Select a value from a single select input by data-cy attribute, making sure it is not disabled or hidden.
@@ -191,7 +196,12 @@ declare global {
        * @param dataCy - The data-cy attribute of the single select input
        * @param value - The value to select
        */
-      singleSelectByDataCy(dataCy: string, value: string, exactMatch?: boolean): Chainable<void>;
+      singleSelectByDataCy(
+        dataCy: string,
+        value: string,
+        exactMatch?: boolean,
+        notFound?: boolean
+      ): Chainable<void>;
 
       /**
        * Select a value from a multi select input by selector, making sure it is not disabled or hidden.
@@ -347,7 +357,11 @@ declare global {
        * cy.filterTableBySingleSelect('status', "Pending");
        * ```
        */
-      filterTableBySingleSelect(filterDataCy: string, optionLabel: string): Chainable<void>;
+      filterTableBySingleSelect(
+        filterDataCy: string,
+        optionLabel: string,
+        notFound?: boolean
+      ): Chainable<void>;
 
       /**
        * Filters the table by using a filter that has a multi select input.
@@ -737,6 +751,8 @@ declare global {
 
       createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
 
+      createAwxConstructedInventory(organization: Organization): Chainable<Inventory>;
+
       createAwxInventorySource(
         inventory: Partial<Pick<Inventory, 'id'>>,
         project: Partial<Pick<Project, 'id'>>
@@ -952,6 +968,8 @@ declare global {
         }
       ): Chainable<void>;
 
+      deleteAwxConstructedInventory(constructedInv: Inventory): Chainable<void>;
+
       deleteAwxInventorySource(
         inventorySource: InventorySource,
         options?: {
@@ -973,6 +991,7 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Chainable<void>;
+
       deleteAwxWorkflowJobTemplate(
         workflowJobTemplate: WorkflowJobTemplate,
         options?: {
@@ -1114,7 +1133,11 @@ declare global {
 
       waitForTemplateStatus(jobID: string): Chainable<AwxItemsResponse<JobEvent>>;
       waitForManagementJobToProcess(jobID: string, retries?: number): Chainable<Job>;
-      waitForJobToProcessEvents(jobID: string, retries?: number): Chainable<Job>;
+      waitForJobToProcessEvents(
+        jobID: string,
+        type: 'jobs' | 'inventory_updates',
+        retries?: number
+      ): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
 
       createAndDeleteCustomAWXCredentialTypeUI(

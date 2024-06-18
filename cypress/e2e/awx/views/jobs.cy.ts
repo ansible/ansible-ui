@@ -156,7 +156,7 @@ describe('Jobs: Delete', () => {
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByMultiSelect('id', [jobId]);
         const jobName = testJob.name ? testJob.name : '';
-        cy.waitForJobToProcessEvents(jobId);
+        cy.waitForJobToProcessEvents(jobId, 'jobs');
         cy.get('[data-cy="refresh"]').click();
         cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
         cy.clickTableRowKebabAction(jobName, 'delete-job', false);
@@ -185,7 +185,7 @@ describe('Jobs: Delete', () => {
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByMultiSelect('id', [jobId]);
         const jobName = jobList.name ? jobList.name : '';
-        cy.waitForJobToProcessEvents(jobId);
+        cy.waitForJobToProcessEvents(jobId, 'jobs');
         cy.get('[data-cy="refresh"]').click();
         cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
         cy.selectTableRow(jobName, false);
