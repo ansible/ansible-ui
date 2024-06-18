@@ -228,9 +228,9 @@ export function useGetPlatformUsersRoutes() {
           id: PlatformRoute.AwxUserAddRoles,
           path: ':id/roles/controller/add-roles',
           element: (
-            <PlatformEdaUserIdLookup>
+            <PlatformAwxUserIdLookup>
               <AddRolesToUser userRolesRoute={PlatformRoute.AwxUserRoles} />
-            </PlatformEdaUserIdLookup>
+            </PlatformAwxUserIdLookup>
           ),
         },
         {
