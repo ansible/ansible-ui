@@ -633,7 +633,7 @@ describe('Projects', () => {
                   cy.verifyPageTitle(editedJt.name);
                   cy.url().should('include', '/output');
                   cy.get('[data-cy="relaunch-job"]').should('be.visible');
-                  cy.waitForJobToProcessEvents(launched.id.toString());
+                  cy.waitForJobToProcessEvents(launched.id.toString(), 'jobs');
                 });
             });
           cy.navigateTo('awx', 'projects');

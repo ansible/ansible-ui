@@ -1,25 +1,32 @@
-Cypress.Commands.add('singleSelectBy', (selector: string, value: string, exactMatch = false) => {
-  cy.getBy(selector).click();
-  // PF Selects open the menu at the body level
-  // We need to use document() to get the body of the page
-  // and then find the .pf-v5-c-menu__content within that body
-  // This fixes the issue where this command would fail inside a within() block
-  cy.document()
-    .its('body')
-    .find('.pf-v5-c-menu__content')
-    .within(() => {
-      cy.getByDataCy('search-input').type(value);
-      const regExp = new RegExp('^' + value + '$');
-      cy.contains('.pf-v5-c-menu__item-text', exactMatch ? regExp : value)
-        .parent()
-        .click();
-    });
-});
+Cypress.Commands.add(
+  'singleSelectBy',
+  (selector: string, value: string, exactMatch = false, notFound?: boolean) => {
+    cy.getBy(selector).click();
+    // PF Selects open the menu at the body level
+    // We need to use document() to get the body of the page
+    // and then find the .pf-v5-c-menu__content within that body
+    // This fixes the issue where this command would fail inside a within() block
+    cy.document()
+      .its('body')
+      .find('.pf-v5-c-menu__content')
+      .within(() => {
+        cy.getByDataCy('search-input').type(value);
+        const regExp = new RegExp('^' + value + '$');
+        if (notFound) {
+          cy.contains('No results found');
+        } else {
+          cy.contains('.pf-v5-c-menu__item-text', exactMatch ? regExp : value)
+            .parent()
+            .click();
+        }
+      });
+  }
+);
 
 Cypress.Commands.add(
   'singleSelectByDataCy',
-  (dataCy: string, value: string, exactMatch = false) => {
-    cy.singleSelectBy(`[data-cy="${dataCy}"]`, value, exactMatch);
+  (dataCy: string, value: string, exactMatch = false, notFound?: boolean) => {
+    cy.singleSelectBy(`[data-cy="${dataCy}"]`, value, exactMatch, notFound);
   }
 );
 

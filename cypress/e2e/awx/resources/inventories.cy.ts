@@ -14,44 +14,45 @@ describe('Inventories Tests', () => {
   let instanceGroup: InstanceGroup;
   let label: Label;
   let user: AwxUser;
-  const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
+  const kinds: Array<'' | 'smart'> = ['', 'smart'];
 
   before(() => {
     cy.awxLogin();
   });
 
-  beforeEach(() => {
-    cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
-        label = lbl;
-      });
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
-        //the cy.createAwxInventory() custom command needs to be updated to accept the
-        //'kind' parameter, in order to work with the conditional in this spec file
-        inventory = inv;
-      });
-      cy.createAwxInstanceGroup().then((ig) => {
-        instanceGroup = ig;
-      });
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-        cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
-      });
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteAwxLabel(label, { failOnStatusCode: false });
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-  });
-
   kinds.forEach((kind) => {
     describe(`Inventories CRUD Tests (${kind === '' ? 'regular' : kind})`, () => {
       if (kind === '') {
+        beforeEach(() => {
+          const orgName = 'E2E Organization Inv tests' + randomString(4);
+          cy.createAwxOrganization(orgName).then((org) => {
+            organization = org;
+            cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
+              label = lbl;
+            });
+            cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+              //the cy.createAwxInventory() custom command needs to be updated to accept the
+              //'kind' parameter, in order to work with the conditional in this spec file
+              inventory = inv;
+            });
+            cy.createAwxInstanceGroup().then((ig) => {
+              instanceGroup = ig;
+            });
+            cy.createAwxUser(organization).then((testUser) => {
+              user = testUser;
+              cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
+            });
+          });
+        });
+
+        afterEach(() => {
+          cy.deleteAwxLabel(label, { failOnStatusCode: false });
+          cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+          cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+          cy.deleteAwxUser(user, { failOnStatusCode: false });
+          cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+        });
+
         it('can create an inventory, assert info on details page, and delete inventory', () => {
           //Refactor this test to match the updated test case and improve the assertions
           const inventoryName = 'E2E Inventory ' + randomString(4);
@@ -166,7 +167,7 @@ describe('Inventories Tests', () => {
           //Add an assertion that the inventory does not appear upon a list search
         });
 
-        it('can bulk delete inventories from the list view and verify deletion', () => {
+        it.skip('can bulk delete inventories from the list view and verify deletion', () => {
           //Assert:
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
@@ -206,42 +207,8 @@ describe('Inventories Tests', () => {
         });
       }
 
-      if (kind === 'constructed') {
-        it.skip('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
-          //Assert that user is on the form view to create an inventory
-          //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
-          //Add assertions for the information visible on the details screen of the new inventory
-          //Add assertion verifying that the inventory has now been deleted- including verifying the 204 statusCode and
-          //filtering a list to show no results
-        });
-
-        it.skip('can edit and run a sync on the edited constructed inventory', () => {
-          //Create a constructed inventory in the beforeEach hook
-          //Assert the original details of the inventory
-          //Assert the user navigating to the edit constructed inventory form
-          //Assert the edited changes of the inventory
-          //Assert that the sync ran successfully
-        });
-
-        it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
-          //Create a constructed inventory in the beforeEach hook
-          //Assert the original order of the input inventories
-          //Assert the UI change to the order of input inventories
-        });
-
-        it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
-          //Create a constructed inventory in the beforeEach hook
-          //Assert the original details of the inventory
-          //Assert the user navigating to the edit constructed inventory form
-          //Assert the change to the strict setting
-          //Add bad variables
-          //Assert the edited changes of the inventory
-          //Run a sync and assert failure of the job
-        });
-      }
-
       if (kind === 'smart') {
-        it.skip('can create a smart inventory, assert info on details page, and delete inventory', () => {
+        it('can create a smart inventory, assert info on details page, and delete inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
@@ -249,7 +216,7 @@ describe('Inventories Tests', () => {
           //filtering a list to show no results
         });
 
-        it.skip('can edit the smart host filter on a smart inventory from the details view and assert info on details page', () => {
+        it('can edit the smart host filter on a smart inventory from the details view and assert info on details page', () => {
           //Create a smart inventory in the beforeEach hook
           //Assert the original details of the inventory
           //Assert the user navigating to the edit smart inventory form

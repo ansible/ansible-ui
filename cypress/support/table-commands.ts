@@ -82,10 +82,14 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('filterTableBySingleSelect', (filterDataCy: string, optionLabel: string) => {
-  cy.selectTableFilter(filterDataCy);
-  cy.singleSelectByDataCy('filter-input', optionLabel);
-});
+Cypress.Commands.add(
+  'filterTableBySingleSelect',
+  (filterDataCy: string, optionLabel: string, notFound?: boolean) => {
+    cy.selectTableFilter(filterDataCy);
+    notFound = notFound ? true : false;
+    cy.singleSelectByDataCy('filter-input', optionLabel, false, notFound);
+  }
+);
 
 Cypress.Commands.add('filterTableByMultiSelect', (filterDataCy: string, optionLabels: string[]) => {
   cy.selectTableFilter(filterDataCy);

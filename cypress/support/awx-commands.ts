@@ -918,12 +918,48 @@ Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 
   }
 });
 
+Cypress.Commands.add('createAwxConstructedInventory', (organization: Organization) => {
+  const arrayOfInventories: number[] = [];
+  // creates 3 inventories
+  for (let i = 0; i < 3; i++) {
+    cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      arrayOfInventories.push(inv.id);
+    });
+  }
+
+  cy.awxRequestPost<Partial<Inventory & { inventories: Array<number | undefined> }>>(
+    awxAPI`/constructed_inventories/`,
+    {
+      name: `E2E Constructed Inventory ${randomString(4)}`,
+      organization: organization.id,
+      kind: 'constructed',
+      inventories: arrayOfInventories,
+      variables: 'plugin: test',
+    }
+  ).then((constructedInv: Partial<Inventory>) => {
+    const inputInvPromises = arrayOfInventories.map((invID) => {
+      cy.awxRequestPost(awxAPI`/inventories/${String(constructedInv.id)}/input_inventories/`, {
+        id: invID,
+      });
+    });
+    const resolvePromise = Promise.all(inputInvPromises).then((_res) => {
+      cy.awxRequestPost(
+        awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
+        {}
+      ).then((_res) => {
+        return constructedInv;
+      });
+    });
+    return resolvePromise;
+  });
+});
+
 Cypress.Commands.add(
   'createAwxInventorySource',
   (inventory: Partial<Pick<Inventory, 'id'>>, project: Partial<Pick<Project, 'id'>>) => {
     cy.requestPost(awxAPI`/inventory_sources/`, {
       name: 'E2E Inventory Source ' + randomString(4),
-      descriptiom: 'This is a description',
+      description: 'This is a description',
       source: 'scm',
       source_project: project.id,
       source_path: '',
@@ -942,6 +978,31 @@ Cypress.Commands.add(
     }
   ) => {
     cy.awxRequestDelete(awxAPI`/inventories/${inventory.id.toString()}/`, options);
+  }
+);
+
+Cypress.Commands.add(
+  'deleteAwxConstructedInventory',
+  (
+    constructedInv: Inventory,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.awxRequestGet<AwxItemsResponse<Inventory>>(
+      awxAPI`/inventories/${constructedInv.id.toString()}/input_inventories/`
+    )
+      .its('results')
+      .then((inputInv: Inventory[]) => {
+        const inputInvPromises = inputInv.map((inv) => {
+          cy.awxRequestDelete(awxAPI`/inventories/${inv.id.toString()}/`, options);
+        });
+        const resolvePromise = Promise.all(inputInvPromises).then((_res) => {
+          cy.awxRequestDelete(awxAPI`/inventories/${constructedInv.id.toString()}/`, options);
+        });
+        return resolvePromise;
+      });
   }
 );
 
@@ -1430,9 +1491,12 @@ Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 
   });
 });
 
-Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) => {
+Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, type, retries = 45) => {
   /* default retries = 1s * 30s for processing events  * 1.5 for good measure */
-  cy.requestGet<Job>(awxAPI`/jobs/${jobID}/`).then((job) => {
+  if (!type) {
+    type = 'jobs';
+  }
+  cy.requestGet<Job>(awxAPI`/${type.toString()}/${jobID}/`).then((job) => {
     let stillProcessing = false;
 
     if (job) {
@@ -1455,7 +1519,7 @@ Cypress.Commands.add('waitForJobToProcessEvents', (jobID: string, retries = 45) 
 
     if (stillProcessing) {
       if (retries > 0) {
-        cy.wait(1000).then(() => cy.waitForJobToProcessEvents(jobID, retries - 1));
+        cy.wait(1000).then(() => cy.waitForJobToProcessEvents(jobID, type, retries - 1));
       } else {
         cy.log('Wait for job to process events timed out.');
       }
