@@ -1,14 +1,14 @@
 //Tests a user's ability to give permissions to a user from the roles tab.
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
+import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
+import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { user_team_access_tab_resources } from '../../../support/constants';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 user_team_access_tab_resources.forEach((resource) => {
   describe(`Assign Role to a User `, () => {
@@ -20,7 +20,6 @@ user_team_access_tab_resources.forEach((resource) => {
       | EdaCredential
       | EdaCredentialType;
     before(() => {
-      cy.edaLogin();
       // If the resource is a RBA, create all dependency resources, else just the one resource
       if (resource.name === 'rulebook-activations') {
         let edaProject: EdaProject;
@@ -97,7 +96,6 @@ describe(`Roles Tab for Users - actions`, () => {
   let cred2: EdaCredential;
   let cred3: EdaCredential;
   before(() => {
-    cy.edaLogin();
     cy.createEdaUser().then((EdaUser) => {
       user = EdaUser;
     });

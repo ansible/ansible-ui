@@ -11,7 +11,6 @@ describe('EDA Credentials Use in Resources', () => {
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;
   before(() => {
-    cy.edaLogin();
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.waitEdaProjectSync(project);

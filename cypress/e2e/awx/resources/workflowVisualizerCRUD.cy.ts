@@ -22,7 +22,6 @@ describe('Workflow Visualizer', () => {
   before(function () {
     organization = this.globalOrganization as Organization;
     project = this.globalProject as Project;
-    cy.awxLogin();
     cy.createAwxInventory({ organization: organization.id })
       .then((i) => {
         inventory = i;

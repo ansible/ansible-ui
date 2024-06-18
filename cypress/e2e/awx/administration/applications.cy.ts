@@ -1,14 +1,10 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Applications', () => {
   let app: Application;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxApplication().then((application: Application) => {

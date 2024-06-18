@@ -10,7 +10,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
   let user: AwxUser;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createInventoryHost(organization, 'constructed').then((result) => {

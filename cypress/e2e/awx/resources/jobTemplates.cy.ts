@@ -10,15 +10,6 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Job Templates Tests', function () {
-  before(function () {
-    cy.awxLogin();
-  });
-
-  beforeEach(() => {
-    cy.createGlobalOrganization();
-    cy.createGlobalProject();
-  });
-
   describe('Job Templates Tests: Create', function () {
     let inventory: Inventory;
     let inventoryWithHost: Inventory;

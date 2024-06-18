@@ -2,16 +2,16 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { randomE2Ename } from '../../../support/utils';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Projects', () => {
   let schedule: Schedule;
@@ -19,10 +19,6 @@ describe('Projects', () => {
   let thisProject: Project;
   let organization: Organization;
   let user: AwxUser;
-
-  before(function () {
-    cy.awxLogin();
-  });
 
   describe('Projects: List View', () => {
     beforeEach(function () {

@@ -1,14 +1,10 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaCredentialCreate } from '../../../../frontend/eda/interfaces/EdaCredential';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Credentials Type - Create, Edit, Delete', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can create a Credential Type', () => {
     const name = 'E2E Credential Type' + randomString(4);
     cy.navigateTo('eda', 'credential-types');
@@ -180,10 +176,6 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
 });
 
 describe('EDA Credentials Type - Input Configuration', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('verify error message on invalid input field', () => {
     const name = 'E2E Credential Type' + randomString(4);
     cy.navigateTo('eda', 'credential-types');

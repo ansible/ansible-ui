@@ -9,7 +9,6 @@ describe('activity-stream', () => {
   let activeUser: AwxUser;
 
   before(function () {
-    cy.awxLogin();
     cy.createAwxTeam(this.globalOrganization as Organization).then((createdTeam) => {
       team = createdTeam;
     });

@@ -15,34 +15,33 @@ import { InventorySource } from '../../frontend/awx/interfaces/InventorySource';
 import { Job } from '../../frontend/awx/interfaces/Job';
 import { JobEvent } from '../../frontend/awx/interfaces/JobEvent';
 import { JobTemplate } from '../../frontend/awx/interfaces/JobTemplate';
-import { Spec as SurveySpec } from '../../frontend/awx/interfaces/Survey';
 import { Label } from '../../frontend/awx/interfaces/Label';
 import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Role } from '../../frontend/awx/interfaces/Role';
 import { Schedule } from '../../frontend/awx/interfaces/Schedule';
-import { Survey } from '../../frontend/awx/interfaces/Survey';
+import { Survey, Spec as SurveySpec } from '../../frontend/awx/interfaces/Survey';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
-import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
+import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
   EdaRulebookActivationCreate,
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
-import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
+import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
 import { RoleDefinitionCreate } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -89,25 +88,31 @@ declare global {
       // Login Commands
       // ==============================================================================================================
 
-      /** Login to the AWX application */
+      /** Login to the application. This will call the correct login for the application i.e. cy.awxLogin() */
+      login(): Chainable<void>;
+
+      /** Logout of the application. This will call the correct logout for the application i.e. cy.awxLogout() */
+      logout(): Chainable<void>;
+
+      /** @deprecated use cy.login */
       awxLogin(): Chainable<void>;
 
-      /** Login to the AWX application */
+      /** @deprecated use cy.logout */
       awxLogout(): Chainable<void>;
 
       /** Login to the AWX with a user created during the test*/
       awxLoginTestUser(username: string, password: string): Chainable<void>;
 
-      /** Login to the EDA application */
+      /** @deprecated use cy.login */
       edaLogin(username?: string, password?: string): Chainable<void>;
 
-      /** Logout of the EDA application */
+      /** @deprecated use cy.logout */
       edaLogout(): Chainable<void>;
 
-      /** Login to the HUB application */
+      /** @deprecated use cy.login */
       hubLogin(): Chainable<void>;
 
-      /** Logout of the HUB application */
+      /** @deprecated use cy.logout */
       hubLogout(): Chainable<void>;
 
       /** Check that the required environment variables are set */

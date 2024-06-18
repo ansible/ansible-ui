@@ -19,8 +19,6 @@ describe.skip('Workflow Visualizer', () => {
 
   beforeEach(function () {
     organization = this.globalOrganization as Organization;
-    cy.awxLogin();
-
     cy.createAwxInventory({ organization: organization.id })
       .then((i) => {
         inventory = i;

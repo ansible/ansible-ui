@@ -1,7 +1,7 @@
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { createAndEditAndDeleteHost, checkHostGroup } from '../../../support/hostsfunctions';
+import { checkHostGroup, createAndEditAndDeleteHost } from '../../../support/hostsfunctions';
 
 describe('Host Tests', () => {
   let organization: Organization;
@@ -9,7 +9,6 @@ describe('Host Tests', () => {
   let user: AwxUser;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {

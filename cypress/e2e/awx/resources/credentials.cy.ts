@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 
 describe('Credentials', () => {
   let organization: Organization;
@@ -15,8 +15,6 @@ describe('Credentials', () => {
   let user: AwxUser;
 
   before(() => {
-    cy.awxLogin();
-
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxUser(organization).then((testUser) => {
@@ -518,7 +516,6 @@ describe('Create Credentials of different types', () => {
   };
   // FLAKY_06_13_2024
   it.skip('credential creation of 30 different credential types', function () {
-    cy.awxLogin();
     cy.fixture<MockCredentialData[]>('credentialsTestData').as('createCredentials');
     cy.get('@createCredentials').then((fixture) => {
       const credentialTypes = fixture as unknown as MockCredentialData[];
@@ -578,7 +575,6 @@ describe('Credentials Tabbed View - Job Templates', function () {
   let awxInventory: Inventory;
 
   beforeEach(function () {
-    cy.awxLogin();
     cy.createAwxOrganization().then((awxOrg) => {
       awxOrganization = awxOrg;
       cy.createAwxUser(awxOrganization).then((awxUser) => {
@@ -662,7 +658,6 @@ describe.skip('Credentials Tabbed View - Team and User Access', function () {
   let awxOrganization: Organization;
   let awxTeam: Team;
   beforeEach(function () {
-    cy.awxLogin();
     cy.createAwxOrganization().then((awxOrg) => {
       awxOrganization = awxOrg;
       cy.createAwxUser(awxOrganization).then((awxUser) => {

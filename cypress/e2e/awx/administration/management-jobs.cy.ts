@@ -1,13 +1,9 @@
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { SystemJobTemplate } from '../../../../frontend/awx/interfaces/SystemJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Management Jobs Page - List and Launch Jobs', () => {
-  beforeEach(() => {
-    cy.awxLogin();
-  });
-
   it('render the management jobs list page, assert the management jobs listed', () => {
     const managementJobsList = [
       'Cleanup Activity Stream',
@@ -129,9 +125,6 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
 
 //TODO: Skipping the test due to test failures with typing issue in the Schedule name field in the UI
 describe.skip('Management Jobs - Schedules Tab', () => {
-  beforeEach(() => {
-    cy.awxLogin();
-  });
   const managementJobsList = [
     'Cleanup Activity Stream',
     'Cleanup Expired OAuth 2 Tokens',
@@ -351,10 +344,6 @@ describe.skip('Management Jobs - Schedules Tab', () => {
 });
 
 describe('Management Jobs - Notifications Tab', function () {
-  beforeEach(() => {
-    cy.awxLogin();
-  });
-
   const managementJobsList = [
     'Cleanup Activity Stream',
     'Cleanup Expired OAuth 2 Tokens',

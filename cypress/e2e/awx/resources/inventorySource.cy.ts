@@ -26,9 +26,6 @@ describe('Inventory Sources', () => {
   let notification: NotificationTemplate;
 
   let executionEnvironment: ExecutionEnvironment;
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(function () {
     project = this.globalProject as Project;

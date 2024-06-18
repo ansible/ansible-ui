@@ -9,10 +9,6 @@ import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/Workflo
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Workflow Job Templates Tests', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   describe('Workflow Job Templates: Create', function () {
     let organization: Organization;
     let inventory: Inventory;

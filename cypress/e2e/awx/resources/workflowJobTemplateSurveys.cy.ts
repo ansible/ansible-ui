@@ -1,16 +1,12 @@
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
 
 describe('Workflow Job Templates Surveys', function () {
   let inventory: Inventory;
   let workflowJobTemplate: WorkflowJobTemplate;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
-
-  before(function () {
-    cy.awxLogin();
-  });
 
   describe('WFJT Surveys: Create, Edit and Delete', function () {
     const question = {

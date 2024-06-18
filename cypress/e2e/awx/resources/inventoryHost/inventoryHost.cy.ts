@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
 //import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { createAndEditAndDeleteHost, checkHostGroup } from '../../../../support/hostsfunctions';
+import { checkHostGroup, createAndEditAndDeleteHost } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests', () => {
   let organization: Organization;
@@ -15,7 +15,6 @@ describe('Inventory Host Tab Tests', () => {
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {

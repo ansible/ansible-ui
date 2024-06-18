@@ -11,10 +11,6 @@ describe('teams', function () {
   let user1: AwxUser;
   let user2: AwxUser;
 
-  before(function () {
-    cy.awxLogin();
-  });
-
   beforeEach(function () {
     cy.createAwxUser(this.globalOrganization as Organization).then((user) => {
       user1 = user;

@@ -1,17 +1,13 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { MeshVisualizer } from '../../../../frontend/awx/interfaces/MeshVisualizer';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Settings } from '../../../../frontend/awx/interfaces/Settings';
-import { randomString } from '../../../../framework/utils/random-string';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Topology view', () => {
   let user: AwxUser;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: awxAPI`/mesh_visualizer/` }).as('getMeshVisualizer');
@@ -71,7 +67,6 @@ describe('Topology view', () => {
   });
 
   it('will allow the user to view a large number of nodes', () => {
-    cy.awxLogin();
     cy.fixture('instance_nodes').then((instanceNodes: MeshVisualizer) => {
       cy.intercept('GET', awxAPI`/mesh_visualizer/`, instanceNodes);
 
@@ -89,7 +84,6 @@ describe('Topology view', () => {
         cy.log('TEST SKIPPED | IS_K8S: False');
         return;
       }
-      cy.awxLogin();
       const node = 'E2EInstance' + randomString(4);
 
       cy.createAwxInstance(node).then(() => {

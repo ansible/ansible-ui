@@ -9,9 +9,6 @@ describe('Job Templates Surveys', function () {
   let jobTemplate: JobTemplate;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
 
-  before(function () {
-    cy.awxLogin();
-  });
   // FLAKY_06_13_2024
   describe.skip('JT Surveys: Create, Edit and Delete', function () {
     const question = {
