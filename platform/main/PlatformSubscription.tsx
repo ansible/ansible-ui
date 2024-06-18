@@ -9,12 +9,20 @@ import { useHasAwxService } from './GatewayServices';
 
 export function PlatformSubscription(props: { children: ReactNode }) {
   const { t } = useTranslation();
-  const { awxConfig, awxConfigIsLoading, awxConfigError, refreshAwxConfig } = useAwxConfigState();
+  const { awxConfig, awxConfigError, refreshAwxConfig } = useAwxConfigState();
 
-  const awxService = useHasAwxService();
+  const hasAwxService = useHasAwxService();
 
-  if (awxService) {
-    if (awxConfigIsLoading) {
+  if (hasAwxService === undefined) {
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
+  }
+
+  if (hasAwxService) {
+    if (awxConfig === undefined) {
       return (
         <Page>
           <LoadingState />

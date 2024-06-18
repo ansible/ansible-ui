@@ -14,7 +14,7 @@ interface GatewayServices {
   galaxy?: string;
 }
 
-export const GatewayServicesContext = createContext<GatewayServices>({});
+export const GatewayServicesContext = createContext<GatewayServices | undefined>({});
 
 export function useGatewayServices() {
   return useContext(GatewayServicesContext);
@@ -72,8 +72,9 @@ export function GatewayServicesProvider(props: { children: ReactNode }) {
   );
 }
 
-export function useGatewayService(serviceType?: 'controller' | 'eda' | 'hub') {
+export function useGatewayService(serviceType?: 'gateway' | 'controller' | 'eda' | 'hub') {
   const services = useGatewayServices();
+  if (!services) return undefined;
   switch (serviceType) {
     case 'controller':
       return services.controller;
@@ -81,19 +82,30 @@ export function useGatewayService(serviceType?: 'controller' | 'eda' | 'hub') {
       return services.eda;
     case 'hub':
       return services.galaxy;
-    default:
+    case 'gateway':
       return services.gateway;
+    default:
+      return undefined;
   }
 }
 
 export function useHasAwxService() {
-  return useGatewayService('controller') !== undefined;
+  const gateway = useGatewayService('gateway');
+  const awxService = useGatewayService('controller');
+  if (gateway === undefined) return undefined;
+  return awxService !== undefined;
 }
 
 export function useHasEdaService() {
-  return useGatewayService('eda') !== undefined;
+  const gateway = useGatewayService('gateway');
+  const edaService = useGatewayService('eda');
+  if (gateway === undefined) return undefined;
+  return edaService !== undefined;
 }
 
 export function useHasHubService() {
-  return useGatewayService('hub') !== undefined;
+  const gateway = useGatewayService('gateway');
+  const hubService = useGatewayService('hub');
+  if (gateway === undefined) return undefined;
+  return hubService !== undefined;
 }
