@@ -79,7 +79,7 @@ describe('Topology view', () => {
   });
   // FLAKY_06_13_2024
   it.skip('will allow the user to select node and delete it', () => {
-    cy.awxRequestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
       if (!data?.IS_K8S) {
         cy.log('TEST SKIPPED | IS_K8S: False');
         return;

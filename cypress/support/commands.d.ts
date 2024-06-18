@@ -631,7 +631,8 @@ declare global {
 
       requestPost<ResponseT, RequestT = ResponseT>(
         url: string,
-        data: Partial<RequestT>
+        data: Partial<RequestT>,
+        failOnStatusCode?: boolean
       ): Chainable<ResponseT>;
 
       requestPut<ResponseT, RequestT = ResponseT>(
@@ -662,60 +663,6 @@ declare global {
       // ==============================================================================================================
       // AWX Commands
       // ==============================================================================================================
-
-      /**
-       * This command is written to allow asynchronous resource creation in an AWX build using
-       * a user token as the authentication method.
-       * @param method
-       * @param url
-       * @param body
-       */
-      awxRequest<ResponseT = unknown>(
-        method: string,
-        url: string,
-        body?: Cypress.RequestBody,
-        /** Whether to fail on response codes other than 2xx and 3xx */
-        failOnStatusCode?: boolean
-      ): Chainable<Cypress.Response<ResponseT>>;
-
-      /**
-       * This command only works for creating a resource in AWX.
-       * @param url
-       * @param body
-       */
-      awxRequestPost<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
-        url: string,
-        body: RequestBodyT,
-        failOnStatusCode?: boolean
-      ): Chainable<ResponseBodyT>;
-
-      /**
-       * This command only works for patching a resource in AWX.
-       * @param url
-       */
-      awxRequestPatch<RequestBodyT extends Cypress.RequestBody, ResponseBodyT = RequestBodyT>(
-        url: string,
-        body: RequestBodyT,
-        failOnStatusCode?: boolean
-      ): Chainable<ResponseBodyT>;
-
-      /**
-       * This command only works for retrieving a resource in AWX.
-       * @param url
-       */
-      awxRequestGet<ResponseBodyT = unknown>(url: string): Chainable<ResponseBodyT>;
-
-      /**
-       * This command only works for deleting a resource in AWX.
-       * @param url
-       */
-      awxRequestDelete(
-        url: string,
-        options?: {
-          /** Whether to fail on response codes other than 2xx and 3xx */
-          failOnStatusCode?: boolean;
-        }
-      ): Chainable<void>;
 
       createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
       editAwxApplication(application: Application, name: string): Chainable<Application>;
