@@ -31,7 +31,7 @@ export function LoginForm(props: LoginFormProps) {
 
         const loginPageResponse = await fetch(props.apiUrl, {
           credentials: 'include',
-          headers: { Accept: 'text/*' },
+          headers: { Accept: 'application/json,text/*' },
         });
         if (!loginPageResponse.ok) {
           throw await createRequestError(loginPageResponse);
