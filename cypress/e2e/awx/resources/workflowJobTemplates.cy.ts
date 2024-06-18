@@ -314,7 +314,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can copy an existing workflow job template from the list', function () {
+    it('can copy an existing workflow job template from the list', () => {
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
       cy.intercept(
@@ -351,7 +351,7 @@ describe('Workflow Job Templates Tests', () => {
         });
     });
 
-    it('can copy an existing workflow job template from the details page', function () {
+    it('can copy an existing workflow job template from the details page', () => {
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
@@ -595,7 +595,7 @@ describe('Workflow Job Templates Tests', () => {
         });
     });
 
-    it('can save and launch a workflow job template from details view', function () {
+    it('can save and launch a workflow job template from details view', () => {
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
