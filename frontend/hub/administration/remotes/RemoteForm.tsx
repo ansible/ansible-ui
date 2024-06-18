@@ -257,10 +257,16 @@ export function EditRemote() {
     return (
       <PageLayout>
         <PageHeader
-          title={Remotes?.name ? `${t('Edit')} ${Remotes?.name}` : t('Remote')}
+          title={
+            Remotes?.name ? t('Edit {{remoteName}}', { remoteName: Remotes?.name }) : t('Remote')
+          }
           breadcrumbs={[
             { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
-            { label: Remotes?.name ? `${t('Edit')} ${Remotes?.name}` : t('Remote') },
+            {
+              label: Remotes?.name
+                ? t('Edit {{remoteName}}', { remoteName: Remotes?.name })
+                : t('Remote'),
+            },
           ]}
         />
         <HubError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />

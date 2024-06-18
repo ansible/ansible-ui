@@ -117,12 +117,16 @@ export function EditHubNamespace() {
   return (
     <PageLayout>
       <PageHeader
-        title={namespace?.name ? `${t('Edit')} ${namespace?.name}` : t('Namespace')}
+        title={
+          HubNamespacePage?.name
+            ? t('Edit {{namespaceName}}', { namespaceName: namespace?.name })
+            : t('Namespace')
+        }
         breadcrumbs={[
           { label: t('Namspaces'), to: getPageUrl(HubRoute.Namespaces) },
           {
             label: HubNamespacePage?.name
-              ? `${t('Edit')} ${HubNamespacePage?.name}`
+              ? t('Edit {{namespaceName}}', { namespaceName: namespace?.name })
               : t('Namespace'),
           },
         ]}

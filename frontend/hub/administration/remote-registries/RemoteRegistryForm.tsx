@@ -144,13 +144,15 @@ export function EditRemoteRegistry() {
       <PageLayout>
         <PageHeader
           title={
-            RemoteRegistries?.name ? `${t('Edit')} ${RemoteRegistries?.name}` : t('Remote Registry')
+            RemoteRegistries?.name
+              ? t('Edit {{registryName}}', { registryName: RemoteRegistries?.name })
+              : t('Remote Registry')
           }
           breadcrumbs={[
             { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
             {
               label: RemoteRegistries?.name
-                ? `${t('Edit')} ${RemoteRegistries?.name} `
+                ? t('Edit {{registryName}}', { registryName: RemoteRegistries?.name })
                 : t('Remote Registry'),
             },
           ]}
