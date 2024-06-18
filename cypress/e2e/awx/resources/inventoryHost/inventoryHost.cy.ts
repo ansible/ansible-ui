@@ -55,7 +55,7 @@ describe('Inventory Host Tab Tests', () => {
     // the test covers create, verify, edit and delete of hosts form inventory
     cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
     cy.clickTab(/^Hosts$/, true);
-    createAndEditAndDeleteHost('inventory_host', inventory);
+    createAndEditAndDeleteHost('inventory_host', inventory, 'list');
   });
 
   it.skip('can see, launch and cancel jobs from inventory -> hosts -> jobs tab', () => {
