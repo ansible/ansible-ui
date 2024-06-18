@@ -1,5 +1,8 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
+import { AwxItemsResponse } from '../../../../../frontend/awx/common/AwxItemsResponse';
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { Notification } from '../../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 export function testNotification(
   type: string,
@@ -76,11 +79,14 @@ export function testDelete(name: string, options?: { details?: boolean }) {
     cy.contains(`[role="dialog"] button`, `Close`).click();
   }
 
-  cy.get(`[data-cy="filter"]`).click();
-  cy.get(`[data-cy="name"] button`).click();
-  cy.get(`[data-cy="filter-input"]`).click();
-  cy.get(`[aria-label="Search input"]`).type(name);
-  cy.contains('No results found');
+  cy.verifyPageTitle('Notifiers');
+  cy.contains('Configure custom notifications to be sent based on predefined events.');
+
+  cy.requestGet<AwxItemsResponse<Notification>>(awxAPI`/notification_templates/?name={name}`)
+    .its('results')
+    .then((results) => {
+      expect(results).to.have.length(0);
+    });
 }
 
 export function selectOrganization(orgName: string) {
