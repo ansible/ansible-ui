@@ -1,10 +1,10 @@
 // using PlatformOrganizationForm.cy.tsx as a reference, generate tests for PlatformOrganizationDetails.cy.tsx
 
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import * as useAwxConfig from '../../../../frontend/awx/common/useAwxConfig';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { GatewayServicesContext } from '../../../main/GatewayServices';
 import { PlatformOrganizationDetails } from './PlatformOrganizationDetails';
-import * as useAwxConfig from '../../../../frontend/awx/common/useAwxConfig';
 
 describe('PlatformOrganizationDetails', () => {
   beforeEach(() => {
@@ -118,7 +118,7 @@ describe('PlatformOrganizationDetails', () => {
       },
     }));
     cy.mount(
-      <GatewayServicesContext.Provider value={{ controller: '' }}>
+      <GatewayServicesContext.Provider value={{ gateway: '', controller: '' }}>
         <PlatformOrganizationDetails />
       </GatewayServicesContext.Provider>
     );
@@ -147,7 +147,7 @@ describe('PlatformOrganizationDetails', () => {
       },
     }));
     cy.mount(
-      <GatewayServicesContext.Provider value={{ controller: '' }}>
+      <GatewayServicesContext.Provider value={{ gateway: '', controller: '' }}>
         <PlatformOrganizationDetails />
       </GatewayServicesContext.Provider>
     );
