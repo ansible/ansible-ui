@@ -123,10 +123,10 @@ export function CreateDecisionEnvironment() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Decision Environment')}
+        title={t('Create decision environment')}
         breadcrumbs={[
           { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
-          { label: t('Create Decision Environment') },
+          { label: t('Create decision environment') },
         ]}
       />
       <EdaPageForm

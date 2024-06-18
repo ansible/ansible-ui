@@ -80,10 +80,10 @@ export function CreateRulebookActivation() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Rulebook Activation')}
+        title={t('Create rulebook activation')}
         breadcrumbs={[
           { label: t('Rulebook Activations'), to: getPageUrl(EdaRoute.RulebookActivations) },
-          { label: t('Create Rulebook Activation') },
+          { label: t('Create rulebook activation') },
         ]}
       />
       {(!tokens?.results || tokens?.results.length < 1) && (
