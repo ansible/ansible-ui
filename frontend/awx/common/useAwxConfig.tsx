@@ -1,11 +1,11 @@
-import { createContext, ReactNode, useContext, useMemo } from 'react';
-import { usePolledState } from '../../common/usePolledState';
+import { ReactNode, createContext, useContext, useMemo } from 'react';
+import useSWR from 'swr';
+import { requestGet } from '../../common/crud/Data';
 import { Config } from '../interfaces/Config';
 import { awxAPI } from './api/awx-utils';
 
 const AwxConfigContext = createContext<{
   awxConfig?: Config | null | undefined;
-  awxConfigIsLoading?: boolean;
   awxConfigError?: Error;
   refreshAwxConfig?: () => void;
 }>({});
@@ -19,14 +19,14 @@ export function useAwxConfigState() {
 }
 
 export function AwxConfigProvider(props: { children?: ReactNode }) {
-  const { data, error, refresh } = usePolledState<Config>(awxAPI`/config/`);
+  const response = useSWR<Config>(awxAPI`/config/`, requestGet);
   const value = useMemo(
     () => ({
-      awxConfig: data,
-      awxConfigError: error,
-      refreshAwxConfig: refresh,
+      awxConfig: response.data,
+      awxConfigError: response.error as Error,
+      refreshAwxConfig: () => response.mutate(undefined),
     }),
-    [data, error, refresh]
+    [response]
   );
   return <AwxConfigContext.Provider value={value}>{props.children}</AwxConfigContext.Provider>;
 }
