@@ -37,6 +37,5 @@ export interface PlatformUser {
   is_platform_auditor?: boolean;
   last_login_map_results: [];
   last_login: string;
-  organizations: number[];
   managed: boolean;
 }
