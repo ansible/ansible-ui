@@ -11,7 +11,10 @@ export function useGet<T>(
 ) {
   const getRequest = useGetRequest<T>();
 
-  url += normalizeQueryString(query);
+  if (url) {
+    url += normalizeQueryString(query);
+  }
+
   const response = useSWR<T>(url, getRequest, {
     dedupingInterval: 0,
     ...swrConfiguration,
@@ -39,8 +42,11 @@ export function useGetItem<T = unknown>(
   id?: string | number,
   swrOptions?: SWRConfiguration
 ) {
-  if (url.endsWith('/')) url = url.slice(0, url.length - 1);
-  return useGet<T>(id ? `${url}/${id}/` : undefined, undefined, swrOptions);
+  if (url?.endsWith('/')) {
+    url = url.slice(0, url.length - 1);
+  }
+
+  return useGet<T>(url && id ? `${url}/${id}/` : undefined, undefined, swrOptions);
 }
 
 export function useGetRequest<ResponseBody>() {
@@ -54,8 +60,12 @@ export function useGetRequest<ResponseBody>() {
     query?: Record<string, string | number | boolean>,
     signal?: AbortSignal
   ) => {
+    if (url) {
+      url += normalizeQueryString(query);
+    }
+
     const response: Response = await requestCommon({
-      url: url + normalizeQueryString(query),
+      url,
       method: 'GET',
       signal,
     });
