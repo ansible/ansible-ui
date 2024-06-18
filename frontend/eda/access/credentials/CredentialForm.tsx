@@ -140,10 +140,10 @@ export function CreateCredential() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Credential')}
+        title={t('Create credential')}
         breadcrumbs={[
           { label: t('Credentials'), to: getPageUrl(EdaRoute.Credentials) },
-          { label: t('Create Credential') },
+          { label: t('Create credential') },
         ]}
       />
       <EdaPageForm
