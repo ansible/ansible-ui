@@ -132,13 +132,13 @@ export function EditPlatformUser() {
     async (userInput: IUserInput, setError, setFieldError) => {
       const { userType, confirmPassword, ...user } = userInput;
       user.is_superuser = userType === UserType.SystemAdministrator;
-      if (userType === UserType.PlatformAuditor && !user.is_system_auditor) {
+      if (userType === UserType.PlatformAuditor && !user.is_platform_auditor) {
         await postRequest(gatewayV1API`/role_user_assignments/`, {
           user: user.id,
           role_definition: platformAuditorRoleData?.results?.[0]?.id,
           object_id: null,
         });
-      } else if (user.is_system_auditor && userType !== UserType.PlatformAuditor) {
+      } else if (user.is_platform_auditor && userType !== UserType.PlatformAuditor) {
         // Get the platform auditor role assignment
         const platformAuditorRoleAssignment = await getRequest(
           gatewayV1API`/role_user_assignments/`,
@@ -158,7 +158,7 @@ export function EditPlatformUser() {
           return false;
         }
       }
-      user.is_system_auditor = userType === UserType.PlatformAuditor;
+      user.is_platform_auditor = userType === UserType.PlatformAuditor;
       await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
       navigate(-1);
     },
@@ -175,7 +175,7 @@ export function EditPlatformUser() {
     ...defaultUserValue,
     userType: user.is_superuser
       ? UserType.SystemAdministrator
-      : user.is_system_auditor
+      : user.is_platform_auditor
         ? UserType.PlatformAuditor
         : UserType.NormalUser,
   };
