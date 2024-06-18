@@ -57,7 +57,10 @@ export function runCommand(params: {
 
         cy.getByDataCy('Submit').click();
 
+        // Credentials tab
+
         cy.getByDataCy('credential').click();
+        cy.contains('button', 'Load more');
         cy.contains('button', 'Browse').click();
 
         cy.filterTableByMultiSelect('name', [credential.name]);
