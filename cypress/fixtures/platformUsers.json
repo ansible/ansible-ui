@@ -18,7 +18,7 @@
       "last_name": "",
       "password": "$encrypted$",
       "is_superuser": true,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "last_login_map_results": []
     },
     {
@@ -36,7 +36,7 @@
       "last_name": "User",
       "password": "$encrypted$",
       "is_superuser": false,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "last_login_map_results": []
     },
     {
@@ -54,7 +54,7 @@
       "last_name": "test",
       "password": "$encrypted$",
       "is_superuser": true,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "last_login_map_results": []
     },
     {
@@ -72,7 +72,7 @@
       "last_name": "",
       "password": "$encrypted$",
       "is_superuser": true,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "last_login_map_results": []
     }
   ]

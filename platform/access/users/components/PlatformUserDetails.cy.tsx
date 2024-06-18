@@ -18,7 +18,7 @@ const mockUser = {
   last_login: '2023-11-01T20:08:07.211714Z',
   password: '$encrypted$',
   is_superuser: false,
-  is_system_auditor: true,
+  is_platform_auditor: true,
 };
 
 describe('Platform user details', () => {

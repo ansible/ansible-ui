@@ -210,7 +210,7 @@ export function usePlatformNavigation() {
 
     const platformAccessRouteChildren = [organizations, teams, users];
 
-    if (activePlatformUser?.is_superuser || activePlatformUser?.is_system_auditor) {
+    if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
       platformAccessRouteChildren.unshift(authenticators);
     }
 
@@ -218,7 +218,7 @@ export function usePlatformNavigation() {
       platformAccessRouteChildren.push(...roles);
     }
 
-    if (activePlatformUser?.is_superuser || activePlatformUser?.is_system_auditor) {
+    if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
       platformAccessRouteChildren.push(...applications);
     }
 

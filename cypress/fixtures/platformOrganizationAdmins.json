@@ -38,7 +38,7 @@
       "last_login": "2024-02-27T14:44:07.224776Z",
       "password": "$encrypted$",
       "is_superuser": true,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [],
       "last_login_results": {
         "1": {
@@ -83,7 +83,7 @@
       "last_login": "2024-02-27T16:29:36.043277Z",
       "password": "$encrypted$",
       "is_superuser": true,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [],
       "last_login_results": {}
     },
@@ -122,7 +122,7 @@
       "last_login": null,
       "password": "$encrypted$",
       "is_superuser": true,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [],
       "last_login_results": {}
     },
@@ -161,7 +161,7 @@
       "last_login": null,
       "password": "$encrypted$",
       "is_superuser": false,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [1],
       "last_login_results": {}
     }

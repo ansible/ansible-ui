@@ -34,7 +34,7 @@ export interface PlatformUser {
   last_name: string;
   password?: string;
   is_superuser: boolean;
-  is_system_auditor?: boolean; // This will eventually be removed from the API
+  is_platform_auditor?: boolean;
   last_login_map_results: [];
   last_login: string;
   organizations: number[];

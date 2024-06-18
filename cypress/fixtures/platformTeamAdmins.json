@@ -37,7 +37,7 @@
       "last_login": null,
       "password": "$encrypted$",
       "is_superuser": false,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [10],
       "last_login_results": {}
     },
@@ -75,7 +75,7 @@
       "last_login": null,
       "password": "$encrypted$",
       "is_superuser": false,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [],
       "last_login_results": {}
     },
@@ -113,7 +113,7 @@
       "last_login": null,
       "password": "$encrypted$",
       "is_superuser": false,
-      "is_system_auditor": false,
+      "is_platform_auditor": false,
       "organizations": [],
       "last_login_results": {}
     }
