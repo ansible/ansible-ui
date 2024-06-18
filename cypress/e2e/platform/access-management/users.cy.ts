@@ -110,7 +110,7 @@ describe('User Types - creates users of type normal, platform auditor and system
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it.skip('create a user of type platform auditor in the ui and delete it', () => {
+  it('create a user of type platform auditor in the ui and delete it', () => {
     const userName = `platform-e2e-auditor-user-${randomString(3).toLowerCase()}`;
     const firstName = `FirstName${randomString(2)}`;
     const lastName = `LastName ${randomString(2)}`;
