@@ -44,8 +44,8 @@ function createAndCheckHost(host_type: string, inventory: string) {
   return hostName;
 }
 
-function editHost(inventoryID: number, host_type: string, hostName: string) {
-  // function that editing host data
+function editHostListView(inventoryID: number, host_type: string, hostName: string) {
+  // function that editing host data from list view
   // this function cover both inventory host and stand alone host
   if (host_type === 'inventory_host') {
     cy.visit(
@@ -64,7 +64,26 @@ function editHost(inventoryID: number, host_type: string, hostName: string) {
   cy.hasDetail(/^Description$/, 'This is the description edited');
 }
 
-function deleteHost(inventoryID: number, host_type: string, hostName: string) {
+function editHostDetailsView(inventoryID: number, host_type: string, hostName: string) {
+  // function that editing host data
+  // this function cover both inventory host and stand alone host
+  let url = '';
+  if (host_type === 'inventory_host') {
+    url = `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`;
+  } else {
+    url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
+  }
+  cy.visit(url);
+  navigateToHost(url, hostName, '[data-cy="name-column-cell"] a');
+  cy.getByDataCy('edit-host').click();
+  cy.verifyPageTitle('Edit host');
+  cy.getByDataCy('description').clear().type('This is the description edited');
+  cy.getByDataCy('Submit').click();
+
+  cy.hasDetail(/^Description$/, 'This is the description edited');
+}
+
+function deleteHostListView(inventoryID: number, host_type: string, hostName: string) {
   // function for delete host
   // can use this for stand alon host and for invntory host
   // will delete and verify that all was deleted curectlly
@@ -83,6 +102,26 @@ function deleteHost(inventoryID: number, host_type: string, hostName: string) {
   cy.clickModalButton('Delete hosts');
   cy.contains('button', 'Close').click();
   cy.contains(/^No results found./);
+}
+
+function deleteHostDetailsView(inventoryID: number, host_type: string, hostName: string) {
+  // function for delete host
+  // can use this for stand alon host and for invntory host
+  // will delete and verify that all was deleted curectlly
+  let url = '';
+  if (host_type === 'inventory_host') {
+    url = `/infrastructure/inventories/inventory/${inventoryID}/hosts/?page=1&perPage=10&sort=name`;
+  } else {
+    url = '/infrastructure/hosts?page=1&perPage=10&sort=name';
+  }
+  cy.visit(url);
+
+  navigateToHost(url, hostName, '[data-cy="name-column-cell"] a');
+  cy.getByDataCy('actions-dropdown').click();
+  cy.getByDataCy('delete-host').click();
+  cy.clickModalConfirmCheckbox();
+  cy.clickModalButton('Delete hosts');
+  cy.contains(/^There are currently no hosts added to this inventory./);
 }
 
 function navigateToHost(url: string, name: string, data: string) {
@@ -165,17 +204,27 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickModalButton('Confirm');
       cy.contains('button', 'Close').click();
       cy.contains(group.name);
-      deleteHost(inventory.id, host_type, host.name);
+      deleteHostListView(inventory.id, host_type, host.name);
     });
   });
 }
 
-export function createAndEditAndDeleteHost(host_type: string, inventory: Inventory) {
-  //create
+export function createAndEditAndDeleteHost(host_type: string, inventory: Inventory, view: string) {
+  //this function will call create host and verify function
+  //base on view - list or details will call the right function to edit and delete the host
+
+  //create host
   const hostName = createAndCheckHost(host_type, inventory.name);
 
-  // edit
-  editHost(inventory.id, host_type, hostName);
-  // delete
-  deleteHost(inventory.id, host_type, hostName);
+  if (view === 'list') {
+    // edit
+    editHostListView(inventory.id, host_type, hostName);
+    // delete
+    deleteHostListView(inventory.id, host_type, hostName);
+  } else {
+    // edit
+    editHostDetailsView(inventory.id, host_type, hostName);
+    // delete
+    deleteHostDetailsView(inventory.id, host_type, hostName);
+  }
 }
