@@ -57,14 +57,10 @@ export function runCommand(params: {
 
         cy.getByDataCy('Submit').click();
 
-        // this needs wait otherwise the modal will not appear, not sure why
-        cy.wait(4000);
-        cy.get(`[aria-label="Options menu"]`).click();
+        cy.getByDataCy('credential').click();
+        cy.contains('button', 'Browse').click();
 
-        cy.get(`[aria-label="Type to filter"]`).type(credential.name);
-        cy.getByDataCy('apply-filter').click();
-
-        cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+        cy.filterTableByMultiSelect('name', [credential.name]);
         cy.get(`[data-cy="checkbox-column-cell"] input`).click();
 
         cy.contains('button', 'Confirm').click();
