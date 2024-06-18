@@ -47,11 +47,6 @@ export function PlatformSelectUsersStep() {
   const view = usePlatformMultiSelectListView<PlatformUser>(
     {
       url: gatewayV1API`/users/`,
-      queryParams: organization?.id
-        ? {
-            not__organizations: organization.id.toString(),
-          }
-        : undefined,
       toolbarFilters,
       tableColumns,
     },

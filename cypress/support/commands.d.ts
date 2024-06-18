@@ -1678,7 +1678,11 @@ declare global {
       associateUsersWithPlatformTeam(
         platformTeam: PlatformTeam,
         users: PlatformUser[]
-      ): Cypress.Chainable<void>;
+      ): Cypress.Chainable<PlatformTeam>;
+      associateUsersWithPlatformOrganization(
+        platformOrganization: PlatformOrganization,
+        users: PlatformUser[]
+      ): Cypress.Chainable<PlatformTeam>;
       createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;
       deletePlatformOrganization(
         organization: PlatformOrganization,

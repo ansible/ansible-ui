@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -10,17 +10,17 @@ import {
   PageLayout,
   PageNotFound,
   useGetPageUrl,
+  usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { postRequest, requestGet, requestPatch } from '../../../../frontend/common/crud/Data';
+import { postRequest } from '../../../../frontend/common/crud/Data';
 import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
@@ -28,6 +28,8 @@ import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { useDeleteRequest } from '../../../../frontend/common/crud/useDeleteRequest';
+import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 const UserType = {
   SystemAdministrator: 'System administrator',
@@ -35,12 +37,17 @@ const UserType = {
   PlatformAuditor: 'Platform auditor',
 };
 
-type IUserInput = PlatformUser & { userType: string; confirmPassword: string };
+type IUserInput = PlatformUser & {
+  userType: string;
+  confirmPassword: string;
+  organizations: number[];
+};
 
 export function CreatePlatformUser() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
+  const alertToaster = usePageAlertToaster();
   const postUserRequest = usePostRequest<PlatformUser>();
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
@@ -52,7 +59,7 @@ export function CreatePlatformUser() {
     setError,
     setFieldError
   ) => {
-    const { userType, confirmPassword, ...user } = userInput;
+    const { userType, confirmPassword, organizations, ...user } = userInput;
     user.is_superuser = userType === UserType.SystemAdministrator;
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
@@ -66,14 +73,31 @@ export function CreatePlatformUser() {
         object_id: null,
       });
     }
-    const teamIds = (user as unknown as { teams: number[] }).teams;
-    if (teamIds) {
-      for (const teamId of teamIds) {
-        const team = await requestGet<PlatformTeam>(gatewayV1API`/teams/${teamId.toString()}/`);
-        team.users.push(createdUser.id);
-        await requestPatch<PlatformTeam>(gatewayV1API`/teams/${teamId.toString()}/`, {
-          users: team.users,
-        });
+    if (organizations) {
+      for (const orgId of organizations) {
+        try {
+          await postRequest(
+            gatewayV1API`/organizations/${orgId.toString() ?? ''}/users/associate/`,
+            {
+              instances: [createdUser.id],
+            }
+          );
+        } catch (error) {
+          const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t('Failed to associate organization with id: {{organizationId}}.', {
+              organizationId: orgId,
+            }),
+            timeout: 5000,
+            children: (
+              <>
+                {genericErrors?.map((err) => err.message)}
+                {fieldErrors?.map((err) => err.message)}
+              </>
+            ),
+          });
+        }
       }
     }
     pageNavigate(PlatformRoute.UserDetails, { params: { id: createdUser.id } });
@@ -113,6 +137,7 @@ export function EditPlatformUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
+  const alertToaster = usePageAlertToaster();
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
   >(gatewayV1API`/role_definitions/`, {
@@ -124,13 +149,55 @@ export function EditPlatformUser() {
     isLoading,
     error,
   } = useGet<PlatformUser>(gatewayV1API`/users/${id.toString()}/`);
-
+  const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
+    gatewayV1API`/users/${user?.id?.toString() ?? ''}/organizations/`
+  );
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
   const deleteRequest = useDeleteRequest();
+  const getAddedAndRemovedOrganizationIds = useCallback(
+    (updatedOrgIds: number[]) => {
+      const addedOrganizationIds: number[] = [];
+      const removedOrganizationIds: number[] = [];
+      if (!organizationsData?.results?.length) {
+        addedOrganizationIds.push(...updatedOrgIds);
+      } else {
+        for (const updatedOrgId of updatedOrgIds) {
+          if (
+            !organizationsData?.results?.some((org) => org.id === updatedOrgId) &&
+            !addedOrganizationIds?.some(
+              (addedOrganizationId) => addedOrganizationId === updatedOrgId
+            )
+          ) {
+            addedOrganizationIds.push(updatedOrgId);
+          }
+        }
+        for (const organization of organizationsData.results) {
+          if (
+            !updatedOrgIds.some((updatedOrgId) => updatedOrgId === organization.id) &&
+            !removedOrganizationIds.some(
+              (removedOrganizationId) => removedOrganizationId === organization.id
+            )
+          ) {
+            removedOrganizationIds.push(organization.id);
+          }
+        }
+      }
+      return {
+        addedOrganizationIds,
+        removedOrganizationIds,
+      };
+    },
+    [organizationsData?.results]
+  );
+  const orgIds = useMemo(
+    () => organizationsData?.results?.map((organization) => organization.id),
+    [organizationsData?.results]
+  );
+
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
-      const { userType, confirmPassword, ...user } = userInput;
+      const { userType, confirmPassword, organizations, ...user } = userInput;
       user.is_superuser = userType === UserType.SystemAdministrator;
       if (userType === UserType.PlatformAuditor && !user.is_platform_auditor) {
         await postRequest(gatewayV1API`/role_user_assignments/`, {
@@ -159,10 +226,73 @@ export function EditPlatformUser() {
         }
       }
       user.is_platform_auditor = userType === UserType.PlatformAuditor;
+      const { addedOrganizationIds, removedOrganizationIds } =
+        getAddedAndRemovedOrganizationIds(organizations);
+      for (const addedOrganizationId of addedOrganizationIds) {
+        try {
+          await postRequest(
+            gatewayV1API`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
+            {
+              instances: [user.id],
+            }
+          );
+        } catch (error) {
+          const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t('Failed to associate organization with id: {{organizationId}}.', {
+              organizationId: addedOrganizationId,
+            }),
+            timeout: 5000,
+            children: (
+              <>
+                {genericErrors?.map((err) => err.message)}
+                {fieldErrors?.map((err) => err.message)}
+              </>
+            ),
+          });
+        }
+      }
+      for (const removedOrganizationId of removedOrganizationIds) {
+        try {
+          await postRequest(
+            gatewayV1API`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
+            {
+              instances: [user.id],
+            }
+          );
+        } catch (error) {
+          const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: t('Failed to disassociate organization with id: {{organizationId}}.', {
+              organizationId: removedOrganizationId,
+            }),
+            timeout: 5000,
+            children: (
+              <>
+                {genericErrors?.map((err) => err.message)}
+                {fieldErrors?.map((err) => err.message)}
+              </>
+            ),
+          });
+        }
+      }
+      user.is_platform_auditor = userType === UserType.PlatformAuditor;
       await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
       navigate(-1);
     },
-    [deleteRequest, getRequest, id, navigate, patchUser, platformAuditorRoleData?.results, t]
+    [
+      alertToaster,
+      deleteRequest,
+      getAddedAndRemovedOrganizationIds,
+      getRequest,
+      id,
+      navigate,
+      patchUser,
+      platformAuditorRoleData?.results,
+      t,
+    ]
   );
   const getPageUrl = useGetPageUrl();
 
@@ -178,6 +308,7 @@ export function EditPlatformUser() {
       : user.is_platform_auditor
         ? UserType.PlatformAuditor
         : UserType.NormalUser,
+    organizations: orgIds || [],
   };
 
   return (

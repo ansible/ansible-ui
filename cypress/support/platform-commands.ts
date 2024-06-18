@@ -5,7 +5,6 @@ import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganiza
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import './rest-commands';
-import { randomE2Ename } from './utils';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -115,8 +114,9 @@ Cypress.Commands.add(
 responsible for creating a new platform user. Here's a breakdown of what it does: */
 
 Cypress.Commands.add('createPlatformUser', (user?: Partial<PlatformUser>) => {
+  const userName = `platform-e2e-user-${randomString(2).toLowerCase()}`;
   cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
-    username: randomE2Ename(),
+    username: userName,
     password: randomString(10),
     ...user,
   });
@@ -141,8 +141,9 @@ Cypress.Commands.add(
 /* This `Cypress.Commands.add('createPlatformTeam', ...)` function is a custom Cypress command that is
 responsible for creating a new platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add('createPlatformTeam', function (platformTeam: Partial<PlatformTeam>) {
+  const teamName = `Platform E2E Team-${randomString(3).toLowerCase()}`;
   cy.requestPost<Partial<PlatformTeam>>(gatewayV1API`/teams/`, {
-    name: randomE2Ename(),
+    name: teamName,
     ...platformTeam,
   });
 });
@@ -161,6 +162,17 @@ Cypress.Commands.add(
     if (platformTeam?.id) {
       cy.requestDelete(gatewayV1API`/teams/${platformTeam.id.toString()}/`, options);
     }
+  }
+);
+Cypress.Commands.add(
+  'associateUsersWithPlatformOrganization', //
+  (platformOrganization: PlatformOrganization, users: PlatformUser[]) => {
+    cy.requestPost(
+      gatewayV1API`/organizations/${platformOrganization.id.toString()}/users/associate/`,
+      {
+        instances: users.map((user) => user.id),
+      }
+    );
   }
 );
 
