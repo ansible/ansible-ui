@@ -48,7 +48,7 @@ describe('Create rulebook activation ', () => {
 
   it('Component renders', () => {
     cy.mount(<CreateRulebookActivation />);
-    cy.verifyPageTitle('Create Rulebook Activation');
+    cy.verifyPageTitle('Create rulebook activation');
   });
 
   it('Validates properly', () => {

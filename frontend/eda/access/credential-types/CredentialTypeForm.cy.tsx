@@ -58,7 +58,7 @@ describe('CredentialTypeForm.cy.ts', () => {
 
     it('should preload the form with current values', () => {
       cy.mount(<EditCredentialType />);
-      cy.verifyPageTitle('Edit Credential Type');
+      cy.verifyPageTitle('Edit Sample Credential Type');
       cy.get('[data-cy="name"]').should('have.value', 'Sample Credential Type');
       cy.get('[data-cy="description"]').should('have.value', 'This is a sample credential');
       cy.dataEditorShouldContain('[data-cy="inputs"]', credentialType.inputs);

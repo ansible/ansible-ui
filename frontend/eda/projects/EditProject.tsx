@@ -281,10 +281,10 @@ export function CreateProject() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Project')}
+        title={t('Create project')}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
-          { label: t('Create Project') },
+          { label: t('Create project') },
         ]}
       />
       <EdaPageForm
