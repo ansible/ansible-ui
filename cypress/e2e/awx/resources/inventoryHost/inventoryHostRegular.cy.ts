@@ -56,7 +56,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     //3) Verify 2 hosts exists in inventory
     //4) Bulk delete hosts from list view using select all option
     //5) Verify no hosts exists in inventory
-    testHostBulkDelete('testHostBulkDelete', inventory);
+    testHostBulkDelete('inventory_host', inventory);
   });
 
   it.skip("can view a host's facts on the facts tab of a host inside an inventory", () => {
