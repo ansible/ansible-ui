@@ -1,3 +1,4 @@
+// Flaky watch
 Cypress.Commands.add(
   'setTableView',
   (
