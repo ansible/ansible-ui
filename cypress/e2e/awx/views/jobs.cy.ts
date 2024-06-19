@@ -57,7 +57,7 @@ describe('Jobs: List', () => {
     cy.clearAllFilters();
   });
   // FLAKY_06_13_2024
-  it.skip('can relaunch the job and navigate to job output', () => {
+  it('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = job.id ? job.id.toString() : '';
     const jobName = job.name ? job.name : '';
@@ -68,7 +68,7 @@ describe('Jobs: List', () => {
   });
 
   // FLAKY_06_19_2024
-  it.skip('can render the toolbar and row actions', () => {
+  it('can render the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
     cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-v5-c-dropdown__menu').within(() => {
@@ -149,7 +149,7 @@ describe('Jobs: Delete', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
   // FLAKY_06_13_2024
-  it.skip('can delete a job from the jobs list row', () => {
+  it('can delete a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -178,7 +178,7 @@ describe('Jobs: Delete', () => {
     );
   });
   // FLAKY_06_13_2024
-  it.skip('can delete a job from the jobs list toolbar', () => {
+  it('can delete a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -244,7 +244,7 @@ describe('Jobs: Output and Details Screen', () => {
     cy.getByDataCy('type').should('contain', 'Management job');
   });
   // FLAKY_06_13_2024
-  it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
+  it('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
     const projectName = 'E2E Project Jobs ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
