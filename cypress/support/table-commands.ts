@@ -91,12 +91,17 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('filterTableByMultiSelect', (filterDataCy: string, optionLabels: string[]) => {
-  cy.selectTableFilter(filterDataCy);
-  cy.multiSelectByDataCy('filter-input', optionLabels);
+Cypress.Commands.add(
+  'filterTableByMultiSelect',
+  (filterDataCy: string, optionLabels: string[], skipWaitForReload?: 'SkipWaitForReload') => {
+    cy.selectTableFilter(filterDataCy);
+    cy.multiSelectByDataCy('filter-input', optionLabels);
 
-  cy.get(`[aria-label="Simple table"] tr`).should('have.length', optionLabels.length + 1);
-});
+    if (skipWaitForReload === undefined) {
+      cy.get(`[aria-label="Simple table"] tr`).should('have.length', optionLabels.length + 1);
+    }
+  }
+);
 
 Cypress.Commands.add(
   'getTableRow',

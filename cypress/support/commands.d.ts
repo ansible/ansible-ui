@@ -369,9 +369,15 @@ declare global {
        * @example
        * ```
        * cy.filterTableByMultiSelect('status', ["Success", "Pending"]);
+       *
+       * It is also waiting for N number of rows unless SkipWaitForReload is set to 'SkipWaitForReload'
        * ```
        */
-      filterTableByMultiSelect(filterDataCy: string, optionLabels: string[]): Chainable<void>;
+      filterTableByMultiSelect(
+        filterDataCy: string,
+        optionLabels: string[],
+        skipWaitForReload?: 'SkipWaitForReload'
+      ): Chainable<void>;
 
       /**
        * Gets a table row containing the specified text for the specified column.
