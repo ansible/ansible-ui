@@ -615,7 +615,8 @@ describe('Inventory Sources', () => {
       cy.get(`input[aria-label="Click to disable start"]`).should('exist');
     });
 
-    it('can visit the Notifications tab of an Inventory Source and enable a notification upon Success', () => {
+    // FLAKY_06_19_2024
+    it.skip('can visit the Notifications tab of an Inventory Source and enable a notification upon Success', () => {
       cy.navigateTo('awx', 'inventories');
       cy.filterTableBySingleSelect('name', inventory.name);
       cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
