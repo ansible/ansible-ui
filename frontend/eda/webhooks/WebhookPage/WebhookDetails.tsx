@@ -64,10 +64,10 @@ export function WebhookDetails() {
         <PageDetail label={t('Additional data headers')}>
           {webhook?.additional_data_headers || ''}
         </PageDetail>
-        <PageDetail label={t('Additional data headers')}>
-          {webhook?.additional_data_headers || ''}
-        </PageDetail>
         <PageDetail label={t('Events received')}>{webhook?.events_received}</PageDetail>
+        <PageDetail label={t('Last event received')}>
+          {webhook?.last_event_received_at ? formatDateString(webhook.last_event_received_at) : ''}
+        </PageDetail>
         <PageDetail label={t('Created')}>
           {webhook?.created_at ? formatDateString(webhook.created_at) : ''}
         </PageDetail>

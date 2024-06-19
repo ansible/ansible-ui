@@ -48,7 +48,7 @@ function WebhookInputs() {
       setValue('webhook_type', webhookType?.kind);
     };
     resetCredential();
-  }, [typeId, setValue, webhookType.name, webhookType?.kind]);
+  }, [typeId, setValue, webhookType?.kind]);
 
   return (
     <>
@@ -80,17 +80,20 @@ function WebhookInputs() {
         name="eda_credential_id"
         type={webhookType?.kind || ''}
       />
-      <PageFormCheckbox<IEdaWebhookCreate>
-        label={t`Test mode`}
-        labelHelp={t('Test mode.')}
-        name="test_mode"
-      />
       <PageFormTextInput<IEdaWebhookCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
         label={t('Additional data headers')}
         placeholder={t('Enter additional data headers')}
-        maxLength={150}
+        labelHelpTitle={t('Additional data headers')}
+        labelHelp={t(
+          'A comma separated HTTP header keys that you want to include in the event payload.'
+        )}
+      />
+      <PageFormCheckbox<IEdaWebhookCreate>
+        label={t`Test mode`}
+        labelHelp={t('Test mode.')}
+        name="test_mode"
       />
     </>
   );
@@ -122,17 +125,20 @@ function WebhookEditInputs() {
         name="eda_credential_id"
         type={webhookType}
       />
-      <PageFormCheckbox<IEdaWebhookCreate>
-        label={t`Test mode`}
-        labelHelp={t('Test mode.')}
-        name="test_mode"
-      />
       <PageFormTextInput<IEdaWebhookCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
         label={t('Additional data headers')}
         placeholder={t('Enter additional data headers')}
-        maxLength={150}
+        labelHelpTitle={t('Additional data headers')}
+        labelHelp={t(
+          'A comma separated HTTP header keys that you want to include in the event payload.'
+        )}
+      />
+      <PageFormCheckbox<IEdaWebhookCreate>
+        label={t`Test mode`}
+        labelHelp={t('Test mode.')}
+        name="test_mode"
       />
     </>
   );
