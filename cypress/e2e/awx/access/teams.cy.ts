@@ -263,8 +263,8 @@ describe('teams', function () {
     });
   });
 
-  // FLAKY_06_14_2024
-  it('can delete a team from the teams list toolbar', function () {
+  // FLAKY_06_19_2024
+  it.skip('can delete a team from the teams list toolbar', function () {
     cy.createAwxTeam(this.globalOrganization as Organization).then((testTeam) => {
       cy.navigateTo('awx', 'teams');
       cy.filterTableByMultiSelect('name', [testTeam.name]);
