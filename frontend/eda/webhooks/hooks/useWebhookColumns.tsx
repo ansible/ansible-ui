@@ -23,9 +23,19 @@ export function useWebhookColumns() {
         list: 'name',
       },
       {
+        header: t('Events received'),
+        type: 'count',
+        value: (webhook) => webhook?.events_received ?? 0,
+      },
+      {
+        header: t('Last event received'),
+        type: 'datetime',
+        value: (webhook) => webhook?.last_event_received_at,
+      },
+      {
         header: t('Created'),
         type: 'datetime',
-        value: (instance) => instance.created_at,
+        value: (webhook) => webhook.created_at,
       },
       {
         header: t('URL'),
@@ -38,7 +48,7 @@ export function useWebhookColumns() {
       {
         header: t('Last modified'),
         type: 'datetime',
-        value: (instance) => instance.modified_at,
+        value: (webhook) => webhook.modified_at,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
