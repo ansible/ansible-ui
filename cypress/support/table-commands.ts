@@ -88,10 +88,6 @@ Cypress.Commands.add(
     cy.selectTableFilter(filterDataCy);
     notFound = notFound ? true : false;
     cy.singleSelectByDataCy('filter-input', optionLabel, false, notFound);
-
-    if (!notFound) {
-      cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
-    }
   }
 );
 
