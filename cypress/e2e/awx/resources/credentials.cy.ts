@@ -83,7 +83,7 @@ describe('Credentials', () => {
       cy.contains('Vault Password').should('be.visible');
       cy.get('[data-cy="vault-password"]').contains('Encrypted');
       cy.get('[data-cy="edit-credential"]').click();
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       cy.get('[data-cy="vault-id"]').should('have.attr', 'disabled');
       cy.get('[data-cy="vault-password"]').should('be.visible');
       cy.get('[data-cy="vault-password"]').then(($input) => {
@@ -157,7 +157,7 @@ describe('Credentials', () => {
       cy.contains('Password').should('be.visible');
       cy.get('[data-cy="password"]').contains('Prompt on launch');
       cy.get('[data-cy="edit-credential"]').click();
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       cy.get('[data-cy="ask_password"]').uncheck();
       cy.get('[data-cy="password"]').type('password');
       cy.clickButton(/^Save credential$/);
@@ -220,7 +220,7 @@ describe('Credentials', () => {
       cy.contains('Organization').should('be.visible');
       cy.contains(organization.name);
       cy.get('[data-cy="edit-credential"]').click();
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       const ModifiedCredentialName = credentialName + ' - edited';
       cy.get('[data-cy="name"]').type(ModifiedCredentialName);
       cy.get('[data-cy="username"]').should('be.visible');
@@ -261,7 +261,7 @@ describe('Credentials', () => {
       cy.get(`[data-cy="row-id-${credential.id}"]`).within(() => {
         cy.get('[data-cy="edit-credential"]').click();
       });
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       cy.get('[data-cy="name"]').clear().type(`${credential.name} - edited`);
       cy.clickButton(/^Save credential$/);
       cy.clearAllFilters();
@@ -365,7 +365,7 @@ describe('Credentials', () => {
         disableFilter: true,
       });
       cy.clickButton(/^Edit credential$/);
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       cy.get('[data-cy="name"]')
         .clear()
         .type(credential.name + '-edited');

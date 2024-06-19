@@ -216,7 +216,7 @@ describe('Execution Environments: Edit and Bulk delete', () => {
     cy.clickTableRowLink('name', executionEnvironment.name, { disableFilter: true });
     cy.verifyPageTitle(executionEnvironment.name);
     cy.getByDataCy('edit-execution-environment').click();
-    cy.verifyPageTitle('Edit Execution Environment');
+    cy.verifyPageTitle(`Edit ${executionEnvironment.name}`);
     cy.url().then((currentUrl) => {
       expect(
         currentUrl.includes(
@@ -248,7 +248,7 @@ describe('Execution Environments: Edit and Bulk delete', () => {
       inKebab: false,
       disableFilter: true,
     });
-    cy.verifyPageTitle('Edit Execution Environment');
+    cy.verifyPageTitle(`Edit ${executionEnvironment.name}`);
     cy.url().then((currentUrl) => {
       expect(
         currentUrl.includes(
