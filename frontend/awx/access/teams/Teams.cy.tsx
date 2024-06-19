@@ -46,7 +46,7 @@ describe('Teams.cy.ts', () => {
         cy.contains(/^Modified by$/).should('be.visible');
         cy.contains('button', /^Organization$/).click();
       });
-      cy.filterTableByMultiSelect('organization', ['Default']);
+      cy.filterTableByMultiSelect('organization', ['Default'], 'SkipWaitForReload');
       // A network request is made based on the filter selected on the UI
       cy.wait('@orgFilterRequest');
       // Clear filter
