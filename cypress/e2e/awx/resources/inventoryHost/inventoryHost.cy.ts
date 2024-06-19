@@ -1,3 +1,4 @@
+//......this file is here to make sure we cover everything in it in the other files in this folder.....//
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
@@ -41,7 +42,7 @@ describe('Inventory Host Tab Tests', () => {
     // cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+  it.skip('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
     // use checkHostGroup function in order to test inventory host group
     // this kind === ''
     // the test is checking: create, verify, multi assosiate and disassosiate of groups (using bluk)
@@ -49,7 +50,7 @@ describe('Inventory Host Tab Tests', () => {
     checkHostGroup('inventory_host', organization);
   });
 
-  it('can create, edit and delete inventory host', () => {
+  it.skip('can create, edit and delete inventory host', () => {
     // use createAndEditAndDeleteHost function in order to test inventory hosts basic functions
     // after navigating to the right url
     // the test covers create, verify, edit and delete of hosts form inventory
