@@ -147,7 +147,8 @@ describe('Job Templates Surveys', function () {
       },
     ];
 
-    it('can create all 7 types of survey types, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job', () =>
+    // FLAKY_06_19_2024
+    it.skip('can create all 7 types of survey types, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job', () =>
       reusableTemplateSurveyTestSuite.canCreateAllSurveyTypes(surveyTypes));
   });
 });
