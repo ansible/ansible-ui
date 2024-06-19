@@ -66,20 +66,54 @@ export function SchedulePage(props: {
   }, [isInventorySource, params.id, abortController.signal]);
   const breadCrumbs = useMemo(() => {
     const completedBreadcrumbs = props.initialBreadCrumbs.map((route) => {
+      const isInventoryRoute = route.to.includes('-inventory-');
+      const inventoryType = inventory?.kind === '' ? 'inventory' : inventory?.kind;
+
+      const allParams = {
+        id: isInventoryRoute ? inventory?.id : resource?.id,
+        inventory_type: isInventoryRoute ? inventoryType : undefined,
+        source_id: isInventoryRoute ? resource?.id : undefined,
+      };
+
       if (route.id === 'data') {
         return {
           label: `${resource?.name}`,
-          to: getPageUrl(route.to, { params: { id: resource?.id } }),
+          to: getPageUrl(route.to, {
+            params: allParams,
+          }),
         };
       }
-      if (route.label === 'inventory' && isInventorySource) {
+      if (route.id === 'inventory' && isInventorySource) {
         return {
           label: `${inventory?.name}`,
-          to: getPageUrl(route.to, { params: { id: inventory?.id } }),
+          to: getPageUrl(route.to, {
+            params: {
+              id: inventory?.id,
+              inventory_type: isInventoryRoute ? inventoryType : undefined,
+              source_id: isInventoryRoute ? resource?.id : undefined,
+            },
+          }),
         };
       }
       if (route.id === 'schedules') {
-        return { label: route.label, to: getPageUrl(route.to, { params: { id: resource?.id } }) };
+        return {
+          label: route.label,
+          to: getPageUrl(route.to, {
+            params: allParams,
+          }),
+        };
+      }
+
+      if (route.id === 'inventory_sources') {
+        return {
+          label: route.label,
+          to: getPageUrl(route.to, {
+            params: {
+              id: inventory?.id,
+              inventory_type: isInventoryRoute ? inventoryType : undefined,
+            },
+          }),
+        };
       }
       return { label: route.label, to: getPageUrl(route.to) };
     });
@@ -91,6 +125,7 @@ export function SchedulePage(props: {
     resource?.name,
     inventory?.id,
     inventory?.name,
+    inventory?.kind,
     isInventorySource,
     props.initialBreadCrumbs,
     schedule?.name,
