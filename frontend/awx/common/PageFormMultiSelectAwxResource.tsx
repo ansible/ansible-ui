@@ -164,8 +164,9 @@ function SelectResource<
   const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
 
   const queryParams = useMemo(() => {
-    const query: QueryParams = {};
+    let query: QueryParams = {};
     urlSearchParams.forEach((value, key) => (query[key] = value));
+    query = { ...query, ...props.queryParams };
     return query;
   }, [urlSearchParams]);
 
