@@ -12,7 +12,7 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
       cy.verifyPageTitle('Authentication');
       // creates a new Google OAuth2 authenticator
       cy.containsBy('a', 'Create authentication').click();
-      cy.selectAuthenticationType('google-oauth2');
+      cy.selectAuthenticationType('google-oauth');
       cy.clickButton('Next');
       cy.get('[data-cy="name"]').type(googleAuthenticator);
       cy.get('[data-cy="configuration-input-KEY"]').type(googleData.oauth2Key);

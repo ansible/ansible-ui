@@ -17,7 +17,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
 
       // Authentication Wizard - Authentication Type Step
       cy.verifyPageTitle('Create Authentication');
-      cy.selectAuthenticationType('tacacs');
+      cy.selectAuthenticationType('tacacs+');
       cy.clickButton('Next');
 
       // Authentication Wizard - Authentication Details Step
