@@ -62,17 +62,17 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //'confirm that edit host button is missing from the host tab list of an inventory'
     //navigate to smart inventory host list
     //verify edit button is missing
-    testMissingButton('inventory_host', inventory, 'list', 'edit-host');
+    testMissingButton('inventory_host', inventory, 'edit-host');
 
     //'confirm that delete host button is missing from the host tab list of an inventory', () => {
     //navigate to smart inventory host list
     //verify action dropdown contain only delete host button is missing
     const missingValue = `[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`;
-    testMissingButton('inventory_host', inventory, 'list', missingValue);
+    testMissingButton('inventory_host', inventory, missingValue);
 
     //'confirm that facts tab is missing from a host inside an inventory', () => {
     //navigate to constructed inventory host list, get to host
     //verify facts tab is missing
-    testMissingTab('inventory_host', inventory, 'list', 'Facts');
+    testMissingTab('inventory_host', inventory, 'Facts');
   });
 });
