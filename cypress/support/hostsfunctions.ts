@@ -59,15 +59,15 @@ function createHost(host_type: string, inventoryID: number) {
   }
 }
 
-function editHost(invenotryName: string, host_type: string, hostName: string, view: string) {
+function editHost(inventoryName: string, host_type: string, hostName: string, view: string) {
   // function that editing host data from list or details views
   // this function cover both inventory host and stand alone host
   if (view === 'list') {
-    navigateToBaseView(host_type, invenotryName);
+    navigateToBaseView(host_type, inventoryName);
     cy.filterTableByMultiSelect('name', [hostName]);
   } else {
     // for details view
-    navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', invenotryName);
+    navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', inventoryName);
   }
 
   cy.getByDataCy('edit-host').click();
@@ -77,11 +77,11 @@ function editHost(invenotryName: string, host_type: string, hostName: string, vi
   cy.hasDetail(/^Description$/, 'This is the description edited');
 }
 
-function deleteHostListView(invenotryName: string, host_type: string, hostName: string) {
+function deleteHostListView(inventoryName: string, host_type: string, hostName: string) {
   // function for delete host
   // can use this for stand alon host and for invntory host
   // will delete and verify that all was deleted curectlly
-  navigateToBaseView(host_type, invenotryName);
+  navigateToBaseView(host_type, inventoryName);
   cy.filterTableByMultiSelect('name', [hostName]);
   cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
   cy.getByDataCy('delete-host').click();
@@ -91,17 +91,31 @@ function deleteHostListView(invenotryName: string, host_type: string, hostName: 
   cy.contains(/^No results found./);
 }
 
-function deleteHostDetailsView(invenotryName: string, host_type: string, hostName: string) {
+function deleteHostDetailsView(inventoryName: string, host_type: string, hostName: string) {
   // function for delete host
   // can use this for stand alon host and for invntory host
   // will delete and verify that all was deleted curectlly
 
-  navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', invenotryName);
+  navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', inventoryName);
   cy.getByDataCy('actions-dropdown').click();
   cy.getByDataCy('delete-host').click();
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Delete hosts');
   cy.contains(/^There are currently no hosts added to this inventory./);
+}
+
+function deleteInventoryHosts(inventory: Inventory) {
+  //function to delete all hosts from inventory
+  navigateToBaseView('inventory_host', inventory.name);
+  cy.getByDataCy('select-all').click();
+  cy.clickToolbarKebabAction('delete-selected-hosts');
+  cy.contains('Permanently delete hosts');
+  cy.clickModalConfirmCheckbox();
+  cy.contains('button', 'Delete hosts').click();
+  cy.contains('button', 'Close').click();
+  cy.getByDataCy('empty-state-title').contains(
+    /^There are currently no hosts added to this inventory./
+  );
 }
 
 function navigateToHost(host_type: string, name: string, data: string, inventoryName: string) {
@@ -191,7 +205,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickModalButton('Confirm');
       cy.contains('button', 'Close').click();
       cy.contains(group.name);
-      deleteHostListView(inventory.name, host_type, host.name);
+      deleteInventoryHosts(inventory);
     });
   });
 }
@@ -238,4 +252,31 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
       /^There are currently no hosts added to this inventory./
     );
   }
+}
+
+export function testMissingButton(
+  host_type: string,
+  inventory: Inventory,
+  view: string,
+  missing: string
+) {
+  //navigate to list view and check host existing
+  //in case this should be done to detailes view the only thing needed is to add click on host name
+  navigateToBaseView(host_type, inventory.name);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+  cy.contains('button', missing).should('not.exist');
+}
+
+export function testMissingTab(
+  host_type: string,
+  inventory: Inventory,
+  view: string,
+  missing: string
+) {
+  //navigate to list view and check host existing
+  //get to host to verify tab is missing
+  navigateToBaseView(host_type, inventory.name);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+  cy.getByDataCy('name-column-cell').contains('E2E Host').click();
+  cy.contains('tab', missing).should('not.exist');
 }

@@ -2,7 +2,8 @@
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-//import { createAndEditAndDeleteHost} from '../../../support/hostsfunctions';
+import { testMissingButton, testMissingTab } from '../../../../support/hostsfunctions';
+//import { testNotification } from '../../administration/notifiers/notifiersSharedFunctions';
 
 describe('Inventory Host Tab Tests for smart inventory', () => {
   let organization: Organization;
@@ -16,9 +17,6 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
       cy.createInventoryHost(organization, 'smart').then((result) => {
         const { inventory: inv } = result;
         inventory = inv;
-      });
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
       });
     });
   });
@@ -60,9 +58,22 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //5) Cancel the job and assert that it has been canceled
   });
 
-  it.skip('confirm that edit host button is missing from the host tab list of an inventory', () => {});
+  it('confirm that edit host button is missing from the host tab list of an inventory', () => {
+    //navigate to smart inventory host list
+    //verify edit button is missing
+    testMissingButton('inventory_host', inventory, 'list', 'edit-host');
+  });
 
-  it.skip('confirm that delete host button is missing from the host tab list of an inventory', () => {});
+  it('confirm that delete host button is missing from the host tab list of an inventory', () => {
+    //navigate to smart inventory host list
+    //verify action dropdown contain only delete host button is missing
+    const missingValue = `[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`;
+    testMissingButton('inventory_host', inventory, 'list', missingValue);
+  });
 
-  it.skip('confirm that facts tab is missing from a host inside an inventory', () => {});
+  it('confirm that facts tab is missing from a host inside an inventory', () => {
+    //navigate to constructed inventory host list, get to host
+    //verify facts tab is missing
+    testMissingTab('inventory_host', inventory, 'list', 'Facts');
+  });
 });
