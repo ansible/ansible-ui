@@ -61,7 +61,12 @@ export function WebhookDetails() {
         <PageDetail label={t('Url')}>
           <CopyCell text={webhook?.url || ''} />
         </PageDetail>
-        <PageDetail label={t('Additional data headers')}>
+        <PageDetail
+          label={t('Additional data headers')}
+          helpText={t(
+            'A comma separated HTTP header keys that you want to include in the event payload.'
+          )}
+        >
           {webhook?.additional_data_headers || ''}
         </PageDetail>
         <PageDetail label={t('Events received')}>{webhook?.events_received}</PageDetail>
