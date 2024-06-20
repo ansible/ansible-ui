@@ -56,7 +56,13 @@ export function PlatformApp() {
   }, [refreshSession, session]);
 
   const debouceRefreshSession = useMemo(
-    () => debounce(refreshSession, 60 * 1000),
+    () =>
+      debounce(() => {
+        void refreshSession().catch(() => {
+          // Ignore errors as the user may have logged out
+          // and this is just a passive attempt to refresh the session
+        });
+      }, 60 * 1000),
     [refreshSession]
   );
   useEffect(() => {
