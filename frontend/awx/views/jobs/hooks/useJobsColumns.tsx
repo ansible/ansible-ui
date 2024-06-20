@@ -18,12 +18,13 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { getLaunchedByDetails, getScheduleUrl } from '../jobUtils';
+import { useGetLaunchedByDetails, useGetScheduleUrl } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const getScheduleUrl = useGetScheduleUrl();
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventory_sources/`);
   const inventorySourceChoices = useMemo(
@@ -39,6 +40,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
   );
 
   const getJobOutputUrl = useGetJobOutputUrl();
+  const getLaunchedByDetails = useGetLaunchedByDetails();
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [
@@ -147,11 +149,13 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Schedule'),
-        cell: (job: UnifiedJob) => (
-          <Link to={job.summary_fields?.schedule ? getScheduleUrl(job) ?? '' : ''}>
-            {job.summary_fields?.schedule?.name}
-          </Link>
-        ),
+        cell: (job: UnifiedJob) => {
+          return (
+            <Link to={job.summary_fields?.schedule ? getScheduleUrl(job) ?? '' : ''}>
+              {job.summary_fields?.schedule?.name}
+            </Link>
+          );
+        },
         value: (job: UnifiedJob) => job.summary_fields?.schedule?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',
@@ -380,7 +384,15 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         dashboard: 'hidden',
       },
     ],
-    [getJobOutputUrl, getPageUrl, inventorySourceChoices, options?.disableLinks, t]
+    [
+      getJobOutputUrl,
+      getPageUrl,
+      inventorySourceChoices,
+      options?.disableLinks,
+      t,
+      getLaunchedByDetails,
+      getScheduleUrl,
+    ]
   );
   return tableColumns;
 }
