@@ -34,9 +34,8 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
   });
 
   after(() => {
-    /*cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });*/
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   //tests
