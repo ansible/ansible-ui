@@ -54,10 +54,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     cy.contains('a', inventory.name).click();
     cy.contains(`a[role="tab"]`, 'Hosts').click();
 
-    /*cy.intercept('get', awxAPI`/inventories/${inventory.id.toString()}/hosts/?name=${host.name}*`).as('getHost');
-    cy.filterTableByMultiSelect('name', [inventory.name]);
-    cy.wait('@getInventories');*/
-
     cy.getByDataCy('run-command').click();
 
     runCommand({
