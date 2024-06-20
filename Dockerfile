@@ -21,7 +21,11 @@ COPY --from=certificate /certs/cert.key /certs/cert.key
 RUN chmod g+rwx /etc/nginx/nginx.conf /etc/nginx/conf.d /etc/nginx/conf.d/default.conf /var/cache/nginx /var/run /var/log/nginx /etc/ssl /certs
 ENV SSL_CERTIFICATE=/certs/cert.pem
 ENV SSL_CERTIFICATE_KEY=/certs/cert.key
+ENV SSL_CLIENT_CERTIFICATE=/certs/CA.pem
+ENV EDA_WEBHOOK_SERVER=${EDA_WEBHOOK_SERVER:-http://example.com}
+ENV EDA_SERVER_UUID=${EDA_SERVER_UUID:-sample_uuid}
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
+COPY CA.pem /certs/CA.pem
 EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"] 
 
@@ -37,7 +41,5 @@ COPY /build/hub /usr/share/nginx/html
 
 # eda-ui
 FROM base AS eda-ui
-ENV EDA_WEBHOOK_SERVER=${EDA_WEBHOOK_SERVER:-http://example.com}
-ENV EDA_SERVER_UUID=${EDA_SERVER_UUID:-sample_uuid}
 COPY /nginx/eda.conf /etc/nginx/templates/default.conf.template
 COPY /build/eda /usr/share/nginx/html
