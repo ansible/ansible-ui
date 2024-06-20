@@ -1,14 +1,10 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Credentials- Create, Edit, Delete', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can create a container registry credential, and assert the information showing on the details page', () => {
     const name = 'E2E Credential ' + randomString(4);
     cy.navigateTo('eda', 'credentials');

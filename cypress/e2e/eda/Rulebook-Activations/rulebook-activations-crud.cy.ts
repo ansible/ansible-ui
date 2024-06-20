@@ -15,7 +15,6 @@ describe('EDA rulebook activations - Create', () => {
   let edaAwxToken: EdaControllerToken;
 
   before(() => {
-    cy.edaLogin();
     cy.createEdaProject().then((project) => {
       edaProject = project;
       cy.waitEdaProjectSync(project);

@@ -2,10 +2,6 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 describe('EDA decision environment- Create, Edit, Delete', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can render the decision environments list page', () => {
     cy.navigateTo('eda', 'decision-environments');
     cy.verifyPageTitle('Decision Environments');

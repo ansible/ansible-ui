@@ -15,8 +15,6 @@ describe.skip('My imports', () => {
   };
 
   before(() => {
-    cy.hubLogin();
-
     cy.createNamespace(validCollection.namespace);
     cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
 

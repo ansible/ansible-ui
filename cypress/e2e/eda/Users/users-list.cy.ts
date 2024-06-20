@@ -3,10 +3,6 @@
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users List', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('renders the Users list page', () => {
     cy.navigateTo('eda', 'users');
     cy.verifyPageTitle('Users');

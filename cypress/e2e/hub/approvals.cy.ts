@@ -31,7 +31,6 @@ tag(['flaky'], () => {
     });
 
     beforeEach(() => {
-      cy.hubLogin();
       cy.navigateTo('hub', Approvals.url);
       cy.verifyPageTitle(Approvals.title);
       cy.contains('button', 'Clear all filters').click();

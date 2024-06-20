@@ -5,10 +5,6 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('AWX Overview', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
     cy.navigateTo('awx', 'overview');
     cy.get('.pf-v5-c-banner')

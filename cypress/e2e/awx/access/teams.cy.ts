@@ -7,10 +7,6 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 describe('Teams: Create', () => {
   let organization: Organization;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;

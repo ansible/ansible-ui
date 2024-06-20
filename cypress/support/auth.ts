@@ -14,6 +14,38 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
   });
 });
 
+Cypress.Commands.add('login', () => {
+  const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  switch (devBaseUrlPort) {
+    case '4101':
+      cy.awxLogin();
+      cy.createGlobalOrganization();
+      cy.createGlobalProject();
+      break;
+    case '4102':
+      cy.hubLogin();
+      break;
+    case '4103':
+      cy.edaLogin();
+      break;
+  }
+});
+
+Cypress.Commands.add('logout', () => {
+  const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  switch (devBaseUrlPort) {
+    case '4101':
+      cy.awxLogout();
+      break;
+    case '4102':
+      cy.hubLogout();
+      break;
+    case '4103':
+      cy.edaLogout();
+      break;
+  }
+});
+
 Cypress.Commands.add('awxLogin', () => {
   cy.requiredVariablesAreSet(['AWX_SERVER', 'AWX_USERNAME', 'AWX_PASSWORD']);
   cy.session(

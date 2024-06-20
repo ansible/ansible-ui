@@ -7,8 +7,6 @@ describe('Notifications: List View', () => {
   let organization: Organization;
 
   before(() => {
-    cy.awxLogin();
-
     cy.createAwxOrganization(randomE2Ename()).then((org) => {
       organization = org;
     });

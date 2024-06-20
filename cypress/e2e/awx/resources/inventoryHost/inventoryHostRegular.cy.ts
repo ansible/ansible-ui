@@ -2,8 +2,8 @@ import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 import {
-  createAndEditAndDeleteHost,
   checkHostGroup,
+  createAndEditAndDeleteHost,
   testHostBulkDelete,
 } from '../../../../support/hostsfunctions';
 
@@ -13,7 +13,6 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   let user: AwxUser;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {

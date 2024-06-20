@@ -1,8 +1,4 @@
 describe('Eda Role Details', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('role details pages should display role name, description, and permissions', () => {
     cy.getEdaRoles().then((roles) => {
       roles.forEach((role) => {

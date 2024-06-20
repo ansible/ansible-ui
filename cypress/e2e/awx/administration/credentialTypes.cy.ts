@@ -1,7 +1,7 @@
 import { randomString } from '../../../../framework/utils/random-string';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Credential Types', () => {
@@ -10,10 +10,6 @@ describe('Credential Types', () => {
   let inputCredType: string;
   let injectorCredType: string;
   let credential: Credential;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   describe('Credential Types- List Actions', () => {
     const credentialName = 'E2E Custom Credential ' + randomString(4);
@@ -24,7 +20,7 @@ describe('Credential Types', () => {
         cy.createAWXCredential({
           name: credentialName,
           kind: 'gce',
-          organization: (this.globalOrganization as Organization).id,
+          organization: (this.globalAwxOrganization as Organization).id,
           credential_type: credType1.id,
         }).then((cred) => {
           credential = cred;

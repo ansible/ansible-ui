@@ -4,7 +4,7 @@ import '@cypress/code-coverage/support';
 Cypress.Commands.add('requestPost', function requestPost<
   ResponseT,
   RequestT = ResponseT,
->(url: string, body: Partial<RequestT>) {
+>(url: string, body: Partial<RequestT>, failOnStatusCode?: boolean) {
   cy.getCookie('csrftoken').then((cookie) =>
     cy
       .request<ResponseT>({
@@ -15,6 +15,7 @@ Cypress.Commands.add('requestPost', function requestPost<
           'X-CSRFToken': cookie?.value,
           Referer: Cypress.config().baseUrl,
         },
+        failOnStatusCode,
       })
       .then((response) => response.body)
   );
