@@ -15,7 +15,7 @@ const config: QuartzConfig = {
       provider: 'plausible',
     },
     locale: 'en-US',
-    baseUrl: 'https://ansible.github.io/ansible-ui',
+    baseUrl: 'ansible.github.io/ansible-ui',
     ignorePatterns: ['private', 'templates', '.obsidian'],
     defaultDateType: 'created',
     theme: {

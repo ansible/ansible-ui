@@ -1,6 +1,3 @@
-# Development
-
-## PR Review Checklist
 
 - [ ] **Code Style**: Ensure that the code adheres to the project's style guidelines. We use Prettier and ESLint for code formatting and linting.
 
@@ -22,20 +19,3 @@
 
 - [ ] **Dependencies**: Assess any newly added dependencies.
   - [ ] Confirm that new dependencies are necessary and justified.
-
-## Project organization
-
-| Path                   | Description                                                                          |
-| ---------------------- | ------------------------------------------------------------------------------------ |
-| /frontend/awx          | The source code for the AWX UI.                                                      |
-| /frontend/hub          | The source code for the HUB UI.                                                      |
-| /frontend/event-driven | The source code for the EDA UI.                                                      |
-| /framework             | A framework for building applications using [PatternFly](https://www.patternfly.org) |
-
-## Testing
-
-See: [CYPRESS.md](../cypress/CYPRESS.md)
-
-## Internationalization (i18n)
-
-See: [i18n.md](./i18n.md)

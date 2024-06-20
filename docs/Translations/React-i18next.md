@@ -1,5 +1,3 @@
-# Getting started
-
 AAP-UI leverages internationalization through the [react-i18next](https://react.i18next.com/) library. This library provides an easy way to handle translations, including pluralization.
 
 ## Using plural and singular
@@ -7,7 +5,6 @@ AAP-UI leverages internationalization through the [react-i18next](https://react.
 To handle both plural and singular forms, pass the `count` prop to the `t` function from `react-i18next`. Depending on the value of `count`, the corresponding singular or plural translation will be returned.
 
 First, ensure you import the `useTranslation` hook:
-
 ```tsx
 const count = 1;
 const { t } = useTranslation();
