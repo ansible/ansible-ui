@@ -11,7 +11,7 @@ describe('Workflow Job Templates Surveys', function () {
   before(function () {
     cy.awxLogin();
   });
-
+  // FLAKY_06_20_2024
   describe.skip('WFJT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
@@ -59,7 +59,7 @@ describe('Workflow Job Templates Surveys', function () {
     it('can create multiple surveys, assert order, change order, and assert new order, then bulk delete all surveys', () =>
       reusableTemplateSurveyTestSuite.canCreateMultipleSurvey());
   });
-
+  // FLAKY_06_13_2024
   describe.skip('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
     before(function () {
       cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
