@@ -10,10 +10,6 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 
 describe('Workflow Job Templates Tests', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   describe('Workflow Job Templates: Create', function () {
     let organization: Organization;
     let inventory: Inventory;

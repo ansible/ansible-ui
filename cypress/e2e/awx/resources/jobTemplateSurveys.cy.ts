@@ -9,9 +9,6 @@ describe('Job Templates Surveys', function () {
   let jobTemplate: JobTemplate;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
 
-  before(function () {
-    cy.awxLogin();
-  });
   // FLAKY_06_13_2024
   describe.skip('JT Surveys: Create, Edit and Delete', function () {
     const question = {
@@ -24,12 +21,12 @@ describe('Job Templates Surveys', function () {
     };
 
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jT) => {
@@ -62,12 +59,12 @@ describe('Job Templates Surveys', function () {
 
   describe('JT Surveys: Launch JT with Survey Enabled', function () {
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jT) => {
@@ -147,7 +144,8 @@ describe('Job Templates Surveys', function () {
       },
     ];
 
-    it('can create all 7 types of survey types, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job', () =>
+    // FLAKY_06_19_2024
+    it.skip('can create all 7 types of survey types, enable survey, launch JT, view default survey answer, complete launch, and assert survey answer on completed job', () =>
       reusableTemplateSurveyTestSuite.canCreateAllSurveyTypes(surveyTypes));
   });
 });

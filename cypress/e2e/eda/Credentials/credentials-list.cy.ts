@@ -3,10 +3,6 @@
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Credentials List', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('renders the Credentials list page', () => {
     cy.navigateTo('eda', 'credentials');
     cy.verifyPageTitle('Credentials');

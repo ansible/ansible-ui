@@ -9,8 +9,7 @@ describe('activity-stream', () => {
   let activeUser: AwxUser;
 
   before(function () {
-    cy.awxLogin();
-    cy.createAwxTeam(this.globalOrganization as Organization).then((createdTeam) => {
+    cy.createAwxTeam(this.globalAwxOrganization as Organization).then((createdTeam) => {
       team = createdTeam;
     });
     cy.requestGet<AwxItemsResponse<AwxUser>>(awxAPI`/me/`)

@@ -3,9 +3,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 
 describe('EDA Custom Roles- Create', () => {
   const name = 'E2E Custom Role ' + randomString(4);
-  before(() => {
-    cy.edaLogin();
-  });
 
   it('can create a custom role', () => {
     cy.navigateTo('eda', 'roles');
@@ -27,7 +24,7 @@ describe('EDA Custom Roles- Create', () => {
     cy.get('h1').should('contain', 'Roles');
     cy.clickTableRow(name, true);
     cy.clickButton(/^Edit role$/);
-    cy.verifyPageTitle(`Edit Role`);
+    cy.verifyPageTitle(`Edit ${name}`);
     cy.get('[data-cy="description"]').clear().type('this custom role has been changed');
     cy.clickButton(/^Save role$/);
     cy.hasDetail('Description', 'this custom role has been changed');

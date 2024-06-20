@@ -1,15 +1,21 @@
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { createAndEditAndDeleteHost, checkHostGroup } from '../../../support/hostsfunctions';
+import {
+  checkFactsInHost,
+  checkHostGroup,
+  createAndEditAndDeleteHost,
+  createHostAndLaunchJob,
+} from '../../../support/hostsfunctions';
 
 describe('Host Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: AwxUser;
+  let project: Project;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
@@ -17,6 +23,10 @@ describe('Host Tests', () => {
       });
       cy.createAwxUser(organization).then((testUser) => {
         user = testUser;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+          // cy.giveUserProjectAccess(project.name, user.id, 'Read');
+        });
       });
     });
   });
@@ -25,13 +35,14 @@ describe('Host Tests', () => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
   });
 
   //tests
   it('can create, edit and delete a stand alone host', () => {
     // use createAndEditAndDeleteHost function in order to test stand alone hosts basic functions
     // after navigating to the right url
-    cy.visit(`/infrastructure/hosts`);
+    cy.navigateTo('awx', 'hosts');
     createAndEditAndDeleteHost('stand_alone_host', inventory, 'list');
   });
 
@@ -40,22 +51,13 @@ describe('Host Tests', () => {
     checkHostGroup('stand_alone_host', organization);
   });
 
-  it.skip('can see, launch and cancel jobs from host jobs tab', () => {
-    // create new host
-    // create job template with the current inventory
-    // job type must be run.
-    // TODO: check if there is a function for that
-    // launch job
-    // got to host - make sure job is visible
-    // launch it for all hosts
-    // verify
-    // lanuch it for all failed hosts
-    // cancel launch
+  it('can see and launch jobs from host jobs tab', () => {
+    createHostAndLaunchJob(inventory, organization.id, project.id);
   });
 
-  it.skip('can view host facts in stand alone host', () => {
-    // create stand alone host with facts
-    // TODO: check if there is some function that creates facts
-    // make sure facts are visible to the user
+  it.skip('can cancel jobs from host jobs tab', () => {});
+
+  it('can view host facts in stand alone host', () => {
+    checkFactsInHost(inventory);
   });
 });

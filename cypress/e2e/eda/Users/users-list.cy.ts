@@ -3,10 +3,6 @@
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users List', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('renders the Users list page', () => {
     cy.navigateTo('eda', 'users');
     cy.verifyPageTitle('Users');
@@ -17,8 +13,7 @@ describe('EDA Users List', () => {
       is_superuser: true,
     }).then((edaUser) => {
       cy.navigateTo('eda', 'users');
-      cy.setTablePageSize('100');
-      cy.clickTableRow(edaUser.username, false);
+      cy.clickTableRow(edaUser.username, true);
       cy.contains(edaUser.username).click();
       cy.verifyPageTitle(edaUser.username);
       cy.clickLink(/^Details$/);
@@ -34,8 +29,9 @@ describe('EDA Users List', () => {
         is_superuser: true,
       }).then((userB) => {
         cy.navigateTo('eda', 'users');
-        cy.selectTableRow(userA.username, false);
-        cy.selectTableRow(userB.username, false);
+        cy.selectTableRow(userA.username, true);
+        cy.clearAllFilters();
+        cy.selectTableRow(userB.username, true);
         cy.clickToolbarKebabAction('delete-selected-users');
         cy.intercept('DELETE', edaAPI`/users/${userA.id.toString()}/`).as('userA');
         cy.intercept('DELETE', edaAPI`/users/${userB.id.toString()}/`).as('userB');
@@ -54,7 +50,7 @@ describe('EDA Users List', () => {
   it('deletes a User from kebab menu from the project details page', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo('eda', 'users');
-      cy.selectTableRow(edaUser.username, false);
+      cy.selectTableRow(edaUser.username, true);
       cy.clickToolbarKebabAction('delete-selected-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);

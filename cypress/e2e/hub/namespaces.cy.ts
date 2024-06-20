@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { Namespaces, MyImports } from './constants';
+import { MyImports, Namespaces } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -8,10 +8,6 @@ describe('Namespaces', () => {
   function generateNamespaceName(): string {
     return `test_${testSignature}_namespace_${randomString(5, undefined, { isLowercase: true })}`;
   }
-
-  before(() => {
-    cy.hubLogin();
-  });
 
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);

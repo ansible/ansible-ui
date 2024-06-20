@@ -7,10 +7,6 @@ describe('User Tokens Actions', () => {
   let organization: Organization;
   let user: AwxUser;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
