@@ -9,6 +9,7 @@ import {
   createHostAndLaunchJob,
 } from '../../../support/hostsfunctions';
 
+// watch
 describe('Host Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
