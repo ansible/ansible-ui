@@ -49,7 +49,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
       cy.get('h1').should('contain', 'Credential Types');
       cy.clickTableRow(edaCredentialType.name, false);
       cy.clickButton(/^Edit credential type$/);
-      cy.verifyPageTitle('Edit Credential Type');
+      cy.verifyPageTitle(`Edit ${edaCredentialType.name}`);
       cy.get('[data-cy="name"]').type(' Extra Text');
       cy.get('[data-cy="description"]').type('this credential type has been changed');
       cy.clickButton(/^Save credential type$/);
@@ -145,8 +145,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
     });
   });
 
-  // this fails due to bug: https://issues.redhat.com/browse/AAP-23562
-  it.skip('can bulk delete credential types', () => {
+  it('can bulk delete credential types', () => {
     cy.createEdaCredentialType().then((credtype1) => {
       cy.createEdaCredentialType().then((credtype2) => {
         cy.navigateTo('eda', 'credential-types');
@@ -161,7 +160,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
           'credtype2'
         );
         cy.clickModalConfirmCheckbox();
-        cy.clickModalButton('Delete credentials');
+        cy.clickModalButton('Delete credential types');
         cy.wait('@credtype1').then((credtype1) => {
           expect(credtype1?.response?.statusCode).to.eql(204);
         });

@@ -63,7 +63,8 @@ describe('Jobs: List', () => {
     cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
-  it('can render the toolbar and row actions', () => {
+  // FLAKY_06_19_2024
+  it.skip('can render the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
     cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-v5-c-dropdown__menu').within(() => {

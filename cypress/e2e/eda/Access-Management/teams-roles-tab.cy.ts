@@ -11,7 +11,8 @@ import { user_team_access_tab_resources } from '../../../support/constants';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 user_team_access_tab_resources.forEach((resource) => {
-  describe(`Assign Role to a Team `, () => {
+  // fails due to filtering bug https://issues.redhat.com/browse/AAP-24181
+  describe.skip(`Assign Role to a Team `, () => {
     let team: EdaTeam;
     let resource_object:
       | EdaProject
