@@ -17,6 +17,10 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
 Cypress.Commands.add('login', () => {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
+    case '4100': // Platform
+      cy.platformLogin();
+      cy.createGlobalPlatformOrganization();
+      break;
     case '4101':
       cy.awxLogin();
       cy.createGlobalOrganization();
