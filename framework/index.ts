@@ -48,6 +48,7 @@ export * from './PageNavigation/useGetPageUrl';
 export * from './PageNavigation/usePageNavigate';
 export * from './PageSettings/PageSettingsProvider';
 export * from './PageTable/PageTable';
+export * from './PageTable/PageTableCard';
 export * from './PageTable/PageTableCards';
 export * from './PageTable/PageTableColumn';
 export * from './PageTable/useTableItems';

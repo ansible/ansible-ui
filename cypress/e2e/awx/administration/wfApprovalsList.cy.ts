@@ -1,3 +1,4 @@
+import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
@@ -8,7 +9,6 @@ import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomString } from '../../../../framework/utils/random-string';
 
 describe.skip('Workflow Approvals Tests', () => {
   let organization: Organization;
@@ -23,10 +23,6 @@ describe.skip('Workflow Approvals Tests', () => {
   let jobTemplateNode: WorkflowNode;
   let approvalWFNode: WorkflowNode;
   let jobName = '';
-
-  before(function () {
-    cy.awxLogin();
-  });
 
   beforeEach(function () {
     cy.createAwxOrganization().then((org) => {

@@ -1,10 +1,6 @@
 //Tests a user's ability to perform certain actions on the Roles list in the EDA UI.
 
 describe('EDA Roles List', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can render the Roles list view and utilize the Roles links to view details', () => {
     cy.navigateTo('eda', 'roles');
     cy.verifyPageTitle('Roles');

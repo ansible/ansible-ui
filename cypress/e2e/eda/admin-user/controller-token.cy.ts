@@ -1,10 +1,6 @@
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 
 describe('EDA Admin User', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   const checkEmptyState = () => {
     cy.contains('h4', 'You currently do not have any tokens from Automation Controller.');
     cy.contains(

@@ -1,14 +1,10 @@
-import { randomE2Ename } from '../../../../support/utils';
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-import { testNotification, testDelete } from './notifiersSharedFunctions';
+import { randomE2Ename } from '../../../../support/utils';
+import { testDelete, testNotification } from './notifiersSharedFunctions';
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
 describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     /*const notificationName = randomE2Ename();

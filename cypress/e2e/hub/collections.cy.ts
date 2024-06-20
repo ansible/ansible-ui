@@ -29,7 +29,6 @@ describe.skip('Collections', () => {
 
   beforeEach(() => {
     collectionName = randomE2Ename();
-    cy.hubLogin();
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
   });

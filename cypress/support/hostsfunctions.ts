@@ -1,8 +1,8 @@
 import { randomString } from '../../framework/utils/random-string';
+import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { awxAPI } from './formatApiPathForAwx';
-import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 
 /////////////// Assisting functions ///////////////
 // this functions will be used for stand alone hosts and inventory hosts test
@@ -49,12 +49,12 @@ function createHost(host_type: string, inventoryID: number) {
   const hostName = 'E2E Host ' + randomString(4);
   // create host with no verify
   if (host_type === 'inventory_host') {
-    cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
+    cy.requestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
       name: hostName,
       inventory: inventoryID,
     });
   } else {
-    cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
+    cy.requestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
       name: hostName,
     });
   }

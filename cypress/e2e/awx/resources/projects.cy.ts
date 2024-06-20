@@ -2,16 +2,16 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { randomE2Ename } from '../../../support/utils';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Projects', () => {
   let schedule: Schedule;
@@ -19,10 +19,6 @@ describe('Projects', () => {
   let thisProject: Project;
   let organization: Organization;
   let user: AwxUser;
-
-  before(function () {
-    cy.awxLogin();
-  });
 
   describe('Projects: List View', () => {
     beforeEach(function () {
@@ -50,7 +46,10 @@ describe('Projects', () => {
       cy.verifyPageTitle('Projects');
       cy.clickLink(/^Create project$/);
       cy.get('[data-cy="name"]').type(projectName);
-      cy.singleSelectByDataCy('organization', `${(this.globalOrganization as Organization).name}`);
+      cy.singleSelectByDataCy(
+        'organization',
+        `${(this.globalAwxOrganization as Organization).name}`
+      );
       cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
       cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
       cy.get('[data-cy="option-allow-override"]').click();
@@ -60,7 +59,7 @@ describe('Projects', () => {
         .its('response.body')
         .then((newProject: Project) => {
           cy.verifyPageTitle(newProject.name);
-          cy.hasDetail(/^Organization$/, `${(this.globalOrganization as Organization).name}`);
+          cy.hasDetail(/^Organization$/, `${(this.globalAwxOrganization as Organization).name}`);
           cy.hasDetail(/^Source control type$/, 'Git');
           cy.hasDetail(/^Enabled options$/, 'Allow branch override');
           cy.waitForProjectToFinishSyncing(newProject.id);
@@ -573,12 +572,12 @@ describe('Projects', () => {
     let jobTemplate: JobTemplate;
 
     before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (inv) => {
           inventory = inv;
 
           cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
+            organization: (this.globalAwxOrganization as Organization).id,
             project: (this.globalProject as Project).id,
             inventory: inventory.id,
           }).then((jt1) => {
@@ -604,7 +603,7 @@ describe('Projects', () => {
     });
 
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', function () {
-      cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxProject({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (thisProject) => {
           cy.navigateTo('awx', 'templates');
           cy.filterTableByMultiSelect('name', [jobTemplate.name]);
@@ -669,7 +668,7 @@ describe('Projects', () => {
   describe.skip('Projects: Notifications Tab', () => {
     let notification: NotificationTemplate;
     beforeEach(function () {
-      cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
+      cy.createAwxProject({ organization: (this.globalAwxOrganization as Organization).id }).then(
         (proj) => {
           thisProject = proj;
 

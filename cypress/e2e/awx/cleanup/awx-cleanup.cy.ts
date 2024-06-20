@@ -13,7 +13,7 @@ const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 
 describe('AWX Cleanup', () => {
   it('cleanup projects', () => {
-    cy.awxRequestGet<AwxItemsResponse<Project>>(
+    cy.requestGet<AwxItemsResponse<Project>>(
       awxAPI`/projects?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
@@ -23,7 +23,7 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup inventories', () => {
-    cy.awxRequestGet<AwxItemsResponse<Inventory>>(
+    cy.requestGet<AwxItemsResponse<Inventory>>(
       awxAPI`/inventories?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
@@ -33,7 +33,7 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup organizations', () => {
-    cy.awxRequestGet<AwxItemsResponse<Organization>>(
+    cy.requestGet<AwxItemsResponse<Organization>>(
       awxAPI`/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
@@ -43,7 +43,7 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup users', () => {
-    cy.awxRequestGet<AwxItemsResponse<AwxUser>>(
+    cy.requestGet<AwxItemsResponse<AwxUser>>(
       awxAPI`/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
@@ -53,7 +53,7 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup templates', () => {
-    cy.awxRequestGet<AwxItemsResponse<JobTemplate>>(
+    cy.requestGet<AwxItemsResponse<JobTemplate>>(
       awxAPI`/unified_job_templates/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
@@ -63,22 +63,22 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup jobs', () => {
-    cy.awxRequestGet<AwxItemsResponse<Job>>(
+    cy.requestGet<AwxItemsResponse<Job>>(
       awxAPI`/unified_jobs/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
         const url = getJobsAPIUrl(resource.job_type ?? '');
-        cy.awxRequestDelete(`${url}${resource.id}/`, { failOnStatusCode: false });
+        cy.requestDelete(`${url}${resource.id}/`, { failOnStatusCode: false });
       }
     });
   });
 
   it('cleanup instance groups', () => {
-    cy.awxRequestGet<AwxItemsResponse<Job>>(
+    cy.requestGet<AwxItemsResponse<Job>>(
       awxAPI`/instance_groups/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.awxRequestDelete(awxAPI`/instance_groups/${resource.id.toString()}/`, {
+        cy.requestDelete(awxAPI`/instance_groups/${resource.id.toString()}/`, {
           failOnStatusCode: false,
         });
       }
@@ -86,12 +86,12 @@ describe('AWX Cleanup', () => {
   });
 
   it('cleanup workflow approvals', () => {
-    cy.awxRequestGet<AwxItemsResponse<WorkflowApproval>>(
+    cy.requestGet<AwxItemsResponse<WorkflowApproval>>(
       awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
     ).then((result) => {
       for (const resource of result.results ?? []) {
-        cy.awxRequestPost(awxAPI`/workflow_approvals/${resource.id.toString()}/deny/`, {}, false);
-        cy.awxRequestDelete(awxAPI`/workflow_approvals/${resource.id.toString()}/`, {
+        cy.requestPost(awxAPI`/workflow_approvals/${resource.id.toString()}/deny/`, {}, false);
+        cy.requestDelete(awxAPI`/workflow_approvals/${resource.id.toString()}/`, {
           failOnStatusCode: false,
         });
       }

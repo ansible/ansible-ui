@@ -20,9 +20,8 @@ describe('Workflow Visualizer', () => {
   let workflowJtNode: WorkflowNode;
 
   before(function () {
-    organization = this.globalOrganization as Organization;
+    organization = this.globalAwxOrganization as Organization;
     project = this.globalProject as Project;
-    cy.awxLogin();
     cy.createAwxInventory({ organization: organization.id })
       .then((i) => {
         inventory = i;

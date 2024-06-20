@@ -14,24 +14,20 @@ describe('Jobs: List', () => {
   let jobTemplate: JobTemplate;
   let job: Job;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(function () {
-    const globalOrganization = this.globalOrganization as Organization;
+    const globalAwxOrganization = this.globalAwxOrganization as Organization;
     const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
+    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
       inventory = inv;
       cy.createAwxJobTemplate({
-        organization: globalOrganization.id,
+        organization: globalAwxOrganization.id,
         project: globalProject.id,
         inventory: inv.id,
       }).then((jt) => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost<Partial<Omit<Job, 'id'>>, Job>(
+        cy.requestPost<Job, Partial<Omit<Job, 'id'>>>(
           awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
           {}
         ).then((jl: Job) => {
@@ -116,35 +112,32 @@ describe('Jobs: Delete', () => {
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(function () {
-    const globalOrganization = this.globalOrganization as Organization;
+    const globalAwxOrganization = this.globalAwxOrganization as Organization;
     const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalOrganization.id }).then((inv) => {
+    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
       inventory = inv;
       cy.createAwxJobTemplate({
-        organization: globalOrganization.id,
+        organization: globalAwxOrganization.id,
         project: globalProject.id,
         inventory: inv.id,
       }).then((jt) => {
         jobTemplate = jt;
 
         // Launch job to populate jobs list
-        cy.awxRequestPost(awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`, {}).then(
-          (jl) => {
-            jobList = jl;
-          }
-        );
+        cy.requestPost<UnifiedJobList>(
+          awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
+          {}
+        ).then((jl) => {
+          jobList = jl;
+        });
       });
     });
   });
 
   afterEach(() => {
     const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.awxRequestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.requestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
@@ -212,10 +205,6 @@ describe('Jobs: Delete', () => {
 describe('Jobs: Output and Details Screen', () => {
   let thisId: string;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   it('can launch a Management job, let it finish, and assert expected results on the output screen', () => {
     cy.navigateTo('awx', 'management-jobs');
     cy.verifyPageTitle('Management Jobs');
@@ -250,7 +239,7 @@ describe('Jobs: Output and Details Screen', () => {
     cy.verifyPageTitle('Projects');
     cy.clickLink(/^Create project$/);
     cy.get('[data-cy="name"]').type(projectName);
-    cy.singleSelectByDataCy('organization', `${(this.globalOrganization as Organization).name}`);
+    cy.singleSelectByDataCy('organization', `${(this.globalAwxOrganization as Organization).name}`);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.intercept('POST', awxAPI`/projects/`).as('newProject');
@@ -289,10 +278,6 @@ describe('Job template: Output and Details Screen', () => {
   let jobTemplate: JobTemplate;
   let thisId: string;
   let organization: Organization;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(function () {
     cy.createAwxOrganization().then((o) => {
@@ -353,10 +338,6 @@ describe('Inventory source: Output and Details Screen', () => {
   let organization: Organization;
   let thisId: string;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(function () {
     cy.createAwxOrganization().then((o) => {
       organization = o;
@@ -413,10 +394,6 @@ describe('Workflow template: Output and Details Screen', () => {
   let inventory: Inventory;
   let project: Project;
   let thisId: string;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(function () {
     cy.createAwxOrganization().then((orgB) => {
