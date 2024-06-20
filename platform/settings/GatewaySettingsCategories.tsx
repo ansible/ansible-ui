@@ -17,12 +17,12 @@ export function useGatewaySettingsCategories(options: Record<string, GatewaySett
       }[];
     }[] = [
       {
-        id: 'gateway',
-        title: t('Gateway settings'),
+        id: 'platform',
+        title: t('Platform gateway settings'),
         description: t(''),
         sections: [
           {
-            title: t('Gateway'),
+            title: t('Platform gateway'),
             include: ['gateway_proxy_url', 'gateway_proxy_url_ignore_cert'],
             options: {},
           },

@@ -1,13 +1,13 @@
 # Platform UI
 
-The Platform UI is the unified UI for the Ansible Automation Platform. It uses the [AAP Gateway](https://github.com/ansible/aap-gateway) as the backend. The gateway unifies the API for the AAP products such as AWX, HUB, and EDA. It also provided centralized authentication and access management.
+The Platform UI is the unified UI for the Ansible Automation Platform. It uses the [AAP Platform](https://github.com/ansible/aap-gateway) as the backend. The platform unifies the API for the AAP products such as AWX, HUB, and EDA. It also provided centralized authentication and access management.
 
 ```mermaid
 flowchart TD
-   ui(Platform UI) --- gateway(AAP Gateway)
-   gateway --- awx(Controller)
-   gateway --- hub(Automation HUB)
-   gateway --- eda(Event Driven Ansible)
+   ui(Platform UI) --- platform(Platform gateway)
+   platform --- awx(Controller)
+   platform --- hub(Automation HUB)
+   platform --- eda(Event Driven Ansible)
    awx --- aa(Ansible Analytics)
 ```
 
@@ -20,9 +20,9 @@ The Platform UI has downstream pages for authentication, access management, sett
    - Node 18.x (recommended)
    - NPM 8.x (recommended)
 
-1. Setup Gateway
+1. Setup Platform
 
-   Follow the instructions in the [AAP Gateway](https://github.com/ansible/aap-gateway) repo to get the Ansible Automation Platform running.
+   Follow the instructions in the [AAP Platform](https://github.com/ansible/aap-gateway) repo to get the Ansible Automation Platform running.
 
 1. Clone the AAP-UI Repository
 
@@ -38,9 +38,9 @@ The Platform UI has downstream pages for authentication, access management, sett
 
 1. Setup Environment Variables
 
-   | Environment Variable | Description                                    |
-   | -------------------: | ---------------------------------------------- |
-   |    `PLATFORM_SERVER` | The AAP Gateway server (protocol://host:port). |
+   | Environment Variable | Description                                     |
+   | -------------------: | ----------------------------------------------- |
+   |    `PLATFORM_SERVER` | The AAP Platform server (protocol://host:port). |
 
    ```zsh
    export PLATFORM_SERVER=https://localhost:443
@@ -55,7 +55,7 @@ The Platform UI has downstream pages for authentication, access management, sett
 
    This will start the Platform UI in development mode.
    It will be running on <https://localhost:4100>.
-   The Platform UI will talk to the gateway using the `PLATFORM_SERVER` environment variable.
+   The Platform gateway ui will talk to the platform gateway api using the `PLATFORM_SERVER` environment variable.
 
 ## Building for Production
 

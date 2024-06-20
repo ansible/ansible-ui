@@ -262,17 +262,17 @@ export function usePlatformNavigation() {
           ],
         },
         {
-          label: t('Gateway'),
-          path: 'gateway',
+          label: t('Platform gateway'),
+          path: 'platform-gateway',
           element: <GatewaySettings />,
           children: [
             {
               path: 'edit',
-              element: <GatewaySettingsEdit categoryId="gateway" />,
+              element: <GatewaySettingsEdit categoryId="platform" />,
             },
             {
               path: '',
-              element: <GatewaySettingsDetails categoryId="gateway" />,
+              element: <GatewaySettingsDetails categoryId="platform" />,
             },
           ],
         },
