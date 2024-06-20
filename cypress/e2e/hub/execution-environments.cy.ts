@@ -5,10 +5,6 @@ import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
 describe('Execution Environments', () => {
-  before(() => {
-    cy.hubLogin();
-  });
-
   it('can render the execution environments page', () => {
     cy.navigateTo('hub', ExecutionEnvironments.url);
     cy.verifyPageTitle(ExecutionEnvironments.title);

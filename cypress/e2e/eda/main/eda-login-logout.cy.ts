@@ -4,10 +4,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Login / Logoff', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can log into the UI and view username in the top right of the Dashboard toolbar', () => {
     cy.getEdaActiveUser().then((edaUser) => {
       cy.intercept('POST', edaAPI`/auth/session/logout/`).as('loggedOut');

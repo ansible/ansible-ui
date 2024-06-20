@@ -12,8 +12,6 @@ describe('Repositories', () => {
   let repository: Repository;
 
   before(() => {
-    cy.hubLogin();
-
     // Create namespace and upload collection only once in the before hook
     // as it is not necessary to create a new namespace and upload collection for each test
     cy.createHubNamespace().then((namespaceResult) => {
