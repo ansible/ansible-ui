@@ -146,7 +146,11 @@ jobs:
       - if: ${{ success() }}
         run: |
           echo Success
-      - if: ${{ cancelled() || failure() }}
+      - if: ${{ failure() }}
         run: |
           echo Failure
           exit 1
+      - if: ${{ cancelled() }}
+        run: |
+          echo Cancelled
+          exit 1          
