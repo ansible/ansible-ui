@@ -496,7 +496,9 @@ describe('Jobs tests', () => {
       if (workflowJobTemplate) {
         cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
       }
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      if (jobTemplate) {
+        cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      }
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
       cy.deleteAwxOrganization(newOrg, { failOnStatusCode: false });
