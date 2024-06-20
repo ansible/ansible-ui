@@ -58,20 +58,19 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //5) Cancel the job and assert that it has been canceled
   });
 
-  it('confirm that edit host button is missing from the host tab list of an inventory', () => {
+  it('test edit, delete and facts are not part of constracted inventory host options', () => {
+    //'confirm that edit host button is missing from the host tab list of an inventory'
     //navigate to smart inventory host list
     //verify edit button is missing
     testMissingButton('inventory_host', inventory, 'list', 'edit-host');
-  });
 
-  it('confirm that delete host button is missing from the host tab list of an inventory', () => {
+    //'confirm that delete host button is missing from the host tab list of an inventory', () => {
     //navigate to smart inventory host list
     //verify action dropdown contain only delete host button is missing
     const missingValue = `[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`;
     testMissingButton('inventory_host', inventory, 'list', missingValue);
-  });
 
-  it('confirm that facts tab is missing from a host inside an inventory', () => {
+    //'confirm that facts tab is missing from a host inside an inventory', () => {
     //navigate to constructed inventory host list, get to host
     //verify facts tab is missing
     testMissingTab('inventory_host', inventory, 'list', 'Facts');

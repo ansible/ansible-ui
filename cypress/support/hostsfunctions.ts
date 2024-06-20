@@ -264,7 +264,7 @@ export function testMissingButton(
   //in case this should be done to detailes view the only thing needed is to add click on host name
   navigateToBaseView(host_type, inventory.name);
   cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
-  cy.contains('button', missing).should('not.exist');
+  cy.get(missing).should('not.exist');
 }
 
 export function testMissingTab(
@@ -278,5 +278,5 @@ export function testMissingTab(
   navigateToBaseView(host_type, inventory.name);
   cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
   cy.getByDataCy('name-column-cell').contains('E2E Host').click();
-  cy.contains('tab', missing).should('not.exist');
+  cy.contains('[role="tab"]', missing).should('not.exist');
 }
