@@ -1,14 +1,10 @@
+import * as path from 'path';
 import { randomString } from '../../../../framework/utils/random-string';
 import { Instance } from '../../../../frontend/awx/interfaces/Instance';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import * as path from 'path';
 
 describe('Instances: Add/Edit', () => {
   let instance: Instance;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxInstance('E2EInstanceTestAddEdit' + randomString(5)).then((ins: Instance) => {
@@ -143,10 +139,6 @@ describe('Instances: Delete', () => {
     return `test-${testSignature}-instance-${randomString(5, undefined, { isLowercase: true })}`;
   }
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
     cy.createAwxInstance('E2EInstanceTestRemove' + randomString(5)).then((ins: Instance) => {
       instance = ins;
@@ -236,10 +228,6 @@ describe('Instances: Delete', () => {
 describe('Instances: Run Health Check', () => {
   let instance: Instance;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
     cy.createAwxInstance('E2EInstanceRunHealthCheck' + randomString(5)).then((ins: Instance) => {
       instance = ins;
@@ -321,10 +309,6 @@ describe('Instances: Run Health Check', () => {
 describe('Instances: Peers', () => {
   let instance: Instance;
   let instanceToAssociate: Instance;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxInstance('E2EInstanceTestPeers' + randomString(5), 8888).then((ins: Instance) => {
@@ -408,10 +392,6 @@ describe('Instances: Peers', () => {
 
 describe('Instances: Listener Addresses Tab', () => {
   let instance: Instance;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxInstance('E2EInstanceTestLA' + randomString(5), 8888).then((ins: Instance) => {

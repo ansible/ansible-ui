@@ -10,7 +10,6 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
   let user: AwxUser;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createInventoryHost(organization, 'smart').then((result) => {

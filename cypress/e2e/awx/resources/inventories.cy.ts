@@ -16,10 +16,6 @@ describe('Inventories Tests', () => {
   let user: AwxUser;
   const kinds: Array<'' | 'smart'> = ['', 'smart'];
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   kinds.forEach((kind) => {
     describe(`Inventories CRUD Tests (${kind === '' ? 'regular' : kind})`, () => {
       if (kind === '') {

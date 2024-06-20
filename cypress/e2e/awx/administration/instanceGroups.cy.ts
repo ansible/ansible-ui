@@ -18,10 +18,6 @@ instanceGroupTypes.forEach((igType) => {
       return `test-${testSignature}-${igType.toLowerCase()}-group-${randomString(5, undefined, { isLowercase: true })}`;
     }
 
-    before(() => {
-      cy.awxLogin();
-    });
-
     beforeEach(() => {
       cy.createAwxInstanceGroup(
         igType === 'Container'
@@ -234,10 +230,6 @@ instanceGroupTypes.forEach((igType) => {
   describe(`${igType} Groups: Details Tab`, () => {
     let instanceGroup: InstanceGroup;
 
-    before(() => {
-      cy.awxLogin();
-    });
-
     beforeEach(() => {
       cy.createAwxInstanceGroup(
         igType === 'Container'
@@ -339,10 +331,6 @@ instanceGroupTypes.forEach((igType) => {
     let team: Team;
     let instanceGroup: InstanceGroup;
     let organization: Organization;
-
-    before(() => {
-      cy.awxLogin();
-    });
 
     beforeEach(function () {
       cy.createAwxOrganization().then((o) => {
@@ -463,10 +451,6 @@ instanceGroupTypes.forEach((igType) => {
     let instanceGroup: InstanceGroup;
     let organization: Organization;
 
-    before(() => {
-      cy.awxLogin();
-    });
-
     beforeEach(function () {
       cy.createAwxOrganization().then((o) => {
         organization = o;
@@ -584,10 +568,6 @@ describe('Instance Groups: Jobs Tab', () => {
   let instanceGroupDefault: InstanceGroup;
   let organization: Organization;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(function () {
     cy.getAwxInstanceGroupByName('default')
       .its('results[0]')
@@ -659,10 +639,6 @@ describe('Instance Groups: Jobs Tab', () => {
 describe('Instance Groups: Instances Tab', () => {
   let instance: Instance;
   let instanceGroup: InstanceGroup;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxInstance('E2EInstanceIGTest' + randomString(5), 9999).then((ins: Instance) => {
