@@ -479,10 +479,19 @@ describe('Jobs tests', () => {
     });
 
     afterEach(function () {
-      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(newOrg, { failOnStatusCode: false });
+      if (workflowJobTemplate) {
+        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+      }
+      if (jobTemplate) {
+        cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      }
+
+      if (inventory) {
+        cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      }
+      if (newOrg) {
+        cy.deleteAwxOrganization(newOrg, { failOnStatusCode: false });
+      }
     });
 
     it('can launch a Workflow job, let it finish, and assert expected results on the output screen', () => {
