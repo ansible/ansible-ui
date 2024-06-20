@@ -24,7 +24,7 @@ npm install @ansible/ansible-ui-framework
 
 ### Using the framework
 
-1. Use [PageFramework](./PageFramework) in your application.
+1. Use [[PageFramework]] in your application.
 2. Use [PageLayout](./PageLayout) to control the layout in your pages.
 3. Use [PageHeader](./PageHeader) to add consistent headers to your pages.
 4. Use framework components in your page
