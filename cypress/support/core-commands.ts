@@ -15,15 +15,16 @@ Cypress.Commands.add('getByDataCy', (dataCy: string) => {
 });
 
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
-  cy.contains(selector, text)
+  cy.contains(selector, text, { timeout: 10000 })
     .should('not.be.disabled')
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('not.be.hidden')
-    .should('be.visible');
-
-  // The following line is necessary to avoid flakiness in the tests
-  // It's a workaround when the element is found and while assertions are running, the element is replaced
-  cy.contains(selector, text);
+    .and('not.have.attr', 'aria-disabled', 'true')
+    .and('not.be.hidden')
+    .and('be.visible')
+    .then(($element) => {
+      // The following line is necessary to avoid flakiness in the tests
+      // It's a workaround when the element is found and while assertions are running, the element is replaced
+      cy.wrap($element).should('contain', text);
+    });
 });
 
 Cypress.Commands.add('containsByDataCy', (dataCy: string, text: string | number | RegExp) => {
