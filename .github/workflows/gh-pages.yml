@@ -43,6 +43,7 @@ jobs:
           docker run --rm \
             -v ./docs:/usr/src/app/content \
             -v ./public:/usr/src/app/public \
+            -v ./docs/quartz.config.ts:/usr/src/app/quartz.config.ts \
             quartz \
             npx quartz build
 
