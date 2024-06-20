@@ -7,7 +7,6 @@ let role: Role;
 
 describe('Hub roles', () => {
   before(() => {
-    cy.hubLogin();
     // Create a custom role
     cy.createHubRole().then((createdRole: Role) => {
       role = createdRole;

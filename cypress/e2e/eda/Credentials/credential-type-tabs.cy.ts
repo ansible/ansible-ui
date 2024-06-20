@@ -1,15 +1,14 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaCredentialCreate } from '../../../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Credentials Type - Tabs', () => {
   let cred: EdaCredentialCreate;
   let credtype: EdaCredentialType;
   before(() => {
-    cy.edaLogin();
     cy.createEdaCredentialType().then((credentialtype) => {
       credtype = credentialtype;
       cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {

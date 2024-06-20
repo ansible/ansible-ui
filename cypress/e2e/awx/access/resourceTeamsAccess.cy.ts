@@ -11,10 +11,6 @@
  * Credentials
  */
 describe('Team Access Tab for ${resource.name} - Add team', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {});
 
   afterEach(() => {});
@@ -23,10 +19,6 @@ describe('Team Access Tab for ${resource.name} - Add team', () => {
 });
 
 describe('Team Access Tab for ${resource.name} - actions', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {});
 
   afterEach(() => {});
