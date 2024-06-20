@@ -460,8 +460,12 @@ describe('Workflow Job Templates Tests', () => {
     let organization: Organization;
     let inventory: Inventory;
     before(function () {
-      organization = this.globalOrganization as Organization;
-      inventory = this.globalInventory as Inventory;
+      cy.createAwxOrganization().then((orgB) => {
+        organization = orgB;
+        cy.createAwxInventory({ organization: organization.id }).then((i) => {
+          inventory = i;
+        });
+      });
     });
 
     beforeEach(function () {
@@ -473,6 +477,11 @@ describe('Workflow Job Templates Tests', () => {
 
     afterEach(() => {
       cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+    });
+
+    after(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
 
     it('can delete a workflow job template from the details page', () => {
