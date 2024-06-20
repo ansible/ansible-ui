@@ -60,7 +60,7 @@ export function runCommand(params: {
         // Credentials tab
 
         // not sure why this is needed, but it ensures the test stability
-        cy.wait(4000);
+        //cy.wait(4000);
         cy.getByDataCy('credential').click();
         cy.get(`[role='listbox'] button`);
         cy.contains('button', 'Browse').click();
