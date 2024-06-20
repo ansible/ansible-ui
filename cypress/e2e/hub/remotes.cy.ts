@@ -8,9 +8,6 @@ describe('Remotes', () => {
   function generateRemoteName(): string {
     return `test-${testSignature}-remote-${randomString(5, undefined, { isLowercase: true })}`;
   }
-  before(() => {
-    cy.hubLogin();
-  });
 
   it('bulk delete remotes', () => {
     const numberOfRemotes = 5;

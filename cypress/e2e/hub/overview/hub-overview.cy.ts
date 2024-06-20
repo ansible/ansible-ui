@@ -16,7 +16,6 @@ const collectionNames: { [key: string]: { [key: string]: string } } = {
 
 describe.skip('HUB Overview', () => {
   before(() => {
-    cy.hubLogin();
     // Create collections
     Object.keys(collectionNames).forEach((category) => {
       Object.values(collectionNames[category]).forEach((name) => {

@@ -12,10 +12,6 @@ describe('Remote Registry', () => {
     })}`;
   }
 
-  before(() => {
-    cy.hubLogin();
-  });
-
   after(() => {
     cy.log('Cleaning up remote registries');
     cy.requestGet<HubItemsResponse<IRemoteRegistry>>(

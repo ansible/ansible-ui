@@ -1,10 +1,6 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
 
 describe('EDA Resource Toolbar Functionality', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can visit the dashboard page and assert the data there', () => {
     cy.get('[data-cy="eda-overview"]').contains('Overview');
     cy.verifyPageTitle('Welcome to Event Driven Automation');

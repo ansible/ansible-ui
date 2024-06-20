@@ -3,7 +3,6 @@ import { Repositories, Tasks } from './constants';
 
 describe('Tasks', () => {
   beforeEach(() => {
-    cy.hubLogin();
     cy.navigateTo('hub', Tasks.url);
   });
 

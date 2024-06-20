@@ -1,10 +1,6 @@
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('AWX Settings', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   it('should be able to change user preferences', () => {
     cy.navigateTo('awx', 'settings-preferences');
     cy.verifyPageTitle('User Preferences');

@@ -3,9 +3,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 
 describe('EDA Custom Roles- Create', () => {
   const name = 'E2E Custom Role ' + randomString(4);
-  before(() => {
-    cy.edaLogin();
-  });
 
   it('can create a custom role', () => {
     cy.navigateTo('eda', 'roles');

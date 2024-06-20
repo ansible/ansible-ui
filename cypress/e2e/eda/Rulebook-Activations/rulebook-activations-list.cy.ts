@@ -16,7 +16,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   let edaRuleBook2: EdaRulebook;
   let edaRuleBook3: EdaRulebook;
   before(() => {
-    cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
 
     cy.createEdaProject().then((project) => {

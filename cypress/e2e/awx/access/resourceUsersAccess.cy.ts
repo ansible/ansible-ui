@@ -11,10 +11,6 @@
  * Credentials
  */
 describe('User Access Tab for ${resource.name} - Add user', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {});
 
   afterEach(() => {});
@@ -23,10 +19,6 @@ describe('User Access Tab for ${resource.name} - Add user', () => {
 });
 
 describe('User Access Tab for ${resource.name} - actions', () => {
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {});
 
   afterEach(() => {});
