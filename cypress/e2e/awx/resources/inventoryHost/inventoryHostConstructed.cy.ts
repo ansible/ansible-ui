@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
+import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { runCommand } from './runCommandFunction';
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
@@ -21,7 +21,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
           const normalInventory = result2.inventory;
           group = result2.group;
 
-          cy.awxRequestPost<{ id: number }>(
+          cy.requestPost<{ id: number }>(
             awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`,
             {
               id: normalInventory.id,
