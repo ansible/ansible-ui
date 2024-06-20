@@ -13,26 +13,13 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Standards/PR Review Checklist.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "b24c5f6b592438da",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "index.md",
+                "file": "Framework/Ansible UI Framework.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -82,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 345.5
   },
   "right": {
     "id": "13b060d8e75f78f5",
@@ -98,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "Framework/Ansible UI Framework.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "Framework/Ansible UI Framework.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "Framework/Ansible UI Framework.md"
               }
             }
           }
@@ -159,11 +146,27 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b24c5f6b592438da",
+  "active": "e777174b2cc16639",
   "lastOpenFiles": [
-    "Testing/Cypress.md",
+    "Framework/Home.md",
+    "Framework/Ansible UI Framework.md",
+    "Framework/BulkActionDialog.md",
+    "Framework/useGet.md",
+    "Framework/useFrameworkTranslations.md",
+    "Framework/useDeleteRequest.md",
+    "Framework/useBreakPoint.md",
+    "Framework/useActiveUser.md",
+    "Framework/Talking-to-APIs.md",
+    "Hub/Hub-Overview.md",
     "index.md",
+    "Framework/EmptyState.md",
+    "Standards/Overview,-structure.md",
     "Standards/PR Review Checklist.md",
+    "Framework/Handling-user-actions.md",
+    "Framework/Overview,-structure.md",
+    "Framework/ReorderItems.md",
+    "Hub/Hub.md",
+    "Testing/Cypress.md",
     "Testing/CYPRESS.md",
     "Testing/Custom Commands.md",
     "Standards/Project organization.md",
