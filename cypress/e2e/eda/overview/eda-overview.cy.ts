@@ -26,7 +26,7 @@ describe('EDA Overview', () => {
             'Create a rulebook activation by clicking the button below.'
           );
           cy.get('[data-cy="create-rulebook-activation"]').click();
-          cy.verifyPageTitle('Create Rulebook Activation');
+          cy.verifyPageTitle('Create rulebook activation');
         } else if (results.length >= 1) {
           cy.get('#rulebook-activations')
             .scrollIntoView()
