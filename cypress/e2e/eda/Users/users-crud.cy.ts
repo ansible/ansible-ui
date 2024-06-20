@@ -4,10 +4,6 @@ import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Users- Create, Edit, Delete', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('can create a User, select user type, and assert the information showing on the details page', () => {
     const userInfo = {
       username: `E2EUser${randomString(4)}`,

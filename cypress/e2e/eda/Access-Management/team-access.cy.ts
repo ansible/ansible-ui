@@ -1,14 +1,14 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
+import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
+import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { user_team_access_tab_resources } from '../../../support/constants';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 type ResourceObject =
   | EdaProject
@@ -22,7 +22,6 @@ user_team_access_tab_resources.forEach((resource) => {
     let edaTeam: EdaTeam;
     let resource_object: ResourceObject;
     before(() => {
-      cy.edaLogin();
       // If the resource is a RBA, create all dependency resources, else just the one resource
       if (resource.name === 'rulebook-activations') {
         let edaProject: EdaProject;
@@ -111,7 +110,6 @@ user_team_access_tab_resources.forEach((resource) => {
     let edaTeam2: EdaTeam;
     let edaTeam3: EdaTeam;
     before(() => {
-      cy.edaLogin();
       // If the resource is a RBA, create all dependency resources, else just the one resource
       if (resource.name === 'rulebook-activations') {
         let edaProject: EdaProject;
