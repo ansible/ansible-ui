@@ -40,19 +40,19 @@ describe('Host Tests', () => {
   });
 
   //tests
-  it.skip('can create, edit and delete a stand alone host', () => {
+  it('can create, edit and delete a stand alone host', () => {
     // use createAndEditAndDeleteHost function in order to test stand alone hosts basic functions
     // after navigating to the right url
     cy.navigateTo('awx', 'hosts');
     createAndEditAndDeleteHost('stand_alone_host', inventory, 'list');
   });
 
-  it.skip('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {
+  it('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {
     // use checkHostGroup function in order to test stand alone host group
     checkHostGroup('stand_alone_host', organization);
   });
 
-  it.skip('can see and launch jobs from host jobs tab', () => {
+  it('can see and launch jobs from host jobs tab', () => {
     createHostAndLaunchJob(inventory, organization.id, project.id);
   });
 

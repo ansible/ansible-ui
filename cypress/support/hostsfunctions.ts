@@ -46,17 +46,19 @@ export function createAndCheckHost(host_type: string, inventory: string) {
 }
 
 function createHost(host_type: string, inventoryID: number) {
+  const hostName = 'E2E Host ' + randomString(4);
   // create host with no verify
   if (host_type === 'inventory_host') {
     cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
-      name: 'E2E Host ' + randomString(4),
+      name: hostName,
       inventory: inventoryID,
     });
   } else {
     cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
-      name: 'E2E Host ' + randomString(4),
+      name: hostName,
     });
   }
+  return hostName;
 }
 
 function editHost(invenotryName: string, host_type: string, hostName: string, view: string) {
@@ -257,12 +259,7 @@ export function createHostAndLaunchJob(
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
     // add a host
-    cy.clickButton(/^Create host$/);
-    const hostName = 'E2E Host ' + randomString(4);
-    cy.get('[data-cy="name"]').type(hostName);
-    cy.intercept('POST', awxAPI`/hosts/`).as('create_host');
-    cy.clickButton(/^Create host$/);
-    cy.wait('@create_host').should('exist');
+    const hostName = createHost('inventory_host', inventory.id);
     // go to inventory job templates
     cy.navigateTo('awx', 'inventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
