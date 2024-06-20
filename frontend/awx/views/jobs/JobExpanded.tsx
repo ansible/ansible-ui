@@ -10,12 +10,13 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from './jobUtils';
+import { useGetLaunchedByDetails, useGetScheduleUrl, isJobRunning } from './jobUtils';
 
 export function JobExpanded(job: UnifiedJob) {
+  const getLaunchedByDetails = useGetLaunchedByDetails();
   const { value: launchedByValue, link: launchedByLink } = useMemo(
-    () => getLaunchedByDetails(job) ?? {},
-    [job]
+    () => (getLaunchedByDetails(job) ? getLaunchedByDetails(job) : {}),
+    [job, getLaunchedByDetails]
   );
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -31,9 +32,10 @@ export function JobExpanded(job: UnifiedJob) {
         : [],
     [data]
   );
+  const getScheduleUrl = useGetScheduleUrl();
   const scheduleUrl = useMemo(
-    () => (job.summary_fields?.schedule ? getScheduleUrl(job) ?? '' : ''),
-    [job]
+    () => (job.summary_fields?.schedule ? (getScheduleUrl(job) ? getScheduleUrl(job) : '') : ''),
+    [job, getScheduleUrl]
   );
   const inventoryUrlPaths: { [key: string]: string } = {
     '': 'inventory',
