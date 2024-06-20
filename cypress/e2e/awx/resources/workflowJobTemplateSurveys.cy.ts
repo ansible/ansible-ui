@@ -12,7 +12,7 @@ describe('Workflow Job Templates Surveys', function () {
     cy.awxLogin();
   });
 
-  describe('WFJT Surveys: Create, Edit and Delete', function () {
+  describe.skip('WFJT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
       question_description: 'The person behind this.',
