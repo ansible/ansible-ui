@@ -1,7 +1,3 @@
----
-title: Ansible Framework
----
-
 A framework for building applications using [PatternFly](https://www.patternfly.org).
 
 While PatternFly provides the building blocks and guidance on building applications, PatternFly does not tie together those building blocks and manage the needed state for the developer. This framework adds state management and abstractions for common patterns of application development.

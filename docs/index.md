@@ -1,69 +1,9 @@
 ---
 title: Ansible UI
 ---
+The [Ansible UI](https://github.com/ansible/ansible-ui) repo is a mono repo containing the user interfaces making up the Ansible ecosystem.
 
-The Ansible UI repo is a mono repo containing the user interfaces making up the Ansible ecosystem.
+[[Ansible Overview]] - Ansible specific documentation for Automation Controller, Event Driven Ansible, and Automation Hub.
 
-### [Hub](Hub-Overview.md)
+[[Ansible UI Framework]] - Documentation for the UI framework built by the Ansible team for building applications using [PatternFly](https://www.patternfly.org).
 
-# Core Components
-
-[PageFramework](./PageFramework)  
-[PageHeader](./PageHeader)  
-[PageLayout](./PageLayout)  
-
-# Page Components
-
-[PageDashboard](./PageDashboard)  
-[PageDashboardCarousel](./PageCarousel#pagedashboardcarousel)  
-[PageDetails](./PageDetails)  
-[PageForm](./PageForm)  
-[PageTable](./PageTable)  
-[PageTabs](./PageTabs)  
-[PageToolbar](./PageToolbar)  
-
-# Components
-
-[BulkActionDialog](./BulkActionDialog)  
-[BulkConfirmationDialog](./BulkConfirmationDialog)  
-[EmptyState](./EmptyState)
-[PageCarousel](./PageCarousel)  
-[ReorderItems](./ReorderItems)
-
-# Hooks
-
-## Framework Hooks
-
-[useBreakPoint](./useBreakPoint)  
-[useFrameworkTranslations](./useFrameworkTranslations)  
-[useInMemoryView](./useInMemoryView)  
-[useIsMounted](./useIsMounted)  
-[useOpen](./useOpen)  
-[usePageNavigate](./usePageNavigate)  
-[useSearchParams](./useSearchParams)  
-[useSelectDialog](./useSelectDialog)  
-[useTableItems](./useTableItems)  
-[useView](./useView)  
-[useWindowLocation](./useWindowLocation)  
-
-## Common Hooks
-
-### Crud
-
-[useDeleteRequest](./useDeleteRequest)  
-[useGet](./useGet)  
-[useGetAllPagesAWX](./useGetAllPagesAWX)  
-[useGetItem](./useGetItem)  
-[useGetRequest](./useGetRequest)  
-[useOptions](./useOptions)  
-[usePatchRequest](./usePatchRequest)  
-[usePostRequest](./usePostRequest)  
-
-### General
-
-[useActiveUser](./useActiveUser)  
-[useInvalidateCache](./useInvalidateCache)  
-
-### Validation
-
-[useIsValidUrl](./useIsValidUrl)  
