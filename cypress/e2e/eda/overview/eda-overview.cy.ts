@@ -1,15 +1,11 @@
 //Tests a user's ability to perform certain actions on the Dashboard of the EDA UI.
 //Implementation of Visual Tests makes sense here at some point
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaRuleAudit } from '../../../../frontend/eda/interfaces/EdaRuleAudit';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Overview', () => {
-  beforeEach(() => {
-    cy.edaLogin();
-  });
-
   it('user can create an RBA when there are none, verify working links when there are RBAs', () => {
     cy.intercept('GET', edaAPI`/activations/*`).as('getRBAs');
     cy.navigateTo('eda', 'overview');
@@ -121,10 +117,6 @@ describe('EDA Overview', () => {
 });
 
 describe('overview checks when resources before any resources are created', () => {
-  beforeEach(() => {
-    cy.edaLogin();
-  });
-
   it('verify the titles, subtitles and info icons on cards', () => {
     cy.navigateTo('eda', 'overview');
     cy.verifyPageTitle('Welcome to Event Driven Automation');

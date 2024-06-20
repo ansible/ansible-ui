@@ -1,11 +1,11 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Execution Environments: Create', () => {
   let credential: Credential;
@@ -13,10 +13,6 @@ describe('Execution Environments: Create', () => {
   let user: AwxUser;
   let execEnvName: string;
   let image: string;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
@@ -188,10 +184,6 @@ describe('Execution Environments: Edit and Bulk delete', () => {
     return `test-${testSignature}-ExecEnv-${randomString(5, undefined, { isLowercase: true })}`;
   }
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
@@ -309,10 +301,6 @@ describe('Execution Environments: Edit and Bulk delete', () => {
 describe('Execution Environments: Templates View', () => {
   let inventory: Inventory;
   let organization: Organization;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
