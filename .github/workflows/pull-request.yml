@@ -143,11 +143,7 @@ jobs:
       - eda-e2e
       # - hub-e2e
     steps:
-      - if: ${{ success() }}
-        run: |
-          echo Success
-          exit 0
-      - if: ${{ !success() }}
+      - if: ${{ cancelled() || failure() }}
         run: |
           echo Failure
           exit 1
