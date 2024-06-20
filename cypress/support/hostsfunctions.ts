@@ -7,7 +7,7 @@ import { awxAPI } from './formatApiPathForAwx';
 /////////////// Assisting functions ///////////////
 // this functions will be used for stand alone hosts and inventory hosts test
 
-function createAndCheckHost(host_type: string, inventory: string) {
+export function createAndCheckHost(host_type: string, inventory: string) {
   // assisting functions that will create host using UI to verify UI elements are working
   // the function will also verify all values contain currect data
   // this function cover both inventory host and stand alone host
@@ -46,17 +46,19 @@ function createAndCheckHost(host_type: string, inventory: string) {
 }
 
 function createHost(host_type: string, inventoryID: number) {
+  const hostName = 'E2E Host ' + randomString(4);
   // create host with no verify
   if (host_type === 'inventory_host') {
     cy.requestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
-      name: 'E2E Host ' + randomString(4),
+      name: hostName,
       inventory: inventoryID,
     });
   } else {
     cy.requestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
-      name: 'E2E Host ' + randomString(4),
+      name: hostName,
     });
   }
+  return hostName;
 }
 
 function editHost(invenotryName: string, host_type: string, hostName: string, view: string) {
@@ -238,4 +240,85 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
       /^There are currently no hosts added to this inventory./
     );
   }
+}
+
+export function createHostAndLaunchJob(
+  inventory: Inventory,
+  organizationId: number,
+  projectId: number,
+  hostInInventory?: boolean
+) {
+  cy.createAwxJobTemplate({
+    inventory: inventory.id,
+    organization: organizationId,
+    project: projectId,
+  }).then(() => {
+    // go to inventory hosts
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    // add a host
+    const hostName = createHost('inventory_host', inventory.id);
+    // go to inventory job templates
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
+    // run  a template and wait for request
+    cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
+    cy.get('[data-cy="launch-template"]').click();
+    cy.wait('@launch').should('exist');
+    if (hostInInventory) {
+      // go to the Hosts under Inventory
+      cy.navigateTo('awx', 'inventories');
+      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    } else {
+      // go to the Hosts
+      cy.navigateTo('awx', 'hosts');
+    }
+    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
+    // go to Jobs tab
+    cy.get('.pf-v5-c-tabs__item > a').contains('Jobs').click();
+    cy.get('[data-cy="relaunch-using-host-parameters"]').should('exist');
+    cy.get('[data-cy="relaunch-using-host-parameters"]').click();
+    cy.get('[data-cy="relaunch-on-all-hosts"]').should('exist');
+    cy.get('[data-cy="relaunch-on-failed-hosts"]').should('exist');
+    // relaunch job
+    cy.intercept('POST', awxAPI`/jobs/*/relaunch`).as('relaunch');
+    cy.get('[data-cy="relaunch-on-all-hosts"]').click();
+    cy.wait('@relaunch').should('exist');
+  });
+}
+
+export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean) {
+  cy.navigateTo('awx', 'hosts');
+  const hostName = createAndCheckHost('stand_alone_host', inventory.name);
+  // mock ansible_fact
+  cy.intercept(
+    { method: 'GET', url: awxAPI`/hosts/*/ansible_facts/` },
+    {
+      ansible_dns: {
+        search: ['dev-ui.svc.cluster.local', 'svc.cluster.local', 'cluster.local'],
+        options: {
+          ndots: '5',
+        },
+        nameservers: ['10.43.0.10'],
+      },
+    }
+  );
+  if (hostInInventory) {
+    // go to the Hosts under Inventory
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
+  }
+  cy.containsBy('a', 'Facts').click();
+  cy.get('code').should('contain', 'ansible_dns');
 }
