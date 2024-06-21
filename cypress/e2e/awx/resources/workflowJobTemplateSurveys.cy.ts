@@ -10,11 +10,7 @@ describe('Workflow Job Templates Surveys', function () {
   let organization: Organization;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
 
-  before(function () {
-    cy.awxLogin();
-  });
-  // FLAKY_06_20_2024
-  describe.skip('WFJT Surveys: Create, Edit and Delete', function () {
+  describe('WFJT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
       question_description: 'The person behind this.',
