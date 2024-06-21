@@ -11,7 +11,6 @@ describe('Topology view', () => {
   let user: AwxUser;
   let organization: Organization;
 
-
   before(() => {
     cy.login();
 
