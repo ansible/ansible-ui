@@ -60,7 +60,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //5) Cancel the job and assert that it has been canceled
   });
 
-  it('test edit, delete and facts are not part of constracted inventory host options', () => {
+  it('test edit, delete buttons and facts tab are not present for constructed inventory host options', () => {
     //'confirm that edit host button is missing from the host tab list of an inventory'
     //navigate to constructed inventory host list
     //verify edit button is missing
