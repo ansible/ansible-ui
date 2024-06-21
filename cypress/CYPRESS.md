@@ -149,6 +149,9 @@ Suppose you have a scenario where a user needs to navigate to the Team Access ta
 // Avoid using hardcoded URLs
 cy.visit('/infrastructure/instance-groups/1974/team-access');
 
+// use navigateTo command
+cy.navigateTo('awx', 'instance-groups');
+
 // Instead, simulate and navigate user interactions through UI interactions
 // Simulate user searching for Instance Group
 // if you are using a custom command to create a new instance group,
