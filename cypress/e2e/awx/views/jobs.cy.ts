@@ -52,8 +52,7 @@ describe('Jobs: List', () => {
     cy.contains(jobName);
     cy.clearAllFilters();
   });
-  // FLAKY_06_13_2024
-  it.skip('can relaunch the job and navigate to job output', () => {
+  it('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = job.id ? job.id.toString() : '';
     const jobName = job.name ? job.name : '';
@@ -63,8 +62,7 @@ describe('Jobs: List', () => {
     cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
-  // FLAKY_06_19_2024
-  it.skip('can render the toolbar and row actions', () => {
+  it('can render the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
     cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-v5-c-dropdown__menu').within(() => {
@@ -110,39 +108,33 @@ describe('Jobs: List', () => {
 describe('Jobs: Delete', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
-  let jobList: UnifiedJobList;
+  let organization: Organization;
 
   beforeEach(function () {
-    const globalAwxOrganization = this.globalAwxOrganization as Organization;
     const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
-      inventory = inv;
-      cy.createAwxJobTemplate({
-        organization: globalAwxOrganization.id,
-        project: globalProject.id,
-        inventory: inv.id,
-      }).then((jt) => {
-        jobTemplate = jt;
 
-        // Launch job to populate jobs list
-        cy.requestPost<UnifiedJobList>(
-          awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
-          {}
-        ).then((jl) => {
-          jobList = jl;
+    cy.createAwxOrganization('E2E Organization' + randomString(4)).then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
+        cy.createAwxJobTemplate({
+          organization: organization.id,
+          project: globalProject.id,
+          inventory: inv.id,
+        }).then((jt) => {
+          jobTemplate = jt;
         });
       });
     });
   });
 
   afterEach(() => {
-    const jobId = jobList?.id ? jobList?.id.toString() : '';
-    cy.requestDelete(awxAPI`/jobs/${jobId}/`, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization);
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
-  // FLAKY_06_13_2024
-  it.skip('can delete a job from the jobs list row', () => {
+
+  it('can delete a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -170,15 +162,14 @@ describe('Jobs: Delete', () => {
       }
     );
   });
-  // FLAKY_06_13_2024
-  it.skip('can delete a job from the jobs list toolbar', () => {
+  it('can delete a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
         cy.navigateTo('awx', 'jobs');
         const jobId = testJob.id ? testJob.id.toString() : '';
         cy.filterTableByMultiSelect('id', [jobId]);
-        const jobName = jobList.name ? jobList.name : '';
+        const jobName = testJob.name ? testJob.name : '';
         cy.waitForJobToProcessEvents(jobId, 'jobs');
         cy.get('[data-cy="refresh"]').click();
         cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
@@ -232,8 +223,7 @@ describe('Jobs: Output and Details Screen', () => {
     cy.getByDataCy('status').should('contain', 'Success');
     cy.getByDataCy('type').should('contain', 'Management job');
   });
-  // FLAKY_06_13_2024
-  it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
+  it('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
     const projectName = 'E2E Project Jobs ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
@@ -390,10 +380,7 @@ describe('Workflow template: Output and Details Screen', () => {
   let workflowJobTemplate: WorkflowJobTemplate;
   let jobTemplate: JobTemplate;
   let organization: Organization;
-  let newOrg: Organization;
   let inventory: Inventory;
-  let project: Project;
-  let thisId: string;
 
   beforeEach(function () {
     cy.createAwxOrganization().then((orgB) => {
@@ -411,43 +398,15 @@ describe('Workflow template: Output and Details Screen', () => {
             inventory: inventory.id,
           }).then((wfjt) => {
             workflowJobTemplate = wfjt;
-            cy.createAwxWorkflowVisualizerProjectNode(
-              workflowJobTemplate,
-              this.globalProject as Project
-            ).then((projectNode) => {
-              cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
-                (jobTemplateNode) => {
-                  cy.createAwxOrganization().then((org) => {
-                    newOrg = org;
-                    cy.createAwxProject({ organization: organization.id }).then((p) => {
-                      project = p;
-                      let inventorySource: InventorySource;
-                      cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-                        inventorySource = invSrc;
-                        cy.createAwxWorkflowVisualizerInventorySourceNode(
-                          workflowJobTemplate,
-                          inventorySource
-                        ).then((inventorySourceNode) => {
-                          cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
-                            (managementNode) => {
-                              cy.createWorkflowJTSuccessNodeLink(projectNode, jobTemplateNode);
-                              cy.createWorkflowJTSuccessNodeLink(
-                                jobTemplateNode,
-                                inventorySourceNode
-                              );
-                              cy.createWorkflowJTFailureNodeLink(
-                                inventorySourceNode,
-                                managementNode
-                              );
-                            }
-                          );
-                        });
-                      });
-                    });
-                  });
-                }
-              );
-            });
+            cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
+              (jobTemplateNode) => {
+                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
+                  (managementNode) => {
+                    cy.createWorkflowJTFailureNodeLink(jobTemplateNode, managementNode);
+                  }
+                );
+              }
+            );
           });
         });
       });
@@ -458,12 +417,11 @@ describe('Workflow template: Output and Details Screen', () => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(newOrg, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can launch a Workflow job, let it finish, and assert expected results on the output screen', () => {
+    let thisId: string;
     cy.navigateTo('awx', 'templates');
     cy.verifyPageTitle('Templates');
     cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
