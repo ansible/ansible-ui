@@ -50,10 +50,6 @@ describe('Teams: Edit and Delete', () => {
   let team: Team;
   let organization: Organization;
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
@@ -152,10 +148,6 @@ describe('Teams: Add and Remove users', () => {
   let team: Team;
   let user1: AwxUser;
   let organization: Organization;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
@@ -276,10 +268,6 @@ describe('Teams: Bulk delete', () => {
   let team: Team;
   let organization: Organization;
   const arrayOfElementText: string[] = [];
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
