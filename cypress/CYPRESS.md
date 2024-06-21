@@ -136,6 +136,25 @@ End-to-End tests for our project are located in the `cypress/e2e` directory. The
    });
    ```
 
+5. **Emulating User Interaction in Cypress Tests - no hardcoding URLs**
+   Example:
+   Suppose you have a scenario where a user needs to navigate to the Team Access tab in Instance Groups. Instead of directly visiting the URL for Team Access, you can simulate the user journey by searching for the Instance Group, filtering the results, and then clicking on the Team Access tab.
+
+```javascript
+// Avoid using hardcoded URLs
+cy.visit('/infrastructure/instance-groups/1974/team-access');
+
+// Instead, simulate user interactions
+// Simulate user searching for Instance Group
+cy.filterTableBySingleSelect('name', instanceGroup.name);
+
+// Simulate user clicking on the filtered Instance Group
+cy.clickTableRowLink('name', instanceGroup.name, { disableFilter: true });
+
+// Simulate user clicking on the Team Access tab
+cy.clickTab('Team Access', true);
+```
+
 ### Best Practices
 
 1. **Descriptive Test Names and Comments**:
