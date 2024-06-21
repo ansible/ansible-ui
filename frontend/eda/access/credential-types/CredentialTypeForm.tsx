@@ -22,10 +22,13 @@ import {
   EdaCredentialTypeInputs,
 } from '../../interfaces/EdaCredentialType';
 import { EdaPageForm } from '../../common/EdaPageForm';
-import { Button } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useCallback, useState } from 'react';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
+import { CredentialTypeDetails } from './CredentialTypePage/CredentialTypeDetails';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function CreateCredentialType() {
   const { t } = useTranslation();
@@ -71,6 +74,11 @@ export function EditCredentialType() {
   const navigate = useNavigate();
 
   const params = useParams<{ id?: string }>();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/credential-types/${params.id ?? ''}/`
+  );
+  const canPatchCredentialType = Boolean(data && data.actions && data.actions['PATCH']);
+
   const { data: credentialType } = useGet<EdaCredentialType>(
     edaAPI`/credential-types/` + `${params?.id}/`
   );
@@ -104,16 +112,28 @@ export function EditCredentialType() {
           },
         ]}
       />
-      {hasCredentialType && (
-        <EdaPageForm<EdaCredentialType>
-          submitText={t('Save credential type')}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-          defaultValue={getInitialFormValues(credentialType)}
-        >
-          <CredentialTypeInputs />
-        </EdaPageForm>
-      )}
+      {hasCredentialType &&
+        (!canPatchCredentialType ? (
+          <>
+            <Alert
+              variant={'warning'}
+              isInline
+              isPlain
+              style={{ paddingLeft: '24px', paddingTop: '16px' }}
+              title={t('The decision environment cannot be edited due to insufficient permission.')}
+            />
+            <CredentialTypeDetails />
+          </>
+        ) : (
+          <EdaPageForm<EdaCredentialType>
+            submitText={t('Save credential type')}
+            onSubmit={handleSubmit}
+            onCancel={onCancel}
+            defaultValue={getInitialFormValues(credentialType)}
+          >
+            <CredentialTypeInputs />
+          </EdaPageForm>
+        ))}
     </PageLayout>
   );
 }
