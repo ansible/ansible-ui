@@ -77,7 +77,7 @@ export function EditCredentialType() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/credential-types/${params.id ?? ''}/`
   );
-  const canPatchCredentialType = Boolean(data && data.actions && data.actions['PATCH']);
+  const canPatchCredentialType = data ? Boolean(data.actions && data.actions['PATCH']) : true;
 
   const { data: credentialType } = useGet<EdaCredentialType>(
     edaAPI`/credential-types/` + `${params?.id}/`
@@ -120,7 +120,7 @@ export function EditCredentialType() {
               isInline
               isPlain
               style={{ paddingLeft: '24px', paddingTop: '16px' }}
-              title={t('The decision environment cannot be edited due to insufficient permission.')}
+              title={t('The credential type cannot be edited due to insufficient permission.')}
             />
             <CredentialTypeDetails />
           </>

@@ -312,7 +312,7 @@ export function EditProject() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/projects/${params.id ?? ''}/`
   );
-  const canEditProject = Boolean(data && data.actions && data.actions['PATCH']);
+  const canEditProject = data ? Boolean(data.actions && data.actions['PATCH']) : true;
 
   const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 

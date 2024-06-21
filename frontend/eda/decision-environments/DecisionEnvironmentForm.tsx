@@ -154,7 +154,7 @@ export function EditDecisionEnvironment() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/decision-environments/${params.id ?? ''}/`
   );
-  const canPatchDE = Boolean(data && data.actions && data.actions['PATCH']);
+  const canPatchDE = data ? Boolean(data.actions && data.actions['PATCH']) : true;
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${id.toString()}/`
