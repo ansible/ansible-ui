@@ -12,11 +12,15 @@ import { MouseEvent, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { gatewayAPI } from '../../../../api/gateway-api-utils';
+import { useGet } from '../../../../../frontend/common/crud/useGet';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RequestError } from '../../../../../frontend/common/crud/RequestError';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
 import type { AuthenticatorMapValues } from '../AuthenticatorForm';
 import { MapFields } from './MapFields';
+import { PlatformItemsResponse } from '../../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../../interfaces/PlatformRole';
 
 export function AuthenticatorMappingStep() {
   const { t } = useTranslation();
@@ -29,6 +33,10 @@ export function AuthenticatorMappingStep() {
     control,
     name: 'mappings',
   });
+
+  const { data: roles, isLoading: isRolesLoading } = useGet<PlatformItemsResponse<PlatformRole>>(
+    gatewayAPI`/role_definitions/?order_by=name`
+  );
 
   const addMapping = (value: AuthenticatorMapType) => {
     const map: AuthenticatorMapValues = {
@@ -52,6 +60,7 @@ export function AuthenticatorMappingStep() {
             index={i}
             map={map as unknown as AuthenticatorMapValues}
             onDelete={removeMap}
+            roles={!roles || isRolesLoading ? undefined : roles.results}
           />
         ))}
       </PageFormSection>
