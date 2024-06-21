@@ -1,8 +1,9 @@
 name: GitHub Pages - Docs
 
 on:
-  pull_request:
-  workflow_dispatch:
+  push:
+    paths:
+      - docs/**
 
 permissions:
   contents: read
