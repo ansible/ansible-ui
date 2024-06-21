@@ -26,6 +26,9 @@ export function PlatformResource() {
       case 'shared.user':
         resourceUrl = gatewayAPI`/users/?resource__ansible_id=${ansible_id}`;
         break;
+      case 'shared.team':
+        resourceUrl = gatewayAPI`/teams/?resource__ansible_id=${ansible_id}`;
+        break;
     }
   }
 
