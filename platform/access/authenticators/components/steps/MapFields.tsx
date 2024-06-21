@@ -1,6 +1,6 @@
 import { Button, FormFieldGroup, FormFieldGroupHeader } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
@@ -11,13 +11,15 @@ import { PageFormPlatformTeamNameSelect } from '../../../organizations/component
 import { PageFormPlatformRoleNameSelect } from '../../../roles/components/PageFormPlatformRoleNameSelect';
 import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
+import { PlatformRole } from '../../../../interfaces/PlatformRole';
 
 export function MapFields(props: {
   index: number;
   map: AuthenticatorMapValues;
   onDelete: (id: number) => void;
+  roles?: PlatformRole[];
 }) {
-  const { index, map, onDelete } = props;
+  const { index, map, onDelete, roles } = props;
   const { register, getValues } = useFormContext();
   const { t } = useTranslation();
   const mapType = map.map_type;
@@ -31,6 +33,15 @@ export function MapFields(props: {
     }
     mapping.groups_value?.forEach(({ name }) => options.add(name));
   });
+
+  const selectedRoleName = useWatch({ name: `mappings.${index}.role` }) as string;
+  let isOrgRoleSelected = false;
+  let isTeamRoleSelected = false;
+  if (selectedRoleName && roles) {
+    const selectedRole = roles.find((r) => r.name === selectedRoleName);
+    isOrgRoleSelected = selectedRole?.content_type === 'shared.organization';
+    isTeamRoleSelected = selectedRole?.content_type === 'shared.team';
+  }
 
   const groupOptions = Array.from(options).map((name) => ({
     value: name,
@@ -186,7 +197,7 @@ export function MapFields(props: {
         >
           <PageFormPlatformTeamNameSelect
             name={`mappings.${index}.team`}
-            isRequired={['team'].includes(mapType)}
+            isRequired={['team'].includes(mapType) || isTeamRoleSelected}
           />
         </PageFormHidden>
         <PageFormHidden
@@ -195,7 +206,9 @@ export function MapFields(props: {
         >
           <PageFormPlatformOrganizationNameSelect
             name={`mappings.${index}.organization`}
-            isRequired={['team', 'organization'].includes(mapType)}
+            isRequired={
+              ['team', 'organization'].includes(mapType) || isOrgRoleSelected || isTeamRoleSelected
+            }
           />
           <PageFormPlatformRoleNameSelect
             name={`mappings.${index}.role`}
