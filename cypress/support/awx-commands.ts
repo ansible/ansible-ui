@@ -596,7 +596,6 @@ Cypress.Commands.add('clickPageAction', (dataCy: string) => {
   cy.getByDataCy(dataCy).click();
 });
 
-// Resources for testing AWX
 Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCode?: boolean) => {
   cy.requestPost<Pick<Organization, 'name'>, Organization>(
     awxAPI`/organizations/`,
@@ -604,7 +603,6 @@ Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCod
     failOnStatusCode
   );
 });
-
 Cypress.Commands.add(
   'createAWXCredential',
   (credential: SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>) => {
@@ -623,7 +621,6 @@ Cypress.Commands.add(
   (
     credential: Credential,
     options?: {
-      /** Whether to fail on response codes other than 2xx and 3xx */
       failOnStatusCode?: boolean;
     }
   ) => {

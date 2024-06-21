@@ -1,3 +1,4 @@
+import { awxAPI } from '../../common/api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { Jobs } from './Jobs';
 
@@ -25,11 +26,39 @@ describe('Jobs.cy.ts', () => {
     cy.fixture('jobs.json')
       .its('results')
       .should('be.an', 'array')
-      .then((results: UnifiedJob[]) => {
-        const job = results[0];
+      .then((jobs: UnifiedJob[]) => {
+        cy.intercept('GET', awxAPI`/unified_jobs/?order_by=-finished&page=1&page_size=100`, {
+          body: jobs,
+        }).as('reqJobs');
+        const job = jobs[0];
         cy.selectTableRow(job.name, false);
         cy.clickToolbarKebabAction('delete-selected-jobs');
         cy.contains('Permanently delete jobs').should('be.visible');
+        cy.get('input[id="confirm"]').should('be.visible');
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete job/);
+        cy.clickButton(/^Close$/);
+        cy.get('div[aria-label="Permanently delete jobs"]').should('not.exist');
+      });
+  });
+  it('can delete a job from the jobs list row', () => {
+    cy.mount(<Jobs />);
+    cy.fixture('jobs.json')
+      .its('results')
+      .should('be.an', 'array')
+      .then((jobs: UnifiedJob[]) => {
+        cy.intercept('GET', awxAPI`/unified_jobs/?order_by=-finished&page=1&page_size=100`, {
+          body: jobs,
+        }).as('reqJobs');
+        const job = jobs[0];
+        cy.selectTableRow(job.name, false);
+        cy.clickTableRowKebabAction(job.name, 'delete-job', false);
+        cy.contains('Permanently delete jobs').should('be.visible');
+        cy.get('input[id="confirm"]').should('be.visible');
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete job/);
+        cy.clickButton(/^Close$/);
+        cy.get('div[aria-label="Permanently delete jobs"]').should('not.exist');
       });
   });
 
