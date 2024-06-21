@@ -137,14 +137,19 @@ End-to-End tests for our project are located in the `cypress/e2e` directory. The
    ```
 
 5. **Emulating User Interaction in Cypress Tests - no hardcoding URLs**
-   Example:
-   Suppose you have a scenario where a user needs to navigate to the Team Access tab in Instance Groups. Instead of directly visiting the URL for Team Access, you can simulate the user journey by searching for the Instance Group, filtering the results, and then clicking on the Team Access tab.
+   Best Practices:
+   Navigate Through UI Interactions: Whenever possible, simulate user interactions to navigate through the application rather than relying on cy.visit(). This approach allows you to maintain the application state and avoid unnecessary page reloads.
+
+Use cy.visit() Sparingly: Reserve the use of cy.visit() for scenarios where reloading the page is necessary, such as testing initial page loads or navigating to a specific URL that cannot be reached through UI interactions.
+
+Example:
+Suppose you have a scenario where a user needs to navigate to the Team Access tab in Instance Groups. Instead of directly visiting the URL for Team Access, you can simulate the user journey by searching for the Instance Group, filtering the results, and then clicking on the Team Access tab.
 
 ```javascript
 // Avoid using hardcoded URLs
 cy.visit('/infrastructure/instance-groups/1974/team-access');
 
-// Instead, simulate user interactions
+// Instead, simulate and navigate user interactions through UI interactions
 // Simulate user searching for Instance Group
 cy.filterTableBySingleSelect('name', instanceGroup.name);
 
