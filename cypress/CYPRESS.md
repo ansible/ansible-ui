@@ -151,7 +151,8 @@ cy.visit('/infrastructure/instance-groups/1974/team-access');
 
 // Instead, simulate and navigate user interactions through UI interactions
 // Simulate user searching for Instance Group
-// if you are using a custom command to create a new instance group, grab the instance group object to access the instance group name
+// if you are using a custom command to create a new instance group,
+// grab the instance group object to access the instance group name
 
 cy.filterTableBySingleSelect('name', instanceGroup.name);
 
