@@ -104,8 +104,7 @@ function deleteHostDetailsView(inventoryName: string, host_type: string, hostNam
   cy.contains(/^There are currently no hosts added to this inventory./);
 }
 
-function deleteInventoryHosts(inventory: Inventory) {
-  //function to delete all hosts from inventory
+function deleteAllInventoryHosts(inventory: Inventory) {
   navigateToBaseView('inventory_host', inventory.name);
   cy.getByDataCy('select-all').click();
   cy.clickToolbarKebabAction('delete-selected-hosts');
