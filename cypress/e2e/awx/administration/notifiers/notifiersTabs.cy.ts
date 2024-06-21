@@ -9,7 +9,6 @@ describe('Notifications', () => {
   //let notificationTemplate: NotificationTemplate;
   let organization: Organization;
 
-
   before(() => {
     cy.login();
     cy.createAwxOrganization(randomE2Ename()).then((org) => {
@@ -19,7 +18,6 @@ describe('Notifications', () => {
 
   after(() => {
     cy.deleteAwxOrganization(organization);
-
   });
 
   describe('Notifications: Details View', () => {
