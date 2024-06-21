@@ -13,15 +13,30 @@ describe('Jobs: List', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let job: Job;
+  let project: Project;
+  let organization: Organization;
+
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: org.id }).then((p) => {
+        project = p;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+  });
 
   beforeEach(function () {
-    const globalAwxOrganization = this.globalAwxOrganization as Organization;
-    const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
+    cy.createAwxInventory({ organization: organization.id }).then((inv) => {
       inventory = inv;
       cy.createAwxJobTemplate({
-        organization: globalAwxOrganization.id,
-        project: globalProject.id,
+        organization: organization.id,
+        project: project.id,
         inventory: inv.id,
       }).then((jt) => {
         jobTemplate = jt;
@@ -52,8 +67,8 @@ describe('Jobs: List', () => {
     cy.contains(jobName);
     cy.clearAllFilters();
   });
-  // FLAKY_06_13_2024
-  it.skip('can relaunch the job and navigate to job output', () => {
+
+  it('can relaunch the job and navigate to job output', () => {
     cy.navigateTo('awx', 'jobs');
     const jobId = job.id ? job.id.toString() : '';
     const jobName = job.name ? job.name : '';
@@ -63,8 +78,7 @@ describe('Jobs: List', () => {
     cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
   });
 
-  // FLAKY_06_19_2024
-  it.skip('can render the toolbar and row actions', () => {
+  it('can render the toolbar and row actions', () => {
     cy.navigateTo('awx', 'jobs');
     cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
     cy.get('.pf-v5-c-dropdown__menu').within(() => {
@@ -111,15 +125,30 @@ describe('Jobs: Delete', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let jobList: UnifiedJobList;
+  let project: Project;
+  let organization: Organization;
+
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: org.id }).then((p) => {
+        project = p;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+  });
 
   beforeEach(function () {
-    const globalAwxOrganization = this.globalAwxOrganization as Organization;
-    const globalProject = this.globalProject as Project;
-    cy.createAwxInventory({ organization: globalAwxOrganization.id }).then((inv) => {
+    cy.createAwxInventory({ organization: organization.id }).then((inv) => {
       inventory = inv;
       cy.createAwxJobTemplate({
-        organization: globalAwxOrganization.id,
-        project: globalProject.id,
+        organization: organization.id,
+        project: project.id,
         inventory: inv.id,
       }).then((jt) => {
         jobTemplate = jt;
@@ -141,8 +170,8 @@ describe('Jobs: Delete', () => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
   });
-  // FLAKY_06_13_2024
-  it.skip('can delete a job from the jobs list row', () => {
+
+  it('can delete a job from the jobs list row', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -170,8 +199,8 @@ describe('Jobs: Delete', () => {
       }
     );
   });
-  // FLAKY_06_13_2024
-  it.skip('can delete a job from the jobs list toolbar', () => {
+
+  it('can delete a job from the jobs list toolbar', () => {
     const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
     cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
       (testJob) => {
@@ -204,6 +233,23 @@ describe('Jobs: Delete', () => {
 
 describe('Jobs: Output and Details Screen', () => {
   let thisId: string;
+  let project: Project;
+  let organization: Organization;
+
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: org.id }).then((p) => {
+        project = p;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+  });
 
   it('can launch a Management job, let it finish, and assert expected results on the output screen', () => {
     cy.navigateTo('awx', 'management-jobs');
@@ -232,14 +278,14 @@ describe('Jobs: Output and Details Screen', () => {
     cy.getByDataCy('status').should('contain', 'Success');
     cy.getByDataCy('type').should('contain', 'Management job');
   });
-  // FLAKY_06_13_2024
-  it.skip('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
+
+  it('can launch a Source Control Update job, let it finish, and assert expected results on the output screen', function () {
     const projectName = 'E2E Project Jobs ' + randomString(4);
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
     cy.clickLink(/^Create project$/);
     cy.get('[data-cy="name"]').type(projectName);
-    cy.singleSelectByDataCy('organization', `${(this.globalAwxOrganization as Organization).name}`);
+    cy.singleSelectByDataCy('organization', `${organization.name}`);
     cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
     cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
     cy.intercept('POST', awxAPI`/projects/`).as('newProject');
@@ -277,28 +323,41 @@ describe('Job template: Output and Details Screen', () => {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let thisId: string;
+  let project: Project;
   let organization: Organization;
 
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: org.id }).then((p) => {
+        project = p;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+  });
+
   beforeEach(function () {
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: (this.globalProject as Project).id,
-          inventory: i.id,
-        }).then((jt) => {
-          jobTemplate = jt;
-        });
+    cy.createAwxInventory({ organization: organization.id }).then((i) => {
+      inventory = i;
+      cy.createAwxJobTemplate({
+        organization: organization.id,
+        project: project.id,
+        inventory: i.id,
+      }).then((jt) => {
+        jobTemplate = jt;
       });
     });
   });
 
   afterEach(() => {
-    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    });
   });
 
   it('can launch a Playbook Run job, let it finish, and assert expected results on the output screen', () => {
@@ -335,17 +394,30 @@ describe('Job template: Output and Details Screen', () => {
 describe('Inventory source: Output and Details Screen', () => {
   let inventory: Inventory;
   let inventorySource: InventorySource;
-  let organization: Organization;
   let thisId: string;
+  let project: Project;
+  let organization: Organization;
+
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: org.id }).then((p) => {
+        project = p;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+  });
 
   beforeEach(function () {
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-        cy.createAwxInventorySource(i, this.globalProject as Project).then((invSrc) => {
-          inventorySource = invSrc;
-        });
+    cy.createAwxInventory({ organization: organization.id }).then((i) => {
+      inventory = i;
+      cy.createAwxInventorySource(i, project).then((invSrc) => {
+        inventorySource = invSrc;
       });
     });
   });
@@ -389,32 +461,44 @@ describe('Inventory source: Output and Details Screen', () => {
 describe('Workflow template: Output and Details Screen', () => {
   let workflowJobTemplate: WorkflowJobTemplate;
   let jobTemplate: JobTemplate;
-  let organization: Organization;
   let newOrg: Organization;
   let inventory: Inventory;
-  let project: Project;
   let thisId: string;
 
+  let project: Project;
+  let organization: Organization;
+
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxProject({ organization: org.id }).then((p) => {
+        project = p;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false }).then(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+  });
+
   beforeEach(function () {
-    cy.createAwxOrganization().then((orgB) => {
-      organization = orgB;
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-        cy.createAwxJobTemplate({
+    cy.createAwxInventory({ organization: organization.id }).then((i) => {
+      inventory = i;
+      cy.createAwxJobTemplate({
+        organization: organization.id,
+        project: project.id,
+        inventory: inventory.id,
+      }).then((jt) => {
+        jobTemplate = jt;
+        cy.createAwxWorkflowJobTemplate({
           organization: organization.id,
-          project: (this.globalProject as Project).id,
           inventory: inventory.id,
-        }).then((jt) => {
-          jobTemplate = jt;
-          cy.createAwxWorkflowJobTemplate({
-            organization: organization.id,
-            inventory: inventory.id,
-          }).then((wfjt) => {
-            workflowJobTemplate = wfjt;
-            cy.createAwxWorkflowVisualizerProjectNode(
-              workflowJobTemplate,
-              this.globalProject as Project
-            ).then((projectNode) => {
+        }).then((wfjt) => {
+          workflowJobTemplate = wfjt;
+          cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then(
+            (projectNode) => {
               cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
                 (jobTemplateNode) => {
                   cy.createAwxOrganization().then((org) => {
@@ -447,8 +531,8 @@ describe('Workflow template: Output and Details Screen', () => {
                   });
                 }
               );
-            });
-          });
+            }
+          );
         });
       });
     });
