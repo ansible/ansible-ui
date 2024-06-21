@@ -68,94 +68,220 @@ describe('Workflow Job Templates Surveys', function () {
       reusableTemplateSurveyTestSuite.canCreateMultipleSurvey());
   });
 
-  // describe.skip('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
-  //   before(function () {
-  //     cy.createAwxInventory({ organization: (this.globalAwxOrganization as Organization).id }).then(
-  //       (inv) => {
-  //         inventory = inv;
+  describe('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
+    before(() => {
+      cy.createAwxOrganization(randomE2Ename()).then((org) => {
+        organization = org;
+      });
+    });
 
-  //         cy.createAwxWorkflowJobTemplate({
-  //           organization: (this.globalAwxOrganization as Organization).id,
-  //           inventory: inventory.id,
-  //         }).then((wfjt) => {
-  //           workflowJobTemplate = wfjt;
-  //           reusableTemplateSurveyTestSuite = new ReusableTemplateSurveyTestSuite(
-  //             workflowJobTemplate
-  //           );
+    after(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
 
-  //           cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id}/survey`);
-  //         });
-  //       }
-  //     );
-  //   });
+    beforeEach(() => {
+      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+        inventory = inv;
 
-  //   after(function () {
-  //     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-  //     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-  //   });
+        cy.createAwxWorkflowJobTemplate({
+          organization: organization.id,
+          inventory: inventory.id,
+        }).then((wfjt) => {
+          workflowJobTemplate = wfjt;
+          reusableTemplateSurveyTestSuite = new ReusableTemplateSurveyTestSuite(
+            workflowJobTemplate
+          );
+        });
+      });
+    });
 
-  //   const surveyTypes = [
-  //     {
-  //       type: 'text',
-  //       label: 'Text',
-  //       question_name: 'Text Answer',
-  //       question_description: 'Text description.',
-  //       variable: 'text_answer',
-  //       default: 'default text answer',
-  //     },
-  //     {
-  //       type: 'textarea',
-  //       label: 'Textarea',
-  //       question_name: 'Textarea Answer',
-  //       question_description: 'Textarea description.',
-  //       variable: 'textarea_answer',
-  //       default: 'default textarea answer',
-  //     },
-  //     {
-  //       type: 'password',
-  //       label: 'Password',
-  //       question_name: 'Password Answer',
-  //       question_description: 'Password description.',
-  //       variable: 'password_answer',
-  //       default: 'default password answer',
-  //     },
-  //     {
-  //       type: 'integer',
-  //       label: 'Integer',
-  //       question_name: 'Integer Answer',
-  //       question_description: 'Integer description.',
-  //       variable: 'integer_answer',
-  //       max: 1338,
-  //       default: '1337',
-  //     },
-  //     {
-  //       type: 'float',
-  //       label: 'Float',
-  //       question_name: 'Float Answer',
-  //       question_description: 'Float description.',
-  //       variable: 'float_answer',
-  //       default: '13.37',
-  //     },
-  //     {
-  //       type: 'multiplechoice',
-  //       label: 'Multiple Choice (single select)',
-  //       question_name: 'Multiplechoice Answer',
-  //       question_description: 'multiplechoice description.',
-  //       variable: 'multiplechoice_answer',
-  //       choices: ['foo', 'bar', 'baz'],
-  //       default: 'bar',
-  //     },
-  //     {
-  //       type: 'multiselect',
-  //       label: 'Multiple Choice (multiple select)',
-  //       question_name: 'Multiselect Answer',
-  //       question_description: 'Multiselect description.',
-  //       variable: 'multiselect_answer',
-  //       choices: ['foo', 'bar', 'baz'],
-  //       default: 'foo\nbar',
-  //     },
-  //   ];
-  //   it('can create all 7 types of survey types, enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () =>
-  //     reusableTemplateSurveyTestSuite.canCreateAllSurveyTypes(surveyTypes));
-  // });
+    afterEach(() => {
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    });
+
+    describe('can create all 7 types of survey types, enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
+      it('Text survey type', () => {
+        const question = {
+          question_name: 'Text answer',
+          question_description: 'Text description.',
+          variable: 'text_answer',
+          default: 'default text answer',
+          type: 'text',
+          max: 1024,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: [],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Text', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType)
+          .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
+          .should('have.value', question.default);
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+
+      it('Textarea survey type', () => {
+        const question = {
+          question_name: 'Textarea answer',
+          question_description: 'Textarea description.',
+          variable: 'textarea_answer',
+          default: 'default textarea answer',
+          type: 'textarea',
+          max: 1024,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: [],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Textarea', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType)
+          .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
+          .should('have.value', question.default);
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+
+      it('Password survey type', () => {
+        const question = {
+          question_name: 'Password answer',
+          question_description: 'Password description.',
+          variable: 'password_answer',
+          default: 'default password answer',
+          type: 'password',
+          max: 1024,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: [],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Password', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType)
+          .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
+          .should('have.value', '$encrypted$');
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+
+      it('Integer survey type', () => {
+        const question = {
+          question_name: 'Integer answer',
+          question_description: 'Integer description.',
+          variable: 'integer_answer',
+          default: 1337,
+          type: 'integer',
+          max: 1338,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: [],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Integer', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType)
+          .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
+          .should('have.value', question.default);
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+
+      it('Float survey type', () => {
+        const question = {
+          question_name: 'Float answer',
+          question_description: 'Float description.',
+          variable: 'float_answer',
+          default: '13.37',
+          type: 'float',
+          max: 1024,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: [],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Float', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType)
+          .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
+          .should('have.value', question.default);
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+
+      it('Multiple choice (single select) survey type', () => {
+        const question = {
+          question_name: 'Multiplechoice answer',
+          question_description: 'multiplechoice description.',
+          variable: 'multiplechoice_answer',
+          default: 'bar',
+          type: 'multiplechoice',
+          max: 1024,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: ['foo', 'bar', 'baz'],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Multiple Choice (single select)', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType).within(() => {
+          cy.contains(question.default);
+          cy.get('div[data-ouia-component-id="menu-select"]').click();
+          question?.choices.forEach((choice) => {
+            cy.getByDataCy('survey-multiplechoice-answer').contains(choice);
+          });
+        });
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+
+      it('Multiple Choice (multiple select) survey type', () => {
+        const question = {
+          question_name: 'Multiselect answer',
+          question_description: 'Multiselect description.',
+          variable: 'multiselect_answer',
+          default: 'foo\nbar',
+          type: 'multiselect',
+          max: 1024,
+          min: 0,
+          new_question: true,
+          required: true,
+          choices: ['foo', 'bar', 'baz'],
+        };
+        cy.createTemplateSurvey(workflowJobTemplate, 'Multiple Choice (multiple select)', question);
+        reusableTemplateSurveyTestSuite.canEnableSurvey(question);
+        const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
+
+        cy.getByDataCy(groupType).within(() => {
+          const defaults = question.default.toString().split('\n');
+          defaults.forEach((defaultValue) => {
+            cy.contains(defaultValue);
+          });
+          cy.get('#survey-multiselect-answer').click();
+        });
+
+        cy.get('#survey-multiselect-answer-select').within(() => {
+          question?.choices?.forEach((choice) => {
+            cy.getByDataCy(choice);
+          });
+        });
+
+        reusableTemplateSurveyTestSuite.canFinishSurvey(question);
+      });
+    });
+  });
 });

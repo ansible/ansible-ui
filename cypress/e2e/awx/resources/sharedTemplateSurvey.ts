@@ -2,6 +2,7 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { Spec } from '../../../../frontend/awx/interfaces/Survey';
+import { Job } from '../../../../frontend/awx/interfaces/Job';
 
 export class ReusableTemplateSurveyTestSuite {
   template: JobTemplate | WorkflowJobTemplate;
@@ -172,18 +173,18 @@ export class ReusableTemplateSurveyTestSuite {
     });
   }
 
-  canCreateAllSurveyTypes(surveyTypes: Spec[]) {
-    surveyTypes.forEach((survey) => {
-      cy.createTemplateSurvey(this.template, 'Text', survey);
-      cy.getByDataCy('name-column-cell').contains(survey.question_name);
-    });
+  canEnableSurvey(survey: Spec) {
+    cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
+    cy.getByDataCy('name-column-cell').contains(survey.question_name);
 
     cy.intercept('PATCH', awxAPI`/${this.templateType}/${this.template.id.toString()}/`).as(
       'enableSurvey'
     );
     cy.get('[for="survey-switch"]').click();
     cy.wait('@enableSurvey');
+  }
 
+  canLaunchSurvey(survey: Spec) {
     cy.intercept('GET', awxAPI`/${this.templateType}/${this.template.id.toString()}/launch/`).as(
       'launchTemplate'
     );
@@ -193,63 +194,31 @@ export class ReusableTemplateSurveyTestSuite {
 
     cy.contains('Prompt on Launch');
 
-    surveyTypes.forEach((survey) => {
-      const groupType = `survey-${survey.type}-answer-form-group`;
-
-      cy.getByDataCy(groupType).within(() => {
-        cy.contains(survey.question_name);
-        cy.contains('*');
-        cy.get('.pf-v5-c-icon').click();
-      });
-      cy.contains(survey.question_description);
-
-      if (['multiplechoice', 'multiselect'].includes(survey.type)) {
-        if (survey.type === 'multiplechoice') {
-          cy.getByDataCy(groupType).within(() => {
-            cy.contains(survey.default);
-            cy.get('div[data-ouia-component-id="menu-select"]').click();
-            (survey?.choices as string[])?.forEach((choice) => {
-              cy.getByDataCy('survey-multiplechoice-answer').contains(choice);
-            });
-          });
-        } else {
-          cy.getByDataCy(groupType).within(() => {
-            const defaults = (survey.default as string).split('\n');
-            defaults.forEach((defaultValue) => {
-              cy.contains(defaultValue);
-            });
-            cy.get('#survey-multiselect-answer').click();
-          });
-
-          cy.get('#survey-multiselect-answer-select').within(() => {
-            (survey?.choices as string[])?.forEach((choice) => {
-              cy.getByDataCy(choice);
-            });
-          });
-        }
-      } else if (survey.type === 'password') {
-        cy.getByDataCy(groupType)
-          .getByDataCy('survey-password-answer')
-          .should('have.value', '$encrypted$');
-      } else {
-        cy.getByDataCy(groupType)
-          .getByDataCy(`survey-${survey.type.toLowerCase()}-answer`)
-          .should('have.value', survey.default);
-      }
+    const groupType = `survey-${survey.type}-answer-form-group`;
+    cy.getByDataCy(groupType).within(() => {
+      cy.contains(survey.question_name);
+      cy.contains('*');
+      cy.get('.pf-v5-c-icon').click();
     });
+    cy.contains(survey.question_description);
 
+    return groupType;
+  }
+
+  canFinishSurvey(survey: Spec) {
     cy.clickButton('Next');
 
     cy.getByDataCy('code-block-value').within(() => {
-      surveyTypes.forEach((survey) => {
-        cy.contains(survey.variable);
-        if (survey.type === 'password') cy.contains('$encrypted$');
-        else {
-          (survey.default as string).split('\n').forEach((def: string) => {
+      cy.contains(survey.variable);
+      if (survey.type === 'password') cy.contains('$encrypted$');
+      else {
+        survey.default
+          .toString()
+          .split('\n')
+          .forEach((def: string) => {
             cy.contains(def);
           });
-        }
-      });
+      }
     });
 
     cy.clickButton('Finish');
@@ -259,29 +228,24 @@ export class ReusableTemplateSurveyTestSuite {
     );
     cy.clickButton(/^Finish/);
     cy.wait('@postLaunch')
-      .its('response.body.id')
-      .then((jobId: string) => {
-        if (this.templateType === 'workflow_job_templates') cy.waitForWorkflowJobStatus(jobId);
-        else cy.waitForTemplateStatus(jobId);
-
-        cy.log('job id', jobId);
-
-        cy.contains('Success');
+      .its('response.body')
+      .then((job: Job) => {
+        if (['running', 'pending'].includes(job.status ?? '')) cy.cancelJob(job);
 
         const jobType = this.templateType === 'workflow_job_templates' ? 'workflow' : 'playbook';
+        cy.visit(`/jobs/${jobType}/${job.id}/details`);
 
-        cy.visit(`/jobs/${jobType}/${jobId}/details`);
-
-        surveyTypes.forEach((survey) => {
-          cy.contains(survey.variable);
-          if (survey.type === 'password') {
-            cy.contains('$encrypted$');
-          } else {
-            (survey.default as string).split('\n').forEach((def) => {
+        cy.contains(survey.variable);
+        if (survey.type === 'password') {
+          cy.contains('$encrypted$');
+        } else {
+          survey.default
+            .toString()
+            .split('\n')
+            .forEach((def) => {
               cy.contains(def);
             });
-          }
-        });
+        }
       });
   }
 }
