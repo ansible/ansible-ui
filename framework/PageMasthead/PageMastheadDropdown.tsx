@@ -9,7 +9,7 @@ export function PageMastheadDropdown(props: {
   label?: string;
   children: ReactNode;
 }) {
-  const isSmallOrLarger = useBreakpoint('sm');
+  const showLabel = useBreakpoint('md');
   const [open, setOpen] = useState(false);
   const onSelect = useCallback(() => setOpen((open) => !open), []);
   const onToggle = useCallback(() => setOpen((open) => !open), []);
@@ -28,7 +28,7 @@ export function PageMastheadDropdown(props: {
             spaceItems={{ default: 'spaceItemsSm' }}
           >
             <FlexItem>{props.icon}</FlexItem>
-            {isSmallOrLarger && <FlexItem wrap="nowrap">{props.label}</FlexItem>}
+            {showLabel && props.label && <FlexItem wrap="nowrap">{props.label}</FlexItem>}
           </Flex>
         </DropdownToggle>
       }
