@@ -197,7 +197,7 @@ export function AwxSettingsForm(props: {
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
 
-  if (props.name.endsWith('SECRET')) {
+  if (props.name.endsWith('SECRET') || props.name.endsWith('PASSWORD')) {
     return (
       <PageFormTextInput
         label={option.label}
