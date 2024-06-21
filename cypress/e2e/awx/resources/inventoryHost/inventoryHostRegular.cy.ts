@@ -1,7 +1,11 @@
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { createAndEditAndDeleteHost, checkHostGroup } from '../../../../support/hostsfunctions';
+import {
+  checkHostGroup,
+  createAndEditAndDeleteHost,
+  testHostBulkDelete,
+} from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
@@ -9,7 +13,6 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   let user: AwxUser;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
@@ -38,24 +41,21 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     // use createAndEditAndDeleteHost function in order to test inventory hosts basic functions
     // after navigating to the right url
     // the test covers create, verify, edit and delete of hosts form inventory
-    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
-    cy.clickTab(/^Hosts$/, true);
     createAndEditAndDeleteHost('inventory_host', inventory, 'list');
   });
 
   it('can edit and delete inventory host action from details view', () => {
     //can and delete host from details view
-    cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/details`);
-    cy.clickTab(/^Hosts$/, true);
     createAndEditAndDeleteHost('inventory_host', inventory, 'details');
   });
 
-  it.skip('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
+  it('can bulk delete multiple hosts from the hosts tab of an inventory', () => {
     //1) Use the inventory , access the host tab of that inventory
     //2) Create 2 hosts in this test for the purpose of delete
-    //3) Assert the existence of the hosts
-    //4) Delete the hosts, intercept the Delete call
-    //5) Assert that the hosts are not found in a search; assert the statusCode of the Delete call
+    //3) Verify 2 hosts exists in inventory
+    //4) Bulk delete hosts from list view using select all option
+    //5) Verify no hosts exists in inventory
+    testHostBulkDelete('inventory_host', inventory);
   });
 
   it.skip("can view a host's facts on the facts tab of a host inside an inventory", () => {
