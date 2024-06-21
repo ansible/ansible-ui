@@ -25,6 +25,7 @@ import { EdaPageForm } from '../../common/EdaPageForm';
 import { Button } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useCallback, useState } from 'react';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 
 export function CreateCredentialType() {
   const { t } = useTranslation();
@@ -160,6 +161,7 @@ function CredentialTypeInputs() {
         label={t('Description')}
         placeholder={t('Enter description')}
       />
+      <PageFormSelectOrganization<EdaCredentialTypeCreate> name="organization_id" />
       <PageFormSection singleColumn>
         <PageFormDataEditor
           name="inputs"
