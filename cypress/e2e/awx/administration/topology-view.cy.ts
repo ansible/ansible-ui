@@ -5,9 +5,23 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Settings } from '../../../../frontend/awx/interfaces/Settings';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Topology view', () => {
   let user: AwxUser;
+  let organization: Organization;
+
+  before(() => {
+    cy.login();
+
+    cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      organization = org;
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+  });
 
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: awxAPI`/mesh_visualizer/` }).as('getMeshVisualizer');
@@ -51,7 +65,7 @@ describe('Topology view', () => {
   });
 
   it('does not show Topology View in sidebar for non admins', function () {
-    cy.createAwxUser(this.globalAwxOrganization as Organization).then((awxUser) => {
+    cy.createAwxUser(organization).then((awxUser) => {
       user = awxUser;
 
       cy.awxLoginTestUser(user.username, 'pw');
@@ -77,8 +91,8 @@ describe('Topology view', () => {
       });
     });
   });
-  // FLAKY_06_13_2024
-  it.skip('will allow the user to select node and delete it', () => {
+
+  it('will allow the user to select node and delete it', () => {
     cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
       if (!data?.IS_K8S) {
         cy.log('TEST SKIPPED | IS_K8S: False');
