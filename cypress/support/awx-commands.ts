@@ -751,10 +751,13 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
   let requestCount = 1;
+  let initialWaitTime = 1000;
+  const maxRequestCount = 300;
+
   cy.requestGet<Project>(awxAPI`/projects/${projectId.toString()}`).then((project) => {
     // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
-    if (project.status === 'successful' || requestCount > 300) {
-      if (requestCount > 300) {
+    if (project.status === 'successful' || requestCount > maxRequestCount) {
+      if (requestCount > maxRequestCount) {
         cy.log('Reached maximum number of requests for reading project status');
       }
       // Reset request count
@@ -762,11 +765,16 @@ Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
       return;
     }
     Cypress.log({
-      displayName: 'PROJECT SYNC:',
+      displayName: `PROJECT SYNC: ${project.name} status ${project.status}`,
       message: [`🕓WAITING FOR PROJECT TO SYNC...🕓`],
     });
     requestCount++;
-    cy.wait(1000);
+    if (requestCount <= 5) {
+      initialWaitTime = initialWaitTime * 2;
+    } else {
+      initialWaitTime = 1000;
+    }
+    cy.wait(initialWaitTime);
     cy.waitForProjectToFinishSyncing(projectId);
   });
 });
