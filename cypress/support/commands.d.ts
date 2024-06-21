@@ -1089,6 +1089,7 @@ declare global {
         retries?: number
       ): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
+      cancelJob(job: Job): Chainable<Job>;
 
       createAndDeleteCustomAWXCredentialTypeUI(
         customCredentialTypeName: string,

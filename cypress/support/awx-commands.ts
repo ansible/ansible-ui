@@ -1495,6 +1495,10 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
   waitForWFJobStatus(200);
 });
 
+Cypress.Commands.add('cancelJob', (job: Job) => {
+  cy.requestPost<Job>(`${job.url}cancel/`, {});
+});
+
 const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
 const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
@@ -1847,7 +1851,6 @@ Cypress.Commands.add(
       spec?.max && cy.getByDataCy('question-max').clear().type(spec.max.toString());
       cy.getByDataCy('question-default').type(spec.default.toString());
     } else if (
-      // ['Multiple Choice (single select)', 'Multiple Choice (multiple select)'].includes(
       ['multiplechoice', 'multiselect'].includes(spec.type) &&
       Array.isArray(spec.choices)
     ) {
