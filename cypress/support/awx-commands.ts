@@ -2,7 +2,7 @@
 
 import '@cypress/code-coverage/support';
 import jsyaml from 'js-yaml';
-import { SetOptional, SetRequired } from 'type-fest';
+import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
@@ -1829,13 +1829,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createTemplateSurvey',
-  (
-    template: JobTemplate | WorkflowJobTemplate,
-    spec: SetOptional<
-      Spec & { label: string },
-      'required' | 'min' | 'max' | 'new_question' | 'choices'
-    >
-  ) => {
+  (template: JobTemplate | WorkflowJobTemplate, label: string, spec: Spec) => {
     cy.visit(
       `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
     );
@@ -1846,7 +1840,7 @@ Cypress.Commands.add(
 
     spec?.required === false && cy.getByDataCy('question-required').uncheck();
 
-    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', spec.label);
+    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', label);
 
     if (['text', 'textarea', 'password', 'integer', 'float'].includes(spec.type)) {
       spec?.min && cy.getByDataCy('question-min').clear().type(spec.min.toString());
