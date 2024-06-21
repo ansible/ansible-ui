@@ -43,7 +43,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
           <PageDetails disableScroll={true} numberOfColumns="single">
             <PageDetailCodeEditor
               label={t('Event log')}
-              value={JSON.stringify(props?.event?.payload)}
+              value={props?.event?.payload}
               showCopyToClipboard={true}
             />
           </PageDetails>

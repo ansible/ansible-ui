@@ -8,7 +8,6 @@ import {
   Scrollable,
   useGetPageUrl,
 } from '../../../../framework';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
@@ -19,6 +18,7 @@ import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { logLevelName } from '../../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
+import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();
@@ -86,7 +86,7 @@ export function EventStreamDetails() {
       </PageDetails>
       {eventStream?.source_args && (
         <PageDetails disableScroll={true} numberOfColumns={'single'}>
-          <PageDetailCodeEditor
+          <PageDetailCodeBlock
             value={eventStream.source_args}
             showCopyToClipboard={true}
             label={t('Arguments')}

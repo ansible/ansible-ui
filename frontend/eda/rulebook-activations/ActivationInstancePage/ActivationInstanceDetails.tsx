@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
@@ -9,6 +8,7 @@ import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';
+import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 
 export function ActivationInstanceDetails() {
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ export function ActivationInstanceDetails() {
 
       <PageDetails disableScroll={true} numberOfColumns={'single'}>
         {activationInstanceLog?.results?.length ? (
-          <PageDetailCodeEditor
+          <PageDetailCodeBlock
             label={t('Output')}
             value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
             showCopyToClipboard={true}

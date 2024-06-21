@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LoadingPage, PageDetail, PageDetails } from '../../../../framework';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
 import { StatusCell } from '../../../common/Status';
@@ -10,6 +9,7 @@ import { PageDetailsSection } from '../../common/PageDetailsSection';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStreamInstance } from '../../interfaces/EdaEventStreamInstance';
 import { EdaEventStreamInstanceLog } from '../../interfaces/EdaEventStreamInstanceLog';
+import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 
 export function EventStreamInstanceDetails() {
   const { t } = useTranslation();
@@ -45,7 +45,7 @@ export function EventStreamInstanceDetails() {
       </PageDetail>
       <PageDetailsSection>
         {eventStreamInstanceLog?.results?.length ? (
-          <PageDetailCodeEditor
+          <PageDetailCodeBlock
             label={t('Output')}
             data-cy="output-field"
             value={eventStreamInstanceLog?.results?.map((item) => item.log).join('\r\n')}
