@@ -110,7 +110,7 @@ function deleteAllInventoryHosts(inventory: Inventory) {
   cy.clickToolbarKebabAction('delete-selected-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
-  cy.contains('button', 'Delete hosts').click();
+  cy.clickButton(/^Delete hosts$/);
   cy.clickButton(/^Close$/);
   cy.getByDataCy('empty-state-title').contains(
     /^There are currently no hosts added to this inventory./
@@ -202,7 +202,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.getByDataCy('associate').click();
       cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
       cy.clickModalButton('Confirm');
-      cy.contains('button', 'Close').click();
+      cy.clickButton(/^Close$/);
       cy.contains(group.name);
       deleteAllInventoryHosts(inventory);
     });
@@ -256,7 +256,7 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
 export function testMissingButton(
   host_type: string,
   inventory: Inventory,
-  view: string,
+  //view: string,
   missing: string
 ) {
   //navigate to list view and check host existing
@@ -269,7 +269,7 @@ export function testMissingButton(
 export function testMissingTab(
   host_type: string,
   inventory: Inventory,
-  view: string,
+  //view: string,
   missing: string
 ) {
   //navigate to list view and check host existing
