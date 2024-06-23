@@ -111,7 +111,7 @@ function deleteAllInventoryHosts(inventory: Inventory) {
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
   cy.contains('button', 'Delete hosts').click();
-  cy.contains('button', 'Close').click();
+  cy.clickButton(/^Close$/);
   cy.getByDataCy('empty-state-title').contains(
     /^There are currently no hosts added to this inventory./
   );
@@ -204,7 +204,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickModalButton('Confirm');
       cy.contains('button', 'Close').click();
       cy.contains(group.name);
-      deleteInventoryHosts(inventory);
+      deleteAllInventoryHosts(inventory);
     });
   });
 }
