@@ -106,6 +106,19 @@ function deleteHostDetailsView(invenotryName: string, host_type: string, hostNam
   cy.contains(/^There are currently no hosts added to this inventory./);
 }
 
+function deleteAllInventoryHosts(inventory: Inventory) {
+  navigateToBaseView('inventory_host', inventory.name);
+  cy.getByDataCy('select-all').click();
+  cy.clickToolbarKebabAction('delete-selected-hosts');
+  cy.contains('Permanently delete hosts');
+  cy.clickModalConfirmCheckbox();
+  cy.clickButton(/^Delete hosts$/);
+  cy.clickButton(/^Close$/);
+  cy.getByDataCy('empty-state-title').contains(
+    /^There are currently no hosts added to this inventory./
+  );
+}
+
 function navigateToHost(host_type: string, name: string, data: string, inventoryName: string) {
   // navigate to specific host - stand alone or inventory host
   navigateToBaseView(host_type, inventoryName);
@@ -191,9 +204,9 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.getByDataCy('associate').click();
       cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
       cy.clickModalButton('Confirm');
-      cy.contains('button', 'Close').click();
+      cy.clickButton(/^Close$/);
       cy.contains(group.name);
-      deleteHostListView(inventory.name, host_type, host.name);
+      deleteAllInventoryHosts(inventory);
     });
   });
 }
@@ -321,4 +334,31 @@ export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean
   }
   cy.containsBy('a', 'Facts').click();
   cy.get('code').should('contain', 'ansible_dns');
+}
+
+export function testMissingButton(
+  host_type: string,
+  inventory: Inventory,
+  //view: string,
+  missing: string
+) {
+  //navigate to list view and check host existing
+  //in case this should be done to detailes view the only thing needed is to add click on host name
+  navigateToBaseView(host_type, inventory.name);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+  cy.get(missing).should('not.exist');
+}
+
+export function testMissingTab(
+  host_type: string,
+  inventory: Inventory,
+  //view: string,
+  missing: string
+) {
+  //navigate to list view and check host existing
+  //get to host to verify tab is missing
+  navigateToBaseView(host_type, inventory.name);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+  cy.getByDataCy('name-column-cell').contains('E2E Host').click();
+  cy.contains('[role="tab"]', missing).should('not.exist');
 }

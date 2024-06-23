@@ -4,6 +4,7 @@ import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { runCommand } from './runCommandFunction';
+import { testMissingButton, testMissingTab } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
@@ -117,9 +118,21 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //5) Cancel the job and assert that it has been canceled
   });
 
-  it.skip('confirm that edit host button is missing from the host tab list of an inventory', () => {});
+  it('test edit, delete buttons and facts tab are not present for constructed inventory host options', () => {
+    //'confirm that edit host button is missing from the host tab list of an inventory', () => {
+    //navigate to constructed inventory host list
+    //verify edit button is missing
+    testMissingButton('inventory_host', inventory, `[data-cy="edit-host"]`);
 
-  it.skip('confirm that delete host button is missing from the host tab list of an inventory', () => {});
+    //'confirm that delete host button is missing from the host tab list of an inventory'
+    //navigate to constructed inventory host list
+    //verify action dropdown contain only delete host button is missing
+    const missingValue = `[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`;
+    testMissingButton('inventory_host', inventory, missingValue);
 
-  it.skip('confirm that facts tab is missing from a host inside an inventory', () => {});
+    //'confirm that facts tab is missing from a host inside an inventory'
+    //navigate to constructed inventory host list, get to host
+    //verify facts tab is missing
+    testMissingTab('inventory_host', inventory, 'Facts');
+  });
 });
