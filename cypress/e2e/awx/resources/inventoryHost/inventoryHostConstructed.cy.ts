@@ -120,7 +120,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
   });
 
   it('test edit, delete buttons and facts tab are not present for constructed inventory host options', () => {
-    //'confirm that edit host button is missing from the host tab list of an inventory'
+    //'confirm that edit host button is missing from the host tab list of an inventory', () => {
     //navigate to constructed inventory host list
     //verify edit button is missing
     testMissingButton('inventory_host', inventory, `[data-cy="edit-host"]`);
