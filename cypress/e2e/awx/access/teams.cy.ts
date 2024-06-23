@@ -22,17 +22,17 @@ describe('Teams: Create', () => {
   it('can create a basic team, assert details page and then delete team', () => {
     const teamName = 'E2E Team ' + randomString(4);
     cy.intercept('POST', awxAPI`/teams/`).as('newTeam');
-    cy.containsBy('a', /^Create team$/).click();
+    cy.getByDataCy('create-team').click();
     cy.getByDataCy('name').type(teamName);
     cy.singleSelectByDataCy('organization', organization.name);
     cy.getByDataCy('Submit').click();
     cy.wait('@newTeam')
       .its('response.body')
       .then((thisTeam: Team) => {
+        cy.verifyPageTitle(thisTeam.name);
         cy.url().then((currentUrl) => {
           expect(currentUrl.includes(`/access/teams/${thisTeam.id.toString()}/details`)).to.be.true;
         });
-        cy.verifyPageTitle(thisTeam.name);
         cy.hasDetail('Name', thisTeam.name);
         cy.hasDetail('Organization', organization.name);
         cy.intercept('DELETE', awxAPI`/teams/${thisTeam.id.toString()}/`).as('deleted');
@@ -49,10 +49,6 @@ describe('Teams: Create', () => {
 describe('Teams: Edit and Delete', () => {
   let team: Team;
   let organization: Organization;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
@@ -152,10 +148,6 @@ describe('Teams: Add and Remove users', () => {
   let team: Team;
   let user1: AwxUser;
   let organization: Organization;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
@@ -276,10 +268,6 @@ describe('Teams: Bulk delete', () => {
   let team: Team;
   let organization: Organization;
   const arrayOfElementText: string[] = [];
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {

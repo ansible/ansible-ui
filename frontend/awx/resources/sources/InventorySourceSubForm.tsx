@@ -2,6 +2,7 @@ import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormDataEditor } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
@@ -68,15 +69,21 @@ export function InventorySourceSubForm() {
             />
           </PageFormHidden>
 
-          <PageFormTextInput<InventorySourceForm>
+          <PageFormSingleSelect<InventorySourceForm>
             placeholder={t('Select a verbosity value')}
             name="verbosity"
-            type="number"
+            options={[
+              { value: '0', label: t('0 (Warning)') },
+              { value: '1', label: t('1 (Info)') },
+              { value: '2', label: t('2 (Debug)') },
+            ]}
+            defaultValue={'1'}
             labelHelpTitle={t('Limit')}
             labelHelp={t(
               'Control the level of output ansible will produce as the playbook executes.'
             )}
             label={t('Verbosity')}
+            isRequired
           />
           <PageFormTextInput<InventorySourceForm>
             name="host_filter"
