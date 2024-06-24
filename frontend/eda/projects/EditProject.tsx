@@ -25,6 +25,10 @@ import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaProject, EdaProjectCreate, EdaProjectRead } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRoute } from '../main/EdaRoutes';
+import { Alert } from '@patternfly/react-core';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
+import { ProjectDetails } from './ProjectPage/ProjectDetails';
 
 function ProjectCreateInputs() {
   const { t } = useTranslation();
@@ -305,6 +309,11 @@ export function EditProject() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/projects/${params.id ?? ''}/`
+  );
+  const canEditProject = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+
   const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
@@ -337,19 +346,39 @@ export function EditProject() {
             { label: `${t('Edit')} ${project?.name || t('Project')}` },
           ]}
         />
-        <EdaPageForm
-          submitText={t('Save project')}
-          onSubmit={onSubmit}
-          cancelText={t('Cancel')}
-          onCancel={onCancel}
-          defaultValue={{
-            ...project,
-            eda_credential_id: project?.eda_credential?.id,
-            organization_id: project?.organization?.id,
-          }}
-        >
-          <ProjectEditInputs />
-        </EdaPageForm>
+        {!canEditProject ? (
+          <>
+            <Alert
+              variant={'warning'}
+              isInline
+              style={{
+                marginLeft: '24px',
+                marginRight: '24px',
+                marginTop: '24px',
+                paddingLeft: '24px',
+                paddingTop: '16px',
+              }}
+              title={t(
+                'You do not have permissions to edit this project. Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+            <ProjectDetails />
+          </>
+        ) : (
+          <EdaPageForm
+            submitText={t('Save project')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={{
+              ...project,
+              eda_credential_id: project?.eda_credential?.id,
+              organization_id: project?.organization?.id,
+            }}
+          >
+            <ProjectEditInputs />
+          </EdaPageForm>
+        )}
       </PageLayout>
     );
   }
