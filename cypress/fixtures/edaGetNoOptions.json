@@ -1,0 +1,6 @@
+{
+  "name": "Eda Credential List",
+  "description": "",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"]
+}
