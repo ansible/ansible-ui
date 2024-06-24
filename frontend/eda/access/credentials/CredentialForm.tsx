@@ -213,7 +213,7 @@ export function EditCredential() {
               isInline
               style={{ paddingLeft: '24px', paddingTop: '16px' }}
               title={t(
-                "'You do not have permissions to edit this credential. Please contact your organization administrator if there is an issue with your access."
+                'You do not have permissions to edit this credential. Please contact your organization administrator if there is an issue with your access.'
               )}
             />
             <CredentialDetails />
