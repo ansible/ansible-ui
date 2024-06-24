@@ -336,12 +336,7 @@ export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean
   cy.get('code').should('contain', 'ansible_dns');
 }
 
-export function testMissingButton(
-  host_type: string,
-  inventory: Inventory,
-  //view: string,
-  missing: string
-) {
+export function testMissingButton(host_type: string, inventory: Inventory, missing: string) {
   //navigate to list view and check host existing
   //in case this should be done to detailes view the only thing needed is to add click on host name
   navigateToBaseView(host_type, inventory.name);
@@ -349,12 +344,7 @@ export function testMissingButton(
   cy.get(missing).should('not.exist');
 }
 
-export function testMissingTab(
-  host_type: string,
-  inventory: Inventory,
-  //view: string,
-  missing: string
-) {
+export function testMissingTab(host_type: string, inventory: Inventory, missing: string) {
   //navigate to list view and check host existing
   //get to host to verify tab is missing
   navigateToBaseView(host_type, inventory.name);
