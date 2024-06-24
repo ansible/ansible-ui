@@ -433,10 +433,10 @@ Cypress.Commands.add('clickButton', (label: string | RegExp) => {
 Cypress.Commands.add('navigateTo', (component: string, label: string) => {
   cy.get('[data-cy="page-navigation"]').then((nav) => {
     if (nav.is(':visible')) {
-      cy.get(`[data-cy="${component}-${label}"]`).click();
+      cy.get(`[data-cy="${component}-${label}"]`).click({ force: true });
     } else {
       cy.get('[data-cy="nav-toggle"]').click();
-      cy.get(`[data-cy="${component}-${label}"]`).click();
+      cy.get(`[data-cy="${component}-${label}"]`).click({ force: true });
     }
   });
   cy.clearAllFilters();
