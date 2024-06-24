@@ -74,6 +74,6 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //'confirm that facts tab is missing from a host inside an inventory', () => {
     //navigate to constructed inventory host list, get to host
     //verify facts tab is missing
-    testMissingTab('inventory_host', inventory, 'Facts');
+    checkHiddenTab('inventory_host', inventory, 'Facts');
   });
 });
