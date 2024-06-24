@@ -67,7 +67,9 @@ export function Login(props: {
                     </Stack>
                   </Flex>
                 </FlexItem>
-                {props.productDescription && <FlexItem>{props.productDescription}</FlexItem>}
+                {props.productDescription && (
+                  <FlexItem style={{ maxWidth: 480 }}>{props.productDescription}</FlexItem>
+                )}
               </Flex>
             </LoginPageBody>
           </LoginPageLayout>
@@ -104,6 +106,7 @@ const LoginPageBody = styled.div`
   gap: 48px;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap-reverse;
 `;
 
 const CardStyled = styled(Card)`
