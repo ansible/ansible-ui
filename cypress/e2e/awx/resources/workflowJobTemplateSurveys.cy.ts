@@ -10,6 +10,7 @@ describe('Workflow Job Templates Surveys', function () {
   let organization: Organization;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
 
+  // rebuild
   describe('WFJT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
