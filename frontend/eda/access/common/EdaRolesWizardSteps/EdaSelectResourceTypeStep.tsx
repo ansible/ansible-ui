@@ -13,14 +13,14 @@ export function EdaSelectResourceTypeStep() {
   const { t } = useTranslation();
   const { wizardData, setWizardData, setStepData } = usePageWizard();
   const { data, isLoading } = useOptions<{
-    actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
+    actions: { GET: { content_type: { choices: ContentTypeOption[] } } };
   }>(edaAPI`/role_definitions/`);
 
   if (isLoading || !data) {
     return <LoadingPage />;
   }
 
-  const options: ContentTypeOption[] = data?.actions?.POST?.content_type?.choices || [];
+  const options: ContentTypeOption[] = data?.actions?.GET?.content_type?.choices || [];
 
   return (
     <PageFormSelect
