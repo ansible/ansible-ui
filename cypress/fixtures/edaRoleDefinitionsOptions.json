@@ -4,7 +4,7 @@
   "renders": ["application/json", "text/html"],
   "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
   "actions": {
-    "POST": {
+    "GET": {
       "id": {
         "type": "integer",
         "required": false,
