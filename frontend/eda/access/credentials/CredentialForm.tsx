@@ -26,6 +26,10 @@ import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialFormInputs } from './CredentialFormTypes';
+import { CredentialDetails } from './CredentialPage/CredentialDetails';
+import { Alert } from '@patternfly/react-core';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -164,6 +168,10 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/eda-credentials/${params.id ?? ''}/`
+  );
+  const canPatchCredential = data ? Boolean(data.actions && data.actions['PATCH']) : true;
   const { data: credential } = useGet<EdaCredential>(edaAPI`/eda-credentials/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
@@ -198,18 +206,38 @@ export function EditCredential() {
             { label: `${t('Edit')} ${credential?.name || t('Credential')}` },
           ]}
         />
-        <EdaPageForm
-          submitText={t('Save credential')}
-          onSubmit={onSubmit}
-          cancelText={t('Cancel')}
-          onCancel={onCancel}
-          defaultValue={{
-            ...credential,
-            credential_type_id: credential?.credential_type?.id || undefined,
-          }}
-        >
-          <CredentialInputs editMode={true} />
-        </EdaPageForm>
+        {!canPatchCredential ? (
+          <>
+            <Alert
+              variant={'warning'}
+              isInline
+              style={{
+                marginLeft: '24px',
+                marginRight: '24px',
+                marginTop: '24px',
+                paddingLeft: '24px',
+                paddingTop: '16px',
+              }}
+              title={t(
+                'You do not have permissions to edit this credential. Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+            <CredentialDetails />
+          </>
+        ) : (
+          <EdaPageForm
+            submitText={t('Save credential')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={{
+              ...credential,
+              credential_type_id: credential?.credential_type?.id || undefined,
+            }}
+          >
+            <CredentialInputs editMode={true} />
+          </EdaPageForm>
+        )}
       </PageLayout>
     );
   }
