@@ -539,49 +539,40 @@ describe('Create Credentials of different types', () => {
     cy.get('[data-cy="name"]').type(credentialName);
     cy.singleSelectBy('[data-cy="credential_type"]', 'Amazon Web Services');
     cy.contains('Type Details').should('be.visible');
-    cy.get('[data-cy="username"]').type('username');
-    cy.get('[data-cy="password"]').type('password');
-    cy.get('[data-cy="security-token"]').type('security-token');
-    cy.get('[data-cy="description"]').type('description');
+    cy.getByDataCy('username').type('username');
+    cy.getByDataCy('password').type('password');
+    cy.getByDataCy('security-token').type('security-token');
+    cy.getByDataCy('[data-cy="description"]').type('description');
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
-    cy.get('[data-cy="name"]').contains(credentialName);
-    cy.contains('Access Key').should('be.visible');
-    cy.get('[data-cy="access-key"]').contains('username');
-    cy.contains('Secret Key').should('be.visible');
-    cy.get('[data-cy="secret-key"]').contains('Encrypted');
-    cy.contains('Organization').should('be.visible');
-    cy.contains(organization.name);
-    cy.get('[data-cy="edit-credential"]').click();
+    cy.getByDataCy('name').contains(credentialName);
+    cy.getByDataCy('access-key').contains('username');
+    cy.getByDataCy('secret-key').contains('Encrypted');
+    cy.getByDataCy('organization').should('have.text', organization.name);
+    cy.getByDataCy('edit-credential').click();
     cy.verifyPageTitle('Edit Credential');
     const ModifiedCredentialName = credentialName + ' - edited';
-    cy.get('[data-cy="name"]').type(ModifiedCredentialName);
-    cy.get('[data-cy="username"]').should('be.visible');
-    cy.get('[data-cy="username"]').then(($input) => {
+    cy.getByDataCy('name').type(ModifiedCredentialName);
+    cy.getByDataCy('username').should('be.visible');
+    cy.getByDataCy('username').then(($input) => {
       expect($input.val()).to.eq('username');
     });
-    cy.get('[data-cy="password"]').should('be.visible');
-    cy.get('[data-cy="password"]').then(($input) => {
+    cy.getByDataCy('password').then(($input) => {
       expect($input.val()).to.eq('ENCRYPTED');
     });
-    cy.get('[data-cy="security-token"]').should('be.visible');
-    cy.get('[data-cy="security-token"]').then(($input) => {
+    cy.getByDataCy('security-token').then(($input) => {
       expect($input.val()).to.eq('ENCRYPTED');
     });
     const newDescription = 'new description';
-    cy.get('[data-cy="description"]').clear().type(newDescription);
+    cy.getByDataCy('description').clear().type(newDescription);
     cy.clickButton(/^Save credential$/);
-    cy.get('[data-cy="name"]').contains(ModifiedCredentialName);
+    cy.getByDataCy('name').contains(ModifiedCredentialName);
     cy.contains(ModifiedCredentialName).should('be.visible');
-    cy.contains('Access Key').should('be.visible');
-    cy.get('[data-cy="access-key"]').contains('username');
-    cy.contains('Secret Key').should('be.visible');
-    cy.get('[data-cy="secret-key"]').contains('Encrypted');
-    cy.get('[data-cy="sts-token"]').contains('Encrypted');
-    cy.contains('Organization').should('be.visible');
-    cy.contains('Description').should('be.visible');
-    cy.get('[data-cy="description"]').contains(newDescription);
+    cy.getByDataCy('access-key').contains('username');
+    cy.getByDataCy('secret-key').contains('Encrypted');
+    cy.getByDataCy('sts-token').contains('Encrypted');
+    cy.getByDataCy('description').contains(newDescription);
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
