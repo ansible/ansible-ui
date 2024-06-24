@@ -211,7 +211,13 @@ export function EditCredential() {
             <Alert
               variant={'warning'}
               isInline
-              style={{ paddingLeft: '24px', paddingTop: '16px' }}
+              style={{
+                marginLeft: '24px',
+                marginRight: '24px',
+                marginTop: '24px',
+                paddingLeft: '24px',
+                paddingTop: '16px',
+              }}
               title={t(
                 'You do not have permissions to edit this credential. Please contact your organization administrator if there is an issue with your access.'
               )}
