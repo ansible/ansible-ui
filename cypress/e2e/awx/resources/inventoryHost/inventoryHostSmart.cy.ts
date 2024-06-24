@@ -69,7 +69,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //navigate to smart inventory host list
     //verify action dropdown contain only delete host button is missing
     const hiddenElement = `[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`;
-    testMissingButton('inventory_host', inventory, missingValue);
+    checkHiddenButton('inventory_host', inventory, hiddenElement);
 
     //'confirm that facts tab is missing from a host inside an inventory', () => {
     //navigate to constructed inventory host list, get to host
