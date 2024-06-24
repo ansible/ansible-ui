@@ -4,7 +4,7 @@ import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { runCommand } from './runCommandFunction';
-import { testMissingButton, testMissingTab } from '../../../../support/hostsfunctions';
+import { checkHiddenButton, checkHiddenTab } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
