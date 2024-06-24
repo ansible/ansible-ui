@@ -336,7 +336,7 @@ export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean
   cy.get('code').should('contain', 'ansible_dns');
 }
 
-export function testMissingButton(host_type: string, inventory: Inventory, missing: string) {
+export function checkHiddenButton(host_type: string, inventory: Inventory, missing: string) {
   //navigate to list view and check host existing
   //in case this should be done to detailes view the only thing needed is to add click on host name
   navigateToBaseView(host_type, inventory.name);
