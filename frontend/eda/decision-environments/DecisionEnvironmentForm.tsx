@@ -25,6 +25,10 @@ import { EdaRoute } from '../main/EdaRoutes';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { requestGet, swrOptions } from '../../common/crud/Data';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
+import { DecisionEnvironmentDetails } from './DecisionEnvironmentPage/DecisionEnvironmentDetails';
+import { Alert } from '@patternfly/react-core';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
@@ -147,6 +151,11 @@ export function EditDecisionEnvironment() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/decision-environments/${params.id ?? ''}/`
+  );
+  const canPatchDE = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${id.toString()}/`
   );
@@ -182,19 +191,39 @@ export function EditDecisionEnvironment() {
             { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
           ]}
         />
-        <EdaPageForm
-          submitText={t('Save decision environment')}
-          onSubmit={onSubmit}
-          cancelText={t('Cancel')}
-          onCancel={onCancel}
-          defaultValue={{
-            ...decisionEnvironment,
-            eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
-            organization_id: decisionEnvironment?.organization?.id || undefined,
-          }}
-        >
-          <DecisionEnvironmentInputs />
-        </EdaPageForm>
+        {!canPatchDE ? (
+          <>
+            <Alert
+              variant={'warning'}
+              isInline
+              style={{
+                marginLeft: '24px',
+                marginRight: '24px',
+                marginTop: '24px',
+                paddingLeft: '24px',
+                paddingTop: '16px',
+              }}
+              title={t(
+                'You do not have permissions to edit this decision environment. Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+            <DecisionEnvironmentDetails />
+          </>
+        ) : (
+          <EdaPageForm
+            submitText={t('Save decision environment')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={{
+              ...decisionEnvironment,
+              eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
+              organization_id: decisionEnvironment?.organization?.id || undefined,
+            }}
+          >
+            <DecisionEnvironmentInputs />
+          </EdaPageForm>
+        )}
       </PageLayout>
     );
   }
