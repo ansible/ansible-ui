@@ -117,7 +117,7 @@ describe('Credentials.cy.ts', () => {
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-credentials"]').click();
+    cy.get('[data-cy="delete-credentials"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',
@@ -175,7 +175,7 @@ describe('Credentials.cy.ts', () => {
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-credentials"]').click();
+    cy.get('[data-cy="delete-credentials"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',

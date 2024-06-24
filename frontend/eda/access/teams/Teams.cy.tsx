@@ -80,7 +80,7 @@ describe('Teams.cy.ts', () => {
     );
     cy.get('[data-cy="row-id-2"] > [data-cy="checkbox-column-cell"] > label > input').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-teams"]').click();
+    cy.get('[data-cy="delete-teams"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',

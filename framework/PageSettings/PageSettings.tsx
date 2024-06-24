@@ -46,7 +46,7 @@ export function PageSettingsForm() {
         dataEditorFormat: 'yaml',
         ...settings,
       }}
-      submitText={t('Save')}
+      submitText={t('Save user preferences')}
       onCancel={onCancel}
       onSubmit={onSubmit}
     >

@@ -55,7 +55,7 @@ export function Organizations() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected organizations'),
+        label: t('Delete organizations'),
         onClick: deleteOrganizations,
         isDanger: true,
       },
