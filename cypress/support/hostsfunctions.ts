@@ -344,7 +344,7 @@ export function testMissingButton(host_type: string, inventory: Inventory, missi
   cy.get(missing).should('not.exist');
 }
 
-export function testMissingTab(host_type: string, inventory: Inventory, missing: string) {
+export function checkHiddenTab(host_type: string, inventory: Inventory, missing: string) {
   //navigate to list view and check host existing
   //get to host to verify tab is missing
   navigateToBaseView(host_type, inventory.name);
