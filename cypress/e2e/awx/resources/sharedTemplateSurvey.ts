@@ -148,9 +148,13 @@ export class ReusableTemplateSurveyTestSuite {
       },
     ];
 
-    specs.forEach((spec) => {
-      cy.createTemplateSurvey(this.template, 'Text', spec);
-    });
+    const survey = {
+      name: '',
+      description: '',
+      spec: specs,
+    };
+
+    cy.createAwxSurvey(survey, this.template);
 
     cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
 

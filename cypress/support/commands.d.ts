@@ -760,7 +760,7 @@ declare global {
 
       createAwxSurvey(
         surveySpec: Partial<Survey>,
-        template: Partial<JobTemplate>
+        template: Partial<JobTemplate | WorkflowJobTemplate>
       ): Chainable<Survey>;
 
       getAwxWorkflowJobTemplateByName(

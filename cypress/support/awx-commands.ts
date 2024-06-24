@@ -1076,7 +1076,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createAwxSurvey',
-  (surveySpec: Partial<Survey>, template: Partial<JobTemplate>) => {
+  (surveySpec: Partial<Survey>, template: Partial<JobTemplate | WorkflowJobTemplate>) => {
     cy.requestPost<Survey>(`${template.url}survey_spec/`, {
       ...surveySpec,
     });
