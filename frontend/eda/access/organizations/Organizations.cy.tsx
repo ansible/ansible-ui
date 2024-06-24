@@ -80,7 +80,7 @@ describe('Organizations.cy.ts', () => {
     );
     cy.get('[data-cy="row-id-2"] > [data-cy="checkbox-column-cell"] > label > input').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-organizations"]').click();
+    cy.get('[data-cy="delete-organizations"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',

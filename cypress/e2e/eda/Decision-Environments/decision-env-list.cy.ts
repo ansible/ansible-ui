@@ -22,7 +22,7 @@ describe('EDA Decision Environment List', () => {
         cy.setTableView('table');
         cy.selectTableRowByCheckbox('name', edaDE1.name, { disableFilterSelection: true });
         cy.selectTableRowByCheckbox('name', edaDE2.name, { disableFilterSelection: true });
-        cy.clickToolbarKebabAction('delete-selected-decision-environments');
+        cy.clickToolbarKebabAction('delete-decision-environments');
         cy.intercept('DELETE', edaAPI`/decision-environments/${edaDE1.id.toString()}/`).as(
           'edaDE1'
         );

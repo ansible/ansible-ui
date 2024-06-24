@@ -42,7 +42,7 @@ export function useProjectsActions(view: IEdaView<EdaProject>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected projects'),
+        label: t('Delete projects'),
         onClick: (projects: EdaProject[]) => deleteProjects(projects),
         isDanger: true,
       },

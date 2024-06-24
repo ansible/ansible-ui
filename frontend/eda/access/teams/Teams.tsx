@@ -54,7 +54,7 @@ export function Teams() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected teams'),
+        label: t('Delete teams'),
         onClick: deleteTeams,
         isDanger: true,
       },
