@@ -48,8 +48,10 @@ export function PageDetailCodeEditor(props: {
   };
 
   useLayoutEffect(() => {
-    const translatedVal = objectToString(valueToObject(value), language);
-    setCodeEditorValue(translatedVal);
+    if (toggleLanguage) {
+      const translatedVal = objectToString(valueToObject(value), language);
+      setCodeEditorValue(translatedVal);
+    }
   }, [language, value]);
 
   const actions =
