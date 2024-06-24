@@ -48,9 +48,11 @@ export function PageDetailCodeEditor(props: {
   };
 
   useLayoutEffect(() => {
-    const translatedVal = objectToString(valueToObject(value), language);
-    setCodeEditorValue(translatedVal);
-  }, [language, value]);
+    if (toggleLanguage) {
+      const translatedVal = objectToString(valueToObject(value), language);
+      setCodeEditorValue(translatedVal);
+    }
+  }, [language, toggleLanguage, value]);
 
   const actions =
     showCopyToClipboard || toggleLanguage ? (

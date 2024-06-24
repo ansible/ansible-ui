@@ -89,6 +89,7 @@ export function EventStreamDetails() {
           <PageDetailCodeEditor
             value={eventStream.source_args}
             showCopyToClipboard={true}
+            toggleLanguage={false}
             label={t('Arguments')}
             helpText={t('Arguments')}
           />
