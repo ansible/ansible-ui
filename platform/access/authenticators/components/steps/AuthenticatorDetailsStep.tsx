@@ -7,6 +7,7 @@ import {
   PageFormTextInput,
 } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
 import { gatewayAPI } from '../../../../api/gateway-api-utils';
@@ -135,6 +136,27 @@ export function AuthenticatorDetailsStep(props: {
             />
           );
         })}
+      </PageFormSection>
+      <PageFormSection>
+        <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox
+            name="enabled"
+            label={t('Enabled')}
+            labelHelp={t(' Should this authenticator be enabled')}
+          />
+          <PageFormCheckbox
+            name="create_objects"
+            label={t('Create objects')}
+            labelHelp={t('Allow authenticator to create objects (users, teams, organizations)')}
+          />
+          <PageFormCheckbox
+            name="remove_users"
+            label={t('Remove users')}
+            labelHelp={t(
+              'When a user authenticates from this source should they be removed from any other groups they were previously added to'
+            )}
+          />
+        </PageFormGroup>
       </PageFormSection>
     </>
   );
