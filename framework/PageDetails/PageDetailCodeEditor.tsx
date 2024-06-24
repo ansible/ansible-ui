@@ -52,7 +52,7 @@ export function PageDetailCodeEditor(props: {
       const translatedVal = objectToString(valueToObject(value), language);
       setCodeEditorValue(translatedVal);
     }
-  }, [language, value]);
+  }, [language, toggleLanguage, value]);
 
   const actions =
     showCopyToClipboard || toggleLanguage ? (
