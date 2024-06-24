@@ -32,7 +32,7 @@ describe('EDA Users List', () => {
         cy.selectTableRow(userA.username, true);
         cy.clearAllFilters();
         cy.selectTableRow(userB.username, true);
-        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.clickToolbarKebabAction('delete-users');
         cy.intercept('DELETE', edaAPI`/users/${userA.id.toString()}/`).as('userA');
         cy.intercept('DELETE', edaAPI`/users/${userB.id.toString()}/`).as('userB');
         cy.clickModalConfirmCheckbox();
@@ -51,7 +51,7 @@ describe('EDA Users List', () => {
     cy.createEdaUser().then((edaUser) => {
       cy.navigateTo('eda', 'users');
       cy.selectTableRow(edaUser.username, true);
-      cy.clickToolbarKebabAction('delete-selected-users');
+      cy.clickToolbarKebabAction('delete-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
       cy.contains(/^Success$/);

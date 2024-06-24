@@ -38,7 +38,7 @@ export function useUsersActions(view: IEdaView<EdaUser>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected users'),
+        label: t('Delete users'),
         onClick: (users: EdaUser[]) => deleteUsers(users),
         isDisabled: isCurrentUserSelected ? t('Current user cannot be deleted') : undefined,
         isDanger: true,
