@@ -94,7 +94,7 @@ describe('DecisionEnvironments.cy.ts', () => {
     );
     cy.get('input[id="check-1"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-decision-environments"]').click();
+    cy.get('[data-cy="delete-decision-environments"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',
@@ -150,7 +150,7 @@ describe('DecisionEnvironments.cy.ts', () => {
     );
     cy.get('input[id="check-1"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-decision-environments"]').click();
+    cy.get('[data-cy="delete-decision-environments"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',

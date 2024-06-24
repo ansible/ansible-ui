@@ -43,7 +43,7 @@ export function useDecisionEnvironmentsActions(view: IEdaView<EdaDecisionEnviron
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected decision environments'),
+        label: t('Delete decision environments'),
         onClick: (decisionEnvironments: EdaDecisionEnvironment[]) =>
           deleteDecisionEnvironments(decisionEnvironments),
         isDanger: true,
