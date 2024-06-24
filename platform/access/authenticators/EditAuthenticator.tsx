@@ -50,13 +50,23 @@ export function EditAuthenticator() {
   }
 
   const handleSubmit = async (values: AuthenticatorFormValues) => {
-    const { name, configuration, mappings: newMappings } = values;
+    const {
+      name,
+      enabled,
+      create_objects,
+      remove_users,
+      configuration,
+      mappings: newMappings,
+    } = values;
     const plugin = plugins?.authenticators.find((a) => a.type === authenticator.type);
     if (!plugins || !plugin) {
       return;
     }
     const request = requestPatch(gatewayAPI`/authenticators/${id.toString()}/`, {
       name,
+      create_objects,
+      remove_users,
+      enabled: false,
       configuration: formatConfiguration(configuration, plugin),
     });
 
@@ -88,6 +98,11 @@ export function EditAuthenticator() {
         return postRequest(gatewayAPI`/authenticator_maps/`, data);
       });
       await Promise.all(mapRequests);
+      if (enabled) {
+        await requestPatch(gatewayAPI`/authenticators/${id.toString()}/`, {
+          enabled,
+        });
+      }
       pageNavigate(PlatformRoute.AuthenticatorDetails, {
         params: { id: (authenticator as Authenticator).id },
       });

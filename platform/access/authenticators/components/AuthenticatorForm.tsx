@@ -127,6 +127,9 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     details: {
       name: '',
       configuration: {},
+      enabled: false,
+      create_objects: false,
+      remove_users: false,
     },
     mapping: {},
     order: {},
@@ -139,6 +142,9 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     initialValues.details = {
       name: authenticator.name,
       configuration: {},
+      enabled: authenticator.enabled,
+      create_objects: authenticator.create_objects,
+      remove_users: authenticator.remove_users,
     };
 
     const configuration: Configuration = {};
