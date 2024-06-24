@@ -49,6 +49,7 @@ export function ActivationInstanceDetails() {
         {activationInstanceLog?.results?.length ? (
           <PageDetailCodeEditor
             label={t('Output')}
+            toggleLanguage={false}
             value={activationInstanceLog?.results?.map((item) => item.log).join('\r\n')}
             showCopyToClipboard={true}
           />
