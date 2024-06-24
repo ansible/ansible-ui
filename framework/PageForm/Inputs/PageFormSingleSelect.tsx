@@ -50,6 +50,7 @@ export function PageFormSingleSelect<
       name={props.name}
       control={control}
       shouldUnregister
+      defaultValue={props.defaultValue}
       render={({ field: { value, onChange }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message
           ? props.validate && isValidating
@@ -80,7 +81,7 @@ export function PageFormSingleSelect<
               placeholder={props.placeholder}
               options={props.options}
               aria-describedby={id ? `${id}-form-group` : undefined}
-              value={value || props.defaultValue}
+              value={value}
               onSelect={onChange}
               isDisabled={isDisabled}
               footer={props.footer}
