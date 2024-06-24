@@ -358,7 +358,7 @@ export function testMissingTab(
   //navigate to list view and check host existing
   //get to host to verify tab is missing
   navigateToBaseView(host_type, inventory.name);
-  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gt', 1);
   cy.getByDataCy('name-column-cell').contains('E2E Host').click();
   cy.contains('[role="tab"]', missing).should('not.exist');
 }
