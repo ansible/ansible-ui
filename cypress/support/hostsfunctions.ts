@@ -3,6 +3,7 @@ import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { awxAPI } from './formatApiPathForAwx';
+import { runCommand } from '../e2e/awx/resources/inventoryHost/runCommandFunction';
 
 /////////////// Assisting functions ///////////////
 // this functions will be used for stand alone hosts and inventory hosts test
@@ -321,4 +322,35 @@ export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean
   }
   cy.containsBy('a', 'Facts').click();
   cy.get('code').should('contain', 'ansible_dns');
+}
+
+export function adHoc_test(organization: Organization, inventoryName: string, groupName: string) {
+  cy.navigateTo('awx', 'inventories');
+
+  cy.intercept('get', awxAPI`/inventories/?name=${inventoryName}*`).as('getInventories');
+  cy.filterTableByMultiSelect('name', [inventoryName]);
+  cy.wait('@getInventories');
+
+  cy.contains('a', inventoryName).click();
+
+  cy.getByDataCy('sync-inventory').click();
+  cy.contains(`[data-cy="last-job-status"]`, 'Success');
+
+  cy.contains(`a[role="tab"]`, 'Groups').click();
+  cy.reload();
+  cy.contains('a', groupName).click();
+
+  cy.contains(`a[role="tab"]`, 'Hosts').click();
+
+  cy.getByDataCy('run-command').click();
+
+  runCommand({
+    selections: 'all',
+    module: 'shell',
+    verbosity: '0-(normal)',
+    forks: 2,
+    show_changes: true,
+    become_enabled: true,
+    organization,
+  });
 }
