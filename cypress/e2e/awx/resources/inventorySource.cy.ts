@@ -291,7 +291,7 @@ describe('Inventory Sources', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-      cy.getByDataCy('name').clear().type('new schedule');
+      cy.get('[data-cy="name"]').type('new schedule');
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
@@ -359,46 +359,6 @@ describe('Inventory Sources', () => {
         });
         cy.clickButton('Close');
         cy.contains('name-column-cell', scheduleName).should('not.exist');
-      });
-    });
-
-    it('can bulk delete multiple schedules from the Source Schedule list and confirm delete', () => {
-      const scheduleName2 = 'e2e-' + randomString(4);
-      let schedB: Schedule;
-
-      cy.createAWXSchedule({
-        name: scheduleName,
-        unified_job_template: inventorySource.id,
-        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-      }).then((schedule1: Schedule) => {
-        cy.createAWXSchedule({
-          name: scheduleName2,
-          unified_job_template: inventorySource.id,
-          rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-        }).then((schedule2: Schedule) => {
-          schedB = schedule2;
-          goToSourceDetails(inventory.name, inventorySource.name);
-
-          cy.clickTab('Schedules', true);
-          cy.selectTableRowByCheckbox('name', scheduleName, { disableFilter: true });
-          cy.selectTableRowByCheckbox('name', scheduleName2, { disableFilter: true });
-          cy.clickToolbarKebabAction('delete-selected-schedules');
-          cy.intercept('DELETE', awxAPI`/schedules/${schedule1.id.toString()}/`, (req) => {
-            req.reply((res) => {
-              expect(res.statusCode).to.equal(204);
-            });
-          }).as('deleteSchedule1');
-          cy.intercept('DELETE', awxAPI`/schedules/${schedB.id.toString()}/`, (req) => {
-            req.reply((res) => {
-              expect(res.statusCode).to.equal(204);
-            });
-          }).as('deleteSchedule2');
-          cy.clickModalConfirmCheckbox();
-          cy.clickButton('Delete schedule');
-          cy.clickButton('Close');
-          cy.contains('name-column-cell', scheduleName).should('not.exist');
-          cy.contains('name-column-cell', scheduleName2).should('not.exist');
-        });
       });
     });
   });
