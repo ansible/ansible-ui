@@ -345,7 +345,7 @@ export function testMissingButton(
   //navigate to list view and check host existing
   //in case this should be done to detailes view the only thing needed is to add click on host name
   navigateToBaseView(host_type, inventory.name);
-  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gte', 2);
+  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gt', 1);
   cy.get(missing).should('not.exist');
 }
 
