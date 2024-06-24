@@ -7,6 +7,7 @@ import { jsonToYaml } from '../../../../../framework/utils/codeEditorUtils';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { edaAPI } from '../../../common/eda-utils';
+import { EdaOrganizationCell } from '../../organizations/components/EdaOrganizationCell';
 
 export function CredentialTypeDetails() {
   const params = useParams<{ id: string }>();
@@ -37,6 +38,9 @@ export function CredentialTypeDetailInner(props: { credentialType: EdaCredential
     <PageDetails>
       <PageDetail label={t('Name')}>{renderCredentialTypeName(props.credentialType)}</PageDetail>
       <PageDetail label={t('Description')}>{props.credentialType.description}</PageDetail>
+      <PageDetail label={t('Organization')}>
+        <EdaOrganizationCell organization_id={props.credentialType?.organization_id} />
+      </PageDetail>
       <PageDetailCodeEditor
         helpText={t('Input schema which defines a set of ordered fields for that type.')}
         label={t('Input configuration')}
