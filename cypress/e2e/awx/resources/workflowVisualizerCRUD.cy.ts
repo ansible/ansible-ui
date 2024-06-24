@@ -110,7 +110,7 @@ describe('Workflow Visualizer', () => {
       });
     });
     // FLAKY_06_13_2024
-    it.skip('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
+    it('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
@@ -142,7 +142,7 @@ describe('Workflow Visualizer', () => {
       cy.verifyPageTitle(`${workflowJobTemplate.name}`);
     });
     // FLAKY_06_13_2024
-    it.skip('Adds a new node specifically linked to an already existing node.', function () {
+    it('Adds a new node specifically linked to an already existing node.', function () {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id="${projectNode.id}"]`)
@@ -250,7 +250,7 @@ describe('Workflow Visualizer', () => {
         });
     });
     // FLAKY_06_13_2024
-    it.skip('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
+    it('Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource', function () {
       cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.clickButton('Add step');
@@ -279,7 +279,7 @@ describe('Workflow Visualizer', () => {
     });
   });
   // FLAKY_06_13_2024
-  describe.skip('Workflow Visualizer: Remove and Add Nodes', () => {
+  describe('Workflow Visualizer: Remove and Add Nodes', () => {
     it.skip('Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)
         .then((projNode) => {
@@ -380,7 +380,7 @@ describe('Workflow Visualizer', () => {
     });
   });
   // FLAKY_06_13_2024
-  describe.skip('Workflow Visualizer: Delete Nodes or Links', () => {
+  describe('Workflow Visualizer: Delete Nodes or Links', () => {
     it('Remove all steps using the kebab menu of the visualizer toolbar and save changes', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then(
         (projectNode) => {
