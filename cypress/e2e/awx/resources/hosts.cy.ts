@@ -6,7 +6,7 @@ import {
   checkFactsInHost,
   checkHostGroup,
   createAndEditAndDeleteHost,
-  createHostAndLaunchJob,
+  launchHostJob,
 } from '../../../support/hostsfunctions';
 
 describe('Host Tests', () => {
@@ -52,7 +52,9 @@ describe('Host Tests', () => {
   });
 
   it('can see and launch jobs from host jobs tab', () => {
-    createHostAndLaunchJob(inventory, organization.id, project.id);
+    cy.createInventoryHost(organization, '').then((result) => {
+      launchHostJob(result.inventory, result.host, organization.id, project.id, 'Host');
+    });
   });
 
   it.skip('can cancel jobs from host jobs tab', () => {});
