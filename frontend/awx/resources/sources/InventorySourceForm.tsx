@@ -79,7 +79,7 @@ export function CreateInventorySource() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add new source')}
+        title={t('Create source')}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           {
@@ -100,7 +100,7 @@ export function CreateInventorySource() {
               },
             }),
           },
-          { label: t('Add') },
+          { label: t('Create source') },
         ]}
       />
       <AwxPageForm
