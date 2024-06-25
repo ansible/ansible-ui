@@ -68,7 +68,7 @@ describe('Inventory Sources', () => {
       cy.verifyPageTitle(inventory.name);
       cy.clickLink(/^Sources$/);
       cy.clickButton(/^Add source/);
-      cy.verifyPageTitle('Add new source');
+      cy.verifyPageTitle('Create source');
       cy.getBy('[data-cy="name"]').type('project source');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
       cy.selectDropdownOptionByResourceName('project', project.name);
@@ -195,7 +195,7 @@ describe('Inventory Sources', () => {
       cy.verifyPageTitle(inventory.name);
       cy.clickLink(/^Sources$/);
       cy.getBy('#add-source').click();
-      cy.verifyPageTitle('Add new source');
+      cy.verifyPageTitle('Create source');
       cy.getBy('[data-cy="name"]').type('amazon ec2 source');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
       cy.getBy('[data-cy="host-filter"]').type('/^test$/');

@@ -365,7 +365,7 @@ describe('Job Templates Tests', function () {
       cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
       cy.selectTableRow(jobTemplate.name, false);
       cy.getBy('[data-cy="edit-template"]').click();
-      cy.verifyPageTitle('Edit Job Template');
+      cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
       cy.getBy('[data-cy="name"]').clear().type(newName);
       cy.getBy('[data-cy="description"]').type('this is a new description after editing');
       cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
@@ -567,7 +567,7 @@ describe('Job Templates Tests', function () {
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
       cy.clickLink(/^Edit template$/);
-      cy.verifyPageTitle('Edit Job Template');
+      cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
       cy.getBy('[data-cy="name"]').clear().type(newName);
       cy.getBy('[data-cy="description"]').type('this is a new description after editing');
       cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');

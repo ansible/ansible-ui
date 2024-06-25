@@ -123,7 +123,7 @@ describe('Execution Environments: Create', () => {
       expect(currentUrl.includes(`/access/organizations/${organization.id.toString()}/details`)).to
         .be.true;
     });
-    cy.clickTab(/^Execution environments$/, true);
+    cy.clickTab(/^Execution Environments$/, true);
     cy.filterTableBySingleSelect('name', execEnvName);
     cy.clickTableRowKebabAction(execEnvName, 'delete-execution-environment', false);
     cy.clickModalConfirmCheckbox();
