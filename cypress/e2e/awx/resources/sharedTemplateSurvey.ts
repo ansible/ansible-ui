@@ -233,7 +233,9 @@ export class ReusableTemplateSurveyTestSuite {
       .then((job: Job) => {
         if (['running', 'pending'].includes(job.status ?? '')) cy.cancelJob(job);
 
+        cy.intercept('GET', awxAPI`/unified_jobs/*`).as('getJobs');
         cy.navigateTo('awx', 'jobs');
+        cy.wait('@getJobs');
         cy.filterTableByMultiSelect('id', [job.id.toString()]);
         cy.get('[data-cy="name-column-cell"]').within(() => {
           cy.get('a').click();
