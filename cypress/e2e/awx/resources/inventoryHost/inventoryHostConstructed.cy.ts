@@ -47,6 +47,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
 
   after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
@@ -120,7 +121,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //1) Use inventory and host
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
-    cy.log('success');
 
     launchHostJob(inventory, host, organization.id, project.id, 'InventoryHost');
   });
