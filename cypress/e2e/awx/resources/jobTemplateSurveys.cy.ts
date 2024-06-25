@@ -12,7 +12,7 @@ describe('Job Templates Surveys', function () {
   let project: Project;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
 
-  // rebuild 3
+  // rebuild 1
   describe('JT Surveys: Create, Edit and Delete', function () {
     const question = {
       question_name: "Who's that?",
