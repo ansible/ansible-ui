@@ -307,7 +307,7 @@ export function createHostAndLaunchJob(
   });
 }
 
-export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean) {
+export function checkFactsInHost(inventory: Inventory, host_type: string) {
   cy.navigateTo('awx', 'hosts');
   const hostName = createAndCheckHost('stand_alone_host', inventory.name);
   // mock ansible_fact
@@ -323,7 +323,7 @@ export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean
       },
     }
   );
-  if (hostInInventory) {
+  if (host_type === `inventory_host`) {
     // go to the Hosts under Inventory
     cy.navigateTo('awx', 'inventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
