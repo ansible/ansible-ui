@@ -20,9 +20,11 @@ import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
 import AwxBrand from './awx-logo.svg';
+import { useAwxProductVersionInfo } from './useAwxProductVersionInfo';
 
 export function AwxMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useAwxProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
@@ -32,6 +34,11 @@ export function AwxMasthead() {
     await fetch('/api/logout/');
     refreshActiveAwxUser?.();
   }, [refreshActiveAwxUser]);
+
+  let userInfo = '';
+  if (activeAwxUser) {
+    userInfo = activeAwxUser.username;
+  }
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -58,7 +65,7 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
@@ -78,9 +85,7 @@ export function AwxMasthead() {
             <DropdownItem
               id="user-details"
               label={t('User details')}
-              onClick={() =>
-                pageNavigate(AwxRoute.UserDetails, { params: { id: activeAwxUser?.id } })
-              }
+              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeAwxUser?.id } })}
             >
               {t('User details')}
             </DropdownItem>
