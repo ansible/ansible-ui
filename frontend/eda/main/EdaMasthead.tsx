@@ -26,6 +26,7 @@ export function EdaMasthead() {
     refreshActiveEdaUser?.();
   }, [refreshActiveEdaUser]);
 
+  const userInfo = activeEdaUser?.username;
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 48 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -52,7 +53,7 @@ export function EdaMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo })}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
