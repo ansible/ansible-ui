@@ -30,7 +30,7 @@ describe('Projects', () => {
     it('can create a project and then delete it from the project details page', () => {
       const projectName = 'E2E Project ' + randomString(4);
       cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
+      cy.verifyPageTitle('Edit project');
       cy.clickLink(/^Create project$/);
       cy.get('[data-cy="name"]').type(projectName);
       cy.singleSelectByDataCy('organization', organization.name);
@@ -93,7 +93,7 @@ describe('Projects', () => {
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="edit-project"]').click();
       });
-      cy.verifyPageTitle('Edit Project');
+      cy.verifyPageTitle('Edit project');
       cy.get('[data-cy="name"]').should('have.value', `${project.name}`);
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
@@ -235,7 +235,7 @@ describe('Projects', () => {
       });
       cy.verifyPageTitle(project.name);
       cy.clickButton(/^Edit project$/);
-      cy.verifyPageTitle('Edit Project');
+      cy.verifyPageTitle('Edit project');
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
       cy.clickButton(/^Save project$/);
