@@ -279,9 +279,18 @@ export function createHostAndLaunchJob(
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
     // run  a template and wait for request
-    cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
+
+    // This intercept does not work as there is an async redirect to the job details page
+    // and just waiting on the intercept does not work
+    // i.e. the intercept finishes, then more cypress commands such as cy.navigateTo('awx', 'hosts') are run,
+    // but then the async opteration navigates to the job details page and the test fails
+    // cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
     cy.get('[data-cy="launch-template"]').click();
-    cy.wait('@launch').should('exist');
+    // cy.wait('@launch');
+    // This is needed as the launch job will redirect async to the job details page
+    // and we need to wait for the redirect to happen
+    cy.location('pathname').should('match', /\/output$/);
+
     if (hostInInventory) {
       // go to the Hosts under Inventory
       cy.navigateTo('awx', 'inventories');
