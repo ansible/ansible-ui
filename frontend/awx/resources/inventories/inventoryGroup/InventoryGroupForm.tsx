@@ -102,7 +102,7 @@ export function CreateGroup() {
   return (
     <PageLayout>
       <GroupFormPageHeader
-        title={t('Create new group')}
+        title={t('Create group')}
         breadcrumbs={breadcrumbs}
         urlParams={params}
         inventoryName={inventory?.name}

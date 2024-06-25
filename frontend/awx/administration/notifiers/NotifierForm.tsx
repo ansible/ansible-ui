@@ -77,11 +77,6 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
 
   const optionsRequest = useOptions<NotificationTemplateOptions>(awxAPI`/notification_templates/`);
 
-  const breadcrumbs: ICatalogBreadcrumb[] = [
-    { label: t('Notifications'), to: getPageUrl(AwxRoute.NotificationTemplates) },
-    { label: mode === 'add' ? t('Add') : t('Edit') },
-  ];
-
   if (notifierRequest.error) {
     return <AwxError error={notifierRequest.error} />;
   }
@@ -114,6 +109,18 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   if (defaultValue && !messagesEmpty) {
     (defaultValue as CustomizeMessageType).customize_messages = true;
   }
+
+  const breadcrumbs: ICatalogBreadcrumb[] = [
+    { label: t('Notifiers'), to: getPageUrl(AwxRoute.NotificationTemplates) },
+    {
+      label:
+        mode === 'add'
+          ? t('Create notifier')
+          : notifierRequest?.data?.name
+            ? t(`Edit ${notifierRequest.data.name}`)
+            : t('Edit notifier'),
+    },
+  ];
 
   const onSubmit: PageFormSubmitHandler<NotificationTemplate> = async (formData) => {
     try {
@@ -196,8 +203,14 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
   return (
     <PageLayout>
       <PageHeader
+        title={
+          mode === 'add'
+            ? t('Create notifier')
+            : notifierRequest?.data?.name
+              ? t(`Edit ${notifierRequest.data.name}`)
+              : t('Edit notifier')
+        }
         breadcrumbs={breadcrumbs}
-        title={mode === 'edit' ? t('Edit notifier') : t('Add notifier')}
       />
       <AwxPageForm<NotificationTemplate>
         submitText={t('Save notifier')}
