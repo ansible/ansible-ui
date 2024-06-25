@@ -233,15 +233,9 @@ export class ReusableTemplateSurveyTestSuite {
       .then((job: Job) => {
         if (['running', 'pending'].includes(job.status ?? '')) cy.cancelJob(job);
 
-        cy.intercept('GET', awxAPI`/unified_jobs/*`).as('getJobs');
-        cy.navigateTo('awx', 'jobs');
-        cy.wait('@getJobs');
-        cy.filterTableByMultiSelect('id', [job.id.toString()]);
-        cy.get('[data-cy="name-column-cell"]').within(() => {
-          cy.get('a').click();
-        });
+        const jobType = this.templateType === 'workflow_job_templates' ? 'workflow' : 'playbook';
+        cy.visit(`/jobs/${jobType}/${job.id}/details`);
         cy.verifyPageTitle(job.name);
-        cy.clickTab('Details', true);
 
         cy.contains(survey.variable);
         if (survey.type === 'password') {
