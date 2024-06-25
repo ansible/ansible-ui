@@ -1,20 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import { AwxHost } from '../../../../../frontend/awx/interfaces/AwxHost';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 import { checkHiddenButton, checkHiddenTab } from '../../../../support/hostsfunctions';
+import { launchHostJob } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for smart inventory', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: AwxUser;
+  let host: AwxHost;
+  let project: Project;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
+
+      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        project = proj;
+      });
+
       cy.createInventoryHost(organization, 'smart').then((result) => {
         const { inventory: inv } = result;
         inventory = inv;
+        host = result.host;
       });
       cy.createAwxUser(organization).then((testUser) => {
         user = testUser;
@@ -24,6 +35,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
 
   after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
@@ -45,10 +57,12 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
   });
 
-  it.skip('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
+  it('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
     //1) Use inventory and host
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
+
+    launchHostJob(inventory, host, organization.id, project.id, 'InventoryHost');
   });
 
   it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
