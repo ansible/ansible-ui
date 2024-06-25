@@ -47,17 +47,17 @@ describe('Credentials', () => {
       cy.navigateTo('awx', 'credentials');
       cy.filterTableByMultiSelect('name', [credential.name]);
       cy.get(`[data-cy="row-id-${credential.id}"]`).within(() => {
-        cy.get('[data-cy="edit-credential"]').click();
+        cy.getByDataCy('edit-credential').click();
       });
       cy.verifyPageTitle('Edit Credential');
-      cy.get('[data-cy="name"]').clear().type(`${credential.name} - edited`);
+      cy.getByDataCy('name').clear().type(`${credential.name} - edited`);
       cy.clickButton(/^Save credential$/);
       cy.clearAllFilters();
       cy.filterTableByMultiSelect('name', [`${credential.name} - edited`]);
       cy.clickTableRowLink('name', `${credential.name} - edited`, { disableFilter: true });
       cy.verifyPageTitle(`${credential.name} - edited`);
       cy.clickButton(/^Edit credential$/);
-      cy.get('[data-cy="name"]').clear().type(`${credential.name}`);
+      cy.getByDataCy('name').clear().type(`${credential.name}`);
       cy.clickButton(/^Save credential$/);
       cy.verifyPageTitle(credential.name);
       cy.deleteAwxCredential(credential);
@@ -106,11 +106,11 @@ describe('Credentials', () => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('copy-credential').click();
       });
-      cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
+      cy.getByDataCy('alert-toaster').contains('copied').should('be.visible');
       cy.clickButton(/^Clear all filters/);
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.filterTableByMultiSelect('name', [`${credential.name} @`]);
-      cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+      cy.getByDataCy('checkbox-column-cell').within(() => {
         cy.get('input').click();
       });
       cy.clickToolbarKebabAction('delete-selected-credentials');
@@ -145,18 +145,18 @@ describe('Credentials', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
-      cy.get('[data-cy="name"]').type(credentialName);
+      cy.getByDataCy('name').type(credentialName);
       cy.singleSelectBy('[data-cy="credential_type"]', 'Container Registry');
       cy.contains('Type Details').should('be.visible');
-      cy.get('[data-cy="host"]').clear().type('https://host.com');
-      cy.get('[data-cy="verify_ssl"]').check();
+      cy.getByDataCy('host').clear().type('https://host.com');
+      cy.getByDataCy('verify_ssl').check();
       cy.clickButton(/^Create credential$/);
       cy.verifyPageTitle(credentialName);
-      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.getByDataCy('name').contains(credentialName);
       cy.contains('Authentication URL').should('be.visible');
-      cy.get('[data-cy="authentication-url"]').contains('https://host.com');
+      cy.getByDataCy('authentication-url').contains('https://host.com');
       cy.contains('Verify SSL').should('be.visible');
-      cy.get('[data-cy="verify-ssl"]').contains('Yes');
+      cy.getByDataCy('verify-ssl').contains('Yes');
       cy.clickPageAction('delete-credential');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential/);
@@ -171,7 +171,7 @@ describe('Credentials', () => {
       });
       cy.clickButton(/^Edit credential$/);
       cy.verifyPageTitle('Edit Credential');
-      cy.get('[data-cy="name"]')
+      cy.getByDataCy('name')
         .clear()
         .type(credential.name + '-edited');
       cy.intercept('PATCH', awxAPI`/credentials/${credential.id.toString()}/`).as('edited');
@@ -365,7 +365,7 @@ describe('Create Credentials of different types', () => {
                   cy.get('#gpg-public-key').type(`${credentialType.field}`);
                   break;
                 case 'Terraform backend configuration':
-                  cy.get('[data-cy="configuration-form-group"]').type(`${credentialType.field}`);
+                  cy.getByDataCy('configuration-form-group').type(`${credentialType.field}`);
                   break;
                 default:
                   cy.get(`[data-cy="${credentialType.dataCy}"]`).type(`${credentialType.field}`);
@@ -389,11 +389,11 @@ describe('Create Credentials of different types', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
-      cy.get('[data-cy="name"]').type(credentialName);
+      cy.getByDataCy('name').type(credentialName);
       cy.singleSelectBy('[data-cy="credential_type"]', credType.name, true);
       cy.clickButton(/^Create credential$/);
       cy.verifyPageTitle(credentialName);
-      cy.get('[data-cy="name"]').contains(credentialName);
+      cy.getByDataCy('name').contains(credentialName);
       //delete created credential
       cy.clickPageAction('delete-credential');
       cy.get('#confirm').click();
@@ -406,33 +406,33 @@ describe('Create Credentials of different types', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').type(credentialName);
+    cy.getByDataCy('name').type(credentialName);
     cy.singleSelectBy('[data-cy="credential_type"]', 'Vault', true);
     cy.contains('Type Details').should('be.visible');
-    cy.get('[data-cy="vault-password"]').type('password');
-    cy.get('[data-cy="vault-id"]').type('id');
+    cy.getByDataCy('vault-password"]').type('password');
+    cy.getByDataCy('vault-id"]').type('id');
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
-    cy.get('[data-cy="name"]').contains(credentialName);
+    cy.getByDataCy('name').contains(credentialName);
     cy.contains('Vault Identifier').should('be.visible');
-    cy.get('[data-cy="vault-identifier"]').contains('id');
+    cy.getByDataCy('vault-identifier"]').contains('id');
     cy.contains('Vault Password').should('be.visible');
-    cy.get('[data-cy="vault-password"]').contains('Encrypted');
-    cy.get('[data-cy="edit-credential"]').click();
+    cy.getByDataCy('vault-password').contains('Encrypted');
+    cy.getByDataCy('edit-credential').click();
     cy.verifyPageTitle('Edit Credential');
-    cy.get('[data-cy="vault-id"]').should('have.attr', 'disabled');
-    cy.get('[data-cy="vault-password"]').should('be.visible');
-    cy.get('[data-cy="vault-password"]').then(($input) => {
+    cy.getByDataCy('vault-id').should('have.attr', 'disabled');
+    cy.getByDataCy('vault-password').should('be.visible');
+    cy.getByDataCy('vault-password').then(($input) => {
       expect($input.val()).to.eq('ENCRYPTED');
     });
-    cy.get('[data-cy="ask_vault_password"]').check();
+    cy.getByDataCy('ask_vault_password').check();
     cy.clickButton(/^Save credential$/);
-    cy.get('[data-cy="name"]').contains(credentialName);
+    cy.getByDataCy('name').contains(credentialName);
     cy.contains('Vault Identifier').should('be.visible');
-    cy.get('[data-cy="vault-identifier"]').contains('id');
+    cy.getByDataCy('vault-identifier').contains('id');
     cy.contains('Vault Password').should('be.visible');
-    cy.get('[data-cy="vault-password"]').contains('Prompt on launch');
+    cy.getByDataCy('vault-password').contains('Prompt on launch');
     //delete created credential
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
@@ -444,61 +444,61 @@ describe('Create Credentials of different types', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').type(credentialName);
+    cy.getByDataCy('name').type(credentialName);
     cy.singleSelectByDataCy('credential_type', 'Amazon Web Services');
     cy.contains('Type Details').should('be.visible');
     cy.singleSelectByDataCy('organization', organization.name);
-    cy.get('[data-cy="username"]').type('username');
-    cy.get('[data-cy="password"]').type('password');
-    cy.get('[data-cy="security-token"]').type('security-token');
-    cy.get('[data-cy="description"]').type('description');
+    cy.getByDataCy('username').type('username');
+    cy.getByDataCy('password').type('password');
+    cy.getByDataCy('security-token').type('security-token');
+    cy.getByDataCy('description').type('description');
     cy.intercept('POST', awxAPI`/credentials/`).as('newCred');
     cy.clickButton(/^Create credential$/);
     cy.wait('@newCred')
       .its('response.body')
       .then((newCred: Credential) => {
-        cy.get('[data-cy="name"]').contains(credentialName);
-        cy.get('[data-cy="label-credential-type"]').contains('Credential type');
-        cy.get('[data-cy="credential-type"]').contains('Amazon Web Services');
-        cy.get('[data-cy="label-access-key"]').contains('Access Key');
-        cy.get('[data-cy="access-key"]').contains('username');
-        cy.get('[data-cy="label-secret-key"]').contains('Secret Key');
-        cy.get('[data-cy="secret-key"]').contains('Encrypted');
-        cy.get('[data-cy="label-sts-token"]').contains('STS Token');
-        cy.get('[data-cy="label-organization"]').contains('Organization');
-        cy.get('[data-cy="organization"]').contains(organization.name);
-        cy.get('[data-cy="label-description"]').contains('Description');
-        cy.get('[data-cy="description"]').contains('description');
-        cy.get('[data-cy="edit-credential"]').click();
+        cy.getByDataCy('name').contains(credentialName);
+        cy.getByDataCy('label-credential-type').contains('Credential type');
+        cy.getByDataCy('credential-type').contains('Amazon Web Services');
+        cy.getByDataCy('label-access-key').contains('Access Key');
+        cy.getByDataCy('access-key').contains('username');
+        cy.getByDataCy('label-secret-key').contains('Secret Key');
+        cy.getByDataCy('secret-key').contains('Encrypted');
+        cy.getByDataCy('label-sts-token').contains('STS Token');
+        cy.getByDataCy('label-organization').contains('Organization');
+        cy.getByDataCy('organization').contains(organization.name);
+        cy.getByDataCy('label-description').contains('Description');
+        cy.getByDataCy('description').contains('description');
+        cy.getByDataCy('edit-credential').click();
         cy.verifyPageTitle('Edit Credential');
         const ModifiedCredentialName = credentialName + ' - edited';
-        cy.get('[data-cy="name"]').type(ModifiedCredentialName);
-        cy.get('[data-cy="username"]').should('be.visible');
-        cy.get('[data-cy="username"]').then(($input) => {
+        cy.getByDataCy('name').type(ModifiedCredentialName);
+        cy.getByDataCy('username').should('be.visible');
+        cy.getByDataCy('username').then(($input) => {
           expect($input.val()).to.eq('username');
         });
-        cy.get('[data-cy="password"]').should('be.visible');
-        cy.get('[data-cy="password"]').then(($input) => {
+        cy.getByDataCy('password').should('be.visible');
+        cy.getByDataCy('password').then(($input) => {
           expect($input.val()).to.eq('ENCRYPTED');
         });
-        cy.get('[data-cy="security-token"]').should('be.visible');
-        cy.get('[data-cy="security-token"]').then(($input) => {
+        cy.getByDataCy('security-token').should('be.visible');
+        cy.getByDataCy('security-token').then(($input) => {
           expect($input.val()).to.eq('ENCRYPTED');
         });
         const newDescription = 'new description';
-        cy.get('[data-cy="description"]').clear().type(newDescription);
+        cy.getByDataCy('description').clear().type(newDescription);
         cy.clickButton(/^Save credential$/);
-        cy.get('[data-cy="name"]').contains(ModifiedCredentialName);
-        cy.get('[data-cy="label-credential-type"]').contains('Credential type');
-        cy.get('[data-cy="credential-type"]').contains('Amazon Web Services');
-        cy.get('[data-cy="label-access-key"]').contains('Access Key');
-        cy.get('[data-cy="access-key"]').contains('username');
-        cy.get('[data-cy="label-secret-key"]').contains('Secret Key');
-        cy.get('[data-cy="secret-key"]').contains('Encrypted');
-        cy.get('[data-cy="label-sts-token"]').contains('STS Token');
-        cy.get('[data-cy="sts-token"]').contains('Encrypted');
-        cy.get('[data-cy="label-description"]').contains('Description');
-        cy.get('[data-cy="description"]').contains(newDescription);
+        cy.getByDataCy('name').contains(ModifiedCredentialName);
+        cy.getByDataCy('label-credential-type').contains('Credential type');
+        cy.getByDataCy('credential-type').contains('Amazon Web Services');
+        cy.getByDataCy('label-access-key').contains('Access Key');
+        cy.getByDataCy('access-key').contains('username');
+        cy.getByDataCy('label-secret-key').contains('Secret Key');
+        cy.getByDataCy('secret-key').contains('Encrypted');
+        cy.getByDataCy('label-sts-token').contains('STS Token');
+        cy.getByDataCy('sts-token').contains('Encrypted');
+        cy.getByDataCy('label-description').contains('Description');
+        cy.getByDataCy('description').contains(newDescription);
 
         cy.clickPageAction('delete-credential');
         cy.get('#confirm').click();
@@ -517,28 +517,28 @@ describe('Create Credentials of different types', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').type(credentialName);
+    cy.getByDataCy('name').type(credentialName);
     cy.singleSelectByDataCy('organization', organization.name);
     cy.singleSelectBy('[data-cy="credential_type"]', 'Machine');
     cy.contains('Type Details').should('be.visible');
-    cy.get('[data-cy="ask_password"]').check();
-    cy.get('[data-cy="ask_ssh_key_unlock"]').check();
+    cy.getByDataCy('ask_password').check();
+    cy.getByDataCy('ask_ssh_key_unlock').check();
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
-    cy.get('[data-cy="name"]').contains(credentialName);
+    cy.getByDataCy('name').contains(credentialName);
     cy.contains('Private Key Passphrase').should('be.visible');
-    cy.get('[data-cy="private-key-passphrase"]').contains('Prompt on launch');
+    cy.get('private-key-passphrase').contains('Prompt on launch');
     cy.contains('Password').should('be.visible');
-    cy.get('[data-cy="password"]').contains('Prompt on launch');
-    cy.get('[data-cy="edit-credential"]').click();
+    cy.getByDataCy('password').contains('Prompt on launch');
+    cy.getByDataCy('edit-credential').click();
     cy.verifyPageTitle('Edit Credential');
-    cy.get('[data-cy="ask_password"]').uncheck();
-    cy.get('[data-cy="password"]').type('password');
+    cy.getByDataCy('ask_password').uncheck();
+    cy.getByDataCy('password').type('password');
     cy.clickButton(/^Save credential$/);
     cy.contains('Password').should('be.visible');
-    cy.get('[data-cy="password"]').contains('Encrypted');
+    cy.getByDataCy('password').contains('Encrypted');
     cy.contains('Private Key Passphrase').should('be.visible');
-    cy.get('[data-cy="private-key-passphrase"]').contains('Prompt on launch');
+    cy.getByDataCy('private-key-passphrase').contains('Prompt on launch');
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
@@ -551,19 +551,19 @@ describe('Create Credentials of different types', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
-    cy.get('[data-cy="name"]').type(credentialName);
+    cy.getByDataCy('name').type(credentialName);
     cy.singleSelectByDataCy('organization', organization.name);
     cy.singleSelectBy('[data-cy="credential_type"]', 'Machine');
     cy.contains('Type Details').should('be.visible');
     // Use custom component to render the privilege escalation method is sudo
     cy.contains('Privilege Escalation Method ').should('be.visible');
     cy.get('button[aria-label="Options menu"]').click();
-    cy.get('[data-cy="select-option-sudo"]').click();
+    cy.getByDataCy('select-option-sudo').click();
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
-    cy.get('[data-cy="name"]').contains(credentialName);
+    cy.getByDataCy('name').contains(credentialName);
     cy.contains('Privilege Escalation Method').should('be.visible');
-    cy.get('[data-cy="privilege-escalation-method"]').contains('sudo');
+    cy.getByDataCy('privilege-escalation-method').contains('sudo');
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
