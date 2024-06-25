@@ -20,22 +20,29 @@ describe('Workflow Visualizer', () => {
   let workflowJtNode: WorkflowNode;
 
   before(function () {
-    organization = this.globalAwxOrganization as Organization;
-    project = this.globalProject as Project;
-    cy.createAwxInventory({ organization: organization.id })
-      .then((i) => {
-        inventory = i;
-      })
-      .then(() => {
-        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-          inventorySource = invSrc;
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id })
+        .then((i) => {
+          inventory = i;
+        })
+        .then(() => {
+          cy.createAwxProject({ organization: organization.id })
+            .then((proj) => {
+              project = proj;
+            })
+            .then(() => {
+              cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+                inventorySource = invSrc;
+              });
+              cy.createAwxJobTemplate({
+                organization: organization.id,
+                project: project.id,
+                inventory: inventory.id,
+              }).then((jt) => (jobTemplate = jt));
+            });
         });
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => (jobTemplate = jt));
-      });
+    });
   });
 
   beforeEach(function () {
@@ -111,7 +118,10 @@ describe('Workflow Visualizer', () => {
     });
     // FLAKY_06_13_2024
     it('Adds a new node linked to an existing node with always status, and save the visualizer.', function () {
-      cy.visit(`/templates/workflow-job-template/${workflowJobTemplate?.id}/visualizer`);
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+      cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+      cy.get('[data-cy="view-workflow-visualizer"]').click();
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
