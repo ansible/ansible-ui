@@ -10,14 +10,12 @@ import {
   launchHostJob,
 } from '../../../../support/hostsfunctions';
 import { Project } from '../../../../../frontend/awx/interfaces/Project';
-import { AwxHost } from '../../../../../frontend/awx/interfaces/AwxHost';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
   let inventory: Inventory;
   let group: InventoryGroup;
   let project: Project;
-  let host: AwxHost;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
@@ -28,7 +26,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
       cy.createInventoryHost(organization, 'constructed').then((result) => {
         const { inventory: inv } = result;
         inventory = inv;
-        host = result.host;
 
         cy.createInventoryHostGroup(organization).then((result2) => {
           const normalInventory = result2.inventory;
@@ -122,7 +119,9 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
 
-    launchHostJob(inventory, host, organization.id, project.id, 'InventoryHost');
+    cy.createInventoryHost(organization, 'constructed').then((result) => {
+      launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');
+    });
   });
 
   it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
