@@ -30,7 +30,7 @@ describe('Projects', () => {
     it('can create a project and then delete it from the project details page', () => {
       const projectName = 'E2E Project ' + randomString(4);
       cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Edit project');
+      cy.verifyPageTitle(`Edit ${projectName}`);
       cy.clickLink(/^Create project$/);
       cy.get('[data-cy="name"]').type(projectName);
       cy.singleSelectByDataCy('organization', organization.name);
@@ -88,7 +88,7 @@ describe('Projects', () => {
 
     it('can edit a project from the project list row', () => {
       cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
+      cy.verifyPageTitle(`Edit ${project.name}`);
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="edit-project"]').click();
@@ -233,7 +233,7 @@ describe('Projects', () => {
       cy.clickTableRowLink('name', project.name, {
         disableFilter: true,
       });
-      cy.verifyPageTitle(project.name);
+      cy.verifyPageTitle(`Edit ${project.name}`);
       cy.clickButton(/^Edit project$/);
       cy.verifyPageTitle('Edit project');
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
@@ -624,7 +624,7 @@ describe('Projects', () => {
         disableFilter: true,
       });
       cy.verifyPageTitle(`${project.name}`);
-      cy.clickTab(/^Job templates$/, true);
+      cy.clickTab(/^Job Templates$/, true);
     });
 
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
@@ -660,7 +660,7 @@ describe('Projects', () => {
               });
           });
         cy.navigateTo('awx', 'projects');
-        cy.verifyPageTitle('Projects');
+        cy.verifyPageTitle(`${project.name}`);
         cy.filterTableByMultiSelect('name', [newProject.name]);
         cy.get(`[data-cy="row-id-${newProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
