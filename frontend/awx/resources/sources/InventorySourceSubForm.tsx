@@ -7,6 +7,7 @@ import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFor
 import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
+import { QueryParams } from '../../common/useAwxView';
 import { InventorySourceForm } from '../../interfaces/InventorySource';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
@@ -30,7 +31,29 @@ export function InventorySourceSubForm() {
     'controller',
     'insights',
     'terraform',
+    'openshift_virtualization',
   ];
+
+  const handleQueryParams = (source: string): QueryParams => {
+    switch (source) {
+      case 'scm':
+        return {
+          credential_type__kind__in: 'cloud,kubernetes',
+        };
+      case 'ec2':
+        return {
+          credential_type__namespace: 'aws',
+        };
+      case 'openshift_virtualization':
+        return {
+          credential_type__namespace: 'kubernetes_bearer_token',
+        };
+      default:
+        return {
+          credential_type__namespace: source,
+        };
+    }
+  };
 
   return (
     <>
@@ -46,19 +69,7 @@ export function InventorySourceSubForm() {
               'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
             )}
             isRequired={sourceTypes.slice(1).includes(source)}
-            queryParams={
-              source === 'scm'
-                ? {
-                    credential_type__kind__in: 'cloud,kubernetes',
-                  }
-                : source === 'ec2'
-                  ? {
-                      credential_type__namespace: 'aws',
-                    }
-                  : {
-                      credential_type__namespace: source,
-                    }
-            }
+            queryParams={handleQueryParams(source)}
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
             <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />
