@@ -133,7 +133,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.filterTableBySingleSelect('name', constructedInv.name);
     cy.wait('@filterConstInventory');
     cy.clickTableRowLink('name', constructedInv.name, { disableFilter: true });
-    cy.verifyPageTitle(constructedInv.name);
+    cy.verifyPageTitle(`Edit ${constructedInv.name}`);
 
     const description = 'Edit action: New description typed by cypress';
     cy.getByDataCy('edit-inventory').click();

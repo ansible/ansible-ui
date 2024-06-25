@@ -3,7 +3,7 @@ import { CreateInventorySource } from './InventorySourceForm';
 describe('CreateInventorySource', () => {
   it('renders create new source page', () => {
     cy.mount(<CreateInventorySource />);
-    cy.contains('Add new source');
+    cy.contains('Add source');
   });
 
   it('disables save button when name is empty', () => {
