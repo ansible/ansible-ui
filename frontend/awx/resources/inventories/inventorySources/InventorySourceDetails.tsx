@@ -131,7 +131,7 @@ export function InventorySourceDetails(props: {
   const getSourceVarsHelpText = (source: string) => {
     let sourceType = '';
     if (source && source !== 'scm') {
-      const type: string[] = ansibleDocUrls[source].split(/[/,.]/);
+      const type: string[] = ansibleDocUrls[source]?.split(/[/,.]/) ?? [];
       sourceType = type[type.length - 2];
     }
 
