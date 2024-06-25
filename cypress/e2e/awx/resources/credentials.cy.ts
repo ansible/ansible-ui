@@ -49,7 +49,7 @@ describe('Credentials', () => {
       cy.get(`[data-cy="row-id-${credential.id}"]`).within(() => {
         cy.get('[data-cy="edit-credential"]').click();
       });
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       cy.get('[data-cy="name"]').clear().type(`${credential.name} - edited`);
       cy.clickButton(/^Save credential$/);
       cy.clearAllFilters();
@@ -170,7 +170,7 @@ describe('Credentials', () => {
         disableFilter: true,
       });
       cy.clickButton(/^Edit credential$/);
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credentialName}`);
       cy.get('[data-cy="name"]')
         .clear()
         .type(credential.name + '-edited');
@@ -420,7 +420,7 @@ describe('Create Credentials of different types', () => {
     cy.contains('Vault Password').should('be.visible');
     cy.get('[data-cy="vault-password"]').contains('Encrypted');
     cy.get('[data-cy="edit-credential"]').click();
-    cy.verifyPageTitle('Edit Credential');
+    cy.verifyPageTitle(`Edit ${credentialName}`);
     cy.get('[data-cy="vault-id"]').should('have.attr', 'disabled');
     cy.get('[data-cy="vault-password"]').should('be.visible');
     cy.get('[data-cy="vault-password"]').then(($input) => {
@@ -470,7 +470,7 @@ describe('Create Credentials of different types', () => {
         cy.get('[data-cy="label-description"]').contains('Description');
         cy.get('[data-cy="description"]').contains('description');
         cy.get('[data-cy="edit-credential"]').click();
-        cy.verifyPageTitle('Edit Credential');
+        cy.verifyPageTitle(`Edit ${credentialName}`);
         const ModifiedCredentialName = credentialName + ' - edited';
         cy.get('[data-cy="name"]').type(ModifiedCredentialName);
         cy.get('[data-cy="username"]').should('be.visible');
@@ -531,7 +531,7 @@ describe('Create Credentials of different types', () => {
     cy.contains('Password').should('be.visible');
     cy.get('[data-cy="password"]').contains('Prompt on launch');
     cy.get('[data-cy="edit-credential"]').click();
-    cy.verifyPageTitle('Edit Credential');
+    cy.verifyPageTitle(`Edit ${credentialName}`);
     cy.get('[data-cy="ask_password"]').uncheck();
     cy.get('[data-cy="password"]').type('password');
     cy.clickButton(/^Save credential$/);
@@ -608,7 +608,7 @@ describe('Credentials Tabbed View - Job Templates', () => {
     cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
     cy.clickTab('Job Templates', true);
     cy.getByDataCy('create-template').click();
-    cy.verifyPageTitle('Create Job Template');
+    cy.verifyPageTitle('Create job template');
     cy.getByDataCy('name').type(jobTemplateName);
     cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
