@@ -7,7 +7,7 @@ import { PageFormSelect } from '../../../../../framework';
 import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
-import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
+import { PageFormSelectInventory } from '../../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
 import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
 import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
@@ -51,13 +51,7 @@ export function ScheduleTypeInputs() {
             ),
             inventory_source: (
               <>
-                <PageFormInventorySelect<ScheduleFormWizard>
-                  isRequired
-                  labelHelp={t(
-                    'First, select the inventory to which the desired inventory source belongs.'
-                  )}
-                  name="resourceInventory"
-                />
+                <PageFormSelectInventory<ScheduleFormWizard> isRequired name="resourceInventory" />
                 {resourceInventory && resourceInventory?.id && (
                   <PageFormInventorySourceSelect<ScheduleFormWizard>
                     isRequired

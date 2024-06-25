@@ -7,7 +7,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';
-import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
+import { PageFormSelectInventory } from '../inventories/components/PageFormInventorySelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 
 export function WorkflowJobTemplateInputs(props: {
@@ -37,11 +37,11 @@ export function WorkflowJobTemplateInputs(props: {
         placeholder={t('Add a description for this workflow job template')}
       />
       <PageFormSelectOrganization<WorkflowJobTemplateForm> name="organization" />
-      <PageFormInventorySelect<WorkflowJobTemplateForm>
+      <PageFormSelectInventory<WorkflowJobTemplateForm>
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
-        name="inventory"
+        name="inventory.id"
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
         placeholder={t('Add a limit to reduce number of hosts.')}
