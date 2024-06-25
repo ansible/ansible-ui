@@ -187,7 +187,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
               'createSchedule'
             );
             cy.getByDataCy('create-schedule').click();
-            cy.verifyPageTitle('Create Schedule');
+            cy.verifyPageTitle('Create schedule');
             cy.getByDataCy('name').type(scheduleName, { delay: 0 });
             cy.getByDataCy('description').type('description');
             if (['Cleanup Activity Stream', 'Cleanup Job Details'].includes(jobName)) {
@@ -273,7 +273,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
               'createSchedule'
             );
             cy.getByDataCy('create-schedule').click();
-            cy.verifyPageTitle('Create Schedule');
+            cy.verifyPageTitle('Create schedule');
             cy.get('[data-cy="name"]').type(scheduleName, { delay: 0 });
             cy.get('[data-cy="description"]').type('description');
             if (['Cleanup Activity Stream', 'Cleanup Job Details'].includes(jobName)) {
@@ -364,7 +364,7 @@ describe('Management Jobs - Notifications Tab', function () {
       cy.verifyPageTitle('Notifiers');
       cy.wait('@getNotifiers');
       cy.getByDataCy('add-notifier').click();
-      cy.verifyPageTitle('Add notifier');
+      cy.verifyPageTitle('Create notifier');
       cy.getByDataCy('name').type(notifierName);
       cy.getByDataCy('description').type('AWX Notifier Description');
       cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
