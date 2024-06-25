@@ -1,18 +1,6 @@
-import {
-  Stack,
-  TextContent,
-  Title,
-  ToolbarGroup,
-  ToolbarItem,
-  Truncate,
-} from '@patternfly/react-core';
+import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { DropdownItem } from '@patternfly/react-core/deprecated';
-import {
-  ExternalLinkAltIcon,
-  QuestionCircleIcon,
-  RedhatIcon,
-  UserCircleIcon,
-} from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -29,6 +17,8 @@ import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
 import { postRequest } from '../../frontend/common/crud/Data';
 import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import { gatewayAPI } from '../api/gateway-api-utils';
+import AAPLogo from '../icons/aap-logo.svg';
+import RedHatIcon from '../icons/redhat-icon.svg';
 import { PlatformAbout } from './PlatformAbout';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
@@ -38,7 +28,7 @@ export function PlatformMasthead() {
   const pageNavigate = usePageNavigate();
   useAwxNotifications();
   useHubNotifications();
-  const showTitle = useBreakpoint('md');
+  const isSmOrLarger = useBreakpoint('sm');
   const [_dialog, setDialog] = usePageDialog();
   const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
 
@@ -52,45 +42,20 @@ export function PlatformMasthead() {
   }, [refreshActivePlatformUser]);
 
   return (
-    <PageMasthead
-      brand={
-        (
-          <RedhatIcon
-            style={{ height: 36, width: 36, color: '#ee0000', marginTop: -24, marginRight: -4 }}
-          />
-        ) as unknown as string
-      }
-    >
-      {showTitle && (
-        <ToolbarItem style={{ flexGrow: 1 }}>
-          <TextContent>
-            <Title
-              headingLevel="h1"
-              size="xl"
-              style={{ fontWeight: 'unset', margin: 0, lineHeight: 1.2 }}
-            >
-              <Stack>
-                <Truncate
-                  content={t('Red Hat')}
-                  className="pf-v5-u-font-weight-bold"
-                  style={{ minWidth: 0 }}
-                />
-                <Truncate
-                  content={t('Ansible Automation Platform')}
-                  className="pf-v5-u-font-weight-light"
-                  style={{ minWidth: 0 }}
-                />
-              </Stack>
-            </Title>
-          </TextContent>
-        </ToolbarItem>
-      )}
-      <ToolbarItem style={{ flexGrow: 1 }} />
-      <ToolbarGroup variant="icon-button-group">
+    <PageMasthead brand={<AAPLogo style={{ height: 48 }} />}>
+      <ToolbarItem style={{ flexGrow: 1 }}>
+        {!isSmOrLarger && <RedHatIcon style={{ height: 38, width: 38 }} />}
+      </ToolbarItem>
+      <ToolbarGroup
+        variant="icon-button-group"
+        // This fixes displaying the toolbar items on the right side of the masthead
+        // on small screens with the AAP logo
+        style={{ marginLeft: -24 }}
+      >
         <ToolbarItem>
           <PageRefreshIcon />
         </ToolbarItem>
-        <ToolbarItem>
+        <ToolbarItem visibility={{ default: 'hidden', lg: 'visible' }}>
           <PageThemeSwitcher />
         </ToolbarItem>
         <ToolbarItem>
@@ -130,13 +95,15 @@ export function PlatformMasthead() {
             icon={<UserCircleIcon />}
             label={activePlatformUser?.username}
           >
-            {/* <DropdownItem
+            <DropdownItem
               id="user-details"
               label={t('User details')}
               onClick={() =>
-                pageNavigate(PlatformRoute.UserPage, { params: { id: activeUser?.id } })
+                pageNavigate(PlatformRoute.UserPage, { params: { id: activePlatformUser?.id } })
               }
-            /> */}
+            >
+              {t('User details')}
+            </DropdownItem>
             <DropdownItem id="logout" label={t('Logout')} onClick={() => void logout()}>
               {t('Logout')}
             </DropdownItem>
