@@ -16,6 +16,7 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
 
 Cypress.Commands.add('login', () => {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+  cy.log('Login was called');
   switch (devBaseUrlPort) {
     case '4101':
       cy.awxLogin();

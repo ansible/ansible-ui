@@ -1502,6 +1502,7 @@ const GLOBAL_ORG_NAME = 'Global Organization';
 
 /** Create a global organization if it doesn't exist. */
 Cypress.Commands.add('createGlobalOrganization', function () {
+  cy.log('Creating global organization');
   cy.requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
     .its('results')
     .then((orgResults: Organization[]) => {
