@@ -58,6 +58,6 @@ describe('Host Tests', () => {
   it.skip('can cancel jobs from host jobs tab', () => {});
 
   it('can view host facts in stand alone host', () => {
-    checkFactsInHost(inventory);
+    checkFactsInHost(inventory, 'stand_alone');
   });
 });
