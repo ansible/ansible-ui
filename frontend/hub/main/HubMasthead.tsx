@@ -19,9 +19,11 @@ import { useHubActiveUser } from '../common/useHubActiveUser';
 import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
+import { useHubProductVersionInfo } from './useHubProductVersionInfo';
 
 export function HubMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useHubProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   useHubNotifications();
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
@@ -29,6 +31,9 @@ export function HubMasthead() {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     refreshActiveHubUser?.();
   }, [refreshActiveHubUser]);
+
+  const userInfo = activeHubUser?.username;
+
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -56,7 +61,7 @@ export function HubMasthead() {
             <></>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/galaxy-logo.svg' })}
+              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
               data-cy="masthead-about"
             >
               {t('About')}
