@@ -1,4 +1,4 @@
-import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
+import { Icon, Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,8 +15,15 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Name'),
-      cell: (project) =>
-        project.custom_virtualenv && !project.default_environment ? (
+      cell: (project) => {
+        const missingResource = (
+          <Tooltip content={t`This project does not have an organization.`} position="right">
+            <Icon status="danger" style={{ paddingTop: '6px' }}>
+              <ExclamationTriangleIcon />
+            </Icon>
+          </Tooltip>
+        );
+        return project.custom_virtualenv && !project.default_environment ? (
           <Split>
             <SplitItem style={{ marginRight: '8px' }}>
               <div
@@ -32,6 +39,7 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
                 ) : (
                   <Link to={getPageUrl(AwxRoute.ProjectDetails, { params: { id: project.id } })}>
                     {project.name}
+                    {!project.organization && missingResource}
                   </Link>
                 )}
               </div>
@@ -67,7 +75,8 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
               </Link>
             )}
           </div>
-        ),
+        );
+      },
       sort: 'name',
       card: 'name',
       list: 'name',
