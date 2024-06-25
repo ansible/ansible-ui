@@ -51,10 +51,10 @@ export function CreateOrganization() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Organization')}
+        title={t('Create organization')}
         breadcrumbs={[
           { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
-          { label: t('Create Organization') },
+          { label: t('Create organization') },
         ]}
       />
       <AwxPageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
@@ -119,10 +119,18 @@ export function EditOrganization() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Organization')}
+        title={
+          organization?.name
+            ? t('Edit {{organizationName}}', { organizationName: organization?.name })
+            : t('Organization')
+        }
         breadcrumbs={[
           { label: t('Organizations'), to: getPageUrl(AwxRoute.Organizations) },
-          { label: t('Edit Organization') },
+          {
+            label: organization?.name
+              ? t('Edit {{organizationName}}', { organizationName: organization?.name })
+              : t('Organization'),
+          },
         ]}
       />
       {organization ? (
