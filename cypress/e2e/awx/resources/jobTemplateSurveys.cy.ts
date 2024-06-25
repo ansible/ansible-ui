@@ -36,8 +36,8 @@ describe('Job Templates Surveys', function () {
     });
 
     after(() => {
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     beforeEach(() => {
@@ -84,6 +84,7 @@ describe('Job Templates Surveys', function () {
     });
 
     after(() => {
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
