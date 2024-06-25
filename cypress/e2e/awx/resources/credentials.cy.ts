@@ -354,12 +354,16 @@ describe('Create Credentials of different types', () => {
             (item.required as { field: string; dataCy: string }[]).forEach((credentialType) => {
               switch (item.name) {
                 case 'HashiCorp Vault Secret Lookup':
-                  cy.get(`[data-cy="${credentialType.dataCy}"]`).type(`${credentialType.field}`);
+                  cy.getByDataCy(`[data-cy="${credentialType.dataCy}"]`).type(
+                    `${credentialType.field}`
+                  );
                   cy.selectDropdownOptionByResourceName('api-version', 'v1');
                   break;
                 case 'Ansible Galaxy/Automation Hub API Token':
                   cy.singleSelectByDataCy('organization', organization.name);
-                  cy.get(`[data-cy="${credentialType.dataCy}"]`).type(`${credentialType.field}`);
+                  cy.getByDataCy(`[data-cy="${credentialType.dataCy}"]`).type(
+                    `${credentialType.field}`
+                  );
                   break;
                 case 'GPG Public Key':
                   cy.get('#gpg-public-key').type(`${credentialType.field}`);
@@ -368,7 +372,9 @@ describe('Create Credentials of different types', () => {
                   cy.getByDataCy('configuration-form-group').type(`${credentialType.field}`);
                   break;
                 default:
-                  cy.get(`[data-cy="${credentialType.dataCy}"]`).type(`${credentialType.field}`);
+                  cy.getByDataCy(`[data-cy="${credentialType.dataCy}"]`).type(
+                    `${credentialType.field}`
+                  );
               }
             });
           }
