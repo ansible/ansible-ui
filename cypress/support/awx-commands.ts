@@ -1862,12 +1862,8 @@ Cypress.Commands.add(
         ? spec.default
         : spec.default.toString().split('\n');
 
-      cy.log('defaults', defaults);
-      cy.log('spec choices', spec.choices);
-
       const choiceBtn = spec.type === 'multiplechoice' ? 'radio' : 'checkbox';
       spec.choices.forEach((choice, index) => {
-        cy.log('loop', defaults, choice);
         if (defaults.includes(choice)) {
           cy.getByDataCy(`choice-${choiceBtn}-${index}`).click();
         }
@@ -1880,7 +1876,9 @@ Cypress.Commands.add(
       .its('response.statusCode')
       .then((statusCode) => {
         expect(statusCode).to.eql(200);
-        cy.verifyPageTitle(template.name);
+        cy.get('[data-cy="name-column-cell"]').within(() => {
+          cy.contains(spec.question_name);
+        });
       });
   }
 );
