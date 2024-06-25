@@ -104,7 +104,7 @@ describe('Edit instance Form', () => {
       'getInstance'
     );
     cy.mount(<EditInstance />);
-    cy.verifyPageTitle('Edit instance');
+    cy.verifyPageTitle('Edit receptor-1');
     cy.get('[data-cy="hostname"]').should('be.visible').should('be.disabled');
     cy.get('[data-cy="node-state"]').should('be.visible').should('be.disabled');
     cy.get('[data-cy="listener-port"]').should('be.visible').should('not.be.disabled');

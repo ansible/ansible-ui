@@ -115,7 +115,7 @@ describe('Create Edit Application Form', () => {
 
     it('should preload the form with current values', () => {
       cy.mount(<EditApplication />);
-      cy.verifyPageTitle('Edit Application');
+      cy.verifyPageTitle('Edit test');
       cy.get('[data-cy="name"]').should('have.value', 'test');
       cy.get('[data-cy="description"]').should('have.value', 'hello');
       cy.get('[data-cy="organization"]').should('contain', 'Default');
