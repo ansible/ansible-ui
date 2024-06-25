@@ -7,19 +7,25 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 export class ReusableTemplateSurveyTestSuite {
   template: JobTemplate | WorkflowJobTemplate;
   templateType: string;
-  UIPath: string;
 
   constructor(template: JobTemplate | WorkflowJobTemplate) {
     this.template = template;
     this.templateType = `${template.type}s`;
-    this.UIPath = this.templateType === 'job_templates' ? 'job-template' : 'workflow-job-template';
+  }
+
+  navigateToTemplateDetails() {
+    cy.navigateTo('awx', 'templates');
+    cy.verifyPageTitle('Templates');
+    cy.filterTableByMultiSelect('name', [this.template.name]);
+    cy.get('[data-cy="name-column-cell"]').within(() => {
+      cy.get('a').click();
+    });
+    cy.verifyPageTitle(this.template.name);
+    cy.clickTab('Survey', true);
   }
 
   canCreateSurvey(question: Spec) {
-    //Use the JT/WFJT created in the beforeEach block
-    //Assert the empty state survey list
-    //Assert creation of the survey and info showing on survey list
-    cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
+    this.navigateToTemplateDetails();
 
     cy.contains(this.template.name);
     cy.get('[aria-selected="true"]').contains('Survey');
@@ -51,11 +57,8 @@ export class ReusableTemplateSurveyTestSuite {
   }
 
   canEditSurvey(question: Spec) {
-    //Use the JT/WFJT created in the beforeEach block
-    //Assert survey creation and info showing on survey list
-    //Assert info on survey list after editing
     cy.createTemplateSurvey(this.template, 'Text', question);
-    cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
+    this.navigateToTemplateDetails();
 
     cy.getByDataCy('name-column-cell').contains(question?.question_name);
     cy.getByDataCy('type-column-cell').contains(question?.type);
@@ -79,11 +82,8 @@ export class ReusableTemplateSurveyTestSuite {
   }
 
   canDeleteSurvey(question: Spec) {
-    //Use the JT/WFJT created in the beforeEach block
-    //Create survey, assert existence
-    //Delete and assert deletion
     cy.createTemplateSurvey(this.template, 'Text', question);
-    cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
+    this.navigateToTemplateDetails();
 
     cy.getByDataCy('row-0').within(() => {
       cy.contains(question.question_name);
@@ -105,10 +105,6 @@ export class ReusableTemplateSurveyTestSuite {
   }
 
   canCreateMultipleSurvey() {
-    //Use the JT/WFJT created in the beforeEach block
-    //Create multiple surveys within the JT/WFJT, assert existence and order of surveys
-    //Change order and assert new order
-    //Bulk delete and assert deletion
     const specs = [
       {
         question_name: 'Foo',
@@ -154,31 +150,32 @@ export class ReusableTemplateSurveyTestSuite {
       spec: specs,
     };
 
-    cy.createAwxSurvey(survey, this.template);
+    cy.createAwxSurvey(survey, this.template).then(() => {
+      this.navigateToTemplateDetails();
 
-    cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
-
-    specs.forEach((spec, index) => {
-      cy.getByDataCy(`row-${index}`).within(() => {
-        cy.getByDataCy('name-column-cell').contains(spec.question_name);
-        cy.getByDataCy('type-column-cell').contains(spec.type);
-        cy.getByDataCy('default-column-cell').contains(spec.default);
+      specs.forEach((spec, index) => {
+        cy.getByDataCy(`row-${index}`).within(() => {
+          cy.getByDataCy('name-column-cell').contains(spec.question_name);
+          cy.getByDataCy('type-column-cell').contains(spec.type);
+          cy.getByDataCy('default-column-cell').contains(spec.default);
+        });
       });
-    });
 
-    cy.clickToolbarKebabAction('manage-question-order');
-    cy.get('#draggable-row-Foo').drag('#draggable-row-Baz');
-    cy.clickButton('Apply');
+      cy.clickToolbarKebabAction('manage-question-order');
+      cy.get('#draggable-row-Foo').drag('#draggable-row-Baz');
+      cy.clickButton('Apply');
 
-    ['Bar', 'Baz', 'Foo'].forEach((spec, index) => {
-      cy.getByDataCy(`row-${index}`).within(() => {
-        cy.getByDataCy('name-column-cell').contains(spec);
+      ['Bar', 'Baz', 'Foo'].forEach((spec, index) => {
+        cy.getByDataCy(`row-${index}`).within(() => {
+          cy.getByDataCy('name-column-cell').contains(spec);
+        });
       });
     });
   }
 
   canEnableSurvey(survey: Spec) {
-    cy.visit(`/templates/${this.UIPath}/${this.template.id}/survey`);
+    this.navigateToTemplateDetails();
+
     cy.getByDataCy('name-column-cell').contains(survey.question_name);
 
     cy.intercept('PATCH', awxAPI`/${this.templateType}/${this.template.id.toString()}/`).as(
@@ -236,8 +233,13 @@ export class ReusableTemplateSurveyTestSuite {
       .then((job: Job) => {
         if (['running', 'pending'].includes(job.status ?? '')) cy.cancelJob(job);
 
-        const jobType = this.templateType === 'workflow_job_templates' ? 'workflow' : 'playbook';
-        cy.visit(`/jobs/${jobType}/${job.id}/details`);
+        cy.navigateTo('awx', 'jobs');
+        cy.filterTableByMultiSelect('id', [job.id.toString()]);
+        cy.get('[data-cy="name-column-cell"]').within(() => {
+          cy.get('a').click();
+        });
+        cy.verifyPageTitle(job.name);
+        cy.clickTab('Details', true);
 
         cy.contains(survey.variable);
         if (survey.type === 'password') {

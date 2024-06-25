@@ -1077,7 +1077,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createAwxSurvey',
   (surveySpec: Partial<Survey>, template: Partial<JobTemplate | WorkflowJobTemplate>) => {
-    cy.requestPost<Survey>(`${template.url}survey_spec/`, {
+    return cy.requestPost<Survey>(`${template.url}survey_spec/`, {
       ...surveySpec,
     });
   }
@@ -1876,7 +1876,12 @@ Cypress.Commands.add(
 
     cy.intercept('POST', awxAPI`/${template.type}s/*/survey_spec/`).as('createSurveySpec');
     cy.clickButton('Create question');
-    cy.wait('@createSurveySpec');
+    cy.wait('@createSurveySpec')
+      .its('response.statusCode')
+      .then((statusCode) => {
+        expect(statusCode).to.eql(200);
+        cy.verifyPageTitle(template.name);
+      });
   }
 );
 
