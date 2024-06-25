@@ -38,7 +38,7 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       }
       brandImageAlt={t('Brand Logo')}
       backgroundImageSrc="/static/media/ansible-brand.svg"
-      productName={process.env.PRODUCT ?? t('AWX')}
+      productName={upstreamServices(process.env.PRODUCT, t) ?? t('AWX')}
     >
       <TextContent>
         <TextList component="dl">
@@ -131,4 +131,14 @@ export function translateVersion(name: string | undefined, t: TFunction) {
   };
 
   return VERSION_NAMES[name as string] || name;
+}
+
+export function upstreamServices(name: string | undefined, t: TFunction) {
+  const SERVICE_NAMES: Record<string, string> = {
+    'Automation Hub': t`Ansible Galaxy`,
+    AWX: t`AWX`,
+    'Event Driven Automation': t`EDA Server`,
+  };
+
+  return SERVICE_NAMES[name as string] || name;
 }
