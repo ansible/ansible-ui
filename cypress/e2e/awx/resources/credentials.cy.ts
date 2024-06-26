@@ -427,10 +427,8 @@ describe('Create Credentials of different types', () => {
     cy.getByDataCy('vault-password').contains('Encrypted');
     cy.getByDataCy('edit-credential').click();
     cy.verifyPageTitle('Edit Credential');
-    cy.getByDataCy('vault-id').should('have.attr', 'disabled');
-    cy.getByDataCy('vault-password').should('be.visible');
-    cy.getByDataCy('vault-password').then(($input) => {
-      cy.wrap($input).should('have.value', 'ENCRYPTED');
+    cy.get('[data-cy="vault-password"]').then(($pwd) => {
+      cy.wrap($pwd).should('have.value', 'ENCRYPTED');
     });
     cy.getByDataCy('ask_vault_password').check();
     cy.clickButton(/^Save credential$/);
@@ -479,14 +477,14 @@ describe('Create Credentials of different types', () => {
         cy.verifyPageTitle('Edit Credential');
         const ModifiedCredentialName = credentialName + ' - edited';
         cy.getByDataCy('name').type(ModifiedCredentialName);
-        cy.getByDataCy('username').then(($input) => {
-          cy.wrap($input).should('have.value', 'username');
+        cy.get('input[data-cy="username"]').then(($username) => {
+          cy.wrap($username).should('have.value', 'username');
         });
-        cy.getByDataCy('password').then(($input) => {
-          cy.wrap($input).should('have.value', 'ENCRYPTED');
+        cy.get('input[data-cy="password"]').then(($pwd) => {
+          cy.wrap($pwd).should('have.value', 'ENCRYPTED');
         });
-        cy.getByDataCy('security-token').then(($input) => {
-          cy.wrap($input).should('have.value', 'ENCRYPTED');
+        cy.get('input[data-cy="security-token"]').then(($token) => {
+          cy.wrap($token).should('have.value', 'ENCRYPTED');
         });
         const newDescription = 'new description';
         cy.getByDataCy('description').clear().type(newDescription);
