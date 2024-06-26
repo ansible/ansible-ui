@@ -111,13 +111,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: string) => {
-  cy.pollEdaResults<EdaRulebookActivation>(
-    edaAPI`/activations/?name=${edaRulebookActivationName}`
-  ).then((activations) => {
-    return activations[0];
-  });
-});
+;
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
   cy.requestDelete(edaAPI`/activations/${edaRulebookActivation.id.toString()}/`, {
