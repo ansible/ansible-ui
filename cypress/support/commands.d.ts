@@ -742,10 +742,8 @@ declare global {
 
       createTemplateSurvey(
         template: JobTemplate | WorkflowJobTemplate,
-        survey: SetOptional<
-          SurveySpec & { label: string },
-          'required' | 'min' | 'max' | 'new_question' | 'choices'
-        >
+        label: string,
+        survey: SurveySpec
       ): Chainable<void>;
 
       /**
@@ -768,7 +766,7 @@ declare global {
 
       createAwxSurvey(
         surveySpec: Partial<Survey>,
-        template: Partial<JobTemplate>
+        template: Partial<JobTemplate | WorkflowJobTemplate>
       ): Chainable<Survey>;
 
       getAwxWorkflowJobTemplateByName(
@@ -1097,6 +1095,7 @@ declare global {
         retries?: number
       ): Chainable<Job>;
       waitForWorkflowJobStatus(jobID: string): Chainable<Job>;
+      cancelJob(job: Job): Chainable<Job>;
 
       createAndDeleteCustomAWXCredentialTypeUI(
         customCredentialTypeName: string,
