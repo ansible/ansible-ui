@@ -43,7 +43,6 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
             : '/static/media/awx-logo.svg'
       }
       brandImageAlt={t('Brand Logo')}
-      backgroundImageSrc="/static/media/ansible-brand.svg"
       productName={upstreamServices(process.env.PRODUCT, t) ?? t('AWX')}
     >
       <DescriptionList isHorizontal>
