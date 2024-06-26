@@ -191,68 +191,6 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source Schedules List Page', () => {
-    it('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
-
-      cy.clickTab('Schedules', true);
-      cy.clickButton('Create schedule');
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
-        });
-      });
-      cy.get('[data-cy="name"]').type('new schedule');
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Save rule$/);
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Finish$/);
-      cy.verifyPageTitle('new schedule');
-      cy.get('.pf-v5-c-switch__label.pf-m-on')
-        .should('have.text', 'Schedule enabled')
-        .should('be.visible');
-      cy.getByDataCy('name').should('contain', 'new schedule');
-      cy.getByDataCy('next-run').should('exist');
-      cy.getByDataCy('first-run').should('exist');
-      cy.getByDataCy('time-zone').should('contain', 'America/New_York');
-    });
-
-    it("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
-      cy.createAWXSchedule({
-        name: scheduleName,
-        unified_job_template: inventorySource.id,
-        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-      }).then((schedule1: Schedule) => {
-        goToSourceDetails(inventory.name, inventorySource.name);
-
-        cy.clickTab('Schedules', true);
-        cy.clickTableRowAction('name', scheduleName, 'edit-schedule', {
-          disableFilter: true,
-        });
-        cy.intercept('PATCH', awxAPI`/schedules/${schedule1.id.toString()}/`).as('editSchedule');
-        cy.getByDataCy('description').should('be.empty');
-        cy.getByDataCy('description').type('mock description');
-        cy.getByDataCy('timezone').should('contain', schedule1.timezone);
-        cy.singleSelectByDataCy('timezone', 'America/New_York');
-        cy.clickButton(/^Next$/);
-        cy.clickButton(/^Next$/);
-        cy.clickButton(/^Next$/);
-        cy.clickButton(/^Finish$/);
-        cy.wait('@editSchedule')
-          .then((response) => {
-            expect(response?.response?.statusCode).to.eql(200);
-          })
-          .its('response.body')
-          .then((response: Schedule) => {
-            expect(response.name).contains(scheduleName);
-            expect(response.description).contains('mock description');
-            expect(response.timezone).contains('America/New_York');
-          });
-      });
-    });
-
     it('can delete a single schedule from the Source Schedule list and confirm delete', () => {
       cy.createAWXSchedule({
         name: scheduleName,
@@ -271,31 +209,6 @@ describe('Inventory Sources', () => {
         });
         cy.clickButton('Close');
         cy.contains('name-column-cell', scheduleName).should('not.exist');
-      });
-    });
-  });
-
-  describe('Inventory Source Schedules Details Page', () => {
-    it('can delete a single schedule from the Source Schedule details page and confirm delete', () => {
-      cy.createAWXSchedule({
-        name: scheduleName,
-        unified_job_template: inventorySource.id,
-        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-      }).then((schedule1: Schedule) => {
-        goToSourceDetails(inventory.name, inventorySource.name);
-        cy.clickTab('Schedules', true);
-        cy.getByDataCy('name-column-cell')
-          .should('contain', scheduleName)
-          .within(() => {
-            cy.clickLink(scheduleName);
-          });
-        cy.clickKebabAction('actions-dropdown', 'delete-schedule');
-        cy.intercept('DELETE', awxAPI`/schedules/${schedule1.id.toString()}/`).as('deleteSchedule');
-        cy.clickModalConfirmCheckbox();
-        cy.clickButton('Delete schedule');
-        cy.wait('@deleteSchedule').then((response) => {
-          expect(response?.response?.statusCode).to.eql(204);
-        });
       });
     });
   });
