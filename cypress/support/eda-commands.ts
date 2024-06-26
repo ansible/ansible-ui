@@ -372,14 +372,7 @@ Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
   });
 });
 
-Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
-  return cy
-    .contains('[data-cy="permissions"]', resourceType)
-    .next()
-    .then((result) => {
-      cy.wrap(result);
-    });
-});
+;
 
 Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
   resourceTypes.forEach((resource) => {
