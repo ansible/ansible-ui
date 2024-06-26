@@ -72,9 +72,7 @@ export type HubPatchRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
 >;
-Cypress.Commands.add('hubPatchRequest', (options: HubPatchRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'PATCH' });
-});
+;
 
 export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
 Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
