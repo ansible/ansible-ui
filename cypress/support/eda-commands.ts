@@ -35,12 +35,7 @@ import { edaAPI } from './formatApiPathForEDA';
 
 /*  EDA related custom command implementation  */
 
-Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.get('button#roles:not(:disabled):not(:hidden)').click();
-  cy.get('#roles-select').within(() => {
-    cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
-  });
-});
+;
 
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   cy.contains('a', anchorName).then((link) => {
