@@ -13,7 +13,8 @@ import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 
 export function useScheduleToolbarActions(
   onComplete: (schedules: Schedule[]) => void,
-  sublistEndPoint = awxAPI`/schedules/`
+  sublistEndPoint = awxAPI`/schedules/`,
+  isMissingResource?: boolean
 ) {
   const createUrl = useGetSchedulCreateUrl(sublistEndPoint);
 
@@ -33,7 +34,9 @@ export function useScheduleToolbarActions(
         icon: PlusCircleIcon,
         label: t('Create schedule'),
         isDisabled: canCreateSchedule
-          ? undefined
+          ? isMissingResource
+            ? t('Resources are missing from this template.')
+            : undefined
           : t(
               'You do not have permission to create a schedule. Please contact your organization administrator if there is an issue with your access.'
             ),
@@ -52,7 +55,7 @@ export function useScheduleToolbarActions(
         isDanger: true,
       },
     ],
-    [canCreateSchedule, createUrl, deleteSchedules, t]
+    [canCreateSchedule, createUrl, deleteSchedules, t, isMissingResource]
   );
 
   return ScheduleToolbarActions;
