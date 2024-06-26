@@ -342,9 +342,7 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
 
 ;
 
-Cypress.Commands.add('deleteRepository', (repositoryName: string) => {
-  cy.galaxykit(`repository delete ${repositoryName}`);
-});
+;
 
 Cypress.Commands.add(
   'undeprecateCollection',
