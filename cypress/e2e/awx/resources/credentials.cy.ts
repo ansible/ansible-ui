@@ -613,7 +613,7 @@ describe('Credentials Tabbed View - Job Templates', () => {
     cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
     cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectItemFromLookupModal('credential-select', machineCredential.name);
+    cy.selectItemFromMultiSelectDropdown('credential', machineCredential.name);
     cy.getByDataCy('Submit').click();
   });
 });
