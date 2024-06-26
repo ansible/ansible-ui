@@ -15,27 +15,32 @@ describe('Job Templates Tests', function () {
     let inventoryWithHost: Inventory;
     let machineCredential: Credential;
     let project: Project;
+    let organization: Organization;
     let executionEnvironment: ExecutionEnvironment;
     const executionEnvironmentName = 'Control Plane Execution Environment';
     const instanceGroup = 'default';
 
-    beforeEach(function () {
-      cy.createAwxInventory({
-        organization: (this.globalAwxOrganization as Organization).id,
-      }).then((inv) => {
-        inventory = inv;
+    beforeEach(() => {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxInventory({
+          organization: organization.id,
+        }).then((inv) => {
+          inventory = inv;
 
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: (this.globalAwxOrganization as Organization).id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: organization.id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+          });
         });
       });
     });
 
-    afterEach(function () {
+    afterEach(() => {
+      // Clean up all created resources
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
       executionEnvironment?.id &&
@@ -43,6 +48,7 @@ describe('Job Templates Tests', function () {
       project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
       inventoryWithHost?.id &&
         cy.deleteAwxInventory(inventoryWithHost, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
@@ -92,11 +98,11 @@ describe('Job Templates Tests', function () {
 
     it('can create a job template that inherits the execution environment from the project', function () {
       cy.createAwxExecutionEnvironment({
-        organization: (this.globalAwxOrganization as Organization).id,
+        organization: organization.id,
       }).then((ee: ExecutionEnvironment) => {
         executionEnvironment = ee;
         cy.createAwxProject({
-          organization: (this.globalAwxOrganization as Organization).id,
+          organization: organization.id,
           default_environment: ee.id,
         }).then((proj: Project) => {
           project = proj;
@@ -351,6 +357,7 @@ describe('Job Templates Tests', function () {
     });
 
     afterEach(function () {
+      // Clean up all created resources
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       inventory2?.id && cy.deleteAwxInventory(inventory2, { failOnStatusCode: false });
@@ -603,6 +610,7 @@ describe('Job Templates Tests', function () {
     });
 
     afterEach(function () {
+      // Clean up all created resources
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
@@ -681,6 +689,7 @@ describe('Job Templates Tests', function () {
     });
 
     afterEach(function () {
+      // Clean up all created resources
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxJobTemplate(jobTemplate2, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
@@ -858,6 +867,7 @@ describe('Job Templates Tests', function () {
     });
 
     afterEach(function () {
+      // Clean up all created resources
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });

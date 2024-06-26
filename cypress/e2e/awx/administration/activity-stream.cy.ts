@@ -7,11 +7,16 @@ import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 describe('activity-stream', () => {
   let team: Team;
   let activeUser: AwxUser;
+  let organization: Organization;
 
-  before(function () {
-    cy.createAwxTeam(this.globalAwxOrganization as Organization).then((createdTeam) => {
-      team = createdTeam;
+  before(() => {
+    cy.createAwxOrganization().then((createdOrganization) => {
+      organization = createdOrganization;
+      cy.createAwxTeam(organization).then((createdTeam) => {
+        team = createdTeam;
+      });
     });
+
     cy.requestGet<AwxItemsResponse<AwxUser>>(awxAPI`/me/`)
       .its('results')
       .then((results) => {
@@ -21,6 +26,7 @@ describe('activity-stream', () => {
 
   after(function () {
     cy.deleteAwxTeam(team, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   beforeEach(function () {
