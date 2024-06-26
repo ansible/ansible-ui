@@ -17,6 +17,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/cert.key 
 #
 FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine AS base
 COPY --from=certificate /certs/cert.pem /certs/cert.pem
+COPY --from=certificate /certs/cert.pem /certs/CA.pem
 COPY --from=certificate /certs/cert.key /certs/cert.key
 RUN chmod g+rwx /etc/nginx/nginx.conf /etc/nginx/conf.d /etc/nginx/conf.d/default.conf /var/cache/nginx /var/run /var/log/nginx /etc/ssl /certs
 ENV SSL_CERTIFICATE=/certs/cert.pem
@@ -25,7 +26,6 @@ ENV SSL_CLIENT_CERTIFICATE=/certs/CA.pem
 ENV EDA_WEBHOOK_SERVER=${EDA_WEBHOOK_SERVER:-http://example.com}
 ENV EDA_SERVER_UUID=${EDA_SERVER_UUID:-sample_uuid}
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
-COPY CA.pem /certs/CA.pem
 EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"] 
 

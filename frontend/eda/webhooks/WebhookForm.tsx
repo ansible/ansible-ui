@@ -58,10 +58,14 @@ function WebhookInputs() {
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
+        labelHelpTitle={t('Name')}
+        labelHelp={t(
+          'The name should match the source name defined in the rulebook. If the source name matches we will swap the webhook in the rulebook with this webhook.'
+        )}
         maxLength={150}
       />
       <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" />
-      <PageFormSelectWebhookType<IEdaWebhookCreate> name="type_id" />
+      <PageFormSelectWebhookType<IEdaWebhookCreate> name="type_id" isRequired />
       <PageFormHidden watch={'type'} hidden={() => true}>
         <PageFormTextInput<IEdaWebhookCreate>
           name="kind"
@@ -73,19 +77,21 @@ function WebhookInputs() {
         <PageFormTextInput<IEdaWebhookCreate>
           name="webhook_type"
           data-cy="type-form-field"
+          isRequired
           label={t('Webhook type')}
         />
       </PageFormHidden>
       <PageFormSelectWebhookCredential<IEdaWebhookCreate>
+        isRequired
         name="eda_credential_id"
         type={webhookType?.kind || ''}
       />
       <PageFormTextInput<IEdaWebhookCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
-        label={t('Additional data headers')}
-        placeholder={t('Enter additional data headers')}
-        labelHelpTitle={t('Additional data headers')}
+        label={t('Include headers')}
+        placeholder={t('Enter include headers')}
+        labelHelpTitle={t('Include headers')}
         labelHelp={t(
           'A comma separated HTTP header keys that you want to include in the event payload.'
         )}
@@ -123,14 +129,15 @@ function WebhookEditInputs() {
       />
       <PageFormSelectWebhookCredential<IEdaWebhookCreate>
         name="eda_credential_id"
+        isRequired
         type={webhookType}
       />
       <PageFormTextInput<IEdaWebhookCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
-        label={t('Additional data headers')}
-        placeholder={t('Enter additional data headers')}
-        labelHelpTitle={t('Additional data headers')}
+        label={t('Include headers')}
+        placeholder={t('Enter include headers')}
+        labelHelpTitle={t('Include headers')}
         labelHelp={t(
           'A comma separated HTTP header keys that you want to include in the event payload.'
         )}
