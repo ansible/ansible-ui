@@ -43,7 +43,13 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
     >
       <DescriptionList isHorizontal>
         {Object.entries(props.versionInfo ?? {})
-          .filter(([product]) => product !== 'galaxy_ng_commit' && product !== 'ha')
+          .filter(
+            ([product]) =>
+              product !== 'galaxy_ng_commit' &&
+              product !== 'ha' &&
+              product !== 'instances' &&
+              product !== 'instance_groups'
+          )
           .map(([product, info]) => (
             <DescriptionListGroup key={product}>
               <DescriptionListTerm>{translateVersion(product, t)}</DescriptionListTerm>
