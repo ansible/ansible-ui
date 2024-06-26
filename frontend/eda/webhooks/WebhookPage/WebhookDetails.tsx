@@ -62,7 +62,7 @@ export function WebhookDetails() {
           <CopyCell text={webhook?.url || ''} />
         </PageDetail>
         <PageDetail
-          label={t('Additional data headers')}
+          label={t('Include headers')}
           helpText={t(
             'A comma separated HTTP header keys that you want to include in the event payload.'
           )}
@@ -82,12 +82,22 @@ export function WebhookDetails() {
             <DescriptionListGroup>
               <DescriptionListTerm style={{ opacity: 0.6 }}>
                 {t('Test mode')}
-                <StandardPopover header={t('Test mode')} content={t('Test mode.')} />
+                <StandardPopover
+                  header={t('Test mode')}
+                  content={t(
+                    ' In Test Mode events are not forwarded to the Activation. This mode helps in viewing the headers and payload'
+                  )}
+                />
               </DescriptionListTerm>
             </DescriptionListGroup>
           </PageDetail>
         )}
-        <PageDetail label={t('Test content type')}>{webhook?.test_content_type || ''}</PageDetail>
+        <PageDetail
+          label={t('Test content type')}
+          helpText={t('The HTTP Body that was sent from the Sender.')}
+        >
+          {webhook?.test_content_type || ''}
+        </PageDetail>
         <PageDetail label={t('Test error message')}>{webhook?.test_error_message || ''}</PageDetail>
       </PageDetails>
       <PageDetails numberOfColumns={'single'} disableScroll={true}>
@@ -96,7 +106,9 @@ export function WebhookDetails() {
             value={webhook?.test_headers}
             showCopyToClipboard={true}
             label={t('Test headers')}
-            helpText={t('Test headers')}
+            helpText={t(
+              'The HTTP Headers received from the Sender. Any of these can be used in the "Include headers" field.'
+            )}
           />
         )}
       </PageDetails>
