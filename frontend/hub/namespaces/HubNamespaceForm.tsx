@@ -21,6 +21,7 @@ import { hubAPI } from '../common/api/formatPath';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from './HubNamespace';
 import { UsefulLinksFields } from './UsefulLinksFields';
+import { HubNamespacePage } from './HubNamespacePage/HubNamespacePage';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -42,10 +43,10 @@ export function CreateHubNamespace() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Namespace')}
+        title={t('Create namespace')}
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-          { label: t('Create Namespace') },
+          { label: t('Create namespace') },
         ]}
       />
       <HubPageForm<HubNamespace>
@@ -116,11 +117,18 @@ export function EditHubNamespace() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Namespace')}
+        title={
+          HubNamespacePage?.name
+            ? t('Edit {{namespaceName}}', { namespaceName: namespace?.name })
+            : t('Namespace')
+        }
         breadcrumbs={[
           { label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) },
-          { label: name, to: getPageUrl(HubRoute.NamespacePage, { params: { id: name } }) },
-          { label: t('Edit Namespace') },
+          {
+            label: HubNamespacePage?.name
+              ? t('Edit {{namespaceName}}', { namespaceName: namespace?.name })
+              : t('Namespace'),
+          },
         ]}
       />
 
