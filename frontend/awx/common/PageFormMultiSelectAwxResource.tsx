@@ -168,7 +168,7 @@ function SelectResource<
     urlSearchParams.forEach((value, key) => (query[key] = value));
     query = { ...query, ...props.queryParams };
     return query;
-  }, [urlSearchParams]);
+  }, [urlSearchParams, props.queryParams]);
 
   const view = useAwxView<Resource>({
     url: props.url.split('?')[0],

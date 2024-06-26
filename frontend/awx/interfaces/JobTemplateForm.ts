@@ -1,4 +1,3 @@
-import { Credential } from './Credential';
 import { InstanceGroup } from './InstanceGroup';
 import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
@@ -33,7 +32,7 @@ export interface JobTemplateForm
     | 'project'
     | 'survey_enabled'
   > {
-  credentials: Pick<Credential, 'id' | 'name' | 'cloud' | 'description' | 'kind'>[];
+  credentials: number[];
   enableHostConfig?: boolean;
   execution_environment: { id: number; name: string } | null;
   id?: number;
