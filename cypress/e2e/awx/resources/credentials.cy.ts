@@ -430,7 +430,7 @@ describe('Create Credentials of different types', () => {
     cy.getByDataCy('vault-id').should('have.attr', 'disabled');
     cy.getByDataCy('vault-password').should('be.visible');
     cy.getByDataCy('vault-password').then(($input) => {
-      expect($input.val()).to.eq('ENCRYPTED');
+      cy.wrap($input).should('have.value', 'ENCRYPTED');
     });
     cy.getByDataCy('ask_vault_password').check();
     cy.clickButton(/^Save credential$/);
@@ -486,7 +486,7 @@ describe('Create Credentials of different types', () => {
           cy.wrap($input).should('have.value', 'ENCRYPTED');
         });
         cy.getByDataCy('security-token').then(($input) => {
-          expect($input.val()).to.eq('ENCRYPTED');
+          cy.wrap($input).should('have.value', 'ENCRYPTED');
         });
         const newDescription = 'new description';
         cy.getByDataCy('description').clear().type(newDescription);
