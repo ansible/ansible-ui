@@ -34,11 +34,6 @@ export function AwxMasthead() {
     await fetch('/api/logout/');
     refreshActiveAwxUser?.();
   }, [refreshActiveAwxUser]);
-
-  let userInfo = '';
-  if (activeAwxUser) {
-    userInfo = activeAwxUser.username;
-  }
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
@@ -65,7 +60,9 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ versionInfo, userInfo })}
+              onClick={() =>
+                openAnsibleAboutModal({ versionInfo, userInfo: activeAwxUser?.username })
+              }
               data-cy="masthead-about"
             >
               {t('About')}
@@ -85,7 +82,9 @@ export function AwxMasthead() {
             <DropdownItem
               id="user-details"
               label={t('User details')}
-              onClick={() => pageNavigate(AwxRoute.UserPage, { params: { id: activeAwxUser?.id } })}
+              onClick={() =>
+                pageNavigate(AwxRoute.UserDetails, { params: { id: activeAwxUser?.id } })
+              }
             >
               {t('User details')}
             </DropdownItem>

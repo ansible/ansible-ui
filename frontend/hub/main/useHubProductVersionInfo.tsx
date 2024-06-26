@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { hubAPI } from '../../../cypress/support/formatApiPathForHub';
+import { hubAPI } from '../common/api/formatPath';
 
 type ProductVersionInfo = Record<string, string | Record<string, string>>;
 
