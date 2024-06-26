@@ -1,9 +1,9 @@
 import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../framework';
-import { TFunction } from 'i18next';
 import styled from 'styled-components';
+import { usePageDialog } from '../../framework';
 
 export interface AnsibleAboutModalProps {
   versionInfo?: ProductVersionInfo;
