@@ -651,9 +651,9 @@ describe('Credentials Tabbed View - Team and User Access', () => {
     cy.deleteAwxTeam(awxTeam, { failOnStatusCode: false });
   });
 
-  function removeRoleFromListRow(credential: string, role: string) {
-    cy.intercept('DELETE', awxAPI`/role_${role}_assignments/*`).as('deleteRole');
-    cy.clickTableRowPinnedAction(credential, 'remove-role', false);
+  function removeRoleFromListRow(roleName: string, assignmentType: string) {
+    cy.intercept('DELETE', awxAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+    cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
@@ -721,11 +721,11 @@ describe('Credentials Tabbed View - Team and User Access', () => {
     cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
       disableFilter: true,
     });
-    removeRoleFromListRow(awxTeam.name, 'team');
+    removeRoleFromListRow('Credential Admin', 'team');
     cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
       disableFilter: true,
     });
-    removeRoleFromListRow(awxTeam.name, 'team');
+    removeRoleFromListRow('Credential Use', 'team');
   });
 
   it('create a new credential, assign a user and apply role(s)', () => {
@@ -783,10 +783,10 @@ describe('Credentials Tabbed View - Team and User Access', () => {
     cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
       disableFilter: true,
     });
-    removeRoleFromListRow(createdAwxUser.username, 'user');
+    removeRoleFromListRow('Credential Admin', 'user');
     cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
       disableFilter: true,
     });
-    removeRoleFromListRow(createdAwxUser.username, 'user');
+    removeRoleFromListRow('Credential Use', 'user');
   });
 });
