@@ -220,6 +220,12 @@ Cypress.Commands.add('getEdaCredentials', (page: number, perPage: number) => {
   );
 });
 
+Cypress.Commands.add('getEdaCredentialTypes', (page: number, perPage: number) => {
+  cy.requestGet<EdaResult<EdaCredentialType>>(
+    edaAPI`/credential-types/?page=${page.toString()}&page_size=${perPage.toString()}`
+  );
+});
+
 Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
   cy.requestGet<EdaResult<EdaUser>>(
     edaAPI`/users/?page=${page.toString()}&page_size=${perPage.toString()}`
