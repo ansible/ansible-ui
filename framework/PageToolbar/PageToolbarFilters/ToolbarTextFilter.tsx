@@ -144,7 +144,7 @@ export function ToolbarSingleTextFilter(props: {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setValueDebounced = useCallback(
-    debounce((value: string) => props.setValue(value), 200),
+    debounce((value: string) => props.setValue(value), 500),
     []
   );
 
