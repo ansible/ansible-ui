@@ -192,8 +192,6 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-;
-
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
   cy.galaxykit('namespace create', namespaceName);
 });

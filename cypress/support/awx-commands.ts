@@ -937,8 +937,6 @@ Cypress.Commands.add(
   }
 );
 
-;
-
 /** Interface for tracking created resources that will need to be delete
 at the end of testing using cy.deleteAwxResources*/
 export interface IAwxResources {
@@ -1246,8 +1244,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-;
 
 Cypress.Commands.add(
   'deleteAwxToken',
