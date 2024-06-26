@@ -2,7 +2,7 @@
 
 import '@cypress/code-coverage/support';
 import jsyaml from 'js-yaml';
-import { SetOptional, SetRequired } from 'type-fest';
+import { SetRequired } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
@@ -1076,8 +1076,8 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createAwxSurvey',
-  (surveySpec: Partial<Survey>, template: Partial<JobTemplate>) => {
-    cy.requestPost<Survey>(`${template.url}survey_spec/`, {
+  (surveySpec: Partial<Survey>, template: Partial<JobTemplate | WorkflowJobTemplate>) => {
+    return cy.requestPost<Survey>(`${template.url}survey_spec/`, {
       ...surveySpec,
     });
   }
@@ -1495,6 +1495,10 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
   waitForWFJobStatus(200);
 });
 
+Cypress.Commands.add('cancelJob', (job: Job) => {
+  cy.requestPost<Job>(`${job.url}cancel/`, {});
+});
+
 const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
 const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
@@ -1829,13 +1833,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createTemplateSurvey',
-  (
-    template: JobTemplate | WorkflowJobTemplate,
-    spec: SetOptional<
-      Spec & { label: string },
-      'required' | 'min' | 'max' | 'new_question' | 'choices'
-    >
-  ) => {
+  (template: JobTemplate | WorkflowJobTemplate, label: string, spec: Spec) => {
     cy.visit(
       `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
     );
@@ -1846,14 +1844,13 @@ Cypress.Commands.add(
 
     spec?.required === false && cy.getByDataCy('question-required').uncheck();
 
-    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', spec.label);
+    spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', label);
 
     if (['text', 'textarea', 'password', 'integer', 'float'].includes(spec.type)) {
       spec?.min && cy.getByDataCy('question-min').clear().type(spec.min.toString());
       spec?.max && cy.getByDataCy('question-max').clear().type(spec.max.toString());
       cy.getByDataCy('question-default').type(spec.default.toString());
     } else if (
-      // ['Multiple Choice (single select)', 'Multiple Choice (multiple select)'].includes(
       ['multiplechoice', 'multiselect'].includes(spec.type) &&
       Array.isArray(spec.choices)
     ) {
@@ -1865,12 +1862,8 @@ Cypress.Commands.add(
         ? spec.default
         : spec.default.toString().split('\n');
 
-      cy.log('defaults', defaults);
-      cy.log('spec choices', spec.choices);
-
       const choiceBtn = spec.type === 'multiplechoice' ? 'radio' : 'checkbox';
       spec.choices.forEach((choice, index) => {
-        cy.log('loop', defaults, choice);
         if (defaults.includes(choice)) {
           cy.getByDataCy(`choice-${choiceBtn}-${index}`).click();
         }
@@ -1879,7 +1872,14 @@ Cypress.Commands.add(
 
     cy.intercept('POST', awxAPI`/${template.type}s/*/survey_spec/`).as('createSurveySpec');
     cy.clickButton('Create question');
-    cy.wait('@createSurveySpec');
+    cy.wait('@createSurveySpec')
+      .its('response.statusCode')
+      .then((statusCode) => {
+        expect(statusCode).to.eql(200);
+        cy.get('[data-cy="name-column-cell"]').within(() => {
+          cy.contains(spec.question_name);
+        });
+      });
   }
 );
 
