@@ -38,7 +38,6 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
       brandImageSrc={props.brandImageSrc}
       brandImageAlt={t('Brand Logo')}
-      backgroundImageSrc="/static/media/ansible-brand.svg"
       productName={upstreamServices(process.env.PRODUCT, t) ?? t('AWX')}
     >
       <DescriptionList isHorizontal>
