@@ -77,7 +77,7 @@ describe.skip('Inventory Sources', () => {
           cy.getBy('[data-cy="name"]').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
           cy.selectDropdownOptionByResourceName('project', project.name);
-          cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+          cy.singleSelectByDataCy('inventory', 'Dockerfile');
           cy.singleSelectBy(
             '[data-cy="executionEnvironment-form-group"]',
             executionEnvironment.name
@@ -165,7 +165,7 @@ describe.skip('Inventory Sources', () => {
       cy.getBy('[data-cy="overwrite_vars"]').check();
       cy.getBy('[data-cy="update_on_launch"]').check();
       cy.selectDropdownOptionByResourceName('project', project.name);
-      cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+      cy.singleSelectByDataCy('inventory', 'Dockerfile');
       cy.getBy('[data-cy="Submit"]').click();
       // Verify edited details
       cy.location('pathname').should('match', /\/details$/);

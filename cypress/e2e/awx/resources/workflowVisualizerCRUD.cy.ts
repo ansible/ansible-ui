@@ -218,10 +218,7 @@ describe('Workflow Visualizer', () => {
                   'Node type * Project Sync'
                 );
                 cy.selectDropdownOptionByResourceName('node-type', 'Inventory Source Sync');
-                cy.selectDropdownOptionByResourceName(
-                  'inventory-source-select',
-                  `${inventorySource.name}`
-                );
+                cy.singleSelectByDataCy('inventory-source-select', `${inventorySource.name}`);
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.getByDataCy('node-alias').type('Inventory Source Node');
                 cy.clickButton('Next');
