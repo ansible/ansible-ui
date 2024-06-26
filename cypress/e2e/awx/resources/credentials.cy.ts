@@ -533,7 +533,7 @@ describe('Create Credentials of different types', () => {
     cy.verifyPageTitle(credentialName);
     cy.getByDataCy('name').contains(credentialName);
     cy.contains('Private Key Passphrase').should('be.visible');
-    cy.get('private-key-passphrase').contains('Prompt on launch');
+    cy.getByDataCy('private-key-passphrase').contains('Prompt on launch');
     cy.contains('Password').should('be.visible');
     cy.getByDataCy('password').contains('Prompt on launch');
     cy.getByDataCy('edit-credential').click();
