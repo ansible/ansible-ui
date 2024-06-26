@@ -27,9 +27,6 @@ import {
   ImportStateEnum,
   RestartPolicyEnum,
   StatusEnum,
-  RoleDefinitionCreate,
-  ContentTypeEnum,
-  PermissionsEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 
