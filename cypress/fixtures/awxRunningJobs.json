@@ -1,0 +1,148 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 70,
+      "type": "job",
+      "url": "/api/v2/jobs/70/",
+      "related": {
+        "created_by": "/api/v2/users/3/",
+        "labels": "/api/v2/jobs/70/labels/",
+        "inventory": "/api/v2/inventories/107/",
+        "project": "/api/v2/projects/8/",
+        "organization": "/api/v2/organizations/2/",
+        "credentials": "/api/v2/jobs/70/credentials/",
+        "unified_job_template": "/api/v2/job_templates/75/",
+        "stdout": "/api/v2/jobs/70/stdout/",
+        "execution_environment": "/api/v2/execution_environments/1/",
+        "job_events": "/api/v2/jobs/70/job_events/",
+        "job_host_summaries": "/api/v2/jobs/70/job_host_summaries/",
+        "activity_stream": "/api/v2/jobs/70/activity_stream/",
+        "notifications": "/api/v2/jobs/70/notifications/",
+        "create_schedule": "/api/v2/jobs/70/create_schedule/",
+        "job_template": "/api/v2/job_templates/75/",
+        "cancel": "/api/v2/jobs/70/cancel/",
+        "relaunch": "/api/v2/jobs/70/relaunch/"
+      },
+      "summary_fields": {
+        "organization": {
+          "id": 2,
+          "name": "Global Organization",
+          "description": ""
+        },
+        "inventory": {
+          "id": 107,
+          "name": "E2E Inventory Bzlo",
+          "description": "",
+          "has_active_failures": true,
+          "total_hosts": 1,
+          "hosts_with_active_failures": 1,
+          "total_groups": 0,
+          "has_inventory_sources": true,
+          "total_inventory_sources": 1,
+          "inventory_sources_with_failures": 0,
+          "organization_id": 2,
+          "kind": ""
+        },
+        "execution_environment": {
+          "id": 1,
+          "name": "quay.io/ansible/awx-ee (latest)",
+          "description": "",
+          "image": "quay.io/ansible/awx-ee:latest"
+        },
+        "project": {
+          "id": 8,
+          "name": "Global Project",
+          "description": "Global Read Only Project for E2E tests",
+          "status": "successful",
+          "scm_type": "git",
+          "allow_override": false
+        },
+        "job_template": {
+          "id": 75,
+          "name": "E2E Job Template MBvv",
+          "description": ""
+        },
+        "unified_job_template": {
+          "id": 75,
+          "name": "E2E Job Template MBvv",
+          "description": "",
+          "unified_job_type": "job"
+        },
+        "instance_group": {
+          "id": 2,
+          "name": "default",
+          "is_container_group": true
+        },
+        "created_by": {
+          "id": 3,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "user_capabilities": {
+          "delete": true,
+          "start": true
+        },
+        "labels": {
+          "count": 0,
+          "results": []
+        },
+        "credentials": []
+      },
+      "created": "2024-06-25T08:12:19.281597Z",
+      "modified": "2024-06-25T08:12:19.457639Z",
+      "name": "E2E Job Template MBvv",
+      "description": "",
+      "unified_job_template": 75,
+      "launch_type": "relaunch",
+      "status": "running",
+      "execution_environment": 1,
+      "failed": true,
+      "started": "2024-06-25T08:12:19.528109Z",
+      "finished": "2024-06-25T08:12:25.144883Z",
+      "canceled_on": null,
+      "elapsed": 5.617,
+      "job_explanation": "",
+      "execution_node": "",
+      "controller_node": "awx-task-54b4b675bd-72mfz",
+      "launched_by": {
+        "id": 3,
+        "name": "dev",
+        "type": "user",
+        "url": "/api/v2/users/3/"
+      },
+      "work_unit_id": "86r1Cpyr",
+      "job_type": "run",
+      "inventory": 107,
+      "project": 8,
+      "playbook": "playbooks/hello_world.yml",
+      "scm_branch": "",
+      "forks": 0,
+      "limit": "",
+      "verbosity": 0,
+      "extra_vars": "{}",
+      "job_tags": "",
+      "force_handlers": false,
+      "skip_tags": "",
+      "start_at_task": "",
+      "timeout": 0,
+      "use_fact_cache": false,
+      "organization": 2,
+      "job_template": 75,
+      "passwords_needed_to_start": [],
+      "allow_simultaneous": false,
+      "artifacts": {},
+      "scm_revision": "5354d08761d4ae951c87da0351e9e8dba603b6f9",
+      "instance_group": 2,
+      "diff_mode": false,
+      "job_slice_number": 0,
+      "job_slice_count": 1,
+      "webhook_service": "",
+      "webhook_credential": null,
+      "webhook_guid": ""
+    }
+  ]
+}
