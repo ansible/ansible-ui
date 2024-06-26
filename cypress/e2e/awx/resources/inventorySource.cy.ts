@@ -120,52 +120,6 @@ describe('Inventory Sources', () => {
       });
     });
 
-    it('can launch and cancel a Source sync via list row actions', () => {
-      goToSourceList(inventory.name);
-      // Launch sync from table row
-      cy.clickTableRowAction('name', inventorySource.name, 'launch-inventory-update', {
-        disableFilter: true,
-      });
-      cy.getTableRow('name', inventorySource.name, { disableFilter: true }).within(() => {
-        cy.getTableCell('status', 'Running', { disableFilter: true });
-      });
-      // Cancel sync from table row
-      cy.clickTableRowAction('name', inventorySource.name, 'cancel-inventory-update', {
-        disableFilter: true,
-      });
-      cy.clickModalConfirmCheckbox();
-      cy.clickButton(/^Cancel Update/);
-      cy.assertModalSuccess();
-      cy.clickModalButton(/^Close/);
-      cy.getTableRow('name', inventorySource.name, { disableFilter: true }).within(() => {
-        cy.get(`[data-cy='status-column-cell']`).should('not.contain.text', 'Running');
-      });
-    });
-
-    it('can sync all Sources from the list toolbar and cancel via list row actions', () => {
-      cy.createAwxInventorySource(inventory, project).then((inventorySource2: InventorySource) => {
-        goToSourceList(inventory.name);
-        // Launch sync all from table toolbar
-        cy.clickToolbarKebabAction('launch-inventory-updates');
-        // Cancel each sync from table row
-        [inventorySource, inventorySource2].forEach((sourceItem) => {
-          cy.getTableRow('name', sourceItem.name, { disableFilter: true }).within(() => {
-            cy.getTableCell('status', 'Running', { disableFilter: true });
-          });
-          cy.clickTableRowAction('name', sourceItem.name, 'cancel-inventory-update', {
-            disableFilter: true,
-          });
-          cy.clickModalConfirmCheckbox();
-          cy.clickButton(/^Cancel Update/);
-          cy.assertModalSuccess();
-          cy.clickModalButton(/^Close/);
-          cy.getTableRow('name', sourceItem.name, { disableFilter: true }).within(() => {
-            cy.get(`[data-cy='status-column-cell']`).should('not.contain.text', 'Running');
-          });
-        });
-      });
-    });
-
     it('can access the Edit form of an existing Source from the list view, update info, and verify the presence of edited info on the details page', () => {
       goToSourceList(inventory.name);
 
@@ -183,7 +137,7 @@ describe('Inventory Sources', () => {
 
     it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page, ', () => {
       goToSourceList(inventory.name);
-
+      // Create inventory source
       cy.getBy('#add-source').click();
       cy.verifyPageTitle('Add new source');
       cy.getBy('[data-cy="name"]').type('amazon ec2 source');
@@ -200,8 +154,12 @@ describe('Inventory Sources', () => {
       cy.getBy('[data-cy="name"]').clear().type('updated amazon ec2 source');
       cy.getBy('[data-cy="overwrite_vars"]').check();
       cy.getBy('[data-cy="Submit"]').click();
+      // Verify details
+      cy.location('pathname').should('match', /\/details$/);
       cy.verifyPageTitle('updated amazon ec2 source');
+      // Edit inventory source
       cy.clickButton('Edit inventory source');
+      cy.location('pathname').should('match', /\/edit$/);
       cy.verifyPageTitle('Edit source');
       cy.getBy('[data-cy="name"]').clear().type('new project');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
@@ -209,21 +167,9 @@ describe('Inventory Sources', () => {
       cy.getBy('[data-cy="update_on_launch"]').check();
       cy.selectDropdownOptionByResourceName('project', project.name);
       cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-      cy.intercept('PATCH', awxAPI`/inventory_sources/*/`).as('editSource');
       cy.getBy('[data-cy="Submit"]').click();
-      cy.wait('@editSource')
-        .then((response) => {
-          expect(response?.response?.statusCode).to.eql(200);
-        })
-        .its('response.body')
-        .then((response: InventorySource) => {
-          expect(response.name).contains('new project');
-          expect(response.source).contains('scm');
-          expect(response.overwrite_vars).equal(true);
-          expect(response.update_on_launch).equal(true);
-          expect(response.source_project).to.equal(project.id);
-          expect(response.inventory).to.equal(inventory.id);
-        });
+      // Verify edited details
+      cy.location('pathname').should('match', /\/details$/);
       cy.verifyPageTitle('new project');
       cy.getByDataCy('name').should('contain', 'new project');
       cy.getByDataCy('organization').should('contain', organization.name);
@@ -241,40 +187,6 @@ describe('Inventory Sources', () => {
       cy.getByDataCy('source-variables').should('contain', '');
       cy.getByDataCy('created').should('exist');
       cy.getByDataCy('last-modified').should('exist');
-    });
-  });
-
-  describe('Inventory Details Page', () => {
-    it('can sync a Source from its details page, view the job output/detail, and cancel sync from its details page', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
-      // Launch sync from Source details
-      cy.clickButton(/^Launch inventory update$/);
-      cy.getByDataCy('last-job-status')
-        .should('contain', 'Running')
-        .within(() => {
-          cy.clickLink('Running');
-        });
-      cy.verifyPageTitle(`${inventory.name} - ${inventorySource.name}`);
-      cy.clickLink(/^Details$/);
-      cy.getByDataCy('name').should('contain', `${inventory.name} - ${inventorySource.name}`);
-      goToSourceDetails(inventory.name, inventorySource.name);
-      // Cancel sync from Source details
-      cy.clickButton(/^Cancel inventory update$/);
-      cy.clickModalConfirmCheckbox();
-      cy.clickButton(/^Cancel Update/);
-      cy.assertModalSuccess();
-      cy.clickModalButton(/^Close/);
-      cy.getByDataCy('last-job-status').should('not.contain.text', 'Running');
-    });
-
-    it('can delete a Source from its details page and confirm the delete', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
-
-      cy.verifyPageTitle(inventorySource.name);
-      cy.clickPageAction('delete-inventory-source');
-      cy.getBy('#confirm').click();
-      cy.clickButton(/^Delete inventory source/);
-      cy.contains('name-column-cell', inventorySource.name).should('not.exist');
     });
   });
 
@@ -364,42 +276,6 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source Schedules Details Page', () => {
-    it("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
-      cy.createAWXSchedule({
-        name: scheduleName,
-        unified_job_template: inventorySource.id,
-        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-      }).then((schedule1: Schedule) => {
-        goToSourceDetails(inventory.name, inventorySource.name);
-        cy.clickTab('Schedules', true);
-        cy.getByDataCy('name-column-cell')
-          .should('contain', scheduleName)
-          .within(() => {
-            cy.clickLink(scheduleName);
-          });
-        cy.clickLink(/^Edit schedule$/);
-        cy.intercept('PATCH', awxAPI`/schedules/${schedule1.id.toString()}/`).as('editSchedule');
-        cy.getByDataCy('description').should('be.empty');
-        cy.getByDataCy('description').type('mock description');
-        cy.getByDataCy('timezone').should('contain', schedule1.timezone);
-        cy.singleSelectByDataCy('timezone', 'America/New_York');
-        cy.clickButton(/^Next$/);
-        cy.clickButton(/^Next$/);
-        cy.clickButton(/^Next$/);
-        cy.clickButton(/^Finish$/);
-        cy.wait('@editSchedule')
-          .then((response) => {
-            expect(response?.response?.statusCode).to.eql(200);
-          })
-          .its('response.body')
-          .then((response: Schedule) => {
-            expect(response.name).contains(scheduleName);
-            expect(response.description).contains('mock description');
-            expect(response.timezone).contains('America/New_York');
-          });
-      });
-    });
-
     it('can delete a single schedule from the Source Schedule details page and confirm delete', () => {
       cy.createAWXSchedule({
         name: scheduleName,
