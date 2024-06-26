@@ -255,9 +255,7 @@ Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
   });
 });
 
-Cypress.Commands.add('deleteRemote', (remoteName: string) => {
-  cy.galaxykit(`remote delete ${remoteName}`);
-});
+;
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
