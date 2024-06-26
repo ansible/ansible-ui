@@ -45,7 +45,7 @@ export function createAndCheckHost(host_type: string, inventory: string) {
   return hostName;
 }
 
-function createHost(host_type: string, inventoryID: number) {
+export function createHost(host_type: string, inventoryID: number) {
   const hostName = 'E2E Host ' + randomString(4);
   // create host with no verify
   if (host_type === 'inventory_host') {
@@ -126,7 +126,7 @@ function navigateToHost(host_type: string, name: string, data: string, inventory
   cy.get(data).click();
 }
 
-function navigateToBaseView(host_type: string, inventoryName: string) {
+export function navigateToBaseView(host_type: string, inventoryName: string) {
   //function for navigeate to host list view or inventory host list view
   if (host_type === 'inventory_host') {
     cy.navigateTo('awx', 'inventories');
@@ -255,6 +255,59 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   }
 }
 
+export function createHostAndCancelJob(
+  inventory: Inventory,
+  organizationId: number,
+  projectId: number,
+  hostInInventory?: boolean
+) {
+  cy.createAwxJobTemplate({
+    inventory: inventory.id,
+    organization: organizationId,
+    project: projectId,
+  }).then(() => {
+    // go to inventory hosts
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    // add a host
+    const hostName = createHost('inventory_host', inventory.id);
+    // go to inventory job templates
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
+    // run  a template and wait for redirect to Job output
+    cy.get('[data-cy="launch-template"]').first().click();
+    cy.location('pathname').should('match', /\/output$/);
+    if (hostInInventory) {
+      // go to the Hosts under Inventory
+      cy.navigateTo('awx', 'inventories');
+      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    } else {
+      // go to the Hosts
+      cy.navigateTo('awx', 'hosts');
+    }
+    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/unified_jobs/*` },
+      { fixture: 'awxRunningJobs.json' }
+    );
+    cy.get('.pf-v5-c-tabs__item > a').contains('Jobs').click();
+    // there should be cancel job button when jon is running
+    cy.get('[data-cy="cancel-job"]').should('be.enabled');
+    cy.get('[data-cy="cancel-job"]').click();
+    cy.clickModalConfirmCheckbox();
+    cy.contains('button', 'Cancel job').click();
+    // expect cancel to fail as the running job is mocked
+    cy.contains('Error').should('exist');
+  });
+}
+
 export function createHostAndLaunchJob(
   inventory: Inventory,
   organizationId: number,
@@ -278,10 +331,9 @@ export function createHostAndLaunchJob(
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
-    // run  a template and wait for request
-    cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
-    cy.get('[data-cy="launch-template"]').click();
-    cy.wait('@launch').should('exist');
+    // run  a template and wait for redirect to Job output
+    cy.get('[data-cy="launch-template"]').first().click();
+    cy.location('pathname').should('match', /\/output$/);
     if (hostInInventory) {
       // go to the Hosts under Inventory
       cy.navigateTo('awx', 'inventories');
