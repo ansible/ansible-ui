@@ -125,7 +125,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.mount(<RulebookActivations />);
     cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="restart-selected-activations"]').click();
+    cy.get('[data-cy="restart-activations"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',
@@ -143,7 +143,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.intercept({ method: 'POST', url: edaAPI`/activations/2/disable/` });
     cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="disable-selected-activations"]').click();
+    cy.get('[data-cy="disable-activations"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',
@@ -161,7 +161,7 @@ describe('RulebookActivations.cy.ts', () => {
     cy.intercept({ method: 'POST', url: edaAPI`/activations/2/delete/` });
     cy.get('[data-cy="row-id-1"] > [data-cy="checkbox-column-cell"]').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="delete-selected-activations"]').click();
+    cy.get('[data-cy="delete-activations"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
         'contain',

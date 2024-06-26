@@ -1,10 +1,10 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { AwxHost } from '../../../../frontend/awx/interfaces/AwxHost';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 describe('Inventory Groups', () => {
   let organization: Organization;
@@ -15,10 +15,6 @@ describe('Inventory Groups', () => {
   function generateGroupName(): string {
     return `test-${testSignature}-inventory-group-${randomString(5, undefined, { isLowercase: true })}`;
   }
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {

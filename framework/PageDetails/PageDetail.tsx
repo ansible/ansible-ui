@@ -26,7 +26,7 @@ export function PageDetail(props: {
   return (
     <DescriptionListGroup style={{ gridColumn: props.fullWidth ? 'span 3' : undefined }}>
       {label && (
-        <DescriptionListTerm>
+        <DescriptionListTerm data-cy={`label-${id}`}>
           {label}
           {helpText ? <StandardPopover header={label} content={helpText} /> : null}
         </DescriptionListTerm>

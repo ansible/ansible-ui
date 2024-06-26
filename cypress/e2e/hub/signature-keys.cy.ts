@@ -2,10 +2,6 @@ import { pulpAPI } from '../../support/formatApiPathForHub';
 import { SignatureKeys } from './constants';
 
 describe('Signature Keys', () => {
-  beforeEach(() => {
-    cy.hubLogin();
-  });
-
   it('should display name and public key in the list page', () => {
     const resourceValues = ['name', 'public-key'];
     cy.intercept({ method: 'GET', url: pulpAPI`/signing-services/*` }).as('signatureKeys');

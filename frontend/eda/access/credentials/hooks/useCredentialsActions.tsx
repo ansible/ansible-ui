@@ -42,7 +42,7 @@ export function useCredentialsActions(view: IEdaView<EdaCredential>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected credentials'),
+        label: t('Delete credentials'),
         onClick: (credentials: EdaCredential[]) => deleteCredentials(credentials),
         isDanger: true,
       },

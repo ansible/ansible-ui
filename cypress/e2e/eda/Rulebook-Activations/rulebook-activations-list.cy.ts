@@ -16,7 +16,6 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
   let edaRuleBook2: EdaRulebook;
   let edaRuleBook3: EdaRulebook;
   before(() => {
-    cy.edaLogin();
     cy.ensureEdaCurrentUserAwxToken();
 
     cy.createEdaProject().then((project) => {
@@ -124,7 +123,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
           cy.get('input[type=checkbox]').check();
         });
     });
-    cy.clickToolbarKebabAction('delete-selected-activations');
+    cy.clickToolbarKebabAction('delete-activations');
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA2.id.toString()}/`).as('rba2');
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA3.id.toString()}/`).as('rba3');
     cy.clickModalConfirmCheckbox();

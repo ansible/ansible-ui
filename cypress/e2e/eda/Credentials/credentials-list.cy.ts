@@ -3,10 +3,6 @@
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Credentials List', () => {
-  before(() => {
-    cy.edaLogin();
-  });
-
   it('renders the Credentials list page', () => {
     cy.navigateTo('eda', 'credentials');
     cy.verifyPageTitle('Credentials');
@@ -39,7 +35,7 @@ describe('EDA Credentials List', () => {
         cy.selectTableRow(edaCredential.name);
         cy.clearAllFilters();
         cy.selectTableRow(testCredential.name);
-        cy.clickToolbarKebabAction('delete-selected-credentials');
+        cy.clickToolbarKebabAction('delete-credentials');
         cy.intercept('DELETE', edaAPI`/eda-credentials/${edaCredential.id.toString()}/`).as(
           'edaCredential'
         );

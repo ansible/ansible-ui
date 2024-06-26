@@ -1,8 +1,8 @@
 import { randomString } from '../../framework/utils/random-string';
+import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 import { Inventory } from '../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { awxAPI } from './formatApiPathForAwx';
-import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
 
 /////////////// Assisting functions ///////////////
 // this functions will be used for stand alone hosts and inventory hosts test
@@ -49,12 +49,12 @@ function createHost(host_type: string, inventoryID: number) {
   const hostName = 'E2E Host ' + randomString(4);
   // create host with no verify
   if (host_type === 'inventory_host') {
-    cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
+    cy.requestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
       name: hostName,
       inventory: inventoryID,
     });
   } else {
-    cy.awxRequestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
+    cy.requestPost<Partial<AwxHost>, AwxHost>(awxAPI`/hosts/`, {
       name: hostName,
     });
   }
@@ -104,6 +104,19 @@ function deleteHostDetailsView(invenotryName: string, host_type: string, hostNam
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Delete hosts');
   cy.contains(/^There are currently no hosts added to this inventory./);
+}
+
+function deleteAllInventoryHosts(inventory: Inventory) {
+  navigateToBaseView('inventory_host', inventory.name);
+  cy.getByDataCy('select-all').click();
+  cy.clickToolbarKebabAction('delete-selected-hosts');
+  cy.contains('Permanently delete hosts');
+  cy.clickModalConfirmCheckbox();
+  cy.clickButton(/^Delete hosts$/);
+  cy.clickButton(/^Close$/);
+  cy.getByDataCy('empty-state-title').contains(
+    /^There are currently no hosts added to this inventory./
+  );
 }
 
 function navigateToHost(host_type: string, name: string, data: string, inventoryName: string) {
@@ -191,9 +204,9 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.getByDataCy('associate').click();
       cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
       cy.clickModalButton('Confirm');
-      cy.contains('button', 'Close').click();
+      cy.clickButton(/^Close$/);
       cy.contains(group.name);
-      deleteHostListView(inventory.name, host_type, host.name);
+      deleteAllInventoryHosts(inventory);
     });
   });
 }
@@ -321,4 +334,21 @@ export function checkFactsInHost(inventory: Inventory, hostInInventory?: boolean
   }
   cy.containsBy('a', 'Facts').click();
   cy.get('code').should('contain', 'ansible_dns');
+}
+
+export function checkHiddenButton(host_type: string, inventory: Inventory, missing: string) {
+  //navigate to list view and check host existing
+  //in case this should be done to detailes view the only thing needed is to add click on host name
+  navigateToBaseView(host_type, inventory.name);
+  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gt', 1);
+  cy.get(missing).should('not.exist');
+}
+
+export function checkHiddenTab(host_type: string, inventory: Inventory, missing: string) {
+  //navigate to list view and check host existing
+  //get to host to verify tab is missing
+  navigateToBaseView(host_type, inventory.name);
+  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gt', 1);
+  cy.getByDataCy('name-column-cell').contains('E2E Host').click();
+  cy.contains('[role="tab"]', missing).should('not.exist');
 }

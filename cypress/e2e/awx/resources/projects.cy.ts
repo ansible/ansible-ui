@@ -2,30 +2,72 @@
 /// <reference types="cypress" />
 
 import { randomString } from '../../../../framework/utils/random-string';
-import { randomE2Ename } from '../../../support/utils';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Projects', () => {
-  let schedule: Schedule;
-  let project: Project;
-  let thisProject: Project;
-  let organization: Organization;
-  let user: AwxUser;
+  describe('Projects: Create and delete', () => {
+    let organization: Organization;
 
-  before(function () {
-    cy.awxLogin();
+    beforeEach(() => {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+      });
+    });
+
+    afterEach(() => {
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    });
+
+    it('can create a project and then delete it from the project details page', () => {
+      const projectName = 'E2E Project ' + randomString(4);
+      cy.navigateTo('awx', 'projects');
+      cy.verifyPageTitle('Projects');
+      cy.clickLink(/^Create project$/);
+      cy.get('[data-cy="name"]').type(projectName);
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
+      cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
+      cy.get('[data-cy="option-allow-override"]').click();
+      cy.intercept('POST', awxAPI`/projects/`).as('newProject');
+      cy.clickButton(/^Create project$/);
+      cy.wait('@newProject')
+        .its('response.body')
+        .then((newProject: Project) => {
+          cy.verifyPageTitle(newProject.name);
+          cy.hasDetail(/^Organization$/, `${organization.name}`);
+          cy.hasDetail(/^Source control type$/, 'Git');
+          cy.hasDetail(/^Enabled options$/, 'Allow branch override');
+          cy.waitForProjectToFinishSyncing(newProject.id);
+          cy.contains('[data-cy="last-job-status"]', 'Success');
+          cy.intercept('DELETE', awxAPI`/projects/${newProject.id.toString()}/`).as('deleted');
+          cy.clickPageAction('delete-project');
+          cy.getModal().within(() => {
+            cy.get('#confirm').click();
+            cy.clickButton(/^Delete project/);
+            cy.contains('Permanently delete projects');
+            cy.wait('@deleted').then((deleted) => {
+              expect(deleted?.response?.statusCode).to.eql(204);
+            });
+          });
+        });
+    });
   });
 
   describe('Projects: List View', () => {
-    beforeEach(function () {
+    let organization: Organization;
+    let project: Project;
+    let user: AwxUser;
+
+    beforeEach(() => {
       cy.createAwxOrganization().then((org) => {
         organization = org;
         cy.createAwxUser(organization).then((testUser) => {
@@ -42,40 +84,6 @@ describe('Projects', () => {
       cy.deleteAwxProject(project, { failOnStatusCode: false });
       cy.deleteAwxUser(user, { failOnStatusCode: false });
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-    // FLAKY_06_13_2024
-    it.skip('can create a project and then delete it from the project details page', function () {
-      const projectName = 'E2E Project ' + randomString(4);
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.clickLink(/^Create project$/);
-      cy.get('[data-cy="name"]').type(projectName);
-      cy.singleSelectByDataCy('organization', `${(this.globalOrganization as Organization).name}`);
-      cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
-      cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
-      cy.get('[data-cy="option-allow-override"]').click();
-      cy.intercept('POST', awxAPI`/projects/`).as('newProject');
-      cy.clickButton(/^Create project$/);
-      cy.wait('@newProject')
-        .its('response.body')
-        .then((newProject: Project) => {
-          cy.verifyPageTitle(newProject.name);
-          cy.hasDetail(/^Organization$/, `${(this.globalOrganization as Organization).name}`);
-          cy.hasDetail(/^Source control type$/, 'Git');
-          cy.hasDetail(/^Enabled options$/, 'Allow branch override');
-          cy.waitForProjectToFinishSyncing(newProject.id);
-          cy.contains('[data-cy="last-job-status"]', 'Success');
-          cy.intercept('DELETE', awxAPI`/projects/${newProject.id.toString()}/`).as('deleted');
-          cy.clickPageAction('delete-project');
-          cy.getModal().within(() => {
-            cy.get('#confirm').click();
-            cy.clickButton(/^Delete project/);
-            cy.contains('Permanently delete projects');
-            cy.wait('@deleted').then((deleted) => {
-              expect(deleted?.response?.statusCode).to.eql(204);
-            });
-          });
-        });
     });
 
     it('can edit a project from the project list row', () => {
@@ -102,7 +110,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can copy a project from the projects list row', function () {
+    it('can copy a project from the projects list row', () => {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -173,7 +181,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can delete a project from projects list toolbar', function () {
+    it('can delete a project from projects list toolbar', () => {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -195,9 +203,14 @@ describe('Projects', () => {
   });
 
   describe('Projects: Details View', () => {
-    beforeEach(function () {
+    let organization: Organization;
+    let project: Project;
+    let user: AwxUser;
+
+    beforeEach(() => {
       cy.createAwxOrganization().then((org) => {
         organization = org;
+
         cy.createAwxUser(organization).then((testUser) => {
           user = testUser;
           cy.createAwxProject({ organization: organization.id }).then((proj) => {
@@ -338,20 +351,24 @@ describe('Projects', () => {
   });
 
   describe('Projects: Schedules Tab', () => {
+    let schedule: Schedule;
+    let project: Project;
+    let organization: Organization;
+
     beforeEach(function () {
       cy.createAwxOrganization().then((org) => {
         organization = org;
         cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          thisProject = proj;
+          project = proj;
           const name = 'E2E' + randomString(4);
           cy.createAWXSchedule({
             name,
-            unified_job_template: thisProject.id,
+            unified_job_template: project.id,
             rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
           }).then((sched: Schedule) => {
             schedule = sched;
             cy.navigateTo('awx', 'projects');
-            cy.filterTableBySingleSelect('name', thisProject.name);
+            cy.filterTableBySingleSelect('name', project.name);
             cy.get('[data-cy="name-column-cell"]').click();
             cy.clickTab('Schedules', true);
           });
@@ -361,7 +378,7 @@ describe('Projects', () => {
 
     afterEach(() => {
       cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
-      cy.deleteAwxProject(thisProject, { failOnStatusCode: false });
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
@@ -487,7 +504,7 @@ describe('Projects', () => {
         .and('contain', 'Exceptions');
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
       cy.getByDataCy('Submit').click();
-      cy.intercept('GET', awxAPI`/projects/${thisProject.id.toString()}/`).as('projectList');
+      cy.intercept('GET', awxAPI`/projects/${project.id.toString()}/`).as('projectList');
       cy.wait('@edited');
       cy.wait('@projectList');
       cy.get('[data-ouia-component-id="simple-table"]')
@@ -567,137 +584,151 @@ describe('Projects', () => {
       cy.clickButton(/^Clear all filters$/);
     });
   });
-  // FLAKY_06_13_2024
-  describe.skip('Projects: Job Templates Tab', () => {
+
+  describe('Projects: Job Templates Tab', () => {
     let inventory: Inventory;
     let jobTemplate: JobTemplate;
+    let organization: Organization;
+    let project: Project;
 
-    before(function () {
-      cy.createAwxInventory({ organization: (this.globalOrganization as Organization).id }).then(
-        (inv) => {
-          inventory = inv;
-
-          cy.createAwxJobTemplate({
-            organization: (this.globalOrganization as Organization).id,
-            project: (this.globalProject as Project).id,
-            inventory: inventory.id,
-          }).then((jt1) => {
-            jobTemplate = jt1;
+    beforeEach(() => {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+          cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+            inventory = inv;
+            cy.createAwxJobTemplate({
+              organization: organization.id,
+              project: project.id,
+              inventory: inventory.id,
+            }).then((jt1) => {
+              jobTemplate = jt1;
+            });
           });
-        }
-      );
+        });
+      });
     });
 
-    after(function () {
+    after(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can navigate to project job templates tab', function () {
+    it('can navigate to project job templates tab', () => {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
-      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
-      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+      cy.verifyPageTitle(`${project.name}`);
       cy.clickTab(/^Job templates$/, true);
     });
 
-    it('can associate a project with a newly created job template and view that JT on the templates tab of the project', function () {
-      cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
-        (thisProject) => {
-          cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-          cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
-          cy.selectTableRow(jobTemplate.name, false);
-          cy.getBy('[data-cy="edit-template"]').click();
-          cy.verifyPageTitle('Edit Job Template');
-          cy.selectDropdownOptionByResourceName('project', thisProject.name);
-          cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
-          cy.getByDataCy('Submit').click();
-          cy.wait('@edited')
-            .its('response.body')
-            .then((editedJt: JobTemplate) => {
-              expect(editedJt.project).to.eql(thisProject.id);
-              cy.intercept('GET', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
-                'clickLaunch'
-              );
-              cy.intercept('POST', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
-                'launched'
-              );
-              cy.getByDataCy('launch-template').click();
-              cy.wait('@clickLaunch');
-              cy.wait('@launched')
-                .its('response.body')
-                .then((launched: Job) => {
-                  cy.verifyPageTitle(editedJt.name);
-                  cy.url().should('include', '/output');
-                  cy.get('[data-cy="relaunch-job"]').should('be.visible');
-                  cy.waitForJobToProcessEvents(launched.id.toString(), 'jobs');
-                });
-            });
-          cy.navigateTo('awx', 'projects');
-          cy.verifyPageTitle('Projects');
-          cy.filterTableByMultiSelect('name', [thisProject.name]);
-          cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
-            cy.get('[data-cy="name-column-cell"]').click();
+    it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
+      cy.createAwxProject({ organization: organization.id }).then((newProject) => {
+        cy.navigateTo('awx', 'templates');
+        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
+        cy.selectTableRow(jobTemplate.name, false);
+        cy.getBy('[data-cy="edit-template"]').click();
+        cy.verifyPageTitle('Edit Job Template');
+        cy.selectDropdownOptionByResourceName('project', newProject.name);
+        cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
+        cy.getByDataCy('Submit').click();
+        cy.wait('@edited')
+          .its('response.body')
+          .then((editedJt: JobTemplate) => {
+            expect(editedJt.project).to.eql(newProject.id);
+            cy.intercept('GET', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
+              'clickLaunch'
+            );
+            cy.intercept('POST', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
+              'launched'
+            );
+            cy.getByDataCy('launch-template').click();
+            cy.wait('@clickLaunch');
+            cy.wait('@launched')
+              .its('response.body')
+              .then((launched: Job) => {
+                cy.verifyPageTitle(editedJt.name);
+                cy.url().should('include', '/output');
+                cy.get('[data-cy="relaunch-job"]').should('be.visible');
+                cy.waitForJobToProcessEvents(launched.id.toString(), 'jobs');
+              });
           });
-          cy.clickTab('Job templates', true);
-          cy.url().should(
-            'contain',
-            `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`
-          );
-          cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-          cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
-          cy.selectTableRow(jobTemplate.name, false);
-          cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
-            inKebab: true,
-            disableFilter: true,
-          });
-          cy.getModal().then(() => {
-            cy.get('h1').should('contain', 'Permanently delete job template');
-            cy.get('#confirm').click();
-            cy.get('[data-ouia-component-id="submit"]').click();
-            cy.clickButton('Close');
-          });
-          cy.get('h2').should('contain', 'No results found');
-        }
-      );
+        cy.navigateTo('awx', 'projects');
+        cy.verifyPageTitle('Projects');
+        cy.filterTableByMultiSelect('name', [newProject.name]);
+        cy.get(`[data-cy="row-id-${newProject.id}"]`).within(() => {
+          cy.get('[data-cy="name-column-cell"]').click();
+        });
+        cy.clickTab('Job templates', true);
+        cy.url().should(
+          'contain',
+          `/projects/${newProject.id}/job-templates?page=1&perPage=10&sort=name`
+        );
+        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
+        cy.selectTableRow(jobTemplate.name, false);
+        cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
+          inKebab: true,
+          disableFilter: true,
+        });
+        cy.getModal().then(() => {
+          cy.get('h1').should('contain', 'Permanently delete job template');
+          cy.get('#confirm').click();
+          cy.get('[data-ouia-component-id="submit"]').click();
+          cy.clickButton('Close');
+        });
+        cy.get('h2').should('contain', 'No results found');
+      });
     });
   });
-  // FLAKY_06_13_2024
-  describe.skip('Projects: Notifications Tab', () => {
-    let notification: NotificationTemplate;
-    beforeEach(function () {
-      cy.createAwxProject({ organization: (this.globalOrganization as Organization).id }).then(
-        (proj) => {
-          thisProject = proj;
 
+  describe('Projects: Notifications Tab', () => {
+    let notification: NotificationTemplate;
+    let project: Project;
+    let organization: Organization;
+
+    beforeEach(() => {
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
           const notificationName = `${randomE2Ename()}`;
           cy.createNotificationTemplate(notificationName).then((notifier) => {
             notification = notifier;
           });
-        }
-      );
+        });
+      });
     });
 
-    it('can navigate to the Projects Notifications list, toggle a Notification on Start, and navigate to its details page', function () {
+    afterEach(() => {
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+      cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });
+    });
+
+    it('can navigate to the Projects Notifications list, toggle a Notification on Start, and navigate to its details page', () => {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [thisProject.name]);
-      cy.clickTableRowLink('name', `${thisProject.name}`, {
+      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
-      cy.verifyPageTitle(`${thisProject.name}`);
+      cy.verifyPageTitle(`${project.name}`);
       cy.clickTab(/^Notifications$/, true);
       cy.getBy('#filter-input').type(`${notification.name}`);
       cy.getByDataCy('apply-filter').click();
       cy.intercept(
         'POST',
-        awxAPI`/projects/${thisProject.id.toString()}/notification_templates_started/`
+        awxAPI`/projects/${project.id.toString()}/notification_templates_started/`
       ).as('started');
       cy.intercept(
         'GET',
-        awxAPI`/projects/${thisProject.id.toString()}/notification_templates_started/`
+        awxAPI`/projects/${project.id.toString()}/notification_templates_started/`
       ).as('getStarted');
       cy.getTableRow('name', notification.name, { disableFilter: true }).within(() => {
         cy.contains('[data-cy="toggle-switch"]', 'Start').find('span').eq(0).click();

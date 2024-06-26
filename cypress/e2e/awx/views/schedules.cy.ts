@@ -18,10 +18,6 @@ describe.skip('Schedules - Create and Delete', function () {
     return `test-${testSignature}-schedule-${randomString(5, undefined, { isLowercase: true })}`;
   }
 
-  before(() => {
-    cy.awxLogin();
-  });
-
   before(function () {
     project = this.globalProject as Project;
     cy.createAwxOrganization().then((o) => {
@@ -311,10 +307,6 @@ describe.skip('Schedules - Create and Delete', function () {
     let project: Project;
     let inventory: Inventory;
 
-    before(() => {
-      cy.awxLogin();
-    });
-
     beforeEach(function () {
       project = this.globalProject as Project;
       cy.createAwxOrganization().then((o) => {
@@ -514,10 +506,6 @@ describe.skip('Schedules - Create and Delete', function () {
 describe.skip('Schedules - Edit', () => {
   let schedule: Schedule;
   let project: Project;
-
-  before(() => {
-    cy.awxLogin();
-  });
 
   beforeEach(function () {
     project = this.globalProject as Project;

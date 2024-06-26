@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
+import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { runCommand } from './runCommandFunction';
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
+import { checkHiddenButton, checkHiddenTab } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;
@@ -11,7 +12,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
   let group: InventoryGroup;
 
   before(() => {
-    cy.awxLogin();
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createInventoryHost(organization, 'constructed').then((result) => {
@@ -22,7 +22,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
           const normalInventory = result2.inventory;
           group = result2.group;
 
-          cy.awxRequestPost<{ id: number }>(
+          cy.requestPost<{ id: number }>(
             awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`,
             {
               id: normalInventory.id,
@@ -118,9 +118,21 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //5) Cancel the job and assert that it has been canceled
   });
 
-  it.skip('confirm that edit host button is missing from the host tab list of an inventory', () => {});
+  it('test edit, delete buttons and facts tab are not present for constructed inventory host options', () => {
+    //'confirm that edit host button is missing from the host tab list of an inventory', () => {
+    //navigate to constructed inventory host list
+    //verify edit button is missing
+    checkHiddenButton('inventory_host', inventory, `[data-cy="edit-host"]`);
 
-  it.skip('confirm that delete host button is missing from the host tab list of an inventory', () => {});
+    //'confirm that delete host button is missing from the host tab list of an inventory'
+    //navigate to constructed inventory host list
+    //verify action dropdown contain only delete host button is missing
+    const hiddenElement = `[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`;
+    checkHiddenButton('inventory_host', inventory, hiddenElement);
 
-  it.skip('confirm that facts tab is missing from a host inside an inventory', () => {});
+    //'confirm that facts tab is missing from a host inside an inventory'
+    //navigate to constructed inventory host list, get to host
+    //verify facts tab is missing
+    checkHiddenTab('inventory_host', inventory, 'Facts');
+  });
 });
