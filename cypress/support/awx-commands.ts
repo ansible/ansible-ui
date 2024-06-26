@@ -30,7 +30,6 @@ import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { awxAPI } from './formatApiPathForAwx';
 
 //  AWX related custom command implementation
