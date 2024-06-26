@@ -1311,10 +1311,7 @@ Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   ).then((result) => JSON.parse(result.stdout) as AwxToken);
 });
 
-Cypress.Commands.add('getGlobalAwxToken', () => {
-  if (globalAwxToken) cy.wrap(globalAwxToken);
-  else cy.createAwxToken().then((awxToken) => (globalAwxToken = awxToken));
-});
+;
 
 Cypress.Commands.add(
   'deleteAwxToken',
