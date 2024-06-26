@@ -52,9 +52,7 @@ export type HubPutRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
 >;
-Cypress.Commands.add('hubPutRequest', (options: HubPutRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'PUT' });
-});
+;
 
 export type HubPostRequestOptions = Pick<
   HubRequestOptions,
