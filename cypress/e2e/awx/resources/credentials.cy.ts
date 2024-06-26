@@ -717,6 +717,7 @@ describe('Credentials Tabbed View - Team and User Access', () => {
       cy.clickButton(/^Close$/);
     });
     cy.getModal().should('not.exist');
+    cy.verifyPageTitle(machineCredential.name);
     cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
       disableFilter: true,
     });
@@ -778,6 +779,7 @@ describe('Credentials Tabbed View - Team and User Access', () => {
       cy.clickButton(/^Close$/);
     });
     cy.getModal().should('not.exist');
+    cy.verifyPageTitle(machineCredential.name);
     cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
       disableFilter: true,
     });
