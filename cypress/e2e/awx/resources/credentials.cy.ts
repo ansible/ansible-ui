@@ -422,7 +422,7 @@ describe('Create Credentials of different types', () => {
     cy.verifyPageTitle(credentialName);
     cy.getByDataCy('name').contains(credentialName);
     cy.contains('Vault Identifier').should('be.visible');
-    cy.getByDataCy('vault-identifier"]').contains('id');
+    cy.getByDataCy('vault-identifier').contains('id');
     cy.contains('Vault Password').should('be.visible');
     cy.getByDataCy('vault-password').contains('Encrypted');
     cy.getByDataCy('edit-credential').click();
