@@ -278,10 +278,9 @@ export function createHostAndCancelJob(
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
-    // run  a template and wait for request
-    cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
+    // run  a template and wait for redirect to Job output
     cy.get('[data-cy="launch-template"]').first().click();
-    cy.wait('@launch').should('exist');
+    cy.location('pathname').should('match', /\/output$/);
     if (hostInInventory) {
       // go to the Hosts under Inventory
       cy.navigateTo('awx', 'inventories');
@@ -332,10 +331,9 @@ export function createHostAndLaunchJob(
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
-    // run  a template and wait for request
-    cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
+    // run  a template and wait for redirect to Job output
     cy.get('[data-cy="launch-template"]').first().click();
-    cy.wait('@launch').should('exist');
+    cy.location('pathname').should('match', /\/output$/);
     if (hostInInventory) {
       // go to the Hosts under Inventory
       cy.navigateTo('awx', 'inventories');
