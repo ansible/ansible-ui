@@ -479,15 +479,12 @@ describe('Create Credentials of different types', () => {
         cy.verifyPageTitle('Edit Credential');
         const ModifiedCredentialName = credentialName + ' - edited';
         cy.getByDataCy('name').type(ModifiedCredentialName);
-        cy.getByDataCy('username').should('be.visible');
         cy.getByDataCy('username').then(($input) => {
-          expect($input.val()).to.eq('username');
+          cy.wrap($input).should('have.value', 'username');
         });
-        cy.getByDataCy('password').should('be.visible');
         cy.getByDataCy('password').then(($input) => {
-          expect($input.val()).to.eq('ENCRYPTED');
+          cy.wrap($input).should('have.value', 'ENCRYPTED');
         });
-        cy.getByDataCy('security-token').should('be.visible');
         cy.getByDataCy('security-token').then(($input) => {
           expect($input.val()).to.eq('ENCRYPTED');
         });
