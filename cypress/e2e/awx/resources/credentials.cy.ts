@@ -416,7 +416,7 @@ describe('Create Credentials of different types', () => {
     cy.singleSelectBy('[data-cy="credential_type"]', 'Vault', true);
     cy.contains('Type Details').should('be.visible');
     cy.getByDataCy('vault-password').type('password');
-    cy.getByDataCy('vault-id"]').type('id');
+    cy.getByDataCy('vault-id').type('id');
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
