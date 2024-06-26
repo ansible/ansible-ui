@@ -57,20 +57,11 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
               ) : (
                 Object.entries(info).map(([key, value]) => (
                   <React.Fragment key={key}>
-                    {typeof value === 'object' ? (
-                      Object.entries(value).map(([foo, bar]) => (
-                        <DescriptionListGroup key={foo}>
-                          <DescriptionListTerm>{translateVersion(foo, t)}</DescriptionListTerm>
-                          <StyledDescriptionListDescription>
-                            {bar as string}
-                          </StyledDescriptionListDescription>
-                        </DescriptionListGroup>
-                      ))
-                    ) : (
+                    {
                       <StyledDescriptionListDescription>
                         {t(value)}
                       </StyledDescriptionListDescription>
-                    )}
+                    }
                   </React.Fragment>
                 ))
               )}
