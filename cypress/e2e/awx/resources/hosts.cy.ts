@@ -1,18 +1,17 @@
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import {
   checkFactsInHost,
   checkHostGroup,
   createAndEditAndDeleteHost,
   createHostAndLaunchJob,
+  createHostAndCancelJob,
 } from '../../../support/hostsfunctions';
 
 describe('Host Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
-  let user: AwxUser;
   let project: Project;
 
   before(() => {
@@ -21,19 +20,14 @@ describe('Host Tests', () => {
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventory = inv;
       });
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-          // cy.giveUserProjectAccess(project.name, user.id, 'Read');
-        });
+      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        project = proj;
       });
     });
   });
 
   after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
   });
@@ -55,7 +49,9 @@ describe('Host Tests', () => {
     createHostAndLaunchJob(inventory, organization.id, project.id);
   });
 
-  it.skip('can cancel jobs from host jobs tab', () => {});
+  it('can cancel jobs from host jobs tab', () => {
+    createHostAndCancelJob(inventory, organization.id, project.id);
+  });
 
   it('can view host facts in stand alone host', () => {
     checkFactsInHost(inventory, 'stand_alone');
