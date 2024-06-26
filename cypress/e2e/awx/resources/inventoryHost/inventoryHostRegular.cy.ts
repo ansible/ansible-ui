@@ -4,7 +4,6 @@ import { Organization } from '../../../../../frontend/awx/interfaces/Organizatio
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 import { runCommand } from './runCommandFunction';
 import { randomString } from '../../../../../framework/utils/random-string';
-import { Project } from '../../../../../frontend/awx/interfaces/Project';
 import { launchHostJob } from '../../../../support/hostsfunctions';
 
 import {
@@ -20,14 +19,10 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: AwxUser;
-  let project: Project;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
-        project = proj;
-      });
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventory = inv;
       });
@@ -87,9 +82,12 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     //1) Use inventory and host
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
-    cy.createInventoryHost(organization, '').then((result) => {
-      launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');
-      cy.deleteAwxInventory(result.inventory, { failOnStatusCode: false });
+    cy.createAwxProject({ organization: organization.id }).then((project) => {
+      cy.createInventoryHost(organization, '').then((result) => {
+        launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');
+        cy.deleteAwxInventory(result.inventory, { failOnStatusCode: false });
+        cy.deleteAwxProject(project, { failOnStatusCode: false });
+      });
     });
   });
 
