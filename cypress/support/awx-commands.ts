@@ -755,8 +755,6 @@ Cypress.Commands.add(
   }
 );
 
-;
-
 Cypress.Commands.add(
   'deleteAwxProject',
   (
@@ -1040,8 +1038,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-;
 
 Cypress.Commands.add(
   'deleteAwxJobTemplate',
