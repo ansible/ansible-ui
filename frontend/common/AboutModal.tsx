@@ -1,6 +1,12 @@
-import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import {
+  AboutModal,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
+} from '@patternfly/react-core';
 import { TFunction } from 'i18next';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { usePageDialog } from '../../framework';
@@ -14,7 +20,7 @@ export interface AnsibleAboutModalProps {
 
 type ProductVersionInfo = Record<string, string | Record<string, string>>;
 
-const ListItemDiv = styled.div`
+const StyledDescriptionListDescription = styled(DescriptionListDescription)`
   font-weight: normal;
 `;
 
@@ -35,53 +41,41 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       backgroundImageSrc="/static/media/ansible-brand.svg"
       productName={upstreamServices(process.env.PRODUCT, t) ?? t('AWX')}
     >
-      <TextContent>
-        <TextList component="dl">
-          {Object.entries(props.versionInfo ?? {})
-            .filter(([product]) => product !== 'galaxy_ng_commit' && product !== 'ha')
-            .map(([product, info]) => {
-              return (
-                <>
-                  <TextListItem key={t(product)} component="dt">
-                    {translateVersion(product, t)}
-                  </TextListItem>
-                  <TextList component="dl">
-                    {typeof info === 'string'
-                      ? info
-                      : Object.entries(info).map(([key, value]) => {
-                          return typeof value === 'object' ? (
-                            <TextListItem key={key} component="dt">
-                              {Object.entries(value).map(([foo, bar]) => (
-                                <TextList component="dl" key={foo}>
-                                  <TextListItem component="dt">
-                                    {translateVersion(foo, t)}
-                                  </TextListItem>
-                                  <TextListItem component="dd">
-                                    <ListItemDiv>{bar as string}</ListItemDiv>
-                                  </TextListItem>
-                                </TextList>
-                              ))}
-                            </TextListItem>
-                          ) : (
-                            <TextListItem key={key} component="dt">
-                              <ListItemDiv>{t(value)}</ListItemDiv>
-                            </TextListItem>
-                          );
-                        })}
-                  </TextList>
-                </>
-              );
-            })}
-          <TextListItem key={t('Username')} component="dt">
-            {t('Username')}
-          </TextListItem>
-          <TextList component="dl">
-            <TextListItem key={t('Username')} component="dt">
-              <ListItemDiv>{props.userInfo}</ListItemDiv>
-            </TextListItem>
-          </TextList>
-        </TextList>
-      </TextContent>
+      <DescriptionList isHorizontal>
+        {Object.entries(props.versionInfo ?? {})
+          .filter(([product]) => product !== 'galaxy_ng_commit' && product !== 'ha')
+          .map(([product, info]) => (
+            <DescriptionListGroup key={product}>
+              <DescriptionListTerm>{translateVersion(product, t)}</DescriptionListTerm>
+              {typeof info === 'string' ? (
+                <DescriptionListDescription>{info}</DescriptionListDescription>
+              ) : (
+                Object.entries(info).map(([key, value]) => (
+                  <React.Fragment key={key}>
+                    {typeof value === 'object' ? (
+                      Object.entries(value).map(([foo, bar]) => (
+                        <DescriptionListGroup key={foo}>
+                          <DescriptionListTerm>{translateVersion(foo, t)}</DescriptionListTerm>
+                          <StyledDescriptionListDescription>
+                            {bar as string}
+                          </StyledDescriptionListDescription>
+                        </DescriptionListGroup>
+                      ))
+                    ) : (
+                      <StyledDescriptionListDescription>
+                        {t(value)}
+                      </StyledDescriptionListDescription>
+                    )}
+                  </React.Fragment>
+                ))
+              )}
+            </DescriptionListGroup>
+          ))}
+        <DescriptionListGroup>
+          <DescriptionListTerm>{t('Username')}</DescriptionListTerm>
+          <DescriptionListDescription>{props.userInfo}</DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
     </AboutModal>
   );
 }
