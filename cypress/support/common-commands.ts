@@ -80,8 +80,6 @@ Cypress.Commands.add(
   }
 );
 
-;
-
 Cypress.Commands.add(
   'singleSelectShouldHaveSelectedOption',
   (selector: string, label: string | RegExp) => {

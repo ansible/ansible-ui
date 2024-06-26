@@ -35,8 +35,6 @@ import { edaAPI } from './formatApiPathForEDA';
 
 /*  EDA related custom command implementation  */
 
-;
-
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   cy.contains('a', anchorName).then((link) => {
     cy.request({
@@ -105,8 +103,6 @@ Cypress.Commands.add(
     });
   }
 );
-
-;
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
   cy.requestDelete(edaAPI`/activations/${edaRulebookActivation.id.toString()}/`, {
@@ -361,10 +357,6 @@ Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
   });
 });
 
-;
-
-;
-
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
   cy.requestGet<EdaRbacRole>(edaAPI`/role_definitions/${roleID}`);
 });
@@ -474,8 +466,6 @@ Cypress.Commands.add(
     });
   }
 );
-
-;
 
 Cypress.Commands.add('getEdaCurrentUserAwxTokens', () => {
   cy.requestGet<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`);

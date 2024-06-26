@@ -35,10 +35,6 @@ import { awxAPI } from './formatApiPathForAwx';
 
 //  AWX related custom command implementation
 
-;
-
-;
-
 /* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`.
 This command removes all the nodes via the visualizer toolbar.
 It verifies that the bulk remove modal is visible, clicks the confirm checkbox,
@@ -457,8 +453,6 @@ Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?:
   cy.getTableRowByText(name, filter, 'SingleText');
 });
 
-;
-
 Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
@@ -512,8 +506,6 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
     cy.get('input[type=checkbox]').click();
   });
 });
-
-;
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
@@ -679,8 +671,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-;
 
 Cypress.Commands.add(
   'createAwxProject',
@@ -1097,8 +1087,6 @@ Cypress.Commands.add(
   }
 );
 
-;
-
 Cypress.Commands.add(
   'deleteAwxJobTemplate',
   (
@@ -1293,8 +1281,6 @@ Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   ).then((result) => JSON.parse(result.stdout) as AwxToken);
 });
 
-;
-
 Cypress.Commands.add(
   'deleteAwxToken',
   (
@@ -1484,16 +1470,6 @@ Cypress.Commands.add('createGlobalProject', function () {
     });
 });
 
-;
-
-;
-
-;
-
-;
-
-;
-
 Cypress.Commands.add('createAwxApplication', () => {
   return cy.requestPost<
     Application,
@@ -1531,8 +1507,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-;
 
 Cypress.Commands.add('createAwxInstance', (hostname: string, listener_port?: number) => {
   if (listener_port) {
