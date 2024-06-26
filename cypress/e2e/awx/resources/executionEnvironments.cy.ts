@@ -354,8 +354,8 @@ describe('Execution Environments: Templates View', () => {
     cy.getByDataCy('create-template').click();
     cy.clickLink(/^Create job template$/);
     cy.getByDataCy('name').type(jtName);
-    cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+    cy.singleSelectByDataCy('inventory', inventory.name);
+    cy.singleSelectByDataCy('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.singleSelectBy('[data-cy="executionEnvironment"]', execEnvName);
 

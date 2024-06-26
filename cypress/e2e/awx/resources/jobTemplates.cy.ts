@@ -53,8 +53,8 @@ describe('Job Templates Tests', function () {
       cy.clickLink(/^Create job template$/);
       cy.getBy('[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type('This is a JT description');
-      cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-      cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+      cy.singleSelectByDataCy('inventory', inventory.name);
+      cy.singleSelectByDataCy('project', `${(this.globalProject as Project).name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.getBy('[data-cy="Submit"]').click();
       cy.wait('@createJT')
@@ -107,8 +107,8 @@ describe('Job Templates Tests', function () {
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);
           cy.getBy('[data-cy="description"]').type('This is a JT description');
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-          cy.selectDropdownOptionByResourceName('project', proj.name);
+          cy.singleSelectByDataCy('inventory', inventory.name);
+          cy.singleSelectByDataCy('project', proj.name);
           cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
           cy.getBy('[data-cy="Submit"]').click();
           cy.wait('@createJT');
@@ -128,7 +128,7 @@ describe('Job Templates Tests', function () {
       cy.getBy('[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
       cy.selectPromptOnLaunch('inventory');
-      cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+      cy.singleSelectByDataCy('project', `${(this.globalProject as Project).name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.selectPromptOnLaunch('execution_environment');
       cy.selectPromptOnLaunch('credential');
@@ -142,7 +142,7 @@ describe('Job Templates Tests', function () {
           cy.filterTableByMultiSelect('name', [jtName]);
           cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
           cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+          cy.singleSelectByDataCy('inventory', inventory.name);
           cy.clickButton(/^Next/);
           cy.selectItemFromLookupModal('credential-select', machineCredential.name);
           cy.clickButton(/^Next/);
@@ -203,7 +203,7 @@ describe('Job Templates Tests', function () {
       cy.getBy('[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
       cy.selectPromptOnLaunch('inventory');
-      cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+      cy.singleSelectByDataCy('project', `${(this.globalProject as Project).name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.selectPromptOnLaunch('execution_environment');
       cy.selectPromptOnLaunch('credential');
@@ -214,7 +214,7 @@ describe('Job Templates Tests', function () {
         .then((id: string) => {
           cy.verifyPageTitle(jtName);
           cy.clickButton(/^Launch template$/);
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+          cy.singleSelectByDataCy('inventory', inventory.name);
           cy.clickButton(/^Next/);
           cy.selectItemFromLookupModal('credential-select', machineCredential.name);
           cy.clickButton(/^Next/);
@@ -279,8 +279,8 @@ describe('Job Templates Tests', function () {
 
             cy.visit('/templates/job-template/create');
             cy.getByDataCy('name').type(jtName);
-            cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-            cy.selectDropdownOptionByResourceName('project', gitProject.name);
+            cy.singleSelectByDataCy('inventory', inventory.name);
+            cy.singleSelectByDataCy('project', gitProject.name);
             cy.selectDropdownOptionByResourceName('playbook', 'debug-loop.yml');
             cy.getByDataCy('allow_simultaneous').click();
             cy.clickButton('Create job template');
@@ -408,7 +408,7 @@ describe('Job Templates Tests', function () {
           cy.getByDataCy('inventory').contains('Deleted');
           cy.clickLink('Edit template');
 
-          cy.selectDropdownOptionByResourceName('inventory', inv.name);
+          cy.singleSelectByDataCy('inventory', inv.name);
           cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('saveJT');
           cy.clickButton('Save job template');
           cy.wait('@saveJT');

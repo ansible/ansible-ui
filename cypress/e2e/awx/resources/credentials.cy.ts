@@ -610,8 +610,8 @@ describe('Credentials Tabbed View - Job Templates', () => {
     cy.getByDataCy('create-template').click();
     cy.verifyPageTitle('Create Job Template');
     cy.getByDataCy('name').type(jobTemplateName);
-    cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+    cy.singleSelectByDataCy('inventory', awxInventory.name);
+    cy.singleSelectByDataCy('project', `${(this.globalProject as Project).name}`);
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.selectItemFromLookupModal('credential-select', machineCredential.name);
     cy.getByDataCy('Submit').click();
