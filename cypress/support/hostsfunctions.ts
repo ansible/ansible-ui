@@ -45,7 +45,7 @@ export function createAndCheckHost(host_type: string, inventory: string) {
   return hostName;
 }
 
-function createHost(host_type: string, inventoryID: number) {
+export function createHost(host_type: string, inventoryID: number) {
   const hostName = 'E2E Host ' + randomString(4);
   // create host with no verify
   if (host_type === 'inventory_host') {
@@ -126,7 +126,7 @@ function navigateToHost(host_type: string, name: string, data: string, inventory
   cy.get(data).click();
 }
 
-function navigateToBaseView(host_type: string, inventoryName: string) {
+export function navigateToBaseView(host_type: string, inventoryName: string) {
   //function for navigeate to host list view or inventory host list view
   if (host_type === 'inventory_host') {
     cy.navigateTo('awx', 'inventories');
