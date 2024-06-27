@@ -449,6 +449,7 @@ describe('Execution Environments: User/Team access', () => {
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
+    cy.filterTableByMultiSelect('name', [execEnvName]);
     cy.clickTableRowLink('name', execEnvName, { disableFilter: true });
     cy.hasDetail('Name', execEnv.name);
     cy.clickTab(/^User Access$/, true);
@@ -499,6 +500,7 @@ describe('Execution Environments: User/Team access', () => {
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
+    cy.filterTableByMultiSelect('name', [execEnvName]);
     cy.clickTableRowLink('name', execEnvName, { disableFilter: true });
     cy.hasDetail('Name', execEnvName);
     cy.clickTab(/^Team Access$/, true);
