@@ -56,7 +56,7 @@ describe('TeamAccess.cy.ts', () => {
     );
     cy.get('input[id="select-all"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
-    cy.get('[data-cy="remove-selected-roles"]').click();
+    cy.get('[data-cy="remove-roles"]').click();
     cy.get('div[role="dialog"]').within(() => {
       cy.contains('Team Assignment 1');
       cy.get('input[id="confirm"]').click();
