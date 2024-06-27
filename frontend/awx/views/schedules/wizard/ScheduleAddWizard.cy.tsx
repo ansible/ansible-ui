@@ -91,7 +91,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.singleSelectByDataCy('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
 
@@ -284,7 +284,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
-      cy.selectDropdownOptionByResourceName('inventory', 'Mock Inventory');
+      cy.singleSelectByDataCy('inventory', 'Mock Inventory');
       cy.selectDropdownOptionByResourceName('inventory-source-select', 'Mock Inventory source');
 
       cy.get('[data-cy="name"]').type('Test Schedule');
@@ -377,7 +377,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.singleSelectByDataCy('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -475,7 +475,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.singleSelectByDataCy('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);

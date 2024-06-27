@@ -635,7 +635,7 @@ describe('Projects', () => {
         cy.selectTableRow(jobTemplate.name, false);
         cy.getBy('[data-cy="edit-template"]').click();
         cy.verifyPageTitle('Edit Job Template');
-        cy.selectDropdownOptionByResourceName('project', newProject.name);
+        cy.singleSelectByDataCy('project', newProject.name);
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
         cy.getByDataCy('Submit').click();
         cy.wait('@edited')

@@ -156,7 +156,7 @@ describe.skip('Schedules - Create and Delete', function () {
         cy.verifyPageTitle('Schedules');
         cy.getBy('[data-cy="create-schedule"]').click();
         cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
-        cy.selectDropdownOptionByResourceName('inventory', `${specificInventory.name}`);
+        cy.singleSelectByDataCy('inventory', `${specificInventory.name}`);
         cy.selectDropdownOptionByResourceName(
           'inventory-source-select',
           `${specificInventorySource.name}`

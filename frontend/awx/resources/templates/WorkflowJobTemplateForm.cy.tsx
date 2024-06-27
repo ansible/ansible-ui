@@ -42,7 +42,7 @@ describe('Create job template ', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
 
-    cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
+    cy.singleSelectByDataCy('inventory', 'Demo Inventory');
 
     cy.clickButton('Create workflow job template');
 

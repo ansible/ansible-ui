@@ -16,7 +16,7 @@ import { PageFormInstanceGroupSelect } from '../../administration/instance-group
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { awxAPI } from '../../common/api/awx-utils';
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
-import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
+import { PageFormSelectInventory } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 
@@ -97,14 +97,14 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         ]}
         placeholderText={t('Select job type')}
       />
-      <PageFormInventorySelect<JobTemplateForm>
+      <PageFormSelectInventory<JobTemplateForm>
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
-        name="inventory"
+        name="inventory.id"
         isRequired={!isInventoryPrompted}
       />
-      <PageFormProjectSelect<JobTemplateForm> name="project" isRequired />
+      <PageFormProjectSelect<JobTemplateForm> name="project.id" isRequired />
 
       <PageFormSelect<JobTemplateForm>
         name="playbook"
