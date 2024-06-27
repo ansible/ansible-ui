@@ -516,7 +516,7 @@ describe('Workflow Visualizer: Add Nodes', () => {
       .should('be.visible')
       .contains('There are currently no nodes in this workflow');
     cy.getByDataCy('add-node-button').should('be.visible').contains('Add step');
-    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+    cy.getByDataCy('workflow-visualizer-toolbar-close').click();
     cy.location('pathname').should('match', /\/workflow-job-template\/\d+\/details/);
     cy.verifyPageTitle(jtName);
     cy.getByDataCy('label-name').should('contain', 'Name');
