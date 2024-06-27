@@ -110,6 +110,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
   });
 
+  //there is NO jobs tab in constructed inventory -> host
   it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
     //1) Use the inventory and host
     //2) create a job template that uses that inventory, utilize a playbook that will cause the job to be long running
