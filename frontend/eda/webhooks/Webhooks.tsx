@@ -24,7 +24,7 @@ export function Webhooks() {
   const rowActions = useWebhookActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Event streams')} description={t('Event streams.')} />
+      <PageHeader title={t('Event Streams')} description={t('Event streams.')} />
       <PageTable
         id="eda-webhooks-table"
         tableColumns={tableColumns}

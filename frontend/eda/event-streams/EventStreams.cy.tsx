@@ -59,7 +59,7 @@ describe('EventStreams.cy.ts', () => {
     cy.mount(<EventStreams />);
     cy.get('h1').should('contain', 'Event Streams');
     cy.get('tbody').find('tr').should('have.length', 10);
-    cy.contains(/^Event streams.$/).should('be.visible');
+    cy.contains(/^Event Streams.$/).should('be.visible');
     cy.get('[data-cy="id-column-header"]').should('be.visible');
     cy.get('[data-cy="name-column-header"]').should('be.visible');
     cy.get('[data-cy="status-column-header"]').should('be.visible');

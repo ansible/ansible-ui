@@ -67,7 +67,7 @@ export function WebhookPage() {
       <PageHeader
         title={webhook?.name}
         breadcrumbs={[
-          { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+          { label: t('Event Streams'), to: getPageUrl(EdaRoute.Webhooks) },
           { label: webhook?.name },
         ]}
         headerActions={
@@ -80,7 +80,7 @@ export function WebhookPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Event streams'),
+          label: t('Back to Event Streams'),
           page: EdaRoute.Webhooks,
           persistentFilterKey: 'webhooks',
         }}

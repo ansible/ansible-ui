@@ -106,6 +106,7 @@ export function WebhookDetails() {
             value={webhook?.test_headers}
             showCopyToClipboard={true}
             label={t('Test headers')}
+            toggleLanguage={false}
             helpText={t(
               'The HTTP Headers received from the Sender. Any of these can be used in the "Include headers" field.'
             )}
@@ -117,6 +118,7 @@ export function WebhookDetails() {
           <PageDetailCodeEditor
             value={webhook?.test_content}
             showCopyToClipboard={true}
+            toggleLanguage={false}
             label={t('Test content')}
             helpText={t('Test content')}
           />
