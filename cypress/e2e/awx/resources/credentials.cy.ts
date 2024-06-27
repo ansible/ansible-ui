@@ -321,11 +321,6 @@ describe('Credentials', () => {
 });
 
 describe('Create Credentials of different types', () => {
-  type MockCredentialData = {
-    name: string;
-    required?: Array<{ field: string; dataCy: string }>;
-    fields?: Array<{ id: string; value: string; dataCy: string }>;
-  };
   let organization: Organization;
   before(() => {
     cy.login();
@@ -335,60 +330,6 @@ describe('Create Credentials of different types', () => {
   });
   afterEach(() => {
     cy.deleteAwxOrganization(organization);
-  });
-  // FLAKY_06_13_2024
-  it.skip('credential creation of 30 different credential types', function () {
-    cy.fixture<MockCredentialData[]>('credentialsTestData').as('createCredentials');
-    cy.get('@createCredentials').then((fixture) => {
-      const credentialTypes = fixture as unknown as MockCredentialData[];
-      cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`).as('getCredentialTypes');
-      cy.navigateTo('awx', 'credentials');
-      credentialTypes.forEach((item) => {
-        const credentialName = `E2E Credential ${randomE2Ename()}`;
-        cy.getByDataCy('create-credential').click();
-        cy.verifyPageTitle('Create Credential');
-        cy.getByDataCy('name').should('be.visible').type(credentialName);
-        cy.wait('@getCredentialTypes').then(() => {
-          cy.singleSelectByDataCy('credential_type', `${item.name}`, true);
-          if (Array.isArray(item.required)) {
-            (item.required as { field: string; dataCy: string }[]).forEach((credentialType) => {
-              switch (item.name) {
-                case 'HashiCorp Vault Secret Lookup':
-                  cy.getByDataCy(`[data-cy="${credentialType.dataCy}"]`).type(
-                    `${credentialType.field}`
-                  );
-                  cy.selectDropdownOptionByResourceName('api-version', 'v1');
-                  break;
-                case 'Ansible Galaxy/Automation Hub API Token':
-                  cy.singleSelectByDataCy('organization', organization.name);
-                  cy.getByDataCy(`[data-cy="${credentialType.dataCy}"]`).type(
-                    `${credentialType.field}`
-                  );
-                  break;
-                case 'GPG Public Key':
-                  cy.get('#gpg-public-key').type(`${credentialType.field}`);
-                  break;
-                case 'Terraform backend configuration':
-                  cy.getByDataCy('configuration-form-group').type(`${credentialType.field}`);
-                  break;
-                default:
-                  cy.getByDataCy(`[data-cy="${credentialType.dataCy}"]`).type(
-                    `${credentialType.field}`
-                  );
-              }
-            });
-          }
-          cy.intercept('POST', awxAPI`/credentials/`).as('created');
-          cy.getByDataCy('Submit').click();
-          cy.wait('@created');
-          cy.verifyPageTitle(credentialName);
-          cy.clickPageAction('delete-credential');
-          cy.get('#confirm').click();
-          cy.clickButton(/^Delete credential/);
-          cy.verifyPageTitle('Credentials');
-        });
-      });
-    });
   });
   it('create credential using custom credential type', () => {
     cy.createAwxCredentialType().then((credType) => {
