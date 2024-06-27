@@ -198,10 +198,18 @@ export function RepositoryForm() {
   return (
     <PageLayout>
       <PageHeader
-        title={isEdit ? t('Edit Repository') : t('Create Repository')}
+        title={
+          isEdit
+            ? t('Edit {{repositoryName}}', { repositoryName: repo?.name })
+            : t('Create repository')
+        }
         breadcrumbs={[
           { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
-          { label: isEdit ? t('Edit Repository') : t('Create Repository') },
+          {
+            label: isEdit
+              ? t('Edit {{repositoryName}}', { repositoryName: repo?.name })
+              : t('Create repository'),
+          },
         ]}
       />
       <HubPageForm<RepositoryFormProps>

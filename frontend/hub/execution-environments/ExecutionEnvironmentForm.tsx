@@ -166,13 +166,32 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       <PageHeader
         title={
           props.mode === 'edit'
-            ? t('Edit Execution Environment')
-            : t('Create Execution Environment')
+            ? t('Edit {{executionenvironmentName}}', {
+                executionenvironmentName: executionEnvironment.data?.name,
+              })
+            : t('Create execution environment')
         }
-        breadcrumbs={[
-          { label: t('Execution Environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
-          { label: t(' Execution Environment') },
-        ]}
+        breadcrumbs={
+          props.mode === 'edit'
+            ? [
+                {
+                  label: t('Execution Environments'),
+                  to: getPageUrl(HubRoute.ExecutionEnvironments),
+                },
+                {
+                  label: t('Edit {{executionenvironmentName}}', {
+                    executionenvironmentName: executionEnvironment.data?.name,
+                  }),
+                },
+              ]
+            : [
+                {
+                  label: t('Execution Environments'),
+                  to: getPageUrl(HubRoute.ExecutionEnvironments),
+                },
+                { label: t('Create execution environment') },
+              ]
+        }
       />
 
       {!isLoading && (

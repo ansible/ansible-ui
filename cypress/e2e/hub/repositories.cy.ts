@@ -57,7 +57,7 @@ describe('Repositories', () => {
 
     // Create repository
     cy.getByDataCy('create-repository').click();
-    cy.verifyPageTitle('Create Repository');
+    cy.verifyPageTitle('Create repository');
     cy.getByDataCy('name').type(repositoryName);
     cy.getByDataCy('description').type(repositoryDescription);
     cy.intercept({
@@ -103,7 +103,7 @@ describe('Repositories', () => {
     cy.clickTableRowAction('name', repository.name, 'edit-repository', { inKebab: true });
 
     // Edit repository
-    cy.verifyPageTitle('Edit Repository');
+    cy.verifyPageTitle(`Edit ${repository.name}`);
     cy.getByDataCy('description').clear().type(repositoryDescription);
     cy.getByDataCy('Submit').click();
 
