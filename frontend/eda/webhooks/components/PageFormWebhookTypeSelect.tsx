@@ -26,10 +26,10 @@ export function PageFormSelectWebhookType<
     <PageFormSingleSelectEdaResource<EdaCredentialType, TFieldValues, TFieldName>
       name={props.name}
       id="webhook_type_id"
-      label={t('Webhook type')}
-      placeholder={t('Select webhook type')}
-      queryPlaceholder={t('Loading webhook types...')}
-      queryErrorText={t('Error loading webhook types')}
+      label={t('Event stream type')}
+      placeholder={t('Select event stream type')}
+      queryPlaceholder={t('Loading event stream types...')}
+      queryErrorText={t('Error loading event stream types')}
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}

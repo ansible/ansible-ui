@@ -236,7 +236,7 @@ export function RulebookActivationInputs() {
       />
       <PageFormMultiSelect<IEdaRulebookActivationInputs>
         name="webhooks"
-        label={t('Webhook(s)')}
+        label={t('Event stream(s)')}
         options={
           webhooks?.results
             ? webhooks.results.map((item) => ({
@@ -245,8 +245,8 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        placeholder={t('Select webhook(s)')}
-        footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create webhook</Link>}
+        placeholder={t('Select event stream(s)')}
+        footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create event stream</Link>}
       />
 
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>

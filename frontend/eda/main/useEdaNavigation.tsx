@@ -327,7 +327,7 @@ export function useEdaNavigation() {
     },
     {
       id: EdaRoute.Webhooks,
-      label: t('Webhooks'),
+      label: t('Event streams'),
       path: 'webhooks',
       children: [
         {

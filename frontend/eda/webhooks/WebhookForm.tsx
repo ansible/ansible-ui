@@ -60,7 +60,7 @@ function WebhookInputs() {
         isRequired
         labelHelpTitle={t('Name')}
         labelHelp={t(
-          'The name should match the source name defined in the rulebook. If the source name matches we will swap the webhook in the rulebook with this webhook.'
+          'The name should match the source name defined in the rulebook. If the source name matches we will swap the event source in the rulebook with this event source.'
         )}
         maxLength={150}
       />
@@ -78,7 +78,7 @@ function WebhookInputs() {
           name="webhook_type"
           data-cy="type-form-field"
           isRequired
-          label={t('Webhook type')}
+          label={t('Event stream type')}
         />
       </PageFormHidden>
       <PageFormSelectWebhookCredential<IEdaWebhookCreate>
@@ -125,7 +125,7 @@ function WebhookEditInputs() {
         name="webhook_type"
         data-cy="type-form-field"
         isReadOnly
-        label={t('Webhook type')}
+        label={t('Event stream type')}
       />
       <PageFormSelectWebhookCredential<IEdaWebhookCreate>
         name="eda_credential_id"
@@ -179,14 +179,14 @@ export function CreateWebhook() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Webhook')}
+        title={t('Create event stream')}
         breadcrumbs={[
-          { label: t('Webhooks'), to: getPageUrl(EdaRoute.Webhooks) },
-          { label: t('Create Webhook') },
+          { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+          { label: t('Create event stream') },
         ]}
       />
       <EdaPageForm
-        submitText={t('Create webhook')}
+        submitText={t('Create event stream')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -221,8 +221,8 @@ export function EditWebhook() {
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Webhooks'), to: getPageUrl(EdaRoute.Webhooks) },
-            { label: t('Edit Webhook') },
+            { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+            { label: t('Edit event stream') },
           ]}
         />
       </PageLayout>
@@ -231,14 +231,14 @@ export function EditWebhook() {
     return (
       <PageLayout>
         <PageHeader
-          title={`${t('Edit')} ${webhook?.name || t('Webhook')}`}
+          title={`${t('Edit')} ${webhook?.name || t('event stream')}`}
           breadcrumbs={[
-            { label: t('Webhooks'), to: getPageUrl(EdaRoute.Webhooks) },
-            { label: `${t('Edit')} ${webhook?.name || t('Webhook')}` },
+            { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+            { label: `${t('Edit')} ${webhook?.name || t('event stream')}` },
           ]}
         />
         <EdaPageForm
-          submitText={t('Save webhook')}
+          submitText={t('Save event stream')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}

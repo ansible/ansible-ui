@@ -41,7 +41,7 @@ export function WebhookPage() {
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         isPinned: true,
-        label: t('Edit webhook'),
+        label: t('Edit event stream'),
         onClick: (webhook: EdaWebhook) =>
           pageNavigate(EdaRoute.EditWebhook, { params: { id: webhook.id } }),
       },
@@ -52,7 +52,7 @@ export function WebhookPage() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete webhook'),
+        label: t('Delete event stream'),
         onClick: (webhook: EdaWebhook) => deleteWebhooks([webhook]),
         isDanger: true,
       },
@@ -67,7 +67,7 @@ export function WebhookPage() {
       <PageHeader
         title={webhook?.name}
         breadcrumbs={[
-          { label: t('Webhooks'), to: getPageUrl(EdaRoute.Webhooks) },
+          { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
           { label: webhook?.name },
         ]}
         headerActions={
@@ -80,7 +80,7 @@ export function WebhookPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Webhooks'),
+          label: t('Back to Event streams'),
           page: EdaRoute.Webhooks,
           persistentFilterKey: 'webhooks',
         }}

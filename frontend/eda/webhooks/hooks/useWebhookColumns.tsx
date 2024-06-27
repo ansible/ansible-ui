@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ColumnTableOption,
+  CopyCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../framework';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
@@ -56,8 +62,7 @@ export function useWebhookColumns() {
       },
       {
         header: t('URL'),
-        type: 'description',
-        value: (webhook) => webhook.url,
+        cell: (webhook) => <CopyCell text={webhook?.url ? webhook.url : ''} />,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
