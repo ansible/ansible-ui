@@ -84,7 +84,7 @@ export function SchedulesList(props: { sublistEndpoint?: string; url?: string })
               'Please contact your organization administrator if there is an issue with your access.'
             )
       }
-      emptyStateIcon={
+      emptyStateNoDataIcon={
         canCreateSchedule ? (isMissingResource ? ExclamationTriangleIcon : undefined) : CubesIcon
       }
       emptyStateButtonIcon={<PlusCircleIcon />}
