@@ -99,7 +99,6 @@ describe('Workflow Visualizer', () => {
       cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
       cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
       cy.getBy('button[id="fit-to-screen"]').click();
-      //cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
       cy.getByDataCy('workflow-visualizer-toolbar-close').click();
       cy.verifyPageTitle(`${workflowJobTemplate.name}`);
     });
@@ -121,7 +120,6 @@ describe('Workflow Visualizer', () => {
       cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
       });
-      //cy.get('li[data-cy="add-node-and-link"]').click();
       cy.getByDataCy('add-node-and-link').click();
       cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -137,7 +135,6 @@ describe('Workflow Visualizer', () => {
         'have.text',
         'Success alert:Successfully saved workflow visualizer'
       );
-      //cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
       cy.getByDataCy('workflow-visualizer-toolbar-close').click();
       cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
     });
@@ -164,7 +161,6 @@ describe('Workflow Visualizer', () => {
                 cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
                   force: true,
                 });
-                //cy.get('li[data-cy="edit-node"]').click();
                 cy.getByDataCy('edit-node').click();
                 cy.getByDataCy('node-type-form-group').should(
                   'have.text',
@@ -187,7 +183,6 @@ describe('Workflow Visualizer', () => {
             'have.text',
             'Success alert:Successfully saved workflow visualizer'
           );
-          //cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
           cy.getByDataCy('workflow-visualizer-toolbar-close').click();
           cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
         }
@@ -216,13 +211,9 @@ describe('Workflow Visualizer', () => {
           cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).within(() => {
             cy.getByDataCy('edge-context-menu_kebab').click({ force: true });
           });
-          //cy.get('li[data-cy="fail"]').click();
           cy.getByDataCy('fail').click();
-          //cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
           cy.getByDataCy('workflow-visualizer-toolbar-close').click();
-          //cy.get('div[data-cy="visualizer-unsaved-changes-modal"]').should('be.visible');
           cy.getByDataCy('visualizer-unsaved-changes-modal').click();
-          //cy.get('button[data-cy="exit-without-saving"]').click();
           cy.getByDataCy('exit-without-saving').click();
           cy.verifyPageTitle(`${workflowJobTemplate.name}`);
         });
@@ -244,7 +235,6 @@ describe('Workflow Visualizer', () => {
       cy.get(`g[data-id="1-unsavedNode"] .pf-topology__node__action-icon`).click({
         force: true,
       });
-      //cy.get('li[data-cy="edit-node"]').click();
       cy.getByDataCy('edit-node').click();
       cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
       cy.selectDropdownOptionByResourceName('project', `${project.name}`);
@@ -255,7 +245,6 @@ describe('Workflow Visualizer', () => {
       cy.get('g[data-id="1-unsavedNode"]').should('have.text', 'ALLTest NodeProject Node');
       cy.clickButton('Save');
       cy.getByDataCy('alert-toaster').should('be.visible');
-      //cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
       cy.getByDataCy('workflow-visualizer-toolbar-close').click();
       cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
     });
@@ -279,7 +268,6 @@ describe('Workflow Visualizer', () => {
           cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
             force: true,
           });
-          //cy.get('li[data-cy="remove-node"]').click();
           cy.getByDataCy('remove-node').click();
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove');
@@ -287,7 +275,6 @@ describe('Workflow Visualizer', () => {
           cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
             force: true,
           });
-          //cy.get('li[data-cy="remove-node"]').click();
           cy.getByDataCy('remove-node').click();
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove');
@@ -304,7 +291,6 @@ describe('Workflow Visualizer', () => {
           cy.get(`g[class*="unsavedNode-node-label"] .pf-topology__node__action-icon`).click({
             force: true,
           });
-          //cy.get('li[data-cy="add-node-and-link"]').click();
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
           cy.selectDropdownOptionByResourceName('project', `${project.name}`);
@@ -411,7 +397,6 @@ describe('Workflow Visualizer', () => {
           cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
             force: true,
           });
-          //cy.get('li[data-cy="add-node-and-link"]').click();
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
@@ -425,7 +410,6 @@ describe('Workflow Visualizer', () => {
           cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
             force: true,
           });
-          //cy.get('li[data-cy="remove-node"]').click();
           cy.getByDataCy('remove-node').click();
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove');
@@ -435,7 +419,6 @@ describe('Workflow Visualizer', () => {
             'have.text',
             'Success alert:Successfully saved workflow visualizer'
           );
-          //cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
           cy.getByDataCy('workflow-visualizer-toolbar-close').click();
           cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
         });
