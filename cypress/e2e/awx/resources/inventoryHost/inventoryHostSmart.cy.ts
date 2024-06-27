@@ -59,7 +59,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     });
   });
 
-  //there is NO group tab in smart inventory
+  //there is NO group tab in smart inventory -> host
   it.skip('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
     //1) Use the inventory created in before, access the host tab of that inventory, visit the host details page
     //2) Use a host, EE, and credential - these resources are needed to run a command against a host
@@ -74,6 +74,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
   });
 
+  //there is NO jobs tab in smart inventory -> host
   it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
     //1) Use the inventory and host
     //2) create a job template that uses that inventory, utilize a playbook that will cause the job to be long running
