@@ -18,13 +18,15 @@ describe('Inventory Sources', () => {
   let inventorySource: InventorySource;
 
   beforeEach(function () {
-    project = this.globalProject as Project;
     cy.createAwxOrganization().then(function (org) {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventory = inv;
-        cy.createAwxInventorySource(inv, project).then((invSrc) => {
-          inventorySource = invSrc;
+        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+          project = proj;
+          cy.createAwxInventorySource(inv, project).then((invSrc) => {
+            inventorySource = invSrc;
+          });
         });
       });
     });
@@ -33,6 +35,7 @@ describe('Inventory Sources', () => {
   afterEach(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
   });
 
   function goToSourceList(inventoryName: string) {
@@ -82,7 +85,7 @@ describe('Inventory Sources', () => {
             '[data-cy="executionEnvironment-form-group"]',
             executionEnvironment.name
           );
-          cy.selectSingleSelectOption('[data-cy="credential"]', credentialName);
+          cy.singleSelectBy('[data-cy="credential"]', credentialName);
           cy.getBy('[data-cy="host-filter"]').type('/^test$/');
           cy.getBy('[data-cy="verbosity"]').type('1');
           cy.getBy('[data-cy="enabled-var"]').type('foo.bar');
