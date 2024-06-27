@@ -184,7 +184,7 @@ export function useJobFinishedColumn<T extends UnifiedJob>(
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Finished'),
-      cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.started} />,
+      cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.finished} />,
       sort: 'finished',
       card: cardOption ?? ColumnCardOption.hidden,
       list: listOption ?? ColumnListOption.secondary,
