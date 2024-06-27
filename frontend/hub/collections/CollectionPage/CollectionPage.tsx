@@ -225,7 +225,7 @@ export function CollectionPage() {
           { label: t('Install'), page: HubRoute.CollectionInstall },
           { label: t('Documentation'), page: HubRoute.CollectionDocumentation },
           { label: t('Contents'), page: HubRoute.CollectionContents },
-          { label: t('Import log'), page: HubRoute.CollectionImportLog },
+          { label: t('Import Log'), page: HubRoute.CollectionImportLog },
           { label: t('Dependencies'), page: HubRoute.CollectionDependencies },
           { label: t('Distributions'), page: HubRoute.CollectionDistributions },
         ]}

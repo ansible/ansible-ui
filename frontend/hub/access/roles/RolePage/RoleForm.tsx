@@ -51,13 +51,13 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Role')}
+        title={t('Create role')}
         breadcrumbs={[
           {
             label: props.breadcrumbLabelForPreviousPage || t('Roles'),
             to: getPageUrl(HubRoute.Roles),
           },
-          { label: t('Create Role') },
+          { label: t('Create role') },
         ]}
       />
       <HubPageForm<RoleInput>
@@ -119,13 +119,13 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Role')}
+        title={role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles')}
         breadcrumbs={[
           {
-            label: props.breadcrumbLabelForPreviousPage || t('Roles'),
+            label: t('Roles'),
             to: getPageUrl(HubRoute.Roles),
           },
-          { label: t('Edit Role') },
+          { label: role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Role') },
         ]}
       />
       <HubPageForm<RoleInput>
