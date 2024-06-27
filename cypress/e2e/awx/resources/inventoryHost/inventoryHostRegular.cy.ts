@@ -9,6 +9,7 @@ import {
   checkHostGroup,
   createAndEditAndDeleteHost,
   testHostBulkDelete,
+  checkFactsInHost,
   createHost,
 } from '../../../../support/hostsfunctions';
 
@@ -63,12 +64,13 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     testHostBulkDelete('inventory_host', inventory);
   });
 
-  it.skip("can view a host's facts on the facts tab of a host inside an inventory", () => {
+  it("can view a host's facts on the facts tab of a host inside an inventory", () => {
     //1) Use the inventory, access the host tab of that inventory
     //2) Visit the host details page, then navigate to the host Facts tab
     //3) Assert that no facts are showing
     //4) Create a JT designed to populate the facts for the host, launch the job template
     //5) Navigate back to the facts tab of that host and assert that the facts exist
+    checkFactsInHost(inventory, 'inventory_host');
   });
 
   it.skip('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
