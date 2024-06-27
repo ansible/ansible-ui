@@ -42,7 +42,9 @@ export function PlatformMasthead() {
   }, [refreshActivePlatformUser]);
 
   return (
-    <PageMasthead brand={<AAPLogo style={{ height: 48 }} />}>
+    <PageMasthead
+      brand={<AAPLogo style={{ height: 48, textDecoration: 'none', color: 'white' }} />}
+    >
       <ToolbarItem style={{ flexGrow: 1 }}>
         {!isSmOrLarger && <RedHatIcon style={{ height: 38, width: 38 }} />}
       </ToolbarItem>
