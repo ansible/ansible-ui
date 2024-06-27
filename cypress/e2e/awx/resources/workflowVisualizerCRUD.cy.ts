@@ -503,30 +503,29 @@ describe('Workflow Visualizer: Add Nodes', () => {
 
   it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
     const jtName = 'E2E ' + randomString(4);
+    const description = 'this is a description';
     // Create workflow job template
     cy.navigateTo('awx', 'templates');
     cy.clickButton(/^Create template$/);
     cy.clickLink(/^Create workflow job template$/);
-    cy.get('[data-cy="name"]').type(jtName);
-    cy.get('[data-cy="description"]').type('this is a description');
-    cy.intercept('POST', awxAPI`/workflow_job_templates/`).as('newWfjt');
-    cy.get('[data-cy="Submit"]').click();
-    cy.wait('@newWfjt')
-      .its('response.body')
-      .then((wfjt: WorkflowJobTemplate) => {
-        expect(wfjt.description).to.eql('this is a description');
-        cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
-        cy.get('h4.pf-v5-c-empty-state__title-text').should(
-          'have.text',
-          'There are currently no nodes in this workflow'
-        );
-        cy.get('div.pf-v5-c-empty-state__actions').within(() => {
-          cy.get('[data-cy="add-node-button"]').should('be.visible');
-        });
-        cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
-        cy.getByDataCy('description').should('contain', wfjt.description);
-        cy.verifyPageTitle(`${jtName}`);
-        cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
-      });
+    cy.getByDataCy('name').type(jtName);
+    cy.getByDataCy('description').type(description);
+    cy.getByDataCy('Submit').click();
+    cy.location('pathname').should('match', /\/workflow-job-template\/\d+\/visualizer/);
+    cy.getByDataCy('empty-state-title')
+      .should('be.visible')
+      .contains('There are currently no nodes in this workflow');
+    cy.getByDataCy('add-node-button').should('be.visible').contains('Add step');
+    cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+    cy.location('pathname').should('match', /\/workflow-job-template\/\d+\/details/);
+    cy.verifyPageTitle(jtName);
+    cy.getByDataCy('label-name').should('contain', 'Name');
+    cy.getByDataCy('name').should('contain', jtName);
+    cy.getByDataCy('label-description').should('contain', 'Description');
+    cy.getByDataCy('description').should('contain', description);
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('delete-template').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete template');
   });
 });
