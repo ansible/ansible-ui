@@ -232,6 +232,7 @@ export function EditCredential() {
             onCancel={onCancel}
             defaultValue={{
               ...credential,
+              organization_id: credential?.organization?.id,
               credential_type_id: credential?.credential_type?.id || undefined,
             }}
           >
