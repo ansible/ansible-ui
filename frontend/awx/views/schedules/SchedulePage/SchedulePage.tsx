@@ -67,7 +67,7 @@ export function SchedulePage(props: {
   const breadCrumbs = useMemo(() => {
     const completedBreadcrumbs = props.initialBreadCrumbs.map((route) => {
       const isInventoryRoute = route.to.includes('-inventory-');
-      const inventoryType = inventory?.kind === '' ? 'inventory' : inventory?.kind;
+      const inventoryType = 'inventory';
 
       const allParams = {
         id: isInventoryRoute ? inventory?.id : resource?.id,
@@ -125,7 +125,6 @@ export function SchedulePage(props: {
     resource?.name,
     inventory?.id,
     inventory?.name,
-    inventory?.kind,
     isInventorySource,
     props.initialBreadCrumbs,
     schedule?.name,
