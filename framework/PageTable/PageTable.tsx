@@ -125,8 +125,8 @@ export type PageTableProps<T extends object> = {
 
   emptyStateTitle: string;
   emptyStateDescription?: string | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  emptyStateIcon?: React.ComponentType<any>;
+  emptyStateIcon?: React.ComponentClass;
+  emptyStateNoDataIcon?: React.ComponentClass;
   emptyStateActions?: IPageAction<T>[];
   emptyStateButtonIcon?: React.ReactNode;
   emptyStateButtonText?: string | null;
@@ -277,6 +277,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
       <EmptyStateNoData
         title={props.emptyStateTitle}
         description={props.emptyStateDescription}
+        icon={props.emptyStateNoDataIcon}
         button={
           (props.emptyStateButtonClick && (
             <Button
@@ -574,7 +575,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           <EmptyState isFullHeight>
             <EmptyStateHeader
               titleText={<>{translations.noResultsFound}</>}
-              icon={<EmptyStateIcon icon={SearchIcon} />}
+              icon={<EmptyStateIcon icon={props.emptyStateIcon ?? SearchIcon} />}
               headingLevel="h2"
             />
             <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
