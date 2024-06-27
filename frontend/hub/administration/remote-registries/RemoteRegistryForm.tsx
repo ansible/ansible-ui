@@ -80,7 +80,7 @@ export function CreateRemoteRegistry() {
       <PageHeader
         title={t('Create remote registry ')}
         breadcrumbs={[
-          { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
+          { label: t('Remote Registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
           { label: t('Create remote registry') },
         ]}
       />
@@ -184,10 +184,18 @@ export function EditRemoteRegistry() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit remote registry ')}
+        title={
+          remoteRegistry?.name
+            ? t('Edit {{remoteregistryName}}', { remoteregistryName: remoteRegistry?.name })
+            : t('Remote Registry')
+        }
         breadcrumbs={[
-          { label: t('Remote registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
-          { label: t('Remote registry') },
+          { label: t('Remote Registries'), to: getPageUrl(HubRoute.RemoteRegistries) },
+          {
+            label: remoteRegistry?.name
+              ? t('Edit {{remoteregistryName}}', { remoteregistryName: remoteRegistry?.name })
+              : t('Remote Registry'),
+          },
         ]}
       />
       <HubPageForm<RemoteRegistryProps>

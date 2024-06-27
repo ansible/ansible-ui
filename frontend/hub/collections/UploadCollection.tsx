@@ -52,10 +52,10 @@ export function UploadCollection() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Upload Collection')}
+        title={t('Upload collection')}
         breadcrumbs={[
           { label: t('Collections'), to: getPageUrl(HubRoute.Collections) },
-          { label: t('Upload Collection') },
+          { label: t('Upload collection') },
         ]}
       />
       <UploadCollectionByFile />
