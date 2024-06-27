@@ -22,88 +22,44 @@ describe('Workflow Visualizer', () => {
   before(function () {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxInventory({ organization: organization.id })
-        .then((i) => {
-          inventory = i;
-        })
-        .then(() => {
-          cy.createAwxProject({ organization: organization.id })
-            .then((proj) => {
-              project = proj;
-            })
-            .then(() => {
-              cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-                inventorySource = invSrc;
-              });
-              cy.createAwxJobTemplate({
-                organization: organization.id,
-                project: project.id,
-                inventory: inventory.id,
-              }).then((jt) => (jobTemplate = jt));
-            });
-        });
+      cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        inventory = i;
+      });
     });
   });
 
   beforeEach(function () {
-    cy.createAwxWorkflowJobTemplate({
-      organization: organization.id,
-      inventory: inventory.id,
-    }).then((wfjt) => (workflowJobTemplate = wfjt));
+    cy.createAwxProject({ organization: organization.id })
+      .then((proj) => {
+        project = proj;
+      })
+      .then(() => {
+        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+          inventorySource = invSrc;
+        });
+        cy.createAwxJobTemplate({
+          organization: organization.id,
+          project: project.id,
+          inventory: inventory.id,
+        }).then((jt) => (jobTemplate = jt));
+        cy.createAwxWorkflowJobTemplate({
+          organization: organization.id,
+          inventory: inventory.id,
+        }).then((wfjt) => (workflowJobTemplate = wfjt));
+      });
   });
 
   afterEach(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
   });
 
   after(function () {
-    cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+    //cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-  });
-
-  describe('Workflow Visualizer: Add Nodes', () => {
-    it('should render a workflow visualizer view with multiple nodes present', () => {
-      cy.renderWorkflowVisualizerNodesFromFixtureFile(
-        `${workflowJobTemplate.name}`,
-        'wf_vis_testing_A.json'
-      );
-      cy.get('[class*="66-node-label"]')
-        .should('exist')
-        .should('contain', 'Cleanup Activity Stream');
-      cy.get('[class*="43-node-label"]').should('exist').should('contain', 'bar');
-      cy.get('[class*="42-node-label"]').should('exist').should('contain', '1');
-      cy.get('[class*="41-node-label"]').should('exist').should('contain', 'Demo Project');
-    });
-
-    it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
-      const jtName = 'E2E ' + randomString(4);
-      // Create workflow job template
-      cy.navigateTo('awx', 'templates');
-      cy.clickButton(/^Create template$/);
-      cy.clickLink(/^Create workflow job template$/);
-      cy.get('[data-cy="name"]').type(jtName);
-      cy.get('[data-cy="description"]').type('this is a description');
-      cy.intercept('POST', awxAPI`/workflow_job_templates/`).as('newWfjt');
-      cy.get('[data-cy="Submit"]').click();
-      cy.wait('@newWfjt')
-        .its('response.body')
-        .then((wfjt: WorkflowJobTemplate) => {
-          expect(wfjt.description).to.eql('this is a description');
-          cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
-          cy.get('h4.pf-v5-c-empty-state__title-text').should(
-            'have.text',
-            'There are currently no nodes in this workflow'
-          );
-          cy.get('div.pf-v5-c-empty-state__actions').within(() => {
-            cy.get('[data-cy="add-node-button"]').should('be.visible');
-          });
-          cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
-          cy.getByDataCy('description').should('contain', wfjt.description);
-          cy.verifyPageTitle(`${jtName}`);
-          cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
-        });
-    });
   });
 
   describe('Workflow Visualizer: Add Node to Existing Visualizer', () => {
@@ -510,5 +466,65 @@ describe('Workflow Visualizer', () => {
           cy.contains('Run on fail').should('not.exist');
         });
     });
+  });
+});
+
+describe('Workflow Visualizer: Add Nodes', () => {
+  let organization: Organization;
+  let inventory: Inventory;
+  let workflowJobTemplate: WorkflowJobTemplate;
+
+  before(function () {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
+      cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        inventory = i;
+      });
+    });
+  });
+
+  after(function () {
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+  });
+
+  it('should render a workflow visualizer view with multiple nodes present', () => {
+    cy.renderWorkflowVisualizerNodesFromFixtureFile(
+      `${workflowJobTemplate.name}`,
+      'wf_vis_testing_A.json'
+    );
+    cy.get('[class*="66-node-label"]').should('exist').should('contain', 'Cleanup Activity Stream');
+    cy.get('[class*="43-node-label"]').should('exist').should('contain', 'bar');
+    cy.get('[class*="42-node-label"]').should('exist').should('contain', '1');
+    cy.get('[class*="41-node-label"]').should('exist').should('contain', 'Demo Project');
+  });
+
+  it('Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel', () => {
+    const jtName = 'E2E ' + randomString(4);
+    // Create workflow job template
+    cy.navigateTo('awx', 'templates');
+    cy.clickButton(/^Create template$/);
+    cy.clickLink(/^Create workflow job template$/);
+    cy.get('[data-cy="name"]').type(jtName);
+    cy.get('[data-cy="description"]').type('this is a description');
+    cy.intercept('POST', awxAPI`/workflow_job_templates/`).as('newWfjt');
+    cy.get('[data-cy="Submit"]').click();
+    cy.wait('@newWfjt')
+      .its('response.body')
+      .then((wfjt: WorkflowJobTemplate) => {
+        expect(wfjt.description).to.eql('this is a description');
+        cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
+        cy.get('h4.pf-v5-c-empty-state__title-text').should(
+          'have.text',
+          'There are currently no nodes in this workflow'
+        );
+        cy.get('div.pf-v5-c-empty-state__actions').within(() => {
+          cy.get('[data-cy="add-node-button"]').should('be.visible');
+        });
+        cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').click();
+        cy.getByDataCy('description').should('contain', wfjt.description);
+        cy.verifyPageTitle(`${jtName}`);
+        cy.deleteAwxWorkflowJobTemplate(wfjt, { failOnStatusCode: false });
+      });
   });
 });
