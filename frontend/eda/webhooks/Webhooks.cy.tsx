@@ -121,13 +121,13 @@ describe('Webhooks.cy.ts', () => {
 
   it('Renders the correct webhooks columns', () => {
     cy.mount(<Webhooks />);
-    cy.get('h1').should('contain', 'Webhooks');
+    cy.get('h1').should('contain', 'Event streams');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('th', 'Name');
     cy.contains('th', 'Created');
   });
 
-  it('Can delete a Webhook not in use', () => {
+  it('Can delete an event stream not in use', () => {
     cy.mount(<Webhooks />);
     cy.intercept(
       { method: 'DELETE', url: edaAPI`/webhooks/1/` },
@@ -170,8 +170,8 @@ describe('Empty list', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<Webhooks />);
-    cy.contains(/^There are currently no webhooks created for your organization.$/);
-    cy.contains(/^Please create a webhook by using the button below.$/);
-    cy.contains('button', /^Create webhook$/).should('be.visible');
+    cy.contains(/^There are currently no event streams created for your organization.$/);
+    cy.contains(/^Please create an event stream by using the button below.$/);
+    cy.contains('button', /^Create event stream$/).should('be.visible');
   });
 });

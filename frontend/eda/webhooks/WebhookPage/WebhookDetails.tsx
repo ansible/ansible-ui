@@ -31,7 +31,7 @@ export function WebhookDetails() {
     <Scrollable>
       <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>{webhook?.name || ''}</PageDetail>
-        <PageDetail label={t('Webhook type')}>{webhook?.webhook_type || ''}</PageDetail>
+        <PageDetail label={t('Event stream type')}>{webhook?.webhook_type || ''}</PageDetail>
         <PageDetail label={t('Organization')}>
           {webhook && webhook.organization ? (
             <Link

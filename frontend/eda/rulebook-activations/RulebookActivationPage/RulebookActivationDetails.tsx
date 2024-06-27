@@ -101,7 +101,7 @@ export function RulebookActivationDetails() {
           </PageDetail>
         )}
         {rulebookActivation.webhooks && rulebookActivation.webhooks.length > 0 && (
-          <PageDetail label={t('Webhook(s)')}>
+          <PageDetail label={t('Event stream(s)')}>
             <LabelGroup>
               {rulebookActivation.webhooks.map((webhook) => (
                 <Label key={webhook?.id}>{webhook?.name}</Label>
