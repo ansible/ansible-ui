@@ -10,6 +10,7 @@ describe('Credential Types', () => {
   let inputCredType: string;
   let injectorCredType: string;
   let credential: Credential;
+  let organization: Organization;
 
   describe('Credential Types- List Actions', () => {
     const credentialName = 'E2E Custom Credential ' + randomString(4);
@@ -17,13 +18,16 @@ describe('Credential Types', () => {
       cy.createAwxCredentialType().then((credentialType: CredentialType) => {
         credType1 = credentialType;
 
-        cy.createAWXCredential({
-          name: credentialName,
-          kind: 'gce',
-          organization: (this.globalAwxOrganization as Organization).id,
-          credential_type: credType1.id,
-        }).then((cred) => {
-          credential = cred;
+        cy.createAwxOrganization().then((org) => {
+          organization = org;
+          cy.createAWXCredential({
+            name: credentialName,
+            kind: 'gce',
+            organization: organization.id,
+            credential_type: credType1.id,
+          }).then((cred) => {
+            credential = cred;
+          });
         });
       });
 
@@ -39,6 +43,7 @@ describe('Credential Types', () => {
     after(() => {
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it('can navigate to the details page, then to the credentials tab and view a related credential', function () {
@@ -99,22 +104,15 @@ describe('Credential Types', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
       cy.getByDataCy('edit-credential-type').click();
+      cy.verifyPageTitle('Edit Credential Type');
+      cy.url().should('contain', `/credential-types/${credType1.id}/edit`);
       cy.getBy('[class*="view-lines monaco-mouse-cursor-text"]')
         .eq(0)
         .type(inputCredType, { parseSpecialCharSequences: false });
-      cy.intercept('PATCH', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
-        'patchRequest'
-      );
       cy.getByDataCy('Submit').click();
-      cy.wait('@patchRequest')
-        .its('response')
-        .then((editedCredType) => {
-          expect(editedCredType?.statusCode).to.eql(403);
-          const stringAssertion = JSON.stringify(editedCredType?.body);
-          expect(stringAssertion).to.eql(
-            '{"detail":"Modifications to inputs are not allowed for credential types that are in use"}'
-          );
-        });
+      cy.contains(
+        'Modifications to inputs are not allowed for credential types that are in use'
+      ).should('be.visible');
     });
   });
 
