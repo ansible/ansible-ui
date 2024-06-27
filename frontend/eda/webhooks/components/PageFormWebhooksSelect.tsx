@@ -18,7 +18,7 @@ export function PageFormWebhookSelect<
       id="webhook-select"
       data-cy={'webhooks-select'}
       placeholder={t('Add event streams')}
-      labelHelpTitle={t('Event streams')}
+      labelHelpTitle={t('Event Streams')}
       labelHelp={props.labelHelp}
       label={t('Event stream')}
       selectTitle={t('Select an event stream')}

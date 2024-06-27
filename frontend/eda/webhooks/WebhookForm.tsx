@@ -181,7 +181,7 @@ export function CreateWebhook() {
       <PageHeader
         title={t('Create event stream')}
         breadcrumbs={[
-          { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+          { label: t('Event Streams'), to: getPageUrl(EdaRoute.Webhooks) },
           { label: t('Create event stream') },
         ]}
       />
@@ -221,7 +221,7 @@ export function EditWebhook() {
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+            { label: t('Event Streams'), to: getPageUrl(EdaRoute.Webhooks) },
             { label: t('Edit event stream') },
           ]}
         />
@@ -233,7 +233,7 @@ export function EditWebhook() {
         <PageHeader
           title={`${t('Edit')} ${webhook?.name || t('event stream')}`}
           breadcrumbs={[
-            { label: t('Event streams'), to: getPageUrl(EdaRoute.Webhooks) },
+            { label: t('Event Streams'), to: getPageUrl(EdaRoute.Webhooks) },
             { label: `${t('Edit')} ${webhook?.name || t('event stream')}` },
           ]}
         />

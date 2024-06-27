@@ -121,7 +121,7 @@ describe('Webhooks.cy.ts', () => {
 
   it('Renders the correct webhooks columns', () => {
     cy.mount(<Webhooks />);
-    cy.get('h1').should('contain', 'Event streams');
+    cy.get('h1').should('contain', 'Event Streams');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('th', 'Name');
     cy.contains('th', 'Created');
