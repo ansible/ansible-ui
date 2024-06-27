@@ -54,6 +54,6 @@ describe('Host Tests', () => {
   });
 
   it('can view host facts in stand alone host', () => {
-    checkFactsInHost(inventory);
+    checkFactsInHost(inventory, 'stand_alone');
   });
 });
