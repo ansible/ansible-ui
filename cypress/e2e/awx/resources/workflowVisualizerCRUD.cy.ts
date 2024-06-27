@@ -19,47 +19,43 @@ describe('Workflow Visualizer', () => {
   let approvalNode: WorkflowNode;
   let workflowJtNode: WorkflowNode;
 
-  before(function () {
+  beforeEach(function () {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxInventory({ organization: organization.id }).then((i) => {
-        inventory = i;
-      });
-    });
-  });
-
-  beforeEach(function () {
-    cy.createAwxProject({ organization: organization.id })
-      .then((proj) => {
-        project = proj;
-      })
-      .then(() => {
-        cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-          inventorySource = invSrc;
+      cy.createAwxInventory({ organization: organization.id })
+        .then((i) => {
+          inventory = i;
+        })
+        .then(() => {
+          cy.createAwxProject({ organization: organization.id })
+            .then((proj) => {
+              project = proj;
+            })
+            .then(() => {
+              cy.createAwxInventorySource(inventory, project).then((invSrc) => {
+                inventorySource = invSrc;
+              });
+              cy.createAwxJobTemplate({
+                organization: organization.id,
+                project: project.id,
+                inventory: inventory.id,
+              }).then((jt) => (jobTemplate = jt));
+              cy.createAwxWorkflowJobTemplate({
+                organization: organization.id,
+                inventory: inventory.id,
+              }).then((wfjt) => (workflowJobTemplate = wfjt));
+            });
         });
-        cy.createAwxJobTemplate({
-          organization: organization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => (jobTemplate = jt));
-        cy.createAwxWorkflowJobTemplate({
-          organization: organization.id,
-          inventory: inventory.id,
-        }).then((wfjt) => (workflowJobTemplate = wfjt));
-      });
+    });
   });
 
   afterEach(() => {
     cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-    cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
-  });
-
-  after(function () {
-    //cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   describe('Workflow Visualizer: Add Node to Existing Visualizer', () => {
@@ -481,6 +477,17 @@ describe('Workflow Visualizer: Add Nodes', () => {
         inventory = i;
       });
     });
+  });
+
+  beforeEach(function () {
+    cy.createAwxWorkflowJobTemplate({
+      organization: organization.id,
+      inventory: inventory.id,
+    }).then((wfjt) => (workflowJobTemplate = wfjt));
+  });
+
+  afterEach(function () {
+    cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
   });
 
   after(function () {
