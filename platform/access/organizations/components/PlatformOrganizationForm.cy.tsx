@@ -211,6 +211,29 @@ describe('PlatformOrganizationForm', () => {
     });
   });
 
+  it('should validate the Max Hosts field when a Controller service is registered closed license', () => {
+    const handleSubmit = cy.spy();
+    cy.stub(useAwxConfig, 'useAwxConfig').callsFake(() => ({
+      license_info: {
+        license_type: 'enterprise',
+      },
+    }));
+    cy.mount(
+      <GatewayServicesContext.Provider value={{ gateway: '', controller: '' }}>
+        <PlatformOrganizationForm handleSubmit={handleSubmit} />
+      </GatewayServicesContext.Provider>
+    );
+    cy.get('[data-cy="wizard-nav-item-details"] button').should('have.class', 'pf-m-current');
+    cy.get('[data-cy="organization-name"]').type('test organization');
+    cy.get('[data-cy="organization-description"]').type('test description');
+    cy.get('[data-cy="maxhosts"]').type('1.3');
+    cy.clickButton('Next');
+    cy.contains('This field must be an integer and have a value between 0 and 2147483647.').should(
+      'be.visible'
+    );
+    cy.get('[data-cy="wizard-nav-item-details"] button').should('have.class', 'pf-m-current');
+  });
+
   it('should submit a full organization when a Controller service is registered closed license', () => {
     const handleSubmit = cy.spy();
     cy.stub(useAwxConfig, 'useAwxConfig').callsFake(() => ({
