@@ -163,7 +163,9 @@ export function PageMultiSelect<
   const selectedOptions = useMemo(() => {
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
-      const option = options.find((option) => option.value === value);
+      const option = options.find(
+        (option) => (option.value as { id: number }).id === (value as { id: number }).id
+      );
       if (option) {
         selectedOptions.push(option);
       } else if (queryLabel) {
@@ -227,7 +229,10 @@ export function PageMultiSelect<
                         style={{ marginTop: -2, marginBottom: -2 }}
                         onClick={() =>
                           onSelect((previousValues) =>
-                            previousValues?.filter((v) => v !== option.value)
+                            previousValues?.filter(
+                              (v) =>
+                                (v as { id: number }).id !== (option.value as { id: number }).id
+                            )
                           )
                         }
                       >

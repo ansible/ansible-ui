@@ -13,7 +13,7 @@ export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
-  Value extends number = PathValue<FormData, Name>,
+  Value extends { id: number } = PathValue<FormData, Name>,
 >(props: {
   id?: string;
   name: Name;
@@ -66,7 +66,7 @@ export function PageFormMultiSelectAwxResource<
           options:
             response.results?.map((resource) => ({
               label: resource.name,
-              value: resource.id as PathValue<FormData, Name>,
+              value: resource as PathValue<FormData, Name>,
               description: resource.description,
             })) ?? [],
           next: response.results[response.results.length - 1]?.name,
@@ -98,8 +98,8 @@ export function PageFormMultiSelectAwxResource<
           queryParams={props.queryParams}
           defaultSelection={
             value && Array.isArray(value)
-              ? value.map((item: number) => {
-                  return { id: item };
+              ? value.map((item: { id: number }) => {
+                  return { id: item.id };
                 })
               : []
           }
@@ -118,9 +118,7 @@ export function PageFormMultiSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => (
-      <AsyncQueryLabel url={props.url.split('?')[0]} id={value as unknown as number} />
-    ),
+    (value: Value) => <AsyncQueryLabel url={props.url.split('?')[0]} id={value.id} />,
     [props.url]
   );
 
