@@ -77,6 +77,13 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
           labelHelpTitle={t('Max hosts')}
           type="number"
           min={0}
+          validate={(val) => {
+            const maxHosts = Number.parseFloat(val);
+            if (Number.isInteger(maxHosts) && maxHosts >= 0 && maxHosts <= 2147483647) {
+              return undefined;
+            }
+            return t('This field must be an integer and have a value between 0 and 2147483647.');
+          }}
         />
       )}
     </>
