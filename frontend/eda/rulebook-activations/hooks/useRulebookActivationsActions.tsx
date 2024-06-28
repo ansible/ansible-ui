@@ -81,7 +81,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
-        label: t('Enable activations'),
+        label: t('Enable rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           enableRulebookActivations(rulebookActivations),
       },
@@ -89,7 +89,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
-        label: t('Disable activations'),
+        label: t('Disable rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           disableRulebookActivations(rulebookActivations),
       },
@@ -97,7 +97,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: RedoIcon,
-        label: t('Restart activations'),
+        label: t('Restart rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           restartRulebookActivations(rulebookActivations),
       },
@@ -108,7 +108,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete activations'),
+        label: t('Delete rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           deleteRulebookActivations(rulebookActivations),
         isDanger: true,
