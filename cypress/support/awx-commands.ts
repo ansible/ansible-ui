@@ -724,7 +724,7 @@ Cypress.Commands.add('createAwxConstructedInventory', (organization: Organizatio
       organization: organization.id,
       kind: 'constructed',
       inventories: arrayOfInventories,
-      variables: 'plugin: test',
+      source_vars: 'plugin: test',
     }
   ).then((constructedInv: Partial<Inventory>) => {
     const inputInvPromises = arrayOfInventories.map((invID) => {
