@@ -13,8 +13,8 @@ export function PlatformUserTokens() {
   const awxService = useGatewayService('controller');
   const edaService = useGatewayService('eda');
 
-	const { activePlatformUser:activeUser } = usePlatformActiveUser();
-	const pageNavigate = usePageNavigate();
+  const { activePlatformUser: activeUser } = usePlatformActiveUser();
+  const pageNavigate = usePageNavigate();
 
   useEffect(() => {
     if (activeUser === undefined || activeUser?.id.toString() !== params.id) {
@@ -25,19 +25,15 @@ export function PlatformUserTokens() {
 
   const tokensTabs = useMemo(() => {
     return [
-			{ label: t('Ansible Automation Platform'), page: PlatformRoute.AAPUserTokens as string },
-			...(awxService
+      { label: t('Ansible Automation Platform'), page: PlatformRoute.AAPUserTokens as string },
+      ...(awxService
         ? [{ label: t('Automation Execution'), page: PlatformRoute.AwxUserTokens as string }]
         : []),
       ...(edaService
         ? [{ label: t('Automation Decisions'), page: PlatformRoute.EdaUserTokens as string }]
         : []),
-		];
-	}, [awxService, edaService, t]);
+    ];
+  }, [awxService, edaService, t]);
 
-	return (
-		<PageRoutedTabs
-			tabs={tokensTabs}
-			isBox={false} params={{id: params.id}} />
-	);
+  return <PageRoutedTabs tabs={tokensTabs} isBox={false} params={{ id: params.id }} />;
 }

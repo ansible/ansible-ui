@@ -110,7 +110,7 @@ export function EditPlatformApplication() {
         <PageHeader
           breadcrumbs={[
             { label: t('Applications'), to: getPageUrl(PlatformRoute.Applications) },
-            { label: t('Edit Application') },
+            { label: t('Edit application') },
           ]}
         />
       </PageLayout>
@@ -120,10 +120,10 @@ export function EditPlatformApplication() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Application')}
+        title={t('Edit application')}
         breadcrumbs={[
           { label: t('Applications'), to: getPageUrl(PlatformRoute.Applications) },
-          { label: t('Edit Application') },
+          { label: t('Edit application') },
         ]}
       />
       <AwxPageForm<Application>

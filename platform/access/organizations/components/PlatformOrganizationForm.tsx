@@ -112,7 +112,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
       <PageHeader
         title={organization ? t('Edit Organization') : t('Create Organization')}
         breadcrumbs={[
-          { label: t('Organization'), to: getPageUrl(PlatformRoute.Organizations) },
+          { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
           { label: organization ? t('Edit Organization') : t('Create Organization') },
         ]}
       />
