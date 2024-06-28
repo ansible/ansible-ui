@@ -5,6 +5,9 @@ import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganiza
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import './rest-commands';
+import { Application } from '../../frontend/awx/interfaces/Application';
+import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsResponse';
+import { Token } from '../../frontend/awx/interfaces/Token';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -258,3 +261,52 @@ Cypress.Commands.add(
       });
   }
 );
+
+Cypress.Commands.add(
+  'createPlatformOAuthApplication',
+  (
+    authType: string,
+    clientType: 'confidential' | 'public' | undefined,
+    organization?: PlatformOrganization
+  ) => {
+    return cy.requestPost<
+      Application,
+      Pick<
+        Application,
+        | 'name'
+        | 'description'
+        | 'organization'
+        | 'client_type'
+        | 'authorization_grant_type'
+        | 'redirect_uris'
+      >
+    >(gatewayV1API`/applications/`, {
+      name: `AAP OAuth Application ${randomString(2)}`,
+      description: 'E2E Application Description',
+      organization: organization ? organization?.id : 1,
+      client_type: clientType,
+      authorization_grant_type: authType,
+      redirect_uris:
+        authType === 'confidential' || authType === 'password' ? 'https://create_from_api.com' : '',
+    });
+  }
+);
+
+Cypress.Commands.add('createPlatformToken', (oAuthAppId: number, scope: 'read' | 'write') => {
+  const url = gatewayV1API`/tokens/`;
+  const body = {
+    application: oAuthAppId,
+    scope: scope,
+  };
+
+  return cy.requestPost<Token>(url, body);
+});
+
+Cypress.Commands.add('getCurrentPlatformUser', () => {
+  return cy
+    .requestGet<PlatformItemsResponse<PlatformUser>>(gatewayV1API`/me/`)
+    .its('results')
+    .then((results) => {
+      return results[0];
+    });
+});

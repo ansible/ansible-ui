@@ -1599,6 +1599,30 @@ declare global {
 
       platformLogin(): Chainable<void>;
       platformLogout(): Chainable<void>;
+      /**
+       * This command creates a Platform OAuth application with the given parameters.
+       * @param authType
+       * @param clientType
+       * @param organization
+       * `cy.createPlatformOAuthApplication('authorization-code', 'public', platformOrganization)`
+       */
+      createPlatformOAuthApplication(
+        authType: string,
+        clientType: 'confidential' | 'public' | undefined,
+        organization?: PlatformOrganization
+      ): Chainable<Application>;
+
+      /**
+       * This command creates a Platform Token application with the given parameters.
+       * @param oAuthAppId
+       * @param scope
+       * `cy.createPlatformToken(platformApplication.id, 'write')`
+       */
+      createPlatformToken(oAuthAppId: number, scope: 'read' | 'write'): Chainable<Token>;
+      /**
+       * This command returns the current Platform User
+       */
+      getCurrentPlatformUser(): Chainable<User>;
       selectResourceFromDropDown(resourceName: string): Cypress.Chainable<void>;
       selectResourceFromSpecificDropDown(
         dropdownDataCy: string,
