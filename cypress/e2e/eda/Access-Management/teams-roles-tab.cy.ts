@@ -149,7 +149,7 @@ describe(`Roles Tab for Teams - actions`, () => {
     cy.clickTab('Roles', true);
     cy.selectTableRow(`${cred2.name}`, false);
     cy.selectTableRow(`${cred3.name}`, false);
-    cy.clickToolbarKebabAction('remove-selected-roles');
+    cy.clickToolbarKebabAction('remove-roles');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove role');
     cy.clickButton(/^Close$/);

@@ -214,7 +214,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Remove selected roles'),
+        label: t('Remove roles'),
         onClick: (items: T[]) => removeRoles(items),
         isDanger: true,
       },
