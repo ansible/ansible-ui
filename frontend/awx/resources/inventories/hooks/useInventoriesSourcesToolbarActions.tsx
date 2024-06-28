@@ -66,7 +66,7 @@ export function useInventoriesSourcesToolbarActions(
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add source'),
+        label: t('Create source'),
         onClick: () =>
           pageNavigate(String(AwxRoute.InventorySourcesAdd), {
             params: { inventory_type: params.inventory_type, id: params.id },

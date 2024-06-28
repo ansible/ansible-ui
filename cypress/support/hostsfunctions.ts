@@ -21,7 +21,7 @@ export function createAndCheckHost(host_type: string, inventory: string) {
 
   // create host
   cy.clickButton(/^Create host$/);
-  cy.verifyPageTitle('Create Host');
+  cy.verifyPageTitle('Create host');
   cy.getByDataCy('name').type(hostName);
   cy.getByDataCy('description').type('This is the description');
 

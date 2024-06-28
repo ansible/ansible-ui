@@ -78,7 +78,7 @@ describe('Users List Actions', () => {
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRowPinnedAction(user.username, 'edit-user');
-    cy.verifyPageTitle('Edit User');
+    cy.verifyPageTitle(`Edit ${user.username}`);
   });
 });
 

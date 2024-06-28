@@ -124,7 +124,7 @@ export function CreateHost() {
             }),
           }
         : {},
-      { label: t('Add') },
+      { label: t('Create host') },
     ];
   } else {
     breadcrumbs = [
@@ -132,13 +132,13 @@ export function CreateHost() {
         label: t('Hosts'),
         to: getPageUrl(AwxRoute.Hosts),
       },
-      { label: t('Create') },
+      { label: t('Create host') },
     ];
   }
 
   return (
     <PageLayout>
-      <PageHeader breadcrumbs={breadcrumbs} title={t('Create Host')} />
+      <PageHeader breadcrumbs={breadcrumbs} title={t('Create host')} />
       <AwxPageForm
         submitText={t('Create host')}
         onSubmit={onSubmit}
@@ -256,17 +256,7 @@ export function EditHost() {
           },
         }),
       },
-      {
-        label: t(`${hostResponse?.name}`),
-        to: getPageUrl(AwxRoute.InventoryHostDetails, {
-          params: {
-            id: params.id,
-            inventory_type: params.inventory_type,
-            host_id: params.host_id,
-          },
-        }),
-      },
-      { label: t('Edit') },
+      { label: t('Edit {{hostName}}', { hostName: host?.name }) },
     ];
   } else {
     breadcrumbs = [
@@ -274,13 +264,16 @@ export function EditHost() {
         label: t('Hosts'),
         to: getPageUrl(AwxRoute.Hosts),
       },
-      { label: t('Edit') },
+      { label: t('Edit {{hostName}}', { hostName: host?.name }) },
     ];
   }
 
   return (
     <PageLayout>
-      <PageHeader breadcrumbs={breadcrumbs} title={t('Edit host')} />
+      <PageHeader
+        breadcrumbs={breadcrumbs}
+        title={t('Edit {{hostName}}', { hostName: host?.name })}
+      />
       <AwxPageForm<IHostInput>
         submitText={t('Save host')}
         onSubmit={onSubmit}

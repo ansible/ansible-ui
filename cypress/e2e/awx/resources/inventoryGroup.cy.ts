@@ -46,7 +46,7 @@ describe('Inventory Groups', () => {
         cy.intercept('POST', awxAPI`/groups/`).as('createGroup');
         cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/groups?`);
         cy.clickButton(/^Create group$/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
@@ -222,7 +222,7 @@ describe('Inventory Groups', () => {
         cy.intercept('POST', awxAPI`/groups/`).as('createGroup');
         cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/groups?`);
         cy.clickButton(/^Create group$/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
@@ -303,7 +303,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
         cy.clickButton(/^New group/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
         cy.contains(newRelatedGroup);
@@ -403,7 +403,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
         cy.clickButton(/^New group/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
         cy.contains(newRelatedGroup);
@@ -473,7 +473,7 @@ describe('Inventory Groups', () => {
 
       cy.intercept('POST', awxAPI`/hosts/`).as('createHost');
       cy.clickButton(/^Create host$/);
-      cy.verifyPageTitle('Create Host');
+      cy.verifyPageTitle('Create host');
       cy.getByDataCy('name').type(newHostName);
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Create host$/);
@@ -490,7 +490,7 @@ describe('Inventory Groups', () => {
     it('can edit a related host from the host tab', () => {
       cy.filterTableBySingleSelect('name', thisInventory.name);
       cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
-      cy.verifyPageTitle(thisInventory.name);
+      cy.verifyPageTitle(`Edit ${thisInventory.name}`);
       cy.clickTab(/^Hosts$/, true);
       cy.clickTableRowAction('name', thisHost.name, 'edit-host', {
         inKebab: false,

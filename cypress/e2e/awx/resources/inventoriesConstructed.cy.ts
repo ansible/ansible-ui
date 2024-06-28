@@ -99,7 +99,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       .its('response.statusCode')
       .then((statusCode) => {
         expect(statusCode).to.be.equal(201);
-        cy.verifyPageTitle(constInvName);
+        cy.verifyPageTitle(`Edit ${constInvName}`);
       });
     cy.clickKebabAction('actions-dropdown', 'delete-inventory');
 
@@ -133,7 +133,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.filterTableBySingleSelect('name', constructedInv.name);
     cy.wait('@filterConstInventory');
     cy.clickTableRowLink('name', constructedInv.name, { disableFilter: true });
-    cy.verifyPageTitle(constructedInv.name);
+    cy.verifyPageTitle(`Edit ${constructedInv.name}`);
 
     const description = 'Edit action: New description typed by cypress';
     cy.getByDataCy('edit-inventory').click();
