@@ -51,7 +51,7 @@ describe('Schedules - Create and Delete', () => {
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -102,7 +102,7 @@ describe('Schedules - Create and Delete', () => {
       cy.selectDropdownOptionByResourceName('schedule_type', 'Project Sync');
       cy.selectDropdownOptionByResourceName('project', `${project.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -141,7 +141,7 @@ describe('Schedules - Create and Delete', () => {
       );
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.getByDataCy('description').type(`description ${scheduleName}`);
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.getByDataCy('schedule-days-to-keep').type('33');
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
@@ -182,7 +182,7 @@ describe('Schedules - Create and Delete', () => {
     let inventory: Inventory;
     let workflowTemplate: WorkflowJobTemplate;
 
-    before(() => {
+    beforeEach(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
         cy.createAwxInventory({ organization: organization.id }).then((i) => {
@@ -198,7 +198,8 @@ describe('Schedules - Create and Delete', () => {
       });
     });
 
-    after(() => {
+    afterEach(() => {
+      cy.deleteAwxWorkflowJobTemplate(workflowTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
@@ -207,14 +208,14 @@ describe('Schedules - Create and Delete', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       const scheduleName = 'E2E Simple Schedule WFJT' + randomString(4);
-      cy.getBy('[data-cy="create-schedule"]').click();
+      cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
       cy.selectDropdownOptionByResourceName(
         'workflow-job-template-select',
         `${workflowTemplate.name}`
       );
       cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -307,7 +308,7 @@ describe('Schedules - Create and Delete', () => {
       cy.selectDropdownOptionByResourceName('inventory', `${inventory.name}`);
       cy.selectDropdownOptionByResourceName('inventory-source-select', `${inventorySource.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -398,7 +399,7 @@ describe('Schedules - Create and Delete', () => {
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.selectSingleSelectOption('[data-cy="timezone"]', 'America/Mexico_City');
+      cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="wizard-nav"] li').contains('Prompts');
 
@@ -675,7 +676,7 @@ describe('Schedules - Edit', () => {
           .should((el) => expect(el.text().trim()).to.equal(text));
       });
     });
-    cy.selectSingleSelectOption('[data-cy="timezone"]', 'America/Mexico_City');
+    cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Add rule$/);
     cy.clickButton(/^Save rule$/);
