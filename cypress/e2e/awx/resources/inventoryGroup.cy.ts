@@ -544,14 +544,7 @@ describe('Inventory Groups', () => {
       });
       cy.clickButton(/^Next$/);
       // TODO: modal is closed instanly, possible cause: https://issues.redhat.com/browse/AAP-23766
-      cy.getByDataCy('credential-select-form-group').within(() => {
-        cy.getBy('[aria-label="Options menu"]').click();
-      });
-      cy.get('[data-ouia-component-id="lookup-credential.name-button"]').click();
-      cy.getModal().within(() => {
-        cy.selectTableRowByCheckbox('name', machineCredential.name);
-        cy.clickButton(/^Confirm$/);
-      });
+      cy.selectItemFromMultiSelectDropdown('credential', machineCredential.name);
       cy.clickButton(/^Next$/);
       cy.getByDataCy('module').should('contain', 'shell');
       cy.getByDataCy('arguments').should('contain', 'argument');
