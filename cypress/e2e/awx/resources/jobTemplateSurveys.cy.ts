@@ -7,9 +7,23 @@ import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
 describe('Job Templates Surveys', function () {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
-  let organization: Organization;
+  let awxOrganization: Organization;
   let project: Project;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
+
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      awxOrganization = org;
+      cy.createAwxProject(awxOrganization).then((proj) => {
+        project = proj;
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  });
 
   describe('JT Surveys: Create, Edit and Delete', function () {
     const question = {
@@ -25,26 +39,12 @@ describe('Job Templates Surveys', function () {
       choices: [],
     };
 
-    before(function () {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-        });
-      });
-    });
-
-    after(() => {
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
     beforeEach(() => {
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
 
         cy.createAwxJobTemplate({
-          organization: organization.id,
+          organization: awxOrganization.id,
           project: project.id,
           inventory: inventory.id,
         }).then((jT) => {
@@ -73,26 +73,12 @@ describe('Job Templates Surveys', function () {
   });
 
   describe('JT Surveys: Launch JT with Survey Enabled', function () {
-    before(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-        });
-      });
-    });
-
-    after(() => {
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
     beforeEach(() => {
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
 
         cy.createAwxJobTemplate({
-          organization: organization.id,
+          organization: awxOrganization.id,
           project: project.id,
           inventory: inventory.id,
         }).then((jt) => {
@@ -124,11 +110,9 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Text', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -148,11 +132,9 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Textarea', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -172,11 +154,9 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Password', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', '$encrypted$');
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -196,11 +176,9 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Integer', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -220,11 +198,9 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Float', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -244,7 +220,6 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Multiple Choice (single select)', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType).within(() => {
           cy.contains(question.default);
           cy.get('div[data-ouia-component-id="menu-select"]').click();
@@ -252,7 +227,6 @@ describe('Job Templates Surveys', function () {
             cy.getByDataCy('survey-multiplechoice-answer').contains(choice);
           });
         });
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -272,7 +246,6 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Multiple Choice (multiple select)', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType).within(() => {
           const defaults = question.default.toString().split('\n');
           defaults.forEach((defaultValue) => {
@@ -280,13 +253,11 @@ describe('Job Templates Surveys', function () {
           });
           cy.get('#survey-multiselect-answer').click();
         });
-
         cy.get('#survey-multiselect-answer-select').within(() => {
           question?.choices?.forEach((choice) => {
             cy.getByDataCy(choice);
           });
         });
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
     });

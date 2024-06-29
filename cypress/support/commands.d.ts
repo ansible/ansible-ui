@@ -673,7 +673,8 @@ declare global {
        * @returns {Chainable<Project>}
        */
       createAwxProject(
-        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+        organization: Organization,
+        project?: Partial<Project>,
         scm_url?: string,
         skipSync?: boolean
       ): Chainable<Project>;
@@ -694,14 +695,11 @@ declare global {
       ): Chainable<Credential>;
       /** Creates a credential type in AWX */
       createAwxCredentialType(): Chainable<CredentialType>;
-      /**
-       * Creates a project in AWX that is specific to being utilized in an EDA test.
-       */
-      createEdaSpecificAwxProject(options?: {
-        project?: Partial<Omit<Project, 'id'>>;
-      }): Chainable<Project>;
 
-      createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
+      createAwxInventory(
+        organization: Organization,
+        inventory?: Partial<Inventory>
+      ): Chainable<Inventory>;
 
       createAwxConstructedInventory(organization: Organization): Chainable<Inventory>;
 
@@ -768,6 +766,26 @@ declare global {
       ): Chainable<WorkflowJobTemplate>;
 
       getAwxInstanceGroupByName(instanceGroupName: string): Chainable<InstanceGroup>;
+
+      getAwxOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
+
+      getGatewayOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
+
+      getAwxUserByAnsibleId(userAnsibleId: string | undefined): Chainable<AwxUser>;
+
+      getAwxTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<Team>;
+
+      /**
+       * pollAWXResults - Polls AWX until results are found
+       * @param url The url for the get request
+       *
+       * @example
+       *  cy.pollAWXResults<Project>(awxAPI`/projects/`).then(
+       *    (projects: Project[]) => {
+       *      // Do something with projects
+       *    }
+       */
+      pollAWXResults<T = unknown>(url: string): Chainable<T[]>;
 
       renderWorkflowVisualizerNodesFromFixtureFile(
         workflowJobTemplateName: string,
@@ -864,6 +882,7 @@ declare global {
        */
       createAwxTeam(awxTeam?: Partial<Team>): Chainable<Team>;
       createAwxUser(awxUser?: Partial<AwxUser>): Chainable<AwxUser>;
+      getCurrentUser(): Chainable<AwxUser>;
       getAwxRoles(): Chainable<RoleSerializerWithParentAccess>;
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
@@ -1161,7 +1180,7 @@ declare global {
 
       createNotificationTemplate(
         notificationName: string,
-        organization_id?: number
+        organization: Organization
       ): Chainable<NotificationTemplate>;
 
       deleteNotificationTemplate(

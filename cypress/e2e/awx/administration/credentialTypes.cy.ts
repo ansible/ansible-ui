@@ -3,6 +3,7 @@ import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Credential Types', () => {
   let credType1: CredentialType;
@@ -10,40 +11,43 @@ describe('Credential Types', () => {
   let inputCredType: string;
   let injectorCredType: string;
   let credential: Credential;
-  let organization: Organization;
+  let awxOrganization: Organization;
 
   describe('Credential Types- List Actions', () => {
     const credentialName = 'E2E Custom Credential ' + randomString(4);
-    before(function () {
-      cy.createAwxCredentialType().then((credentialType: CredentialType) => {
-        credType1 = credentialType;
 
-        cy.createAwxOrganization().then((org) => {
-          organization = org;
+    beforeEach(function () {
+      const orgName = randomE2Ename();
+      cy.createAwxOrganization(orgName).then((org) => {
+        awxOrganization = org;
+
+        cy.createAwxCredentialType().then((credentialType: CredentialType) => {
+          credType1 = credentialType;
+
           cy.createAWXCredential({
             name: credentialName,
             kind: 'gce',
-            organization: organization.id,
+            organization: awxOrganization.id,
             credential_type: credType1.id,
           }).then((cred) => {
             credential = cred;
           });
         });
-      });
 
-      cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
-        inputCredType = JSON.stringify(credentialType);
-      });
+        cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
+          inputCredType = JSON.stringify(credentialType);
+        });
 
-      cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
-        injectorCredType = JSON.stringify(credentialType);
+        cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
+          injectorCredType = JSON.stringify(credentialType);
+        });
       });
     });
 
-    after(() => {
+    afterEach(() => {
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
     });
 
     it('can navigate to the details page, then to the credentials tab and view a related credential', function () {
@@ -60,7 +64,7 @@ describe('Credential Types', () => {
         awxAPI`/credential_types/${credType1.id.toString()}/credentials/?order_by=name&page=1&page_size=10`
       ).as('credentialsList');
       cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`).as('credTypeList');
-      cy.getBy(`a[href*="/access/credential-types/${credType1.id}/credentials?"]`).click();
+      cy.clickTab('Credentials', true);
       cy.wait('@credTypeList');
       cy.wait('@credentialsList');
       cy.getBy('tr').should('have.length', 2);
