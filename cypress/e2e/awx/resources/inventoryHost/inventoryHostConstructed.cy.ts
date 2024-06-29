@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';

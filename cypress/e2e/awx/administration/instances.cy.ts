@@ -4,8 +4,8 @@ import { Instance } from '../../../../frontend/awx/interfaces/Instance';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { tag } from '../../../support/tag';
 
-tag(['openshift'], () => {
-  //These tests will not work in an AAP VM build; only a Kubernetes or Openshift build of AAP.
+tag(['upstream'], () => {
+  //An instance can only be created in an Openshift or Kubernetes build
   describe('Instances: Add/Edit', () => {
     let instance: Instance;
 
