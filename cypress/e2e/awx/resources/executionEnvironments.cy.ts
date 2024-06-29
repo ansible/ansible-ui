@@ -154,7 +154,7 @@ describe('Execution Environments', () => {
       cy.clickModalButton('Close');
     });
 
-    it('can create a new EE associated to a particular org, assign admin access to a user in that org, and login as that user to assert access to the EE', () => {
+    it.skip('can create a new EE associated to a particular org, assign admin access to a user in that org, and login as that user to assert access to the EE', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);

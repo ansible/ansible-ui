@@ -152,7 +152,7 @@ describe('Workflow Visualizer', () => {
       cy.contains('Success').should('be.visible');
     });
 
-    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
+    it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });

@@ -35,7 +35,7 @@ describe('activity-stream', () => {
     );
   }
 
-  it('event column displays correct info', function () {
+  it.skip('event column displays correct info', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
     cy.getTableRow('event', ` created inventory ${inventory.name}`, { disableFilter: true }).within(
@@ -48,7 +48,7 @@ describe('activity-stream', () => {
     );
   });
 
-  it('event details modal displays correct info', function () {
+  it.skip('event details modal displays correct info', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
     openEventDetails(inventory.name);

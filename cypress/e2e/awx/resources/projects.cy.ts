@@ -542,7 +542,7 @@ describe('Projects', () => {
   // FLAKY_06_13_2024
   describe('Projects: Job Templates Tab', () => {
     let jobTemplate: JobTemplate;
-    before(function () {
+    beforeEach(function () {
       cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
         cy.createAwxJobTemplate({
@@ -555,7 +555,7 @@ describe('Projects', () => {
       });
     });
 
-    after(function () {
+    afterEach(function () {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });

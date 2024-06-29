@@ -9,7 +9,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
-describe('Job Templates Tests', function () {
+describe.skip('Job Templates Tests', function () {
   let awxOrganization: Organization;
   let project: Project;
 

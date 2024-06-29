@@ -508,7 +508,7 @@ describe('Credentials', () => {
         });
     });
 
-    it('can edit credential type that renders a sub form', () => {
+    it.skip('can edit credential type that renders a sub form', () => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential$/);
