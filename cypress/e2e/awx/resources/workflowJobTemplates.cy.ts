@@ -436,24 +436,19 @@ describe('Workflow Job Templates Tests', () => {
     let workflowJobTemplate: WorkflowJobTemplate;
     let inventory: Inventory;
 
-    before(function () {
+    beforeEach(function () {
       cy.createAwxInventory(organization).then((i) => {
         inventory = i;
-      });
-    });
 
-    beforeEach(function () {
-      cy.createAwxWorkflowJobTemplate({
-        organization: organization.id,
-        inventory: inventory.id,
-      }).then((wfjt) => (workflowJobTemplate = wfjt));
+        cy.createAwxWorkflowJobTemplate({
+          organization: organization.id,
+          inventory: inventory.id,
+        }).then((wfjt) => (workflowJobTemplate = wfjt));
+      });
     });
 
     afterEach(() => {
       cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-    });
-
-    after(() => {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
 

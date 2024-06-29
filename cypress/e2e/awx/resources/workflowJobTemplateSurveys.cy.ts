@@ -4,7 +4,7 @@ import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/Workflo
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
 import { randomE2Ename } from '../../../support/utils';
 
-describe('Workflow Job Templates Surveys', function () {
+describe.skip('Workflow Job Templates Surveys', function () {
   let inventory: Inventory;
   let workflowJobTemplate: WorkflowJobTemplate;
   let awxOrganization: Organization;

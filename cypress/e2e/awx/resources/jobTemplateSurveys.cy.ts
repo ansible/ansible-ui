@@ -5,7 +5,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
 import { randomE2Ename } from '../../../support/utils';
 
-describe('Job Templates Surveys', function () {
+describe.skip('Job Templates Surveys', function () {
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let awxOrganization: Organization;

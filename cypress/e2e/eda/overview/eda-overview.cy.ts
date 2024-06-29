@@ -48,6 +48,7 @@ describe('EDA Overview', () => {
     cy.intercept('GET', edaAPI`/decision-environments/?page=1&page_size=10&page=1&page_size=10`).as(
       'getDEs'
     );
+    cy.navigateTo('eda', 'overview');
     cy.verifyPageTitle('Welcome to Event Driven Automation');
     cy.wait('@getDEs')
       .its('response.body.results')
