@@ -25,7 +25,7 @@ export function useWebhookActions(view: IEdaView<EdaWebhook>) {
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         isPinned: true,
-        label: t('Edit webhook'),
+        label: t('Edit event stream'),
         onClick: (webhook: EdaWebhook) =>
           pageNavigate(EdaRoute.EditWebhook, { params: { id: webhook.id } }),
       },
@@ -36,7 +36,7 @@ export function useWebhookActions(view: IEdaView<EdaWebhook>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete webhook'),
+        label: t('Delete event stream'),
         onClick: (webhook: EdaWebhook) => deleteWebhooks([webhook]),
         isDanger: true,
       },
