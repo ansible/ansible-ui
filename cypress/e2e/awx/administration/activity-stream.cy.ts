@@ -101,7 +101,7 @@ describe('activity-stream', () => {
     cy.filterTableByTextFilter('initiated-by-(username)', currentUser.username);
     cy.wait('@initiatorFilterRequest')
       .then((response) => {
-        expect(response.response.statusCode).to.eql(200);
+        expect(response?.response?.statusCode).to.eql(200);
       })
       .its('response')
       .then((activityStream) => {

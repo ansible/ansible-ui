@@ -169,7 +169,7 @@ describe(`Instance Groups`, () => {
     });
 
     it(`bulk deletion dialog shows warnings for Instance groups that cannot be deleted`, () => {
-      const arrayOfElementText = [];
+      const arrayOfElementText: string[] = [];
       for (let i = 0; i < 2; i++) {
         const instanceGroupName = randomE2Ename();
         cy.createAwxInstanceGroup({
@@ -342,7 +342,7 @@ describe(`Instance Groups`, () => {
     });
 
     it(`bulk deletion dialog shows warnings for container groups that cannot be deleted`, () => {
-      const arrayOfElementText = [];
+      const arrayOfElementText: string[] = [];
       for (let i = 0; i < 2; i++) {
         const containerGroupName = randomE2Ename();
         cy.createAwxInstanceGroup({
