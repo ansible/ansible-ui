@@ -65,7 +65,7 @@ export function PageAsyncMultiSelect<
   const [searchValue, setSearchValue] = useState<string>('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setSearch = useCallback(
-    debounce((search: string) => setSearchValue(search), 200),
+    debounce((search: string) => setSearchValue(search), 500),
     []
   );
 
