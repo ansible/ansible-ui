@@ -70,6 +70,16 @@ describe('EDA Cleanup', () => {
     });
   });
 
+  it('cleanup old eda credential types', () => {
+    cy.getEdaCredentialTypes(1, 100).then((result) => {
+      for (const resource of result.results ?? []) {
+        if (isOldResource('E2E Credential', resource)) {
+          cy.deleteEdaCredentialType(resource);
+        }
+      }
+    });
+  });
+
   it('cleanup old eda users', () => {
     cy.getEdaUsers(1, 100).then((result) => {
       for (const user of result.results ?? []) {
