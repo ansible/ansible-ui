@@ -40,18 +40,22 @@ describe('Inventory Groups', () => {
 
   describe('Inventory Groups - List View', () => {
     it('can create a group, assert info on details page, then delete group from the list view', () => {
-      cy.createAwxInventory().then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
         const newGroupName = 'E2E Group ' + randomString(4);
-        cy.intercept('POST', awxAPI`/groups/`).as('createGroup');
-        cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/groups?`);
+        cy.navigateTo('awx', 'inventories');
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+        cy.verifyPageTitle(inventory.name);
+        cy.get(`a[href*="/groups?"]`).click();
         cy.clickButton(/^Create group$/);
         cy.verifyPageTitle('Create new group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
+        cy.intercept('POST', awxAPI`/groups/*`).as('created');
         cy.clickButton(/^Save/);
-        cy.wait('@createGroup')
+        cy.wait('@created')
           .its('response.statusCode')
           .then((statusCode) => {
             expect(statusCode).to.eql(201);
@@ -79,7 +83,6 @@ describe('Inventory Groups', () => {
           'contain',
           'There are currently no groups added to this inventory.'
         );
-
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -87,12 +90,11 @@ describe('Inventory Groups', () => {
     it('can edit an inventory group from the groups list view', () => {
       cy.createInventoryHostGroup(organization).then((result) => {
         const { inventory, host, group } = result;
-
         cy.navigateTo('awx', 'inventories');
         cy.filterTableBySingleSelect('name', inventory.name);
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
-        cy.get(`[href*="/infrastructure/inventories/inventory/${inventory.id}/hosts?"]`).click();
+        cy.get(`a[href*="/hosts?"]`).click();
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickTab(/^Groups$/, true);
         cy.filterTableByMultiSelect('name', [group.name]);
@@ -101,7 +103,6 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
         cy.verifyPageTitle(group.name + '-changed');
-
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -180,9 +181,8 @@ describe('Inventory Groups', () => {
 
     it('can bulk delete groups from the group list view', () => {
       const arrayOfElementText: string[] = [];
-      cy.createAwxInventory().then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
-
         for (let i = 0; i < 5; i++) {
           const groupName = generateGroupName();
           cy.createInventoryGroup(inventory, groupName);
@@ -201,7 +201,6 @@ describe('Inventory Groups', () => {
           cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
           cy.get('[data-cy="delete-group-modal-delete-button"]').click();
         });
-
         cy.wait('@deleted')
           .its('response')
           .then((response) => {
@@ -216,16 +215,20 @@ describe('Inventory Groups', () => {
 
   describe('Inventory Groups - Details View', () => {
     it('can create a group, assert info on details page, then delete group from the details page', () => {
-      cy.createAwxInventory().then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
         const newGroupName = 'E2E Group ' + randomString(4);
-        cy.intercept('POST', awxAPI`/groups/`).as('createGroup');
-        cy.visit(`/infrastructure/inventories/inventory/${inventory.id}/groups?`);
+        cy.navigateTo('awx', 'inventories');
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+        cy.verifyPageTitle(inventory.name);
+        cy.get(`a[href*="/groups?"]`).click();
         cy.clickButton(/^Create group$/);
         cy.verifyPageTitle('Create new group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
+        cy.intercept('POST', awxAPI`/groups/`).as('createGroup');
         cy.clickButton(/^Save/);
         cy.wait('@createGroup')
           .its('response.statusCode')
@@ -249,7 +252,6 @@ describe('Inventory Groups', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(204);
           });
-
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -321,7 +323,6 @@ describe('Inventory Groups', () => {
         cy.assertModalSuccess();
         cy.clickModalButton(/^Close/);
         cy.clickButton(/^Clear all filters$/);
-
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -381,7 +382,6 @@ describe('Inventory Groups', () => {
           });
         cy.assertModalSuccess();
         cy.clickModalButton(/^Close/);
-
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -412,9 +412,7 @@ describe('Inventory Groups', () => {
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
         cy.clickToolbarKebabAction('run-command');
         cy.clickKebabAction('actions-dropdown', 'run-command');
-
         cy.selectDropdownOptionByResourceName('module-name', 'shell');
-
         cy.clickModalConfirmCheckbox();
         cy.clickButton(/^Disassociate groups/);
         cy.wait('@disassociateGroup')
@@ -425,7 +423,6 @@ describe('Inventory Groups', () => {
         cy.assertModalSuccess();
         cy.clickModalButton(/^Close/);
         cy.clickButton(/^Clear all filters$/);
-
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -467,10 +464,8 @@ describe('Inventory Groups', () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(204);
         });
-
       cy.assertModalSuccess();
       cy.clickModalButton(/^Close/);
-
       cy.intercept('POST', awxAPI`/hosts/`).as('createHost');
       cy.clickButton(/^Create host$/);
       cy.verifyPageTitle('Create Host');
@@ -501,7 +496,6 @@ describe('Inventory Groups', () => {
       cy.getByDataCy('name').type('-edited');
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Save host$/);
-
       cy.wait('@editHost')
         .its('response')
         .then((response) => {
@@ -513,6 +507,7 @@ describe('Inventory Groups', () => {
     });
 
     it.skip("can run an ad-hoc command against a group's host", () => {
+      //unskip this test when below issue is resolved
       cy.filterTableBySingleSelect('name', thisInventory.name);
       cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
       cy.verifyPageTitle(thisInventory.name);

@@ -1,13 +1,13 @@
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
-import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { AwxItemsResponse } from '../../../frontend/awx/common/AwxItemsResponse';
+import { Inventory } from '../../../frontend/awx/interfaces/Inventory';
+import { Job } from '../../../frontend/awx/interfaces/Job';
+import { JobTemplate } from '../../../frontend/awx/interfaces/JobTemplate';
+import { Organization } from '../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../frontend/awx/interfaces/Project';
+import { AwxUser } from '../../../frontend/awx/interfaces/User';
+import { WorkflowApproval } from '../../../frontend/awx/interfaces/WorkflowApproval';
+import { getJobsAPIUrl } from '../../../frontend/awx/views/jobs/jobUtils';
+import { awxAPI } from '../../support/formatApiPathForAwx';
 
 const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 

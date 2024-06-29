@@ -61,6 +61,7 @@ export const baseConfig: Cypress.ConfigOptions = {
         plugins: [
           new DefinePlugin({
             'process.env.AWX_API_PREFIX': JSON.stringify(env.AWX_API_PREFIX),
+            'process.env.AWX_GW_API_PREFIX': JSON.stringify(env.AWX_GW_API_PREFIX),
             'process.env.AWX_WEBSOCKET_PREFIX': JSON.stringify(env.AWX_WEBSOCKET_PREFIX),
             'process.env.EDA_API_PREFIX': JSON.stringify(env.EDA_API_PREFIX),
             'process.env.HUB_API_PREFIX': JSON.stringify(env.HUB_API_PREFIX),

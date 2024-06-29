@@ -1,7 +1,7 @@
 import { randomE2Ename } from '../../../../support/utils';
 import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
 import { AwxItemsResponse } from '../../../../../frontend/awx/common/AwxItemsResponse';
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Notification } from '../../../../../frontend/awx/interfaces/generated-from-swagger/api';
 
 export function testNotification(

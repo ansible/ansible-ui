@@ -32,6 +32,7 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTe
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { awxAPI } from './formatApiPathForAwx';
+import { awxGWAPI } from './formatApiPathForAwxDownstream';
 
 //  AWX related custom command implementation
 
@@ -81,7 +82,7 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.clickModalButton('Close');
 });
 
-/* Custom Cypress command called `deleteWFApprovalConfirmModal`.
+/* Custom Cypress command called `actionsWFApprovalConfirmModal`.
 This command deletes a workflow approval request.
 It verifies that the remove modal is visible, clicks the confirm checkbox,
 clicks the delete workflow approvals, asserts all workflows were removed
@@ -103,14 +104,14 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called
+/* The following code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerJobTemplateNode`. This command is used to create a new workflow job
 template node in an AWX (Ansible Tower) instance. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerJobTemplateNode',
   (workflowJobTemplate: WorkflowJobTemplate, jobTemplateNode: JobTemplate) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: jobTemplateNode.id,
       }
@@ -118,7 +119,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called
+/* The following code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerManagementNode`. This command is used to create a workflow node for a
 given workflow job template in an AWX (Ansible Tower) application. The `workflowJobTemplateId`
 parameter is the ID of the workflow job template, and the `managementId` parameter is the ID of the
@@ -128,7 +129,7 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerManagementNode',
   (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplateId?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplateId?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: managementId,
       }
@@ -136,15 +137,15 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
+/* The following code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
 command is used to create a new workflow node for a given workflow job template. It makes a POST
-request to the `/api/v2/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
+request to the awxAPI`/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
 data to create the node. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerWJTNode',
   (workflowJobTemplate: WorkflowJobTemplate) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: workflowJobTemplate?.id,
         limit: null,
@@ -154,14 +155,14 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerProjectNode`.
+/* The following code is adding a custom Cypress command called `createAwxWorkflowVisualizerProjectNode`.
 This command is used to create a new workflow node for a given `workflowJobTemplate` and `project`
 in an AWX (Ansible Tower) environment. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerProjectNode',
   function (workflowJobTemplate: WorkflowJobTemplate, project: Project) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: project.id,
       }
@@ -173,11 +174,11 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerApprovalNode',
   (workflowJobTemplate: WorkflowJobTemplate) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {}
     ).then((approvalNode) => {
       cy.requestPost(
-        `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
+        awxAPI`/workflow_job_template_nodes/${approvalNode.id.toString()}/create_approval_template/`,
         {
           name: 'E2E WorkflowJTApprovalNode ' + randomString(4),
         }
@@ -188,7 +189,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called
+/* The following code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerInventorySourceNode`. This command is used to create a workflow node for
 an Ansible Tower workflow job template. The function takes two parameters: `workflowJobTemplate` (of
 type `WorkflowJobTemplate`) and `inventorySource` (of type `InventorySource`). */
@@ -196,7 +197,7 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerInventorySourceNode',
   function (workflowJobTemplate: WorkflowJobTemplate, inventorySource: InventorySource) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: inventorySource.id,
         scm_branch: null,
@@ -208,7 +209,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createWorkflowJTSuccessNodeLink`. This
+/* The following code is adding a custom Cypress command called `createWorkflowJTSuccessNodeLink`. This
 command is used to create a link between two nodes in a workflow job template. It takes two
 parameters, `firstNode` and `secondNode`, which are objects representing the first and second nodes
 respectively. */
@@ -216,7 +217,7 @@ Cypress.Commands.add(
   'createWorkflowJTSuccessNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_template_nodes/${firstNode.id}/success_nodes/`,
+      awxAPI`/workflow_job_template_nodes/${firstNode.id.toString()}/success_nodes/`,
       {
         id: secondNode.id,
       }
@@ -224,16 +225,15 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
+/* The following code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
 command is used to create a failure node link between two workflow job template nodes. It makes a
-POST request to the `/api/v2/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
+POST request to the awxAPI`/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
 with the `id` of the second node as the request payload. */
-
 Cypress.Commands.add(
   'createWorkflowJTFailureNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
+      awxAPI`/workflow_job_template_nodes/${firstNode.id.toString()}/failure_nodes/`,
       {
         id: secondNode.id,
       }
@@ -246,7 +246,7 @@ Cypress.Commands.add(
   'createWorkflowJTAlwaysNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_template_nodes/${firstNode.id}/always_nodes/`,
+      awxAPI`/workflow_job_template_nodes/${firstNode.id.toString()}/always_nodes/`,
       {
         id: secondNode.id,
       }
@@ -285,9 +285,58 @@ Cypress.Commands.add(
   }
 );
 
-/**
- * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
- */
+Cypress.Commands.add('pollAWXResults', <T>(url: string) => {
+  cy.requestGet<AwxItemsResponse<T>>(url).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length > 0) {
+      cy.wrap(result.results);
+    } else {
+      cy.wait(100).then(() => cy.pollAWXResults(url));
+    }
+  });
+});
+
+Cypress.Commands.add('getAwxOrgByAnsibleId', (orgAnsibleId: string | undefined) => {
+  if (orgAnsibleId) {
+    const url = awxAPI`/organizations/?resource__ansible_id=${orgAnsibleId.toString()}`;
+    cy.pollAWXResults<Organization>(url).then((org) => {
+      return org[0];
+    });
+  }
+});
+
+Cypress.Commands.add('getGatewayOrgByAnsibleId', (orgAnsibleId: string | undefined) => {
+  if (orgAnsibleId) {
+    const url = awxGWAPI`/organizations/?resource__ansible_id=${orgAnsibleId.toString()}`;
+    cy.pollAWXResults<Organization>(url).then((org) => {
+      return org[0];
+    });
+  }
+});
+
+Cypress.Commands.add('getAwxUserByAnsibleId', (userAnsibleId: string | undefined) => {
+  if (userAnsibleId) {
+    const url = awxAPI`/users/?resource__ansible_id=${userAnsibleId.toString()}`;
+    cy.pollAWXResults<AwxUser>(url).then((user) => {
+      return user[0];
+    });
+  }
+});
+
+Cypress.Commands.add('getAwxTeamByAnsibleId', (teamAnsibleId: string | undefined) => {
+  if (teamAnsibleId) {
+    const url = awxAPI`/teams/?resource__ansible_id=${teamAnsibleId.toString()}`;
+    cy.pollAWXResults<Team>(url).then((team) => {
+      return team[0];
+    });
+  }
+});
+
+Cypress.Commands.add('getCurrentUser', () => {
+  const url = awxGWAPI`/me/`;
+  cy.pollAWXResults<AwxUser>(url).then((user) => {
+    return user[0];
+  });
+});
 
 Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: string) => {
   cy.get(`[data-cy="${configType}"]`)
@@ -301,10 +350,6 @@ Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: s
     })
     .type('{esc}');
 });
-
-/**@param
- * createAWXCredentialTypeUI
- */
 
 Cypress.Commands.add(
   'createAndDeleteCustomAWXCredentialTypeUI',
@@ -568,9 +613,6 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('clickModalButton', (label: string | RegExp) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    // cy.contains('button', label).click();
-    // FIXME: contains doesn't work inside modals !?
-    // ref.: https://github.com/cypress-io/cypress/issues/9268
     cy.clickButton(label);
   });
 });
@@ -597,12 +639,18 @@ Cypress.Commands.add('clickPageAction', (dataCy: string) => {
 });
 
 Cypress.Commands.add('createAwxOrganization', (orgName?: string, failOnStatusCode?: boolean) => {
-  cy.requestPost<Pick<Organization, 'name'>, Organization>(
-    awxAPI`/organizations/`,
+  cy.requestPost<Partial<Organization>>(
+    awxGWAPI`/organizations/`,
     { name: orgName ? orgName : 'E2E Organization ' + randomString(4) },
     failOnStatusCode
-  );
+  ).then((organization) => {
+    const ansibleId = organization?.summary_fields?.resource.ansible_id;
+    cy.getAwxOrgByAnsibleId(ansibleId).then((thisOrg: Organization) => {
+      return thisOrg;
+    });
+  });
 });
+
 Cypress.Commands.add(
   'createAWXCredential',
   (credential: SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>) => {
@@ -664,15 +712,40 @@ Cypress.Commands.add(
     }
   ) => {
     if (!organization?.id) return;
-    cy.requestDelete(awxAPI`/organizations/${organization?.id.toString()}/`, options);
+    cy.requestDelete(awxGWAPI`/organizations/${organization?.id.toString()}/`, options);
   }
 );
 
 Cypress.Commands.add('createAwxTeam', (organization: Organization) => {
-  cy.requestPost<Pick<Team, 'name' | 'organization'>, Team>(awxAPI`/teams/`, {
-    name: 'E2E Team ' + randomString(4),
-    organization: organization.id,
-  });
+  const serverString = Cypress.env('PLATFORM_SERVER') as string;
+
+  if (serverString === undefined) {
+    const orgAnsibleId = organization.summary_fields.resource.ansible_id;
+    cy.getAwxOrgByAnsibleId(orgAnsibleId).then((thisOrg) => {
+      cy.requestPost<Team>(awxGWAPI`/teams/`, {
+        name: 'e2e-team-' + randomString(4),
+        organization: thisOrg.id,
+      }).then((team) => {
+        const ansibleId = team?.summary_fields?.resource.ansible_id;
+        cy.getAwxTeamByAnsibleId(ansibleId).then((thisTeam: Team) => {
+          return thisTeam;
+        });
+      });
+    });
+  } else {
+    const orgAnsibleId = organization.summary_fields.resource.ansible_id;
+    cy.getGatewayOrgByAnsibleId(orgAnsibleId).then((thisOrg) => {
+      cy.requestPost<Team>(awxGWAPI`/teams/`, {
+        name: 'e2e-team-' + randomString(4),
+        organization: thisOrg.id,
+      }).then((team) => {
+        const ansibleId = team?.summary_fields?.resource.ansible_id;
+        cy.getAwxTeamByAnsibleId(ansibleId).then((thisTeam: Team) => {
+          return thisTeam;
+        });
+      });
+    });
+  }
 });
 
 Cypress.Commands.add(
@@ -685,22 +758,44 @@ Cypress.Commands.add(
     }
   ) => {
     if (team.id) {
-      cy.requestDelete(awxAPI`/teams/${team.id.toString()}/`, options);
+      cy.requestDelete(awxGWAPI`/teams/${team.id.toString()}/`, options);
     }
   }
 );
 
 Cypress.Commands.add('createAwxUser', (organization: Organization) => {
-  cy.requestPost<Omit<AwxUser, 'id' | 'auth' | 'summary_fields'>, AwxUser>(
-    awxAPI`/organizations/${organization.id.toString()}/users/`,
-    {
+  const serverString = Cypress.env('PLATFORM_SERVER') as string;
+
+  if (serverString === undefined) {
+    cy.requestPost<Partial<AwxUser>>(
+      awxGWAPI`/organizations/${organization.id.toString()}/users/`,
+      {
+        username: 'e2e-user-' + randomString(4),
+        is_superuser: false,
+        is_system_auditor: false,
+        password: 'pw',
+        user_type: 'normal',
+      }
+    ).then((user) => {
+      const ansibleId = user?.summary_fields?.resource.ansible_id;
+      cy.getAwxUserByAnsibleId(ansibleId).then((thisUser: AwxUser) => {
+        return thisUser;
+      });
+    });
+  } else {
+    cy.requestPost<Partial<AwxUser>>(awxGWAPI`/users/`, {
       username: 'e2e-user-' + randomString(4),
       is_superuser: false,
       is_system_auditor: false,
       password: 'pw',
       user_type: 'normal',
-    }
-  ).then((user) => user);
+    }).then((user) => {
+      const ansibleId = user?.summary_fields?.resource.ansible_id;
+      cy.getAwxUserByAnsibleId(ansibleId).then((thisUser: AwxUser) => {
+        return thisUser;
+      });
+    });
+  }
 });
 
 Cypress.Commands.add(
@@ -713,7 +808,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (user?.id) {
-      cy.requestDelete(awxAPI`/users/${user.id.toString()}/`, options);
+      cy.requestDelete(awxGWAPI`/users/${user.id.toString()}/`, options);
     }
   }
 );
@@ -730,12 +825,14 @@ Cypress.Commands.add('getAwxRoles', () => {
 Cypress.Commands.add(
   'createAwxProject',
   (
-    project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+    organization: Organization,
+    project?: Partial<Project>,
     scm_url?: string,
     skipSync?: boolean
   ) => {
     cy.requestPost<Project>(awxAPI`/projects/`, {
       name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
       scm_type: 'git',
       scm_url: scm_url ? scm_url : 'https://github.com/ansible/ansible-ui',
       ...project,
@@ -812,18 +909,6 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  'createEdaSpecificAwxProject',
-  (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
-    cy.createAwxProject({
-      name: 'EDA Project ' + randomString(4),
-      organization: options?.project?.organization ?? null,
-      scm_type: 'git',
-      scm_url: 'https://github.com/ansible/ansible-ui',
-    });
-  }
-);
-
-Cypress.Commands.add(
   'deleteAwxProject',
   (
     project: Project,
@@ -832,7 +917,6 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const organizationId = project.organization;
     // Delete sync job related to project
     if (project && project.related && typeof project.related.last_job === 'string') {
       const projectUpdateEndpoint: string = project.related.last_job;
@@ -840,35 +924,25 @@ Cypress.Commands.add(
     }
     // Delete project
     cy.requestDelete(awxAPI`/projects/${project.id.toString()}/`, options);
-    // Delete organization for the project
-    if (organizationId) {
-      cy.requestDelete(awxAPI`/organizations/${organizationId.toString()}/`, options);
-    }
   }
 );
 
-Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 'id'>>) => {
-  if (inventory?.organization !== undefined) {
-    cy.requestPost<Inventory, Partial<Omit<Inventory, 'id'>>>(awxAPI`/inventories/`, {
+Cypress.Commands.add(
+  'createAwxInventory',
+  (organization: Organization, inventory?: Partial<Inventory>) => {
+    cy.requestPost<Inventory>(awxAPI`/inventories/`, {
       name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
       ...inventory,
     });
-  } else {
-    cy.createAwxOrganization().then((organization) => {
-      cy.requestPost<Inventory, Partial<Omit<Inventory, 'id'>>>(awxAPI`/inventories/`, {
-        name: 'E2E Inventory ' + randomString(4),
-        organization: organization.id,
-        ...inventory,
-      });
-    });
   }
-});
+);
 
 Cypress.Commands.add('createAwxConstructedInventory', (organization: Organization) => {
   const arrayOfInventories: number[] = [];
   // creates 3 inventories
   for (let i = 0; i < 3; i++) {
-    cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+    cy.createAwxInventory(organization).then((inv: Inventory) => {
       arrayOfInventories.push(inv.id);
     });
   }
@@ -997,24 +1071,22 @@ Cypress.Commands.add(
   'createAwxOrganizationProjectInventoryJobTemplate',
   (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
     cy.createAwxOrganization().then((organization) => {
-      cy.createAwxInventory({ organization: organization.id }).then((inventory) => {
-        cy.createEdaSpecificAwxProject({ project: { organization: organization.id } }).then(
-          (project) => {
-            cy.createEdaAwxJobTemplate(project, inventory, options?.jobTemplate).then(
-              (jobTemplate) => ({
-                project,
-                inventory,
-                jobTemplate,
-              })
-            );
-          }
-        );
+      cy.createAwxInventory(organization).then((inventory) => {
+        cy.createAwxProject(organization).then((project) => {
+          cy.createEdaAwxJobTemplate(project, inventory, options?.jobTemplate).then(
+            (jobTemplate) => ({
+              project,
+              inventory,
+              jobTemplate,
+            })
+          );
+        });
       });
     });
   }
 );
 
-/** Interface for tracking created resources that will need to be delete
+/** Interface for tracking created resources that will need to be deleted
 at the end of testing using cy.deleteAwxResources*/
 export interface IAwxResources {
   jobTemplate?: JobTemplate;
@@ -1095,7 +1167,6 @@ Cypress.Commands.add(
     cy.getAwxWorkflowJobTemplateByName(workflowJobTemplateName)
       .its('results[0]')
       .then((results: WorkflowJobTemplate) => {
-        cy.log('THIS ONE THIS ONE', results.id);
         cy.intercept(
           {
             method: 'GET',
@@ -1105,7 +1176,10 @@ Cypress.Commands.add(
         )
           .as('newVisualizerView')
           .then(() => {
-            cy.visit(`/templates/workflow-job-template/${results.id}/visualizer`);
+            cy.navigateTo('awx', 'templates');
+            cy.filterTableByMultiSelect('name', [results.name]);
+            cy.clickTableRowLink('name', results.name, { disableFilter: true });
+            cy.get('a[href*="/visualizer"]').click();
           });
       });
   }
@@ -1327,7 +1401,6 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    // const instanceGroupId = instanceGroup.id;
     if (instanceGroup?.id) {
       cy.requestDelete(awxAPI`/instance_groups/${instanceGroup.id.toString()}/`, options);
     }
@@ -1340,11 +1413,12 @@ Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   const username = Cypress.env('AWX_USERNAME') as string;
   const password = Cypress.env('AWX_PASSWORD') as string;
   const tokensEndpoint = awxAPI`/tokens/`;
+  cy.log('THIS ONE', tokensEndpoint);
   cy.exec(
     `curl --insecure -d '${JSON.stringify({
       description: 'E2E-' + randomString(4),
       ...awxToken,
-    })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${awxServer}${tokensEndpoint}'`
+    })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${tokensEndpoint}'`
   ).then((result) => JSON.parse(result.stdout) as AwxToken);
 });
 
@@ -1377,7 +1451,7 @@ after(() => {
 
 Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
   cy.requestGet<AwxItemsResponse<JobEvent>>(
-    `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
+    awxAPI`/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
   )
     .its('results')
     .then((results: { summary_fields: { job: { status: string } } }[]) => {
@@ -1401,7 +1475,7 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
 });
 
 Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 45) => {
-  cy.requestGet<Job>(`api/v2/system_jobs/${jobID}/`).then((mgtJobResponse: Job) => {
+  cy.requestGet<Job>(awxAPI`/system_jobs/${jobID}/`).then((mgtJobResponse: Job) => {
     let stillProcessing = false;
 
     if (mgtJobResponse) {
@@ -1502,17 +1576,18 @@ Cypress.Commands.add('cancelJob', (job: Job) => {
 const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
 const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
-const GLOBAL_ORG_NAME = 'Global Organization';
+const GLOBAL_ORG_NAME = 'Global Platform Level Organization';
+const GLOBAL_ORG_DESCRIPTION = 'DO NOT DELETE: Global Organization';
 
 /** Create a global organization if it doesn't exist. */
 Cypress.Commands.add('createGlobalOrganization', function () {
-  cy.requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
+  cy.requestGet<AwxItemsResponse<Organization>>(awxGWAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
     .its('results')
     .then((orgResults: Organization[]) => {
       if (orgResults.length === 0) {
         cy.requestPost<AwxItemsResponse<Organization>, Partial<Organization>>(
-          awxAPI`/organizations/`,
-          { name: GLOBAL_ORG_NAME }
+          awxGWAPI`/organizations/`,
+          { name: GLOBAL_ORG_NAME, description: GLOBAL_ORG_DESCRIPTION }
         );
         cy.wait(100).then(() => cy.createGlobalOrganization());
       } else {
@@ -1560,7 +1635,7 @@ Cypress.Commands.add(
     cy.selectDropdownOptionByResourceName('client-type', customClientType);
     cy.get('[data-cy="redirect-uris"]').type(customRedirectURIS);
 
-    cy.intercept('POST', `api/v2/applications/`).as('createApp');
+    cy.intercept('POST', awxAPI`/applications/`).as('createApp');
 
     cy.clickButton('Create application');
 
@@ -1601,7 +1676,7 @@ Cypress.Commands.add(
     //Click on Edit application button
     cy.clickButton('Edit application');
 
-    cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+    cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
 
     cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
     cy.clickButton('Save application');
@@ -1629,7 +1704,7 @@ Cypress.Commands.add(
     cy.searchAndDisplayResource(customAppName);
     cy.get(`[data-cy="edit-application"]`).click();
 
-    cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+    cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
 
     cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
     cy.clickButton('Save application');
@@ -1667,7 +1742,7 @@ Cypress.Commands.add(
     //Click on Delete application button
     cy.clickButton('Delete application');
 
-    cy.intercept('DELETE', `api/v2/applications/*/`).as('deleteApp');
+    cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
 
     //Verify Delete modal
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -1690,7 +1765,7 @@ Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: s
   cy.clickTab(/^Back to Applications$/, true);
   cy.verifyPageTitle('OAuth Applications');
   cy.clickTableRowKebabAction(customAppName, 'delete-application');
-  cy.intercept('DELETE', `api/v2/applications/*/`).as('deleteApp');
+  cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
 
   //Verify Delete modal
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -1723,7 +1798,7 @@ Cypress.Commands.add('createAwxApplication', () => {
       | 'authorization_grant_type'
       | 'redirect_uris'
     >
-  >(awxAPI`/applications/`, {
+  >(awxGWAPI`/applications/`, {
     name: 'E2E Application API ' + randomString(4),
     description: 'E2E Application API Description',
     organization: 1,
@@ -1744,14 +1819,14 @@ Cypress.Commands.add(
     }
   ) => {
     if (id) {
-      cy.requestDelete(awxAPI`/applications/${id}/`, options);
+      cy.requestDelete(awxGWAPI`/applications/${id}/`, options);
     }
   }
 );
 
 Cypress.Commands.add('editAwxApplication', (application: Application, name: string) => {
   if (application?.id) {
-    cy.requestPatch(awxAPI`/applications/${application.id.toString()}/`, {
+    cy.requestPatch(awxGWAPI`/applications/${application.id.toString()}/`, {
       name: name,
     });
   }
@@ -1790,7 +1865,7 @@ Cypress.Commands.add('removeAwxInstance', (id: string) => {
 
 Cypress.Commands.add(
   'createNotificationTemplate',
-  function (notificationName: string, organization_id?: number) {
+  function (notificationName: string, organization: Organization) {
     cy.requestPost<
       Pick<
         NotificationTemplate,
@@ -1799,9 +1874,7 @@ Cypress.Commands.add(
       NotificationTemplate
     >(awxAPI`/notification_templates/`, {
       name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
-      organization: organization_id
-        ? organization_id
-        : (this.globalAwxOrganization as Organization).id,
+      organization: organization.id,
       notification_type: 'email',
       notification_configuration: {
         host: '127.0.0.1',
@@ -1834,9 +1907,14 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createTemplateSurvey',
   (template: JobTemplate | WorkflowJobTemplate, label: string, spec: Spec) => {
-    cy.visit(
-      `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
-    );
+    cy.navigateTo('awx', 'templates');
+    cy.verifyPageTitle('Templates');
+    cy.filterTableByMultiSelect('name', [template.name]);
+    cy.get('[data-cy="name-column-cell"]').within(() => {
+      cy.get('a').click();
+    });
+    cy.verifyPageTitle(template.name);
+    cy.get('a[href*="survey"]').click();
 
     cy.getByDataCy('question-name').type(spec.question_name ?? '');
     cy.getByDataCy('question-description').type(spec?.question_description ?? '');
@@ -1869,7 +1947,6 @@ Cypress.Commands.add(
         }
       });
     }
-
     cy.intercept('POST', awxAPI`/${template.type}s/*/survey_spec/`).as('createSurveySpec');
     cy.clickButton('Create question');
     cy.wait('@createSurveySpec')
