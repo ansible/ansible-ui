@@ -78,7 +78,7 @@ describe.skip('Workflow Approvals Tests', () => {
     cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
-  describe('Workflow Approvals - Approve, Deny, Delete', () => {
+  describe.skip('Workflow Approvals - Approve, Deny, Delete', () => {
     it('admin can approve and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-APPROVE-' + randomString(4),
