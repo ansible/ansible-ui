@@ -1,10 +1,10 @@
-import { randomString } from '../../../../framework/utils/random-string';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { AwxHost } from '../../../../frontend/awx/interfaces/AwxHost';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { randomString } from '../../../../framework/utils/random-string';
 
 describe('Inventory Groups', () => {
   let organization: Organization;
@@ -53,7 +53,7 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
-        cy.intercept('POST', awxAPI`/groups/*`).as('created');
+        cy.intercept('POST', awxAPI`/groups/`).as('created');
         cy.clickButton(/^Save/);
         cy.wait('@created')
           .its('response.statusCode')

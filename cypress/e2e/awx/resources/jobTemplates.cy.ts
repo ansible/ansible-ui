@@ -390,8 +390,12 @@ describe('Job Templates Tests', function () {
     it('can assign a new inventory to a job template if the originally assigned inventory was deleted', function () {
       cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory2 = inv;
-        cy.visit(`templates/job-template/${jobTemplate.id}/details`);
-        cy.contains(jobTemplate.name);
+        cy.navigateTo('awx', 'templates');
+        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.clickTableRowLink('name', jobTemplate.name, {
+          disableFilter: true,
+        });
+        cy.verifyPageTitle(jobTemplate.name);
         cy.getByDataCy('inventory').contains(jobTemplate.summary_fields.inventory.name).click();
         cy.clickKebabAction('actions-dropdown', 'delete-inventory');
         cy.clickModalConfirmCheckbox();
@@ -400,8 +404,12 @@ describe('Job Templates Tests', function () {
         );
         cy.clickModalButton('Delete inventory');
         cy.wait('@deleteInventory');
-        cy.visit(`templates/job-template/${jobTemplate.id}/details`);
-        cy.contains(jobTemplate.name);
+        cy.navigateTo('awx', 'templates');
+        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.clickTableRowLink('name', jobTemplate.name, {
+          disableFilter: true,
+        });
+        cy.verifyPageTitle(jobTemplate.name);
         cy.getByDataCy('inventory').contains('Deleted');
         cy.clickLink('Edit template');
         cy.selectDropdownOptionByResourceName('inventory', inv.name);
@@ -572,7 +580,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can copy an existing job template from the list', function () {
-      cy.visit('/templates');
+      cy.navigateTo('awx', 'templates');
       cy.filterTableBySingleSelect('name', jobTemplate.name);
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
         'copyTemplate'
@@ -590,7 +598,12 @@ describe('Job Templates Tests', function () {
     });
 
     it('can copy an existing job template from the details page', function () {
-      cy.visit(`/templates/job-template/${jobTemplate.id.toString()}/details`);
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.clickTableRowLink('name', jobTemplate.name, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(jobTemplate.name);
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
         'copyTemplate'
       );
@@ -598,9 +611,13 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('alert-toaster').contains(`${jobTemplate.name} copied.`);
       cy.wait('@copyTemplate')
         .its('response.body')
-        .then(({ id, name }: { id: number; name: string }) => {
-          cy.visit(`/templates/job-template/${id}/details`);
-          cy.contains(name);
+        .then(({ name }: { name: string }) => {
+          cy.navigateTo('awx', 'templates');
+          cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+          cy.clickTableRowLink('name', jobTemplate.name, {
+            disableFilter: true,
+          });
+          cy.verifyPageTitle(name);
         });
     });
   });
@@ -650,7 +667,7 @@ describe('Job Templates Tests', function () {
     });
 
     it('can delete a job template from the list line item', function () {
-      cy.visit('/templates');
+      cy.navigateTo('awx', 'templates');
       cy.filterTableBySingleSelect('name', jobTemplate.name);
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('actions-dropdown').click();
@@ -697,8 +714,12 @@ describe('Job Templates Tests', function () {
           inventory: deletedInventory.id,
         }).then((jt) => {
           jobTemplateWithDeletedInventory = jt;
-
-          cy.visit(`templates/job-template/${jobTemplateWithDeletedInventory.id}/details`);
+          cy.navigateTo('awx', 'templates');
+          cy.filterTableByMultiSelect('name', [jobTemplateWithDeletedInventory.name]);
+          cy.clickTableRowLink('name', jobTemplateWithDeletedInventory.name, {
+            disableFilter: true,
+          });
+          cy.verifyPageTitle(jobTemplateWithDeletedInventory.name);
           cy.getByDataCy('inventory').contains(deletedInventory.name).click();
           cy.clickKebabAction('actions-dropdown', 'delete-inventory');
           cy.clickModalConfirmCheckbox();
@@ -711,7 +732,12 @@ describe('Job Templates Tests', function () {
             .then((response) => {
               expect(response?.statusCode).to.eql(202);
             });
-          cy.visit(`templates/job-template/${jobTemplateWithDeletedInventory.id}/details`);
+          cy.navigateTo('awx', 'templates');
+          cy.filterTableByMultiSelect('name', [jobTemplateWithDeletedInventory.name]);
+          cy.clickTableRowLink('name', jobTemplateWithDeletedInventory.name, {
+            disableFilter: true,
+          });
+          cy.verifyPageTitle(jobTemplateWithDeletedInventory.name);
           cy.getByDataCy('inventory').contains('Deleted');
         });
       });
@@ -815,7 +841,12 @@ describe('Job Templates Tests', function () {
     });
 
     it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      cy.visit(`/templates/job-template/${jobTemplate.id}/details`);
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.clickTableRowLink('name', jobTemplate.name, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(jobTemplate.name);
       cy.clickTab('Notifications', true);
       cy.filterTableByTextFilter('name', notification.name);
       cy.getByDataCy('name-column-cell').contains(notification.name).click();
@@ -824,17 +855,35 @@ describe('Job Templates Tests', function () {
     });
 
     it('can toggle the Job Templates -> Notification on and off for job start', () => {
-      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.clickTableRowLink('name', jobTemplate.name, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(jobTemplate.name);
+      cy.clickTab('Notifications', true);
       toggleNotificationType('start');
     });
 
     it('can toggle the Job Templates -> Notification on and off for job success', () => {
-      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.clickTableRowLink('name', jobTemplate.name, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(jobTemplate.name);
+      cy.clickTab('Notifications', true);
       toggleNotificationType('success');
     });
 
     it('can toggle the Job Templates -> Notification on and off for job failure', () => {
-      cy.visit(`/templates/job-template/${jobTemplate.id}/notifications`);
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.clickTableRowLink('name', jobTemplate.name, {
+        disableFilter: true,
+      });
+      cy.verifyPageTitle(jobTemplate.name);
+      cy.clickTab('Notifications', true);
       toggleNotificationType('failure');
     });
   });

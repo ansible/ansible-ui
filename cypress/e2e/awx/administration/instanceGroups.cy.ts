@@ -169,7 +169,7 @@ describe(`Instance Groups`, () => {
     });
 
     it(`bulk deletion dialog shows warnings for Instance groups that cannot be deleted`, () => {
-      const arrayOfElementText: string[] = [];
+      const arrayOfElementText = [];
       for (let i = 0; i < 2; i++) {
         const instanceGroupName = randomE2Ename();
         cy.createAwxInstanceGroup({
@@ -342,7 +342,7 @@ describe(`Instance Groups`, () => {
     });
 
     it(`bulk deletion dialog shows warnings for container groups that cannot be deleted`, () => {
-      const arrayOfElementText: string[] = [];
+      const arrayOfElementText = [];
       for (let i = 0; i < 2; i++) {
         const containerGroupName = randomE2Ename();
         cy.createAwxInstanceGroup({
@@ -1023,7 +1023,7 @@ describe(`Instance Groups`, () => {
   });
 });
 
-tag(['openshift'], () => {
+tag(['upstream'], () => {
   //An instance can only be created in an Openshift or Kubernetes build
   describe('Instance Groups: Instances Tab', () => {
     let instance: Instance;

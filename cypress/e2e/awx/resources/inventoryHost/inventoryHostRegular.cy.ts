@@ -1,12 +1,11 @@
-import { randomString } from '../../../../../framework/utils/random-string';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 import { launchHostJob } from '../../../../support/hostsfunctions';
 import { runCommand } from './runCommandFunction';
-
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { randomString } from '../../../../../framework/utils/random-string';
 import {
   checkFactsInHost,
   checkHostGroup,
@@ -67,7 +66,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     //1) Use inventory and host
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
-    cy.createAwxProject({ organization: organization.id }).then((project) => {
+    cy.createAwxProject(organization).then((project) => {
       cy.createInventoryHost(organization, '').then((result) => {
         launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');
         cy.deleteAwxInventory(result.inventory, { failOnStatusCode: false });
