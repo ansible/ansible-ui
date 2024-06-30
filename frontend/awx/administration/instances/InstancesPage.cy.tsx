@@ -91,7 +91,7 @@ describe('Instances Page', () => {
     }).as('isK8s');
     cy.mount(<InstancePage />);
     cy.wait('@isK8s').then(() => {
-      cy.get('actions-dropdown').should('be.disabled');
+      cy.get('actions-dropdown').should('not.exist');
     });
   });
 
