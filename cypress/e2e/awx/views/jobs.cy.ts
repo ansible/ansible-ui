@@ -266,7 +266,6 @@ describe('Jobs', () => {
   describe('Job template: Output and Details Screen', () => {
     let inventory: Inventory;
     let jobTemplate: JobTemplate;
-    let thisId: string;
 
     beforeEach(function () {
       cy.createAwxInventory(awxOrganization).then((i) => {
@@ -298,29 +297,27 @@ describe('Jobs', () => {
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(201);
         })
-        .its('response.body.id')
-        .then((jobId: string) => {
-          thisId = jobId;
-          cy.waitForTemplateStatus(thisId);
+        .its('response.body')
+        .then((job: Job) => {
+          cy.waitForTemplateStatus(job.id.toString());
+          cy.verifyPageTitle(jobTemplate.name);
+          cy.url().then((currentUrl) => {
+            expect(currentUrl.includes(`/jobs/playbook/${job.id}/output`)).to.be.true;
+          });
+          cy.clickTab(/^Details$/, true);
+          cy.url().then((currentUrl) => {
+            expect(currentUrl.includes(`/jobs/playbook/${job.id}/details`)).to.be.true;
+          });
+          cy.getByDataCy('name').should('contain', jobTemplate.name);
+          cy.getByDataCy('status').should('contain', 'Success');
+          cy.getByDataCy('inventory').should('contain', inventory.name);
         });
-      cy.verifyPageTitle(jobTemplate.name);
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/jobs/playbook/${thisId}/output`)).to.be.true;
-      });
-      cy.clickTab(/^Details$/, true);
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/jobs/playbook/${thisId}/details`)).to.be.true;
-      });
-      cy.getByDataCy('name').should('contain', jobTemplate.name);
-      cy.getByDataCy('status').should('contain', 'Success');
-      cy.getByDataCy('inventory').should('contain', inventory.name);
     });
   });
 
   describe('Inventory source: Output and Details Screen', () => {
     let inventory: Inventory;
     let inventorySource: InventorySource;
-    let thisId: string;
 
     beforeEach(function () {
       cy.createAwxInventory(awxOrganization).then((i) => {
@@ -351,16 +348,15 @@ describe('Jobs', () => {
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(202);
         })
-        .its('response.body.id')
-        .then((invId: string) => {
-          thisId = invId;
+        .its('response.body')
+        .then((inv: Inventory) => {
+          cy.clickTab(/^Jobs$/, true);
+          cy.filterTableBySingleSelect('name', inventorySource.name);
+          cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
+          cy.url().then((currentUrl) => {
+            expect(currentUrl.includes(`/jobs/inventory/${inv.id}/details`)).to.be.true;
+          });
         });
-      cy.clickTab(/^Jobs$/, true);
-      cy.filterTableBySingleSelect('name', inventorySource.name);
-      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/jobs/inventory/${thisId}/details`)).to.be.true;
-      });
     });
   });
 
@@ -368,7 +364,6 @@ describe('Jobs', () => {
     let workflowJobTemplate: WorkflowJobTemplate;
     let jobTemplate: JobTemplate;
     let inventory: Inventory;
-    let thisId: string;
 
     beforeEach(function () {
       cy.createAwxInventory(awxOrganization).then((i) => {
@@ -417,22 +412,21 @@ describe('Jobs', () => {
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(201);
         })
-        .its('response.body.id')
-        .then((jobId: string) => {
-          thisId = jobId;
-          cy.waitForWorkflowJobStatus(thisId);
+        .its('response.body')
+        .then((wfJob: WorkflowJobTemplate) => {
+          cy.waitForWorkflowJobStatus(wfJob.id.toString());
+          cy.verifyPageTitle(workflowJobTemplate.name);
+          cy.url().then((currentUrl) => {
+            expect(currentUrl.includes(`/jobs/workflow/${wfJob.id}/output`)).to.be.true;
+          });
+          cy.clickTab(/^Details$/, true);
+          cy.url().then((currentUrl) => {
+            expect(currentUrl.includes(`/jobs/workflow/${wfJob.id}/details`)).to.be.true;
+          });
+          cy.getByDataCy('name').should('contain', workflowJobTemplate.name);
+          cy.getByDataCy('type').should('contain', 'Workflow job');
+          cy.getByDataCy('inventory').should('contain', inventory.name);
         });
-      cy.verifyPageTitle(workflowJobTemplate.name);
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/jobs/workflow/${thisId}/output`)).to.be.true;
-      });
-      cy.clickTab(/^Details$/, true);
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/jobs/workflow/${thisId}/details`)).to.be.true;
-      });
-      cy.getByDataCy('name').should('contain', workflowJobTemplate.name);
-      cy.getByDataCy('type').should('contain', 'Workflow job');
-      cy.getByDataCy('inventory').should('contain', inventory.name);
     });
   });
 });
