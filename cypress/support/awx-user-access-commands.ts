@@ -12,19 +12,19 @@ import { awxAPI } from './formatApiPathForAwx';
 
 Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
   cy.requestGet<AwxItemsResponse<WorkflowJobTemplate>>(
-    `/api/v2/workflow_job_templates/?name=${wfjtName}`
+    awxAPI`/workflow_job_templates/?name=${wfjtName}`
   )
     .its('results[0]')
     .then((resource: WorkflowJobTemplate) => {
       cy.requestGet<AwxItemsResponse<Role>>(
-        `/api/v2/workflow_job_templates/${resource.id}/object_roles/`
+        awxAPI`/workflow_job_templates/${resource.id.toString()}/object_roles/`
       )
         .its('results')
         .then((rolesArray) => {
           const approveRole = rolesArray
             ? rolesArray.find((role) => role.name === roleName)
             : undefined;
-          cy.requestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+          cy.requestPost<Partial<Role>>(awxGWAPI`/users/${userId.toString()}/roles/`, {
             id: approveRole?.id,
           });
         });
@@ -56,16 +56,18 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'giveUserProjectAccess',
   (projectName: string, userId: number, roleName: string) => {
-    cy.requestGet<AwxItemsResponse<Project>>(`/api/v2/projects/?name=${projectName}`)
+    cy.requestGet<AwxItemsResponse<Project>>(awxAPI`/projects/?name=${projectName}`)
       .its('results[0]')
       .then((resource: Project) => {
-        cy.requestGet<AwxItemsResponse<Role>>(`/api/v2/projects/${resource.id}/object_roles/`)
+        cy.requestGet<AwxItemsResponse<Role>>(
+          awxAPI`/projects/${resource.id.toString()}/object_roles/`
+        )
           .its('results')
           .then((rolesArray) => {
             const approveRole = rolesArray
               ? rolesArray.find((role) => role.name === roleName)
               : undefined;
-            cy.requestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+            cy.requestPost<Partial<Role>>(awxGWAPI`/users/${userId.toString()}/roles/`, {
               id: approveRole?.id,
             });
           });
@@ -76,16 +78,18 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'giveUserInventoryAccess',
   (inventoryName: string, userId: number, roleName: string) => {
-    cy.requestGet<AwxItemsResponse<Inventory>>(`/api/v2/inventories/?name=${inventoryName}`)
+    cy.requestGet<AwxItemsResponse<Inventory>>(awxAPI`/inventories/?name=${inventoryName}`)
       .its('results[0]')
       .then((resource: Inventory) => {
-        cy.requestGet<AwxItemsResponse<Role>>(`/api/v2/inventories/${resource.id}/object_roles/`)
+        cy.requestGet<AwxItemsResponse<Role>>(
+          awxAPI`/inventories/${resource.id.toString()}/object_roles/`
+        )
           .its('results')
           .then((rolesArray) => {
             const approveRole = rolesArray
               ? rolesArray.find((role) => role.name === roleName)
               : undefined;
-            cy.requestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+            cy.requestPost<Partial<Role>>(awxGWAPI`/users/${userId.toString()}/roles/`, {
               id: approveRole?.id,
             });
           });
@@ -96,16 +100,20 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'giveUserOrganizationAccess',
   (organizationName: string, userId: number, roleName: string) => {
-    cy.requestGet<AwxItemsResponse<Organization>>(`/api/v2/organizations/?name=${organizationName}`)
+    cy.requestGet<AwxItemsResponse<Organization>>(
+      awxGWAPI`/organizations/?name=${organizationName}`
+    )
       .its('results[0]')
       .then((resource: Organization) => {
-        cy.requestGet<AwxItemsResponse<Role>>(`/api/v2/organizations/${resource.id}/object_roles/`)
+        cy.requestGet<AwxItemsResponse<Role>>(
+          awxGWAPI`/organizations/${resource.id.toString()}/object_roles/`
+        )
           .its('results')
           .then((rolesArray) => {
             const approveRole = rolesArray
               ? rolesArray.find((role) => role.name === roleName)
               : undefined;
-            cy.requestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+            cy.requestPost<Partial<Role>>(awxGWAPI`/users/${userId.toString()}/roles/`, {
               id: approveRole?.id,
             });
           });
@@ -114,17 +122,19 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('giveUserTeamAccess', (teamName: string, userId: number, roleName: string) => {
-  cy.requestGet<AwxItemsResponse<Team>>(`/api/v2/teams/?name=${teamName}`)
+  cy.requestGet<AwxItemsResponse<Team>>(awxGWAPI`/teams/?name=${teamName}`)
     .its('results[0]')
     .then((resource: Team) => {
-      cy.requestGet<AwxItemsResponse<Role>>(`/api/v2/teams/${resource.id}/object_roles/`)
+      cy.requestGet<AwxItemsResponse<Role>>(
+        awxGWAPI`/teams/${resource.id.toString()}/object_roles/`
+      )
         .its('results')
         .then((rolesArray) => {
           const approveRole = rolesArray
             ? rolesArray.find((role) => role.name === roleName)
             : undefined;
           cy.log('APPROVE', approveRole);
-          cy.requestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
+          cy.requestPost<Partial<Role>>(awxGWAPI`/users/${userId.toString()}/roles/`, {
             id: approveRole?.id,
           });
         });
