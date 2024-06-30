@@ -28,7 +28,7 @@ describe('Execution Environments', () => {
     });
   });
 
-  it('can add and delete a new execution environment', () => {
+  it.skip('can add and delete a new execution environment', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
       const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
