@@ -90,8 +90,10 @@ describe('Instances Page', () => {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.getByDataCy('actions-dropdown').click();
-    cy.get('[data-cy="remove-instance"]').should('not.be.visible');
+    cy.wait('@isK8s').then(() => {
+      cy.getByDataCy('actions-dropdown').click();
+      cy.get('[data-cy="remove-instance"]').should('not.be.visible');
+    });
   });
 
   it('remove instance button should be shown for k8s system', () => {
@@ -99,9 +101,11 @@ describe('Instances Page', () => {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.getByDataCy('actions-dropdown').click();
-    cy.getByDataCy('remove-instance').should('be.visible');
-    cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
+    cy.wait('@isK8s').then(() => {
+      cy.getByDataCy('actions-dropdown').click();
+      cy.getByDataCy('remove-instance').should('be.visible');
+      cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
+    });
   });
 
   it('only admin users can remove instance', () => {
