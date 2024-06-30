@@ -90,8 +90,8 @@ describe('Instances Page', () => {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="remove-instance"]').should('not.exist');
+    cy.getByDataCy('actions-dropdown').click();
+    cy.get('[data-cy="remove-instance"]').should('not.be.visible');
   });
 
   it('remove instance button should be shown for k8s system', () => {
