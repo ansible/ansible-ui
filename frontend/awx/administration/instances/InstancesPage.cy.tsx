@@ -91,8 +91,7 @@ describe('Instances Page', () => {
     }).as('isK8s');
     cy.mount(<InstancePage />);
     cy.wait('@isK8s').then(() => {
-      cy.getByDataCy('actions-dropdown').click();
-      cy.get('[data-cy="remove-instance"]').should('not.be.visible');
+      cy.get('actions-dropdown').should('be.disabled');
     });
   });
 
