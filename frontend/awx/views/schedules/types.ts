@@ -6,6 +6,7 @@ import { Project } from '../../interfaces/Project';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
 import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export enum Frequency {
   YEARLY = 0,
@@ -78,10 +79,11 @@ export enum RuleType {
 }
 
 export interface schedulePageUrl {
-  pageId: string;
+  pageId: AwxRoute;
   params: {
     id: string;
     schedule_id: string;
     source_id?: string;
+    inventory_type?: string;
   };
 }
