@@ -4,24 +4,31 @@ import { Organization } from '../../../../../frontend/awx/interfaces/Organizatio
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 import { runCommand } from './runCommandFunction';
 import { randomString } from '../../../../../framework/utils/random-string';
+import { Project } from '../../../../../frontend/awx/interfaces/Project';
 
 import {
   checkHostGroup,
   createAndEditAndDeleteHost,
   testHostBulkDelete,
+  checkFactsInHost,
   createHost,
+  createHostAndCancelJob,
 } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: AwxUser;
+  let project: Project;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxInventory({ organization: organization.id }).then((inv) => {
         inventory = inv;
+      });
+      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        project = proj;
       });
       cy.createAwxUser(organization).then((testUser) => {
         user = testUser;
@@ -63,12 +70,13 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     testHostBulkDelete('inventory_host', inventory);
   });
 
-  it.skip("can view a host's facts on the facts tab of a host inside an inventory", () => {
+  it("can view a host's facts on the facts tab of a host inside an inventory", () => {
     //1) Use the inventory, access the host tab of that inventory
     //2) Visit the host details page, then navigate to the host Facts tab
     //3) Assert that no facts are showing
     //4) Create a JT designed to populate the facts for the host, launch the job template
     //5) Navigate back to the facts tab of that host and assert that the facts exist
+    checkFactsInHost(inventory, 'inventory_host');
   });
 
   it.skip('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
@@ -77,12 +85,13 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
   });
 
-  it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
+  it('can cancel a currently running job from the host jobs tab inside an inventory', () => {
     //1) Use the inventory and host
     //2) create a job template that uses that inventory, utilize a playbook that will cause the job to be long running
     //3) Launch the job template
     //4) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
     //5) Cancel the job and assert that it has been canceled
+    createHostAndCancelJob(inventory, organization.id, project.id, true);
   });
 
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {

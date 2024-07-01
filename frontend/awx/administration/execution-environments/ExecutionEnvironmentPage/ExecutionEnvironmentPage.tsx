@@ -56,12 +56,20 @@ export function ExecutionEnvironmentPage() {
           page: AwxRoute.ExecutionEnvironments,
           persistentFilterKey: 'execution_environments',
         }}
-        tabs={[
-          { label: t('Details'), page: AwxRoute.ExecutionEnvironmentDetails },
-          { label: t('Templates'), page: AwxRoute.ExecutionEnvironmentTemplates },
-          { label: t('Team Access'), page: AwxRoute.ExecutionEnvironmentTeamAccess },
-          { label: t('User Access'), page: AwxRoute.ExecutionEnvironmentUserAccess },
-        ]}
+        tabs={
+          /** Role assignments via team/user access tabs are not applicable for managed and global EEs */
+          executionEnvironment?.managed || executionEnvironment?.organization === null
+            ? [
+                { label: t('Details'), page: AwxRoute.ExecutionEnvironmentDetails },
+                { label: t('Templates'), page: AwxRoute.ExecutionEnvironmentTemplates },
+              ]
+            : [
+                { label: t('Details'), page: AwxRoute.ExecutionEnvironmentDetails },
+                { label: t('Templates'), page: AwxRoute.ExecutionEnvironmentTemplates },
+                { label: t('Team Access'), page: AwxRoute.ExecutionEnvironmentTeamAccess },
+                { label: t('User Access'), page: AwxRoute.ExecutionEnvironmentUserAccess },
+              ]
+        }
         params={{ id: executionEnvironment?.id ?? '' }}
       />
     </PageLayout>

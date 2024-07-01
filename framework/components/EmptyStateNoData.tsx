@@ -1,5 +1,5 @@
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, ComponentClass } from 'react';
 import { EmptyStateCustom } from './EmptyStateCustom';
 
 export function EmptyStateNoData(props: {
@@ -7,11 +7,12 @@ export function EmptyStateNoData(props: {
   title: string;
   description: ReactNode;
   variant?: 'xs' | 'sm' | 'lg' | 'xl' | 'full' | undefined;
+  icon?: ComponentClass;
 }) {
-  const { button, description, title, variant } = props;
+  const { button, description, title, variant, icon: Icon } = props;
   return (
     <EmptyStateCustom
-      icon={button ? PlusCircleIcon : CubesIcon}
+      icon={Icon ?? (button ? PlusCircleIcon : CubesIcon)}
       title={title}
       description={description}
       button={button}

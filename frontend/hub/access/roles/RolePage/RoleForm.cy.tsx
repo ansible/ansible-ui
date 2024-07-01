@@ -80,7 +80,7 @@ describe('Hub Roles Form', () => {
       }
     );
     cy.mount(<EditRole />);
-    cy.verifyPageTitle('Edit Role');
+    cy.verifyPageTitle(`Edit ${mockRole.name}`);
     cy.get('[data-cy="name"]').should('have.value', mockRole.name);
     cy.get('[data-cy="description"]').should('have.value', mockRole.description);
     cy.get('[data-cy="permissioncategories-0-selectedpermissions-form-group"]').should(
