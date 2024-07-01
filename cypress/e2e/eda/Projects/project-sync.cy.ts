@@ -1,6 +1,4 @@
 describe('EDA Projects Syncing', () => {
-  before(() => cy.edaLogin());
-
   it('can sync a single project', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo('eda', 'projects');

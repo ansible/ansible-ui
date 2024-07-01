@@ -1,6 +1,6 @@
-import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
-import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaControllerToken } from '../../../frontend/eda/interfaces/EdaControllerToken';
+import { EdaResult } from '../../../frontend/eda/interfaces/EdaResult';
+import { edaAPI } from '../../support/formatApiPathForEDA';
 
 function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
   if (!resource.name) return false;

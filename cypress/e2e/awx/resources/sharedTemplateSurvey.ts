@@ -26,30 +26,24 @@ export class ReusableTemplateSurveyTestSuite {
 
   canCreateSurvey(question: Spec) {
     this.navigateToTemplateDetails();
-
     cy.contains(this.template.name);
     cy.get('[aria-selected="true"]').contains('Survey');
     cy.contains('There are currently no survey questions.');
     cy.contains('Create a survey question by clicking the button below.');
     cy.clickButton('Create survey question');
-
     cy.getByDataCy('question-name').type(question.question_name);
     cy.getByDataCy('question-description').type(question.question_description);
     cy.getByDataCy('question-variable').type(question.variable);
     cy.getByDataCy('question-default').type(question.default.toString());
-
     cy.intercept(
       'POST',
       awxAPI`/${this.templateType}/${this.template.id.toString()}/survey_spec/`
     ).as('createQuestion');
     cy.clickButton('Create question');
     cy.wait('@createQuestion');
-
     cy.contains('Survey disabled');
-
     cy.get('[for="survey-switch"]').click();
     cy.contains('Survey enabled');
-
     cy.getByDataCy('row-0').within(() => {
       cy.contains(question?.question_name);
       cy.contains(question?.type);
@@ -59,23 +53,16 @@ export class ReusableTemplateSurveyTestSuite {
   canEditSurvey(question: Spec) {
     cy.createTemplateSurvey(this.template, 'Text', question);
     this.navigateToTemplateDetails();
-
     cy.getByDataCy('name-column-cell').contains(question?.question_name);
     cy.getByDataCy('type-column-cell').contains(question?.type);
     cy.getByDataCy('default-column-cell').contains(question?.default);
-
     cy.getByDataCy('edit-question').click();
-
     cy.getByDataCy('question-name').clear().type('foo');
     cy.getByDataCy('question-description').clear();
-
     cy.selectDropdownOptionByResourceName('type', 'Integer');
-
     cy.getByDataCy('question-max').type('0');
     cy.getByDataCy('question-default').clear().type('1337');
-
     cy.clickButton('Save question');
-
     cy.getByDataCy('name-column-cell').contains('foo');
     cy.getByDataCy('type-column-cell').contains('integer');
     cy.getByDataCy('default-column-cell').contains('1337');
@@ -84,7 +71,6 @@ export class ReusableTemplateSurveyTestSuite {
   canDeleteSurvey(question: Spec) {
     cy.createTemplateSurvey(this.template, 'Text', question);
     this.navigateToTemplateDetails();
-
     cy.getByDataCy('row-0').within(() => {
       cy.contains(question.question_name);
       cy.contains(question.default);
@@ -99,7 +85,6 @@ export class ReusableTemplateSurveyTestSuite {
     ).as('deleteSurveySpec');
     cy.clickModalButton('Delete');
     cy.wait('@deleteSurveySpec');
-
     cy.contains('There are currently no survey questions.');
     cy.contains('Create a survey question by clicking the button below.');
   }
@@ -143,16 +128,13 @@ export class ReusableTemplateSurveyTestSuite {
         choices: [],
       },
     ];
-
     const survey = {
       name: '',
       description: '',
       spec: specs,
     };
-
     cy.createAwxSurvey(survey, this.template).then(() => {
       this.navigateToTemplateDetails();
-
       specs.forEach((spec, index) => {
         cy.getByDataCy(`row-${index}`).within(() => {
           cy.getByDataCy('name-column-cell').contains(spec.question_name);
@@ -160,11 +142,9 @@ export class ReusableTemplateSurveyTestSuite {
           cy.getByDataCy('default-column-cell').contains(spec.default);
         });
       });
-
       cy.clickToolbarKebabAction('manage-question-order');
       cy.get('#draggable-row-Foo').drag('#draggable-row-Baz');
       cy.clickButton('Apply');
-
       ['Bar', 'Baz', 'Foo'].forEach((spec, index) => {
         cy.getByDataCy(`row-${index}`).within(() => {
           cy.getByDataCy('name-column-cell').contains(spec);
@@ -175,9 +155,7 @@ export class ReusableTemplateSurveyTestSuite {
 
   canEnableSurvey(survey: Spec) {
     this.navigateToTemplateDetails();
-
     cy.getByDataCy('name-column-cell').contains(survey.question_name);
-
     cy.intercept('PATCH', awxAPI`/${this.templateType}/${this.template.id.toString()}/`).as(
       'enableSurvey'
     );
@@ -189,12 +167,9 @@ export class ReusableTemplateSurveyTestSuite {
     cy.intercept('GET', awxAPI`/${this.templateType}/${this.template.id.toString()}/launch/`).as(
       'launchTemplate'
     );
-
     cy.clickButton('Launch template');
     cy.wait('@launchTemplate');
-
     cy.contains('Prompt on Launch');
-
     const groupType = `survey-${survey.type}-answer-form-group`;
     cy.getByDataCy(groupType).within(() => {
       cy.contains(survey.question_name);
@@ -202,13 +177,11 @@ export class ReusableTemplateSurveyTestSuite {
       cy.get('.pf-v5-c-icon').click();
     });
     cy.contains(survey.question_description);
-
     return groupType;
   }
 
   canFinishSurvey(survey: Spec) {
     cy.clickButton('Next');
-
     cy.getByDataCy('code-block-value').within(() => {
       cy.contains(survey.variable);
       if (survey.type === 'password') cy.contains('$encrypted$');
@@ -221,9 +194,7 @@ export class ReusableTemplateSurveyTestSuite {
           });
       }
     });
-
     cy.clickButton('Finish');
-
     cy.intercept('POST', awxAPI`/${this.templateType}/${this.template.id.toString()}/launch/`).as(
       'postLaunch'
     );
@@ -233,10 +204,13 @@ export class ReusableTemplateSurveyTestSuite {
       .then((job: Job) => {
         if (['running', 'pending'].includes(job.status ?? '')) cy.cancelJob(job);
 
-        const jobType = this.templateType === 'workflow_job_templates' ? 'workflow' : 'playbook';
-        cy.visit(`/jobs/${jobType}/${job.id}/details`);
-        cy.verifyPageTitle(job.name);
-
+        cy.navigateTo('awx', 'jobs');
+        cy.verifyPageTitle('Jobs');
+        const jobId = job.id ? job.id.toString() : '';
+        const jobName = job.name ? job.name : '';
+        cy.filterTableByMultiSelect('id', [jobId]);
+        cy.clickTableRowLink('name', jobName, { disableFilter: true });
+        cy.verifyPageTitle(jobName);
         cy.contains(survey.variable);
         if (survey.type === 'password') {
           cy.contains('$encrypted$');
