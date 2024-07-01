@@ -31,6 +31,7 @@ jobs:
     uses: ./.github/workflows/awx-e2e.yml
     with:
       AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
+      TAGS: nightly
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
