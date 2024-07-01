@@ -143,7 +143,7 @@ describe('Inventory Groups', () => {
           cy.clickButton(/^Confirm/);
         });
         cy.clickButton(/^Next$/);
-        cy.selectSingleSelectOption('[data-cy="credential"]', machineCredential.name);
+        cy.singleSelectByDataCy('credential', machineCredential.name);
         cy.clickButton(/^Next$/);
         cy.getByDataCy('module').should('contain', 'shell');
         cy.getByDataCy('arguments').should('contain', 'argument');
