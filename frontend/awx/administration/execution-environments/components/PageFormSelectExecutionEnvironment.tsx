@@ -39,9 +39,9 @@ export function PageFormSelectExecutionEnvironment<
       name={props.name}
       id="executionEnvironment"
       label={props.label ?? t('Execution Environment')}
-      placeholder={t('Select executionEnvironment')}
-      queryPlaceholder={t('Loading executionEnvironments...')}
-      queryErrorText={t('Error loading executionEnvironments')}
+      placeholder={t('Select execution environment')}
+      queryPlaceholder={t('Loading execution environments...')}
+      queryErrorText={t('Error loading execution environments')}
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
