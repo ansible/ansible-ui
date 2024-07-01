@@ -7,7 +7,7 @@ on:
         type: string
         description: 'HUB Server'
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 8 * * *'
 
 jobs:
   setup:
@@ -20,15 +20,15 @@ jobs:
         run: |
           CURRENTDATE=$(date +'%Y%m%d')
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "HUB_SERVER=${{ github.event.inputs.HUB_SERVER || 'https://HUB.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
+            echo "HUB_SERVER=${{ github.event.inputs.HUB_SERVER || 'https://hub.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
           else 
-            echo "HUB_SERVER=https://HUB.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "HUB_SERVER=https://galaxy.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
           fi
 
-  HUB-e2e:
+  hub-e2e:
     name: HUB E2E
     needs: setup
-    uses: ./.github/workflows/HUB-e2e.yml
+    uses: ./.github/workflows/hub-e2e.yml
     with:
       HUB_SERVER: ${{ needs.setup.outputs.HUB_SERVER }}
     secrets:
@@ -41,6 +41,7 @@ jobs:
     if: success()
     needs:
       - setup
+      - hub-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -75,6 +76,7 @@ jobs:
     if: failure()
     needs:
       - setup
+      - hub-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
