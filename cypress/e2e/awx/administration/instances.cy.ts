@@ -14,38 +14,37 @@ describe('Instances: Add/Edit', () => {
     cy.verifyPageTitle('Instances');
   });
 
-  it('can add a new instance and navigate to the details page', () => {
+  it('can add a new instance and verify details', () => {
     const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
+    // Navigate to the create instance page
     cy.getByDataCy('add-instance').click();
     cy.getByDataCy('page-title').should('contain', 'Add instance');
+
+    // Create a new instance
     cy.getByDataCy('hostname').type(instanceHostname);
     cy.getByDataCy('listener-port').type('9999');
     cy.getByDataCy('managed_by_policy').click();
     cy.getByDataCy('peers_from_control_nodes').click();
-    cy.intercept('POST', awxAPI`/instances/`).as('newInstance');
     cy.getByDataCy('Submit').click();
-    cy.wait('@newInstance')
-      .its('response.body')
-      .then((thisInstance: Instance) => {
-        cy.navigateTo('awx', 'instances');
-        expect(thisInstance.hostname).to.eql(instanceHostname);
-        cy.filterTableBySingleSelect('hostname', instanceHostname);
-        cy.clickTableRowLink('name', instanceHostname, { disableFilter: true });
-        cy.getByDataCy('name').should('contain', instanceHostname);
-        cy.getByDataCy('node-type').should('contain', 'Execution');
-        cy.getByDataCy('status').should('contain', 'Installed');
-        cy.getByDataCy('listener-port').should('contain', '9999');
-        cy.getByDataCy('actions-dropdown').click();
-        cy.getByDataCy('remove-instance').click();
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('header').contains('Permanently remove instances');
-          cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
-          cy.getByDataCy('name-column-cell').should('have.text', thisInstance.hostname);
-          cy.get('input[id="confirm"]').click();
-          cy.get('button').contains('Remove instance').click();
-        });
-      });
-    cy.verifyPageTitle('Instances');
+
+    // Verify the instance was created by checking the page title
+    // as the instance detail page is navigated to after creation
+    cy.verifyPageTitle(instanceHostname);
+
+    // Verify the instance details
+    cy.getByDataCy('name').should('contain', instanceHostname);
+    cy.getByDataCy('node-type').should('contain', 'Execution');
+    cy.getByDataCy('status').should('contain', 'Installed');
+    cy.getByDataCy('listener-port').should('contain', '9999');
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('remove-instance').click();
+    cy.getModal().within(() => {
+      cy.get('header').contains('Permanently remove instances');
+      cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
+      cy.getByDataCy('name-column-cell').should('have.text', instanceHostname);
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Remove instance').click();
+    });
   });
 
   it('can edit an instance from the instances list view and assert info on details page', () => {

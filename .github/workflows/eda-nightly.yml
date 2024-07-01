@@ -31,6 +31,7 @@ jobs:
     uses: ./.github/workflows/eda-e2e.yml
     with:
       EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
+      TAGS: nightly
     secrets:
       EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
       EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
