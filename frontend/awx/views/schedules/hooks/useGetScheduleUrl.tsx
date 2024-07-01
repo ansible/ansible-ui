@@ -9,13 +9,13 @@ export function useGetScheduleUrl() {
   return useCallback(
     (route: string, schedule: Schedule) => {
       const unified_job_type = schedule.summary_fields.unified_job_template.unified_job_type;
-      const params = {
-        id: schedule.summary_fields.unified_job_template?.id.toString(),
-        schedule_id: schedule.id.toString(),
-      };
-
-      if (unified_job_type === 'inventory_update') {
-        const inventoryUpdateParams = {
+      let params: { id: string; schedule_id: string; source_id?: string; inventory_type?: string } =
+        {
+          id: schedule.summary_fields.unified_job_template?.id.toString(),
+          schedule_id: schedule.id.toString(),
+        };
+      if (unified_job_type === 'inventory_update' && schedule.summary_fields.inventory?.id) {
+        params = {
           id: schedule.summary_fields.inventory?.id.toString(),
           source_id: schedule.summary_fields.unified_job_template.id.toString(),
           schedule_id: schedule.id.toString(),
@@ -25,20 +25,21 @@ export function useGetScheduleUrl() {
           name: t('Inventory sync'),
           details: {
             pageId: AwxRoute.InventorySourceScheduleDetails,
-            params: inventoryUpdateParams,
+            params,
           },
           create: {
             pageId: AwxRoute.InventorySourceScheduleCreate,
-            params: inventoryUpdateParams,
+            params,
           },
           edit: {
             pageId: AwxRoute.InventorySourceScheduleEdit,
-            params: inventoryUpdateParams,
+            params,
           },
           resource: {
             pageId: AwxRoute.InventorySourceDetail,
-            params: inventoryUpdateParams,
+            params,
           },
+          scheduleList: { pageId: AwxRoute.InventorySourceSchedules, params },
         }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'job') {
@@ -48,6 +49,7 @@ export function useGetScheduleUrl() {
           create: { pageId: AwxRoute.JobTemplateScheduleCreate, params },
           edit: { pageId: AwxRoute.JobTemplateScheduleEdit, params },
           resource: { pageId: AwxRoute.JobTemplateDetails, params },
+          scheduleList: { pageId: AwxRoute.JobTemplateSchedules, params },
         }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'project_update') {
@@ -57,6 +59,7 @@ export function useGetScheduleUrl() {
           create: { pageId: AwxRoute.ProjectScheduleCreate, params },
           edit: { pageId: AwxRoute.ProjectScheduleEdit, params },
           resource: { pageId: AwxRoute.ProjectDetails, params },
+          scheduleList: { pageId: AwxRoute.ProjectSchedules, params },
         }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'system_job') {
@@ -66,6 +69,7 @@ export function useGetScheduleUrl() {
           create: { pageId: AwxRoute.ManagementJobScheduleCreate, params },
           edit: { pageId: AwxRoute.ManagementJobScheduleEdit, params },
           resource: { pageId: AwxRoute.ManagementJobSchedules, params },
+          scheduleList: { pageId: AwxRoute.ManagementJobSchedules, params },
         }[route] as string | schedulePageUrl;
       }
       if (unified_job_type === 'workflow_job') {
@@ -75,6 +79,7 @@ export function useGetScheduleUrl() {
           create: { pageId: AwxRoute.WorkflowJobTemplateScheduleCreate, params },
           edit: { pageId: AwxRoute.WorkflowJobTemplateScheduleEdit, params },
           resource: { pageId: AwxRoute.WorkflowJobTemplateDetails, params },
+          scheduleList: { pageId: AwxRoute.WorkflowJobTemplateSchedules, params },
         }[route] as string | schedulePageUrl;
       }
       return '';

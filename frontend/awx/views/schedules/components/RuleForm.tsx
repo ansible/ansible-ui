@@ -176,15 +176,20 @@ export function RuleForm(props: {
           label={t('Weekdays')}
           name={`byweekday`}
           options={weekdayOptions}
-          labelHelp={t(
-            'This is the byweekday field. Select day(s) of the week on which to run the schedule.'
-          )}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>{t('Sunday')}</Chip>
-              <Chip isReadOnly>{t('Wednesday')}</Chip>
-              <Chip isReadOnly>{t('Friday')}</Chip>
-            </ChipGroup>
+          placeholder={t('Select weekdays')}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the byweekday field. Select day(s) of the week on which to run the schedule.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>{t('Sunday')}</Chip>
+                <Chip disabled>{t('Wednesday')}</Chip>
+                <Chip disabled>{t('Friday')}</Chip>
+              </ChipGroup>
+            </>
           }
           disableSortOptions
         />
@@ -193,116 +198,151 @@ export function RuleForm(props: {
           label={t('Months')}
           options={monthOptions}
           labelHelpTitle={t('Months')}
-          labelHelp={t(
-            'This is the bymonth field. This field is used to declare which months of the year the schedule should run.'
-          )}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>{t('June')}</Chip>
-              <Chip isReadOnly>{t('August')}</Chip>
-              <Chip isReadOnly>{t('January')}</Chip>
-            </ChipGroup>
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the bymonth field. This field is used to declare which months of the year the schedule should run.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>{t('June')}</Chip>
+                <Chip disabled>{t('August')}</Chip>
+                <Chip disabled>{t('January')}</Chip>
+              </ChipGroup>
+            </>
           }
+          placeholder={t('Select months')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byweekno`}
           options={WEEKS_OF_YEAR}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>17</Chip>
-              <Chip isReadOnly>43</Chip>
-              <Chip isReadOnly>52</Chip>
-            </ChipGroup>
-          }
+          placeholder={t('Select weeks')}
           label={t('Annual week(s) number')}
-          labelHelp={t(
-            'This is the byweekno field. This field is used to declare numbered weeks of the year the schedule should run.'
-          )}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the byweekno field. This field is used to declare numbered weeks of the year the schedule should run.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>17</Chip>
+                <Chip disabled>43</Chip>
+                <Chip disabled>52</Chip>
+              </ChipGroup>
+            </>
+          }
           labelHelpTitle={t('Annual weeks(s) number')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byminute`}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>1</Chip>
-              <Chip isReadOnly>37</Chip>
-              <Chip isReadOnly>59</Chip>
-            </ChipGroup>
-          }
+          placeholder={t('Select hours')}
           options={MINUTES_OF_HOUR}
           label={t('Minute(s) of hour')}
-          labelHelp={t(
-            'This is the byminute field. This field is used to declare minute(s) of the hour the schedule should run.'
-          )}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the byminute field. This field is used to declare minute(s) of the hour the schedule should run.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>1</Chip>
+                <Chip disabled>37</Chip>
+                <Chip disabled>59</Chip>
+              </ChipGroup>
+            </>
+          }
           labelHelpTitle={t('Minute(s) of hour')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byhour`}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>0</Chip>
-              <Chip isReadOnly>7</Chip>
-              <Chip isReadOnly>18</Chip>
-            </ChipGroup>
-          }
+          placeholder={t('Select hours')}
           options={HOURS_OF_DAY}
           label={t('Hour of day')}
-          labelHelp={t(
-            'This is the byhour field. This field is used to declare hours of day the schedule should run.'
-          )}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the byhour field. This field is used to declare hours of day the schedule should run.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>0</Chip>
+                <Chip disabled>7</Chip>
+                <Chip disabled>18</Chip>
+              </ChipGroup>
+            </>
+          }
           labelHelpTitle={t('Hour of day')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`bymonthday`}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>1</Chip>
-              <Chip isReadOnly>15</Chip>
-              <Chip isReadOnly>28</Chip>
-            </ChipGroup>
-          }
+          placeholder={t('Select days')}
           options={DAYS_OF_MONTH}
           label={t('Month day(s)')}
-          labelHelp={t(
-            'This is the bymonthday field. This field is used to declare ordinal days number of the month the schedule should run.'
-          )}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the bymonthday field. This field is used to declare ordinal days number of the month the schedule should run.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>1</Chip>
+                <Chip disabled>15</Chip>
+                <Chip disabled>28</Chip>
+              </ChipGroup>
+            </>
+          }
           labelHelpTitle={t('Month day(s)')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
           name={`byyearday`}
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>1</Chip>
-              <Chip isReadOnly>235</Chip>
-              <Chip isReadOnly>300</Chip>
-            </ChipGroup>
-          }
+          placeholder={t('Select days')}
           options={DAYS_OF_YEAR}
           label={t('Day(s) of Year')}
-          labelHelp={t(
-            'This is the byyearday field. This field is used to declare ordinal number days of the year the schedule should run. Do not use commas between the selected values'
-          )}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the byyearday field. This field is used to declare ordinal number days of the year the schedule should run. Do not use commas between the selected values'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>1</Chip>
+                <Chip disabled>235</Chip>
+                <Chip disabled>300</Chip>
+              </ChipGroup>
+            </>
+          }
           labelHelpTitle={t('Day(s) of Year')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
-          placeholder={
-            <ChipGroup readOnly>
-              <Chip isReadOnly>1</Chip>
-              <Chip isReadOnly>235</Chip>
-              <Chip isReadOnly>300</Chip>
-            </ChipGroup>
-          }
+          placeholder={t('Select positions')}
           options={DAYS_OF_YEAR}
           name={`bysetpos`}
-          labelHelp={t(
-            'This is the bysetpos field. Use this field to filter down recurrence instances within a single interval of the rule. See the iCalendar RFC for bysetpos field more information.'
-          )}
+          labelHelp={
+            <>
+              <div>
+                {t(
+                  'This is the bysetpos field. Use this field to filter down recurrence instances within a single interval of the rule. See the iCalendar RFC for bysetpos field more information.'
+                )}
+              </div>
+              <ChipGroup>
+                <Chip disabled>1</Chip>
+                <Chip disabled>235</Chip>
+                <Chip disabled>300</Chip>
+              </ChipGroup>
+            </>
+          }
           labelHelpTitle={t('Occurrences')}
           label={t('Occurrences')}
           disableSortOptions
