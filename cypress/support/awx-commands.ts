@@ -85,12 +85,10 @@ Cypress.Commands.add(
   }
 );
 
-/* The following code is adding a custom Cypress command called
-`createAwxWorkflowVisualizerManagementNode`. This command is used to create a workflow node for a
-given workflow job template in an AWX (Ansible Tower) application. The `workflowJobTemplateId`
-parameter is the ID of the workflow job template, and the `managementId` parameter is the ID of the
-management node (1, 2, 3, or 4). The command makes a POST request to the AWX API to create the
-workflow node with the specified parameters. */
+/** The following code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerManagementNode`. This command is used to create a management job node for a workflow visualizer in an AWX (Ansible Controller) application.
+@param {'1'|'2'|'3'|'4'} managementId - Id of the management job template
+*/
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerManagementNode',
   (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {

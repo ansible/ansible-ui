@@ -5,7 +5,7 @@
 
 import { apiTag } from '../../frontend/hub/common/api/formatPath';
 
-export function awxGWAPI(strings: TemplateStringsArray, ...values: string[]) {
+export function awxGWAPI(url: TemplateStringsArray, ...values: string[]) {
   const base = (Cypress.env('AWX_GW_API_PREFIX') as string) || '/api/v2';
-  return base + apiTag(strings, ...values);
+  return base + apiTag(url, ...values);
 }

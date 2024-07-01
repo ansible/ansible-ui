@@ -1,3 +1,4 @@
+import { awxAPI } from '../../common/api/awx-utils';
 import { InstancePage } from './InstancesPage';
 
 describe('Instances Page', () => {
@@ -8,7 +9,7 @@ describe('Instances Page', () => {
   });
 
   it('Component renders, displays instance in breadcrumb and buttons enabled', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -29,16 +30,16 @@ describe('Instances Page', () => {
     cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
   });
 
-  it('edit instance button should be hidden for non-k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('edit instance button should be hidden for non-k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
     cy.get('[data-cy="edit-instance"]').should('not.exist');
   });
 
-  it('edit instance button should be shown for k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('edit instance button should be shown for k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -47,7 +48,7 @@ describe('Instances Page', () => {
   });
 
   it('only admin users can edit instance', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -61,7 +62,7 @@ describe('Instances Page', () => {
   });
 
   it('edit instance button should be hidden for managed instance', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.intercept('GET', '/api/v2/instances/*', {
@@ -85,8 +86,8 @@ describe('Instances Page', () => {
       });
   });
 
-  it('remove instance button should be hidden for non-k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('remove instance button should be hidden for non-k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -95,8 +96,8 @@ describe('Instances Page', () => {
     });
   });
 
-  it('remove instance button should be shown for k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('remove instance button should be shown for k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -108,7 +109,7 @@ describe('Instances Page', () => {
   });
 
   it('only admin users can remove instance', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -122,7 +123,7 @@ describe('Instances Page', () => {
   });
 
   it('remove instance button should be hidden for managed instance', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.intercept('GET', '/api/v2/instances/*', {
@@ -137,16 +138,16 @@ describe('Instances Page', () => {
       });
   });
 
-  it('peers tab should be hidden for non-k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('peers tab should be hidden for non-k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
     cy.get('[data-cy="instances-peers-tab"]').should('not.exist');
   });
 
-  it('peers tab should be shown for k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('peers tab should be shown for k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);
@@ -154,16 +155,16 @@ describe('Instances Page', () => {
     cy.getByDataCy('instances-peers-tab').should('be.enabled');
   });
 
-  it('listener addresses tab should be hidden for non-k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('listener addresses tab should be hidden for non-k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: false,
     }).as('isK8s');
     cy.mount(<InstancePage />);
     cy.get('[data-cy="instances-listener-addresses-tab"]').should('not.exist');
   });
 
-  it('listener addresses tab should be shown for k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+  it('listener addresses tab should be shown for k8s deployment', () => {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
     cy.mount(<InstancePage />);

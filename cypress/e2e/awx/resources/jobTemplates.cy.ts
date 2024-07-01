@@ -277,7 +277,7 @@ describe.skip('Job Templates Tests', function () {
         });
     });
 
-    it('can create a job template, select concurrent jobs, and verify that two jobs will run concurrently', function () {
+    it('can create a job template, select concurrent jobs, launch the job template two times and verify that both jobs appear in the table', function () {
       const jtName = 'E2E Concurrent JT ' + randomString(4);
       cy.createAwxProject(
         awxOrganization,
@@ -313,10 +313,10 @@ describe.skip('Job Templates Tests', function () {
                   cy.contains('Running');
                   cy.contains(jtName);
                   cy.navigateTo('awx', 'jobs');
-                  cy.filterTableBySingleSelect('name', name);
-                  cy.contains('Running');
-                  cy.filterTableBySingleSelect('name', name2);
-                  cy.contains('Running');
+                  cy.filterTableByMultiSelect('name', [name, name2]);
+                  cy.contains('Running').each(($element) => {
+                    cy.wrap($element).should('be.visible');
+                  });
                 });
             });
         });
@@ -416,7 +416,7 @@ describe.skip('Job Templates Tests', function () {
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('saveJT');
         cy.clickButton('Save job template');
         cy.wait('@saveJT');
-        cy.contains(inv.name);
+        cy.contains(inv.name).should('be.visible');
       });
     });
 
