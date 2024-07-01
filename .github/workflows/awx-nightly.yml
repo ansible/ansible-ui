@@ -7,7 +7,7 @@ on:
         type: string
         description: 'AWX Server'
   schedule:
-    - cron: '0 */1 * * *'
+    - cron: '0 8 * * *'
 
 jobs:
   setup:
@@ -41,6 +41,7 @@ jobs:
     if: success()
     needs:
       - setup
+      - awx-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -75,6 +76,7 @@ jobs:
     if: failure()
     needs:
       - setup
+      - awx-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification

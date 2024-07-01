@@ -7,7 +7,7 @@ on:
         type: string
         description: 'EDA Server'
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 8 * * *'
 
 jobs:
   setup:
@@ -20,15 +20,15 @@ jobs:
         run: |
           CURRENTDATE=$(date +'%Y%m%d')
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "EDA_SERVER=${{ github.event.inputs.EDA_SERVER || 'https://EDA.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
+            echo "EDA_SERVER=${{ github.event.inputs.EDA_SERVER || 'https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
           else 
-            echo "EDA_SERVER=https://EDA.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "EDA_SERVER=https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
           fi
 
-  EDA-e2e:
+  eda-e2e:
     name: EDA E2E
     needs: setup
-    uses: ./.github/workflows/EDA-e2e.yml
+    uses: ./.github/workflows/eda-e2e.yml
     with:
       EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
     secrets:
@@ -41,6 +41,7 @@ jobs:
     if: success()
     needs:
       - setup
+      - eda-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -75,6 +76,7 @@ jobs:
     if: failure()
     needs:
       - setup
+      - eda-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
