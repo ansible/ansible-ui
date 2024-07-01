@@ -38,7 +38,7 @@ export function PageFormSelectExecutionEnvironment<
     <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>
       name={props.name}
       id="executionEnvironment"
-      label={props.label ?? t('ExecutionEnvironment')}
+      label={props.label ?? t('Execution Environment')}
       placeholder={t('Select executionEnvironment')}
       queryPlaceholder={t('Loading executionEnvironments...')}
       queryErrorText={t('Error loading executionEnvironments')}
