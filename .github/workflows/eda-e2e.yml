@@ -10,6 +10,9 @@ on:
         type: boolean
         required: false
         default: false
+      TAGS:
+        type: string
+        required: false
     secrets:
       EDA_PASSWORD:
         required: true
@@ -113,7 +116,7 @@ jobs:
           parallel: true
           # auto-cancel-after-failures: 1
           config-file: cypress.eda.config.ts
-          tag: "!flaky"
+          tag: ${{ inputs.TAGS }}
         env:
           EDA_SERVER: ${{ inputs.EDA_SERVER }}
           EDA_USERNAME: e2e
