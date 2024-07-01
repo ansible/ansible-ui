@@ -28,8 +28,6 @@ export function Login(props: {
   const { apiUrl } = props;
   const onSubmit = useCallback(async () => {
     try {
-      if (!props.apiUrl) return;
-
       const loginPageResponse = await fetch(apiUrl, {
         credentials: 'include',
         headers: { Accept: 'application/json,text/*' },
@@ -88,7 +86,9 @@ export function Login(props: {
         loginTitle={t('Log in to your account')}
         loginSubtitle={props.loginDescription}
         socialMediaLoginAriaLabel={t('Log in with social media')}
-        socialMediaLoginContent={<SocialAuthLogin options={props.authOptions} />}
+        socialMediaLoginContent={
+          !props.hideInputs ? <SocialAuthLogin options={props.authOptions} /> : undefined
+        }
         brandImgSrc={props.icon}
         brandImgAlt={props.product}
         textContent={props.productDescription}
