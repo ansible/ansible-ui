@@ -48,7 +48,7 @@ describe('Execution Environments: Create', () => {
     cy.getByDataCy('name').type(execEnvName);
     cy.getByDataCy('image').type(image);
     cy.singleSelectByDataCy('organization', organization.name);
-    cy.selectSingleSelectOption('[data-cy="credential"]', credential.name);
+    cy.singleSelectByDataCy('credential', credential.name);
     cy.intercept('POST', awxAPI`/execution_environments/`).as('createEE');
     cy.clickButton(/^Create execution environment$/);
     cy.wait('@createEE')
@@ -95,7 +95,7 @@ describe('Execution Environments: Create', () => {
     cy.getByDataCy('name').type(execEnvName);
     cy.getByDataCy('image').type(image);
     cy.singleSelectByDataCy('organization', organization.name);
-    cy.selectSingleSelectOption('[data-cy="credential"]', credential.name);
+    cy.singleSelectByDataCy('credential', credential.name);
     cy.intercept('POST', awxAPI`/execution_environments/`).as('createEE');
     cy.clickButton(/^Create execution environment$/);
     cy.wait('@createEE')

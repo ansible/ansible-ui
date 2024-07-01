@@ -514,10 +514,8 @@ describe('Job Templates Tests', function () {
 
         cy.getByDataCy('isWebhookEnabled').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
-        cy.selectSingleSelectOption('[data-cy="webhook_credential"]', ghCred.name);
-
+        cy.singleSelectByDataCy('webhook_credential', ghCred.name);
         cy.clickButton('Save job template');
-
         cy.contains('Webhook credential');
         cy.getByDataCy('webhook-credential').contains(ghCred.name);
 
