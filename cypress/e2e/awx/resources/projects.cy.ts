@@ -15,10 +15,10 @@ describe('Projects', () => {
   let awxOrganization: Organization;
   let inventory: Inventory;
 
-  before(function () {
+  before(() => {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((thisAwxOrg) => {
-      awxOrganization = thisAwxOrg;
+    cy.createAwxOrganization(orgName).then((org) => {
+      awxOrganization = org;
     });
   });
 
@@ -26,7 +26,7 @@ describe('Projects', () => {
     cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     cy.createAwxProject(awxOrganization).then((proj) => {
       project = proj;
     });
@@ -37,7 +37,7 @@ describe('Projects', () => {
   });
 
   describe('Projects: List View', () => {
-    it('can create a project and then delete it from the project details page', function () {
+    it('can create a project and then delete it from the project details page', () => {
       const projectName = 'E2E Project ' + randomString(4);
 
       cy.navigateTo('awx', 'projects');
@@ -98,7 +98,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can copy a project from the projects list row', function () {
+    it('can copy a project from the projects list row', () => {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -131,7 +131,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can sync a project from the projects list row', function () {
+    it('can sync a project from the projects list row', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -150,7 +150,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can delete a project from the projects list row', function () {
+    it('can delete a project from the projects list row', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -171,7 +171,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can delete a project from projects list toolbar', function () {
+    it('can delete a project from projects list toolbar', () => {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -217,7 +217,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can copy a project from the project details page', function () {
+    it('can copy a project from the project details page', () => {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -253,7 +253,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can sync a project from the project details page', function () {
+    it('can sync a project from the project details page', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -273,7 +273,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can delete a project from project details page', function () {
+    it('can delete a project from project details page', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -295,7 +295,7 @@ describe('Projects', () => {
   });
 
   describe('Projects: User Access Tab', () => {
-    it('can navigate to project access tab', function () {
+    it('can navigate to project access tab', () => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.clickTableRowLink('name', `${project.name}`, {
@@ -307,7 +307,7 @@ describe('Projects', () => {
   });
 
   describe('Projects: Team Access Tab', () => {
-    it('can navigate to project access tab', function () {
+    it('can navigate to project access tab', () => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.clickTableRowLink('name', `${project.name}`, {
@@ -319,7 +319,7 @@ describe('Projects', () => {
   });
 
   describe('Projects: Schedules Tab', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       cy.createAWXSchedule({
         name: `Schedule` + `${randomE2Ename()}`,
         unified_job_template: project.id,
@@ -543,7 +543,7 @@ describe('Projects', () => {
   // FLAKY_06_13_2024
   describe('Projects: Job Templates Tab', () => {
     let jobTemplate: JobTemplate;
-    beforeEach(function () {
+    beforeEach(() => {
       cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
         cy.createAwxJobTemplate({
@@ -556,7 +556,7 @@ describe('Projects', () => {
       });
     });
 
-    afterEach(function () {
+    afterEach(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
@@ -572,7 +572,7 @@ describe('Projects', () => {
       cy.clickTab(/^Job templates$/, true);
     });
 
-    it('can associate a project with a newly created job template and view that JT on the templates tab of the project', function () {
+    it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
       cy.createAwxProject(awxOrganization).then((thisProject) => {
         cy.navigateTo('awx', 'templates');
         cy.filterTableByMultiSelect('name', [jobTemplate.name]);
@@ -643,14 +643,14 @@ describe('Projects', () => {
   describe('Projects: Notifications Tab', () => {
     let notification: NotificationTemplate;
 
-    beforeEach(function () {
+    beforeEach(() => {
       const notificationName = `${randomE2Ename()}`;
       cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
         notification = notifier;
       });
     });
 
-    afterEach(function () {
+    afterEach(() => {
       cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });
     });
 
