@@ -8,7 +8,6 @@ import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';
 import { WebSocketProvider } from '../common/useAwxWebSocket';
-import ProductIcon from './awx-logo.svg';
 
 type AwxAuthOptions = {
   [key: string]: {
@@ -44,7 +43,7 @@ export function AwxLogin(props: { children: React.ReactNode }) {
           refreshActiveAwxUser?.();
           void mutate(() => true);
         }}
-        icon={<ProductIcon style={{ height: 64 }} />}
+        icon="/static/media/awx-logo.svg"
         brand={process.env.BRAND}
         product={process.env.PRODUCT}
       />

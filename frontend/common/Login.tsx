@@ -1,23 +1,12 @@
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Flex,
-  FlexItem,
-  Page,
-  PageSection,
-  Stack,
-  Text,
-  TextContent,
-} from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import { LoginForm, LoginPage } from '@patternfly/react-core';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
 import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
-import { LoginForm } from './LoginForm';
-import { AuthOption } from './SocialAuthLogin';
+import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
+import { RequestError, createRequestError } from './crud/RequestError';
+import { getCookie } from './crud/cookie';
 
 export function Login(props: {
   hideInputs?: boolean;
@@ -25,92 +14,118 @@ export function Login(props: {
   apiUrl: string;
   onSuccess: () => void;
   loginDescription?: string;
-  icon?: ReactNode;
+  icon?: string;
   brand?: string;
   product?: string;
   productDescription?: string;
 }) {
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [helperText, setHelperText] = useState('');
+
+  const { apiUrl } = props;
+  const onSubmit = useCallback(async () => {
+    try {
+      if (!props.apiUrl) return;
+
+      const loginPageResponse = await fetch(apiUrl, {
+        credentials: 'include',
+        headers: { Accept: 'application/json,text/*' },
+      });
+      if (!loginPageResponse.ok) {
+        throw await createRequestError(loginPageResponse);
+      }
+
+      const searchParams = new URLSearchParams();
+      searchParams.set('username', username);
+      searchParams.set('password', password);
+
+      const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        ['X-Csrftoken']: getCookie('csrftoken') || '',
+      };
+
+      try {
+        // We need to make a request to the login page first to get the CSRF token
+        // the CSRF token is required for the login request
+        // and is set as a cookie on the login page response
+        const response = await fetch(apiUrl, {
+          credentials: 'include',
+          method: 'POST',
+          headers,
+          body: searchParams,
+          redirect: 'manual',
+        });
+        if (!response.ok) {
+          throw await createRequestError(response);
+        }
+      } catch (err) {
+        if (!(err instanceof RequestError)) {
+          throw err;
+        }
+        if (err.statusCode === 401 || err.statusCode === 403) {
+          throw new Error(t('Invalid username or password. Please try again.'));
+        } else if (err.statusCode !== 0) {
+          throw err;
+        }
+      }
+
+      props.onSuccess?.();
+    } catch (err) {
+      if (err instanceof Error) {
+        setHelperText(err.message);
+      } else {
+        setHelperText(t('Invalid username or password. Please try again.'));
+      }
+    }
+  }, [apiUrl, password, props, t, username]);
+
   return (
     <ErrorBoundary message={translations.errorText}>
-      <Page style={{ overflow: 'auto' }}>
-        <PageSection isFilled hasOverflowScroll isCenterAligned isWidthLimited>
-          <LoginPageLayout>
-            <LoginPageBody>
-              <CardStyled isLarge isRounded>
-                <CardHeader>
-                  <TextContent>
-                    <CardTitle component="h1">{t('Log in to your account')}</CardTitle>
-                    {props.loginDescription && <Text component="p">{props.loginDescription}</Text>}
-                  </TextContent>
-                </CardHeader>
-                <CardBody>
-                  <LoginForm
-                    apiUrl={props.apiUrl}
-                    authOptions={props.authOptions}
-                    onSuccess={props.onSuccess}
-                    hideInputs={props.hideInputs}
-                  />
-                </CardBody>
-              </CardStyled>
-              <Flex direction={{ default: 'column' }} spaceItems={{ default: 'spaceItemsXl' }}>
-                <FlexItem>
-                  <Flex
-                    spaceItems={{ default: 'spaceItemsMd' }}
-                    alignItems={{ default: 'alignItemsCenter' }}
-                  >
-                    {props.icon}
-                    <Stack>
-                      {props.brand && <Brand>{props.brand}</Brand>}
-                      <Product>{props.product}</Product>
-                    </Stack>
-                  </Flex>
-                </FlexItem>
-                {props.productDescription && (
-                  <FlexItem style={{ maxWidth: 480 }}>{props.productDescription}</FlexItem>
-                )}
-              </Flex>
-            </LoginPageBody>
-          </LoginPageLayout>
-        </PageSection>
-      </Page>
+      <LoginPage
+        loginTitle={t('Log in to your account')}
+        loginSubtitle={props.loginDescription}
+        socialMediaLoginAriaLabel={t('Log in with social media')}
+        socialMediaLoginContent={<SocialAuthLogin options={props.authOptions} />}
+        brandImgSrc={props.icon}
+        brandImgAlt={props.product}
+        textContent={props.productDescription}
+      >
+        <LoginForm
+          showHelperText={!!helperText}
+          helperText={helperText}
+          helperTextIcon={<ExclamationCircleIcon />}
+          usernameLabel={t('Username')}
+          usernameValue={username}
+          onChangeUsername={(_, username) => {
+            setHelperText('');
+            setUsername(username);
+          }}
+          isValidUsername={!helperText || !!username}
+          passwordLabel={t('Password')}
+          passwordValue={password}
+          onChangePassword={(_, password) => {
+            setHelperText('');
+            setPassword(password);
+          }}
+          isValidPassword={!helperText || !!password}
+          loginButtonLabel={t('Log in')}
+          onLoginButtonClick={(event) => {
+            event.preventDefault();
+            if (!username) {
+              setHelperText(t('Username is required'));
+              return;
+            }
+            if (!password) {
+              setHelperText(t('Password is required'));
+              return;
+            }
+            void onSubmit();
+          }}
+        />
+      </LoginPage>
     </ErrorBoundary>
   );
 }
-
-const Brand = styled.div`
-  font-size: xx-large;
-  font-weight: bold;
-  line-height: 1.15;
-  font-family: 'Red Hat Display', sans-serif;
-`;
-
-const Product = styled.h1`
-  font-size: xx-large;
-  line-height: 1.15;
-  font-family: 'Red Hat Display', sans-serif;
-`;
-
-const LoginPageLayout = styled.div`
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  gap: 48px;
-`;
-
-const LoginPageBody = styled.div`
-  display: flex;
-  flex-grow: 1;
-  gap: 48px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap-reverse;
-`;
-
-const CardStyled = styled(Card)`
-  width: 400px;
-  min-width: 360px;
-  max-width: min(400px, 100dvw);
-`;
