@@ -15,8 +15,9 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { resourceEndPoints } from '../hooks/scheduleHelpers';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
-import { ScheduleResources } from '../types';
+import { ScheduleResources, schedulePageUrl } from '../types';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
+import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 
 export function SchedulePage(props: {
   tabs: { label: string; page: string }[];
@@ -48,8 +49,17 @@ export function SchedulePage(props: {
     `${resourceEndPoints[resourceType]}`,
     isInventorySource ? params.source_id : params.id
   );
+  const getScheduleURL = useGetScheduleUrl();
+  let urlId: {
+    id: AwxRoute;
+    params?: { id: string; schedule_id: string; source_id?: string; inventory_type?: string };
+  } = { id: AwxRoute.Schedules };
+  if (schedule) {
+    const { pageId, params } = getScheduleURL('scheduleList', schedule) as schedulePageUrl;
+    urlId = { id: pageId, params };
+  }
   const itemActions = useSchedulesActions({
-    onScheduleDeleteCompleted: () => navigate(getPageUrl(AwxRoute.Schedules)),
+    onScheduleDeleteCompleted: () => navigate(getPageUrl(urlId.id, { params: urlId.params })),
     onScheduleToggleCompleted: refresh,
   });
 
