@@ -132,7 +132,7 @@ export function PageSettingsForm() {
           { label: t('JSON'), value: 'json' },
         ]}
         placeholder={t('Select date format')}
-        labelHelp={t('Sets the default format for when editing data fields.')}
+        labelHelp={t('Sets the default format for when editing date fields.')}
         isRequired
       />
     </PageForm>
