@@ -10,6 +10,9 @@ on:
         type: boolean
         required: false
         default: false
+      TAGS:
+        type: string
+        required: false
     secrets:
       HUB_PASSWORD:
         required: true
@@ -119,7 +122,7 @@ jobs:
           record: true
           parallel: true
           config-file: cypress.hub.config.ts
-          tag: "!flaky"
+          tag: ${{ inputs.TAGS }}
         env:
           HUB_SERVER: ${{ inputs.HUB_SERVER }}
           HUB_USERNAME: e2e

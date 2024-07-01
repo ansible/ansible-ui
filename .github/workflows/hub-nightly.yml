@@ -31,6 +31,7 @@ jobs:
     uses: ./.github/workflows/hub-e2e.yml
     with:
       HUB_SERVER: ${{ needs.setup.outputs.HUB_SERVER }}
+      TAGS: nightly
     secrets:
       HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
       HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}

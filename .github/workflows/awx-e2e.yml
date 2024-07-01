@@ -10,6 +10,9 @@ on:
         type: boolean
         required: false
         default: false
+      TAGS:
+        type: string
+        required: false
     secrets:
       AWX_PASSWORD:
         required: true
@@ -115,7 +118,7 @@ jobs:
           parallel: true
           # auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
-          tag: "!flaky"
+          tag: ${{ inputs.TAGS }}
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
