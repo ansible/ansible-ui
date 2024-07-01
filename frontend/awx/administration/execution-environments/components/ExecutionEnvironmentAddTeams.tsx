@@ -132,7 +132,7 @@ export function ExecutionEnvironmentAddTeams() {
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('ExecutionEnvironments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
+          { label: t('Execution Environments'), to: getPageUrl(AwxRoute.ExecutionEnvironments) },
           {
             label: executionenvironment?.name,
             to: getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
