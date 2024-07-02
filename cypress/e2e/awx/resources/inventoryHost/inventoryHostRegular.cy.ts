@@ -5,6 +5,7 @@ import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
 import { runCommand } from './runCommandFunction';
 import { randomString } from '../../../../../framework/utils/random-string';
 import { launchHostJob } from '../../../../support/hostsfunctions';
+import { Project } from '../../../../../frontend/awx/interfaces/Project';
 
 import {
   checkHostGroup,
@@ -19,6 +20,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;
   let inventory: Inventory;
   let user: AwxUser;
+  let project: Project;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
