@@ -991,19 +991,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'createEdaAwxJobTemplate',
-  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
-    cy.requestPost<Partial<JobTemplate>, JobTemplate>(awxAPI`/job_templates/`, {
-      name: 'run_basic',
-      playbook: 'basic.yml',
-      project: project.id,
-      inventory: inventory.id,
-      organization: inventory.organization,
-      ...jobTemplate,
-    });
-  }
-);
+;
 
 ;
 
