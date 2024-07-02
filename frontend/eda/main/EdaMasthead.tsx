@@ -9,10 +9,10 @@ import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwit
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
+import EdaBrand from '../../icons/eda-logo.svg';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
-import EdaBrand from './eda-logo.svg';
 
 export function EdaMasthead() {
   const { t } = useTranslation();

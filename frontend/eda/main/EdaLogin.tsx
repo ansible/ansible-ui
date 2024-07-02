@@ -1,10 +1,9 @@
 import { Page } from '@patternfly/react-core';
 import { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
-import { Login } from '../../common/Login';
+import { AnsibleLogin } from '../../common/AnsibleLogin';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
-import ProductIcon from './eda-logo.svg';
 
 export function EdaLogin(props: { children: React.ReactNode }) {
   const { activeEdaUser, refreshActiveEdaUser } = useEdaActiveUser();
@@ -19,15 +18,14 @@ export function EdaLogin(props: { children: React.ReactNode }) {
 
   if (!activeEdaUser) {
     return (
-      <Login
-        apiUrl={edaAPI`/auth/session/login/`}
+      <AnsibleLogin
+        loginApiUrl={edaAPI`/auth/session/login/`}
         onSuccess={() => {
           refreshActiveEdaUser?.();
           void mutate(() => true);
         }}
-        icon={<ProductIcon style={{ maxWidth: 64, maxHeight: 64 }} />}
-        brand={process.env.BRAND}
-        product={process.env.PRODUCT}
+        brandImg="/static/media/eda-logo.svg"
+        brandImgAlt={process.env.PRODUCT}
       />
     );
   }

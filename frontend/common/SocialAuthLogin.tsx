@@ -1,26 +1,7 @@
-import { Button as PFButton } from '@patternfly/react-core';
+import { Button as PFButton, Stack, Title } from '@patternfly/react-core';
 import { AzureIcon, GithubIcon, GoogleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-
-const Container = styled.div`
-  max-block-size: 330px;
-  overflow: auto;
-  margin-block-start: 40px;
-  padding-block-start: 20px;
-  border-block-start: 1px solid var(--pf-v5-global--BorderColor--light-100);
-`;
-
-const Heading = styled.h2`
-  font-weight: var(--pf-v5-global--FontWeight--bold);
-  margin-block-end: 1em;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 30px 0;
-`;
 
 const Button = styled(PFButton)`
   overflow: hidden;
@@ -46,14 +27,14 @@ export function SocialAuthLogin(props: SocialAuthLoginProps) {
   }
 
   return (
-    <Container>
-      <Heading>{t`Log in with`}</Heading>
-      <Grid>
+    <>
+      <Title headingLevel="h3">{t`Log in with`}</Title>
+      <Stack style={{ width: '100%' }} hasGutter>
         {options.map((option) => (
           <SocialAuthLink key={option.login_url} option={option} />
         ))}
-      </Grid>
-    </Container>
+      </Stack>
+    </>
   );
 }
 
@@ -95,8 +76,8 @@ function SocialAuthLink(props: { option: AuthOption }) {
       component="a"
       href={option.login_url}
       variant="secondary"
+      icon={<Icon />}
     >
-      <Icon height="20" width="20" style={{ verticalAlign: '-0.25em', marginRight: '0.5em' }} />
       {option.name || labels[option.type] || ''}
     </Button>
   );

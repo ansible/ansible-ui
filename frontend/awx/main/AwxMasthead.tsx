@@ -11,6 +11,7 @@ import { usePageNotifications } from '../../../framework/PageNotifications/PageN
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { useGet } from '../../common/crud/useGet';
+import AwxBrand from '../../icons/awx-logo.svg';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
@@ -19,7 +20,6 @@ import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
-import AwxBrand from './awx-logo.svg';
 
 export function AwxMasthead() {
   const { t } = useTranslation();

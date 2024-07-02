@@ -12,13 +12,13 @@ import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
+import GalaxyBrand from '../../icons/galaxy-logo.svg';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubActiveUser } from '../common/useHubActiveUser';
 import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
-import GalaxyBrand from './galaxy-logo.svg';
 
 export function HubMasthead() {
   const { t } = useTranslation();
