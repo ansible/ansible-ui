@@ -1,8 +1,8 @@
 import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('activity-stream', () => {
   let team: Team;

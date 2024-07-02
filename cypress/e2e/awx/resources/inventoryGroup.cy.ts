@@ -1,10 +1,10 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { AwxHost } from '../../../../frontend/awx/interfaces/AwxHost';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Inventory Groups', () => {
   let organization: Organization;
