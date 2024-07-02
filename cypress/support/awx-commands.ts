@@ -625,14 +625,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getAwxRoles', () => {
-  cy.requestGet<AwxItemsResponse<RoleSerializerWithParentAccess>>(awxAPI`/role_definitions/`).then(
-    (response) => {
-      const awxRoles = response.results;
-      return awxRoles;
-    }
-  );
-});
+;
 
 Cypress.Commands.add(
   'createAwxProject',
