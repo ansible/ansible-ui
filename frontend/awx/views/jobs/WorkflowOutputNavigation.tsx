@@ -11,8 +11,10 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons'
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { stringIsUUID } from '../../common/util/strings';
-import { jobPaths } from './WorkflowOutput/WorkflowOutputNode';
 import type { WorkflowJobNode } from '../../interfaces/WorkflowNode';
+import { useGetPageUrl } from '../../../../framework';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { jobPaths } from './WorkflowOutput/WorkflowOutputNode';
 
 interface WorkflowOutputNavigationProps {
   workflowNodes: WorkflowJobNode[];
@@ -22,6 +24,7 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { workflowNodes } = props;
+  const getPageUrl = useGetPageUrl();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<string | undefined>();
@@ -120,12 +123,14 @@ export function WorkflowOutputNavigation(props: WorkflowOutputNavigationProps) {
           {filteredNodes.map((node: WorkflowJobNode) => (
             <SelectOption
               key={node.id}
-              to={
-                node.summary_fields.job?.type &&
-                `/jobs/${jobPaths[node.summary_fields.job?.type]}/${
-                  node.summary_fields.job?.id
-                }/output`
-              }
+              to={getPageUrl(AwxRoute.JobOutput, {
+                params: {
+                  job_type: node.summary_fields.job?.type
+                    ? jobPaths[node.summary_fields.job?.type]
+                    : '',
+                  id: node.summary_fields.job?.id,
+                },
+              })}
               component={Link}
               value={node.summary_fields?.job?.name}
             >
