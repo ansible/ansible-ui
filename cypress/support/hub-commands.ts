@@ -355,15 +355,7 @@ export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } &
   HubGetRequestOptions,
   'url'
 >;
-Cypress.Commands.add(
-  'queryHubExecutionEnvironments',
-  (options?: HubQueryExecutionEnvironmentsOptions) => {
-    cy.hubGetRequest({
-      ...options,
-      url: hubAPI`/_ui/v1/execution-environments/remotes/`,
-    });
-  }
-);
+;
 export type HubCreateExecutionEnvironmentOptions = {
   executionEnvironment: SetRequired<Partial<HubExecutionEnvironmentPayload>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
