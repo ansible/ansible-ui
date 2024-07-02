@@ -504,7 +504,6 @@ async function submitInputInventories(
   currentInputInventories: InputInventory[],
   originalInputInventories: InputInventory[]
 ) {
-  // call allPromises array sequentialy
   for (const item of originalInputInventories) {
     await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
       id: item.id,
