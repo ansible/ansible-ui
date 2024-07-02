@@ -1542,42 +1542,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'deleteCustomAWXApplicationFromDetailsView',
-  (customAppName: string, customGrantType: string, customClientType: string) => {
-    //Verify application details page
-    cy.verifyPageTitle(customAppName);
-    cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').should('contain', 'Default');
-    cy.get('[data-cy="authorization-grant-type"]').should(
-      'contain',
-      customGrantType === 'Authorization code'
-        ? 'authorization-code'
-        : customGrantType.toLowerCase()
-    );
-
-    cy.get('[data-cy="client-type"]').should('contain', customClientType.toLowerCase());
-    //Click on Delete application button
-    cy.clickButton('Delete application');
-
-    cy.intercept('DELETE', `api/v2/applications/*/`).as('deleteApp');
-
-    //Verify Delete modal
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Permanently delete applications');
-      cy.get('button').contains('Delete application').should('have.attr', 'aria-disabled', 'true');
-      cy.get('[data-cy="name-column-cell"]').should('have.text', customAppName);
-      cy.get('[data-cy="organization-column-cell"]').should('have.text', 'Default');
-      cy.get('input[id="confirm"]').click();
-      cy.get('button').contains('Delete application').click();
-    });
-
-    //Verify API call
-    cy.wait('@deleteApp').then((deleteApp) => {
-      expect(deleteApp?.response?.statusCode).to.eql(204);
-    });
-  }
-);
+;
 
 Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: string) => {
   cy.clickTab(/^Back to Applications$/, true);
