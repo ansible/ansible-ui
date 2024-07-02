@@ -253,6 +253,4 @@ describe('Organizations: Notifications Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can create a Notification with a specific Org and toggle the Notification on and off on the Notifications tab of the Org', () => {});
 });
