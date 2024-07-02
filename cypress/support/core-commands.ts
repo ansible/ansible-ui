@@ -25,5 +25,3 @@ Cypress.Commands.add('containsBy', (selector: string, text: string | number | Re
   // It's a workaround when the element is found and while assertions are running, the element is replaced
   cy.contains(selector, text);
 });
-
-;

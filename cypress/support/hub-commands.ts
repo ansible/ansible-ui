@@ -52,8 +52,6 @@ export type HubPutRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
 >;
-;
-
 export type HubPostRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
@@ -70,8 +68,6 @@ export type HubPatchRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
 >;
-;
-
 export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
 Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
   cy.hubRequest({ ...options, method: 'DELETE' });
@@ -196,12 +192,6 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-;
-
-;
-
-;
-
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
   cy.galaxykit('namespace create', namespaceName);
 });
@@ -233,8 +223,6 @@ Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
     url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
 });
-
-;
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
@@ -319,18 +307,11 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
   cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
 });
 
-;
-
-;
-
-;
-
 // HUB Execution Environment Commands
 export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<
   HubGetRequestOptions,
   'url'
 >;
-;
 export type HubCreateExecutionEnvironmentOptions = {
   executionEnvironment: SetRequired<Partial<HubExecutionEnvironmentPayload>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
@@ -498,7 +479,6 @@ export type HubQueryNamespacesOptions = { qs?: { limit?: number } } & Omit<
   HubGetRequestOptions,
   'url'
 >;
-;
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'

@@ -8,8 +8,6 @@ import { Role } from '../../frontend/awx/interfaces/Role';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 
-;
-
 Cypress.Commands.add(
   'giveUserCredentialsAccess',
   (credentialName: string, userId: number, roleName: string) => {
