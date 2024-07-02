@@ -35,14 +35,7 @@ import { awxAPI } from './formatApiPathForAwx';
 
 ;
 
-Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
-  cy.contains('text', nodeName)
-    .parents('[data-kind="node"]')
-    .within(() => {
-      cy.get('.pf-topology__node__action-icon').click();
-    });
-  cy.get('li[data-cy="remove-node"] ').click();
-});
+;
 
 /* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`.
 This command removes all the nodes via the visualizer toolbar.
