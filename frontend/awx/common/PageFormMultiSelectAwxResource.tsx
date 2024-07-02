@@ -10,10 +10,10 @@ import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';
 
 export function PageFormMultiSelectAwxResource<
-  Resource extends { id: number; name: string; description?: string | null | undefined },
+  Resource extends { value: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
-  Value extends number = PathValue<FormData, Name>,
+  Value = PathValue<FormData, Name>,
 >(props: {
   id?: string;
   name: Name;
@@ -66,7 +66,7 @@ export function PageFormMultiSelectAwxResource<
           options:
             response.results?.map((resource) => ({
               label: resource.name,
-              value: resource.id as PathValue<FormData, Name>,
+              value: resource.value as PathValue<FormData, Name>,
               description: resource.description,
             })) ?? [],
           next: response.results[response.results.length - 1]?.name,
@@ -99,7 +99,7 @@ export function PageFormMultiSelectAwxResource<
           defaultSelection={
             value && Array.isArray(value)
               ? value.map((item: number) => {
-                  return { id: item };
+                  return { value: item };
                 })
               : []
           }
@@ -140,7 +140,7 @@ export function PageFormMultiSelectAwxResource<
       onBrowse={() =>
         openSelectDialog((resources: Resource[]) => {
           if (resources) {
-            setValue(props.name, resources.map((res) => res.id) as PathValue<FormData, Name>);
+            setValue(props.name, resources.map((res) => res.value) as PathValue<FormData, Name>);
           }
         })
       }
@@ -164,10 +164,11 @@ function SelectResource<
   const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
 
   const queryParams = useMemo(() => {
-    const query: QueryParams = {};
+    let query: QueryParams = {};
     urlSearchParams.forEach((value, key) => (query[key] = value));
+    query = { ...query, ...props.queryParams };
     return query;
-  }, [urlSearchParams]);
+  }, [urlSearchParams, props.queryParams]);
 
   const view = useAwxView<Resource>({
     url: props.url.split('?')[0],

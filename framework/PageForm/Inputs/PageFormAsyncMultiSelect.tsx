@@ -63,6 +63,7 @@ export function PageFormAsyncMultiSelect<
       control={control}
       shouldUnregister
       render={({ field: { value, onChange }, fieldState: { error } }) => {
+        console.log(value);
         const helperTextInvalid = error?.message
           ? props.validate && isValidating
             ? translations.validating

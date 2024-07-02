@@ -93,6 +93,16 @@ interface LaunchPayload {
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 
+const acceptableCredentialKinds = [
+  'machine',
+  'cloud',
+  'net',
+  'ssh',
+  'vault',
+  'kubernetes',
+  'cryptography',
+];
+
 export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
 
@@ -269,6 +279,7 @@ export function LaunchWizard({
             'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
           )}
           isMultiple
+          queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
         />
       ),
     },

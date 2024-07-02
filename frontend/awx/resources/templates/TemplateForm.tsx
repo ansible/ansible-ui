@@ -99,6 +99,7 @@ export function EditJobTemplate() {
     );
   }
   if (isJobTemplateLoading || isInstanceGroupsLoading) return <LoadingPage />;
+  console.log({ defaultValues });
   return (
     <PageLayout>
       <PageHeader
@@ -179,14 +180,14 @@ export function CreateJobTemplate() {
   );
 }
 
-async function submitCredentials(
-  template: JobTemplate,
-  newCredentials: Pick<Credential, 'id' | 'name' | 'cloud' | 'description' | 'kind'>[]
-) {
+async function submitCredentials(template: JobTemplate, newCredentials: Credential[]) {
   const { added, removed } = getAddedAndRemoved(
     template?.summary_fields?.credentials ?? ([] as Credential[]),
     newCredentials
   );
+
+  console.log(template);
+  console.log(newCredentials);
 
   const disassociateCredentials = removed.map((cred) =>
     postRequest(awxAPI`/job_templates/${template?.id?.toString()}/credentials/`, {
