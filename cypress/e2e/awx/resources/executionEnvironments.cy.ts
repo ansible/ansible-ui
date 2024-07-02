@@ -26,11 +26,9 @@ describe('Execution Environments: Create', () => {
       }).then((cred) => {
         credential = cred;
       });
-      if (Cypress.currentTest.title.includes('access to a user')) {
-        cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-          user = testUser;
-        });
-      }
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
+        user = testUser;
+      });
     });
     execEnvName = 'E2E Execution Environment Create' + randomString(4);
     image = 'quay.io/ansible/awx-ee:latest';
