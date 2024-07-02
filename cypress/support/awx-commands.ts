@@ -511,13 +511,7 @@ Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean)
   });
 });
 
-Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get('td[data-cy=checkbox-column-cell]').click();
-    });
-  });
-});
+;
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
