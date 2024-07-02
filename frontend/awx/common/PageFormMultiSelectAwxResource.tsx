@@ -138,7 +138,7 @@ export function PageFormMultiSelectAwxResource<
       onBrowse={() =>
         openSelectDialog((resources: Resource[]) => {
           if (resources) {
-            setValue(props.name, resources.map((res) => res.id) as PathValue<FormData, Name>);
+            setValue(props.name, resources as PathValue<FormData, Name>);
           }
         })
       }
