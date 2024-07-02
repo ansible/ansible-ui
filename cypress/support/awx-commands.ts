@@ -1544,30 +1544,7 @@ Cypress.Commands.add(
 
 ;
 
-Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: string) => {
-  cy.clickTab(/^Back to Applications$/, true);
-  cy.verifyPageTitle('OAuth Applications');
-  cy.clickTableRowKebabAction(customAppName, 'delete-application');
-  cy.intercept('DELETE', `api/v2/applications/*/`).as('deleteApp');
-
-  //Verify Delete modal
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    cy.get('header').contains('Permanently delete applications');
-    cy.get('button').contains('Delete application').should('have.attr', 'aria-disabled', 'true');
-    cy.get('[data-cy="name-column-cell"]').should('have.text', customAppName);
-    cy.get('[data-cy="organization-column-cell"]').should('have.text', 'Default');
-    cy.get('input[id="confirm"]').click();
-    cy.get('button').contains('Delete application').click();
-  });
-
-  //Verify API call
-  cy.wait('@deleteApp').then((deleteApp) => {
-    expect(deleteApp?.response?.statusCode).to.eql(204);
-  });
-
-  //Confirm status
-  cy.assertModalSuccess();
-});
+;
 
 Cypress.Commands.add('createAwxApplication', () => {
   return cy.requestPost<
