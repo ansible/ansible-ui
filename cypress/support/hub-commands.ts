@@ -198,24 +198,7 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
 
 ;
 
-Cypress.Commands.add(
-  'deleteCommunityCollectionFromSystem',
-  (
-    collectionName: CollectionVersionSearch,
-    options?: {
-      /** Whether to fail on response codes other than 2xx and 3xx */
-      failOnStatusCode?: boolean;
-    }
-  ) => {
-    if (collectionName) {
-      const thisName = collectionName.collection_version?.name;
-      cy.requestDelete(
-        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName ?? ''}/`,
-        options
-      );
-    }
-  }
-);
+;
 
 ;
 
