@@ -92,6 +92,9 @@ export function runCommand(params: {
         cy.getByDataCy('forks').contains(params.forks.toString());
 
         cy.getByDataCy('execution-environment').contains(executionEnvironment.name);
+
+        cy.deleteAwxCredential(credential, { failOnStatusCode: false });
+        cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
       });
     }
   );
