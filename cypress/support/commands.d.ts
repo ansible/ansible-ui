@@ -33,6 +33,7 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
@@ -1424,6 +1425,7 @@ declare global {
        * Creates a DE and returns the same.
        */
       createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
+      createEdaOrganization(): Chainable<EdaOrganization>;
 
       /**
        * Retrieves a DE by name.

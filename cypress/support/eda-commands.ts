@@ -11,6 +11,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
 import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
@@ -597,6 +598,18 @@ Cypress.Commands.add('createEdaDecisionEnvironment', () => {
       message: [`Created 👉  ${edaDE.name}`],
     });
     return edaDE;
+  });
+});
+
+Cypress.Commands.add('createEdaOrganization', () => {
+  cy.requestPost<EdaOrganization>(edaAPI`/organizations/`, {
+    name: 'E2E Organization ' + randomString(4),
+  }).then((edaOrg) => {
+    Cypress.log({
+      displayName: 'EDA Organization :',
+      message: [`Created 👉  ${edaOrg.name}`],
+    });
+    return edaOrg;
   });
 });
 
