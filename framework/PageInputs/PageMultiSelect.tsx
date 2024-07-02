@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 import { ReactNode, Ref, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Scrollable } from '../components/Scrollable';
@@ -158,14 +159,18 @@ export function PageMultiSelect<
     props.setSearchValue
   );
 
+  const formContext = useFormContext();
+
+  const formValues = formContext.getValues();
+
+  console.log({ formValues });
+
   const selectListRef = useRef<HTMLDivElement>(null);
 
   const selectedOptions = useMemo(() => {
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
-      const option = options.find(
-        (option) => (option.value as { id: number }).id === (value as { id: number }).id
-      );
+      const option = options.find((option) => option.value === value);
       if (option) {
         selectedOptions.push(option);
       } else if (queryLabel) {
@@ -221,24 +226,26 @@ export function PageMultiSelect<
               ) : (
                 <>
                   <ChipGroup numChips={99}>
-                    {selectedOptions.map((option) => (
-                      <Chip
-                        key={option.label}
-                        isReadOnly={props.disableClearChips}
-                        textMaxWidth={maxChipSize}
-                        style={{ marginTop: -2, marginBottom: -2 }}
-                        onClick={() =>
-                          onSelect((previousValues) =>
-                            previousValues?.filter(
-                              (v) =>
-                                (v as { id: number }).id !== (option.value as { id: number }).id
-                            )
-                          )
-                        }
-                      >
-                        {option.label}
-                      </Chip>
-                    ))}
+                    {selectedOptions.map(
+                      (option) => (
+                        console.log(option),
+                        (
+                          <Chip
+                            key={option.label}
+                            isReadOnly={props.disableClearChips}
+                            textMaxWidth={maxChipSize}
+                            style={{ marginTop: -2, marginBottom: -2 }}
+                            onClick={() =>
+                              onSelect((previousValues) =>
+                                previousValues?.filter((v) => v !== option.value)
+                              )
+                            }
+                          >
+                            {option.label}
+                          </Chip>
+                        )
+                      )
+                    )}
                   </ChipGroup>
                   {!disableClearSelection && (
                     <TimesIcon
@@ -264,10 +271,13 @@ export function PageMultiSelect<
   const onSelectHandler = useCallback(
     (_: unknown, itemId: string | number | undefined) => {
       onSelect((previousValues: ValueT[] | undefined) => {
+        console.log({ itemId });
+        console.log({ options });
         const newSelectedOption = options.find((option) => {
           if (option.key !== undefined) return option.key === itemId;
           else return option.label === itemId;
         });
+        console.log({ newSelectedOption });
         if (newSelectedOption) {
           if (previousValues?.find((value) => value === newSelectedOption.value) !== undefined) {
             previousValues = previousValues.filter((value) => value !== newSelectedOption.value);

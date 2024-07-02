@@ -99,6 +99,7 @@ export function EditJobTemplate() {
     );
   }
   if (isJobTemplateLoading || isInstanceGroupsLoading) return <LoadingPage />;
+  console.log({ defaultValues });
   return (
     <PageLayout>
       <PageHeader
@@ -184,6 +185,9 @@ async function submitCredentials(template: JobTemplate, newCredentials: Credenti
     template?.summary_fields?.credentials ?? ([] as Credential[]),
     newCredentials
   );
+
+  console.log(template);
+  console.log(newCredentials);
 
   const disassociateCredentials = removed.map((cred) =>
     postRequest(awxAPI`/job_templates/${template?.id?.toString()}/credentials/`, {

@@ -10,10 +10,10 @@ import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';
 
 export function PageFormMultiSelectAwxResource<
-  Resource extends { id: number; name: string; description?: string | null | undefined },
+  Resource extends { value: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
-  Value extends { id: number } = PathValue<FormData, Name>,
+  Value = PathValue<FormData, Name>,
 >(props: {
   id?: string;
   name: Name;
@@ -66,7 +66,7 @@ export function PageFormMultiSelectAwxResource<
           options:
             response.results?.map((resource) => ({
               label: resource.name,
-              value: resource as PathValue<FormData, Name>,
+              value: resource.value as PathValue<FormData, Name>,
               description: resource.description,
             })) ?? [],
           next: response.results[response.results.length - 1]?.name,
@@ -98,8 +98,8 @@ export function PageFormMultiSelectAwxResource<
           queryParams={props.queryParams}
           defaultSelection={
             value && Array.isArray(value)
-              ? value.map((item: { id: number }) => {
-                  return { id: item.id };
+              ? value.map((item: number) => {
+                  return { value: item };
                 })
               : []
           }
@@ -118,7 +118,9 @@ export function PageFormMultiSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => <AsyncQueryLabel url={props.url.split('?')[0]} id={value.id} />,
+    (value: Value) => (
+      <AsyncQueryLabel url={props.url.split('?')[0]} id={value as unknown as number} />
+    ),
     [props.url]
   );
 
@@ -138,7 +140,7 @@ export function PageFormMultiSelectAwxResource<
       onBrowse={() =>
         openSelectDialog((resources: Resource[]) => {
           if (resources) {
-            setValue(props.name, resources as PathValue<FormData, Name>);
+            setValue(props.name, resources.map((res) => res.value) as PathValue<FormData, Name>);
           }
         })
       }
