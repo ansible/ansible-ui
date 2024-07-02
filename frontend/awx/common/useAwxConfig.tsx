@@ -18,7 +18,19 @@ export function useAwxConfigState() {
   return useContext(AwxConfigContext);
 }
 
-export function AwxConfigProvider(props: { children?: ReactNode }) {
+export function AwxConfigProvider(props: { children: ReactNode; disabled?: boolean }) {
+  return props?.disabled ? (
+    <AwxConfigContext.Provider
+      value={{ awxConfig: undefined, awxConfigError: undefined, refreshAwxConfig: undefined }}
+    >
+      {props.children}
+    </AwxConfigContext.Provider>
+  ) : (
+    <AwxConfigProviderInternal>{props?.children}</AwxConfigProviderInternal>
+  );
+}
+
+export function AwxConfigProviderInternal(props: { children?: ReactNode }) {
   const response = useSWR<Config>(awxAPI`/config/`, requestGet);
   const value = useMemo(
     () => ({
