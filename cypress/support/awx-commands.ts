@@ -875,26 +875,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'createAwxOrganizationProjectInventoryJobTemplate',
-  (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
-    cy.createAwxOrganization().then((organization) => {
-      cy.createAwxInventory({ organization: organization.id }).then((inventory) => {
-        cy.createEdaSpecificAwxProject({ project: { organization: organization.id } }).then(
-          (project) => {
-            cy.createEdaAwxJobTemplate(project, inventory, options?.jobTemplate).then(
-              (jobTemplate) => ({
-                project,
-                inventory,
-                jobTemplate,
-              })
-            );
-          }
-        );
-      });
-    });
-  }
-);
+;
 
 /** Interface for tracking created resources that will need to be delete
 at the end of testing using cy.deleteAwxResources*/
