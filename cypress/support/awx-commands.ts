@@ -1473,36 +1473,7 @@ Cypress.Commands.add('createGlobalProject', function () {
 
 ;
 
-Cypress.Commands.add(
-  'editCustomAWXApplicationFromListView',
-  (customAppName: string, customGrantType: string, newCustomClientType: string) => {
-    //Go back to list view
-    cy.clickTab(/^Back to Applications$/, true);
-    cy.verifyPageTitle('OAuth Applications');
-
-    //Filter by app name
-    cy.searchAndDisplayResource(customAppName);
-    cy.get(`[data-cy="edit-application"]`).click();
-
-    cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
-
-    cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
-    cy.clickButton('Save application');
-
-    //Verify API call
-    cy.wait('@editApp')
-      .its('response.body.client_type')
-      .then((client_type: string) => {
-        expect(newCustomClientType.toLowerCase()).to.be.equal(client_type);
-      });
-
-    //Verify changes
-    cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').should('contain', 'Default');
-    cy.get('[data-cy="authorization-grant-type"]').should('contain', customGrantType.toLowerCase());
-    cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
-  }
-);
+;
 
 ;
 
