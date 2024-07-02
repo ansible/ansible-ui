@@ -1471,45 +1471,7 @@ Cypress.Commands.add('createGlobalProject', function () {
 
 ;
 
-Cypress.Commands.add(
-  'editCustomAWXApplicationFromDetailsView',
-  (
-    customAppName: string,
-    customGrantType: string,
-    customClientType: string,
-    newCustomClientType: string
-  ) => {
-    //Verify application details page
-    cy.verifyPageTitle(customAppName);
-    cy.get('[data-cy="name"]').should('contain', customAppName);
-    cy.get('[data-cy="organization"]').should('contain', 'Default');
-    cy.get('[data-cy="authorization-grant-type"]').should(
-      'contain',
-      customGrantType === 'Authorization code'
-        ? 'authorization-code'
-        : customGrantType.toLowerCase()
-    );
-    cy.get('[data-cy="client-type"]').should('contain', customClientType.toLowerCase());
-
-    //Click on Edit application button
-    cy.clickButton('Edit application');
-
-    cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
-
-    cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
-    cy.clickButton('Save application');
-
-    //Verify API call
-    cy.wait('@editApp')
-      .its('response.body.client_type')
-      .then((client_type: string) => {
-        expect(newCustomClientType.toLowerCase()).to.be.equal(client_type);
-      });
-
-    //Verify changes
-    cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
-  }
-);
+;
 
 Cypress.Commands.add(
   'editCustomAWXApplicationFromListView',
