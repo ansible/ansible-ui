@@ -523,12 +523,7 @@ export type HubQueryNamespacesOptions = { qs?: { limit?: number } } & Omit<
   HubGetRequestOptions,
   'url'
 >;
-Cypress.Commands.add('queryHubNamespaces', (options?: HubQueryNamespacesOptions) => {
-  cy.hubGetRequest({
-    ...options,
-    url: hubAPI`/_ui/v1/namespaces/`,
-  });
-});
+;
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
