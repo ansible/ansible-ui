@@ -16,7 +16,7 @@ describe('Constructed Inventories CRUD Tests', () => {
 
   before(() => {
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
-    cy.createAwxOrganization(orgName).then((org) => {
+    cy.createAwxOrganization({ name: orgName }).then((org) => {
       organization = org;
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;

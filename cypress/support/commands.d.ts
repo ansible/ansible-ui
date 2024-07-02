@@ -664,7 +664,7 @@ declare global {
       // AWX Commands
       // ==============================================================================================================
 
-      createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
+      createAwxOrganization(awxOrganization?: Partial<Organization>): Chainable<Organization>;
       editAwxApplication(application: Application, name: string): Chainable<Application>;
 
       /**
@@ -855,8 +855,15 @@ declare global {
       giveUserTeamAccess(teamName: string, userId: number, roleName: string): Chainable<Role>;
 
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
-      createAwxTeam(organization: Organization): Chainable<Team>;
-      createAwxUser(organization: Organization): Chainable<AwxUser>;
+
+      /**
+       * @Example
+       * ```tsx
+       * cy.createAwxUser({ organization: organization.id, is_superuser:true });
+       * ```
+       */
+      createAwxTeam(awxTeam?: Partial<Team>): Chainable<Team>;
+      createAwxUser(awxUser?: Partial<AwxUser>): Chainable<AwxUser>;
       getAwxRoles(): Chainable<RoleSerializerWithParentAccess>;
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>

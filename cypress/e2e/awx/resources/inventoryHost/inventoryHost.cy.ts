@@ -20,7 +20,7 @@
 //     cy.createAwxInventory({ organization: organization.id }).then((inv) => {
 //       inventory = inv;
 //     });
-//     cy.createAwxUser(organization).then((testUser) => {
+//     cy.createAwxUser({ organization: organization.id }).then((testUser) => {
 //       user = testUser;
 //     });
 //   });

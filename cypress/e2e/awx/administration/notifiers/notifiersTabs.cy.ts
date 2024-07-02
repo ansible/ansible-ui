@@ -1,7 +1,7 @@
 import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-import { randomE2Ename } from '../../../../support/utils';
-import { testNotification, testDelete } from './notifiersSharedFunctions';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { randomE2Ename } from '../../../../support/utils';
+import { testDelete, testNotification } from './notifiersSharedFunctions';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
@@ -11,7 +11,7 @@ describe('Notifications', () => {
 
   before(() => {
     cy.login();
-    cy.createAwxOrganization(randomE2Ename()).then((org) => {
+    cy.createAwxOrganization().then((org) => {
       organization = org;
     });
   });
@@ -95,7 +95,7 @@ describe('Notifications', () => {
     const orgName = randomE2Ename();
 
     before(() => {
-      cy.createAwxOrganization(orgName).then(() => {});
+      cy.createAwxOrganization({ name: orgName }).then(() => {});
     });
 
     it('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {

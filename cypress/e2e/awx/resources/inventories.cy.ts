@@ -21,7 +21,7 @@ describe('Inventories Tests', () => {
       if (kind === '') {
         beforeEach(() => {
           const orgName = 'E2E Organization Inv tests' + randomString(4);
-          cy.createAwxOrganization(orgName).then((org) => {
+          cy.createAwxOrganization({ name: orgName }).then((org) => {
             organization = org;
             cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
               label = lbl;
@@ -34,7 +34,7 @@ describe('Inventories Tests', () => {
             cy.createAwxInstanceGroup().then((ig) => {
               instanceGroup = ig;
             });
-            cy.createAwxUser(organization).then((testUser) => {
+            cy.createAwxUser({ organization: organization.id }).then((testUser) => {
               user = testUser;
               cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
             });
