@@ -20,9 +20,11 @@ import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
 import AwxBrand from './awx-logo.svg';
+import { useAwxProductVersionInfo } from './useAwxProductVersionInfo';
 
 export function AwxMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useAwxProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const config = useAwxConfig();
   const pageNavigate = usePageNavigate();
@@ -58,7 +60,9 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() =>
+                openAnsibleAboutModal({ versionInfo, userInfo: activeAwxUser?.username })
+              }
               data-cy="masthead-about"
             >
               {t('About')}

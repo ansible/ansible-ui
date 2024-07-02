@@ -13,9 +13,10 @@ import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
 import EdaBrand from './eda-logo.svg';
-
+import { useEdaProductVersionInfo } from './useEdaProductVersionInfo';
 export function EdaMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useEdaProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   const pageNavigate = usePageNavigate();
   const { activeEdaUser, refreshActiveEdaUser } = useEdaActiveUser();
@@ -49,7 +50,9 @@ export function EdaMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() =>
+                openAnsibleAboutModal({ versionInfo, userInfo: activeEdaUser?.username })
+              }
               data-cy="masthead-about"
             >
               {t('About')}
