@@ -59,8 +59,15 @@ export function runCommand(params: {
 
         // Credentials tab
 
-        // not sure why this is needed, but it ensures the test stability
-        cy.wait(4000);
+        // check that everything is correctly rendered in the form, so it does not fail sometimes
+        cy.getByDataCy('wizard-nav');
+        cy.getByDataCy('credential');
+        cy.getByDataCy('credential-form-group');
+        cy.getByDataCy('wizard-footer');
+        cy.getByDataCy('Submit');
+        cy.getByDataCy('wizard-back');
+        cy.getByDataCy('wizard-cancel');
+
         cy.getByDataCy('credential').click();
         cy.get(`[role='listbox'] button`);
         cy.contains('button', 'Browse').click();
