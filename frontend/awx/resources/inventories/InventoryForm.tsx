@@ -322,6 +322,9 @@ export function useInventoryFormDetailLabels() {
     limit: t(
       `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
     ),
+    prevent_instance_group_fallback: t(
+      `Prevent instance group fallback: If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.`
+    ),
   };
 }
 
@@ -431,9 +434,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
       {inventoryKind === '' && (
         <PageFormGroup
           label={t('Options')}
-          labelHelp={t(
-            'If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.'
-          )}
+          labelHelp={inventoryFormDetailLables.prevent_instance_group_fallback}
         >
           <PageFormCheckbox<InventoryCreate>
             label={t('Prevent instance group fallback')}

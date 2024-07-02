@@ -3,7 +3,11 @@ import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { checkHiddenButton, checkHiddenTab } from '../../../../support/hostsfunctions';
+import {
+  checkHiddenButton,
+  checkHiddenTab,
+  launchHostJob,
+} from '../../../../support/hostsfunctions';
 import { runCommand } from './runCommandFunction';
 
 describe('Inventory Host Tab Tests for smart inventory', () => {
@@ -68,10 +72,17 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
   });
 
-  it.skip('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
+  it('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
     //1) Use inventory and host
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
+    cy.createAwxProject({ organization: organization.id }).then((project) => {
+      cy.createInventoryHost(organization, 'smart').then((result) => {
+        launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');
+        cy.deleteAwxInventory(result.inventory, { failOnStatusCode: false });
+        cy.deleteAwxProject(project, { failOnStatusCode: false });
+      });
+    });
   });
 
   //there is NO jobs tab in smart inventory -> host
