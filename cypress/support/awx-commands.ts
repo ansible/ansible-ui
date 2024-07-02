@@ -1187,19 +1187,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
-  let awxServer = Cypress.env('AWX_SERVER') as string;
-  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  const username = Cypress.env('AWX_USERNAME') as string;
-  const password = Cypress.env('AWX_PASSWORD') as string;
-  const tokensEndpoint = awxAPI`/tokens/`;
-  cy.exec(
-    `curl --insecure -d '${JSON.stringify({
-      description: 'E2E-' + randomString(4),
-      ...awxToken,
-    })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${awxServer}${tokensEndpoint}'`
-  ).then((result) => JSON.parse(result.stdout) as AwxToken);
-});
+;
 
 ;
 
