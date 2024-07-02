@@ -1584,13 +1584,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('editAwxApplication', (application: Application, name: string) => {
-  if (application?.id) {
-    cy.requestPatch(awxAPI`/applications/${application.id.toString()}/`, {
-      name: name,
-    });
-  }
-});
+;
 
 Cypress.Commands.add('createAwxInstance', (hostname: string, listener_port?: number) => {
   if (listener_port) {
