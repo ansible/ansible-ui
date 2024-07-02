@@ -374,17 +374,7 @@ Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
 
 ;
 
-Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
-  resourceTypes.forEach((resource) => {
-    cy.contains('[data-cy="permissions"]', resource)
-      .next()
-      .within(() => {
-        actions.forEach((action) => {
-          cy.contains(action);
-        });
-      });
-  });
-});
+;
 
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
   cy.requestGet<EdaRbacRole>(edaAPI`/role_definitions/${roleID}`);
