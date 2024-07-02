@@ -1,7 +1,7 @@
 import { Page } from '@patternfly/react-core';
 import useSWR, { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
-import { Login } from '../../common/Login';
+import { AnsibleLogin } from '../../common/AnsibleLogin';
 import type { AuthOption } from '../../common/SocialAuthLogin';
 import { requestGet } from '../../common/crud/Data';
 import { awxAPI } from '../common/api/awx-utils';
@@ -36,16 +36,15 @@ export function AwxLogin(props: { children: React.ReactNode }) {
 
   if (!activeAwxUser) {
     return (
-      <Login
+      <AnsibleLogin
         authOptions={authOptions}
-        apiUrl="/api/login/"
+        loginApiUrl="/api/login/"
         onSuccess={() => {
           refreshActiveAwxUser?.();
           void mutate(() => true);
         }}
-        icon="/static/media/awx-logo.svg"
-        brand={process.env.BRAND}
-        product={process.env.PRODUCT}
+        brandImg="/static/media/awx-logo.svg"
+        brandImgAlt={process.env.PRODUCT}
       />
     );
   }
