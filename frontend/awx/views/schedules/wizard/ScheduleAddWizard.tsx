@@ -139,7 +139,6 @@ export function ScheduleAddWizard() {
         }
 
         const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
-
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {
@@ -153,6 +152,22 @@ export function ScheduleAddWizard() {
                 'This schedule will never run.  If you have defined exceptions it is likely that the exceptions cancel out all the rules defined in the rules step.'
               ),
             ],
+          };
+
+          throw new RequestError('', '', 400, '', errors);
+        }
+
+        const { resource } = wizardData;
+        if (
+          (resource?.type === 'job_template' &&
+            (!resource?.summary_fields?.inventory ||
+              !resource?.summary_fields?.project ||
+              !resource?.summary_fields?.organization)) ||
+          (resource?.type === 'workflow_job_template' &&
+            (!resource?.summary_fields?.inventory || !resource?.summary_fields?.organization))
+        ) {
+          const errors = {
+            __all__: [t('Resources are missing from this template.')],
           };
 
           throw new RequestError('', '', 400, '', errors);
