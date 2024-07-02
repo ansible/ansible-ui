@@ -1,19 +1,19 @@
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { randomString } from '../../../../../framework/utils/random-string';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { runCommand } from './runCommandFunction';
-import { randomString } from '../../../../../framework/utils/random-string';
-import { launchHostJob } from '../../../../support/hostsfunctions';
 import { Project } from '../../../../../frontend/awx/interfaces/Project';
+import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { launchHostJob } from '../../../../support/hostsfunctions';
+import { runCommand } from './runCommandFunction';
 
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import {
+  checkFactsInHost,
   checkHostGroup,
   createAndEditAndDeleteHost,
-  testHostBulkDelete,
-  checkFactsInHost,
   createHost,
   createHostAndCancelJob,
+  testHostBulkDelete,
 } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
@@ -31,7 +31,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       cy.createAwxProject({ organization: organization.id }).then((proj) => {
         project = proj;
       });
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
     });

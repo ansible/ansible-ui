@@ -53,7 +53,7 @@ describe('Teams: Edit and Delete', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxTeam(organization).then((createdTeam) => {
+      cy.createAwxTeam({ organization: organization.id }).then((createdTeam) => {
         team = createdTeam;
       });
     });
@@ -152,9 +152,9 @@ describe('Teams: Add and Remove users', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => {
       organization = o;
-      cy.createAwxUser(organization).then((user) => {
+      cy.createAwxUser({ organization: organization.id }).then((user) => {
         user1 = user;
-        cy.createAwxTeam(organization).then((createdTeam) => {
+        cy.createAwxTeam({ organization: organization.id }).then((createdTeam) => {
           team = createdTeam;
           cy.giveUserTeamAccess(team.name, user1.id, 'Read');
         });
@@ -273,7 +273,7 @@ describe('Teams: Bulk delete', () => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       for (let i = 0; i < 5; i++) {
-        cy.createAwxTeam(organization).then((createdTeam) => {
+        cy.createAwxTeam({ organization: organization.id }).then((createdTeam) => {
           team = createdTeam;
           arrayOfElementText.push(team.name);
         });
