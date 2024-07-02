@@ -242,7 +242,11 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
           })
         }
       />
-      <PageDetail label={t('Enabled options')} isEmpty={!inventory.prevent_instance_group_fallback}>
+      <PageDetail
+        label={t('Enabled options')}
+        isEmpty={!inventory.prevent_instance_group_fallback}
+        helpText={inventoryFormDetailLables.prevent_instance_group_fallback}
+      >
         <TextList component={TextListVariants.ul}>
           {inventory.prevent_instance_group_fallback && (
             <TextListItem component={TextListItemVariants.li}>
