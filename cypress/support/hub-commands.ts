@@ -221,17 +221,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('cleanupCollections', (namespace: string, repo: string) => {
-  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespace}`
-  ).then((result) => {
-    for (const resource of result.data ?? []) {
-      if (resource.repository?.name === repo) {
-        cy.deleteCommunityCollectionFromSystem(resource);
-      }
-    }
-  });
-});
+;
 
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
   cy.galaxykit('namespace create', namespaceName);
