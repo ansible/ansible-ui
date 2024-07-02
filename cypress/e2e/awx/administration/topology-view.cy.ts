@@ -5,7 +5,6 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Settings } from '../../../../frontend/awx/interfaces/Settings';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../support/utils';
 
 describe('Topology view', () => {
   let user: AwxUser;
@@ -14,7 +13,7 @@ describe('Topology view', () => {
   before(() => {
     cy.login();
 
-    cy.createAwxOrganization(randomE2Ename()).then((org) => {
+    cy.createAwxOrganization().then((org) => {
       organization = org;
     });
   });
@@ -65,7 +64,7 @@ describe('Topology view', () => {
   });
 
   it('does not show Topology View in sidebar for non admins', function () {
-    cy.createAwxUser(organization).then((awxUser) => {
+    cy.createAwxUser({ organization: organization.id }).then((awxUser) => {
       user = awxUser;
 
       cy.awxLoginTestUser(user.username, 'pw');

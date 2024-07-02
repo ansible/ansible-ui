@@ -3,8 +3,8 @@ import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { runCommand } from './runCommandFunction';
 import { checkHiddenButton, checkHiddenTab } from '../../../../support/hostsfunctions';
+import { runCommand } from './runCommandFunction';
 
 describe('Inventory Host Tab Tests for smart inventory', () => {
   let organization: Organization;
@@ -19,7 +19,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
         inventory = inv;
       });
 
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
     });

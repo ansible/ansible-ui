@@ -34,16 +34,16 @@ describe.skip('Workflow Approvals Tests', () => {
       ).then((proj) => {
         project = proj;
 
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           user = u;
         });
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFApprove = u;
         });
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFDeny = u;
         });
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFCancel = u;
         });
         cy.createAwxInventory({ organization: organization.id })

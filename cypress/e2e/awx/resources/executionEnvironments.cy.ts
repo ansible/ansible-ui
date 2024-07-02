@@ -27,7 +27,7 @@ describe('Execution Environments: Create', () => {
         credential = cred;
       });
       if (Cypress.currentTest.title.includes('access to a user')) {
-        cy.createAwxUser(organization).then((testUser) => {
+        cy.createAwxUser({ organization: organization.id }).then((testUser) => {
           user = testUser;
         });
       }
@@ -422,10 +422,10 @@ describe('Execution Environments: User/Team access', () => {
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
-      cy.createAwxTeam(organization).then((testTeam) => {
+      cy.createAwxTeam({ organization: organization.id }).then((testTeam) => {
         team = testTeam;
       });
       cy.createAwxExecutionEnvironment({

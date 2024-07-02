@@ -45,9 +45,9 @@ describe('Organizations: Edit and Delete', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -165,9 +165,9 @@ describe('Organizations: Users Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -193,9 +193,9 @@ describe('Organizations: Teams Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -217,9 +217,9 @@ describe('Organizations: Execution Environments Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -240,9 +240,9 @@ describe('Organizations: Notifications Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
