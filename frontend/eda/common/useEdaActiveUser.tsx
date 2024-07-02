@@ -16,7 +16,15 @@ export function useEdaActiveUser() {
   return useContext(EdaActiveUserContext);
 }
 
-export function EdaActiveUserProvider(props: { children: ReactNode }) {
+export function EdaActiveUserProvider(props: { children: ReactNode; disabled?: boolean }) {
+  return props?.disabled ? (
+    <EdaActiveUserContext.Provider value={{}}>{props.children}</EdaActiveUserContext.Provider>
+  ) : (
+    <EdaActiveUserProviderInternal>{props?.children}</EdaActiveUserProviderInternal>
+  );
+}
+
+export function EdaActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<EdaUser>(edaAPI`/users/me/`, requestGet, {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
