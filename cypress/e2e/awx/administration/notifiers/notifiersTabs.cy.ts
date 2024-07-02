@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { randomE2Ename } from '../../../../support/utils';
 import { testDelete, testNotification } from './notifiersSharedFunctions';
