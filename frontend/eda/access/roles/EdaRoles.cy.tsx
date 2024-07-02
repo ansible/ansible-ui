@@ -60,10 +60,12 @@ describe('EdaRoles.cy.ts', () => {
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.contains('li[data-cy="delete-role"] button', /^Delete role$/).should(
+          'have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 
@@ -73,10 +75,12 @@ describe('EdaRoles.cy.ts', () => {
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'false');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'false');
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.contains('li[data-cy="delete-role"] button', /^Delete role$/).should(
+          'not.have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 
@@ -86,10 +90,12 @@ describe('EdaRoles.cy.ts', () => {
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.contains('li[data-cy="delete-role"] button', /^Delete role$/).should(
+          'have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 

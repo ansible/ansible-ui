@@ -151,7 +151,11 @@ inventories.forEach((inventory) => {
           .should('be.an', 'array')
           .then(() => {
             cy.get('[data-cy="add-group"]').click();
-            cy.get('[data-cy="create-new-group"]').should('have.attr', 'aria-disabled', 'true');
+            cy.get('[data-cy="create-new-group"] button').should(
+              'have.attr',
+              'aria-disabled',
+              'true'
+            );
           });
       });
     }
@@ -165,7 +169,7 @@ inventories.forEach((inventory) => {
 
         cy.get(`[data-cy="run-command"]`);
         cy.get(`[data-cy="add-group"]`).should('not.exist');
-        cy.get(`[aria-label="Actions"]`).should('not.exist');
+        cy.get(`[data-cy="actions-dropdown"]`).should('not.exist');
       });
     }
 
@@ -178,7 +182,7 @@ inventories.forEach((inventory) => {
 
         cy.get(`[data-cy="run-command"]`);
         cy.get(`[data-cy="add-group"]`);
-        cy.get(`[aria-label="Actions"]`).click();
+        cy.get(`[data-cy="actions-dropdown"]`).click();
         cy.get(`[data-cy="disassociate-selected-groups"]`);
       });
     }

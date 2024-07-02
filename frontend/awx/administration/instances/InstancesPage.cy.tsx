@@ -22,9 +22,9 @@ describe('Instances Page', () => {
     cy.getByDataCy('instances-peers-tab').should('be.enabled');
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('edit-instance').should('be.visible');
-    cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('edit-instance').should('not.have.attr', 'aria-disabled', 'true');
     cy.getByDataCy('remove-instance').should('be.visible');
-    cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('remove-instance').should('not.have.attr', 'aria-disabled', 'true');
     cy.getByDataCy('run-health-check').should('be.visible');
     cy.getByDataCy('run-health-check').should('have.attr', 'aria-disabled', 'false');
   });
@@ -43,7 +43,7 @@ describe('Instances Page', () => {
     }).as('isK8s');
     cy.mount(<InstancePage />);
     cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="edit-instance"]').should('have.attr', 'aria-disabled', 'false');
+    cy.get('[data-cy="edit-instance"]').should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('only admin users can edit instance', () => {
@@ -56,7 +56,7 @@ describe('Instances Page', () => {
       .then(() => {
         cy.get('[data-cy="actions-dropdown"]').click();
         cy.getByDataCy('edit-instance').should('be.visible');
-        cy.getByDataCy('edit-instance').should('have.attr', 'aria-disabled', 'false');
+        cy.getByDataCy('edit-instance').should('not.have.attr', 'aria-disabled', 'true');
       });
   });
 
@@ -101,7 +101,7 @@ describe('Instances Page', () => {
     cy.mount(<InstancePage />);
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('remove-instance').should('be.visible');
-    cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
+    cy.getByDataCy('remove-instance').should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('only admin users can remove instance', () => {
@@ -114,7 +114,7 @@ describe('Instances Page', () => {
       .then(() => {
         cy.getByDataCy('actions-dropdown').click();
         cy.getByDataCy('remove-instance').should('be.visible');
-        cy.getByDataCy('remove-instance').should('have.attr', 'aria-disabled', 'false');
+        cy.getByDataCy('remove-instance').should('not.have.attr', 'aria-disabled', 'true');
       });
   });
 

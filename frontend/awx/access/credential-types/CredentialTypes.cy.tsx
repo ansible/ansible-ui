@@ -30,11 +30,10 @@ describe('Credential Types List', () => {
       cy.mount(<CredentialTypes />);
       cy.contains('tr', 'VMware vCenter').within(() => {
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete credential type$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
+        cy.contains(
+          'li[data-cy="delete-credential-type"] button',
+          /^Delete credential type$/
+        ).should('have.attr', 'aria-disabled', 'true');
       });
     });
 
@@ -43,11 +42,10 @@ describe('Credential Types List', () => {
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete credential type$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
+        cy.contains(
+          'li[data-cy="delete-credential-type"] button',
+          /^Delete credential type$/
+        ).should('have.attr', 'aria-disabled', 'true');
       });
     });
 

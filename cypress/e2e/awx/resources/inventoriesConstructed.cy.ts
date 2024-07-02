@@ -59,10 +59,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     const verbosityValue = generateRandom(0, 2);
 
     cy.navigateTo('awx', 'inventories');
-    cy.getByDataCy('create-inventory').click();
-    cy.get('.pf-v5-c-dropdown__menu').within(() => {
-      cy.get('[data-cy="create-constructed-inventory"]').click();
-    });
+    cy.get('button[data-cy="create-inventory"]').click();
+    cy.get('li[data-cy="create-constructed-inventory"] button').click();
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
     cy.intercept({

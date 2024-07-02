@@ -182,6 +182,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
     <PageToolbarToggleGroupContext.Provider value={{ activeGroup, setActiveGroup }}>
       <Toolbar
         ouiaId="page-toolbar"
+        data-cy="page-toolbar"
         clearAllFilters={clearAllFilters}
         className="page-table-toolbar border-bottom"
         style={{

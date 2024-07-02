@@ -20,7 +20,7 @@ describe('Job Page', () => {
   it('Delete button is disabled on a running job', () => {
     cy.mount(<JobHeader />, { path: ':job_type/:id', initialEntries: ['/workflow/1'] });
     cy.getByDataCy('actions-dropdown').click();
-    cy.contains('[data-cy="delete-job"]', 'Delete job').should(
+    cy.contains('[data-cy="delete-job"] button', 'Delete job').should(
       'have.attr',
       'aria-disabled',
       'true'
@@ -38,10 +38,10 @@ describe('Job Page', () => {
     );
     cy.mount(<JobHeader />, { path: ':job_type/:id', initialEntries: ['/workflow/1'] });
     cy.getByDataCy('actions-dropdown').click();
-    cy.contains('[data-cy="delete-job"]', 'Delete job').should(
-      'have.attr',
+    cy.contains('[data-cy="delete-job"] button', 'Delete job').should(
+      'not.have.attr',
       'aria-disabled',
-      'false'
+      'true'
     );
   });
   it('Cancel button is disabled on a finished job', () => {

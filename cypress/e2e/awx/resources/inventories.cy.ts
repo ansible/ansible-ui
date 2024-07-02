@@ -53,8 +53,8 @@ describe('Inventories Tests', () => {
           //Refactor this test to match the updated test case and improve the assertions
           const inventoryName = 'E2E Inventory ' + randomString(4);
           cy.navigateTo('awx', 'inventories');
-          cy.clickButton(/^Create inventory$/);
-          cy.clickLink(/^Create inventory$/);
+          cy.get('button[data-cy="create-inventory"]').click();
+          cy.get('li[data-cy="create-inventory"] button').click();
           //Assert that user is on the form view to create an inventory
           cy.get('[data-cy="name"]').type(inventoryName);
           cy.singleSelectByDataCy('organization', organization.name);

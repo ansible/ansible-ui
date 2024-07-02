@@ -73,7 +73,7 @@ describe('Roles List', () => {
     cy.mount(<Roles />);
     cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
       cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete role$/).should(
+      cy.contains('li[data-cy="delete-role"] button', /^Delete role$/).should(
         'have.attr',
         'aria-disabled',
         'true'
@@ -100,7 +100,7 @@ describe('Roles List', () => {
     });
     cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
       cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete role$/).should(
+      cy.contains('li[data-cy="delete-role"] button', /^Delete role$/).should(
         'have.attr',
         'aria-disabled',
         'true'
@@ -119,10 +119,10 @@ describe('Roles List', () => {
     });
     cy.contains('tr', 'galaxy.demorole').within(() => {
       cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete role$/).should(
-        'have.attr',
+      cy.contains('li[data-cy="delete-role"] button', /^Delete role$/).should(
+        'not.have.attr',
         'aria-disabled',
-        'false'
+        'true'
       );
     });
   });

@@ -15,8 +15,8 @@ describe('TeamPage', () => {
     cy.contains('button', 'Edit team').should('have.attr', 'aria-disabled', 'false');
   });
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
-    cy.get('button[aria-label="Actions"]').click();
-    cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete team').should(
+    cy.get('button[data-cy="actions-dropdown"]').click();
+    cy.contains('li[data-cy="delete-team"] button', 'Delete team').should(
       'have.attr',
       'aria-disabled',
       'true'
