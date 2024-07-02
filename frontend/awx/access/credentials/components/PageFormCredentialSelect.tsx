@@ -50,6 +50,7 @@ export function PageFormCredentialSelect<
       tableColumns={credentialColumns}
       toolbarFilters={credentialFilters}
       queryParams={props.queryParams}
+      additionalControls={props.additionalControls}
     />
   ) : (
     <PageFormSingleSelectAwxResource<Credential, TFieldValues, TFieldName>
@@ -66,6 +67,7 @@ export function PageFormCredentialSelect<
       tableColumns={credentialColumns}
       toolbarFilters={credentialFilters}
       queryParams={props.queryParams}
+      additionalControls={props.additionalControls}
     />
   );
 }
