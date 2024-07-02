@@ -462,12 +462,7 @@ Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?:
   cy.getTableRowByText(name, filter, 'SingleText');
 });
 
-Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterTableByText(name);
-  }
-  cy.contains('article', name);
-});
+;
 
 Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
