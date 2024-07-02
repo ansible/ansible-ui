@@ -2,7 +2,7 @@ import { Spinner } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
+import { ITableColumn, IToolbarFilter, usePageDialogs } from '../../../framework';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
@@ -61,12 +61,12 @@ export function PageFormSingleSelectEdaResource<
     [props.url]
   );
 
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { setValue } = useFormContext<FormData>();
   const value = useWatch<FormData>({ name: props.name });
   const openSelectDialog = useCallback(
     (onSelect: (resource: Resource) => void) => {
-      setDialog(
+      pushDialog(
         <SelectResource<Resource>
           title={props.label}
           url={props.url}
@@ -77,7 +77,7 @@ export function PageFormSingleSelectEdaResource<
         />
       );
     },
-    [props.label, props.tableColumns, props.toolbarFilters, props.url, setDialog, value]
+    [props.label, props.tableColumns, props.toolbarFilters, props.url, pushDialog, value]
   );
 
   const queryLabel = useCallback(

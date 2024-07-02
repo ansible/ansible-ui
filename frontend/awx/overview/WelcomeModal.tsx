@@ -1,6 +1,6 @@
 import { Button, Checkbox, Modal, ModalVariant, TextContent } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../framework';
+import { usePageDialogs } from '../../../framework';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
@@ -11,11 +11,11 @@ const CheckboxDiv = styled.div`
 const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 
 export function WelcomeModal() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog } = usePageDialogs();
   const { t } = useTranslation();
   const onClose = useCallback(() => {
-    setDialog(undefined);
-  }, [setDialog]);
+    popDialog();
+  }, [popDialog]);
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const handleChange = (checked: boolean) => {

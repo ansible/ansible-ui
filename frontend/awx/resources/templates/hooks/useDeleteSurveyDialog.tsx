@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import { usePageDialog, PageTable, usePageAlertToaster } from '../../../../../framework';
+import { usePageDialogs, PageTable, usePageAlertToaster } from '../../../../../framework';
 import { usePaged } from '../../../../../framework/PageTable/useTableItems';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { useDeleteSurvey } from './useDeleteSurvey';
@@ -25,7 +25,7 @@ const ConfirmBoxDiv = styled.div`
 
 export function useDeleteSurveyDialog(onComplete: (questions: Spec[]) => void) {
   const { t } = useTranslation();
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog, popDialog } = usePageDialogs();
   const alertToaster = usePageAlertToaster();
 
   const onError = (error: unknown) => {
@@ -43,10 +43,10 @@ export function useDeleteSurveyDialog(onComplete: (questions: Spec[]) => void) {
   };
 
   const deleteSurveyDialog = (questions: Spec[]) => {
-    setDialog(
+    pushDialog(
       <DeleteSurveyDialog
         questions={questions}
-        onClose={() => setDialog(undefined)}
+        onClose={() => popDialog()}
         onComplete={onComplete}
         onError={onError}
       />

@@ -17,7 +17,7 @@ import { ISelected } from '../PageTable/useTableItems';
 import { IToolbarFilter } from '../PageToolbar/PageToolbarFilter';
 import { Collapse } from '../components/Collapse';
 import { IView } from '../useView';
-import { usePageDialog } from './PageDialog';
+import { usePageDialogs } from './PageDialog';
 
 /**
  * @deprecated use SingleSelectDialog
@@ -47,10 +47,10 @@ export function useSelectDialog<
     setTitle(title ?? '');
     setOnSelect(() => onSelect);
   }, []);
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog, popDialog } = usePageDialogs();
   useEffect(() => {
     if (onSelect !== undefined) {
-      setDialog(
+      pushDialog(
         <SelectDialog<T, TMultiple>
           title={title}
           open
@@ -67,7 +67,7 @@ export function useSelectDialog<
         />
       );
     } else {
-      setDialog(undefined);
+      popDialog();
       view.unselectAll();
     }
   }, [
@@ -75,7 +75,8 @@ export function useSelectDialog<
     confirm,
     onSelect,
     selected,
-    setDialog,
+    popDialog,
+    pushDialog,
     tableColumns,
     title,
     toolbarFilters,

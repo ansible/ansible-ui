@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 import { useState, useEffect } from 'react';
-import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
+import { MultiSelectDialog, usePageDialogs } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
@@ -42,14 +42,14 @@ export function InventoryHostGroupsAddModal(props: {
 }
 
 export function useInventoryHostGroupsAddModal() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const [props, setProps] = useState<InventoryHostGroupsAddModalProps>();
   useEffect(() => {
     if (props) {
-      setDialog(<InventoryHostGroupsAddModal {...props} />);
+      pushDialog(<InventoryHostGroupsAddModal {...props} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, popDialog, pushDialog]);
   return setProps;
 }

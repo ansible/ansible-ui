@@ -1,20 +1,20 @@
 import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../framework';
+import { usePageDialogs } from '../../framework';
 
 export interface AnsibleAboutModalProps {
   onClose?: () => void;
 }
 
 function AnsibleAboutModal(props: AnsibleAboutModalProps) {
-  const [_dialog, setDialog] = usePageDialog();
+  const { popDialog } = usePageDialogs();
   const { t } = useTranslation();
   return (
     <AboutModal
       isOpen
       onClose={() => {
-        setDialog(undefined);
+        popDialog();
         props.onClose?.();
       }}
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
@@ -33,7 +33,7 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
 }
 
 export function useAnsibleAboutModal() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const [props, setProps] = useState<AnsibleAboutModalProps>();
   useEffect(() => {
     if (props) {
@@ -41,10 +41,10 @@ export function useAnsibleAboutModal() {
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(<AnsibleAboutModal {...props} onClose={onCloseHandler} />);
+      pushDialog(<AnsibleAboutModal {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, pushDialog, popDialog]);
   return setProps;
 }

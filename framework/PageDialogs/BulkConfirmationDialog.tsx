@@ -19,7 +19,7 @@ import { usePaged } from '../PageTable/useTableItems';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { compareStrings } from '../utils/compare';
 import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
-import { usePageDialog } from './PageDialog';
+import { usePageDialogs } from './PageDialog';
 
 const ModalBodyDiv = styled.div`
   display: flex;
@@ -95,12 +95,12 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
     actionButtonText,
     isDanger,
   } = props;
-  const [_, setDialog] = usePageDialog();
+  const { popDialog } = usePageDialogs();
   const [translations] = useFrameworkTranslations();
   const onCloseClicked = useCallback(() => {
-    setDialog(undefined);
+    popDialog();
     onClose?.();
-  }, [onClose, setDialog]);
+  }, [onClose, popDialog]);
 
   // Non-actionable rows appear first
   const sortedItems = useMemo<T[]>(() => {
@@ -198,7 +198,6 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               itemCount={items.length}
               tableColumns={modalColumns}
               keyFn={keyFn}
-              // pagination={pagination}
               compact
               errorStateTitle="Error"
               emptyStateTitle="No items"
@@ -225,7 +224,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
 }
 
 function useBulkConfirmationDialog<T extends object>() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const [props, setProps] = useState<BulkConfirmationDialog<T>>();
   useEffect(() => {
     if (props) {
@@ -233,11 +232,11 @@ function useBulkConfirmationDialog<T extends object>() {
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(<BulkConfirmationDialog<T> {...props} onClose={onCloseHandler} />);
+      pushDialog(<BulkConfirmationDialog<T> {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, popDialog, pushDialog]);
   return setProps;
 }
 

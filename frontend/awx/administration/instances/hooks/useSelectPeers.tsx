@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
@@ -44,13 +44,13 @@ function SelectPeers(props: {
 }
 
 export function useMultiSelectPeer() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectPeers = useCallback(
     (onSelect: (instances: Instance[]) => void) => {
-      setDialog(<SelectPeers onSelect={onSelect} isLookup={true} title={t('Select peers')} />);
+      pushDialog(<SelectPeers onSelect={onSelect} isLookup={true} title={t('Select peers')} />);
     },
-    [setDialog, t]
+    [pushDialog, t]
   );
   return openSelectPeers;
 }

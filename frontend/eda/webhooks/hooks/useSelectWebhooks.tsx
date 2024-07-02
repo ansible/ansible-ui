@@ -5,14 +5,14 @@ import { useWebhookFilters } from './useWebhookFilters';
 import { useWebhookColumns } from './useWebhookColumns';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';
 import { useEdaView } from '../../common/useEventDrivenView';
-import { MultiSelectDialog, usePageDialog } from '../../../../framework';
+import { MultiSelectDialog, usePageDialogs } from '../../../../framework';
 
 export function useSelectWebhooks(webhookType?: number, title?: string) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectWebhooks = useCallback(
     (onSelect: (webhooks: EdaWebhook[]) => void) => {
-      setDialog(
+      pushDialog(
         <SelectEdaWebhooks
           title={t(title ? title : 'Select webhook')}
           onSelect={onSelect}
@@ -20,7 +20,7 @@ export function useSelectWebhooks(webhookType?: number, title?: string) {
         />
       );
     },
-    [webhookType, setDialog, t, title]
+    [webhookType, pushDialog, t, title]
   );
   return openSelectWebhooks;
 }

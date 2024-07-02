@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
 import { ActivityStreamInitiatedByCell } from '../components/ActivityStreamInitiatedByCell';
 import { ActivityDescription } from '../components/ActivityDescription';
-import { PageDetail, PageDetails, usePageDialog } from '../../../../../framework';
+import { PageDetail, PageDetails, usePageDialogs } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
@@ -15,8 +15,8 @@ export interface ActivityStreamModalProps {
 
 export function ActivityStreamDialog({ activity }: ActivityStreamModalProps) {
   const { t } = useTranslation();
-  const [_, setDialog] = usePageDialog();
-  const onClose = () => setDialog(undefined);
+  const { popDialog } = usePageDialogs();
+  const onClose = () => popDialog();
 
   return (
     <Modal
@@ -66,7 +66,7 @@ export function ActivityStreamDialog({ activity }: ActivityStreamModalProps) {
 }
 
 export function useActivityStreamDialog() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const [props, setProps] = useState<ActivityStreamModalProps>();
   useEffect(() => {
     if (props) {
@@ -74,10 +74,10 @@ export function useActivityStreamDialog() {
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(<ActivityStreamDialog {...props} onClose={onCloseHandler} />);
+      pushDialog(<ActivityStreamDialog {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, popDialog, pushDialog]);
   return setProps;
 }

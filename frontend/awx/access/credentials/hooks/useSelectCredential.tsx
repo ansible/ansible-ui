@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, usePageDialog, useSelectDialog } from '../../../../../framework';
+import { IToolbarFilter, usePageDialogs, useSelectDialog } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import {
@@ -83,11 +83,11 @@ export function useSingleSelectCredential(
   title?: string,
   sourceType?: string
 ) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectCredential = useCallback(
     (onSelect: (credential: Credential) => void) => {
-      setDialog(
+      pushDialog(
         <SelectCredential
           title={title ? title : t('Select credential')}
           onSelect={onSelect}
@@ -96,7 +96,7 @@ export function useSingleSelectCredential(
         />
       );
     },
-    [credentialType, setDialog, t, title, sourceType]
+    [credentialType, pushDialog, t, title, sourceType]
   );
   return openSelectCredential;
 }

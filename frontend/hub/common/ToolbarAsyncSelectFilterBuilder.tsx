@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ISelected, ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
+import { ISelected, ITableColumn, IToolbarFilter, usePageDialogs } from '../../../framework';
 import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { IView, ViewExtendedOptions } from '../../../framework/useView';
@@ -24,15 +24,15 @@ export type AsyncSelectFilterBuilderProps<T extends object> = {
 export function useAsyncSingleSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  let [, setDialog] = usePageDialog();
+  let { pushDialog } = usePageDialogs();
   if (props.multiDialogs?.pushDialog) {
-    setDialog = props.multiDialogs.pushDialog;
+    pushDialog = props.multiDialogs.pushDialog;
   }
 
   return {
     openBrowse: useCallback(
       (onSelect: (value: T) => void, defaultSelection?: T) => {
-        setDialog(
+        pushDialog(
           <SelectFilter<T>
             defaultSelection={defaultSelection}
             onSelect={onSelect}
@@ -41,7 +41,7 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
           />
         );
       },
-      [setDialog, props]
+      [pushDialog, props]
     ),
   };
 }
@@ -49,15 +49,15 @@ export function useAsyncSingleSelectFilterBuilder<T extends object>(
 export function useAsyncMultiSelectFilterBuilder<T extends object>(
   props: AsyncSelectFilterBuilderProps<T>
 ) {
-  let [, setDialog] = usePageDialog();
+  let { pushDialog } = usePageDialogs();
   if (props.multiDialogs?.pushDialog) {
-    setDialog = props.multiDialogs.pushDialog;
+    pushDialog = props.multiDialogs.pushDialog;
   }
 
   return {
     openBrowse: useCallback(
       (onSelect: (value: T[]) => void, defaultSelection?: T[]) => {
-        setDialog(
+        pushDialog(
           <SelectFilter<T>
             defaultSelection={defaultSelection}
             onMultiSelect={onSelect}
@@ -66,7 +66,7 @@ export function useAsyncMultiSelectFilterBuilder<T extends object>(
           />
         );
       },
-      [setDialog, props]
+      [pushDialog, props]
     ),
   };
 }

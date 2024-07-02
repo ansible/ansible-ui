@@ -6,7 +6,7 @@ import {
   ITableColumn,
   MultiSelectDialog,
   TextCell,
-  usePageDialog,
+  usePageDialogs,
 } from '../../../../framework';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
@@ -98,7 +98,7 @@ export function CollectionMultiSelectDialog(props: {
 }
 
 export function useSelectCollectionsDialog(defaultSelection: CollectionVersionSearch[]) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const openSelectCollectionsDialog = useCallback(
     (
       title: string,
@@ -109,7 +109,7 @@ export function useSelectCollectionsDialog(defaultSelection: CollectionVersionSe
         allowZeroSelections?: boolean;
       }
     ) => {
-      setDialog(
+      pushDialog(
         <CollectionMultiSelectDialog
           title={title}
           description={description}
@@ -120,7 +120,7 @@ export function useSelectCollectionsDialog(defaultSelection: CollectionVersionSe
         />
       );
     },
-    [defaultSelection, setDialog]
+    [defaultSelection, pushDialog]
   );
   return openSelectCollectionsDialog;
 }

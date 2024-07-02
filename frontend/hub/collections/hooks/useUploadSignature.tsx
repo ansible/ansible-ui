@@ -1,5 +1,5 @@
 import { CollectionVersionSearch } from '../Collection';
-import { LoadingPage, usePageDialog } from './../../../../framework';
+import { LoadingPage, usePageDialogs } from './../../../../framework';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useState, useCallback } from 'react';
@@ -13,12 +13,12 @@ import { TaskResponse } from '../../administration/tasks/Task';
 import { parseTaskResponse } from '../../common/api/hub-api-utils';
 
 export function useUploadSignature() {
-  const [_, setDialog] = usePageDialog();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const { popDialog, pushDialog } = usePageDialogs();
+  const onClose = useCallback(() => popDialog(), [popDialog]);
   const context = useHubContext();
 
   return (collection: CollectionVersionSearch) => {
-    setDialog(
+    pushDialog(
       <UploadSignatureDialog collection={collection} onClose={onClose} context={context} />
     );
   };

@@ -34,26 +34,26 @@ export function usePageDialogs() {
   return useContext(PageDialogContext);
 }
 
-/*
- * @deprecated Use usePageDialogs instead
- */
-export function usePageDialog(): [
-  dialog: ReactNode | undefined,
-  setDialog: (dialog: ReactNode | undefined) => void,
-] {
-  const { dialogs, clearDialogs, pushDialog } = usePageDialogs();
-  const dialog = useMemo(
-    () => (dialogs.length > 0 ? dialogs[dialogs.length - 1] : undefined),
-    [dialogs]
-  );
-  const setDialog = useCallback(
-    (dialog: ReactNode | undefined) => {
-      clearDialogs();
-      if (dialog !== undefined) {
-        pushDialog(dialog);
-      }
-    },
-    [clearDialogs, pushDialog]
-  );
-  return useMemo(() => [dialog, setDialog] as const, [dialog, setDialog]);
-}
+// /*
+//  * @deprecated Use usePageDialogs instead
+//  */
+// export function usePageDialog(): [
+//   dialog: ReactNode | undefined,
+//   setDialog: (dialog: ReactNode | undefined) => void,
+// ] {
+//   const { dialogs, clearDialogs, pushDialog } = usePageDialogs();
+//   const dialog = useMemo(
+//     () => (dialogs.length > 0 ? dialogs[dialogs.length - 1] : undefined),
+//     [dialogs]
+//   );
+//   const setDialog = useCallback(
+//     (dialog: ReactNode | undefined) => {
+//       clearDialogs();
+//       if (dialog !== undefined) {
+//         pushDialog(dialog);
+//       }
+//     },
+//     [clearDialogs, pushDialog]
+//   );
+//   return useMemo(() => [dialog, setDialog] as const, [dialog, setDialog]);
+// }

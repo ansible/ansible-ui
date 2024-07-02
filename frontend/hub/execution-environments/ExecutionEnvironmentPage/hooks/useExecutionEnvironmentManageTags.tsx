@@ -15,7 +15,7 @@ import {
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
 import { ExecutionEnvironmentImage } from '../ExecutionEnvironmentImage';
 import { ExecutionEnvironmentTag } from '../../ExecutionEnvironmentTag';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { LoadingState } from '../../../../../framework/components/LoadingState';
 import { TagLabel } from '../components/ImageLabels';
@@ -30,11 +30,11 @@ import { Task } from '../../../administration/tasks/Task';
 const VALID_TAG_REGEX = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 
 export function useExecutionEnvironmentManageTags(onComplete?: () => void) {
-  const [_, setDialog] = usePageDialog();
-  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+  const { popDialog, pushDialog } = usePageDialogs();
+  const onClose = useCallback(() => popDialog(), [popDialog]);
 
   return (ee: ExecutionEnvironment, image: ExecutionEnvironmentImage) => {
-    setDialog(<ManageTagsModal ee={ee} image={image} onClose={onClose} onComplete={onComplete} />);
+    pushDialog(<ManageTagsModal ee={ee} image={image} onClose={onClose} onComplete={onComplete} />);
   };
 }
 

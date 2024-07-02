@@ -5,14 +5,14 @@ import { useCredentialFilters } from './useCredentialFilters';
 import { useCredentialColumns } from './useCredentialColumns';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useEdaView } from '../../../common/useEventDrivenView';
-import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
+import { MultiSelectDialog, usePageDialogs } from '../../../../../framework';
 
 export function useSelectCredentials(credentialKinds?: string[], title?: string) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectCredentials = useCallback(
     (onSelect: (credentials: EdaCredential[]) => void) => {
-      setDialog(
+      pushDialog(
         <SelectEdaCredentials
           title={t(title ? title : 'Select credential')}
           onSelect={onSelect}
@@ -20,7 +20,7 @@ export function useSelectCredentials(credentialKinds?: string[], title?: string)
         />
       );
     },
-    [credentialKinds, setDialog, t, title]
+    [credentialKinds, pushDialog, t, title]
   );
   return openSelectCredentials;
 }

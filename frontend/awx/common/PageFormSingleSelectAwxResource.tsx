@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
+import { ITableColumn, IToolbarFilter, usePageDialogs } from '../../../framework';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
@@ -83,13 +83,13 @@ export function PageFormSingleSelectAwxResource<
     [props.url, props.queryParams]
   );
 
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
 
   const { setValue } = useFormContext<FormData>();
   const value = useWatch<FormData>({ name: props.name });
   const openSelectDialog = useCallback(
     (onSelect: (resource: Resource) => void) => {
-      setDialog(
+      pushDialog(
         <SelectResource<Resource>
           title={props.label}
           url={props.url}
@@ -106,7 +106,7 @@ export function PageFormSingleSelectAwxResource<
       props.tableColumns,
       props.toolbarFilters,
       props.url,
-      setDialog,
+      pushDialog,
       value,
       props.queryParams,
     ]
