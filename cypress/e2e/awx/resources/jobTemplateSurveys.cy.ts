@@ -3,7 +3,6 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
-import { randomE2Ename } from '../../../support/utils';
 
 describe('Job Templates Surveys', function () {
   let inventory: Inventory;
@@ -27,7 +26,7 @@ describe('Job Templates Surveys', function () {
     };
 
     before(function () {
-      cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      cy.createAwxOrganization().then((org) => {
         organization = org;
         cy.createAwxProject({ organization: organization.id }).then((proj) => {
           project = proj;
@@ -75,7 +74,7 @@ describe('Job Templates Surveys', function () {
 
   describe('JT Surveys: Launch JT with Survey Enabled', function () {
     before(() => {
-      cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      cy.createAwxOrganization().then((org) => {
         organization = org;
         cy.createAwxProject({ organization: organization.id }).then((proj) => {
           project = proj;
