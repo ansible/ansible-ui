@@ -1469,41 +1469,7 @@ Cypress.Commands.add('createGlobalProject', function () {
     });
 });
 
-Cypress.Commands.add(
-  'createCustomAWXApplicationFromUI',
-  (
-    customAppName: string,
-    customAppDescription: string,
-    customGrantType: string,
-    customClientType: string,
-    customRedirectURIS: string
-  ) => {
-    cy.clickButton('Create application');
-    cy.verifyPageTitle('Create Application');
-    cy.get('[data-cy="name"]').type(customAppName);
-    cy.get('[data-cy="description"]').type(customAppDescription);
-    cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
-    cy.selectDropdownOptionByResourceName('authorization-grant-type', customGrantType);
-    cy.selectDropdownOptionByResourceName('client-type', customClientType);
-    cy.get('[data-cy="redirect-uris"]').type(customRedirectURIS);
-
-    cy.intercept('POST', `api/v2/applications/`).as('createApp');
-
-    cy.clickButton('Create application');
-
-    //Verify API call
-    cy.wait('@createApp')
-      .its('response.statusCode')
-      .then((statusCode: string) => {
-        expect(statusCode).to.eql(201);
-      });
-
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.get('header').contains('Application information');
-    });
-    cy.get('button[aria-label="Close"]').click();
-  }
-);
+;
 
 Cypress.Commands.add(
   'editCustomAWXApplicationFromDetailsView',
