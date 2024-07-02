@@ -342,11 +342,7 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
   cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
 });
 
-Cypress.Commands.add('createRepository', (repositoryName: string, remoteName?: string) => {
-  remoteName
-    ? cy.galaxykit(`repository create --remote ${remoteName} ${repositoryName}`)
-    : cy.galaxykit(`repository create ${repositoryName}`);
-});
+;
 
 Cypress.Commands.add('deleteRepository', (repositoryName: string) => {
   cy.galaxykit(`repository delete ${repositoryName}`);
