@@ -16,7 +16,7 @@ import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUse
 import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
-import { GatewayServicesProvider } from './GatewayServices';
+import { GatewayServicesProvider, useHasEdaService } from './GatewayServices';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
@@ -30,27 +30,34 @@ export default function PlatformMain() {
         <PlatformActiveUserProvider>
           <PlatformLogin>
             <GatewayServicesProvider>
-              <QuickStartProvider>
-                <AwxActiveUserProvider>
-                  <EdaActiveUserProvider>
-                    <HubActiveUserProvider>
-                      <WebSocketProvider>
-                        <AwxConfigProvider>
-                          <HubContextProvider>
-                            <PlatformSubscription>
-                              <PlatformApp />
-                            </PlatformSubscription>
-                          </HubContextProvider>
-                        </AwxConfigProvider>
-                      </WebSocketProvider>
-                    </HubActiveUserProvider>
-                  </EdaActiveUserProvider>
-                </AwxActiveUserProvider>
-              </QuickStartProvider>
+              <PlatformMainInternal />
             </GatewayServicesProvider>
           </PlatformLogin>
         </PlatformActiveUserProvider>
       </PageFramework>
     </BrowserRouter>
+  );
+}
+
+export function PlatformMainInternal() {
+  const hasEda = useHasEdaService();
+  return (
+    <QuickStartProvider>
+      <AwxActiveUserProvider>
+        <EdaActiveUserProvider disabled={!hasEda}>
+          <HubActiveUserProvider>
+            <WebSocketProvider>
+              <AwxConfigProvider>
+                <HubContextProvider>
+                  <PlatformSubscription>
+                    <PlatformApp />
+                  </PlatformSubscription>
+                </HubContextProvider>
+              </AwxConfigProvider>
+            </WebSocketProvider>
+          </HubActiveUserProvider>
+        </EdaActiveUserProvider>
+      </AwxActiveUserProvider>
+    </QuickStartProvider>
   );
 }
