@@ -693,17 +693,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'createEdaSpecificAwxProject',
-  (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
-    cy.createAwxProject({
-      name: 'EDA Project ' + randomString(4),
-      organization: options?.project?.organization ?? null,
-      scm_type: 'git',
-      scm_url: 'https://github.com/ansible/ansible-ui',
-    });
-  }
-);
+;
 
 Cypress.Commands.add(
   'deleteAwxProject',
