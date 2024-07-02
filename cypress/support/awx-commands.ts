@@ -33,27 +33,7 @@ import { awxAPI } from './formatApiPathForAwx';
 
 //  AWX related custom command implementation
 
-Cypress.Commands.add(
-  'editNodeInVisualizer',
-  (nodeName: string, newNodeType: string, newNodeName?: string) => {
-    cy.contains('text', nodeName)
-      .parents('[data-kind="node"]')
-      .within(() => {
-        cy.get('.pf-topology__node__action-icon').click();
-      });
-    cy.get('li[data-cy="edit-node"] ').click();
-    cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
-      cy.get('button').click();
-      cy.contains('li', newNodeType).click();
-    });
-    if (newNodeType === 'Approval' && newNodeName !== undefined) {
-      cy.get('[data-cy="node-resource-name-form-group"]').within(() => {
-        cy.get('[data-cy="node-resource-name"]').clear().type(newNodeName);
-      });
-    }
-  }
-);
+;
 
 Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
   cy.contains('text', nodeName)
