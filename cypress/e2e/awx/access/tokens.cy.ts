@@ -10,7 +10,7 @@ describe('User Tokens Actions', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
     });

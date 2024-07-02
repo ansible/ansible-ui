@@ -12,7 +12,7 @@ describe('Users List Actions', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
     });
@@ -89,7 +89,7 @@ describe('Users Delete Actions', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
     });

@@ -335,7 +335,7 @@ instanceGroupTypes.forEach((igType) => {
     beforeEach(function () {
       cy.createAwxOrganization().then((o) => {
         organization = o;
-        cy.createAwxTeam(organization).then((createdTeam) => {
+        cy.createAwxTeam({ organization: organization.id }).then((createdTeam) => {
           team = createdTeam;
           cy.createAwxInstanceGroup(
             igType === 'Container'
@@ -454,7 +454,7 @@ instanceGroupTypes.forEach((igType) => {
     beforeEach(function () {
       cy.createAwxOrganization().then((o) => {
         organization = o;
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           user = u;
           cy.createAwxInstanceGroup(
             igType === 'Container'

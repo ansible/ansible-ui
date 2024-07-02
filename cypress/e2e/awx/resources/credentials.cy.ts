@@ -16,7 +16,7 @@ describe('Credentials', () => {
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
       });
     });
@@ -569,7 +569,7 @@ describe('Credentials Tabbed View - Team and User Access', () => {
     cy.awxLogin();
     cy.createAwxOrganization().then((awxOrg) => {
       awxOrganization = awxOrg;
-      cy.createAwxUser(awxOrganization).then((awxUser) => {
+      cy.createAwxUser({ organization: awxOrganization.id }).then((awxUser) => {
         createdAwxUser = awxUser;
         cy.createAWXCredential({
           kind: 'machine',
@@ -579,7 +579,7 @@ describe('Credentials Tabbed View - Team and User Access', () => {
           machineCredential = cred;
         });
       });
-      cy.createAwxTeam(awxOrganization).then((createdAwxTeam) => {
+      cy.createAwxTeam({ organization: awxOrganization.id }).then((createdAwxTeam) => {
         awxTeam = createdAwxTeam;
       });
     });

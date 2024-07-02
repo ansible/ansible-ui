@@ -70,7 +70,7 @@ describe('Projects', () => {
     beforeEach(() => {
       cy.createAwxOrganization().then((org) => {
         organization = org;
-        cy.createAwxUser(organization).then((testUser) => {
+        cy.createAwxUser({ organization: organization.id }).then((testUser) => {
           user = testUser;
           cy.createAwxProject({ organization: organization.id }).then((proj) => {
             project = proj;
@@ -211,7 +211,7 @@ describe('Projects', () => {
       cy.createAwxOrganization().then((org) => {
         organization = org;
 
-        cy.createAwxUser(organization).then((testUser) => {
+        cy.createAwxUser({ organization: organization.id }).then((testUser) => {
           user = testUser;
           cy.createAwxProject({ organization: organization.id }).then((proj) => {
             project = proj;

@@ -2,7 +2,6 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
-import { randomE2Ename } from '../../../support/utils';
 
 describe('Workflow Job Templates Surveys', function () {
   let inventory: Inventory;
@@ -25,7 +24,7 @@ describe('Workflow Job Templates Surveys', function () {
     };
 
     before(function () {
-      cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      cy.createAwxOrganization().then((org) => {
         organization = org;
       });
     });
@@ -70,7 +69,7 @@ describe('Workflow Job Templates Surveys', function () {
 
   describe('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
     before(() => {
-      cy.createAwxOrganization(randomE2Ename()).then((org) => {
+      cy.createAwxOrganization().then((org) => {
         organization = org;
       });
     });
