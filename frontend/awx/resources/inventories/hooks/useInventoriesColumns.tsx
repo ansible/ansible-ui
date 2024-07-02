@@ -12,6 +12,7 @@ import {
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { type WebSocketInventory } from '../Inventories';
+import { Tooltip } from '@patternfly/react-core';
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();
@@ -73,7 +74,23 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
             syncStatus = (inventory as WebSocketInventory).status;
           }
         }
-        return <StatusCell status={syncStatus} />;
+
+        let tooltip = '';
+        if (inventory.has_inventory_sources) {
+          tooltip = t`No inventory sync failures`;
+        } else {
+          tooltip = t`Not configured for inventory sync.`;
+        }
+
+        if (!tooltip) {
+          return <StatusCell status={syncStatus} />;
+        }
+
+        return (
+          <Tooltip content={tooltip} position="top">
+            <StatusCell status={syncStatus} />
+          </Tooltip>
+        );
       },
     }),
     [t]
