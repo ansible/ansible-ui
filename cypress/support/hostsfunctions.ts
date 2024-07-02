@@ -308,50 +308,51 @@ export function createHostAndCancelJob(
   });
 }
 
-export function createHostAndLaunchJob(
+export function launchHostJob(
   inventory: Inventory,
+  host: AwxHost,
   organizationId: number,
   projectId: number,
-  hostInInventory?: boolean
+  type: 'Host' | 'InventoryHost'
 ) {
   cy.createAwxJobTemplate({
     inventory: inventory.id,
     organization: organizationId,
     project: projectId,
   }).then(() => {
-    // go to inventory hosts
     cy.navigateTo('awx', 'inventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
-    // add a host
-    const hostName = createHost('inventory_host', inventory.id);
-    // go to inventory job templates
-    cy.navigateTo('awx', 'inventories');
-    cy.filterTableByMultiSelect('name', [inventory.name]);
-    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
-    // run  a template and wait for redirect to Job output
-    cy.get('[data-cy="launch-template"]').first().click();
-    cy.location('pathname').should('match', /\/output$/);
-    if (hostInInventory) {
+    cy.contains(`[role='tab']`, 'Job templates').click();
+
+    // run  a template and wait for request
+    cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
+    cy.get('[data-cy="launch-template"]').click();
+    cy.wait('@launch').should('exist');
+
+    cy.contains('span', 'Failed', { timeout: 60000 });
+
+    if (type === 'InventoryHost') {
       // go to the Hosts under Inventory
       cy.navigateTo('awx', 'inventories');
       cy.filterTableByMultiSelect('name', [inventory.name]);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+      cy.contains(`[role='tab']`, 'Jobs').click();
     } else {
       // go to the Hosts
       cy.navigateTo('awx', 'hosts');
+      cy.filterTableByMultiSelect('name', [host.name]);
+      cy.get('[data-cy="name-column-cell"]').contains(host.name).click();
+
+      // go to Jobs tab
+      cy.contains(`[role='tab']`, 'Jobs').click();
     }
-    cy.filterTableByMultiSelect('name', [hostName]);
-    cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
-    // go to Jobs tab
-    cy.get('.pf-v5-c-tabs__item > a').contains('Jobs').click();
+
     cy.get('[data-cy="relaunch-using-host-parameters"]').should('exist');
     cy.get('[data-cy="relaunch-using-host-parameters"]').click();
     cy.get('[data-cy="relaunch-on-all-hosts"]').should('exist');
     cy.get('[data-cy="relaunch-on-failed-hosts"]').should('exist');
+
     // relaunch job
     cy.intercept('POST', awxAPI`/jobs/*/relaunch`).as('relaunch');
     cy.get('[data-cy="relaunch-on-all-hosts"]').click();
