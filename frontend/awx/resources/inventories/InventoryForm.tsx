@@ -504,29 +504,19 @@ async function submitInputInventories(
   currentInputInventories: InputInventory[],
   originalInputInventories: InputInventory[]
 ) {
-  const { added, removed } = getAddedAndRemoved(
-    originalInputInventories ?? ([] as InputInventory[]),
-    currentInputInventories ?? ([] as InputInventory[])
-  );
-
-  if (added.length === 0 && removed.length === 0) {
-    return;
-  }
-
-  const disassociationPromises = removed.map((item: { id: number }) =>
-    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+  // call allPromises array sequentialy
+  for (const item of originalInputInventories) {
+    await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
       id: item.id,
       disassociate: true,
-    })
-  );
-  const associationPromises = added.map((item: { id: number }) =>
-    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
-      id: item.id,
-    })
-  );
+    });
+  }
 
-  const results = await Promise.all([...disassociationPromises, ...associationPromises]);
-  return results;
+  for (const item of currentInputInventories) {
+    await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+      id: item.id,
+    });
+  }
 }
 
 type InputInventory = { id: number; url: string; type: string; name: string };
