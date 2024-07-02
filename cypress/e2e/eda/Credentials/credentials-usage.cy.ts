@@ -5,11 +5,13 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 describe('EDA Credentials Use in Resources', () => {
   let edaProject: EdaProject;
   let edaDecisionEnvironment: EdaDecisionEnvironment;
   let edaRuleBook: EdaRulebook;
+  let edaOrganization: EdaOrganization;
   before(() => {
     cy.createEdaProject().then((project) => {
       edaProject = project;
@@ -18,6 +20,9 @@ describe('EDA Credentials Use in Resources', () => {
         edaRuleBook = edaRuleBooks[0];
         cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
           edaDecisionEnvironment = decisionEnvironment;
+        });
+        cy.createEdaOrganization().then((organization) => {
+          edaOrganization = organization;
         });
       });
     });
@@ -69,6 +74,7 @@ describe('EDA Credentials Use in Resources', () => {
     cy.clickButton(/^Create project$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
+    cy.selectDropdownOptionByResourceName('organization-id', edaOrganization?.name);
     cy.clickButton(/^Create project$/);
     cy.getEdaProjectByName(name).then((thisProject: EdaProject) => {
       cy.waitEdaProjectSync(thisProject).then((result) => {
