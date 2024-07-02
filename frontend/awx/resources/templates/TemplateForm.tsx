@@ -179,13 +179,10 @@ export function CreateJobTemplate() {
   );
 }
 
-async function submitCredentials(
-  template: JobTemplate,
-  newCredentials: Pick<Credential, 'id' | 'name' | 'cloud' | 'description' | 'kind'>[]
-) {
+async function submitCredentials(template: JobTemplate, newCredentials: number[]) {
   const { added, removed } = getAddedAndRemoved(
     template?.summary_fields?.credentials ?? ([] as Credential[]),
-    newCredentials
+    newCredentials.map((id) => ({ id }))
   );
 
   const disassociateCredentials = removed.map((cred) =>
