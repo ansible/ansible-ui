@@ -340,15 +340,7 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
 
 ;
 
-Cypress.Commands.add(
-  'undeprecateCollection',
-  (collection: string, namespace: string, repository: string) => {
-    cy.requestPatch(
-      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${collection}/`,
-      { deprecated: false }
-    );
-  }
-);
+;
 
 // HUB Execution Environment Commands
 export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<
