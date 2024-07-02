@@ -1049,17 +1049,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => {
-  cy.requestGet<AwxItemsResponse<JobTemplate>>(
-    awxAPI`/job_templates/?name=${awxJobTemplateName}`
-  ).then((result) => {
-    if (result && result.count === 0) {
-      cy.createAwxOrganizationProjectInventoryJobTemplate();
-    } else {
-      cy.requestGet<JobTemplate>(awxAPI`/job_templates/${result.results[0].id?.toString() ?? ''}`);
-    }
-  });
-});
+;
 
 Cypress.Commands.add(
   'deleteAwxJobTemplate',
