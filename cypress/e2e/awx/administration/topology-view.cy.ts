@@ -25,7 +25,7 @@ describe('Topology view', () => {
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: awxAPI`/mesh_visualizer/` }).as('getMeshVisualizer');
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instances/*/instance_groups/' },
+      { method: 'GET', url: awxAPI`/instances/*/instance_groups/` },
       { fixture: 'instance_groups.json' }
     ).as('getInstanceGroups');
   });

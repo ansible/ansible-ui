@@ -30,7 +30,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -77,7 +77,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -113,7 +113,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -144,7 +144,7 @@ describe('Applications', () => {
         inKebab: true,
         disableFilter: true,
       });
-      cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+      cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
       // Edit application
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.clickButton('Save application');
@@ -175,7 +175,7 @@ describe('Applications', () => {
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -221,7 +221,7 @@ describe('Applications', () => {
       cy.getByDataCy('client-type').should('have.text', 'confidential');
       // Edit application
       cy.clickButton('Edit application');
-      cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+      cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.clickButton('Save application');
       cy.wait('@editApp')
