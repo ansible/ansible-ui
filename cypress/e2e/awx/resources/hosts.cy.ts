@@ -17,10 +17,10 @@ describe('Host Tests', () => {
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
       });
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+      cy.createAwxProject(organization).then((proj) => {
         project = proj;
       });
     });

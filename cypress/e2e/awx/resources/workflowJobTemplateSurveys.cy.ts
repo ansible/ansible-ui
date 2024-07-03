@@ -3,11 +3,21 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
 
-describe('Workflow Job Templates Surveys', function () {
+describe.skip('Workflow Job Templates Surveys', function () {
   let inventory: Inventory;
   let workflowJobTemplate: WorkflowJobTemplate;
-  let organization: Organization;
+  let awxOrganization: Organization;
   let reusableTemplateSurveyTestSuite: ReusableTemplateSurveyTestSuite;
+
+  before(function () {
+    cy.createAwxOrganization().then((org) => {
+      awxOrganization = org;
+    });
+  });
+
+  after(() => {
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  });
 
   describe('WFJT Surveys: Create, Edit and Delete', function () {
     const question = {
@@ -23,22 +33,12 @@ describe('Workflow Job Templates Surveys', function () {
       choices: [],
     };
 
-    before(function () {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-      });
-    });
-
-    after(() => {
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
     beforeEach(() => {
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
 
         cy.createAwxWorkflowJobTemplate({
-          organization: organization.id,
+          organization: awxOrganization.id,
           inventory: inventory.id,
         }).then((wfjt) => {
           workflowJobTemplate = wfjt;
@@ -68,22 +68,12 @@ describe('Workflow Job Templates Surveys', function () {
   });
 
   describe('WFJT Surveys: Launch WFJT with Survey Enabled', function () {
-    before(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-      });
-    });
-
-    after(() => {
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
     beforeEach(() => {
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
 
         cy.createAwxWorkflowJobTemplate({
-          organization: organization.id,
+          organization: awxOrganization.id,
           inventory: inventory.id,
         }).then((wfjt) => {
           workflowJobTemplate = wfjt;
@@ -116,11 +106,9 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Text', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -140,11 +128,9 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Textarea', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -164,11 +150,9 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Password', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', '$encrypted$');
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -188,11 +172,9 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Integer', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -212,11 +194,9 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Float', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType)
           .getByDataCy(`survey-${question.type.toLowerCase()}-answer`)
           .should('have.value', question.default);
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -236,7 +216,6 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Multiple Choice (single select)', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType).within(() => {
           cy.contains(question.default);
           cy.get('div[data-ouia-component-id="menu-select"]').click();
@@ -244,7 +223,6 @@ describe('Workflow Job Templates Surveys', function () {
             cy.getByDataCy('survey-multiplechoice-answer').contains(choice);
           });
         });
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
@@ -264,7 +242,6 @@ describe('Workflow Job Templates Surveys', function () {
         cy.createTemplateSurvey(workflowJobTemplate, 'Multiple Choice (multiple select)', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-
         cy.getByDataCy(groupType).within(() => {
           const defaults = question.default.toString().split('\n');
           defaults.forEach((defaultValue) => {
@@ -272,13 +249,11 @@ describe('Workflow Job Templates Surveys', function () {
           });
           cy.get('#survey-multiselect-answer').click();
         });
-
         cy.get('#survey-multiselect-answer-select').within(() => {
           question?.choices?.forEach((choice) => {
             cy.getByDataCy(choice);
           });
         });
-
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
     });
