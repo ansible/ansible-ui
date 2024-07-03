@@ -605,9 +605,10 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can save and launch a workflow job template from list view', function () {
       cy.navigateTo('awx', 'templates');
-      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
-        'launchWJT-WithNodes'
-      );
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+      ).as('launchWJT-WithNodes');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
       cy.clickTableRowLink('name', workflowJobTemplate.name, {
         disableFilter: true,
@@ -626,9 +627,10 @@ describe('Workflow Job Templates Tests', () => {
       cy.filterTableByMultiSelect('name', [workflowJobTemplate?.name]);
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
       cy.verifyPageTitle(workflowJobTemplate.name);
-      cy.intercept('POST', `api/v2/workflow_job_templates/${workflowJobTemplate.id}/launch/`).as(
-        'launchWJT-WithNodes'
-      );
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+      ).as('launchWJT-WithNodes');
       cy.get('button[data-cy="launch-template"]').click();
       cy.wait('@launchWJT-WithNodes')
         .its('response.body.id')
