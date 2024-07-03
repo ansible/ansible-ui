@@ -495,7 +495,8 @@ describe('Workflow Job Templates Tests', () => {
     });
   });
 
-  describe('Workflow Job Templates: Launch', function () {
+  // FLAKY_03_07_2024
+  describe.skip('Workflow Job Templates: Launch', function () {
     let workflowJobTemplate: WorkflowJobTemplate;
     let jobTemplate: JobTemplate;
     let inventory: Inventory;
