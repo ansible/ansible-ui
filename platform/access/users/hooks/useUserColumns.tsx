@@ -71,7 +71,7 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
       {
         header: t('Last login'),
         type: 'datetime',
-        value: (user) => user.last_login,
+        value: (user) => (user.last_login ? user.last_login : undefined),
         list: 'secondary',
         sort: 'last_login',
         modal: ColumnModalOption.hidden,

@@ -1,9 +1,9 @@
 import { randomString } from '../../../../../framework/utils/random-string';
 import { Application } from '../../../../../frontend/awx/interfaces/Application';
+import { Token } from '../../../../../frontend/awx/interfaces/Token';
 import { gatewayV1API } from '../../../../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../../../../platform/interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../../../platform/interfaces/PlatformUser';
-import { Token } from '../../../../../frontend/awx/interfaces/Token';
 
 describe('AAP OAuth Applications CRUD actions List page', () => {
   let platformOrganization: PlatformOrganization;

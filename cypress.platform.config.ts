@@ -3,7 +3,10 @@ import { defineConfig } from 'cypress';
 import setValue from 'set-value';
 import { baseConfig } from './cypress.base.config';
 
-baseConfig.e2e!.specPattern = 'cypress/e2e/platform/**/*.cy.ts';
+baseConfig.e2e!.specPattern = [
+  'cypress/e2e/platform/**/*.cy.ts',
+  // 'cypress/e2e/awx/**/*.cy.ts'
+];
 baseConfig.e2e!.baseUrl = 'https://localhost:4100';
 baseConfig.component!.specPattern = 'platform/**/*.cy.{js,jsx,ts,tsx}';
 
