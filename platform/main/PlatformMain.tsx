@@ -26,6 +26,7 @@ import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformSubscription } from './PlatformSubscription';
+import { GatewayUIAuthProvider } from './GatewayUIAuth';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {
@@ -34,9 +35,11 @@ export default function PlatformMain() {
       <PageFramework defaultRefreshInterval={10}>
         <PlatformActiveUserProvider>
           <PlatformLogin>
-            <GatewayServicesProvider>
-              <PlatformMainInternal />
-            </GatewayServicesProvider>
+            <GatewayUIAuthProvider>
+              <GatewayServicesProvider>
+                <PlatformMainInternal />
+              </GatewayServicesProvider>
+            </GatewayUIAuthProvider>
           </PlatformLogin>
         </PlatformActiveUserProvider>
       </PageFramework>
