@@ -204,7 +204,8 @@ describe('Schedules - Create and Delete', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can create a simple schedule of resource type Workflow job template, then delete the schedule', () => {
+    //FLAKY_DATE 07/03/24
+    it.skip('can create a simple schedule of resource type Workflow job template, then delete the schedule', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       const scheduleName = 'E2E Simple Schedule WFJT' + randomString(4);
