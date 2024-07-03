@@ -71,3 +71,10 @@ Cypress.Commands.add('createAwxUser', (awxUser?: Partial<AwxUser>) => {
 Cypress.Commands.add('deleteAwxUser', (user: AwxUser, options?: { failOnStatusCode?: boolean }) => {
   cy.requestDelete(awxAPI`/users/${user.id.toString()}/`, options);
 });
+
+Cypress.Commands.add('getCurrentUser', () => {
+  const url = awxAPI`/me/`;
+  cy.pollAWXResults<AwxUser>(url).then((user) => {
+    return user[0];
+  });
+});

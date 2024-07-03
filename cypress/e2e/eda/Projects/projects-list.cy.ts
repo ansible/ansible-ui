@@ -6,8 +6,6 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 //Tests a user's ability to perform necessary actions on the Projects list in the EDA UI.
 
 describe('EDA Projects List', () => {
-  before(() => cy.edaLogin());
-
   it('renders the EDA projects page', () => {
     cy.navigateTo('eda', 'projects');
     cy.verifyPageTitle('Projects');

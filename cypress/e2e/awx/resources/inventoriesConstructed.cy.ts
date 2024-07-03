@@ -28,7 +28,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     inventoriesList = [];
     invNames = [];
     for (let i = 0; i < invToCreate; i++) {
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventoriesList.push(inv);
       });
     }
