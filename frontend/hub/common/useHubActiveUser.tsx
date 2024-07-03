@@ -16,7 +16,15 @@ export function useHubActiveUser() {
   return useContext(HubActiveUserContext);
 }
 
-export function HubActiveUserProvider(props: { children: ReactNode }) {
+export function HubActiveUserProvider(props: { children: ReactNode; disabled?: boolean }) {
+  return props?.disabled ? (
+    <HubActiveUserContext.Provider value={{}}>{props.children}</HubActiveUserContext.Provider>
+  ) : (
+    <HubActiveUserProviderInternal>{props?.children}</HubActiveUserProviderInternal>
+  );
+}
+
+export function HubActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<HubUser>(hubAPI`/_ui/v1/me/`, requestGet, {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
