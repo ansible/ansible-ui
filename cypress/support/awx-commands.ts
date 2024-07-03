@@ -29,7 +29,6 @@ import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from './formatApiPathForAwx';
-import { awxGWAPI } from './formatApiPathForAwxDownstream';
 
 //  AWX related custom command implementation
 
@@ -1285,12 +1284,12 @@ const GLOBAL_ORG_DESCRIPTION = 'DO NOT DELETE: Global Organization';
 
 /** Create a global organization if it doesn't exist. */
 Cypress.Commands.add('createGlobalOrganization', function () {
-  cy.requestGet<AwxItemsResponse<Organization>>(awxGWAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
+  cy.requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
     .its('results')
     .then((orgResults: Organization[]) => {
       if (orgResults.length === 0) {
         cy.requestPost<AwxItemsResponse<Organization>, Partial<Organization>>(
-          awxGWAPI`/organizations/`,
+          awxAPI`/organizations/`,
           { name: GLOBAL_ORG_NAME, description: GLOBAL_ORG_DESCRIPTION }
         );
         cy.wait(100).then(() => cy.createGlobalOrganization());
@@ -1481,7 +1480,7 @@ Cypress.Commands.add('createAwxApplication', () => {
       | 'authorization_grant_type'
       | 'redirect_uris'
     >
-  >(awxGWAPI`/applications/`, {
+  >(awxAPI`/applications/`, {
     name: 'E2E Application API ' + randomString(4),
     description: 'E2E Application API Description',
     organization: 1,
@@ -1502,7 +1501,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (id) {
-      cy.requestDelete(awxGWAPI`/applications/${id}/`, options);
+      cy.requestDelete(awxAPI`/applications/${id}/`, options);
     }
   }
 );
