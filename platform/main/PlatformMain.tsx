@@ -16,7 +16,12 @@ import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUse
 import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
-import { GatewayServicesProvider, useHasEdaService } from './GatewayServices';
+import {
+  GatewayServicesProvider,
+  useHasAwxService,
+  useHasHubService,
+  useHasEdaService,
+} from './GatewayServices';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
@@ -40,15 +45,17 @@ export default function PlatformMain() {
 }
 
 export function PlatformMainInternal() {
+  const hasAwx = useHasAwxService();
+  const hasHub = useHasHubService();
   const hasEda = useHasEdaService();
   return (
     <QuickStartProvider>
-      <AwxActiveUserProvider>
+      <AwxActiveUserProvider disabled={!hasAwx}>
         <EdaActiveUserProvider disabled={!hasEda}>
-          <HubActiveUserProvider>
+          <HubActiveUserProvider disabled={!hasHub}>
             <WebSocketProvider>
-              <AwxConfigProvider>
-                <HubContextProvider>
+              <AwxConfigProvider disabled={!hasAwx}>
+                <HubContextProvider disabled={!hasHub}>
                   <PlatformSubscription>
                     <PlatformApp />
                   </PlatformSubscription>
