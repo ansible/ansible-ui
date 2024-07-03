@@ -69,6 +69,7 @@ describe('EDA Credentials Use in Resources', () => {
     cy.clickButton(/^Create project$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.clickButton(/^Create project$/);
     cy.getEdaProjectByName(name).then((thisProject: EdaProject) => {
       cy.waitEdaProjectSync(thisProject).then((result) => {

@@ -63,6 +63,7 @@ Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaNa
 Cypress.Commands.add('createEdaProject', () => {
   cy.requestPost<EdaProject>(edaAPI`/projects/`, {
     name: 'E2E Project ' + randomString(4),
+    organization_id: 1,
     url: 'https://github.com/ansible/ansible-ui',
   }).then((edaProject) => {
     Cypress.log({
