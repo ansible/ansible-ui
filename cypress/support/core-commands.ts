@@ -25,15 +25,3 @@ Cypress.Commands.add('containsBy', (selector: string, text: string | number | Re
   // It's a workaround when the element is found and while assertions are running, the element is replaced
   cy.contains(selector, text);
 });
-
-Cypress.Commands.add('containsByDataCy', (dataCy: string, text: string | number | RegExp) => {
-  cy.contains(`[data-cy="${dataCy}"]`, text)
-    .should('not.be.disabled')
-    .should('not.have.attr', 'aria-disabled', 'true')
-    .should('not.be.hidden')
-    .should('be.visible');
-
-  // The following line is necessary to avoid flakiness in the tests
-  // It's a workaround when the element is found and while assertions are running, the element is replaced
-  cy.contains(`[data-cy="${dataCy}"]`, text);
-});

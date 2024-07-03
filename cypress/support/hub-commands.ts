@@ -52,10 +52,6 @@ export type HubPutRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
 >;
-Cypress.Commands.add('hubPutRequest', (options: HubPutRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'PUT' });
-});
-
 export type HubPostRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
@@ -72,10 +68,6 @@ export type HubPatchRequestOptions = Pick<
   HubRequestOptions,
   'url' | 'body' | 'qs' | 'failOnStatusCode'
 >;
-Cypress.Commands.add('hubPatchRequest', (options: HubPatchRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'PATCH' });
-});
-
 export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
 Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
   cy.hubRequest({ ...options, method: 'DELETE' });
@@ -200,77 +192,6 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-Cypress.Commands.add('addAndApproveMultiCollections', (numberOfCollections = 1) => {
-  const rand = Math.floor(Math.random() * 9999999);
-  const namespace = `foo_${rand}`;
-
-  const uploadCollection = (namespace: string, range: number) => {
-    for (let i = 0; i < range; i++) {
-      const collection = `bar_${rand}${i}`;
-      cy.galaxykit(`-i collection upload ${namespace} ${collection}`);
-    }
-  };
-
-  const approveMultiCollections = (namespace: string) => {
-    cy.visit('/administration/approvals?page=1&perPage=100');
-    cy.verifyPageTitle('Collection Approvals');
-    cy.selectToolbarFilterByLabel('Namespace');
-    cy.intercept(
-      'GET',
-      hubAPI`/v3/plugin/ansible/search/collection-versions/?repository_label=pipeline=staging&namespace=${namespace}&order_by=namespace&offset=0&limit=100`
-    ).as('approvals');
-    cy.searchAndDisplayResource(`${namespace}`);
-    cy.wait('@approvals');
-    cy.get('[data-cy="select-all"]').click();
-    cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-      cy.get('[data-cy="actions-dropdown"]')
-        .click()
-        .then(() => {
-          cy.get('[data-cy="approve-selected-collections"]').click();
-        });
-    });
-    cy.get('[data-ouia-component-id="Approve collections"]').within(() => {
-      cy.get('[data-ouia-component-id="confirm"]').click();
-      cy.get('[data-ouia-component-id="submit"]').click();
-      cy.clickButton('Close');
-    });
-  };
-
-  uploadCollection(namespace, numberOfCollections);
-  approveMultiCollections(namespace);
-});
-
-Cypress.Commands.add(
-  'deleteCommunityCollectionFromSystem',
-  (
-    collectionName: CollectionVersionSearch,
-    options?: {
-      /** Whether to fail on response codes other than 2xx and 3xx */
-      failOnStatusCode?: boolean;
-    }
-  ) => {
-    if (collectionName) {
-      const thisName = collectionName.collection_version?.name;
-      cy.requestDelete(
-        hubAPI`/v3/plugin/ansible/content/community/collections/index/ibm/${thisName ?? ''}/`,
-        options
-      );
-    }
-  }
-);
-
-Cypress.Commands.add('cleanupCollections', (namespace: string, repo: string) => {
-  cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespace}`
-  ).then((result) => {
-    for (const resource of result.data ?? []) {
-      if (resource.repository?.name === repo) {
-        cy.deleteCommunityCollectionFromSystem(resource);
-      }
-    }
-  });
-});
-
 Cypress.Commands.add('createNamespace', (namespaceName: string) => {
   cy.galaxykit('namespace create', namespaceName);
 });
@@ -301,10 +222,6 @@ Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
     name: remoteName,
     url: url ? url : 'https://console.redhat.com/api/automation-hub/',
   });
-});
-
-Cypress.Commands.add('deleteRemote', (remoteName: string) => {
-  cy.galaxykit(`remote delete ${remoteName}`);
 });
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
@@ -390,40 +307,11 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string)
   cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
 });
 
-Cypress.Commands.add('createRepository', (repositoryName: string, remoteName?: string) => {
-  remoteName
-    ? cy.galaxykit(`repository create --remote ${remoteName} ${repositoryName}`)
-    : cy.galaxykit(`repository create ${repositoryName}`);
-});
-
-Cypress.Commands.add('deleteRepository', (repositoryName: string) => {
-  cy.galaxykit(`repository delete ${repositoryName}`);
-});
-
-Cypress.Commands.add(
-  'undeprecateCollection',
-  (collection: string, namespace: string, repository: string) => {
-    cy.requestPatch(
-      hubAPI`/v3/plugin/ansible/content/${repository}/collections/index/${namespace}/${collection}/`,
-      { deprecated: false }
-    );
-  }
-);
-
 // HUB Execution Environment Commands
 export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<
   HubGetRequestOptions,
   'url'
 >;
-Cypress.Commands.add(
-  'queryHubExecutionEnvironments',
-  (options?: HubQueryExecutionEnvironmentsOptions) => {
-    cy.hubGetRequest({
-      ...options,
-      url: hubAPI`/_ui/v1/execution-environments/remotes/`,
-    });
-  }
-);
 export type HubCreateExecutionEnvironmentOptions = {
   executionEnvironment: SetRequired<Partial<HubExecutionEnvironmentPayload>, 'registry'>;
 } & Omit<HubPostRequestOptions, 'url' | 'body'>;
@@ -591,12 +479,6 @@ export type HubQueryNamespacesOptions = { qs?: { limit?: number } } & Omit<
   HubGetRequestOptions,
   'url'
 >;
-Cypress.Commands.add('queryHubNamespaces', (options?: HubQueryNamespacesOptions) => {
-  cy.hubGetRequest({
-    ...options,
-    url: hubAPI`/_ui/v1/namespaces/`,
-  });
-});
 export type HubCreateNamespaceOptions = { namespace: Partial<HubNamespace> } & Omit<
   HubPostRequestOptions,
   'url' | 'body'
