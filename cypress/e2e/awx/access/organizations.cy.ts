@@ -180,7 +180,6 @@ describe('Organizations: Users Tab', function () {
   });
 
   it.skip('can add a brand new normal user to the Org', () => {});
-  it.skip('can add a brand new admin user to the Org', () => {});
   it.skip('can add a brand new auditor user to the Org', () => {});
   it.skip('can add an existing user to an Org and assign a specific type of role to that user', () => {});
   it.skip('can remove a user from the users tab of an Org', () => {});
