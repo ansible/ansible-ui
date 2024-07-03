@@ -52,3 +52,10 @@ Cypress.Commands.add('deleteAwxUser', (user: AwxUser, options?: { failOnStatusCo
     cy.deletePlatformUser(platformUser, options)
   );
 });
+
+Cypress.Commands.add('getCurrentUser', () => {
+  const url = awxAPI`/me/`;
+  cy.pollAWXResults<AwxUser>(url).then((user) => {
+    return user[0];
+  });
+});

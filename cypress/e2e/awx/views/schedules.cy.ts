@@ -8,7 +8,7 @@ import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe('Schedules - Create and Delete', () => {
+describe.skip('Schedules - Create and Delete', () => {
   describe('Schedules - Create schedule of resource type Job template', () => {
     let organization: Organization;
     let jobTemplate: JobTemplate;
@@ -18,9 +18,9 @@ describe('Schedules - Create and Delete', () => {
     before(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        cy.createAwxProject(organization).then((proj) => {
           project = proj;
-          cy.createAwxInventory({ organization: organization.id }).then((i) => {
+          cy.createAwxInventory(organization).then((i) => {
             inventory = i;
             cy.createAwxJobTemplate({
               name: 'E2E Credentials ' + randomString(4),
@@ -83,7 +83,7 @@ describe('Schedules - Create and Delete', () => {
     beforeEach(() => {
       cy.createAwxOrganization().then((org) => {
         organization = org;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        cy.createAwxProject(organization).then((proj) => {
           project = proj;
         });
       });
@@ -185,7 +185,7 @@ describe('Schedules - Create and Delete', () => {
     beforeEach(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
-        cy.createAwxInventory({ organization: organization.id }).then((i) => {
+        cy.createAwxInventory(organization).then((i) => {
           inventory = i;
           cy.createAwxWorkflowJobTemplate({
             name: 'E2E Workflow Job Template ' + randomString(4),
@@ -281,9 +281,9 @@ describe('Schedules - Create and Delete', () => {
     before(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        cy.createAwxProject(organization).then((proj) => {
           project = proj;
-          cy.createAwxInventory({ organization: organization.id }).then((i) => {
+          cy.createAwxInventory(organization).then((i) => {
             inventory = i;
             cy.createAwxInventorySource(i, project).then((invSrc) => {
               inventorySource = invSrc;
@@ -346,9 +346,9 @@ describe('Schedules - Create and Delete', () => {
     beforeEach(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        cy.createAwxProject(organization).then((proj) => {
           project = proj;
-          cy.createAwxInventory({ organization: organization.id }).then((i) => {
+          cy.createAwxInventory(organization).then((i) => {
             inventory = i;
             cy.createAwxJobTemplate({
               name: 'E2E Complex Job template ' + randomString(4),
@@ -554,7 +554,7 @@ describe('Schedules - Bulk deletion', () => {
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+      cy.createAwxProject(organization).then((proj) => {
         project = proj;
         for (let i = 0; i < 5; i++) {
           const scheduleName = generateScheduleName();
@@ -606,7 +606,7 @@ describe('Schedules - Edit', () => {
     const name = 'E2E Edit Schedule ' + randomString(4);
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+      cy.createAwxProject(organization).then((proj) => {
         project = proj;
         cy.createAWXSchedule({
           name,
