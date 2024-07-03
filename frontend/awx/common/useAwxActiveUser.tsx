@@ -17,7 +17,14 @@ export function useAwxActiveUser() {
   return useContext(AwxActiveUserContext);
 }
 
-export function AwxActiveUserProvider(props: { children: ReactNode }) {
+export function AwxActiveUserProvider(props: { children: ReactNode; disabled?: boolean }) {
+  return props?.disabled ? (
+    <AwxActiveUserContext.Provider value={{}}>{props.children}</AwxActiveUserContext.Provider>
+  ) : (
+    <AwxActiveUserProviderInternal>{props?.children}</AwxActiveUserProviderInternal>
+  );
+}
+export function AwxActiveUserProviderInternal(props: { children: ReactNode }) {
   const response = useSWR<AwxItemsResponse<AwxUser>>(awxAPI`/me/`, requestGet, {
     dedupingInterval: 0,
     refreshInterval: 10 * 1000,
