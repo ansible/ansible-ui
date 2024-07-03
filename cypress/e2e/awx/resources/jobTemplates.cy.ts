@@ -156,7 +156,7 @@ describe.skip('Job Templates Tests', function () {
           cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
           cy.selectDropdownOptionByResourceName('inventory', inventory.name);
           cy.clickButton(/^Next/);
-          cy.selectItemFromLookupModal('credential-select', machineCredential.name);
+          cy.multiSelectByDataCy('credential', [machineCredential.name]);
           cy.clickButton(/^Next/);
           cy.get(`[data-cy*="execution-environment-select-form-group"]`).within(() => {
             cy.get('button').eq(1).click();

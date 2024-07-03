@@ -646,22 +646,21 @@ describe('Credentials', () => {
       cy.deleteAwxInventory(awxInventory, { failOnStatusCode: false });
     });
 
-    it('can create a job template within the context of credential job template tab', function () {
-      const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
-      cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
-      cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [machineCredential.name]);
-      cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
-      cy.clickTab('Job Templates', true);
-      cy.getByDataCy('create-template').click();
-      cy.verifyPageTitle('Create Job Template');
-      cy.getByDataCy('name').type(jobTemplateName);
-      cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
-      cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-      cy.selectItemFromLookupModal('credential-select', machineCredential.name);
-      cy.getByDataCy('Submit').click();
-    });
+  it('can create a job template within the context of credential job template tab', function () {
+    const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
+    cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
+    cy.navigateTo('awx', 'credentials');
+    cy.filterTableByMultiSelect('name', [machineCredential.name]);
+    cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
+    cy.clickTab('Job Templates', true);
+    cy.getByDataCy('create-template').click();
+    cy.verifyPageTitle('Create Job Template');
+    cy.getByDataCy('name').type(jobTemplateName);
+    cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
+    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+    cy.multiSelectByDataCy('credential', [machineCredential.name]);
+    cy.getByDataCy('Submit').click();
   });
 });
 
