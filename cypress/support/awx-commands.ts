@@ -352,16 +352,6 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
   });
 });
 
-Cypress.Commands.add('selectItemFromMultiSelectDropdown', (resource: string, itemName: string) => {
-  cy.get(`[data-cy*="${resource}-form-group"]`).within(() => {
-    cy.get('button').eq(1).click();
-  });
-  cy.get(`[data-cy="search-input"]`).within(() => {
-    cy.get('input').type(itemName);
-  });
-  cy.get(`[data-cy="${itemName.toLowerCase().replaceAll(' ', '-')}"]`).click();
-});
-
 Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
   const menuSelector = `[data-cy*="${resource}-form-group"] div[data-ouia-component-id="menu-select"]`;
   cy.get('[data-cy="loading-spinner"]').should('not.exist');

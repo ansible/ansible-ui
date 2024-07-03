@@ -268,8 +268,6 @@ declare global {
        * (used for components that do not utilize the PageFormAsyncSelect component yet) */
       selectItemFromLookupModal(resource: string, itemName: string): Chainable<void>;
 
-      selectItemFromMultiSelectDropdown(resource: string, itemName: string): Chainable<void>;
-
       /**
        * This command works for a form field that can show up either as a drop down
        * or as a spyglass lookup.
