@@ -1,13 +1,18 @@
 import { randomString } from '../../framework/utils/random-string';
+import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
+import { Application } from '../../frontend/awx/interfaces/Application';
+import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { Team } from '../../frontend/awx/interfaces/Team';
+import { Token } from '../../frontend/awx/interfaces/Token';
+import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { Authenticator } from '../../platform/interfaces/Authenticator';
+import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
-import { Application } from '../../frontend/awx/interfaces/Application';
-import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsResponse';
-import { Token } from '../../frontend/awx/interfaces/Token';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -90,11 +95,14 @@ Cypress.Commands.add(
 /* The `Cypress.Commands.add('createPlatformOrganization', () => { ... })` function is a custom Cypress
 command that is responsible for creating a new platform organization. Here's a breakdown of what it
 does: */
-Cypress.Commands.add('createPlatformOrganization', () => {
-  const orgName = `Platform E2E Organization-${randomString(3).toLowerCase()}`;
-  cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
-    name: orgName,
-  });
+Cypress.Commands.add('createPlatformOrganization', (org?: Partial<PlatformOrganization>) => {
+  if (!org) {
+    org = {};
+  }
+  if (!org.name) {
+    org.name = `Platform E2E Organization-${randomString(3).toLowerCase()}`;
+  }
+  cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, org);
 });
 
 /* The `Cypress.Commands.add('deletePlatformOrganization', ...)` function is a custom Cypress command
@@ -208,6 +216,96 @@ Cypress.Commands.add('createGlobalPlatformOrganization', function () {
     });
 });
 
+Cypress.Commands.add('getAwxOrgByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<AwxItemsResponse<Organization> | undefined>(
+        awxAPI`/organizations/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getPlatformOrgByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<PlatformItemsResponse<PlatformOrganization> | undefined>(
+        gatewayV1API`/organizations/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getAwxTeamByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<AwxItemsResponse<Team> | undefined>(
+        awxAPI`/teams/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getPlatformTeamByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<PlatformItemsResponse<PlatformTeam> | undefined>(
+        gatewayV1API`/teams/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getAwxUserByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<AwxItemsResponse<AwxUser> | undefined>(
+        awxAPI`/users/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getPlatformUserByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<PlatformItemsResponse<PlatformUser> | undefined>(
+        gatewayV1API`/users/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
 Cypress.Commands.add('searchAndDisplayResourceInModalPlatform', (resourceName: string) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.get('[data-cy="text-input"]').find('input').type(resourceName);
@@ -303,8 +401,7 @@ Cypress.Commands.add('createPlatformToken', (oAuthAppId: number, scope: 'read' |
 });
 
 Cypress.Commands.add('getCurrentPlatformUser', () => {
-  return cy
-    .requestGet<PlatformItemsResponse<PlatformUser>>(gatewayV1API`/me/`)
+  cy.requestGet<PlatformItemsResponse<PlatformUser>>(gatewayV1API`/me/`)
     .its('results')
     .then((results) => {
       return results[0];

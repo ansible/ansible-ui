@@ -29,13 +29,13 @@ export interface PlatformUser {
     };
   };
   username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
+  email?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
   password?: string;
-  is_superuser: boolean;
+  is_superuser?: boolean | null;
   is_platform_auditor?: boolean;
   last_login_map_results: [];
-  last_login: string;
+  last_login?: string | null;
   managed: boolean;
 }

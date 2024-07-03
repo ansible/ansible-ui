@@ -83,6 +83,7 @@ import {
 } from './hub-commands';
 
 // Platform Imports
+import { Token } from '../../frontend/awx/interfaces/Token';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
@@ -1629,7 +1630,7 @@ declare global {
       /**
        * This command returns the current Platform User
        */
-      getCurrentPlatformUser(): Chainable<User>;
+      getCurrentPlatformUser(): Chainable<PlatformUser>;
       selectResourceFromDropDown(resourceName: string): Cypress.Chainable<void>;
       selectResourceFromSpecificDropDown(
         dropdownDataCy: string,
@@ -1665,7 +1666,9 @@ declare global {
         platformOrganization: PlatformOrganization,
         users: PlatformUser[]
       ): Cypress.Chainable<PlatformTeam>;
-      createPlatformOrganization(): Cypress.Chainable<PlatformOrganization>;
+      createPlatformOrganization(
+        org?: Partial<PlatformOrganization>
+      ): Cypress.Chainable<PlatformOrganization>;
       deletePlatformOrganization(
         organization: PlatformOrganization,
         options?: {
@@ -1673,6 +1676,15 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
+
+      getPlatformOrgByAnsibleId(ansibleId: string | undefined): Chainable<PlatformOrganization>;
+      getAwxOrgByAnsibleId(ansibleId: string | undefined): Chainable<Organization>;
+
+      getPlatformTeamByAnsibleId(ansibleId: string | undefined): Chainable<PlatformTeam>;
+      getAwxTeamByAnsibleId(ansibleId: string | undefined): Chainable<Team>;
+
+      getPlatformUserByAnsibleId(ansibleId: string | undefined): Chainable<PlatformUser>;
+      getAwxUserByAnsibleId(ansibleId: string | undefined): Chainable<AwxUser>;
 
       createPlatformUser(user?: Partial<PlatformUser>): Chainable<PlatformUser>;
       deletePlatformUser(
