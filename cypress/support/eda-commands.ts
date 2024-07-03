@@ -27,20 +27,10 @@ import {
   ImportStateEnum,
   RestartPolicyEnum,
   StatusEnum,
-  RoleDefinitionCreate,
-  ContentTypeEnum,
-  PermissionsEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 
 /*  EDA related custom command implementation  */
-
-Cypress.Commands.add('selectEdaUserRoleByName', (roleName: string) => {
-  cy.get('button#roles:not(:disabled):not(:hidden)').click();
-  cy.get('#roles-select').within(() => {
-    cy.get(`[data-cy="${roleName.toLowerCase()}"]`).click();
-  });
-});
 
 Cypress.Commands.add('checkAnchorLinks', (anchorName: string) => {
   cy.contains('a', anchorName).then((link) => {
@@ -111,14 +101,6 @@ Cypress.Commands.add(
     });
   }
 );
-
-Cypress.Commands.add('getEdaRulebookActivation', (edaRulebookActivationName: string) => {
-  cy.pollEdaResults<EdaRulebookActivation>(
-    edaAPI`/activations/?name=${edaRulebookActivationName}`
-  ).then((activations) => {
-    return activations[0];
-  });
-});
 
 Cypress.Commands.add('deleteEdaRulebookActivation', (edaRulebookActivation) => {
   cy.requestDelete(edaAPI`/activations/${edaRulebookActivation.id.toString()}/`, {
@@ -373,27 +355,6 @@ Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
   });
 });
 
-Cypress.Commands.add('checkActionsofResource', (resourceType: string) => {
-  return cy
-    .contains('[data-cy="permissions"]', resourceType)
-    .next()
-    .then((result) => {
-      cy.wrap(result);
-    });
-});
-
-Cypress.Commands.add('checkResourceNameAndAction', (resourceTypes: string[], actions: string[]) => {
-  resourceTypes.forEach((resource) => {
-    cy.contains('[data-cy="permissions"]', resource)
-      .next()
-      .within(() => {
-        actions.forEach((action) => {
-          cy.contains(action);
-        });
-      });
-  });
-});
-
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
   cy.requestGet<EdaRbacRole>(edaAPI`/role_definitions/${roleID}`);
 });
@@ -499,22 +460,6 @@ Cypress.Commands.add(
     }).then(() => {
       Cypress.log({
         displayName: 'Role User Assignment :',
-      });
-    });
-  }
-);
-
-Cypress.Commands.add(
-  'createEdaRoleDefinition',
-  (roleName: string, description: string, content_type, permissions) => {
-    cy.requestPost<RoleDefinitionCreate>(edaAPI`/role_definitions/`, {
-      name: roleName,
-      description: description,
-      content_type: content_type as ContentTypeEnum,
-      permissions: permissions as PermissionsEnum[],
-    }).then(() => {
-      Cypress.log({
-        displayName: 'EDA Role Definition :',
       });
     });
   }
