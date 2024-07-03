@@ -57,7 +57,7 @@ describe('Inventories Tests', () => {
           const inventoryName = 'E2E Inventory ' + randomString(4);
           cy.navigateTo('awx', 'inventories');
           cy.clickButton(/^Create inventory$/);
-          cy.clickLink(/^Create inventory$/);
+          cy.get('#create-inventory').click();
           //Assert that user is on the form view to create an inventory
           cy.get('[data-cy="name"]').type(inventoryName);
           cy.singleSelectByDataCy('organization', organization.name);
@@ -122,7 +122,10 @@ describe('Inventories Tests', () => {
           //Refactor this test to match the updated test case and improve the assertions
           cy.navigateTo('awx', 'inventories'); //Add assertion to verify the user is on the inventories list view
           cy.filterTableBySingleSelect('name', inventory.name);
-          cy.clickTableRowKebabAction(inventory.name, 'copy-inventory', false);
+          cy.clickTableRowAction('name', inventory.name, 'copy-inventory', {
+            disableFilter: true,
+            inKebab: true,
+          });
           cy.hasAlert(`${inventory.name.toString()} copied`);
           //Assert the presence of the original and the copy by performing a search on the list of inventories
         });
@@ -130,7 +133,10 @@ describe('Inventories Tests', () => {
         it('can delete an inventory from the inventory list row item', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
-          cy.clickTableRowKebabAction(inventory.name, 'delete-inventory', false);
+          cy.clickTableRowAction('name', inventory.name, 'delete-inventory', {
+            disableFilter: true,
+            inKebab: true,
+          });
           //Add assertion to show the presence of the expected inventory
           cy.get('#confirm').click();
           cy.clickButton(/^Delete inventory/);
@@ -221,7 +227,7 @@ describe('Inventories Tests', () => {
               cy.get(`[aria-label="Simple table"] tr`);
               cy.contains('button', 'Cancel');
               cy.contains('button', 'Confirm');
-              cy.get(`[aria-label="Pagination"]`);
+              cy.get('#filter');
             });
 
             cy.get(`[role="dialog"]`).within(() => {

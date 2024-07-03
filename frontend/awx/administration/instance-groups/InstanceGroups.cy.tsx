@@ -32,18 +32,18 @@ describe('Instance Groups List', () => {
     });
     it('Create group button is disabled if the user does not have permission to create instance groups', () => {
       cy.mount(<InstanceGroups />);
-      cy.get('button[data-cy="create-group"]').should('have.attr', 'disabled');
+      cy.get('button[data-cy="create-group"]').should('have.attr', 'aria-disabled', 'true');
     });
     it('Delete instance group row action is disabled if the user does not have permission to edit instance groups', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete container group$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
       });
+      cy.contains('#delete-container-group', /^Delete container group$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
     it('Edit instance group row action is disabled if the user does not have permission to edit instance groups', () => {
       cy.mount(<InstanceGroups />);

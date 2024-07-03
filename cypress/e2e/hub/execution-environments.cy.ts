@@ -72,12 +72,9 @@ describe('Execution Environments', () => {
           cy.get('tbody').find('tr').should('have.length', 1);
           cy.get('tbody').within(() => {
             cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
-            cy.get('[data-cy="actions-dropdown"]')
-              .click()
-              .then(() => {
-                cy.get(`[data-cy="delete-execution-environment"]`).click();
-              });
+            cy.get('[data-cy="actions-dropdown"]').click();
           });
+          cy.get(`[data-cy="delete-execution-environment"]`).click();
           cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(
             () => {
               cy.get('[data-ouia-component-id="confirm"]').click();

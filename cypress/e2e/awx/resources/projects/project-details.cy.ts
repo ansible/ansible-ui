@@ -234,7 +234,10 @@ describe('Projects', () => {
 
     it('can delete a schedule from the schedules list row', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
-      cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
+      cy.clickTableRowAction('name', schedule.name, 'delete-schedule', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.getModal().then(() => {
         cy.get('#confirm').click();
         cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');

@@ -37,12 +37,12 @@ describe('InventorySources.cy.ts', () => {
         const source = results[2]; // source with status "running"
         cy.contains('tr', source.name).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete inventory source$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#delete-inventory-source', /^Delete inventory source$/).should(
+          'have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 
@@ -55,12 +55,12 @@ describe('InventorySources.cy.ts', () => {
         const source = results[1]; // sources with summary_fields.user_capabilities.delete: false
         cy.contains('tr', source.name).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete inventory source$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#delete-inventory-source', /^Delete inventory source$/).should(
+          'have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 });
