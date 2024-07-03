@@ -638,7 +638,6 @@ describe('Projects', () => {
     });
   });
 
-  // FLAKY_06_13_2024
   describe('Projects: Notifications Tab', () => {
     let notification: NotificationTemplate;
 
