@@ -24,7 +24,23 @@ export function useHubContext() {
   return useContext(HubContext);
 }
 
-export function HubContextProvider(props: { children: ReactNode }) {
+export function HubContextProvider(props: { children: ReactNode; disabled?: boolean }) {
+  return props?.disabled ? (
+    <HubContext.Provider
+      value={{
+        featureFlags: {},
+        settings: {},
+        user: undefined,
+        hasPermission: () => false,
+      }}
+    >
+      {props.children}
+    </HubContext.Provider>
+  ) : (
+    <HubContextProviderInternal>{props?.children}</HubContextProviderInternal>
+  );
+}
+export function HubContextProviderInternal(props: { children: ReactNode }) {
   const hubFeatureFlagResponse = useSWR<HubFeatureFlags>(
     hubAPI`/_ui/v1/feature-flags/`,
     requestGet
