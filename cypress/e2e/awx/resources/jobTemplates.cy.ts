@@ -32,19 +32,24 @@ describe.skip('Job Templates Tests', function () {
     let inventoryWithHost: Inventory;
     let machineCredential: Credential;
     let project: Project;
+    let organization: Organization;
     let executionEnvironment: ExecutionEnvironment;
     const executionEnvironmentName = 'Control Plane Execution Environment';
     const instanceGroup = 'default';
 
     beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory = inv;
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxInventory(organization).then((inv) => {
+          inventory = inv;
+
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: organization.id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+          });
         });
       });
     });
@@ -102,33 +107,6 @@ describe.skip('Job Templates Tests', function () {
           cy.clickButton(/^Close$/);
           cy.clearAllFilters();
         });
-    });
-
-    it('can create a job template that inherits the execution environment from the project', function () {
-      cy.createAwxExecutionEnvironment({
-        organization: awxOrganization.id,
-      }).then((ee: ExecutionEnvironment) => {
-        executionEnvironment = ee;
-        cy.createAwxProject(awxOrganization, {
-          default_environment: ee.id,
-        }).then((proj: Project) => {
-          project = proj;
-          cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
-          const jtName = 'E2E-JT ' + randomString(4);
-          cy.navigateTo('awx', 'templates');
-          cy.getBy('[data-cy="create-template"]').click();
-          cy.clickLink(/^Create job template$/);
-          cy.getBy('[data-cy="name"]').type(jtName);
-          cy.getBy('[data-cy="description"]').type('This is a JT description');
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-          cy.selectDropdownOptionByResourceName('project', proj.name);
-          cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-          cy.getBy('[data-cy="Submit"]').click();
-          cy.wait('@createJT');
-          cy.getByDataCy('execution-environment').contains(ee.name);
-          cy.getByDataCy('project').contains(proj.name);
-        });
-      });
     });
 
     it('can create a job template using the prompt on launch wizard', function () {

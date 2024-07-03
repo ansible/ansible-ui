@@ -10,7 +10,6 @@ import {
 } from '@patternfly/react-topology';
 import type { Credential } from '../../../interfaces/Credential';
 import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import type { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { InventorySource } from '../../../interfaces/InventorySource';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -126,7 +125,7 @@ export interface PromptFormValues {
         vault_id?: string;
       }[];
   credential_passwords?: { [key: string]: string };
-  instance_groups: InstanceGroup[] | { id: number; name: string }[];
+  instance_groups: number[];
   execution_environment: ExecutionEnvironment | { id: number; name: string } | null;
   diff_mode: boolean;
   extra_vars: string;

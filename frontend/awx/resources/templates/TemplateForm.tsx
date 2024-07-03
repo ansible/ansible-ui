@@ -237,28 +237,28 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
   const results = await Promise.all([...disassociationPromises, ...associationPromises]);
   return results;
 }
-async function submitInstanceGroups(templateId: number, newInstanceGroups: InstanceGroup[]) {
+async function submitInstanceGroups(templateId: number, newInstanceGroups: number[]) {
   const originalInstanceGroups = await requestGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/job_templates/${templateId.toString()}/instance_groups/`
   );
   if (!isEqual(newInstanceGroups, originalInstanceGroups.results)) {
-    for (const group of originalInstanceGroups.results) {
+    for (const groupID of originalInstanceGroups.results) {
       await postRequest(awxAPI`/job_templates/${templateId.toString()}/instance_groups/`, {
-        id: group.id,
+        id: groupID,
         disassociate: true,
       });
     }
-    for (const group of newInstanceGroups) {
+    for (const groupID of newInstanceGroups) {
       await await postRequest(awxAPI`/job_templates/${templateId.toString()}/instance_groups/`, {
-        id: group.id,
+        id: groupID,
       });
     }
   }
 }
 
-function isEqual(array1: InstanceGroup[], array2: InstanceGroup[]) {
+function isEqual(array1: number[], array2: InstanceGroup[]) {
   return (
     array1.length === array2.length &&
-    array1.every((element, index) => element.id === array2[index].id)
+    array1.every((element, index) => element === array2[index].id)
   );
 }

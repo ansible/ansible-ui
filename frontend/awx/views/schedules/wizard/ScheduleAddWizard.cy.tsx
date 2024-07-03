@@ -83,7 +83,7 @@ describe('ScheduleAddWizard', () => {
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        ['Details', 'Prompts', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));
@@ -129,7 +129,7 @@ describe('ScheduleAddWizard', () => {
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+        ['Details', 'Prompts', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
             .eq(index)
             .should((el) => expect(el.text().trim()).to.equal(text));

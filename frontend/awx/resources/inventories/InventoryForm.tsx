@@ -267,7 +267,7 @@ export function EditInventory() {
 
   const defaultValue =
     inventory.kind === 'smart'
-      ? { ...inventory, instanceGroups: originalInstanceGroups }
+      ? { ...inventory, instanceGroups: originalInstanceGroups?.map(({ id }) => id) }
       : inventory.kind === 'constructed'
         ? {
             ...inventory,
@@ -276,7 +276,7 @@ export function EditInventory() {
           }
         : {
             ...inventory,
-            instanceGroups: originalInstanceGroups,
+            instanceGroups: originalInstanceGroups?.map(({ id }) => id),
             labels: inventory.summary_fields?.labels?.results ?? [],
           };
 
@@ -477,9 +477,9 @@ async function submitInstanceGroups(
   currentInstanceGroups: InstanceGroup[],
   originalInstanceGroups: InstanceGroup[]
 ) {
-  const { added, removed } = getAddedAndRemoved(
-    originalInstanceGroups ?? ([] as InstanceGroup[]),
-    currentInstanceGroups ?? ([] as InstanceGroup[])
+  const { added, removed } = getAddedAndRemoved<InstanceGroup>(
+    originalInstanceGroups,
+    currentInstanceGroups
   );
 
   if (added.length === 0 && removed.length === 0) {

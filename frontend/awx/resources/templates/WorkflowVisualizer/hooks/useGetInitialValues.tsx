@@ -132,7 +132,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
           prompt?.execution_environment ?? (defaults?.execution_environment || null),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
         forks: prompt?.forks ?? (defaults?.forks || 0),
-        instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
+        instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups.map(({ id }) => id) || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
         job_slice_count: prompt?.job_slice_count ?? (defaults?.job_slice_count || 0),
         job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults?.job_tags || ''),
