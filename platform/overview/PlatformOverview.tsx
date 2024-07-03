@@ -21,6 +21,7 @@ import { EdaDecisionEnvironmentsCard } from '../../frontend/eda/overview/cards/E
 import { EdaRuleAuditCard } from '../../frontend/eda/overview/cards/EdaRuleAuditCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
 import { useHasAwxService, useHasEdaService, useHasHubService } from '../main/GatewayServices';
+import { useIsManagedCloudInstall } from '../main/GatewayUIAuth';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
@@ -30,6 +31,7 @@ export function PlatformOverview() {
   const awxService = useHasAwxService();
   const edaService = useHasEdaService();
   const hubService = useHasHubService();
+  const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   return (
     <PageLayout>
       <PageHeader
@@ -48,7 +50,7 @@ export function PlatformOverview() {
           .filter((resource) => {
             switch (resource.id) {
               case 'quick-starts':
-                return !!hubService;
+                return !!hubService && !managedCloudInstall;
               case 'counts':
               case 'job_activity':
               case 'recent_jobs':
