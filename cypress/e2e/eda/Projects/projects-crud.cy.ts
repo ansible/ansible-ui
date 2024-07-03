@@ -16,6 +16,7 @@ describe('EDA Projects CRUD', () => {
     cy.clickButton(/^Create project$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="url"]').type('https://github.com/ansible/ansible-ui');
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
