@@ -28,41 +28,9 @@ import { Spec, Survey } from '../../frontend/awx/interfaces/Survey';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { awxAPI } from './formatApiPathForAwx';
 
 //  AWX related custom command implementation
-
-Cypress.Commands.add(
-  'editNodeInVisualizer',
-  (nodeName: string, newNodeType: string, newNodeName?: string) => {
-    cy.contains('text', nodeName)
-      .parents('[data-kind="node"]')
-      .within(() => {
-        cy.get('.pf-topology__node__action-icon').click();
-      });
-    cy.get('li[data-cy="edit-node"] ').click();
-    cy.get('[data-cy="workflow-topology-sidebar"]').should('be.visible');
-    cy.get('[data-cy="node-type-form-group"]').within(() => {
-      cy.get('button').click();
-      cy.contains('li', newNodeType).click();
-    });
-    if (newNodeType === 'Approval' && newNodeName !== undefined) {
-      cy.get('[data-cy="node-resource-name-form-group"]').within(() => {
-        cy.get('[data-cy="node-resource-name"]').clear().type(newNodeName);
-      });
-    }
-  }
-);
-
-Cypress.Commands.add('removeNodeInVisualizer', (nodeName: string) => {
-  cy.contains('text', nodeName)
-    .parents('[data-kind="node"]')
-    .within(() => {
-      cy.get('.pf-topology__node__action-icon').click();
-    });
-  cy.get('li[data-cy="remove-node"] ').click();
-});
 
 /* Custom Cypress command called `removeAllNodesFromVisualizerToolbar`.
 This command removes all the nodes via the visualizer toolbar.
@@ -481,13 +449,6 @@ Cypress.Commands.add('getTableRowBySingleText', (name: string | RegExp, filter?:
   cy.getTableRowByText(name, filter, 'SingleText');
 });
 
-Cypress.Commands.add('getListCardByText', (name: string | RegExp, filter?: boolean) => {
-  if (filter !== false && typeof name === 'string') {
-    cy.filterTableByText(name);
-  }
-  cy.contains('article', name);
-});
-
 Cypress.Commands.add('selectDetailsPageKebabAction', (dataCy: string) => {
   cy.get('[data-cy="actions-dropdown"]')
     .click()
@@ -539,14 +500,6 @@ Cypress.Commands.add(
 Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
   cy.getTableRowByText(name, filter).within(() => {
     cy.get('input[type=checkbox]').click();
-  });
-});
-
-Cypress.Commands.add('selectTableRowInDialog', (name: string | RegExp, filter?: boolean) => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    cy.getTableRowByText(name, filter).within(() => {
-      cy.get('td[data-cy=checkbox-column-cell]').click();
-    });
   });
 });
 
@@ -644,15 +597,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('getAwxRoles', () => {
-  cy.requestGet<AwxItemsResponse<RoleSerializerWithParentAccess>>(awxAPI`/role_definitions/`).then(
-    (response) => {
-      const awxRoles = response.results;
-      return awxRoles;
-    }
-  );
-});
-
 Cypress.Commands.add(
   'createAwxProject',
   (
@@ -734,18 +678,6 @@ Cypress.Commands.add(
         options
       );
     }
-  }
-);
-
-Cypress.Commands.add(
-  'createEdaSpecificAwxProject',
-  (options?: { project?: Partial<Omit<Project, 'id'>> }) => {
-    cy.createAwxProject({
-      name: 'EDA Project ' + randomString(4),
-      organization: options?.project?.organization ?? null,
-      scm_type: 'git',
-      scm_url: 'https://github.com/ansible/ansible-ui',
-    });
   }
 );
 
@@ -913,27 +845,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'createAwxOrganizationProjectInventoryJobTemplate',
-  (options?: { project?: Partial<Omit<Project, 'id'>>; jobTemplate?: Partial<JobTemplate> }) => {
-    cy.createAwxOrganization().then((organization) => {
-      cy.createAwxInventory({ organization: organization.id }).then((inventory) => {
-        cy.createEdaSpecificAwxProject({ project: { organization: organization.id } }).then(
-          (project) => {
-            cy.createEdaAwxJobTemplate(project, inventory, options?.jobTemplate).then(
-              (jobTemplate) => ({
-                project,
-                inventory,
-                jobTemplate,
-              })
-            );
-          }
-        );
-      });
-    });
-  }
-);
-
 /** Interface for tracking created resources that will need to be delete
 at the end of testing using cy.deleteAwxResources*/
 export interface IAwxResources {
@@ -1047,32 +958,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-Cypress.Commands.add(
-  'createEdaAwxJobTemplate',
-  (project: Project, inventory: Inventory, jobTemplate?: Partial<JobTemplate>) => {
-    cy.requestPost<Partial<JobTemplate>, JobTemplate>(awxAPI`/job_templates/`, {
-      name: 'run_basic',
-      playbook: 'basic.yml',
-      project: project.id,
-      inventory: inventory.id,
-      organization: inventory.organization,
-      ...jobTemplate,
-    });
-  }
-);
-
-Cypress.Commands.add('getAwxJobTemplateByName', (awxJobTemplateName: string) => {
-  cy.requestGet<AwxItemsResponse<JobTemplate>>(
-    awxAPI`/job_templates/?name=${awxJobTemplateName}`
-  ).then((result) => {
-    if (result && result.count === 0) {
-      cy.createAwxOrganizationProjectInventoryJobTemplate();
-    } else {
-      cy.requestGet<JobTemplate>(awxAPI`/job_templates/${result.results[0].id?.toString() ?? ''}`);
-    }
-  });
-});
 
 Cypress.Commands.add(
   'deleteAwxJobTemplate',
@@ -1251,25 +1136,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
-  let awxServer = Cypress.env('AWX_SERVER') as string;
-  if (awxServer.endsWith('/')) awxServer = awxServer.slice(0, -1);
-  const username = Cypress.env('AWX_USERNAME') as string;
-  const password = Cypress.env('AWX_PASSWORD') as string;
-  const tokensEndpoint = awxAPI`/tokens/`;
-  cy.exec(
-    `curl --insecure -d '${JSON.stringify({
-      description: 'E2E-' + randomString(4),
-      ...awxToken,
-    })}' -H "Content-Type: application/json" -u "${username}:${password}" -X POST '${awxServer}${tokensEndpoint}'`
-  ).then((result) => JSON.parse(result.stdout) as AwxToken);
-});
-
-Cypress.Commands.add('getGlobalAwxToken', () => {
-  if (globalAwxToken) cy.wrap(globalAwxToken);
-  else cy.createAwxToken().then((awxToken) => (globalAwxToken = awxToken));
-});
 
 Cypress.Commands.add(
   'deleteAwxToken',
@@ -1645,14 +1511,6 @@ Cypress.Commands.add(
     }
   }
 );
-
-Cypress.Commands.add('editAwxApplication', (application: Application, name: string) => {
-  if (application?.id) {
-    cy.requestPatch(awxAPI`/applications/${application.id.toString()}/`, {
-      name: name,
-    });
-  }
-});
 
 Cypress.Commands.add('createAwxInstance', (hostname: string, listener_port?: number) => {
   if (listener_port) {

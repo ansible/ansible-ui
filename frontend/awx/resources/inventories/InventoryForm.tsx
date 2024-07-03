@@ -325,6 +325,9 @@ export function useInventoryFormDetailLabels() {
     prevent_instance_group_fallback: t(
       `Prevent instance group fallback: If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.`
     ),
+    input_inventories: t(
+      `Input Inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution`
+    ),
   };
 }
 
@@ -504,29 +507,18 @@ async function submitInputInventories(
   currentInputInventories: InputInventory[],
   originalInputInventories: InputInventory[]
 ) {
-  const { added, removed } = getAddedAndRemoved(
-    originalInputInventories ?? ([] as InputInventory[]),
-    currentInputInventories ?? ([] as InputInventory[])
-  );
-
-  if (added.length === 0 && removed.length === 0) {
-    return;
-  }
-
-  const disassociationPromises = removed.map((item: { id: number }) =>
-    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+  for (const item of originalInputInventories) {
+    await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
       id: item.id,
       disassociate: true,
-    })
-  );
-  const associationPromises = added.map((item: { id: number }) =>
-    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
-      id: item.id,
-    })
-  );
+    });
+  }
 
-  const results = await Promise.all([...disassociationPromises, ...associationPromises]);
-  return results;
+  for (const item of currentInputInventories) {
+    await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+      id: item.id,
+    });
+  }
 }
 
 type InputInventory = { id: number; url: string; type: string; name: string };
@@ -565,6 +557,8 @@ function PageFormMultiSelectInventories() {
   const filters = useInventoriesFilters();
   const columns = useInventoriesColumns();
   const { t } = useTranslation();
+  const labels = useInventoryFormDetailLabels();
+
   return (
     <PageFormMultiSelectAwxResource<Inventory>
       name={'inventories'}
@@ -574,7 +568,7 @@ function PageFormMultiSelectInventories() {
       queryPlaceholder={t('Loading inventories...')}
       queryErrorText={t('Error loading inventories')}
       isRequired={true}
-      labelHelp={t(`Select Input Inventories for the constructed inventory plugin.`)}
+      labelHelp={labels.input_inventories}
       url={awxAPI`/inventories/`}
       tableColumns={columns}
       toolbarFilters={filters}
