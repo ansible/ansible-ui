@@ -19,7 +19,6 @@ import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
-import type { Credential } from '../../../interfaces/Credential';
 import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -53,7 +52,7 @@ export const formFieldToLaunchConfig = {
 
 export interface TemplateLaunch {
   inventory: Inventory;
-  credentials: Credential[];
+  credentials: number[];
   credential_passwords: { [key: string]: string };
   instance_groups: { id: number; name: string }[];
   execution_environment: ExecutionEnvironment;
@@ -178,10 +177,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           payload[key] = value;
         };
 
-        setValue(
-          'credentials',
-          credentials?.map((cred) => cred.id)
-        );
+        setValue('credentials', credentials);
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
         setValue('execution_environment', execution_environment?.id);
@@ -287,7 +283,12 @@ export function LaunchWizard({
       id: 'credential-passwords',
       label: t('Credential Passwords'),
       hidden: (wizardValues: Partial<TemplateLaunch>) => {
-        const { credentials = [] } = 'credentials' in wizardValues ? wizardValues : config.defaults;
+        const credentials =
+          'credentials' in wizardValues
+            ? wizardValues.credentials
+            : config.defaults.credentials
+              ? config.defaults.credentials.map((cred) => cred.id)
+              : [];
 
         const launchConfigAsksCredentials = config.ask_credential_on_launch;
         const launchConfigRequiresPasswords = config.passwords_needed_to_start?.length > 0;
@@ -296,10 +297,10 @@ export function LaunchWizard({
           return false;
         }
 
-        const showCredentialPasswordsStep = credentials.some((credential) => {
-          if (!credential.inputs) {
-            const launchConfigCredential = config.defaults.credentials.find(
-              (defaultCred) => defaultCred.id === credential.id
+        const showCredentialPasswordsStep = credentials?.some((credId) => {
+          if (!config.defaults?.credentials?.find((cred) => cred.id === credId)?.inputs) {
+            const launchConfigCredential = config.defaults.credentials?.find(
+              (defaultCred) => defaultCred.id === credId
             );
             return launchConfigCredential && launchConfigCredential?.passwords_needed?.length > 0;
           }
@@ -310,7 +311,12 @@ export function LaunchWizard({
             'ssh_key_unlock',
             'vault_password',
           ];
-          return passwordInputs.some((inputName) => credential.inputs?.[inputName] === 'ASK');
+          return passwordInputs.some(
+            (inputName) =>
+              config.defaults?.credentials?.find((cred) => cred.id === credId)?.inputs?.[
+                inputName
+              ] === 'ASK'
+          );
         });
 
         return !showCredentialPasswordsStep;
@@ -371,7 +377,7 @@ export function LaunchWizard({
       inventory: defaults.inventory.id ? defaults.inventory : null,
     },
     credentials: {
-      credentials: defaults.credentials,
+      credentials: defaults?.credentials ? defaults.credentials.map((cred) => cred.id) : [],
     },
     'credential-passwords': {},
     'execution-environment': {
