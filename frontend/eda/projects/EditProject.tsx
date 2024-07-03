@@ -55,7 +55,7 @@ function ProjectCreateInputs() {
           placeholder={t('Enter description')}
           maxLength={150}
         />
-        <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" />
+        <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" isRequired />
         <PageFormTextInput
           name="type"
           aria-disabled={true}
@@ -171,7 +171,7 @@ function ProjectEditInputs() {
           placeholder={t('Enter description')}
           maxLength={150}
         />
-        <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" />
+        <PageFormSelectOrganization<EdaProjectCreate> name="organization_id" isRequired />
         <PageFormTextInput
           name="type"
           aria-disabled={true}
