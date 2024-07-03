@@ -97,7 +97,7 @@ describe('activity-stream', () => {
   });
 
   it('can filter by initiated by from activity stream list', function () {
-    cy.intercept(`api/v2/activity_stream/?actor__username__icontains=${activeUser.username}*`).as(
+    cy.intercept(awxAPI`/activity_stream/?actor__username__icontains=${activeUser.username}*`).as(
       'initiatorFilterRequest'
     );
     cy.filterTableByTextFilter('initiated-by-(username)', activeUser.username);

@@ -65,7 +65,7 @@ describe('Job Templates Tests', function () {
           cy.navigateTo('awx', 'templates');
           cy.filterTableByMultiSelect('name', [jtName]);
           cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
-          cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
+          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
           cy.wait('@postLaunch')
             .its('response.body.id')
@@ -168,7 +168,7 @@ describe('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.intercept('POST', `api/v2/job_templates/${id}/launch/`).as('postLaunch');
+          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);
           cy.wait('@postLaunch')
             .its('response.body.id')
@@ -368,7 +368,7 @@ describe('Job Templates Tests', function () {
       cy.verifyPageTitle('Edit Job Template');
       cy.getBy('[data-cy="name"]').clear().type(newName);
       cy.getBy('[data-cy="description"]').type('this is a new description after editing');
-      cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
+      cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
       cy.wait('@editJT')
         .its('response.body.name')
@@ -449,7 +449,7 @@ describe('Job Templates Tests', function () {
         'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.'
       );
 
-      cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
+      cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('editJT');
       cy.clickButton('Save job template');
       cy.wait('@editJT');
 
@@ -568,7 +568,7 @@ describe('Job Templates Tests', function () {
       cy.verifyPageTitle('Edit Job Template');
       cy.getBy('[data-cy="name"]').clear().type(newName);
       cy.getBy('[data-cy="description"]').type('this is a new description after editing');
-      cy.intercept('PATCH', `api/v2/job_templates/${jobTemplate.id}/`).as('editJT');
+      cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
       cy.wait('@editJT')
         .its('response.body')
