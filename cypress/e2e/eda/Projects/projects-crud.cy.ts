@@ -7,8 +7,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Projects CRUD', () => {
-  before(() => cy.edaLogin());
-
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
     const name = 'E2E Project ' + randomString(4);
     cy.navigateTo('eda', 'projects');

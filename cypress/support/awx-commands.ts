@@ -47,7 +47,7 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.clickModalButton('Close');
 });
 
-/* Custom Cypress command called `deleteWFApprovalConfirmModal`.
+/* Custom Cypress command called `actionsWFApprovalConfirmModal`.
 This command deletes a workflow approval request.
 It verifies that the remove modal is visible, clicks the confirm checkbox,
 clicks the delete workflow approvals, asserts all workflows were removed
@@ -69,7 +69,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called
+/* The following code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerJobTemplateNode`. This command is used to create a new workflow job
 template node in an AWX (Ansible Tower) instance. */
 Cypress.Commands.add(
@@ -84,12 +84,10 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called
-`createAwxWorkflowVisualizerManagementNode`. This command is used to create a workflow node for a
-given workflow job template in an AWX (Ansible Tower) application. The `workflowJobTemplateId`
-parameter is the ID of the workflow job template, and the `managementId` parameter is the ID of the
-management node (1, 2, 3, or 4). The command makes a POST request to the AWX API to create the
-workflow node with the specified parameters. */
+/** The following code is adding a custom Cypress command called
+`createAwxWorkflowVisualizerManagementNode`. This command is used to create a management job node for a workflow visualizer in an AWX (Ansible Controller) application.
+@param {'1'|'2'|'3'|'4'} managementId - Id of the management job template
+*/
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerManagementNode',
   (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {
@@ -102,7 +100,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
+/* The following code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
 command is used to create a new workflow node for a given workflow job template. It makes a POST
 request to the awxAPI`/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
 data to create the node. */
@@ -120,7 +118,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerProjectNode`.
+/* The following code is adding a custom Cypress command called `createAwxWorkflowVisualizerProjectNode`.
 This command is used to create a new workflow node for a given `workflowJobTemplate` and `project`
 in an AWX (Ansible Tower) environment. */
 Cypress.Commands.add(
@@ -154,7 +152,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called
+/* The following code is adding a custom Cypress command called
 `createAwxWorkflowVisualizerInventorySourceNode`. This command is used to create a workflow node for
 an Ansible Tower workflow job template. The function takes two parameters: `workflowJobTemplate` (of
 type `WorkflowJobTemplate`) and `inventorySource` (of type `InventorySource`). */
@@ -174,7 +172,7 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createWorkflowJTSuccessNodeLink`. This
+/* The following code is adding a custom Cypress command called `createWorkflowJTSuccessNodeLink`. This
 command is used to create a link between two nodes in a workflow job template. It takes two
 parameters, `firstNode` and `secondNode`, which are objects representing the first and second nodes
 respectively. */
@@ -190,11 +188,10 @@ Cypress.Commands.add(
   }
 );
 
-/* The above code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
+/* The following code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
 command is used to create a failure node link between two workflow job template nodes. It makes a
 POST request to the awxAPI`/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
 with the `id` of the second node as the request payload. */
-
 Cypress.Commands.add(
   'createWorkflowJTFailureNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
@@ -251,9 +248,15 @@ Cypress.Commands.add(
   }
 );
 
-/**
- * cy.inputCustomCredTypeConfig(json/yml, input/injector config)
- */
+Cypress.Commands.add('pollAWXResults', <T>(url: string) => {
+  cy.requestGet<AwxItemsResponse<T>>(url).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length > 0) {
+      cy.wrap(result.results);
+    } else {
+      cy.wait(100).then(() => cy.pollAWXResults(url));
+    }
+  });
+});
 
 Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: string) => {
   cy.get(`[data-cy="${configType}"]`)
@@ -267,10 +270,6 @@ Cypress.Commands.add('inputCustomCredTypeConfig', (configType: string, config: s
     })
     .type('{esc}');
 });
-
-/**@param
- * createAWXCredentialTypeUI
- */
 
 Cypress.Commands.add(
   'createAndDeleteCustomAWXCredentialTypeUI',
@@ -518,9 +517,6 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('clickModalButton', (label: string | RegExp) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    // cy.contains('button', label).click();
-    // FIXME: contains doesn't work inside modals !?
-    // ref.: https://github.com/cypress-io/cypress/issues/9268
     cy.clickButton(label);
   });
 });
@@ -600,12 +596,14 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createAwxProject',
   (
-    project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+    organization: Organization,
+    project?: Partial<Project>,
     scm_url?: string,
     skipSync?: boolean
   ) => {
     cy.requestPost<Project>(awxAPI`/projects/`, {
       name: 'E2E Project ' + randomString(4),
+      organization: organization.id,
       scm_type: 'git',
       scm_url: scm_url ? scm_url : 'https://github.com/ansible/ansible-ui',
       ...project,
@@ -700,28 +698,22 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxInventory', (inventory?: Partial<Omit<Inventory, 'id'>>) => {
-  if (inventory?.organization !== undefined) {
-    cy.requestPost<Inventory, Partial<Omit<Inventory, 'id'>>>(awxAPI`/inventories/`, {
+Cypress.Commands.add(
+  'createAwxInventory',
+  (organization: Organization, inventory?: Partial<Inventory>) => {
+    cy.requestPost<Inventory>(awxAPI`/inventories/`, {
       name: 'E2E Inventory ' + randomString(4),
+      organization: organization.id,
       ...inventory,
     });
-  } else {
-    cy.createAwxOrganization().then((organization) => {
-      cy.requestPost<Inventory, Partial<Omit<Inventory, 'id'>>>(awxAPI`/inventories/`, {
-        name: 'E2E Inventory ' + randomString(4),
-        organization: organization.id,
-        ...inventory,
-      });
-    });
   }
-});
+);
 
 Cypress.Commands.add('createAwxConstructedInventory', (organization: Organization) => {
   const arrayOfInventories: number[] = [];
   // creates 3 inventories
   for (let i = 0; i < 3; i++) {
-    cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+    cy.createAwxInventory(organization).then((inv: Inventory) => {
       arrayOfInventories.push(inv.id);
     });
   }
@@ -926,7 +918,6 @@ Cypress.Commands.add(
     cy.getAwxWorkflowJobTemplateByName(workflowJobTemplateName)
       .its('results[0]')
       .then((results: WorkflowJobTemplate) => {
-        cy.log('THIS ONE THIS ONE', results.id);
         cy.intercept(
           {
             method: 'GET',
@@ -936,7 +927,10 @@ Cypress.Commands.add(
         )
           .as('newVisualizerView')
           .then(() => {
-            cy.visit(`/templates/workflow-job-template/${results.id}/visualizer`);
+            cy.navigateTo('awx', 'templates');
+            cy.filterTableByMultiSelect('name', [results.name]);
+            cy.clickTableRowLink('name', results.name, { disableFilter: true });
+            cy.get('a[href*="/visualizer"]').click();
           });
       });
   }
@@ -1130,7 +1124,6 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    // const instanceGroupId = instanceGroup.id;
     if (instanceGroup?.id) {
       cy.requestDelete(awxAPI`/instance_groups/${instanceGroup.id.toString()}/`, options);
     }
@@ -1286,7 +1279,8 @@ Cypress.Commands.add('cancelJob', (job: Job) => {
 const GLOBAL_PROJECT_NAME = 'Global Project';
 const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
 const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
-const GLOBAL_ORG_NAME = 'Global Organization';
+const GLOBAL_ORG_NAME = 'Global Platform Level Organization';
+const GLOBAL_ORG_DESCRIPTION = 'DO NOT DELETE: Global Organization';
 
 /** Create a global organization if it doesn't exist. */
 Cypress.Commands.add('createGlobalOrganization', function () {
@@ -1296,7 +1290,7 @@ Cypress.Commands.add('createGlobalOrganization', function () {
       if (orgResults.length === 0) {
         cy.requestPost<AwxItemsResponse<Organization>, Partial<Organization>>(
           awxAPI`/organizations/`,
-          { name: GLOBAL_ORG_NAME }
+          { name: GLOBAL_ORG_NAME, description: GLOBAL_ORG_DESCRIPTION }
         );
         cy.wait(100).then(() => cy.createGlobalOrganization());
       } else {
@@ -1545,7 +1539,7 @@ Cypress.Commands.add('removeAwxInstance', (id: string) => {
 
 Cypress.Commands.add(
   'createNotificationTemplate',
-  function (notificationName: string, organization_id?: number) {
+  function (notificationName: string, organization: Organization) {
     cy.requestPost<
       Pick<
         NotificationTemplate,
@@ -1554,9 +1548,7 @@ Cypress.Commands.add(
       NotificationTemplate
     >(awxAPI`/notification_templates/`, {
       name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
-      organization: organization_id
-        ? organization_id
-        : (this.globalAwxOrganization as Organization).id,
+      organization: organization.id,
       notification_type: 'email',
       notification_configuration: {
         host: '127.0.0.1',
@@ -1589,9 +1581,15 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'createTemplateSurvey',
   (template: JobTemplate | WorkflowJobTemplate, label: string, spec: Spec) => {
-    cy.visit(
-      `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
-    );
+    cy.navigateTo('awx', 'templates');
+    cy.verifyPageTitle('Templates');
+    cy.filterTableByMultiSelect('name', [template.name]);
+    cy.get('[data-cy="name-column-cell"]').within(() => {
+      cy.get('a').click();
+    });
+    cy.verifyPageTitle(template.name);
+    cy.get('a[href*="survey"]').click();
+
     cy.getByDataCy('question-name').type(spec.question_name ?? '');
     cy.getByDataCy('question-description').type(spec?.question_description ?? '');
     cy.getByDataCy('question-variable').type(spec?.variable ?? '');

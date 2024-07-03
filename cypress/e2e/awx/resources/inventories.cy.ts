@@ -26,7 +26,7 @@ describe('Inventories Tests', () => {
             cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
               label = lbl;
             });
-            cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+            cy.createAwxInventory(organization).then((inv) => {
               //the cy.createAwxInventory() custom command needs to be updated to accept the
               //'kind' parameter, in order to work with the conditional in this spec file
               inventory = inv;
@@ -170,9 +170,9 @@ describe('Inventories Tests', () => {
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
 
           cy.createAwxOrganization().then((org) => {
-            cy.createAwxInventory({ organization: org.id }).then((inv1) => {
-              cy.createAwxInventory({ organization: org.id }).then((inv2) => {
-                cy.createAwxInventory({ organization: org.id }).then((inv3) => {
+            cy.createAwxInventory(organization).then((inv1) => {
+              cy.createAwxInventory(organization).then((inv2) => {
+                cy.createAwxInventory(organization).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
 
                   cy.intercept(

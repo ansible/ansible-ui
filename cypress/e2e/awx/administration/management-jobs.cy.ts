@@ -348,6 +348,18 @@ describe.skip('Management Jobs - Schedules Tab', () => {
 });
 
 describe('Management Jobs - Notifications Tab', function () {
+  let awxOrganization: Organization;
+
+  before(function () {
+    cy.createAwxOrganization().then((thisOrg) => {
+      awxOrganization = thisOrg;
+    });
+  });
+
+  after(function () {
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  });
+
   const managementJobsList = [
     'Cleanup Activity Stream',
     'Cleanup Expired OAuth 2 Tokens',
@@ -371,7 +383,7 @@ describe('Management Jobs - Notifications Tab', function () {
       cy.verifyPageTitle('Add notifier');
       cy.getByDataCy('name').type(notifierName);
       cy.getByDataCy('description').type('AWX Notifier Description');
-      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', awxOrganization.name);
       cy.singleSelectByDataCy('notification_type', 'Pagerduty');
       cy.getByDataCy('notification-configuration-subdomain').type('pagerduty.com');
       cy.getByDataCy('notification-configuration-token').type('token');
