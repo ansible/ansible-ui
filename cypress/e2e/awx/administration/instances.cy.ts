@@ -48,7 +48,7 @@ describe('Instances: Add/Edit', () => {
   });
 
   it('can edit an instance from the instances list view and assert info on details page', () => {
-    cy.intercept('PATCH', '/api/v2/instances/*/').as('editedInstance');
+    cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.url().then((currentUrl) => {
@@ -117,7 +117,7 @@ describe('Instances: Add/Edit', () => {
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('edit-instance').click();
     cy.getByDataCy('enabled').uncheck();
-    cy.intercept('PATCH', '/api/v2/instances/*/').as('editedInstance');
+    cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
     cy.clickButton(/^Save$/);
     cy.wait('@editedInstance')
       .then((response) => {
@@ -147,7 +147,7 @@ describe('Instances: Delete', () => {
   });
 
   it('can remove an instance from details page', () => {
-    cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
+    cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.url().then((currentUrl) => {
@@ -170,7 +170,7 @@ describe('Instances: Delete', () => {
   });
 
   it('can remove an instance from instance list toolbar', () => {
-    cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
+    cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
@@ -201,7 +201,7 @@ describe('Instances: Delete', () => {
       arrayOfElementText.push(instanceName);
     }
     arrayOfElementText.push(instance.hostname);
-    cy.intercept('PATCH', '/api/v2/instances/*').as('removedInstance');
+    cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
     cy.filterTableByMultiSelect('hostname', arrayOfElementText);
@@ -328,7 +328,7 @@ describe('Instances: Peers', () => {
   });
 
   it('can associate peers to an instance, navigate to associated peer details page and then disassociate peer', () => {
-    cy.intercept('PATCH', '/api/v2/instances/*').as('associatePeer');
+    cy.intercept('PATCH', awxAPI`/instances/*`).as('associatePeer');
     cy.filterTableBySingleSelect('hostname', instance.hostname);
     cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
     cy.getByDataCy('instances-peers-tab').click();
@@ -369,7 +369,7 @@ describe('Instances: Peers', () => {
       cy.get('[data-cy="checkbox-column-cell"] input').click();
     });
     cy.clickToolbarKebabAction('disassociate');
-    cy.intercept('PATCH', '/api/v2/instances/*/').as('disassociatePeer');
+    cy.intercept('PATCH', awxAPI`/instances/*/`).as('disassociatePeer');
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Disassociate peers');
       cy.get('button').contains('Disassociate peer').should('have.attr', 'aria-disabled', 'true');

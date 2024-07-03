@@ -234,7 +234,7 @@ describe('Credentials', () => {
     });
 
     it('can display success toast message when running a test from the create credential form', () => {
-      cy.intercept('POST', '/api/v2/credential_types/25/test', {}).as('runTest');
+      cy.intercept('POST', awxAPI`/credential_types/25/test`, {}).as('runTest');
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential/);
       cy.getByDataCy('name').type('foo');
@@ -298,7 +298,7 @@ describe('Credentials', () => {
     });
 
     it('can display success toast message when running a test from the edit credential form', () => {
-      cy.intercept('POST', `/api/v2/credentials/${credential.id}/test`, {}).as('runTest');
+      cy.intercept('POST', awxAPI`/credentials/${credential.id.toString()}/test`, {}).as('runTest');
       cy.navigateTo('awx', 'credentials');
       cy.filterTableByMultiSelect('name', [credential.name]);
       cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
