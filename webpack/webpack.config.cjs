@@ -11,7 +11,6 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 const {
   AWX_API_PREFIX,
-  AWX_GW_API_PREFIX,
   AWX_WEBSOCKET_PREFIX,
   EDA_API_PREFIX,
   HUB_API_PREFIX,
@@ -107,7 +106,6 @@ module.exports = function (env, argv) {
           : JSON.stringify('development'),
         'process.env.UI_MODE': JSON.stringify(process.env.UI_MODE),
         'process.env.AWX_API_PREFIX': JSON.stringify(AWX_API_PREFIX),
-        'process.env.AWX_GW_API_PREFIX': JSON.stringify(AWX_GW_API_PREFIX),
         'process.env.AWX_WEBSOCKET_PREFIX': JSON.stringify(AWX_WEBSOCKET_PREFIX),
         'process.env.EDA_API_PREFIX': JSON.stringify(EDA_API_PREFIX),
         'process.env.HUB_API_PREFIX': JSON.stringify(HUB_API_PREFIX),

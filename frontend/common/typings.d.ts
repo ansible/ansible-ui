@@ -31,7 +31,6 @@ declare namespace NodeJS {
     UI_MODE?: 'AWX' | 'HUB' | 'EDA' | 'GALAXY';
     ROUTE_PREFIX: string;
     AWX_API_PREFIX: string;
-    AWX_GW_API_PREFIX: string;
     AWX_WEBSOCKET_PREFIX: string;
     HUB_API_PREFIX: string;
     EDA_API_PREFIX: string;

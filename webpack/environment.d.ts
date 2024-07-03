@@ -1,6 +1,5 @@
 declare module 'config' {
   export const AWX_API_PREFIX: string;
-  export const AWX_GW_API_PREFIX: string;
   export const AWX_WEBSOCKET_PREFIX: string;
   export const AWX_PASSWORD: string;
   export const AWX_SERVER: string;

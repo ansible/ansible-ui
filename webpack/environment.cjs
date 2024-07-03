@@ -5,7 +5,6 @@ const AWX_SERVER =
 const AWX_USERNAME = process.env.AWX_USERNAME || process.env.CYPRESS_AWX_USERNAME || 'admin';
 const AWX_PASSWORD = process.env.AWX_PASSWORD || process.env.CYPRESS_AWX_PASSWORD || 'password';
 const AWX_API_PREFIX = process.env.AWX_API_PREFIX || '/api/v2';
-const AWX_GW_API_PREFIX = process.env.AWX_GW_API_PREFIX || '/api/v2';
 const AWX_WEBSOCKET_PREFIX = process.env.AWX_WEBSOCKET_PREFIX || '/websocket/';
 
 const EDA_PROTOCOL = process.env.EDA_PROTOCOL || 'http';
@@ -32,7 +31,6 @@ const ROUTE_PREFIX = process.env.ROUTE_PREFIX || '/';
 
 module.exports = {
   AWX_API_PREFIX,
-  AWX_GW_API_PREFIX,
   AWX_WEBSOCKET_PREFIX,
   AWX_PASSWORD,
   AWX_SERVER,
