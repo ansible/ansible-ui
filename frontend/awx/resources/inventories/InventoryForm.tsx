@@ -325,6 +325,9 @@ export function useInventoryFormDetailLabels() {
     prevent_instance_group_fallback: t(
       `Prevent instance group fallback: If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.`
     ),
+    input_inventories: t(
+      `Input Inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution`
+    ),
   };
 }
 
@@ -554,6 +557,8 @@ function PageFormMultiSelectInventories() {
   const filters = useInventoriesFilters();
   const columns = useInventoriesColumns();
   const { t } = useTranslation();
+  const labels = useInventoryFormDetailLabels();
+
   return (
     <PageFormMultiSelectAwxResource<Inventory>
       name={'inventories'}
@@ -563,7 +568,7 @@ function PageFormMultiSelectInventories() {
       queryPlaceholder={t('Loading inventories...')}
       queryErrorText={t('Error loading inventories')}
       isRequired={true}
-      labelHelp={t(`Select Input Inventories for the constructed inventory plugin.`)}
+      labelHelp={labels.input_inventories}
       url={awxAPI`/inventories/`}
       tableColumns={columns}
       toolbarFilters={filters}

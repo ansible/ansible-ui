@@ -183,6 +183,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       </PageDetail>
       <PageDetail
         label={t`Input inventories`}
+        helpText={inventoryFormDetailLables.input_inventories}
         isEmpty={
           typeof inputInventoriesError === 'undefined' &&
           (!inputInventories || inputInventories?.results.length === 0)
