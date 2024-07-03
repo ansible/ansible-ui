@@ -6,28 +6,6 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Project } from '../../frontend/awx/interfaces/Project';
 import { Role } from '../../frontend/awx/interfaces/Role';
 import { Team } from '../../frontend/awx/interfaces/Team';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
-
-Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {
-  cy.requestGet<AwxItemsResponse<WorkflowJobTemplate>>(
-    `/api/v2/workflow_job_templates/?name=${wfjtName}`
-  )
-    .its('results[0]')
-    .then((resource: WorkflowJobTemplate) => {
-      cy.requestGet<AwxItemsResponse<Role>>(
-        `/api/v2/workflow_job_templates/${resource.id}/object_roles/`
-      )
-        .its('results')
-        .then((rolesArray) => {
-          const approveRole = rolesArray
-            ? rolesArray.find((role) => role.name === roleName)
-            : undefined;
-          cy.requestPost<Partial<Role>>(`/api/v2/users/${userId}/roles/`, {
-            id: approveRole?.id,
-          });
-        });
-    });
-});
 
 Cypress.Commands.add(
   'giveUserCredentialsAccess',
