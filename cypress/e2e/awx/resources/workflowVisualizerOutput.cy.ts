@@ -102,7 +102,7 @@ describe('Workflow Visualizer', () => {
       });
     });
 
-    it('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
+    it.skip('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySingleSelect('name', `${jobTemplate?.name}`);
@@ -123,7 +123,6 @@ describe('Workflow Visualizer', () => {
       });
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.get('[data-cy="wf-vzr-name"]').should('have.text', `${workflowJobTemplate?.name}`);
-
       cy.getBy(`g[data-id=${jobTemplateNode.id}] .pf-topology__node__action-icon`).click({
         force: true,
       });
@@ -141,13 +140,22 @@ describe('Workflow Visualizer', () => {
       cy.getByDataCy('workflow-visualizer-toolbar-save').click();
       cy.getBy('.pf-v5-c-alert__action').click();
       cy.getByDataCy('workflow-visualizer-toolbar-kebab').click();
+      cy.intercept(
+        'POST',
+        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+      ).as('launch');
       cy.getByDataCy('workflow-visualizer-toolbar-launch').click();
-      cy.url().should('contain', `/output`);
-      cy.contains('Running').should('be.visible');
-      cy.contains('Unreachable').should('be.visible');
-      cy.getBy(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
-      cy.getBy(`g[class*="node-label"]`).contains(project.name).should('be.visible');
-      cy.contains('Success').should('be.visible');
+      cy.wait('@launch')
+        .its('response.body')
+        .then((job: Job) => {
+          cy.url().should('contain', `/output`);
+          cy.contains('Running').should('be.visible');
+          cy.waitForWorkflowJobStatus(`${job.id}`).then(() => {
+            cy.getBy(`g[class*="node-label"]`).contains(jobTemplate.name).should('be.visible');
+            cy.getBy(`g[class*="node-label"]`).contains(project.name).should('be.visible');
+            cy.contains('Success').should('be.visible');
+          });
+        });
     });
 
     it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {

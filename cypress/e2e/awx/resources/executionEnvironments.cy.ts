@@ -39,14 +39,13 @@ describe('Execution Environments', () => {
         credential_type: 18,
       }).then((cred) => {
         credential = cred;
-      });
-      if (Cypress.currentTest.title.includes('access to a user')) {
+
         cy.createAwxUser({ organization: awxOrganization.id }).then((testUser) => {
           user = testUser;
         });
-      }
-      execEnvName = 'E2E Execution Environment Create' + randomString(4);
-      image = 'quay.io/ansible/awx-ee:latest';
+        execEnvName = 'E2E Execution Environment Create' + randomString(4);
+        image = 'quay.io/ansible/awx-ee:latest';
+      });
       cy.navigateTo('awx', 'execution-environments');
       cy.verifyPageTitle('Execution Environments');
     });

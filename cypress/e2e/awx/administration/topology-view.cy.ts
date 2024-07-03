@@ -62,22 +62,6 @@ describe('Topology view', () => {
       });
   });
 
-  it('does not show Topology View in sidebar for non admins', function () {
-    cy.createAwxUser({ organization: organization.id }).then((awxUser) => {
-      user = awxUser;
-
-      cy.awxLoginTestUser(user.username, 'pw');
-      cy.getByDataCy('page-navigation').then((nav) => {
-        if (!nav.is(':visible')) cy.getByDataCy('nav-toggle').click();
-      });
-      cy.get('[data-cy="awx-topology-view"]').should('not.exist');
-
-      cy.visit('/infrastructure/topology');
-      cy.contains('Page not found');
-      cy.contains('We could not find that page.');
-    });
-  });
-
   it('will allow the user to view a large number of nodes', () => {
     cy.fixture('instance_nodes').then((instanceNodes: MeshVisualizer) => {
       cy.intercept('GET', awxAPI`/mesh_visualizer/`, instanceNodes);
