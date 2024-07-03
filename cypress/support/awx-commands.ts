@@ -76,7 +76,7 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerJobTemplateNode',
   (workflowJobTemplate: WorkflowJobTemplate, jobTemplateNode: JobTemplate) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: jobTemplateNode.id,
       }
@@ -94,7 +94,7 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerManagementNode',
   (workflowJobTemplateId: WorkflowJobTemplate, managementId: 1 | 2 | 3 | 4) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplateId?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplateId?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: managementId,
       }
@@ -104,13 +104,13 @@ Cypress.Commands.add(
 
 /* The above code is adding a custom Cypress command called `createAwxWorkflowVisualizerWJTNode`. This
 command is used to create a new workflow node for a given workflow job template. It makes a POST
-request to the `/api/v2/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
+request to the awxAPI`/workflow_job_templates/{id}/workflow_nodes/` endpoint with the necessary
 data to create the node. */
 Cypress.Commands.add(
   'createAwxWorkflowVisualizerWJTNode',
   (workflowJobTemplate: WorkflowJobTemplate) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: workflowJobTemplate?.id,
         limit: null,
@@ -127,7 +127,7 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerProjectNode',
   function (workflowJobTemplate: WorkflowJobTemplate, project: Project) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: project.id,
       }
@@ -139,11 +139,11 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerApprovalNode',
   (workflowJobTemplate: WorkflowJobTemplate) => {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {}
     ).then((approvalNode) => {
       cy.requestPost(
-        `/api/v2/workflow_job_template_nodes/${approvalNode.id}/create_approval_template/`,
+        awxAPI`/workflow_job_template_nodes/${approvalNode.id.toString()}/create_approval_template/`,
         {
           name: 'E2E WorkflowJTApprovalNode ' + randomString(4),
         }
@@ -162,7 +162,7 @@ Cypress.Commands.add(
   'createAwxWorkflowVisualizerInventorySourceNode',
   function (workflowJobTemplate: WorkflowJobTemplate, inventorySource: InventorySource) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_templates/${workflowJobTemplate?.id}/workflow_nodes/`,
+      awxAPI`/workflow_job_templates/${workflowJobTemplate?.id.toString()}/workflow_nodes/`,
       {
         unified_job_template: inventorySource.id,
         scm_branch: null,
@@ -182,7 +182,7 @@ Cypress.Commands.add(
   'createWorkflowJTSuccessNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_template_nodes/${firstNode.id}/success_nodes/`,
+      awxAPI`/workflow_job_template_nodes/${firstNode.id.toString()}/success_nodes/`,
       {
         id: secondNode.id,
       }
@@ -192,14 +192,14 @@ Cypress.Commands.add(
 
 /* The above code is adding a custom Cypress command called `createWorkflowJTFailureNodeLink`. This
 command is used to create a failure node link between two workflow job template nodes. It makes a
-POST request to the `/api/v2/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
+POST request to the awxAPI`/workflow_job_template_nodes/{firstNode.id}/failure_nodes/` endpoint
 with the `id` of the second node as the request payload. */
 
 Cypress.Commands.add(
   'createWorkflowJTFailureNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_template_nodes/${firstNode.id}/failure_nodes/`,
+      awxAPI`/workflow_job_template_nodes/${firstNode.id.toString()}/failure_nodes/`,
       {
         id: secondNode.id,
       }
@@ -212,7 +212,7 @@ Cypress.Commands.add(
   'createWorkflowJTAlwaysNodeLink',
   function (firstNode: WorkflowNode, secondNode: WorkflowNode) {
     cy.requestPost<WorkflowNode>(
-      `/api/v2/workflow_job_template_nodes/${firstNode.id}/always_nodes/`,
+      awxAPI`/workflow_job_template_nodes/${firstNode.id.toString()}/always_nodes/`,
       {
         id: secondNode.id,
       }
@@ -356,7 +356,6 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
 Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
   const menuSelector = `[data-cy*="${resource}-form-group"] div[data-ouia-component-id="menu-select"]`;
   cy.get('[data-cy="loading-spinner"]').should('not.exist');
-
   cy.get(`${menuSelector}`)
     .find('svg[data-cy="lookup-button"]', { timeout: 1000 })
     .should((_) => {})
@@ -691,7 +690,6 @@ Cypress.Commands.add(
       failOnStatusCode?: boolean;
     }
   ) => {
-    const organizationId = project.organization;
     // Delete sync job related to project
     if (project && project.related && typeof project.related.last_job === 'string') {
       const projectUpdateEndpoint: string = project.related.last_job;
@@ -699,10 +697,6 @@ Cypress.Commands.add(
     }
     // Delete project
     cy.requestDelete(awxAPI`/projects/${project.id.toString()}/`, options);
-    // Delete organization for the project
-    if (organizationId) {
-      cy.requestDelete(awxAPI`/organizations/${organizationId.toString()}/`, options);
-    }
   }
 );
 
@@ -731,7 +725,6 @@ Cypress.Commands.add('createAwxConstructedInventory', (organization: Organizatio
       arrayOfInventories.push(inv.id);
     });
   }
-
   cy.requestPost<Partial<Inventory & { inventories: Array<number | undefined> }>>(
     awxAPI`/constructed_inventories/`,
     {
@@ -1035,7 +1028,6 @@ Cypress.Commands.add(
               });
           });
         }
-
         if (kind === 'smart') {
           cy.requestPost<Partial<Inventory>>(awxAPI`/inventories/`, {
             name: `E2E Smart Inventory ${randomString(4)}`,
@@ -1047,7 +1039,6 @@ Cypress.Commands.add(
             return { inventory, host };
           });
         }
-
         if (kind === '') {
           return new Promise((resolve, _reject) => resolve({ inventory, host }));
         }
@@ -1170,7 +1161,7 @@ after(() => {
 
 Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
   cy.requestGet<AwxItemsResponse<JobEvent>>(
-    `api/v2/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
+    awxAPI`/jobs/${jobID}/job_events/?order_by=counter&page=1&page_size=50`
   )
     .its('results')
     .then((results: { summary_fields: { job: { status: string } } }[]) => {
@@ -1194,7 +1185,7 @@ Cypress.Commands.add('waitForTemplateStatus', (jobID: string) => {
 });
 
 Cypress.Commands.add('waitForManagementJobToProcess', (jobID: string, retries = 45) => {
-  cy.requestGet<Job>(`api/v2/system_jobs/${jobID}/`).then((mgtJobResponse: Job) => {
+  cy.requestGet<Job>(awxAPI`/system_jobs/${jobID}/`).then((mgtJobResponse: Job) => {
     let stillProcessing = false;
 
     if (mgtJobResponse) {
@@ -1335,6 +1326,154 @@ Cypress.Commands.add('createGlobalProject', function () {
     });
 });
 
+Cypress.Commands.add(
+  'createCustomAWXApplicationFromUI',
+  (
+    customAppName: string,
+    customAppDescription: string,
+    customGrantType: string,
+    customClientType: string,
+    customRedirectURIS: string
+  ) => {
+    cy.clickButton('Create application');
+    cy.verifyPageTitle('Create Application');
+    cy.get('[data-cy="name"]').type(customAppName);
+    cy.get('[data-cy="description"]').type(customAppDescription);
+    cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
+    cy.selectDropdownOptionByResourceName('authorization-grant-type', customGrantType);
+    cy.selectDropdownOptionByResourceName('client-type', customClientType);
+    cy.get('[data-cy="redirect-uris"]').type(customRedirectURIS);
+    cy.intercept('POST', awxAPI`/applications/`).as('createApp');
+    cy.clickButton('Create application');
+    //Verify API call
+    cy.wait('@createApp')
+      .its('response.statusCode')
+      .then((statusCode: string) => {
+        expect(statusCode).to.eql(201);
+      });
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('header').contains('Application information');
+    });
+    cy.get('button[aria-label="Close"]').click();
+  }
+);
+
+Cypress.Commands.add(
+  'editCustomAWXApplicationFromDetailsView',
+  (
+    customAppName: string,
+    customGrantType: string,
+    customClientType: string,
+    newCustomClientType: string
+  ) => {
+    //Verify application details page
+    cy.verifyPageTitle(customAppName);
+    cy.get('[data-cy="name"]').should('contain', customAppName);
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
+    cy.get('[data-cy="authorization-grant-type"]').should(
+      'contain',
+      customGrantType === 'Authorization code'
+        ? 'authorization-code'
+        : customGrantType.toLowerCase()
+    );
+    cy.get('[data-cy="client-type"]').should('contain', customClientType.toLowerCase());
+    //Click on Edit application button
+    cy.clickButton('Edit application');
+    cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
+    cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
+    cy.clickButton('Save application');
+    //Verify API call
+    cy.wait('@editApp')
+      .its('response.body.client_type')
+      .then((client_type: string) => {
+        expect(newCustomClientType.toLowerCase()).to.be.equal(client_type);
+      });
+    //Verify changes
+    cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
+  }
+);
+
+Cypress.Commands.add(
+  'editCustomAWXApplicationFromListView',
+  (customAppName: string, customGrantType: string, newCustomClientType: string) => {
+    //Go back to list view
+    cy.clickTab(/^Back to Applications$/, true);
+    cy.verifyPageTitle('OAuth Applications');
+    //Filter by app name
+    cy.searchAndDisplayResource(customAppName);
+    cy.get(`[data-cy="edit-application"]`).click();
+    cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
+    cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
+    cy.clickButton('Save application');
+    //Verify API call
+    cy.wait('@editApp')
+      .its('response.body.client_type')
+      .then((client_type: string) => {
+        expect(newCustomClientType.toLowerCase()).to.be.equal(client_type);
+      });
+    //Verify changes
+    cy.get('[data-cy="name"]').should('contain', customAppName);
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
+    cy.get('[data-cy="authorization-grant-type"]').should('contain', customGrantType.toLowerCase());
+    cy.get('[data-cy="client-type"]').should('contain', newCustomClientType.toLowerCase());
+  }
+);
+
+Cypress.Commands.add(
+  'deleteCustomAWXApplicationFromDetailsView',
+  (customAppName: string, customGrantType: string, customClientType: string) => {
+    //Verify application details page
+    cy.verifyPageTitle(customAppName);
+    cy.get('[data-cy="name"]').should('contain', customAppName);
+    cy.get('[data-cy="organization"]').should('contain', 'Default');
+    cy.get('[data-cy="authorization-grant-type"]').should(
+      'contain',
+      customGrantType === 'Authorization code'
+        ? 'authorization-code'
+        : customGrantType.toLowerCase()
+    );
+    cy.get('[data-cy="client-type"]').should('contain', customClientType.toLowerCase());
+    //Click on Delete application button
+    cy.clickButton('Delete application');
+    cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
+    //Verify Delete modal
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('header').contains('Permanently delete applications');
+      cy.get('button').contains('Delete application').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="name-column-cell"]').should('have.text', customAppName);
+      cy.get('[data-cy="organization-column-cell"]').should('have.text', 'Default');
+      cy.get('input[id="confirm"]').click();
+      cy.get('button').contains('Delete application').click();
+    });
+    //Verify API call
+    cy.wait('@deleteApp').then((deleteApp) => {
+      expect(deleteApp?.response?.statusCode).to.eql(204);
+    });
+  }
+);
+
+Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: string) => {
+  cy.clickTab(/^Back to Applications$/, true);
+  cy.verifyPageTitle('OAuth Applications');
+  cy.clickTableRowKebabAction(customAppName, 'delete-application');
+  cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
+  //Verify Delete modal
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('header').contains('Permanently delete applications');
+    cy.get('button').contains('Delete application').should('have.attr', 'aria-disabled', 'true');
+    cy.get('[data-cy="name-column-cell"]').should('have.text', customAppName);
+    cy.get('[data-cy="organization-column-cell"]').should('have.text', 'Default');
+    cy.get('input[id="confirm"]').click();
+    cy.get('button').contains('Delete application').click();
+  });
+  //Verify API call
+  cy.wait('@deleteApp').then((deleteApp) => {
+    expect(deleteApp?.response?.statusCode).to.eql(204);
+  });
+  //Confirm status
+  cy.assertModalSuccess();
+});
+
 Cypress.Commands.add('createAwxApplication', () => {
   return cy.requestPost<
     Application,
@@ -1453,15 +1592,11 @@ Cypress.Commands.add(
     cy.visit(
       `/templates/${template.type === 'job_template' ? 'job-template' : 'workflow-job-template'}/${template.id}/survey/add`
     );
-
     cy.getByDataCy('question-name').type(spec.question_name ?? '');
     cy.getByDataCy('question-description').type(spec?.question_description ?? '');
     cy.getByDataCy('question-variable').type(spec?.variable ?? '');
-
     spec?.required === false && cy.getByDataCy('question-required').uncheck();
-
     spec.type !== 'text' && cy.selectDropdownOptionByResourceName('type', label);
-
     if (['text', 'textarea', 'password', 'integer', 'float'].includes(spec.type)) {
       spec?.min && cy.getByDataCy('question-min').clear().type(spec.min.toString());
       spec?.max && cy.getByDataCy('question-max').clear().type(spec.max.toString());
@@ -1485,7 +1620,6 @@ Cypress.Commands.add(
         }
       });
     }
-
     cy.intercept('POST', awxAPI`/${template.type}s/*/survey_spec/`).as('createSurveySpec');
     cy.clickButton('Create question');
     cy.wait('@createSurveySpec')

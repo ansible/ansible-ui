@@ -147,7 +147,7 @@ describe('Projects', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
-      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
+      cy.intercept(awxAPI`/projects/${project.id.toString()}/update/`).as('projectUpdateRequest');
       cy.clickTableRowAction('name', `${project.name}`, 'sync-project', {
         disableFilter: true,
       });
@@ -295,7 +295,7 @@ describe('Projects', () => {
         disableFilter: true,
       });
       cy.verifyPageTitle(`${project.name}`);
-      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
+      cy.intercept(awxAPI`/projects/${project.id.toString()}/update/`).as('projectUpdateRequest');
       cy.clickButton(/^Sync project$/);
       cy.get('[data-cy="last-job-status"]').should('contain', 'Running');
       cy.waitForProjectToFinishSyncing(project.id);

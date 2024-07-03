@@ -1,5 +1,5 @@
 import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
@@ -97,7 +97,7 @@ describe('activity-stream', () => {
   });
 
   it('can filter by initiated by from activity stream list', function () {
-    cy.intercept(`api/v2/activity_stream/?actor__username__icontains=${activeUser.username}*`).as(
+    cy.intercept(awxAPI`/activity_stream/?actor__username__icontains=${activeUser.username}*`).as(
       'initiatorFilterRequest'
     );
     cy.filterTableByTextFilter('initiated-by-(username)', activeUser.username);

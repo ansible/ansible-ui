@@ -1,5 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { AwxHost } from '../../../../frontend/awx/interfaces/AwxHost';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
