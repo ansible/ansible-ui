@@ -81,18 +81,6 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  'filterByMultiSelection',
-  (filterType: RegExp | string, selectLabel: RegExp | string) => {
-    cy.selectToolbarFilterByLabel(filterType);
-    cy.get('#filter-input').click();
-    cy.get('#filter-input-select').within(() => {
-      cy.contains(selectLabel).click();
-    });
-    cy.get('tbody').click();
-  }
-);
-
-Cypress.Commands.add(
   'singleSelectShouldHaveSelectedOption',
   (selector: string, label: string | RegExp) => {
     cy.get(selector).within(() => {
