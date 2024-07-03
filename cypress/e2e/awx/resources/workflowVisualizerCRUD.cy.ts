@@ -7,7 +7,6 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../support/utils';
 
 describe('Workflow Visualizer', () => {
   let awxOrganization: Organization;
@@ -21,8 +20,7 @@ describe('Workflow Visualizer', () => {
   let workflowJtNode: WorkflowNode;
 
   before(function () {
-    const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((thisAwxOrg) => {
+    cy.createAwxOrganization().then((thisAwxOrg) => {
       awxOrganization = thisAwxOrg;
 
       cy.createAwxProject(awxOrganization).then((proj) => {

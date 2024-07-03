@@ -2,15 +2,13 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../support/utils';
 
 describe('Applications', () => {
   let app: Application;
   let awxOrganization: Organization;
 
   beforeEach(() => {
-    const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((thisAwxOrg) => {
+    cy.createAwxOrganization().then((thisAwxOrg) => {
       awxOrganization = thisAwxOrg;
     });
 

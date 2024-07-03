@@ -3,7 +3,6 @@ import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../../../frontend/awx/interfaces/CredentialType';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../support/utils';
 
 describe('Credential Types', () => {
   let credType1: CredentialType;
@@ -17,8 +16,7 @@ describe('Credential Types', () => {
     const credentialName = 'E2E Custom Credential ' + randomString(4);
 
     beforeEach(function () {
-      const orgName = randomE2Ename();
-      cy.createAwxOrganization(orgName).then((org) => {
+      cy.createAwxOrganization().then((org) => {
         awxOrganization = org;
 
         cy.createAwxCredentialType().then((credentialType: CredentialType) => {
