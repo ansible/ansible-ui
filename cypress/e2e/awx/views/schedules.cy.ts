@@ -94,7 +94,7 @@ describe.skip('Schedules - Create and Delete', () => {
     });
   });
 
-  describe.skip('Schedules - Create schedule of resource type Project', () => {
+  describe('Schedules - Create schedule of resource type Project', () => {
     let organization: Organization;
     let project: Project;
 
