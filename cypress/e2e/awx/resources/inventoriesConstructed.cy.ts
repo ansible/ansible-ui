@@ -179,14 +179,9 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.get(`[data-cy="input-inventories"] ul > li`) // Adjust the selector to match your list items
       .should(($lis) => {
         expectedOrder = $lis.map((index, el) => Cypress.$(el).text()).get();
-        //expect(actualOrder).to.deep.equal(expectedOrder);
       })
       .then(() => {
         cy.getByDataCy('edit-inventory').click();
-
-        // fill plugin
-        //cy.get(`[data-cy='source-vars']`);
-        //cy.get(`[data-cy='source-vars input`).type('plugin: test');
 
         // remove one item
         cy.contains(`[aria-label="Chip group category"] li`, expectedOrder[0]).within(() => {
@@ -198,15 +193,12 @@ describe('Constructed Inventories CRUD Tests', () => {
         expectedOrder.push(deletedItem);
 
         // now add it also in GUI
-        //cy.getByDataCy('inventories').click();
         cy.get(`[aria-label="Search input"]`).type(deletedItem);
         cy.contains('label', deletedItem).within(() => {
           cy.get('input').click();
         });
 
-        //cy.intercept('POST', awxAPI`/${constructedInv.id.toString()}/input_inventories/`).as('saveInv2');
         cy.clickButton(/^Save inventory$/);
-        //cy.wait('@saveInv2');
         cy.getByDataCy('input-inventories');
 
         cy.navigateTo('awx', 'inventories');
