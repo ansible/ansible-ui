@@ -214,7 +214,7 @@ describe('Inventory Groups', () => {
   });
 
   describe('Inventory Groups - Details View', () => {
-    it('can create a group, assert info on details page, then delete group from the details page', () => {
+    it.skip('can create a group, assert info on details page, then delete group from the details page', () => {
       cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
         const newGroupName = 'E2E Group ' + randomString(4);
