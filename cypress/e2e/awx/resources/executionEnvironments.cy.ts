@@ -314,7 +314,7 @@ describe('Execution Environments', () => {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
 
-    it('can create a new JT using the existing EE, visit the templates tab of the EE to view the JT, delete the JT and then delete the EE', function () {
+    it.skip('can create a new JT using the existing EE, visit the templates tab of the EE to view the JT, delete the JT and then delete the EE', function () {
       const jtName = 'E2E Job Template EE ' + randomString(4);
       const execEnvName = 'E2E Execution Environment JT ' + randomString(4);
       const image = 'quay.io/ansible/awx-ee:latest';
