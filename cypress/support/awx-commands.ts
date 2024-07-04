@@ -709,40 +709,51 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxConstructedInventory', (organization: Organization) => {
-  const arrayOfInventories: number[] = [];
-  // creates 3 inventories
-  for (let i = 0; i < 3; i++) {
-    cy.createAwxInventory(organization).then((inv: Inventory) => {
-      arrayOfInventories.push(inv.id);
-    });
-  }
-  cy.requestPost<Partial<Inventory & { inventories: Array<number | undefined> }>>(
-    awxAPI`/constructed_inventories/`,
-    {
+Cypress.Commands.add(
+  'createAwxConstructedInventory',
+  (organization: Organization, source_vars?: boolean) => {
+    const arrayOfInventories: number[] = [];
+    // creates 3 inventories
+    for (let i = 0; i < 3; i++) {
+      cy.createAwxInventory(organization).then((inv: Inventory) => {
+        arrayOfInventories.push(inv.id);
+      });
+    }
+
+    const postData: Partial<Inventory & { inventories: Array<number | undefined> }> = {
       name: `E2E Constructed Inventory ${randomString(4)}`,
       organization: organization.id,
       kind: 'constructed',
       inventories: arrayOfInventories,
-      source_vars: 'plugin: test',
+    };
+
+    if (source_vars) {
+      postData.source_vars = 'plugin: test';
+    } else {
+      postData.variables = 'plugin: test';
     }
-  ).then((constructedInv: Partial<Inventory>) => {
-    const inputInvPromises = arrayOfInventories.map((invID) => {
-      cy.requestPost(awxAPI`/inventories/${String(constructedInv.id)}/input_inventories/`, {
-        id: invID,
+
+    cy.requestPost<Partial<Inventory & { inventories: Array<number | undefined> }>>(
+      awxAPI`/constructed_inventories/`,
+      postData
+    ).then((constructedInv: Partial<Inventory>) => {
+      const inputInvPromises = arrayOfInventories.map((invID) => {
+        cy.requestPost(awxAPI`/inventories/${String(constructedInv.id)}/input_inventories/`, {
+          id: invID,
+        });
       });
-    });
-    const resolvePromise = Promise.all(inputInvPromises).then((_res) => {
-      cy.requestPost(
-        awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
-        {}
-      ).then((_res) => {
-        return constructedInv;
+      const resolvePromise = Promise.all(inputInvPromises).then((_res) => {
+        cy.requestPost(
+          awxAPI`/inventories/${String(constructedInv.id)}/update_inventory_sources/`,
+          {}
+        ).then((_res) => {
+          return constructedInv;
+        });
       });
+      return resolvePromise;
     });
-    return resolvePromise;
-  });
-});
+  }
+);
 
 Cypress.Commands.add(
   'createAwxInventorySource',

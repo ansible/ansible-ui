@@ -701,7 +701,10 @@ declare global {
         inventory?: Partial<Inventory>
       ): Chainable<Inventory>;
 
-      createAwxConstructedInventory(organization: Organization): Chainable<Inventory>;
+      createAwxConstructedInventory(
+        organization: Organization,
+        source_vars?: boolean
+      ): Chainable<Inventory>;
 
       createAwxInventorySource(
         inventory: Partial<Pick<Inventory, 'id'>>,

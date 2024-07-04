@@ -162,6 +162,60 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
+  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+    //Create a constructed inventory in the beforeEach hook
+    //Assert the original details of the inventory
+    //Assert the user navigating to the edit constructed inventory form
+    //Assert the change to the strict setting
+    //Add bad variables
+    //Assert the edited changes of the inventory
+    //Run a sync and assert failure of the job
+  });
+});
+
+describe('Constructed Inventories CRUD Tests - reorder input inventories', () => {
+  let organization: Organization;
+  let inventoriesList: Inventory[] = [];
+  let constructedInv: Inventory;
+  let instanceGroup: InstanceGroup;
+  const invToDelete: Inventory[] = [];
+  const constrInvToDelete: Inventory[] = [];
+  const invToCreate: number = 3;
+
+  before(() => {
+    const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
+    cy.createAwxOrganization({ name: orgName }).then((org) => {
+      organization = org;
+      cy.createAwxInstanceGroup().then((ig) => {
+        instanceGroup = ig;
+      });
+    });
+  });
+
+  beforeEach(() => {
+    inventoriesList = [];
+    for (let i = 0; i < invToCreate; i++) {
+      cy.createAwxInventory(organization).then((inv) => {
+        inventoriesList.push(inv);
+      });
+    }
+    cy.createAwxConstructedInventory(organization, true).then((constInv) => {
+      constructedInv = constInv;
+    });
+  });
+
+  afterEach(() => {
+    constrInvToDelete.push(constructedInv);
+    invToDelete.push(...inventoriesList);
+  });
+
+  after(() => {
+    cy.deleteAwxInstanceGroup(instanceGroup);
+    invToDelete.map((inventory) => cy.deleteAwxInventory(inventory, { failOnStatusCode: false }));
+    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
+    cy.deleteAwxOrganization(organization);
+  });
+
   it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
     //Create a constructed inventory in the beforeEach hook
     //Assert the original order of the input inventories
@@ -214,16 +268,6 @@ describe('Constructed Inventories CRUD Tests', () => {
             expect(actualOrder).to.deep.equal(expectedOrder);
           });
       });
-  });
-
-  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
-    //Create a constructed inventory in the beforeEach hook
-    //Assert the original details of the inventory
-    //Assert the user navigating to the edit constructed inventory form
-    //Assert the change to the strict setting
-    //Add bad variables
-    //Assert the edited changes of the inventory
-    //Run a sync and assert failure of the job
   });
 });
 
