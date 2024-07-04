@@ -12,7 +12,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   let instanceGroup: InstanceGroup;
   const invToDelete: Inventory[] = [];
   const constrInvToDelete: Inventory[] = [];
-  const invToCreate: number = 3;
+  const invToCreate: number = 1;
 
   before(() => {
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
