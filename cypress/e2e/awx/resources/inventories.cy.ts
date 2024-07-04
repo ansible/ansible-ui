@@ -224,7 +224,6 @@ describe('Inventories Tests', () => {
 
             cy.getByDataCy('organization').click();
             cy.contains('button', 'Browse').click();
-            cy.get(`[role="dialog"]`);
 
             cy.get(`[role="dialog"]`).within(() => {
               cy.filterTableByMultiSelect('name', [org.name]);
