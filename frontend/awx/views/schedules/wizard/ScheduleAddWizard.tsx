@@ -58,13 +58,24 @@ export function ScheduleAddWizard() {
       ...rest,
     };
 
-    const {
-      schedule,
-    }: {
-      schedule: Schedule;
-    } = await processSchedules(data);
-    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-    pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    try {
+      const {
+        schedule,
+      }: {
+        schedule: Schedule;
+      } = await processSchedules(data);
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+      pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    } catch (error) {
+      const { fieldErrors } = awxErrorAdapter(error);
+      const missingResource = fieldErrors.find((err) => err?.name === 'resources_needed_to_start');
+      if (missingResource) {
+        const errors = {
+          __all__: [missingResource.message],
+        };
+        throw new RequestError('', '', 400, '', errors);
+      }
+    }
   };
 
   const onCancel = () => navigate(location.pathname.replace('create', ''));
@@ -152,22 +163,6 @@ export function ScheduleAddWizard() {
                 'This schedule will never run.  If you have defined exceptions it is likely that the exceptions cancel out all the rules defined in the rules step.'
               ),
             ],
-          };
-
-          throw new RequestError('', '', 400, '', errors);
-        }
-
-        const { resource } = wizardData;
-        if (
-          (resource?.type === 'job_template' &&
-            (!resource?.summary_fields?.inventory ||
-              !resource?.summary_fields?.project ||
-              !resource?.summary_fields?.organization)) ||
-          (resource?.type === 'workflow_job_template' &&
-            (!resource?.summary_fields?.inventory || !resource?.summary_fields?.organization))
-        ) {
-          const errors = {
-            __all__: [t('Resources are missing from this template.')],
           };
 
           throw new RequestError('', '', 400, '', errors);
