@@ -163,7 +163,11 @@ export function PageMultiSelect<
   const selectedOptions = useMemo(() => {
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
-      const option = options.find((option) => option.value === value);
+      const option = options.find((option) =>
+        typeof value !== 'number'
+          ? (option.value as { id: number }).id === (value as { id: number }).id
+          : option.value === value
+      );
       if (option) {
         selectedOptions.push(option);
       } else if (queryLabel) {
@@ -264,13 +268,20 @@ export function PageMultiSelect<
           else return option.label === itemId;
         });
         if (newSelectedOption) {
-          if (previousValues?.find((value) => value === newSelectedOption.value) !== undefined) {
-            previousValues = previousValues.filter((value) => value !== newSelectedOption.value);
+          if (
+            previousValues?.find(
+              (value) => JSON.stringify(value) === JSON.stringify(newSelectedOption.value)
+            ) !== undefined
+          ) {
+            previousValues = previousValues.filter(
+              (value) => JSON.stringify(value) !== JSON.stringify(newSelectedOption.value)
+            );
           } else {
             previousValues = previousValues ? [...previousValues] : [];
             previousValues.push(newSelectedOption.value);
           }
         }
+
         return previousValues;
       });
     },
