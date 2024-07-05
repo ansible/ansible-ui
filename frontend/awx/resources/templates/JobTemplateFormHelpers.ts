@@ -28,7 +28,7 @@ export function getJobTemplateDefaultValues(
     ask_variables_on_launch: template.ask_variables_on_launch || false,
     ask_verbosity_on_launch: template.ask_verbosity_on_launch || false,
     become_enabled: template.become_enabled || false,
-    credentials: template.summary_fields?.credentials.map((cred) => cred.id) || [],
+    credentials: template.summary_fields?.credentials || [],
     description: template.description || '',
     diff_mode: template.diff_mode || false,
     execution_environment: template.summary_fields?.execution_environment || null,

@@ -154,7 +154,9 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       )}
       <PageDetail label={t('Credentials')} isEmpty={isEmpty(credentials)}>
         <LabelGroup>
-          {credentials?.map((credId) => <CredentialDetail credentialID={credId} key={credId} />)}
+          {credentials?.map((credential) => (
+            <CredentialDetail credentialID={credential.id} key={credential.id} />
+          ))}
         </LabelGroup>
       </PageDetail>
       <PageDetail

@@ -2,6 +2,7 @@ import { InstanceGroup } from './InstanceGroup';
 import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
 import { Project } from './Project';
+import { Credential } from './Credential';
 
 export interface JobTemplateRelatedFields
   extends Pick<JobTemplate['related'], 'webhook_receiver' | 'callback' | 'webhook_key'> {
@@ -32,7 +33,7 @@ export interface JobTemplateForm
     | 'project'
     | 'survey_enabled'
   > {
-  credentials: number[];
+  credentials: Pick<Credential, 'id' | 'name' | 'cloud' | 'description' | 'kind'>[];
   enableHostConfig?: boolean;
   execution_environment: { id: number; name: string } | null;
   id?: number;

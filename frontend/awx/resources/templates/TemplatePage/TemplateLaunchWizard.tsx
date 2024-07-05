@@ -30,6 +30,7 @@ import { PageFormInventorySelect } from '../../inventories/components/PageFormIn
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
+import { Credential } from '../../../interfaces/Credential';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -52,7 +53,7 @@ export const formFieldToLaunchConfig = {
 
 export interface TemplateLaunch {
   inventory: Inventory;
-  credentials: number[];
+  credentials: Credential[];
   credential_passwords: { [key: string]: string };
   instance_groups: { id: number; name: string }[];
   execution_environment: ExecutionEnvironment;
@@ -177,7 +178,10 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           payload[key] = value;
         };
 
-        setValue('credentials', credentials);
+        setValue(
+          'credentials',
+          credentials.map((cred) => Number(cred.id))
+        );
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
         setValue('execution_environment', execution_environment?.id);
@@ -285,10 +289,8 @@ export function LaunchWizard({
       hidden: (wizardValues: Partial<TemplateLaunch>) => {
         const credentials =
           'credentials' in wizardValues
-            ? wizardValues.credentials
-            : config.defaults.credentials
-              ? config.defaults.credentials.map((cred) => cred.id)
-              : [];
+            ? (wizardValues.credentials as Credential[])
+            : (config.defaults.credentials as unknown as Credential[]);
 
         const launchConfigAsksCredentials = config.ask_credential_on_launch;
         const launchConfigRequiresPasswords = config.passwords_needed_to_start?.length > 0;
@@ -297,10 +299,10 @@ export function LaunchWizard({
           return false;
         }
 
-        const showCredentialPasswordsStep = credentials?.some((credId) => {
-          if (!config.defaults?.credentials?.find((cred) => cred.id === credId)?.inputs) {
+        const showCredentialPasswordsStep = credentials?.some((credential: Credential) => {
+          if (!credential.inputs) {
             const launchConfigCredential = config.defaults.credentials?.find(
-              (defaultCred) => defaultCred.id === credId
+              (defaultCred) => JSON.stringify(defaultCred.id) === JSON.stringify(credential.id)
             );
             return launchConfigCredential && launchConfigCredential?.passwords_needed?.length > 0;
           }
@@ -311,12 +313,7 @@ export function LaunchWizard({
             'ssh_key_unlock',
             'vault_password',
           ];
-          return passwordInputs.some(
-            (inputName) =>
-              config.defaults?.credentials?.find((cred) => cred.id === credId)?.inputs?.[
-                inputName
-              ] === 'ASK'
-          );
+          return passwordInputs.some((inputName) => credential.inputs?.[inputName] === 'ASK');
         });
 
         return !showCredentialPasswordsStep;
@@ -377,7 +374,7 @@ export function LaunchWizard({
       inventory: defaults.inventory.id ? defaults.inventory : null,
     },
     credentials: {
-      credentials: defaults?.credentials ? defaults.credentials.map((cred) => cred.id) : [],
+      credentials: defaults?.credentials,
     },
     'credential-passwords': {},
     'execution-environment': {
