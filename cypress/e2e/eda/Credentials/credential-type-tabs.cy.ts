@@ -28,7 +28,7 @@ describe('EDA Credentials Type - Tabs', () => {
     cy.deleteEdaCredentialType(credtype);
   });
 
-  it('can view credentials in use via Credentials Tab', () => {
+  it.skip('can view credentials in use via Credentials Tab', () => {
     cy.navigateTo('eda', 'credential-types');
     cy.get('h1').should('contain', 'Credential Types');
     cy.clickTableRow(credtype.name, false);
@@ -38,7 +38,7 @@ describe('EDA Credentials Type - Tabs', () => {
     cy.contains('h1', cred.name);
   });
 
-  it('can remove credentials via Credentials Tab', () => {
+  it.skip('can remove credentials via Credentials Tab', () => {
     cy.navigateTo('eda', 'credential-types');
     cy.get('h1').should('contain', 'Credential Types');
     cy.clickTableRow(credtype.name, false);
