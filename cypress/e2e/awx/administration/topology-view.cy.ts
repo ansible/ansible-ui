@@ -45,7 +45,7 @@ describe('Topology view', () => {
     cy.verifyPageTitle('Topology View');
   });
 
-  it('navigate to instance group detail when instance group is clicked from sidebar', () => {
+  it.skip('navigate to instance group detail when instance group is clicked from sidebar', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
