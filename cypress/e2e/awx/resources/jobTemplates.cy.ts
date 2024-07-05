@@ -62,6 +62,7 @@ describe.skip('Job Templates Tests', function () {
       project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
       inventoryWithHost?.id &&
         cy.deleteAwxInventory(inventoryWithHost, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization);
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
@@ -147,16 +148,7 @@ describe.skip('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-            cy.get('button').eq(1).click();
-          });
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', instanceGroup);
-            cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-              cy.get('[data-cy="checkbox-column-cell"] input').click();
-            });
-            cy.clickButton(/^Confirm/);
-          });
+          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup]);
           cy.clickButton(/^Next/);
           cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);
@@ -219,16 +211,7 @@ describe.skip('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-            cy.get('button').eq(1).click();
-          });
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', instanceGroup);
-            cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-              cy.get('[data-cy="checkbox-column-cell"] input').click();
-            });
-            cy.clickButton(/^Confirm/);
-          });
+          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup]);
           cy.clickButton(/^Next/);
           cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);

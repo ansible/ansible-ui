@@ -15,6 +15,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   const invToCreate: number = 3;
 
   before(() => {
+    cy.login();
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
     cy.createAwxOrganization({ name: orgName }).then((org) => {
       organization = org;
@@ -73,16 +74,17 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.singleSelectBy('[data-cy="organization"]', organization.name);
     cy.wait('@filterOrg');
     // this can be simplified if we include data-cy to the search button of instance groups
-    cy.getByDataCy('instance-group-select-form-group').find('[aria-label="Options menu"]').click();
+    cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+
     cy.intercept({
       method: 'GET',
       pathname: awxAPI`/instance_groups/`,
       query: { name: instanceGroup.name },
     }).as('filterInstanceG');
-    cy.filterTableByMultiSelect('name', [instanceGroup.name]);
-    cy.wait('@filterInstanceG');
-    cy.getByDataCy('checkbox-column-cell').click();
-    cy.clickModalButton('Confirm');
+    // cy.filterTableByMultiSelect('name', [instanceGroup.name]);
+    // cy.wait('@filterInstanceG');
+    // cy.getByDataCy('checkbox-column-cell').click();
+    // cy.clickModalButton('Confirm');
     cy.intercept({
       method: 'GET',
       pathname: awxAPI`/inventories/`,
