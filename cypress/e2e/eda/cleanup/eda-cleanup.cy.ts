@@ -14,8 +14,6 @@ function isOldResource(prefix: string, resource: { name?: string; created_at?: s
 }
 
 describe('EDA Cleanup', () => {
-  before(() => cy.edaLogin());
-
   it('cleanup old admin awx tokens', () => {
     cy.request<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`).then((response) => {
       const tokens = response.body.results;
