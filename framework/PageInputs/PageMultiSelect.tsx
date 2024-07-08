@@ -164,7 +164,7 @@ export function PageMultiSelect<
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
       const option = options.find((option) =>
-        typeof value !== 'number'
+        typeof value === 'object'
           ? (option.value as { id: number }).id === (value as { id: number }).id
           : option.value === value
       );
@@ -269,19 +269,22 @@ export function PageMultiSelect<
         });
         if (newSelectedOption) {
           if (
-            previousValues?.find(
-              (value) => JSON.stringify(value) === JSON.stringify(newSelectedOption.value)
+            previousValues?.find((value) =>
+              typeof value === 'object'
+                ? (value as { id: number }).id === (newSelectedOption.value as { id: number }).id
+                : value === newSelectedOption.value
             ) !== undefined
           ) {
-            previousValues = previousValues.filter(
-              (value) => JSON.stringify(value) !== JSON.stringify(newSelectedOption.value)
+            previousValues = previousValues.filter((value) =>
+              typeof value === 'object'
+                ? (value as { id: number }).id !== (newSelectedOption.value as { id: number }).id
+                : value !== newSelectedOption.value
             );
           } else {
             previousValues = previousValues ? [...previousValues] : [];
             previousValues.push(newSelectedOption.value);
           }
         }
-
         return previousValues;
       });
     },

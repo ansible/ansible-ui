@@ -5,11 +5,13 @@ import { PageMultiSelect } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
 interface ITestObject {
+  id: number;
   name: string;
   description?: string;
 }
 
 const testObjects: ITestObject[] = new Array(12).fill(0).map((_, index) => ({
+  id: index,
   name: `Option ${index}`,
   description: `Description ${index}`,
 }));
