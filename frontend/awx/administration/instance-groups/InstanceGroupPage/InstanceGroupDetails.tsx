@@ -1,11 +1,20 @@
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import { PageDetails, PageDetail, DateTimeCell, LoadingPage } from '../../../../../framework';
+import { Link, useParams } from 'react-router-dom';
+import {
+  DateTimeCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+} from '../../../../../framework';
+import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { Unavailable } from '../../../../../framework/components/Unavailable';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { AwxError } from '../../../common/AwxError';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function InstanceGroupDetails() {
   const params = useParams<{ id: string }>();
@@ -25,6 +34,7 @@ export function InstanceGroupDetails() {
 export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }) {
   const { t } = useTranslation();
   const { instanceGroup } = props;
+  const getPageUrl = useGetPageUrl();
 
   return (
     <PageDetails>
@@ -67,7 +77,29 @@ export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }
         {instanceGroup.max_forks}
       </PageDetail>
       <PageDetail label={t('Used Capacity')} isEmpty={instanceGroup.is_container_group}>
-        {instanceGroup.consumed_capacity}
+        {instanceGroup.capacity ? (
+          `${Math.round(100 - instanceGroup.percent_capacity_remaining)}%`
+        ) : (
+          <Unavailable>{t('Unavailable')}</Unavailable>
+        )}
+      </PageDetail>
+      <PageDetail
+        label={t('Credential')}
+        isEmpty={!instanceGroup.is_container_group || !instanceGroup.summary_fields.credential}
+      >
+        <LabelGroup>
+          <Label color="blue">
+            <Link
+              to={getPageUrl(AwxRoute.CredentialDetails, {
+                params: {
+                  id: instanceGroup?.summary_fields?.credential?.id,
+                },
+              })}
+            >
+              {instanceGroup?.summary_fields?.credential?.name}
+            </Link>
+          </Label>
+        </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell value={instanceGroup.created} />
