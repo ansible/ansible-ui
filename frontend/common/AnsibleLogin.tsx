@@ -2,6 +2,7 @@ import {
   BackgroundImage,
   Brand,
   Login,
+  LoginFooter,
   LoginForm,
   LoginHeader,
   LoginMainBody,
@@ -127,7 +128,7 @@ export function AnsibleLogin(props: {
             }
           />
         }
-        footer={props.textContent}
+        footer={props.textContent && <LoginFooter>{props.textContent}</LoginFooter>}
       >
         <LoginMainHeader
           title={props.loginTitle ?? t('Log in to your account')}
