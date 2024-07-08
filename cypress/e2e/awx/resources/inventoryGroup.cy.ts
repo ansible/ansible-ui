@@ -54,7 +54,7 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
         cy.intercept('POST', awxAPI`/groups/`).as('created');
-        cy.clickButton(/^Save/);
+        cy.clickButton(/^Save group/);
         cy.wait('@created')
           .its('response.statusCode')
           .then((statusCode) => {
@@ -229,7 +229,7 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
         cy.intercept('POST', awxAPI`/groups/`).as('createGroup');
-        cy.clickButton(/^Save/);
+        cy.clickButton(/^Save group/);
         cy.wait('@createGroup')
           .its('response.statusCode')
           .then((statusCode) => {
