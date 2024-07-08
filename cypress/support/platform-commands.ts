@@ -31,15 +31,15 @@ Cypress.Commands.add('platformLogin', () => {
       });
       cy.contains('Log in');
       cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
-      cy.getByDataCy('username').type(Cypress.env('PLATFORM_USERNAME') as string, {
-        force: true,
+      cy.get('#pf-login-username-id').type(Cypress.env('PLATFORM_USERNAME') as string, {
         delay: 0,
-      });
-      cy.getByDataCy('password').type(Cypress.env('PLATFORM_PASSWORD') as string, {
         force: true,
-        delay: 0,
       });
-      cy.getByDataCy('Submit').click();
+      cy.get('#pf-login-password-id').type(Cypress.env('PLATFORM_PASSWORD') as string, {
+        delay: 0,
+        force: true,
+      });
+      cy.contains('button', 'Log in').click();
       cy.getByDataCy('nav-toggle').should('exist');
     },
     {
