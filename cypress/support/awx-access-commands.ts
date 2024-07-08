@@ -6,6 +6,7 @@ import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
+import { awxAPI } from './formatApiPathForAwx';
 
 // Base create and delete commands for AWX organizations, teams, and users
 
