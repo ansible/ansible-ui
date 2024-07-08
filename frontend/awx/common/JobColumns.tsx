@@ -213,8 +213,9 @@ export function useJobScheduleColumn<T extends UnifiedJob>(
     () => ({
       header: t('Schedule'),
       cell: (job: UnifiedJob) => {
+        const scheduleUrl = getScheduleUrl(job);
         return (
-          <Link to={job.summary_fields?.schedule && getScheduleUrl(job) ? getScheduleUrl(job) : ''}>
+          <Link to={job.summary_fields?.schedule && scheduleUrl ? scheduleUrl : ''}>
             {job.summary_fields?.schedule?.name}
           </Link>
         );
