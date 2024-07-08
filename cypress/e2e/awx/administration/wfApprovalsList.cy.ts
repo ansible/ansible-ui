@@ -161,7 +161,7 @@ describe('Workflow Approvals Tests', () => {
             });
           }
         );
-        //cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
       });
     });
 
