@@ -15,7 +15,7 @@ describe.skip('Schedules - Create and Delete', () => {
     let project: Project;
     let inventory: Inventory;
 
-    before(() => {
+    beforeEach(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
         cy.createAwxProject(organization).then((proj) => {
@@ -35,7 +35,7 @@ describe.skip('Schedules - Create and Delete', () => {
       });
     });
 
-    after(() => {
+    afterEach(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
@@ -73,6 +73,24 @@ describe.skip('Schedules - Create and Delete', () => {
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete schedule');
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    });
+
+    it("can't create a schedule with missing resources", () => {
+      const scheduleName = 'E2E Schedule With Missing Resources' + randomString(4);
+      cy.deleteAwxInventory(inventory);
+      cy.navigateTo('awx', 'schedules');
+      cy.verifyPageTitle('Schedules');
+      cy.getByDataCy('create-schedule').click();
+      cy.verifyPageTitle('Create Schedule');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
+      cy.getByDataCy('name').type(`${scheduleName}`);
+      cy.clickButton('Next');
+      cy.clickButton('Save rule');
+      cy.clickButton('Next');
+      cy.clickButton('Next');
+      cy.clickButton('Finish');
+      cy.contains('Job Template inventory is missing or undefined.');
     });
   });
 
@@ -601,6 +619,7 @@ describe('Schedules - Edit', () => {
   let schedule: Schedule;
   let project: Project;
   let organization: Organization;
+  let jobTemplate: JobTemplate;
 
   beforeEach(() => {
     const name = 'E2E Edit Schedule ' + randomString(4);
@@ -626,6 +645,7 @@ describe('Schedules - Edit', () => {
     cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    jobTemplate?.id && cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
   });
 
   it('can edit a simple schedule from details page', () => {
@@ -883,5 +903,48 @@ describe('Schedules - Edit', () => {
       cy.getByDataCy('toggle-switch').click();
     });
     cy.get('input[aria-label="Click to disable schedule"]').should('exist');
+  });
+
+  it("can't edit a schedule with missing resources", () => {
+    const name = 'E2E Edit Schedule With Missing Resources' + randomString(4);
+
+    cy.createAwxInventory(organization).then((inv) => {
+      cy.createAwxJobTemplate({
+        name: 'E2E Job Template ' + randomString(4),
+        organization: organization.id,
+        project: project.id,
+        inventory: inv.id,
+      }).then((jt) => {
+        jobTemplate = jt;
+        cy.createAWXSchedule({
+          name,
+          unified_job_template: jt.id,
+          rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+        }).then((sched: Schedule) => {
+          schedule = sched;
+          cy.deleteAwxInventory(inv);
+
+          cy.navigateTo('awx', 'templates');
+          cy.verifyPageTitle('Templates');
+          cy.filterTableByMultiSelect('name', [jt.name]);
+          cy.get('[data-cy="name-column-cell"]').within(() => {
+            cy.get('a').click();
+          });
+          cy.verifyPageTitle(jt.name);
+          cy.clickTab('Schedules', true);
+          cy.get('[data-cy="create-schedule"]').should('have.attr', 'aria-disabled', 'true');
+          cy.get('[data-cy="name-column-cell"]').within(() => {
+            cy.get('a').click();
+          });
+          cy.clickLink('Edit schedule');
+          cy.verifyPageTitle('Edit Schedule');
+          cy.clickButton('Next');
+          cy.clickButton('Next');
+          cy.clickButton('Next');
+          cy.clickButton('Finish');
+          cy.contains('Job Template inventory is missing or undefined.');
+        });
+      });
+    });
   });
 });
