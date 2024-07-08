@@ -15,7 +15,7 @@ describe.skip('Schedules - Create and Delete', () => {
     let project: Project;
     let inventory: Inventory;
 
-    before(() => {
+    beforeEach(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
         cy.createAwxProject(organization).then((proj) => {
@@ -35,7 +35,7 @@ describe.skip('Schedules - Create and Delete', () => {
       });
     });
 
-    after(() => {
+    afterEach(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
@@ -645,7 +645,7 @@ describe('Schedules - Edit', () => {
     cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    jobTemplate?.id && cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
   });
 
   it('can edit a simple schedule from details page', () => {
