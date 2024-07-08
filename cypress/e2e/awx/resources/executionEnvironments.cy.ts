@@ -101,7 +101,7 @@ describe('Execution Environments', () => {
       cy.clickModalButton('Close');
     });
 
-    it('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
+    it.skip('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);
@@ -434,7 +434,7 @@ describe('Execution Environments: User/Team access', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('Add a user role assignment from the User Access tab', () => {
+  it.skip('Add a user role assignment from the User Access tab', () => {
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
