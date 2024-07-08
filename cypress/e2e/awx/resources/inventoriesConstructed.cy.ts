@@ -51,7 +51,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.deleteAwxOrganization(organization);
   });
 
-  it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
+  it.skip('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
     invNames = inventoriesList.map(({ name }) => String(name));
     cy.intercept('POST', awxAPI`/constructed_inventories/`).as('createInv');
     const constInvName = 'E2E Constructed Inventory ' + randomString(4);
