@@ -94,6 +94,7 @@ export function WorkflowJobTemplatePage() {
         }}
         tabs={tabs}
         params={{ id: template.id }}
+        componentParams={{ template }}
       />
     </PageLayout>
   );

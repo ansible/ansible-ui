@@ -91,6 +91,7 @@ export function TemplatePage() {
         }}
         tabs={tabs}
         params={{ id: template?.id }}
+        componentParams={{ template }}
       />
     </PageLayout>
   );

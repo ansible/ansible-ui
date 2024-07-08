@@ -58,13 +58,24 @@ export function ScheduleAddWizard() {
       ...rest,
     };
 
-    const {
-      schedule,
-    }: {
-      schedule: Schedule;
-    } = await processSchedules(data);
-    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-    pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    try {
+      const {
+        schedule,
+      }: {
+        schedule: Schedule;
+      } = await processSchedules(data);
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+      pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    } catch (error) {
+      const { fieldErrors } = awxErrorAdapter(error);
+      const missingResource = fieldErrors.find((err) => err?.name === 'resources_needed_to_start');
+      if (missingResource) {
+        const errors = {
+          __all__: [missingResource.message],
+        };
+        throw new RequestError('', '', 400, '', errors);
+      }
+    }
   };
 
   const onCancel = () => navigate(location.pathname.replace('create', ''));
@@ -139,7 +150,6 @@ export function ScheduleAddWizard() {
         }
 
         const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
-
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {
