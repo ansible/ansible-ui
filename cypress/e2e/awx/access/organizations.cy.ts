@@ -225,8 +225,6 @@ describe('Organizations: Execution Environments Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can create an EE with a specific Org and visit the EE tab of an org to view associated EE', () => {});
 });
 
 describe('Organizations: Notifications Tab', function () {
