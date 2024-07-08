@@ -484,7 +484,7 @@ describe('Workflow Approvals Tests', () => {
           (jtNode) => {
             jobTemplateNode = jtNode;
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
-              /*approvalWFNode = appNode;
+              approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
               cy.intercept(
                 'POST',
@@ -498,7 +498,7 @@ describe('Workflow Approvals Tests', () => {
               cy.wait('@launched')
                 .its('response.body')
                 .then((launched: WorkflowJob) => {
-                  cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then(
+                  /*cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then(
                     (wfApprovalA) => {
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
@@ -573,8 +573,8 @@ describe('Workflow Approvals Tests', () => {
                       });
                       cy.verifyPageTitle('Workflow Approvals');
                     }
-                  );
-                });*/
+                  );*/
+                });
             });
           }
         );
