@@ -69,17 +69,17 @@ describe('Workflow Approvals Tests', () => {
   });
 
   afterEach(() => {
-    /*cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFApprove, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFCancel, { failOnStatusCode: false });
-    cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });*/
+    cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
   describe('Workflow Approvals - Approve, Deny, Delete', () => {
-    it.only('admin can approve and then delete a workflow approval from the list row item', () => {
+    it('admin can approve and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-APPROVE-' + randomString(4),
         organization: organization.id,
