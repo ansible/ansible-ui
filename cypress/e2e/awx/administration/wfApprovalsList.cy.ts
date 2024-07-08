@@ -501,7 +501,7 @@ describe('Workflow Approvals Tests', () => {
                   cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then(
                     (wfApprovalA) => {
 
-                      /*
+                    
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
                       cy.navigateTo('awx', 'templates');
@@ -537,6 +537,8 @@ describe('Workflow Approvals Tests', () => {
                       cy.getModal().within(() => {
                         cy.clickButton('Close');
                       });
+
+                      /*
                       cy.get('tbody tr').should('have.length', 1);
                       cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
                       cy.navigateTo('awx', 'workflow-approvals');
