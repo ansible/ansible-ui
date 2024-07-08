@@ -11,6 +11,7 @@ import {
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
 import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
 import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
@@ -49,7 +50,7 @@ export function AnsibleLogin(props: {
   const [translations] = useFrameworkTranslations();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [helperText, setHelperText] = useState('');
+  const [helperText, setHelperText] = useState<ReactNode>('');
 
   const { loginApiUrl } = props;
   const onSubmit = useCallback(async () => {
@@ -99,9 +100,11 @@ export function AnsibleLogin(props: {
       props.onSuccess?.();
     } catch (err) {
       if (err instanceof Error) {
-        setHelperText(err.message);
+        setHelperText(<ErrorSpanStyled>{err.message}</ErrorSpanStyled>);
       } else {
-        setHelperText(t('Invalid username or password. Please try again.'));
+        setHelperText(
+          <ErrorSpanStyled>{t('Invalid username or password. Please try again.')}</ErrorSpanStyled>
+        );
       }
     }
   }, [loginApiUrl, password, props, t, username]);
@@ -134,7 +137,7 @@ export function AnsibleLogin(props: {
           <LoginForm
             showHelperText={!!helperText}
             helperText={helperText}
-            helperTextIcon={<ExclamationCircleIcon />}
+            helperTextIcon={<ErrorExclamationCircleIconStyled />}
             usernameLabel={t('Username')}
             usernameValue={username}
             onChangeUsername={(_, username) => {
@@ -149,6 +152,9 @@ export function AnsibleLogin(props: {
               setPassword(password);
             }}
             isValidPassword={!helperText || !!password}
+            isShowPasswordEnabled
+            showPasswordAriaLabel={t('Show password')}
+            hidePasswordAriaLabel={t('Hide password')}
             loginButtonLabel={t('Log in')}
             onLoginButtonClick={(event) => {
               event.preventDefault();
@@ -176,3 +182,11 @@ export function AnsibleLogin(props: {
     </ErrorBoundary>
   );
 }
+
+const ErrorSpanStyled = styled.span`
+  color: var(--pf-v5-global--danger-color--200);
+`;
+
+const ErrorExclamationCircleIconStyled = styled(ExclamationCircleIcon)`
+  color: var(--pf-v5-global--danger-color--100);
+`;
