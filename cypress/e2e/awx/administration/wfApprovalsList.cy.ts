@@ -498,8 +498,10 @@ describe('Workflow Approvals Tests', () => {
               cy.wait('@launched')
                 .its('response.body')
                 .then((launched: WorkflowJob) => {
-                  /*cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then(
+                  cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then(
                     (wfApprovalA) => {
+
+                      /*
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
                       cy.navigateTo('awx', 'templates');
@@ -572,8 +574,9 @@ describe('Workflow Approvals Tests', () => {
                         cy.clickButton('Cancel');
                       });
                       cy.verifyPageTitle('Workflow Approvals');
+                      */
                     }
-                  );*/
+                  );
                 });
             });
           }
