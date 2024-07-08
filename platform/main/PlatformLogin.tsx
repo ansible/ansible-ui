@@ -1,9 +1,8 @@
 import { Page } from '@patternfly/react-core';
-import { t } from 'i18next';
 import { ReactNode } from 'react';
 import { mutate } from 'swr';
 import { LoadingState } from '../../framework/components/LoadingState';
-import { Login } from '../../frontend/common/Login';
+import { AnsibleLogin } from '../../frontend/common/AnsibleLogin';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import AAPLogo from '../icons/aap-logo.svg';
@@ -13,8 +12,7 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 export function PlatformLogin(props: { children: ReactNode }) {
   const { activePlatformUser } = usePlatformActiveUser();
   const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
-  const hideInputs = options ? !options.show_login_form : false;
-  // const { activeTheme } = usePageSettings();
+  const hideAuthOptions = options ? !options.show_login_form : false;
 
   if (activePlatformUser === undefined) {
     return (
@@ -26,20 +24,19 @@ export function PlatformLogin(props: { children: ReactNode }) {
 
   if (!activePlatformUser) {
     return (
-      <Login
-        apiUrl={gatewayAPI`/login/`}
+      <AnsibleLogin
+        loginApiUrl={gatewayAPI`/login/`}
         onSuccess={() => void mutate(() => true, undefined)}
-        hideInputs={hideInputs}
-        authOptions={options?.ssos}
-        loginDescription={t('Enter your credentials.')}
-        icon={
+        authOptions={hideAuthOptions ? undefined : options?.ssos}
+        brandImg={
           options?.custom_logo ? (
             <img src={options.custom_logo} alt="Custom logo" style={{ height: 64 }} />
           ) : (
             <AAPLogo style={{ height: 64 }} />
           )
         }
-        productDescription={options?.custom_login_info}
+        brandImgAlt={process.env.PRODUCT}
+        textContent={options?.custom_login_info}
       />
     );
   }
