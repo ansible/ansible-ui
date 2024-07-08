@@ -32,7 +32,7 @@ describe('Constructed Inventories CRUD Tests', () => {
         inventoriesList.push(inv);
       });
     }
-    cy.createAwxConstructedInventory(organization, { input_inventory_count: 1 }).then(
+    cy.createAwxConstructedInventory(organization, { input_inventory_count: 3 }).then(
       (constInv) => {
         constructedInv = constInv;
       }
