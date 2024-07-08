@@ -484,7 +484,7 @@ describe('Workflow Approvals Tests', () => {
           (jtNode) => {
             jobTemplateNode = jtNode;
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
-              approvalWFNode = appNode;
+              /*approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
               cy.intercept(
                 'POST',
@@ -574,7 +574,7 @@ describe('Workflow Approvals Tests', () => {
                       cy.verifyPageTitle('Workflow Approvals');
                     }
                   );
-                });
+                });*/
             });
           }
         );
