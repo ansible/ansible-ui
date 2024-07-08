@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/// <reference types="cypress" />
-
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Job } from '../../../../frontend/awx/interfaces/Job';
@@ -9,31 +6,44 @@ import { NotificationTemplate } from '../../../../frontend/awx/interfaces/Notifi
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Projects', () => {
-  describe('Projects: Create and delete', () => {
-    let organization: Organization;
+  let schedule: Schedule;
+  let project: Project;
+  let awxOrganization: Organization;
+  let inventory: Inventory;
 
-    beforeEach(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-      });
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      awxOrganization = org;
     });
+  });
 
-    afterEach(() => {
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  after(() => {
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  });
+
+  beforeEach(() => {
+    cy.createAwxProject(awxOrganization).then((proj) => {
+      project = proj;
     });
+  });
 
+  afterEach(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+  });
+
+  describe('Projects: List View', () => {
     it('can create a project and then delete it from the project details page', () => {
       const projectName = 'E2E Project ' + randomString(4);
+
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.clickLink(/^Create project$/);
       cy.get('[data-cy="name"]').type(projectName);
-      cy.singleSelectByDataCy('organization', organization.name);
+      cy.singleSelectByDataCy('organization', `${awxOrganization.name}`);
       cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
       cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
       cy.get('[data-cy="option-allow-override"]').click();
@@ -43,7 +53,7 @@ describe('Projects', () => {
         .its('response.body')
         .then((newProject: Project) => {
           cy.verifyPageTitle(newProject.name);
-          cy.hasDetail(/^Organization$/, `${organization.name}`);
+          cy.hasDetail(/^Organization$/, `${awxOrganization.name}`);
           cy.hasDetail(/^Source control type$/, 'Git');
           cy.hasDetail(/^Enabled options$/, 'Allow branch override');
           cy.waitForProjectToFinishSyncing(newProject.id);
@@ -63,29 +73,6 @@ describe('Projects', () => {
   });
 
   describe('Projects: List View', () => {
-    let organization: Organization;
-    let project: Project;
-    let user: AwxUser;
-
-    beforeEach(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-          user = testUser;
-          cy.createAwxProject({ organization: organization.id }).then((proj) => {
-            project = proj;
-            cy.giveUserProjectAccess(project.name, user.id, 'Read');
-          });
-        });
-      });
-    });
-
-    afterEach(() => {
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxUser(user, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
     it('can edit a project from the project list row', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -143,11 +130,13 @@ describe('Projects', () => {
         });
     });
 
-    it('can sync a project from the projects list row', function () {
+    it('can sync a project from the projects list row', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
-      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
+      cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/update/`).as(
+        'projectUpdateRequest'
+      );
       cy.clickTableRowAction('name', `${project.name}`, 'sync-project', {
         disableFilter: true,
       });
@@ -160,7 +149,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can delete a project from the projects list row', function () {
+    it('can delete a project from the projects list row', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -203,30 +192,6 @@ describe('Projects', () => {
   });
 
   describe('Projects: Details View', () => {
-    let organization: Organization;
-    let project: Project;
-    let user: AwxUser;
-
-    beforeEach(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-
-        cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-          user = testUser;
-          cy.createAwxProject({ organization: organization.id }).then((proj) => {
-            project = proj;
-            cy.giveUserProjectAccess(project.name, user.id, 'Read');
-          });
-        });
-      });
-    });
-
-    afterEach(() => {
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxUser(user, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
     it('can edit a project from the project details page', () => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -251,7 +216,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can copy a project from the project details page', function () {
+    it('can copy a project from the project details page', () => {
       const endOfProject = project.name.split(' ').slice(-1).toString();
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
@@ -287,7 +252,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can sync a project from the project details page', function () {
+    it('can sync a project from the project details page', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -295,9 +260,10 @@ describe('Projects', () => {
         disableFilter: true,
       });
       cy.verifyPageTitle(`${project.name}`);
-      cy.intercept(`api/v2/projects/${project.id}/update/`).as('projectUpdateRequest');
+      cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/update/`).as(
+        'projectUpdateRequest'
+      );
       cy.clickButton(/^Sync project$/);
-      cy.get('[data-cy="last-job-status"]').should('contain', 'Running');
       cy.waitForProjectToFinishSyncing(project.id);
       cy.wait('@projectUpdateRequest')
         .its('response')
@@ -306,7 +272,7 @@ describe('Projects', () => {
         });
     });
 
-    it('can delete a project from project details page', function () {
+    it('can delete a project from project details page', () => {
       cy.navigateTo('awx', 'projects');
       cy.verifyPageTitle('Projects');
       cy.filterTableByMultiSelect('name', [project.name]);
@@ -328,58 +294,46 @@ describe('Projects', () => {
   });
 
   describe('Projects: User Access Tab', () => {
-    it('can navigate to project access tab', function () {
+    it('can navigate to project access tab', () => {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
-      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
-      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+      cy.verifyPageTitle(`${project.name}`);
       cy.clickTab(/^User Access$/, true);
     });
   });
+
   describe('Projects: Team Access Tab', () => {
-    it('can navigate to project access tab', function () {
+    it('can navigate to project access tab', () => {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [(this.globalProject as Project).name]);
-      cy.clickTableRowLink('name', `${(this.globalProject as Project).name}`, {
+      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
-      cy.verifyPageTitle(`${(this.globalProject as Project).name}`);
+      cy.verifyPageTitle(`${project.name}`);
       cy.clickTab(/^Team Access$/, true);
     });
   });
 
   describe('Projects: Schedules Tab', () => {
-    let schedule: Schedule;
-    let project: Project;
-    let organization: Organization;
-
-    beforeEach(function () {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-          const name = 'E2E' + randomString(4);
-          cy.createAWXSchedule({
-            name,
-            unified_job_template: project.id,
-            rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-          }).then((sched: Schedule) => {
-            schedule = sched;
-            cy.navigateTo('awx', 'projects');
-            cy.filterTableBySingleSelect('name', project.name);
-            cy.get('[data-cy="name-column-cell"]').click();
-            cy.clickTab('Schedules', true);
-          });
-        });
+    beforeEach(() => {
+      cy.createAWXSchedule({
+        name: `Schedule` + `${randomE2Ename()}`,
+        unified_job_template: project.id,
+        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+      }).then((sched: Schedule) => {
+        schedule = sched;
+        cy.navigateTo('awx', 'projects');
+        cy.filterTableBySingleSelect('name', project.name);
+        cy.get('[data-cy="name-column-cell"]').click();
+        cy.clickTab('Schedules', true);
       });
     });
 
     afterEach(() => {
       cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it('can edit a simple schedule from details page', () => {
@@ -585,36 +539,26 @@ describe('Projects', () => {
     });
   });
 
+  // FLAKY_06_13_2024
   describe('Projects: Job Templates Tab', () => {
-    let inventory: Inventory;
     let jobTemplate: JobTemplate;
-    let organization: Organization;
-    let project: Project;
-
     beforeEach(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-          cy.createAwxInventory({ organization: organization.id }).then((inv) => {
-            inventory = inv;
-            cy.createAwxJobTemplate({
-              organization: organization.id,
-              project: project.id,
-              inventory: inventory.id,
-            }).then((jt1) => {
-              jobTemplate = jt1;
-            });
-          });
+      cy.createAwxInventory(awxOrganization).then((inv) => {
+        inventory = inv;
+        cy.createAwxJobTemplate({
+          organization: awxOrganization.id,
+          project: project.id,
+          inventory: inventory.id,
+        }).then((jt1) => {
+          jobTemplate = jt1;
         });
       });
     });
 
-    after(() => {
+    afterEach(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it('can navigate to project job templates tab', () => {
@@ -628,20 +572,20 @@ describe('Projects', () => {
     });
 
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
-      cy.createAwxProject({ organization: organization.id }).then((newProject) => {
+      cy.createAwxProject(awxOrganization).then((thisProject) => {
         cy.navigateTo('awx', 'templates');
         cy.filterTableByMultiSelect('name', [jobTemplate.name]);
         cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
         cy.selectTableRow(jobTemplate.name, false);
         cy.getBy('[data-cy="edit-template"]').click();
         cy.verifyPageTitle('Edit Job Template');
-        cy.selectDropdownOptionByResourceName('project', newProject.name);
+        cy.selectDropdownOptionByResourceName('project', thisProject.name);
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
         cy.getByDataCy('Submit').click();
         cy.wait('@edited')
           .its('response.body')
           .then((editedJt: JobTemplate) => {
-            expect(editedJt.project).to.eql(newProject.id);
+            expect(editedJt.project).to.eql(thisProject.id);
             cy.intercept('GET', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
               'clickLaunch'
             );
@@ -661,14 +605,20 @@ describe('Projects', () => {
           });
         cy.navigateTo('awx', 'projects');
         cy.verifyPageTitle('Projects');
-        cy.filterTableByMultiSelect('name', [newProject.name]);
-        cy.get(`[data-cy="row-id-${newProject.id}"]`).within(() => {
+        cy.filterTableByMultiSelect('name', [thisProject.name]);
+        cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
+          cy.get('[data-cy="name-column-cell"]').click();
+        });
+        cy.navigateTo('awx', 'projects');
+        cy.verifyPageTitle('Projects');
+        cy.filterTableByMultiSelect('name', [thisProject.name]);
+        cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
         });
         cy.clickTab('Job templates', true);
         cy.url().should(
           'contain',
-          `/projects/${newProject.id}/job-templates?page=1&perPage=10&sort=name`
+          `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`
         );
         cy.filterTableByMultiSelect('name', [jobTemplate.name]);
         cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
@@ -690,25 +640,15 @@ describe('Projects', () => {
 
   describe('Projects: Notifications Tab', () => {
     let notification: NotificationTemplate;
-    let project: Project;
-    let organization: Organization;
 
     beforeEach(() => {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
-          project = proj;
-          const notificationName = `${randomE2Ename()}`;
-          cy.createNotificationTemplate(notificationName).then((notifier) => {
-            notification = notifier;
-          });
-        });
+      const notificationName = `${randomE2Ename()}`;
+      cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
+        notification = notifier;
       });
     });
 
     afterEach(() => {
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
       cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });
     });
 

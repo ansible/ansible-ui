@@ -10,40 +10,42 @@ describe('Credential Types', () => {
   let inputCredType: string;
   let injectorCredType: string;
   let credential: Credential;
-  let organization: Organization;
+  let awxOrganization: Organization;
 
   describe('Credential Types- List Actions', () => {
     const credentialName = 'E2E Custom Credential ' + randomString(4);
-    before(function () {
-      cy.createAwxCredentialType().then((credentialType: CredentialType) => {
-        credType1 = credentialType;
 
-        cy.createAwxOrganization().then((org) => {
-          organization = org;
+    beforeEach(function () {
+      cy.createAwxOrganization().then((org) => {
+        awxOrganization = org;
+
+        cy.createAwxCredentialType().then((credentialType: CredentialType) => {
+          credType1 = credentialType;
+
           cy.createAWXCredential({
             name: credentialName,
             kind: 'gce',
-            organization: organization.id,
+            organization: awxOrganization.id,
             credential_type: credType1.id,
           }).then((cred) => {
             credential = cred;
           });
         });
-      });
 
-      cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
-        inputCredType = JSON.stringify(credentialType);
-      });
+        cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
+          inputCredType = JSON.stringify(credentialType);
+        });
 
-      cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
-        injectorCredType = JSON.stringify(credentialType);
+        cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
+          injectorCredType = JSON.stringify(credentialType);
+        });
       });
     });
 
-    after(() => {
+    afterEach(() => {
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.deleteAwxCredentialType(credType1, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
     });
 
     it('can navigate to the details page, then to the credentials tab and view a related credential', function () {
@@ -60,7 +62,7 @@ describe('Credential Types', () => {
         awxAPI`/credential_types/${credType1.id.toString()}/credentials/?order_by=name&page=1&page_size=10`
       ).as('credentialsList');
       cy.intercept('GET', awxAPI`/credential_types/?page=1&page_size=200`).as('credTypeList');
-      cy.getBy(`a[href*="/access/credential-types/${credType1.id}/credentials?"]`).click();
+      cy.clickTab('Credentials', true);
       cy.wait('@credTypeList');
       cy.wait('@credentialsList');
       cy.getBy('tr').should('have.length', 2);
@@ -202,7 +204,9 @@ describe('Credential Types', () => {
       });
       cy.get('[data-cy="name"]').clear().type(editedCredentialTypeName);
       cy.get('[data-cy="description"]').clear().type('this is a new description after editing');
-      cy.intercept('PATCH', `api/v2/credential_types/${credType1.id}/`).as('editCredType');
+      cy.intercept('PATCH', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
+        'editCredType'
+      );
       cy.clickButton(/^Save credential type$/);
       cy.wait('@editCredType')
         .its('response.body.name')
@@ -218,7 +222,9 @@ describe('Credential Types', () => {
       cy.filterTableByMultiSelect('name', [editedCredentialTypeName]);
       cy.clickTableRowKebabAction(`${editedCredentialTypeName}`, 'delete-credential-type', false);
       cy.get('#confirm').click();
-      cy.intercept('DELETE', `api/v2/credential_types/${credType1.id}/`).as('deleteCredType');
+      cy.intercept('DELETE', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
+        'deleteCredType'
+      );
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
@@ -238,7 +244,9 @@ describe('Credential Types', () => {
       cy.verifyPageTitle('Edit Credential Type');
       cy.get('[data-cy="name"]').clear().type(editedCredentialTypeName);
       cy.get('[data-cy="description"]').clear().type('this is a new description after editing');
-      cy.intercept('PATCH', `api/v2/credential_types/${credType1.id}/`).as('editCredType');
+      cy.intercept('PATCH', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
+        'editCredType'
+      );
       cy.clickButton(/^Save credential type$/);
       cy.wait('@editCredType')
         .its('response.body.name')
@@ -250,7 +258,9 @@ describe('Credential Types', () => {
             'this is a new description after editing'
           );
         });
-      cy.intercept('DELETE', `api/v2/credential_types/${credType1.id}/`).as('deleteCredType');
+      cy.intercept('DELETE', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
+        'deleteCredType'
+      );
       cy.clickPageAction('delete-credential-type');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
@@ -289,8 +299,12 @@ describe('Credential Types', () => {
       cy.selectTableRow(credType1.name, false);
       cy.selectTableRow(credType2.name, false);
       cy.clickToolbarKebabAction('delete-selected-credential-types');
-      cy.intercept('DELETE', `api/v2/credential_types/${credType1.id}/`).as('deleteCredType1');
-      cy.intercept('DELETE', `api/v2/credential_types/${credType2.id}/`).as('deleteCredType2');
+      cy.intercept('DELETE', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
+        'deleteCredType1'
+      );
+      cy.intercept('DELETE', awxAPI`/credential_types/${credType2.id.toString()}/`).as(
+        'deleteCredType2'
+      );
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credential types');
       cy.wait(['@deleteCredType1', '@deleteCredType2']).then((credTypeArray) => {

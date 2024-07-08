@@ -180,10 +180,7 @@ describe('Organizations: Users Tab', function () {
   });
 
   it.skip('can add a brand new normal user to the Org', () => {});
-  it.skip('can add a brand new admin user to the Org', () => {});
   it.skip('can add a brand new auditor user to the Org', () => {});
-  it.skip('can add an existing user to an Org and assign a specific type of role to that user', () => {});
-  it.skip('can remove a user from the users tab of an Org', () => {});
   it.skip('can bulk remove users from the users tab of an Org', () => {});
 });
 
@@ -206,8 +203,6 @@ describe('Organizations: Teams Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can associate a team to an org and visit the teams tab of an org to view associated team', () => {});
   it.skip('can edit a team from the teams tab inside of an Org', () => {});
 });
 
@@ -253,6 +248,4 @@ describe('Organizations: Notifications Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can create a Notification with a specific Org and toggle the Notification on and off on the Notifications tab of the Org', () => {});
 });

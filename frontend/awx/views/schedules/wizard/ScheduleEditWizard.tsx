@@ -59,13 +59,24 @@ export function ScheduleEditWizard() {
       ...rest,
     };
 
-    const {
-      schedule,
-    }: {
-      schedule: Schedule;
-    } = await processSchedules(data);
-    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-    return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    try {
+      const {
+        schedule,
+      }: {
+        schedule: Schedule;
+      } = await processSchedules(data);
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+      return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    } catch (error) {
+      const { fieldErrors } = awxErrorAdapter(error);
+      const missingResource = fieldErrors.find((err) => err?.name === 'resources_needed_to_start');
+      if (missingResource) {
+        const errors = {
+          __all__: [missingResource.message],
+        };
+        throw new RequestError('', '', 400, '', errors);
+      }
+    }
   };
 
   const onCancel = () => navigate(-1);

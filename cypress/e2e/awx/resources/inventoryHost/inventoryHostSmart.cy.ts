@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
@@ -76,7 +76,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //1) Use inventory and host
     //2) create a job template that uses that inventory, launch the job template, wait for job to finish
     //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
-    cy.createAwxProject({ organization: organization.id }).then((project) => {
+    cy.createAwxProject(organization).then((project) => {
       cy.createInventoryHost(organization, 'smart').then((result) => {
         launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');
         cy.deleteAwxInventory(result.inventory, { failOnStatusCode: false });

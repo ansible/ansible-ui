@@ -58,7 +58,13 @@ export function PageFormInventorySelect<
 export function PageFormSelectInventory<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
+>(props: {
+  name: TFieldName;
+  isRequired?: boolean;
+  isDisabled?: string;
+  helperText?: string;
+  labelHelp?: string;
+}) {
   const { t } = useTranslation();
   const columns = useInventoriesColumns({ disableLinks: true });
   const filters = useInventoriesFilters();
@@ -73,6 +79,7 @@ export function PageFormSelectInventory<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
+      labelHelp={props.labelHelp}
       url={awxAPI`/inventories/`}
       tableColumns={columns}
       toolbarFilters={filters}

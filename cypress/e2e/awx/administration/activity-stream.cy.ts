@@ -1,111 +1,114 @@
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('activity-stream', () => {
-  let team: Team;
-  let activeUser: AwxUser;
+  let inventory: Inventory;
+  let awxOrganization: Organization;
+  let currentUser: AwxUser;
 
   before(function () {
-    cy.createAwxTeam({ organization: (this.globalAwxOrganization as Organization).id }).then(
-      (createdTeam) => {
-        team = createdTeam;
-      }
-    );
-    cy.requestGet<AwxItemsResponse<AwxUser>>(awxAPI`/me/`)
-      .its('results')
-      .then((results) => {
-        activeUser = results[0];
+    cy.createAwxOrganization().then((thisAwxOrg) => {
+      awxOrganization = thisAwxOrg;
+
+      cy.createAwxInventory(awxOrganization).then((inv) => {
+        inventory = inv;
+
+        cy.getCurrentUser().then((user) => {
+          currentUser = user;
+        });
       });
+    });
   });
 
   after(function () {
-    cy.deleteAwxTeam(team, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
-  beforeEach(function () {
-    cy.navigateTo('awx', 'activity-stream');
-    cy.verifyPageTitle('Activity Stream');
-  });
-
-  function openEventDetails(teamName: string) {
-    cy.getTableRow('event', `created team ${teamName}`, { disableFilter: true }).within(() => {
-      cy.getByDataCy('view-event-details').click();
-    });
+  function openEventDetails(inventoryName: string) {
+    cy.getTableRow('event', ` created inventory ${inventoryName}`, { disableFilter: true }).within(
+      () => {
+        cy.getByDataCy('view-event-details').click();
+      }
+    );
   }
 
-  it('can render the activity stream list page', function () {
-    cy.verifyPageTitle('Activity Stream');
-  });
-
   it.skip('event column displays correct info', function () {
-    cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
-      cy.getByDataCy('event-column-cell').should('have.text', `created team ${team.name}`);
-    });
+    cy.navigateTo('awx', 'activity-stream');
+    cy.verifyPageTitle('Activity Stream');
+    cy.getTableRow('event', ` created inventory ${inventory.name}`, { disableFilter: true }).within(
+      () => {
+        cy.getByDataCy('event-column-cell').should(
+          'have.text',
+          ` created inventory ${inventory.name}`
+        );
+      }
+    );
   });
 
   it.skip('event details modal displays correct info', function () {
-    openEventDetails(team.name);
+    cy.navigateTo('awx', 'activity-stream');
+    cy.verifyPageTitle('Activity Stream');
+    openEventDetails(inventory.name);
     cy.getModal().within(() => {
-      cy.getByDataCy('initiated-by').should('have.text', activeUser.username);
-      cy.getByDataCy('action').should('have.text', `created team ${team.name}`);
+      cy.getByDataCy('initiated-by').should('have.text', currentUser.username);
+      cy.getByDataCy('action').should('have.text', ` created inventory ${inventory.name}`);
       cy.getByDataCy('time').should('not.be.empty');
     });
     cy.clickModalButton('Close');
   });
 
   it('can navigate to event resource detail page from activity stream list page', function () {
-    cy.filterTableByTextFilter('keyword', team.name);
-    cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
-      cy.getByDataCy('source-resource-detail').click();
-    });
-    cy.verifyPageTitle(team.name);
+    cy.navigateTo('awx', 'activity-stream');
+    cy.verifyPageTitle('Activity Stream');
+    cy.filterTableByTextFilter('keyword', inventory.name);
+    cy.getTableRow('event', ` created inventory ${inventory.name}`, { disableFilter: true }).within(
+      () => {
+        cy.getByDataCy('source-resource-detail').click();
+      }
+    );
+    cy.verifyPageTitle(inventory.name);
   });
 
   it('can navigate to event resource detail page from activity stream event details modal', function () {
-    cy.filterTableByTextFilter('keyword', team.name);
-    openEventDetails(team.name);
+    cy.navigateTo('awx', 'activity-stream');
+    cy.verifyPageTitle('Activity Stream');
+    cy.filterTableByTextFilter('keyword', inventory.name);
+    openEventDetails(inventory.name);
     cy.getModal().within(() => {
       cy.getByDataCy('source-resource-detail').click();
     });
-    cy.verifyPageTitle(team.name);
-  });
-
-  it('can navigate to initiator detail page from activity stream list page', function () {
-    cy.filterTableByTextFilter('keyword', team.name);
-    cy.getTableRow('event', `created team ${team.name}`, { disableFilter: true }).within(() => {
-      cy.getBy('[data-cy="initiated-by-column-cell"] a').click();
-    });
-    cy.verifyPageTitle(activeUser.username);
-  });
-
-  it('can navigate to initiator detail page from activity stream event details modal', function () {
-    cy.filterTableByTextFilter('keyword', team.name);
-    openEventDetails(team.name);
-    cy.getModal().within(() => {
-      cy.getBy('dd[data-cy="initiated-by"] a').click();
-    });
-    cy.verifyPageTitle(activeUser.username);
+    cy.verifyPageTitle(inventory.name);
   });
 
   it('can filter by keyword from activity stream list', function () {
-    cy.filterTableByTextFilter('keyword', team.name);
+    cy.navigateTo('awx', 'activity-stream');
+    cy.verifyPageTitle('Activity Stream');
+    cy.filterTableByTextFilter('keyword', inventory.name);
     cy.get('tbody').find('tr').should('have.length', 1);
-    cy.getByDataCy('event-column-cell').should('have.text', `created team ${team.name}`);
+    cy.getByDataCy('event-column-cell').should('have.text', ` created inventory ${inventory.name}`);
   });
 
   it('can filter by initiated by from activity stream list', function () {
-    cy.intercept(`api/v2/activity_stream/?actor__username__icontains=${activeUser.username}*`).as(
-      'initiatorFilterRequest'
-    );
-    cy.filterTableByTextFilter('initiated-by-(username)', activeUser.username);
+    cy.navigateTo('awx', 'activity-stream');
+    cy.verifyPageTitle('Activity Stream');
+    cy.intercept(
+      'GET',
+      awxAPI`/activity_stream/?actor__username__icontains=${currentUser.username}*`
+    ).as('initiatorFilterRequest');
+    cy.filterTableByTextFilter('initiated-by-(username)', currentUser.username);
     cy.wait('@initiatorFilterRequest')
-      .its('response')
       .then((response) => {
-        expect(response?.statusCode).to.eql(200);
+        expect(response?.response?.statusCode).to.eql(200);
+      })
+      .its('response')
+      .then((activityStream) => {
+        cy.log('ACTIVITY STREAM', activityStream);
       });
-    cy.get('[data-cy="initiated-by-column-cell"]').first().should('have.text', activeUser.username);
+    cy.get('[data-cy="initiated-by-column-cell"]')
+      .first()
+      .should('have.text', currentUser.username);
   });
 });

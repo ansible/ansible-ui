@@ -56,7 +56,7 @@ export function GroupEdit() {
 
   return (
     <AwxPageForm<InventoryGroupCreate>
-      submitText={t('Save')}
+      submitText={t('Save group')}
       onSubmit={onSubmit}
       cancelText={t('Cancel')}
       onCancel={onCancel}
