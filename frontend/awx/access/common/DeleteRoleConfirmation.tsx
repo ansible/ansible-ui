@@ -1,7 +1,7 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../framework';
+import { usePageDialogs } from '../../../../framework';
 import { AccessRole, AwxUser } from '../../interfaces/User';
 
 export interface DeleteRoleConfirmationProps {
@@ -20,13 +20,13 @@ export interface DeleteRoleConfirmationProps {
 
 export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
   const { title, role, user, onConfirm, onClose } = props;
-  const [_, setDialog] = usePageDialog();
+  const { popDialog } = usePageDialogs();
   const { t } = useTranslation();
   const sourceOfRole = () => (typeof role.team_id !== 'undefined' ? t(`team`) : t(`user`));
   const onCloseClicked = useCallback(() => {
-    setDialog(undefined);
+    popDialog();
     onClose?.();
-  }, [onClose, setDialog]);
+  }, [onClose, popDialog]);
 
   return (
     <Modal
@@ -100,7 +100,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
  * openDeleteRoleConfirmationDialog(...) // Pass DeleteRoleConfirmationProps
  */
 export function useDeleteRoleConfirmationDialog() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const [props, setProps] = useState<DeleteRoleConfirmationProps>();
   useEffect(() => {
     if (props) {
@@ -108,10 +108,10 @@ export function useDeleteRoleConfirmationDialog() {
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(<DeleteRoleConfirmation {...props} onClose={onCloseHandler} />);
+      pushDialog(<DeleteRoleConfirmation {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, pushDialog, popDialog]);
   return setProps;
 }

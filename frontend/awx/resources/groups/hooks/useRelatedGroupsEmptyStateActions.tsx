@@ -5,7 +5,7 @@ import {
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
-  usePageDialog,
+  usePageDialogs,
   usePageNavigate,
 } from '../../../../../framework';
 import { useCallback, useMemo } from 'react';
@@ -20,7 +20,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { IAwxView } from '../../../common/useAwxView';
 
 export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>) {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string; group_id: string }>();
@@ -48,9 +48,9 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
           });
         }
       }
-      setDialog(undefined);
+      popDialog();
     },
-    [setDialog, params.group_id, alertToaster, t, view]
+    [popDialog, params.group_id, alertToaster, t, view]
   );
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
@@ -66,7 +66,7 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
         label: t('Existing group'),
         isPinned: true,
         onClick: () =>
-          setDialog(
+          pushDialog(
             <GroupSelectDialog
               groupId={params.group_id as string}
               onSelectedGroups={onSelectedGroups}
@@ -102,7 +102,7 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
     params.group_id,
     params.id,
     params.inventory_type,
-    setDialog,
+    pushDialog,
     t,
   ]);
 }

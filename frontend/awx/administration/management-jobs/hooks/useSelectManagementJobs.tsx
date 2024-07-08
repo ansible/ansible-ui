@@ -5,7 +5,7 @@ import { useAwxView } from '../../../common/useAwxView';
 import { useManagementJobColumns } from './useManagementJobColumns';
 import { useManagementJobFilters } from './useManagementJobFilters';
 import { useCallback } from 'react';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 function SelectManagementJob(props: {
@@ -31,13 +31,13 @@ function SelectManagementJob(props: {
 }
 
 export function useSelectManagementJobs() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectSystemJob = useCallback(
     (onSelect: (template: SystemJobTemplate) => void) => {
-      setDialog(<SelectManagementJob title={t('Select a system job')} onSelect={onSelect} />);
+      pushDialog(<SelectManagementJob title={t('Select a system job')} onSelect={onSelect} />);
     },
-    [setDialog, t]
+    [pushDialog, t]
   );
   return openSelectSystemJob;
 }

@@ -4,7 +4,7 @@ import { CogIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
+import { PageHeader, PageLayout, usePageDialogs } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { awxAPI } from '../common/api/awx-utils';
 import { useAwxConfig } from '../common/useAwxConfig';
@@ -24,7 +24,7 @@ export function AwxOverview() {
   const { openManageDashboard, managedResources } = useManagedAwxDashboard();
   const product: string = process.env.PRODUCT ?? t('AWX');
   const config = useAwxConfig();
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const welcomeMessageSetting = localStorage.getItem(HIDE_WELCOME_MESSAGE);
   const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
   function renderCustomizeControls() {
@@ -36,9 +36,9 @@ export function AwxOverview() {
   }
   useEffect(() => {
     if (config?.ui_next && !hideWelcomeMessage) {
-      setDialog(<WelcomeModal />);
+      pushDialog(<WelcomeModal />);
     }
-  }, [config?.ui_next, hideWelcomeMessage, setDialog]);
+  }, [config?.ui_next, hideWelcomeMessage, pushDialog]);
 
   return (
     <PageLayout>

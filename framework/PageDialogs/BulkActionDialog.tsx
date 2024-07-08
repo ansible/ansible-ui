@@ -19,7 +19,7 @@ import { usePaged } from '../PageTable/useTableItems';
 import { pfDanger, pfInfo, pfSuccess } from '../components/pfcolors';
 import { useAbortController } from '../hooks/useAbortController';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
-import { usePageDialog } from './PageDialog';
+import { usePageDialogs } from './PageDialog';
 
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
@@ -99,7 +99,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
   const [error, setError] = useState('');
   const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>();
   const abortController = useAbortController();
-  const [_, setDialog] = usePageDialog();
+  const { popDialog } = usePageDialogs();
 
   const onCancelClicked = useCallback(() => {
     setCanceled(true);
@@ -118,9 +118,9 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
   }, [abortController, items, keyFn, t]);
 
   const onCloseClicked = useCallback(() => {
-    setDialog(undefined);
+    popDialog();
     onClose?.();
-  }, [onClose, setDialog]);
+  }, [onClose, popDialog]);
 
   useEffect(() => {
     async function process() {
@@ -260,7 +260,6 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
               },
             ]}
             keyFn={keyFn}
-            // pagination={pagination}
             compact
             errorStateTitle=""
             emptyStateTitle={t('No items')}
@@ -310,7 +309,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
 export function useBulkActionDialog<T extends object>(
   defaultErrorAdapter: ErrorAdapter = genericErrorAdapter
 ) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog, popDialog } = usePageDialogs();
   const [props, setProps] = useState<BulkActionDialogProps<T>>();
   useEffect(() => {
     if (props) {
@@ -318,7 +317,7 @@ export function useBulkActionDialog<T extends object>(
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(
+      pushDialog(
         <BulkActionDialog<T>
           {...props}
           errorAdapter={props.errorAdapter ?? defaultErrorAdapter}
@@ -326,8 +325,8 @@ export function useBulkActionDialog<T extends object>(
         />
       );
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog, defaultErrorAdapter]);
+  }, [props, popDialog, pushDialog, defaultErrorAdapter]);
   return setProps;
 }

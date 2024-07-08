@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, usePageDialog } from '../../../../../framework';
+import { IToolbarFilter, usePageDialogs } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -48,15 +48,15 @@ function SelectWorkflowJobTemplate(props: {
 }
 
 export function useSelectWorkflowJobTemplate() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectInventory = useCallback(
     (onSelect: (template: WorkflowJobTemplate) => void) => {
-      setDialog(
+      pushDialog(
         <SelectWorkflowJobTemplate title={t('Select workflow job template')} onSelect={onSelect} />
       );
     },
-    [setDialog, t]
+    [pushDialog, t]
   );
   return openSelectInventory;
 }

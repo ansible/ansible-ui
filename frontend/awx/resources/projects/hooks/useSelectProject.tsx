@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -28,13 +28,13 @@ function SelectProject(props: { title: string; onSelect: (project: Project) => v
 }
 
 export function useSelectProject() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectInventory = useCallback(
     (onSelect: (project: Project) => void) => {
-      setDialog(<SelectProject title={t('Select project')} onSelect={onSelect} />);
+      pushDialog(<SelectProject title={t('Select project')} onSelect={onSelect} />);
     },
-    [setDialog, t]
+    [pushDialog, t]
   );
   return openSelectInventory;
 }

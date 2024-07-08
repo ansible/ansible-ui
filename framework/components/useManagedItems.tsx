@@ -1,9 +1,9 @@
 import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../PageDialogs/PageDialog';
 import { useSelected } from '../PageTable/useTableItems';
 import { ReorderItems } from './ReorderItems';
+import { usePageDialogs } from '../PageDialogs/PageDialog';
 
 interface IManageItemColumn<ItemT extends object> {
   header: string;
@@ -61,7 +61,7 @@ export interface ManageItemsProps<ItemT extends object> {
  * - Display type
  */
 export function useManageItems<ItemT extends object>(options: ManageItemsProps<ItemT>) {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const [keyFn] = useState(() => options.keyFn);
   const [saveFn] = useState(() => options.saveFn);
   const [loadFn] = useState(() => options.loadFn);
@@ -137,7 +137,7 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
   );
 
   const openManageItems = () =>
-    setDialog(
+    pushDialog(
       <ManageItemsModal
         {...options}
         keyFn={keyFn}
@@ -159,8 +159,8 @@ export function ManageItemsModal<ItemT extends object>(
   const { t } = useTranslation();
   const { title, description, columns, onApplyChanges } = props;
   const [keyFn] = useState(() => props.keyFn);
-  const [_, setDialog] = usePageDialog();
-  const onClose = () => setDialog(undefined);
+  const { popDialog } = usePageDialogs();
+  const onClose = () => popDialog();
   const [items, setItems] = useState<ItemT[]>(() => props.items);
   const {
     selectedItems,
@@ -174,7 +174,7 @@ export function ManageItemsModal<ItemT extends object>(
 
   const onApply = () => {
     onApplyChanges(items, selectedItems);
-    setDialog(undefined);
+    popDialog();
   };
 
   return (

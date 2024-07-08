@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialogs } from '../../../../../framework';
 import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -27,12 +27,12 @@ function SelectTeams(props: { title: string; onSelect: (teams: Team[]) => void }
 }
 
 export function useSelectTeams() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const openSelectTeams = useCallback(
     (title: string, onSelect: (teams: Team[]) => void) => {
-      setDialog(<SelectTeams title={title} onSelect={onSelect} />);
+      pushDialog(<SelectTeams title={title} onSelect={onSelect} />);
     },
-    [setDialog]
+    [pushDialog]
   );
   return openSelectTeams;
 }

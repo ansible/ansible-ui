@@ -7,7 +7,7 @@ import {
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
-  usePageDialog,
+  usePageDialogs,
   usePageNavigate,
 } from '../../../../../framework';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
@@ -23,7 +23,7 @@ import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { useRunCommandAction } from '../../inventories/hooks/useInventoriesGroupsToolbarActions';
 
 export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const disassociateGroups = useDisassociateGroups(view.unselectItemsAndRefresh);
@@ -61,9 +61,9 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
           });
         }
       }
-      setDialog(undefined);
+      popDialog();
     },
-    [setDialog, postRequest, params.group_id, view, alertToaster, t]
+    [popDialog, postRequest, params.group_id, view, alertToaster, t]
   );
 
   return useMemo<IPageAction<InventoryGroup>[]>(() => {
@@ -83,7 +83,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
             selection: PageActionSelection.None,
             label: t('Add existing group'),
             onClick: () =>
-              setDialog(
+              pushDialog(
                 <GroupSelectDialog
                   groupId={params.group_id as string}
                   onSelectedGroups={onSelectedGroups}
@@ -141,7 +141,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
     view.selectedItems.length,
     params.group_id,
     onSelectedGroups,
-    setDialog,
+    pushDialog,
     isConstructed,
   ]);
 }

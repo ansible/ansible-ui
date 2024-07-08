@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, usePageDialog } from '../../../../../framework';
+import { IToolbarFilter, usePageDialogs } from '../../../../../framework';
 import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -45,13 +45,13 @@ function SelectJobTemplate(props: { title: string; onSelect: (template: JobTempl
 }
 
 export function useSelectJobTemplate() {
-  const [_, setDialog] = usePageDialog();
+  const { pushDialog } = usePageDialogs();
   const { t } = useTranslation();
   const openSelectTemplate = useCallback(
     (onSelect: (template: JobTemplate) => void) => {
-      setDialog(<SelectJobTemplate title={t('Select job template')} onSelect={onSelect} />);
+      pushDialog(<SelectJobTemplate title={t('Select job template')} onSelect={onSelect} />);
     },
-    [setDialog, t]
+    [pushDialog, t]
   );
   return openSelectTemplate;
 }

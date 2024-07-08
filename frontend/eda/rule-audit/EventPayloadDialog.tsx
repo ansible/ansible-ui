@@ -1,7 +1,7 @@
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../framework';
+import { PageDetail, PageDetails, Scrollable, usePageDialogs } from '../../../framework';
 import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../interfaces/EdaRuleAuditEvent';
@@ -13,8 +13,8 @@ export interface EventPayloadModalProps {
 
 export function EventPayloadDialog(props: EventPayloadModalProps) {
   const { t } = useTranslation();
-  const [_, setDialog] = usePageDialog();
-  const onClose = () => setDialog(undefined);
+  const { popDialog } = usePageDialogs();
+  const onClose = () => popDialog();
 
   return (
     <Modal
@@ -54,7 +54,7 @@ export function EventPayloadDialog(props: EventPayloadModalProps) {
 }
 
 export function useEventPayloadDialog() {
-  const [_, setDialog] = usePageDialog();
+  const { popDialog, pushDialog } = usePageDialogs();
   const [props, setProps] = useState<EventPayloadModalProps>();
   useEffect(() => {
     if (props) {
@@ -62,10 +62,10 @@ export function useEventPayloadDialog() {
         setProps(undefined);
         props.onClose?.();
       };
-      setDialog(<EventPayloadDialog {...props} onClose={onCloseHandler} />);
+      pushDialog(<EventPayloadDialog {...props} onClose={onCloseHandler} />);
     } else {
-      setDialog(undefined);
+      popDialog();
     }
-  }, [props, setDialog]);
+  }, [props, popDialog, pushDialog]);
   return setProps;
 }
