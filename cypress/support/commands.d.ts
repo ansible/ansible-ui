@@ -703,7 +703,7 @@ declare global {
 
       createAwxConstructedInventory(
         organization: Organization,
-        source_vars?: boolean
+        params?: { source_vars?: boolean; input_inventory_count?: number }
       ): Chainable<Inventory>;
 
       createAwxInventorySource(

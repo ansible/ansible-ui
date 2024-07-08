@@ -32,9 +32,11 @@ describe('Constructed Inventories CRUD Tests', () => {
         inventoriesList.push(inv);
       });
     }
-    cy.createAwxConstructedInventory(organization).then((constInv) => {
-      constructedInv = constInv;
-    });
+    cy.createAwxConstructedInventory(organization, { input_inventory_count: 1 }).then(
+      (constInv) => {
+        constructedInv = constInv;
+      }
+    );
   });
 
   afterEach(() => {
@@ -175,12 +177,9 @@ describe('Constructed Inventories CRUD Tests', () => {
 
 describe('Constructed Inventories CRUD Tests - reorder input inventories', () => {
   let organization: Organization;
-  let inventoriesList: Inventory[] = [];
   let constructedInv: Inventory;
   let instanceGroup: InstanceGroup;
-  const invToDelete: Inventory[] = [];
   const constrInvToDelete: Inventory[] = [];
-  const invToCreate: number = 3;
 
   before(() => {
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
@@ -193,25 +192,17 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
   });
 
   beforeEach(() => {
-    inventoriesList = [];
-    for (let i = 0; i < invToCreate; i++) {
-      cy.createAwxInventory(organization).then((inv) => {
-        inventoriesList.push(inv);
-      });
-    }
-    cy.createAwxConstructedInventory(organization, true).then((constInv) => {
+    cy.createAwxConstructedInventory(organization, { source_vars: true }).then((constInv) => {
       constructedInv = constInv;
     });
   });
 
   afterEach(() => {
     constrInvToDelete.push(constructedInv);
-    invToDelete.push(...inventoriesList);
   });
 
   after(() => {
     cy.deleteAwxInstanceGroup(instanceGroup);
-    invToDelete.map((inventory) => cy.deleteAwxInventory(inventory, { failOnStatusCode: false }));
     constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
     cy.deleteAwxOrganization(organization);
   });

@@ -711,10 +711,14 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createAwxConstructedInventory',
-  (organization: Organization, source_vars?: boolean) => {
+  (
+    organization: Organization,
+    params?: { source_vars?: boolean; input_inventory_count?: number }
+  ) => {
     const arrayOfInventories: number[] = [];
     // creates 3 inventories
-    for (let i = 0; i < 3; i++) {
+    const count = params?.input_inventory_count ? params.input_inventory_count : 3;
+    for (let i = 0; i < count; i++) {
       cy.createAwxInventory(organization).then((inv: Inventory) => {
         arrayOfInventories.push(inv.id);
       });
@@ -727,7 +731,7 @@ Cypress.Commands.add(
       inventories: arrayOfInventories,
     };
 
-    if (source_vars) {
+    if (params?.source_vars) {
       postData.source_vars = 'plugin: test';
     } else {
       postData.variables = 'plugin: test';
