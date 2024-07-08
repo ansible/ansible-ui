@@ -1,4 +1,3 @@
-import { InstanceGroup } from './InstanceGroup';
 import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
 import { Project } from './Project';
@@ -37,7 +36,7 @@ export interface JobTemplateForm
   enableHostConfig?: boolean;
   execution_environment: { id: number; name: string } | null;
   id?: number;
-  instance_groups: InstanceGroup[];
+  instance_groups: number[];
   inventory: { name?: string; id?: number } | null;
   isProvisioningCallbackEnabled: boolean;
   isWebhookEnabled: boolean;

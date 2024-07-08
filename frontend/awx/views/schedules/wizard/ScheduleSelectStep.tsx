@@ -14,7 +14,6 @@ import { PageWizardStep } from '../../../../../framework';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import { RESOURCE_TYPE } from './constants';
 
 export function ScheduleSelectStep() {
   const { pathname } = useLocation();
@@ -116,17 +115,20 @@ export function ScheduleSelectStep() {
   useEffect(() => {
     const setLaunchToWizardData = async () => {
       let launchConfigValue = {} as PromptFormValues;
+      const isTemplate = urlFragments.includes('templates');
+      if (
+        (!isTemplate &&
+          scheduleType !== 'job-template' &&
+          scheduleType !== 'workflow-job-template') ||
+        !resource?.id
+      )
+        return;
+      const configUrl =
+        scheduleType === 'job-template'
+          ? awxAPI`/job_templates/${resource.id?.toString()}/launch/`
+          : awxAPI`/workflow_job_templates/${resource.id?.toString()}/launch/`;
 
-      const template = isTopLevelScheduleForm
-        ? resource?.type
-        : urlFragments.find((item) => item === 'workflow_job_template' || item === 'job_template');
-      const isTemplate = template === 'job_template' || template === 'workflow_job_template';
-
-      if (!isTemplate) return;
-
-      const launchConfigResults = await requestGet<LaunchConfiguration>(
-        awxAPI`/${template}s/${resource.id.toString()}/launch/`
-      );
+      const launchConfigResults = await requestGet<LaunchConfiguration>(configUrl);
 
       const {
         job_tags = '',
@@ -137,6 +139,7 @@ export function ScheduleSelectStep() {
 
       launchConfigValue = {
         ...defaults,
+        instance_groups: defaults.instance_groups?.map(({ id }) => id) || [],
         inventory: inventory?.id ? inventory : null,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),
@@ -166,7 +169,7 @@ export function ScheduleSelectStep() {
       }
     };
 
-    if (scheduleType === RESOURCE_TYPE.job || scheduleType === RESOURCE_TYPE.workflow_job) {
+    if (scheduleType === 'job-template' || scheduleType === 'workflow-job-template') {
       void setLaunchToWizardData();
     }
   }, [

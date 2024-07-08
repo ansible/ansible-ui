@@ -301,7 +301,122 @@ describe('Workflow Visualizer', () => {
       cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
     });
   });
+  describe('Workflow Visualizer: Prompt on Launch', () => {
+    let jobTemplate: JobTemplate;
+    before(() => {
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: project.id,
+        inventory: inventory.id,
+        ask_inventory_on_launch: true,
+      }).then((jt) => (jobTemplate = jt));
+    });
+    after(() => {
+      cy.deleteAwxJobTemplate(jobTemplate);
+    });
+    afterEach(() => {
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate);
+    });
+    it('Should save a workflow visualizer with a prompt on launch no', () => {
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+      cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+      cy.get('a[href*="/visualizer"]').click();
+      cy.clickButton('Add step');
+      cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getByDataCy('node-alias').type('POL JT Node');
 
+      cy.clickButton('Next');
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 3);
+        ['Node details', 'Prompts', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+      cy.clickButton('Next');
+      cy.clickButton('Finish');
+
+      cy.get(`g[data-id=1-unsavedNode]`).should('have.text', 'POL JT Node');
+      cy.clickButton('Save');
+      cy.getByDataCy('alert-toaster').should(
+        'have.text',
+        'Success alert:Successfully saved workflow visualizer'
+      );
+      cy.getByDataCy('workflow-visualizer-toolbar-close').click();
+      cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
+    });
+    it('Can switch node resource to job template with prompt on launch and successfully save visualizer', () => {
+      let jobTemplate: JobTemplate;
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: project.id,
+        inventory: inventory.id,
+        ask_inventory_on_launch: true,
+      }).then((jt) => (jobTemplate = jt));
+      cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then(
+        (projectNode) => {
+          cy.createAwxWorkflowVisualizerInventorySourceNode(
+            workflowJobTemplate,
+            inventorySource
+          ).then((inventorySourceNode) => {
+            cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 1)
+              .then((managementNode) => {
+                cy.createWorkflowJTSuccessNodeLink(projectNode, inventorySourceNode);
+                cy.createWorkflowJTAlwaysNodeLink(inventorySourceNode, managementNode);
+              })
+              .then(() => {
+                cy.navigateTo('awx', 'templates');
+                cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+                cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+                cy.get('a[href*="/visualizer"]').click();
+                cy.get(`g[data-id=${projectNode.id}] .pf-topology__node__action-icon`).click({
+                  force: true,
+                });
+                cy.getByDataCy('edit-node').click();
+                cy.get('[data-cy="wizard-nav"]').within(() => {
+                  cy.get('li').should('have.length', 2);
+                  ['Node details', 'Review'].forEach((text, index) => {
+                    cy.get('li')
+                      .eq(index)
+                      .should((el) => expect(el.text().trim()).to.equal(text));
+                  });
+                });
+                cy.getByDataCy('node-type-form-group').should(
+                  'have.text',
+                  'Node type * Project Sync'
+                );
+                cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+                cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+                cy.selectDropdownOptionByResourceName('node-convergence', 'All');
+                cy.getByDataCy('node-alias').type('Inventory Source Node');
+                cy.clickButton('Next');
+                cy.get('[data-cy="wizard-nav"]').within(() => {
+                  cy.get('li').should('have.length', 3);
+                  ['Node details', 'Prompts', 'Review'].forEach((text, index) => {
+                    cy.get('li')
+                      .eq(index)
+                      .should((el) => expect(el.text().trim()).to.equal(text));
+                  });
+                });
+                cy.clickButton('Next');
+                cy.clickButton('Finish');
+                cy.get(`g[data-id=${projectNode.id}]`).should('have.text', 'Inventory Source Node');
+              });
+          });
+          cy.clickButton('Save');
+          cy.getByDataCy('alert-toaster').should(
+            'have.text',
+            'Success alert:Successfully saved workflow visualizer'
+          );
+          cy.getByDataCy('workflow-visualizer-toolbar-close').click();
+          cy.getByDataCy('page-title').should('have.text', `${workflowJobTemplate.name}`);
+        }
+      );
+    });
+  });
   describe('Workflow Visualizer: Remove and Add Nodes', () => {
     it('Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project)

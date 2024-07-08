@@ -19,9 +19,10 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 
 type IOrganizationData = Organization & {
-  instanceGroups?: InstanceGroup[];
+  instanceGroups?: number[];
 };
 
 export function CreateOrganization() {
@@ -39,7 +40,7 @@ export function CreateOrganization() {
     for (const ig of values.instanceGroups || []) {
       igRequests.push(
         postRequest(awxAPI`/organizations/${createdOrganization.id.toString()}/instance_groups/`, {
-          id: ig.id,
+          id: ig,
         })
       );
     }
@@ -83,18 +84,24 @@ export function EditOrganization() {
     requestGet,
     swrOptions
   );
-  const instanceGroups = igResponse?.results;
+  const originalInstanceGroups = igResponse?.results;
 
   useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<IOrganizationData> = async (values) => {
     const { instanceGroups, ...organization } = values;
+    const { added, removed } = getAddedAndRemoved(
+      originalInstanceGroups || [],
+      instanceGroups?.map((id) => ({
+        id,
+      })) || []
+    );
     const editedOrganization = await requestPatch<Organization>(
       awxAPI`/organizations/${id.toString()}/`,
       organization
     );
     const disassociateRequests = [];
-    for (const ig of instanceGroups || []) {
+    for (const ig of removed || []) {
       disassociateRequests.push(
         postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
           id: ig.id,
@@ -104,10 +111,10 @@ export function EditOrganization() {
     }
     await Promise.all(disassociateRequests);
     const igRequests = [];
-    for (const ig of values.instanceGroups || []) {
+    for (const ig of added || []) {
       igRequests.push(
         postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
-          id: ig.id,
+          id: ig,
         })
       );
     }
@@ -130,7 +137,10 @@ export function EditOrganization() {
           submitText={t('Save organization')}
           onSubmit={onSubmit}
           onCancel={onCancel}
-          defaultValue={{ ...organization, instanceGroups }}
+          defaultValue={{
+            ...organization,
+            instanceGroups: originalInstanceGroups?.map(({ id }) => id) ?? undefined,
+          }}
         >
           <OrganizationInputs orgId={organization.id} />
         </AwxPageForm>

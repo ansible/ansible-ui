@@ -55,7 +55,7 @@ export interface TemplateLaunch {
   inventory: Inventory;
   credentials: Credential[];
   credential_passwords: { [key: string]: string };
-  instance_groups: { id: number; name: string }[];
+  instance_groups: number[];
   execution_environment: ExecutionEnvironment;
   diff_mode: boolean;
   extra_vars: string;
@@ -189,7 +189,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         setValue('forks', forks);
         setValue(
           'instance_groups',
-          instance_groups?.map((ig) => ig.id)
+          instance_groups?.map((id) => id)
         );
         setValue('inventory', inventory?.id);
         setValue('job_slice_count', job_slice_count);
