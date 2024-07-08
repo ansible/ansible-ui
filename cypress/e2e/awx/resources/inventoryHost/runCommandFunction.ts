@@ -60,6 +60,7 @@ export function runCommand(params: {
         // Credentials tab
 
         // check that everything is correctly rendered in the form, so it does not fail sometimes
+        cy.getByDataCy('wizard');
         cy.getByDataCy('wizard-nav');
         cy.getByDataCy('credential');
         cy.getByDataCy('credential-form-group');
@@ -67,6 +68,7 @@ export function runCommand(params: {
         cy.getByDataCy('Submit');
         cy.getByDataCy('wizard-back');
         cy.getByDataCy('wizard-cancel');
+        cy.contains(`[data-cy='credential']`, 'Select credential');
 
         cy.getByDataCy('credential').click();
         cy.get(`[role='listbox'] button`);
