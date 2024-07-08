@@ -12,8 +12,8 @@ describe('EDA Login / Logoff', () => {
         expect(result?.response?.statusCode).to.eql(204);
       });
       if (edaUser) {
-        cy.get('[data-cy="username"]').type(edaUser.username);
-        cy.get('[data-cy="password"]').type(Cypress.env('EDA_PASSWORD') as string);
+        cy.get('#pf-login-username-id').type(edaUser.username);
+        cy.get('#pf-login-password-id').type(Cypress.env('EDA_PASSWORD') as string);
         cy.clickButton('Log in');
         cy.get('.pf-v5-c-dropdown__toggle').eq(1).should('contain', edaUser.username);
       }
