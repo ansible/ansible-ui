@@ -657,7 +657,7 @@ describe('Credentials', () => {
       cy.verifyPageTitle('Create Job Template');
       cy.getByDataCy('name').type(jobTemplateName);
       cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-      cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
+      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.multiSelectByDataCy('credential', [machineCredential.name]);
       cy.getByDataCy('Submit').click();
