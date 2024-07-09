@@ -14,7 +14,7 @@ describe('EdaAddUsers', () => {
     cy.intercept('GET', edaAPI`/decision-environments/*`, {
       fixture: 'edaDecisionEnvironment.json',
     });
-    cy.intercept('GET', edaAPI`/users/*`, { fixture: 'edaUsers.json' });
+    cy.intercept('GET', edaAPI`/users/*`, { fixture: 'edaNormalUsers.json' });
     cy.intercept('GET', edaAPI`/role_definitions/*`, {
       fixture: 'edaDecisionEnvironmentRoles.json',
     });
@@ -25,16 +25,18 @@ describe('EdaAddUsers', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
     cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
-    cy.get('table tbody').find('tr').should('have.length', 6);
+    cy.get('table tbody').find('tr').should('have.length', 2);
   });
   it('can filter users by username', () => {
-    cy.intercept(edaAPI`/users/?name=demo*`, { fixture: 'edaUsers.json' }).as('nameFilterRequest');
+    cy.intercept(edaAPI`/users/?is_superuser=false&name=demo*`, {
+      fixture: 'edaNormalUsers.json',
+    }).as('nameFilterRequest');
     cy.filterTableByText('demo');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
   });
   it('should validate that at least one user is selected for moving to next step', () => {
-    cy.get('table tbody').find('tr').should('have.length', 6);
+    cy.get('table tbody').find('tr').should('have.length', 2);
     cy.clickButton(/^Next$/);
     cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one user.');
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });

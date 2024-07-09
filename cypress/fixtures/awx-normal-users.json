@@ -1,0 +1,89 @@
+{
+  "count": 2,
+  "next": "/api/v2/users/?is_superuser=false&order_by=username&page=2&page_size=10",
+  "previous": null,
+  "results": [
+    {
+      "id": 31,
+      "type": "user",
+      "url": "/api/v2/users/31/",
+      "related": {
+        "teams": "/api/v2/users/31/teams/",
+        "organizations": "/api/v2/users/31/organizations/",
+        "admin_of_organizations": "/api/v2/users/31/admin_of_organizations/",
+        "projects": "/api/v2/users/31/projects/",
+        "credentials": "/api/v2/users/31/credentials/",
+        "roles": "/api/v2/users/31/roles/",
+        "activity_stream": "/api/v2/users/31/activity_stream/",
+        "access_list": "/api/v2/users/31/access_list/",
+        "tokens": "/api/v2/users/31/tokens/",
+        "authorized_tokens": "/api/v2/users/31/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/31/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "27c0b724-1967-4eca-9054-95309adb0048",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-07-08T13:34:23.697601Z",
+      "modified": null,
+      "username": "demo-user",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    },
+    {
+      "id": 32,
+      "type": "user",
+      "url": "/api/v2/users/32/",
+      "related": {
+        "teams": "/api/v2/users/32/teams/",
+        "organizations": "/api/v2/users/32/organizations/",
+        "admin_of_organizations": "/api/v2/users/32/admin_of_organizations/",
+        "projects": "/api/v2/users/32/projects/",
+        "credentials": "/api/v2/users/32/credentials/",
+        "roles": "/api/v2/users/32/roles/",
+        "activity_stream": "/api/v2/users/32/activity_stream/",
+        "access_list": "/api/v2/users/32/access_list/",
+        "tokens": "/api/v2/users/32/tokens/",
+        "authorized_tokens": "/api/v2/users/32/authorized_tokens/",
+        "personal_tokens": "/api/v2/users/32/personal_tokens/"
+      },
+      "summary_fields": {
+        "resource": {
+          "ansible_id": "1c0b93f7-d6fc-4939-88e1-fb255985a947",
+          "resource_type": "shared.user"
+        },
+        "user_capabilities": {
+          "edit": true,
+          "delete": true
+        }
+      },
+      "created": "2024-07-08T13:34:42.370342Z",
+      "modified": null,
+      "username": "test-user",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_superuser": false,
+      "is_system_auditor": false,
+      "password": "$encrypted$",
+      "ldap_dn": "",
+      "last_login": null,
+      "external_account": null,
+      "auth": []
+    }
+  ]
+}
