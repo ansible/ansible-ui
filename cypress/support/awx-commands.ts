@@ -693,7 +693,6 @@ Cypress.Commands.add(
       const projectUpdateEndpoint: string = project.related.last_job;
       cy.requestDelete(projectUpdateEndpoint, options);
     }
-    // Delete project
     cy.requestDelete(awxAPI`/projects/${project.id.toString()}/`, options);
   }
 );
@@ -1268,6 +1267,7 @@ Cypress.Commands.add('waitForWorkflowJobStatus', (jobID: string) => {
   const waitForWFJobStatus = (maxLoops: number) => {
     if (maxLoops === 0) {
       cy.log('Max loops reached while waiting for processing events.');
+      cy.cancelJob({ url: awxAPI`/workflow_jobs/${jobID}/` } as Job);
       return;
     }
     cy.wait(500);

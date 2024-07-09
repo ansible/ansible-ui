@@ -659,7 +659,7 @@ describe('Credentials', () => {
       cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
       cy.selectDropdownOptionByResourceName('project', `${project.name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-      cy.selectItemFromLookupModal('credential-select', machineCredential.name);
+      cy.multiSelectByDataCy('credential', [machineCredential.name]);
       cy.getByDataCy('Submit').click();
     });
   });
