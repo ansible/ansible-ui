@@ -74,6 +74,10 @@ jobs:
       matrix:
         containers: [1,2,3,4]
     steps:
+      - name: Setup firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest    
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/download-artifact@v4
@@ -119,6 +123,7 @@ jobs:
           # auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
           tag: ${{ inputs.TAGS }}
+          browser: firefox
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
