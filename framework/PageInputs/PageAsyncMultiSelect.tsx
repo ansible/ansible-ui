@@ -28,6 +28,8 @@ export interface PageAsyncMultiSelectProps<ValueT>
   queryErrorText?: string | ((error: Error) => string);
 
   onBrowse?: () => void;
+
+  compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
 }
 
 /**
@@ -247,6 +249,7 @@ export function PageAsyncMultiSelect<
       disableClearSelection={props.disableClearSelection}
       disableClearChips={props.disableClearChips}
       queryLabel={props.queryLabel}
+      compareOptionValues={props.compareOptionValues}
     />
   );
 }
