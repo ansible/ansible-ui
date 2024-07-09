@@ -351,7 +351,7 @@ Cypress.Commands.add(
   (executionEnvironment: HubExecutionEnvironment) => {
     cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
     cy.getByDataCy('actions-dropdown').click();
-    cy.getByDataCy('sync-from-registry').click();
+    cy.getByDataCy('sync-execution-environment').click();
 
     cy.clickModalConfirmCheckbox();
     cy.intercept(
