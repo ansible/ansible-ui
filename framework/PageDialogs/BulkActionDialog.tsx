@@ -324,9 +324,14 @@ export function useBulkActionDialog<T extends object>(
   const [props, setProps] = useState<BulkActionDialogProps<T>>();
   useEffect(() => {
     if (props) {
-      const onCloseHandler = () => {
+      const onCloseHandler = (
+        status: 'success' | 'failures' | 'canceled',
+        successfulItems: T[],
+        failedItems: T[],
+        canceledItems: T[]
+      ) => {
         setProps(undefined);
-        props.onClose?.();
+        props.onClose?.(status, successfulItems, failedItems, canceledItems);
       };
       setDialog(
         <BulkActionDialog<T>
