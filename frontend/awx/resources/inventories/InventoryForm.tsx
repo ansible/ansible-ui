@@ -41,7 +41,7 @@ import { valueToObject } from '../../../../framework';
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
   labels: Label[];
-  inventories?: number[];
+  inventories?: Inventory[];
   inputInventories?: InputInventory[];
 };
 
@@ -272,7 +272,7 @@ export function EditInventory() {
         ? {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            inventories: inputInventoriesResponse?.results?.map((item) => item.id),
+            inventories: inputInventoriesResponse?.results as Inventory[],
           }
         : {
             ...inventory,
@@ -523,19 +523,22 @@ async function submitInputInventories(
 
 type InputInventory = { id: number; url: string; type: string; name: string };
 
-async function loadInputInventories(inventories: number[], t: TFunction<'translation', undefined>) {
+async function loadInputInventories(
+  inventories: Inventory[],
+  t: TFunction<'translation', undefined>
+) {
   const promises: unknown[] = [];
   const inventoriesData: InputInventory[] = inventories.map((inv) => {
-    return { id: inv, url: '', type: '', name: '' };
+    return { id: inv.id, url: '', type: '', name: '' };
   });
 
-  inventories.forEach((id) => {
+  inventories.forEach((inventory) => {
     const promise = requestGet<AwxItemsResponse<Inventory>>(
-      awxAPI`/inventories/?id=${id.toString()}`
+      awxAPI`/inventories/?id=${inventory.id.toString()}`
     )
       .then((result: AwxItemsResponse<Inventory>) => {
         if (result.results.length > 0) {
-          const inv = inventoriesData.find((inv) => inv.id === id);
+          const inv = inventoriesData.find((inv) => inv.id === inventory.id);
           if (inv) {
             inv.url = result.results[0].url || '';
             inv.type = result.results[0].type || '';
@@ -543,7 +546,7 @@ async function loadInputInventories(inventories: number[], t: TFunction<'transla
         }
       })
       .catch(() => {
-        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id: id }));
+        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id: inventory.id }));
       });
 
     promises.push(promise);
