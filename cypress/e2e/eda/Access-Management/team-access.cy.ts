@@ -233,7 +233,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.contains('li', 'Team Access').click();
       cy.selectTableRow(`${edaTeam2.name}`, false);
       cy.selectTableRow(`${edaTeam3.name}`, false);
-      cy.clickToolbarKebabAction('remove-selected-roles');
+      cy.clickToolbarKebabAction('remove-roles');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Remove role');
       cy.clickButton(/^Close$/);

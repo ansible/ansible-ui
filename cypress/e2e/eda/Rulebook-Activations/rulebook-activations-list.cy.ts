@@ -123,7 +123,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
           cy.get('input[type=checkbox]').check();
         });
     });
-    cy.clickToolbarKebabAction('delete-activations');
+    cy.clickToolbarKebabAction('delete-rulebook-activations');
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA2.id.toString()}/`).as('rba2');
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA3.id.toString()}/`).as('rba3');
     cy.clickModalConfirmCheckbox();
