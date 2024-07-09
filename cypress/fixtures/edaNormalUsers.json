@@ -1,0 +1,25 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "page_size": 10,
+  "page": 1,
+  "results": [
+    {
+      "id": 5,
+      "username": "demo-user",
+      "first_name": "Demo",
+      "last_name": "User",
+      "is_superuser": false,
+      "roles": []
+    },
+    {
+      "id": 6,
+      "username": "demo-user2",
+      "first_name": "Demo",
+      "last_name": "User2",
+      "is_superuser": false,
+      "roles": []
+    }
+  ]
+}
