@@ -619,32 +619,38 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
   let requestCount = 1;
-  let initialWaitTime = 1000;
-  const maxRequestCount = 300;
+  const initialWaitTime = 1000;
+  const subsequentWaitTime = 100;
+  const maxTotalWaitTime = 360000; // 6 minutes in milliseconds
+  let totalWaitTime = 0;
 
-  cy.requestGet<Project>(awxAPI`/projects/${projectId.toString()}`).then((project) => {
-    // Assuming that projects could take up to 5 min to sync if the instance is under load with other jobs
-    if (project.status === 'successful' || requestCount > maxRequestCount) {
-      if (requestCount > maxRequestCount) {
-        cy.log('Reached maximum number of requests for reading project status');
+  const waitForSync = () => {
+    cy.requestGet<Project>(awxAPI`/projects/${projectId.toString()}`).then((project) => {
+      if (project.status === 'successful' || totalWaitTime > maxTotalWaitTime) {
+        if (totalWaitTime > maxTotalWaitTime) {
+          cy.log('Reached maximum total wait time for reading project status');
+        }
+        // Reset request count
+        requestCount = 1;
+        totalWaitTime = 0;
+        return;
       }
-      // Reset request count
-      requestCount = 1;
-      return;
-    }
-    Cypress.log({
-      displayName: `PROJECT SYNC: ${project.name} status ${project.status}`,
-      message: [`🕓WAITING FOR PROJECT TO SYNC...🕓`],
+      Cypress.log({
+        displayName: `PROJECT SYNC: ${project.name} status ${project.status}`,
+        message: [`🕓WAITING FOR PROJECT TO SYNC...🕓`],
+      });
+      requestCount++;
+      if (requestCount <= 10) {
+        totalWaitTime += initialWaitTime;
+        cy.wait(initialWaitTime).then(waitForSync);
+      } else {
+        totalWaitTime += subsequentWaitTime;
+        cy.wait(subsequentWaitTime).then(waitForSync);
+      }
     });
-    requestCount++;
-    if (requestCount <= 5) {
-      initialWaitTime = initialWaitTime * 2;
-    } else {
-      initialWaitTime = 1000;
-    }
-    cy.wait(initialWaitTime);
-    cy.waitForProjectToFinishSyncing(projectId);
-  });
+  };
+
+  waitForSync();
 });
 
 Cypress.Commands.add(
