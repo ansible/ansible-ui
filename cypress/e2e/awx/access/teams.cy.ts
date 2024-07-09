@@ -238,7 +238,7 @@ describe('Teams: Add and Remove users', () => {
     cy.getTableRow('username', `${user1.username}`).within(() => {
       cy.get('input[type="checkbox"]').click({ force: true });
     });
-    cy.clickToolbarKebabAction('remove-selected-roles');
+    cy.clickToolbarKebabAction('remove-roles');
     cy.get('#confirm').click();
     cy.clickButton(/^Remove user/);
     cy.contains(/^Success$/);
