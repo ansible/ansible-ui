@@ -694,7 +694,6 @@ Cypress.Commands.add(
       const projectUpdateEndpoint: string = project.related.last_job;
       cy.requestDelete(projectUpdateEndpoint, options);
     }
-    // Delete project
     cy.requestDelete(awxAPI`/projects/${project.id.toString()}/`, options);
   }
 );
