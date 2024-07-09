@@ -500,8 +500,6 @@ describe('Workflow Approvals Tests', () => {
                 .then((launched: WorkflowJob) => {
                   cy.pollFirstPendingWorkflowApprovalsForWorkflowJobID(launched.id).then(
                     (wfApprovalA) => {
-
-                    
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
                       cy.navigateTo('awx', 'templates');
@@ -537,13 +535,8 @@ describe('Workflow Approvals Tests', () => {
                       cy.getModal().within(() => {
                         cy.clickButton('Close');
                       });
-
-                      // OK
-                      
                       cy.get('tbody tr').should('have.length', 1);
                       cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
-                      
-                      /*
                       cy.navigateTo('awx', 'workflow-approvals');
                       cy.verifyPageTitle('Workflow Approvals');
                       cy.filterTableBySingleSelect('name', workflowApproval.name);
@@ -560,9 +553,6 @@ describe('Workflow Approvals Tests', () => {
                         cy.clickButton('Close');
                       });
                       cy.waitForWorkflowJobStatus(launched.id.toString());
-
-                      // Not OK
-                      
                       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
                         cy.getByDataCy('status-column-cell').should('contain', 'Approve');
                         cy.getByDataCy('checkbox-column-cell').click();
@@ -582,14 +572,16 @@ describe('Workflow Approvals Tests', () => {
                         cy.clickButton('Cancel');
                       });
                       cy.verifyPageTitle('Workflow Approvals');
-                      */
                     }
                   );
                 });
             });
           }
         );
-        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+
+        if (workflowJobTemplate) {
+          cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+        }
       });
     });
 

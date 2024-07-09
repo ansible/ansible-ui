@@ -83,7 +83,7 @@ Cypress.Commands.add('awxLogin', () => {
 });
 
 Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) => {
-  cy.awxLogout();
+  cy.logout();
   cy.requiredVariablesAreSet(['AWX_SERVER']);
   cy.session(
     'AWX_TEST_USER',
@@ -117,7 +117,9 @@ Cypress.Commands.add('awxLogout', () => {
   cy.getByDataCy('account-menu')
     .click()
     .then(() => {
-      cy.intercept('GET', awxAPI`/logout/`).as('logout');
+      const interceptUrl = `/api/logout/`;
+      cy.log(`Intercepting ${interceptUrl}`);
+      cy.intercept('GET', interceptUrl).as('logout');
       cy.get('ul>li>a').contains('Logout').click();
       cy.wait('@logout');
       cy.then(Cypress.session.clearAllSavedSessions);
