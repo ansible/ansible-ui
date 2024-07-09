@@ -76,9 +76,9 @@ describe('ScheduleAddWizard', () => {
     });
 
     it('job template should render the correct steps initially', () => {
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
+        initialEntries: ['/templates/job-templates/266/schedules/create'],
+        path: '/templates/job-templates/:id/schedules/create',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -90,8 +90,8 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
-      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      // cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      // cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
 
@@ -122,9 +122,9 @@ describe('ScheduleAddWizard', () => {
         },
       });
 
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />, {
+        initialEntries: ['/templates/workflow-job-templates/266/schedules/create'],
+        path: '/templates/workflow-job-templates/:id/schedules/create',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -166,9 +166,9 @@ describe('ScheduleAddWizard', () => {
         }
       );
 
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/projects/`} />, {
+        initialEntries: ['/projects/6/schedules/create'],
+        path: '/projects/:id/schedules/create',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -209,9 +209,9 @@ describe('ScheduleAddWizard', () => {
         }
       );
 
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
+        initialEntries: ['/administration/management-jobs/2/schedules/create'],
+        path: '/administration/management-jobs/:id/schedules/create',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -269,9 +269,9 @@ describe('ScheduleAddWizard', () => {
         }
       );
 
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/inventory_sources/`} />, {
+        initialEntries: ['/infrastructure/inventories/inventory/1/sources/schedules/create'],
+        path: '/infrastructure/inventories/inventory/:id/sources/schedules/create',
       });
 
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -300,9 +300,9 @@ describe('ScheduleAddWizard', () => {
     });
 
     it('job template should not go to next step due to name failed validation', () => {
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
+        initialEntries: ['/templates/job-template/8/schedules/create'],
+        path: '/templates/job-template/:id/schedules/create',
       });
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.clickButton(/^Next$/);
@@ -331,9 +331,9 @@ describe('ScheduleAddWizard', () => {
           ],
         }
       );
-      cy.mount(<ScheduleAddWizard />, {
-        initialEntries: ['/schedules/add'],
-        path: '/schedules/add',
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
+        initialEntries: ['administration/management-jobs/5/schedules/create'],
+        path: 'administration/management-jobs/:id/schedules/create',
       });
       cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
       cy.selectDropdownOptionByResourceName(
@@ -363,7 +363,7 @@ describe('ScheduleAddWizard', () => {
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
       cy.intercept('/api/v2/job_templates/100/launch/', {});
-      cy.mount(<ScheduleAddWizard />, {
+      cy.mount(<ScheduleAddWizard isTopLevelSchedule />, {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });
@@ -461,7 +461,7 @@ describe('ScheduleAddWizard', () => {
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
       cy.intercept('/api/v2/job_templates/100/launch/', {});
-      cy.mount(<ScheduleAddWizard />, {
+      cy.mount(<ScheduleAddWizard isTopLevelSchedule />, {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });

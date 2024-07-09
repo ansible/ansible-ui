@@ -46,13 +46,14 @@ export function useAwxProjectRoutes() {
         {
           id: AwxRoute.ProjectScheduleEdit,
           path: ':id/schedules/:schedule_id/edit',
-          element: <ScheduleEditWizard />,
+          element: <ScheduleEditWizard resourceEndPoint={awxAPI`/projects/`} />,
         },
         {
           id: AwxRoute.ProjectSchedulePage,
           path: ':id/schedules/:schedule_id',
           element: (
             <SchedulePage
+              resourceEndPoint={awxAPI`/projects/`}
               initialBreadCrumbs={[
                 { label: t('Projects'), to: AwxRoute.Projects },
                 { id: 'data', to: AwxRoute.ProjectPage },
@@ -99,7 +100,13 @@ export function useAwxProjectRoutes() {
             {
               id: AwxRoute.ProjectSchedules,
               path: 'schedules',
-              element: <SchedulesList sublistEndpoint={awxAPI`/projects`} />,
+              element: (
+                <SchedulesList
+                  createSchedulePageId={AwxRoute.ProjectScheduleCreate}
+                  resourceType="projects"
+                  sublistEndpoint={awxAPI`/projects`}
+                />
+              ),
             },
             {
               id: AwxRoute.ProjectUsers,

@@ -17,7 +17,7 @@ export function ScheduleResourceInputs() {
     name: 'resource',
   }) as SystemJobTemplate;
   const hasDaysToKeepField =
-    resource &&
+    resource?.name &&
     (resource.name.includes('Cleanup Activity Stream') ||
       resource.name.includes('Cleanup Job Details'));
   const { timeZones, links } = useGetTimezones();

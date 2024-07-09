@@ -38,7 +38,7 @@ export function ScheduleReviewStep() {
     rules,
   } = wizardData;
 
-  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
+  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'promptStep'));
   const resourceTypeDetail = useGetNodeTypeDetail(schedule_type);
 
   let resourceDetailsLink = getPageUrl(ResourceLink[schedule_type], {

@@ -26,6 +26,7 @@ export function useAwxManagementJobsRoutes() {
           path: ':id/schedules/:schedule_id/',
           element: (
             <SchedulePage
+              resourceEndPoint={awxAPI`/system_job_templates/`}
               initialBreadCrumbs={[
                 { label: t('Management Jobs'), to: AwxRoute.ManagementJobs },
                 { id: 'data', to: AwxRoute.ManagementJobPage },
@@ -48,14 +49,14 @@ export function useAwxManagementJobsRoutes() {
             {
               id: AwxRoute.ManagementJobScheduleDetails,
               path: 'details',
-              element: <ScheduleDetails />,
+              element: <ScheduleDetails isSystemJobTemplateSchedule />,
             },
           ],
         },
         {
           id: AwxRoute.ManagementJobScheduleEdit,
           path: ':id/schedules/:schedule_id/edit',
-          element: <ScheduleEditWizard />,
+          element: <ScheduleEditWizard resourceEndPoint={awxAPI`/system_job_templates/`} />,
         },
         {
           id: AwxRoute.ManagementJobScheduleCreate,
@@ -70,7 +71,13 @@ export function useAwxManagementJobsRoutes() {
             {
               id: AwxRoute.ManagementJobSchedules,
               path: 'schedules',
-              element: <SchedulesList sublistEndpoint={awxAPI`/system_job_templates`} />,
+              element: (
+                <SchedulesList
+                  createSchedulePageId={AwxRoute.ManagementJobScheduleCreate}
+                  sublistEndpoint={awxAPI`/system_job_templates`}
+                  resourceType="management-jobs"
+                />
+              ),
             },
             {
               id: AwxRoute.ManagementJobNotifications,
