@@ -19,7 +19,6 @@ import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
-import type { Credential } from '../../../interfaces/Credential';
 import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -31,6 +30,7 @@ import { PageFormInventorySelect } from '../../inventories/components/PageFormIn
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
+import { Credential } from '../../../interfaces/Credential';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -92,6 +92,16 @@ interface LaunchPayload {
   verbosity: number;
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
+
+const acceptableCredentialKinds = [
+  'machine',
+  'cloud',
+  'net',
+  'ssh',
+  'vault',
+  'kubernetes',
+  'cryptography',
+];
 
 export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
@@ -170,7 +180,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
         setValue(
           'credentials',
-          credentials?.map((cred) => cred.id)
+          credentials.map((cred) => Number(cred.id))
         );
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
@@ -269,6 +279,7 @@ export function LaunchWizard({
             'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
           )}
           isMultiple
+          queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
         />
       ),
     },
@@ -276,7 +287,10 @@ export function LaunchWizard({
       id: 'credential-passwords',
       label: t('Credential Passwords'),
       hidden: (wizardValues: Partial<TemplateLaunch>) => {
-        const { credentials = [] } = 'credentials' in wizardValues ? wizardValues : config.defaults;
+        const credentials =
+          'credentials' in wizardValues
+            ? (wizardValues.credentials as Credential[])
+            : (config.defaults.credentials as unknown as Credential[]);
 
         const launchConfigAsksCredentials = config.ask_credential_on_launch;
         const launchConfigRequiresPasswords = config.passwords_needed_to_start?.length > 0;
@@ -285,10 +299,10 @@ export function LaunchWizard({
           return false;
         }
 
-        const showCredentialPasswordsStep = credentials.some((credential) => {
+        const showCredentialPasswordsStep = credentials?.some((credential: Credential) => {
           if (!credential.inputs) {
-            const launchConfigCredential = config.defaults.credentials.find(
-              (defaultCred) => defaultCred.id === credential.id
+            const launchConfigCredential = config.defaults.credentials?.find(
+              (defaultCred) => JSON.stringify(defaultCred.id) === JSON.stringify(credential.id)
             );
             return launchConfigCredential && launchConfigCredential?.passwords_needed?.length > 0;
           }
@@ -360,7 +374,7 @@ export function LaunchWizard({
       inventory: defaults.inventory.id ? defaults.inventory : null,
     },
     credentials: {
-      credentials: defaults.credentials,
+      credentials: defaults?.credentials,
     },
     'credential-passwords': {},
     'execution-environment': {

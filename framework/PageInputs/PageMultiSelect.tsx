@@ -99,6 +99,8 @@ export interface PageMultiSelectProps<ValueT> {
   disableSortOptions?: boolean;
 
   queryLabel?: (value: ValueT) => ReactNode;
+
+  compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
 }
 
 /**
@@ -151,6 +153,7 @@ export function PageMultiSelect<
     disableClearSelection,
     maxChipSize,
     queryLabel,
+    compareOptionValues,
   } = props;
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
   const [searchValue, setSearchValue] = useOverridableState(
@@ -163,7 +166,9 @@ export function PageMultiSelect<
   const selectedOptions = useMemo(() => {
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
-      const option = options.find((option) => option.value === value);
+      const option = options.find((option) =>
+        compareOptionValues ? compareOptionValues(option.value, value) : option.value === value
+      );
       if (option) {
         selectedOptions.push(option);
       } else if (queryLabel) {
@@ -173,7 +178,7 @@ export function PageMultiSelect<
       }
     }
     return selectedOptions;
-  }, [options, queryLabel, values]);
+  }, [options, queryLabel, values, compareOptionValues]);
 
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
@@ -264,8 +269,18 @@ export function PageMultiSelect<
           else return option.label === itemId;
         });
         if (newSelectedOption) {
-          if (previousValues?.find((value) => value === newSelectedOption.value) !== undefined) {
-            previousValues = previousValues.filter((value) => value !== newSelectedOption.value);
+          if (
+            previousValues?.find((value) =>
+              compareOptionValues
+                ? compareOptionValues(value, newSelectedOption.value)
+                : value === newSelectedOption.value
+            ) !== undefined
+          ) {
+            previousValues = previousValues.filter((value) =>
+              compareOptionValues
+                ? !compareOptionValues(value, newSelectedOption.value)
+                : value !== newSelectedOption.value
+            );
           } else {
             previousValues = previousValues ? [...previousValues] : [];
             previousValues.push(newSelectedOption.value);
@@ -274,7 +289,7 @@ export function PageMultiSelect<
         return previousValues;
       });
     },
-    [onSelect, options]
+    [onSelect, options, compareOptionValues]
   );
 
   const searchRef = useRef<HTMLInputElement>(null);
