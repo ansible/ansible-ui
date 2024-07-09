@@ -6,6 +6,10 @@ on:
       AWX_SERVER:
         type: string
         description: 'AWX Server'
+      BRANCH:
+        type: string
+        description: 'Branch'
+        default: 'main'
   schedule:
     - cron: '0 8 * * *'
 
@@ -31,6 +35,7 @@ jobs:
     uses: ./.github/workflows/awx-e2e.yml
     with:
       AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
+      BRANCH: ${{ github.event.inputs.BRANCH  }}
       TAGS: nightly
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}

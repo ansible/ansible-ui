@@ -13,6 +13,10 @@ on:
       TAGS:
         type: string
         required: false
+      BRANCH:
+        type: string
+        required: false
+        default: 'main'
     secrets:
       AWX_PASSWORD:
         required: true
@@ -32,6 +36,7 @@ jobs:
       - uses: actions/checkout@v4
         if: ${{ !inputs.SKIP_JOB }}
         with:
+          ref: ${{ inputs.BRANCH }}
           fetch-depth: 1
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
