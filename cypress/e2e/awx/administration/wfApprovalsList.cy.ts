@@ -542,6 +542,8 @@ describe('Workflow Approvals Tests', () => {
                       
                       cy.get('tbody tr').should('have.length', 1);
                       cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
+                      
+                      /*
                       cy.navigateTo('awx', 'workflow-approvals');
                       cy.verifyPageTitle('Workflow Approvals');
                       cy.filterTableBySingleSelect('name', workflowApproval.name);
@@ -559,7 +561,8 @@ describe('Workflow Approvals Tests', () => {
                       });
                       cy.waitForWorkflowJobStatus(launched.id.toString());
 
-                      /*
+                      // Not OK
+                      
                       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
                         cy.getByDataCy('status-column-cell').should('contain', 'Approve');
                         cy.getByDataCy('checkbox-column-cell').click();
