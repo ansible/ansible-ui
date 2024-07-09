@@ -49,6 +49,7 @@ Cypress.Commands.add('platformLogin', () => {
       cacheAcrossSpecs: true,
     }
   );
+  cy.requestPost(gatewayV1API`/session/`, {});
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
