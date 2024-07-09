@@ -13,7 +13,7 @@ export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
-  Value extends number = PathValue<FormData, Name>,
+  Value extends Resource = PathValue<FormData, Name>,
 >(props: {
   id?: string;
   name: Name;
@@ -31,6 +31,7 @@ export function PageFormMultiSelectAwxResource<
   additionalControls?: React.ReactNode;
   labelHelp?: string;
   queryParams?: QueryParams;
+  compareOptionValues?: (a: Value, b: Value) => boolean;
 }) {
   const id = useID(props);
 
@@ -66,7 +67,7 @@ export function PageFormMultiSelectAwxResource<
           options:
             response.results?.map((resource) => ({
               label: resource.name,
-              value: resource.id as PathValue<FormData, Name>,
+              value: resource as PathValue<FormData, Name>,
               description: resource.description,
             })) ?? [],
           next: response.results[response.results.length - 1]?.name,
@@ -98,8 +99,8 @@ export function PageFormMultiSelectAwxResource<
           queryParams={props.queryParams}
           defaultSelection={
             value && Array.isArray(value)
-              ? value.map((item: number) => {
-                  return { id: item };
+              ? value.map((item) => {
+                  return { id: item.id };
                 })
               : []
           }
@@ -118,9 +119,7 @@ export function PageFormMultiSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => (
-      <AsyncQueryLabel url={props.url.split('?')[0]} id={value as unknown as number} />
-    ),
+    (value: Value) => <AsyncQueryLabel url={props.url.split('?')[0]} id={value.id} />,
     [props.url]
   );
 
@@ -140,12 +139,13 @@ export function PageFormMultiSelectAwxResource<
       onBrowse={() =>
         openSelectDialog((resources: Resource[]) => {
           if (resources) {
-            setValue(props.name, resources.map((res) => res.id) as PathValue<FormData, Name>);
+            setValue(props.name, resources.map((res) => res) as PathValue<FormData, Name>);
           }
         })
       }
       queryLabel={queryLabel}
       additionalControls={props.additionalControls}
+      compareOptionValues={props.compareOptionValues}
     />
   );
 }
@@ -164,10 +164,11 @@ function SelectResource<
   const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
 
   const queryParams = useMemo(() => {
-    const query: QueryParams = {};
+    let query: QueryParams = {};
     urlSearchParams.forEach((value, key) => (query[key] = value));
+    query = { ...query, ...props.queryParams };
     return query;
-  }, [urlSearchParams]);
+  }, [urlSearchParams, props.queryParams]);
 
   const view = useAwxView<Resource>({
     url: props.url.split('?')[0],
