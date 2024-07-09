@@ -153,6 +153,7 @@ export function PageMultiSelect<
     disableClearSelection,
     maxChipSize,
     queryLabel,
+    isOptionValueEqual,
   } = props;
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
   const [searchValue, setSearchValue] = useOverridableState(
@@ -166,9 +167,7 @@ export function PageMultiSelect<
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
       const option = options.find((option) =>
-        props.isOptionValueEqual
-          ? props.isOptionValueEqual(option.value, value)
-          : option.value === value
+        isOptionValueEqual ? isOptionValueEqual(option.value, value) : option.value === value
       );
       if (option) {
         selectedOptions.push(option);
@@ -179,7 +178,7 @@ export function PageMultiSelect<
       }
     }
     return selectedOptions;
-  }, [options, queryLabel, values, props.isOptionValueEqual]);
+  }, [options, queryLabel, values, isOptionValueEqual]);
 
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
@@ -272,14 +271,14 @@ export function PageMultiSelect<
         if (newSelectedOption) {
           if (
             previousValues?.find((value) =>
-              props.isOptionValueEqual
-                ? props.isOptionValueEqual(value, newSelectedOption.value)
+              isOptionValueEqual
+                ? isOptionValueEqual(value, newSelectedOption.value)
                 : value === newSelectedOption.value
             ) !== undefined
           ) {
             previousValues = previousValues.filter((value) =>
-              props.isOptionValueEqual
-                ? !props.isOptionValueEqual(value, newSelectedOption.value)
+              isOptionValueEqual
+                ? !isOptionValueEqual(value, newSelectedOption.value)
                 : value !== newSelectedOption.value
             );
           } else {
@@ -290,7 +289,7 @@ export function PageMultiSelect<
         return previousValues;
       });
     },
-    [onSelect, options, props.isOptionValueEqual]
+    [onSelect, options, isOptionValueEqual]
   );
 
   const searchRef = useRef<HTMLInputElement>(null);
