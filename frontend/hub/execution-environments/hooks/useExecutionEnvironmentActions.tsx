@@ -1,4 +1,4 @@
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -30,7 +30,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
-        label: t('Edit'),
+        label: t('Edit execution environment'),
         isPinned: true,
         onClick: (ee: ExecutionEnvironment) => {
           pageNavigate(HubRoute.EditExecutionEnvironment, { params: { id: ee.name } });
@@ -39,7 +39,8 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: t('Sync selected environments'),
+        icon: SyncAltIcon,
+        label: t('Sync execution environment'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         onClick: (ee) => syncExecutionEnvironments([ee]),
         isDisabled:
@@ -51,7 +52,8 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: t('Sign selected environments'),
+        icon: CheckIcon,
+        label: t('Sign execution environment'),
         onClick: (ee) => signExecutionEnvironment([ee]),
         isDisabled:
           context.hasPermission('container.change_containernamespace') &&

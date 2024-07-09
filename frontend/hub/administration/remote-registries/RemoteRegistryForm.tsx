@@ -199,7 +199,7 @@ export function EditRemoteRegistry() {
         ]}
       />
       <HubPageForm<RemoteRegistryProps>
-        submitText={t('Edit remote registry')}
+        submitText={t('Save remote registry')}
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={remoteRegistryDefaultValues}

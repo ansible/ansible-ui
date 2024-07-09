@@ -65,7 +65,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ThumbsUpIcon,
-        label: autoSign ? t('Sign and approve') : t('Approve'),
+        label: autoSign ? t('Approve and sign collection') : t('Approve and sign collection'),
         onClick: (collection) =>
           approveCollection(
             [collection],
@@ -86,7 +86,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: ImportIcon,
-        label: t('View Import Logs'),
+        label: t('View import logs'),
         onClick: (collection) =>
           pageNavigate(HubRoute.MyImports, {
             query: {
@@ -102,7 +102,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: ThumbsDownIcon,
-        label: t('Reject'),
+        label: t('Reject collection'),
         onClick: (collection) => rejectCollections([collection]),
         isDanger: true,
         isDisabled: (collection) =>
