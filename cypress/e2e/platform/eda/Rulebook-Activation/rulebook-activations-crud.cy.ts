@@ -19,7 +19,6 @@ tag(['aaas-unsupported'], () => {
     let edaRuleBook: EdaRulebook;
 
     before(() => {
-      cy.platformLogin();
       cy.createEdaProject().then((project) => {
         edaProject = project;
         cy.waitEdaProjectSync(project);
@@ -85,7 +84,6 @@ tag(['aaas-unsupported'], () => {
     let edaRuleBook: EdaRulebook;
 
     before(() => {
-      cy.platformLogin();
       cy.createEdaProject().then((project) => {
         edaProject = project;
         cy.waitEdaProjectSync(project);

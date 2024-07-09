@@ -3,7 +3,6 @@ import { Authenticator } from '../../../../../platform/interfaces/Authenticator'
 
 describe('Authenticators - Local CRUD UI', () => {
   beforeEach(() => {
-    cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication Methods');
   });

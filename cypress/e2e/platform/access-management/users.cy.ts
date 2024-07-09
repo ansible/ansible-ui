@@ -4,14 +4,13 @@ import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 
-describe('Users - create, edit and delete', () => {
+describe('Users - Create, Edit and Delete', () => {
   beforeEach(() => {
-    cy.platformLogin();
     cy.navigateTo('platform', 'users');
     cy.verifyPageTitle('Users');
   });
 
-  it('edits a user from the list view and delete it from the ui', () => {
+  it('edits a user from the list view and deletes it from the ui', () => {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.clickTableRowAction('username', createdPlatformUser.username, 'edit-user', {
         inKebab: true,
@@ -29,7 +28,7 @@ describe('Users - create, edit and delete', () => {
     });
   });
 
-  it('edits a user from the details page and delete it from the ui', () => {
+  it('edits a user from the details page and deletes it from the ui', () => {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.clickTableRowLink('username', createdPlatformUser.username);
       cy.contains('a[role="tab"]', 'Details').click();
@@ -51,7 +50,7 @@ describe('Users - create, edit and delete', () => {
     });
   });
 
-  it('bulk delete users from the toolbar action', () => {
+  it('bulk deletes users from the toolbar action', () => {
     cy.createPlatformUser().then((createdPlatformUser1: PlatformUser) => {
       cy.createPlatformUser().then((createdPlatformUser2: PlatformUser) => {
         cy.selectTableRowByCheckbox('username', createdPlatformUser1.username);
@@ -69,16 +68,15 @@ describe('Users - create, edit and delete', () => {
   });
 });
 
-describe('User Types - creates users of type normal, platform auditor and system admin', () => {
+describe('User Types - Creates Users of Type Normal, Platform Auditor and System Admin', () => {
   beforeEach(() => {
-    cy.platformLogin();
     cy.intercept('GET', gatewayV1API`/users/?order_by=username&page=1&page_size=10`).as('getUsers');
     cy.navigateTo('platform', 'users');
     cy.wait('@getUsers');
     cy.verifyPageTitle('Users');
   });
 
-  it('create a user of type system administrator in the ui and delete it', () => {
+  it('creates a system administrator in the ui and then deletes it', () => {
     const userName = `platform-e2e-admin-user-${randomString(3).toLowerCase()}`;
     const firstName = `FirstName${randomString(2)}`;
     const lastName = `LastName ${randomString(2)}`;
@@ -110,7 +108,7 @@ describe('User Types - creates users of type normal, platform auditor and system
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('create a user of type platform auditor in the ui and delete it', () => {
+  it('creates a platform auditor in the ui and then deletes it', () => {
     const userName = `platform-e2e-auditor-user-${randomString(3).toLowerCase()}`;
     const firstName = `FirstName${randomString(2)}`;
     const lastName = `LastName ${randomString(2)}`;
@@ -143,7 +141,7 @@ describe('User Types - creates users of type normal, platform auditor and system
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it.skip('admin creates a normal user, log in as normal user, and verify auth type is set to local', () => {
+  it.skip('creates a normal user, logs in as the normal user, and verifies auth type is set to local', () => {
     const userName = `platform-e2e-normal-user-${randomString(3).toLowerCase()}`;
     const firstName = `FirstName${randomString(2)}`;
     const lastName = `LastName ${randomString(2)}`;
@@ -199,17 +197,20 @@ describe('User Types - creates users of type normal, platform auditor and system
   });
 });
 
-describe('Users - Teams and Roles tab tests', () => {
+describe('Users - Teams and Roles Tab Tests', () => {
   let platformTeam: PlatformTeam;
+  let platformOrg: PlatformOrganization;
   beforeEach(function () {
-    cy.platformLogin();
-    cy.createPlatformTeam({
-      organization: (this.globalPlatformOrganization as PlatformOrganization).id,
-    }).then((testPlatformTeam: PlatformTeam) => {
-      platformTeam = testPlatformTeam;
+    cy.createPlatformOrganization().then((org) => {
+      platformOrg = org;
+      cy.createPlatformTeam({
+        organization: platformOrg.id,
+      }).then((testPlatformTeam: PlatformTeam) => {
+        platformTeam = testPlatformTeam;
+      });
+      cy.navigateTo('platform', 'users');
+      cy.verifyPageTitle('Users');
     });
-    cy.navigateTo('platform', 'users');
-    cy.verifyPageTitle('Users');
   });
 
   it('should add and remove a team from teams tab', () => {

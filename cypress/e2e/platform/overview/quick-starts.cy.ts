@@ -2,10 +2,6 @@ import { tag } from '../../../support/tag';
 
 tag(['aaas-unsupported'], () => {
   describe('Overview - Quick Starts', () => {
-    before(() => {
-      cy.platformLogin();
-    });
-
     beforeEach(() => {
       cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
     });

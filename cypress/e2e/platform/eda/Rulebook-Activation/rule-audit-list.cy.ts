@@ -15,8 +15,6 @@ tag(['aaas-unsupported'], () => {
     let edaRuleBook: EdaRulebook;
 
     before(() => {
-      cy.platformLogin();
-
       cy.createEdaProject().then((project) => {
         edaProject = project;
         cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {

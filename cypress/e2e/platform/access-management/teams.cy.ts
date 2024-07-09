@@ -5,12 +5,11 @@ import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
 import { randomE2Ename } from '../../../support/utils';
 
-describe('Platform Teams - create, edit and delete with existing global platform organization', function () {
+describe('Platform Teams - Create, Edit and Delete', function () {
   let platformTeam: PlatformTeam;
   let platformOrganization: PlatformOrganization;
 
   beforeEach(function () {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((org) => {
       platformOrganization = org;
       cy.createPlatformTeam({
@@ -52,7 +51,7 @@ describe('Platform Teams - create, edit and delete with existing global platform
       });
   });
 
-  it('edits a team with a user from the list view and delete it from the ui', function () {
+  it('can edit a team with a user from the list view and delete it from the ui', function () {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.associateUsersWithPlatformTeam(platformTeam, [createdPlatformUser]).then(() => {
         cy.getTableRowByText(platformTeam.name).within(() => {
@@ -140,12 +139,11 @@ describe('Platform Teams - create, edit and delete with existing global platform
   });
 });
 
-describe('Platform Teams - tabs tests', function () {
+describe('Platform Teams - Tabs Tests', function () {
   let platformTeam: PlatformTeam;
   let platformOrganization: PlatformOrganization;
 
   beforeEach(function () {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((org) => {
       platformOrganization = org;
       cy.createPlatformTeam({
@@ -200,7 +198,7 @@ describe('Platform Teams - tabs tests', function () {
   });
 
   // Team - Administrators Tab
-  it('can add and remove users as administrators to the team from the administrators tab', function () {
+  it('can add and remove users to the team from the administrators tab', function () {
     cy.createPlatformUser().then((user1) => {
       cy.createPlatformUser().then((user2) => {
         cy.associateUsersWithPlatformOrganization(platformOrganization, [user1, user2]).then(() => {

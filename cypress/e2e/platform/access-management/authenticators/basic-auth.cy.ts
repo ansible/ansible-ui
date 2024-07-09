@@ -4,7 +4,6 @@ import { gatewayV1API } from '../../../../../platform/api/gateway-api-utils';
 
 describe('Platform Basic Authentication', () => {
   it('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
-    cy.platformLogin();
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication Methods');
 
@@ -32,8 +31,6 @@ describe('Platform Basic Authentication', () => {
     // Log out
     cy.intercept('GET', gatewayV1API`/ui_auth/`).as('getUIAuthRequest');
     cy.platformLogout();
-
-    // Log back in
     cy.wait('@getUIAuthRequest')
       .its('response.body')
       .then((responseBody: UIAuth) => {

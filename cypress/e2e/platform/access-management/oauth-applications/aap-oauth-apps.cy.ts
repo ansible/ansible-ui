@@ -8,7 +8,6 @@ import { PlatformUser } from '../../../../../platform/interfaces/PlatformUser';
 describe('AAP OAuth Applications CRUD actions List page', () => {
   let platformOrganization: PlatformOrganization;
   beforeEach(() => {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((organization) => {
       platformOrganization = organization;
     });
@@ -84,7 +83,6 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
 describe('AAP OAuth Applications CRUD actions Details page', () => {
   let platformOrganization: PlatformOrganization;
   beforeEach(() => {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((organization) => {
       platformOrganization = organization;
     });
@@ -159,7 +157,6 @@ describe('AAP OAuth Applications CRUD actions and Bulk Deletion', () => {
   let platformApplication1: Application;
   let platformApplication2: Application;
   beforeEach(() => {
-    cy.platformLogin();
     cy.createPlatformOAuthApplication('authorization-code', 'public').then((aapApplication) => {
       platformApplication1 = aapApplication;
     });
@@ -196,7 +193,6 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
   let platformApplication: Application;
   let platformOrganization: PlatformOrganization;
   beforeEach(() => {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((organization) => {
       platformOrganization = organization;
       cy.createPlatformOAuthApplication('authorization-code', 'public', platformOrganization).then(

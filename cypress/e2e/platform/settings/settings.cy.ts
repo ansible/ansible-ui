@@ -1,7 +1,6 @@
 import { ILicenseInfo } from '../../../../frontend/awx/interfaces/Config';
 describe('Users - create, edit and delete', () => {
   it('checks license compliance status', () => {
-    cy.platformLogin();
     cy.intercept('GET', '/api/controller/v2/config').as('getConfig');
     cy.navigateTo('platform', 'subscription-details');
     cy.verifyPageTitle('Subscription');

@@ -4,7 +4,6 @@ import { Ldap } from '../../../../../platform/interfaces/LdapAuthenticator';
 describe('LDAP Authentication form - create, edit, update and delete', () => {
   it('creates an LDAP authenticator', () => {
     const ldapAuthenticator = randomE2Ename();
-    cy.platformLogin();
 
     cy.fixture('platform-authenticators/ldap').then((ldapData: Ldap) => {
       const { CONNECTION_OPTIONS, GROUP_TYPE_PARAMS, GROUP_SEARCH, USER_ATTR_MAP, USER_SEARCH } =

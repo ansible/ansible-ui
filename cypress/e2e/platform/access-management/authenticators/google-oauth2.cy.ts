@@ -4,7 +4,6 @@ import { GoogleOAuth2 } from '../../../../../platform/interfaces/GoogleOAuth2Aut
 describe('Google OAuth2 Authentication form - create, edit, update and delete', () => {
   it('creates a Google OAuth2 authenticator', () => {
     const googleAuthenticator = `E2E Google OAuth2 Authenticator ${randomString(4)}`;
-    cy.platformLogin();
 
     cy.fixture('platform-authenticators/google-oauth2').then((data: GoogleOAuth2) => {
       const googleData = data;

@@ -1,6 +1,5 @@
 describe.skip('Platform Header Toolbar - Help Menu', () => {
   it('checks the help menu items', () => {
-    cy.platformLogin();
     cy.visit('/');
 
     // Click on help-menu

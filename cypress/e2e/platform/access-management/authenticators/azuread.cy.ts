@@ -4,7 +4,6 @@ import { randomE2Ename } from '../../../../support/utils';
 describe('Azure AD Authentication form - create, edit, update and delete', () => {
   it('creates an Azure AD authenticator', () => {
     const azureAdAuthenticator = randomE2Ename();
-    cy.platformLogin();
 
     cy.fixture('platform-authenticators/azuread').then((azureADData: AzureAD) => {
       cy.navigateTo('platform', 'authenticators');
@@ -49,16 +48,14 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
     cy.platformLogout();
 
     // Verify the GH Authenticator is displayed in the login page
-    cy.get('form.pf-v5-c-form').within(() => {
-      cy.get('h2').should('have.text', 'Log in with').should('be.visible');
-      cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.azuread"]')
-        .contains(azureAdAuthenticator)
-        .should('have.attr', 'href')
-        .and(
-          'equal',
-          `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-azuread__${azureAdAuthenticator.toLowerCase()}/`
-        );
-    });
+    cy.contains('Log in with').should('be.visible');
+    cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.azuread"]')
+      .contains(azureAdAuthenticator)
+      .should('have.attr', 'href')
+      .and(
+        'equal',
+        `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-azuread__${azureAdAuthenticator.toLowerCase()}/`
+      );
 
     // Login
     cy.platformLogin();
