@@ -179,7 +179,7 @@ export function PageMultiSelect<
       }
     }
     return selectedOptions;
-  }, [options, queryLabel, values]);
+  }, [options, queryLabel, values, props.isOptionValueEqual]);
 
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
@@ -290,7 +290,7 @@ export function PageMultiSelect<
         return previousValues;
       });
     },
-    [onSelect, options]
+    [onSelect, options, props.isOptionValueEqual]
   );
 
   const searchRef = useRef<HTMLInputElement>(null);
