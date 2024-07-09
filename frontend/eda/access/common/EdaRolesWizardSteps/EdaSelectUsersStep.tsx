@@ -46,6 +46,9 @@ export function EdaSelectUsersStep(props: { descriptionForUsersSelection?: strin
   const view = useEdaMultiSelectListView<EdaUser>(
     {
       url: edaAPI`/users/`,
+      queryParams: {
+        is_superuser: 'false',
+      },
       toolbarFilters,
       tableColumns,
     },
