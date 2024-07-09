@@ -29,8 +29,9 @@ function PageMultiSelectTest<T>(props: {
   defaultValues?: T[];
   options: PageSelectOption<T>[];
   footer?: ReactNode;
+  compareOptionValues?: (a: T, b: T) => boolean;
 }) {
-  const { placeholder, defaultValues: defaultValue, options, footer } = props;
+  const { placeholder, defaultValues: defaultValue, options, footer, compareOptionValues } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValue);
   return (
     <PageSection>
@@ -41,6 +42,7 @@ function PageMultiSelectTest<T>(props: {
         options={options}
         onSelect={setValues}
         footer={footer}
+        compareOptionValues={compareOptionValues}
       />
     </PageSection>
   );
@@ -48,7 +50,13 @@ function PageMultiSelectTest<T>(props: {
 
 describe('PageMultiSelect', () => {
   it('should show placeholder', () => {
-    cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
+    cy.mount(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
     cy.get('#test').should('have.text', placeholderText);
   });
 
@@ -58,6 +66,7 @@ describe('PageMultiSelect', () => {
         placeholder={placeholderText}
         options={options}
         defaultValues={testObjects}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
       />
     );
     cy.multiSelectShouldHaveSelectedOption('#test', testObjects[0].name);
@@ -65,7 +74,13 @@ describe('PageMultiSelect', () => {
   });
 
   it('select and unselect options', () => {
-    cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
+    cy.mount(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
     cy.get('#test').should('have.text', placeholderText);
 
     cy.multiSelectShouldNotHaveSelectedOption('#test', testObjects[0].name);
@@ -95,7 +110,13 @@ describe('PageMultiSelect', () => {
   });
 
   it('should support filtering options when more than 10 items', () => {
-    cy.mount(<PageMultiSelectTest placeholder={placeholderText} options={options} />);
+    cy.mount(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
     cy.get('#test').click();
     cy.get('#test-search').type('Option 1');
     cy.get('#test-select').should('contain', 'Option 1');
@@ -105,7 +126,12 @@ describe('PageMultiSelect', () => {
 
   it('should show footer', () => {
     cy.mount(
-      <PageMultiSelectTest placeholder={placeholderText} options={options} footer="Footer" />
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        footer="Footer"
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
     );
     cy.get('#test').click();
     cy.contains('Footer');
