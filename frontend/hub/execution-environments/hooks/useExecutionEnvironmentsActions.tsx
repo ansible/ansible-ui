@@ -37,7 +37,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add execution environment'),
+        label: t('Create execution environment'),
         onClick: () => {
           pageNavigate(HubRoute.CreateExecutionEnvironment);
         },
