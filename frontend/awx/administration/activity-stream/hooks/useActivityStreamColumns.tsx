@@ -17,7 +17,7 @@ export function useActivityStreamColumns(options?: {
         header: t('Time'),
         cell: (activity_stream: ActivityStream) =>
           activity_stream.timestamp && <DateTimeCell value={activity_stream.timestamp} />,
-        sort: 'timestamp',
+        sort: 'id', // Timestamp for activity stream is not indexed result in slow query, id is effectively the same and more performant.
         list: 'secondary',
         defaultSortDirection: 'desc',
         modal: ColumnModalOption.hidden,
