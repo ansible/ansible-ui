@@ -1,5 +1,6 @@
 import { Page } from '@patternfly/react-core';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { AnsibleLogin } from '../../frontend/common/AnsibleLogin';
@@ -13,6 +14,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
   const { activePlatformUser } = usePlatformActiveUser();
   const { data: options } = useGet<UIAuth>(gatewayAPI`/ui_auth/`);
   const hideAuthOptions = options ? !options.show_login_form : false;
+  const { t } = useTranslation();
 
   if (activePlatformUser === undefined) {
     return (
@@ -30,13 +32,14 @@ export function PlatformLogin(props: { children: ReactNode }) {
         authOptions={hideAuthOptions ? undefined : options?.ssos}
         brandImg={
           options?.custom_logo ? (
-            <img src={options.custom_logo} alt="Custom logo" style={{ height: 64 }} />
+            <img src={options.custom_logo} alt={t('Custom logo')} style={{ height: 64 }} />
           ) : (
             <AAPLogo style={{ height: 64 }} />
           )
         }
         brandImgAlt={process.env.PRODUCT}
         textContent={options?.custom_login_info}
+        loginSubtitle={t('Enter your credentials.')}
       />
     );
   }
