@@ -139,4 +139,4 @@ before(() => {
   };
 });
 
-Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
+// Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
