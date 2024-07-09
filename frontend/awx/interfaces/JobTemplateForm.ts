@@ -1,8 +1,8 @@
-import { Credential } from './Credential';
 import { InstanceGroup } from './InstanceGroup';
 import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
 import { Project } from './Project';
+import { Credential } from './Credential';
 
 export interface JobTemplateRelatedFields
   extends Pick<JobTemplate['related'], 'webhook_receiver' | 'callback' | 'webhook_key'> {
