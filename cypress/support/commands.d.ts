@@ -686,7 +686,7 @@ declare global {
         skipSync?: boolean
       ): Chainable<Project>;
 
-      waitForProjectToFinishSyncing(projectId: number): Chainable<void>;
+      waitForProjectToFinishSyncing(projectId: number): Chainable<Project>;
 
       /** Create an execution environment in AWX */
       createAwxExecutionEnvironment(

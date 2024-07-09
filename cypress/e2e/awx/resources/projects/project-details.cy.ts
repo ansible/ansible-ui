@@ -1,296 +1,29 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../support/utils';
+import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
+import { Job } from '../../../../../frontend/awx/interfaces/Job';
+import { JobTemplate } from '../../../../../frontend/awx/interfaces/JobTemplate';
+import { NotificationTemplate } from '../../../../../frontend/awx/interfaces/NotificationTemplate';
+import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../../frontend/awx/interfaces/Project';
+import { Schedule } from '../../../../../frontend/awx/interfaces/Schedule';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../../support/utils';
 
 describe('Projects', () => {
-  let schedule: Schedule;
   let project: Project;
   let awxOrganization: Organization;
-  let inventory: Inventory;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
       awxOrganization = org;
+      cy.createAwxProject(awxOrganization).then((proj) => {
+        project = proj;
+      });
     });
   });
 
   after(() => {
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
-  });
-
-  beforeEach(() => {
-    cy.createAwxProject(awxOrganization).then((proj) => {
-      project = proj;
-    });
-  });
-
-  afterEach(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
-  });
-
-  describe('Projects: List View', () => {
-    it('can create a project and then delete it from the project details page', () => {
-      const projectName = 'E2E Project ' + randomString(4);
-
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.clickLink(/^Create project$/);
-      cy.get('[data-cy="name"]').type(projectName);
-      cy.singleSelectByDataCy('organization', `${awxOrganization.name}`);
-      cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
-      cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
-      cy.get('[data-cy="option-allow-override"]').click();
-      cy.intercept('POST', awxAPI`/projects/`).as('newProject');
-      cy.clickButton(/^Create project$/);
-      cy.wait('@newProject')
-        .its('response.body')
-        .then((newProject: Project) => {
-          cy.verifyPageTitle(newProject.name);
-          cy.hasDetail(/^Organization$/, `${awxOrganization.name}`);
-          cy.hasDetail(/^Source control type$/, 'Git');
-          cy.hasDetail(/^Enabled options$/, 'Allow branch override');
-          cy.waitForProjectToFinishSyncing(newProject.id);
-          cy.contains('[data-cy="last-job-status"]', 'Success');
-          cy.intercept('DELETE', awxAPI`/projects/${newProject.id.toString()}/`).as('deleted');
-          cy.clickPageAction('delete-project');
-          cy.getModal().within(() => {
-            cy.get('#confirm').click();
-            cy.clickButton(/^Delete project/);
-            cy.contains('Permanently delete projects');
-            cy.wait('@deleted').then((deleted) => {
-              expect(deleted?.response?.statusCode).to.eql(204);
-            });
-          });
-        });
-    });
-  });
-
-  describe('Projects: List View', () => {
-    it('can edit a project from the project list row', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
-        cy.get('[data-cy="edit-project"]').click();
-      });
-      cy.verifyPageTitle('Edit Project');
-      cy.get('[data-cy="name"]').should('have.value', `${project.name}`);
-      cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
-      cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
-      cy.clickButton(/^Save project$/);
-      cy.wait('@edited')
-        .its('response.body')
-        .then((edited: Project) => {
-          expect(edited.name).to.eql(`${project.name} - edited`);
-          cy.verifyPageTitle(`${edited.name}`);
-          cy.clickButton(/^Edit project$/);
-          cy.get('[data-cy="name"]').clear().type(`${project.name}`);
-          cy.clickButton(/^Save project$/);
-          cy.verifyPageTitle(project.name);
-        });
-    });
-
-    it('can copy a project from the projects list row', () => {
-      const endOfProject = project.name.split(' ').slice(-1).toString();
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [endOfProject]);
-      cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
-      cy.clickTableRowAction('name', `${endOfProject}`, 'copy-project', {
-        inKebab: true,
-        disableFilter: true,
-      });
-      cy.wait('@copiedProject')
-        .its('response.body')
-        .then((response: Project) => {
-          cy.waitForProjectToFinishSyncing(response.id);
-          cy.filterTableByMultiSelect('name', [project.name, project.name, response.name]).then(
-            () => {
-              cy.get('#filter-input').click();
-              cy.getTableRow('name', project.name, { disableFilter: true }).should('be.visible');
-              cy.getTableRow('name', response.name, { disableFilter: true }).should('be.visible');
-              cy.clickTableRowAction('name', `${response.name}`, 'delete-project', {
-                inKebab: true,
-                disableFilter: true,
-              });
-              cy.getModal().within(() => {
-                cy.get('#confirm').click();
-                cy.get('[data-ouia-component-id="submit"]').click();
-                cy.clickButton('Close');
-              });
-            }
-          );
-        });
-    });
-
-    it('can sync a project from the projects list row', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/update/`).as(
-        'projectUpdateRequest'
-      );
-      cy.clickTableRowAction('name', `${project.name}`, 'sync-project', {
-        disableFilter: true,
-      });
-      cy.hasAlert(`Syncing ${project.name}`).should('be.visible');
-      cy.waitForProjectToFinishSyncing(project.id);
-      cy.wait('@projectUpdateRequest')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(202);
-        });
-    });
-
-    it('can delete a project from the projects list row', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.clickTableRowAction('name', `${project.name}`, 'delete-project', {
-        inKebab: true,
-        disableFilter: true,
-      });
-      cy.get('#confirm').click();
-      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
-      cy.clickButton(/^Delete project/);
-      cy.wait('@deleted')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
-          cy.clearAllFilters();
-        });
-    });
-
-    it('can delete a project from projects list toolbar', () => {
-      const endOfProject = project.name.split(' ').slice(-1).toString();
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [endOfProject]);
-      cy.selectTableRowByCheckbox('name', `${project.name}`, { disableFilter: true });
-      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
-      cy.clickToolbarKebabAction('delete-selected-projects');
-      cy.get('#confirm').click();
-      cy.get('button[data-ouia-component-id="submit"]').click();
-      cy.wait('@deleted')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
-          cy.clearAllFilters();
-        });
-    });
-  });
-
-  describe('Projects: Details View', () => {
-    it('can edit a project from the project details page', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.clickTableRowLink('name', project.name, {
-        disableFilter: true,
-      });
-      cy.verifyPageTitle(project.name);
-      cy.clickButton(/^Edit project$/);
-      cy.verifyPageTitle('Edit Project');
-      cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
-      cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
-      cy.clickButton(/^Save project$/);
-      cy.wait('@edited')
-        .its('response.body')
-        .then((edited: Project) => {
-          expect(edited.name).of.eql(`${project.name} - edited`);
-          cy.verifyPageTitle(`${project.name} - edited`);
-          cy.clickButton(/^Edit project$/);
-          cy.get('[data-cy="name"]').clear().type(`${project.name}`);
-          cy.clickButton(/^Save project$/);
-          cy.verifyPageTitle(project.name);
-        });
-    });
-
-    it('can copy a project from the project details page', () => {
-      const endOfProject = project.name.split(' ').slice(-1).toString();
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [endOfProject]);
-      cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
-        cy.get('[data-cy="name-column-cell"]').click();
-      });
-      cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
-      cy.get('[data-cy="actions-dropdown"]')
-        .click()
-        .then(() => {
-          cy.get('[data-cy="copy-project"]').click();
-        });
-      cy.wait('@copiedProject')
-        .its('response.body')
-        .then((response: Project) => {
-          cy.waitForProjectToFinishSyncing(response.id);
-          cy.get('[data-cy="Projects"]').eq(1).click();
-          cy.verifyPageTitle('Projects');
-          cy.filterTableByMultiSelect('name', [response.name]).then(() => {
-            cy.get('#filter-input').click();
-            cy.getTableRow('name', response.name, { disableFilter: true }).should('be.visible');
-            cy.clickTableRowAction('name', `${response.name}`, 'delete-project', {
-              inKebab: true,
-              disableFilter: true,
-            });
-            cy.getModal().within(() => {
-              cy.get('#confirm').click();
-              cy.get('[data-ouia-component-id="submit"]').click();
-              cy.clickButton('Close');
-            });
-          });
-        });
-    });
-
-    it('can sync a project from the project details page', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.clickTableRowLink('name', project.name, {
-        disableFilter: true,
-      });
-      cy.verifyPageTitle(`${project.name}`);
-      cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/update/`).as(
-        'projectUpdateRequest'
-      );
-      cy.clickButton(/^Sync project$/);
-      cy.waitForProjectToFinishSyncing(project.id);
-      cy.wait('@projectUpdateRequest')
-        .its('response')
-        .then((update) => {
-          expect(update?.statusCode).to.eql(202);
-        });
-    });
-
-    it('can delete a project from project details page', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.verifyPageTitle('Projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.clickTableRowLink('name', project.name, { disableFilter: true });
-      cy.get('[data-cy="page-title"]').should('contain', `${project.name}`);
-      cy.intercept('DELETE', awxAPI`/projects/${project.id.toString()}/`).as('deleted');
-      cy.clickPageAction('delete-project');
-      cy.getModal().within(() => {
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete project/);
-        cy.wait('@deleted')
-          .its('response')
-          .then((deleted) => {
-            expect(deleted?.statusCode).to.eql(204);
-          });
-      });
-      cy.verifyPageTitle('Projects');
-    });
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
   describe('Projects: User Access Tab', () => {
@@ -306,7 +39,7 @@ describe('Projects', () => {
   });
 
   describe('Projects: Team Access Tab', () => {
-    it('can navigate to project access tab', () => {
+    it('can navigate to team access tab', () => {
       cy.navigateTo('awx', 'projects');
       cy.filterTableByMultiSelect('name', [project.name]);
       cy.clickTableRowLink('name', `${project.name}`, {
@@ -318,6 +51,8 @@ describe('Projects', () => {
   });
 
   describe('Projects: Schedules Tab', () => {
+    let schedule: Schedule;
+
     beforeEach(() => {
       cy.createAWXSchedule({
         name: `Schedule` + `${randomE2Ename()}`,
@@ -542,6 +277,7 @@ describe('Projects', () => {
   // FLAKY_06_13_2024
   describe('Projects: Job Templates Tab', () => {
     let jobTemplate: JobTemplate;
+    let inventory: Inventory;
     beforeEach(() => {
       cy.createAwxInventory(awxOrganization).then((inv) => {
         inventory = inv;
@@ -558,17 +294,6 @@ describe('Projects', () => {
     afterEach(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxProject(project, { failOnStatusCode: false });
-    });
-
-    it('can navigate to project job templates tab', () => {
-      cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
-      cy.clickTableRowLink('name', `${project.name}`, {
-        disableFilter: true,
-      });
-      cy.verifyPageTitle(`${project.name}`);
-      cy.clickTab(/^Job templates$/, true);
     });
 
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
@@ -586,14 +311,10 @@ describe('Projects', () => {
           .its('response.body')
           .then((editedJt: JobTemplate) => {
             expect(editedJt.project).to.eql(thisProject.id);
-            cy.intercept('GET', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
-              'clickLaunch'
-            );
             cy.intercept('POST', awxAPI`/job_templates/${editedJt.id.toString()}/launch/`).as(
               'launched'
             );
             cy.getByDataCy('launch-template').click();
-            cy.wait('@clickLaunch');
             cy.wait('@launched')
               .its('response.body')
               .then((launched: Job) => {
