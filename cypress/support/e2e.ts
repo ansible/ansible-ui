@@ -106,4 +106,4 @@ Cypress.on('uncaught:exception', (_err, _runnable) => {
   return false;
 });
 
-// Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
+Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
