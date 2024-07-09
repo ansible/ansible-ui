@@ -74,10 +74,6 @@ jobs:
       matrix:
         containers: [1,2,3,4]
     steps:
-      - name: Setup firefox
-        uses: browser-actions/setup-firefox@v1
-        with:
-          firefox-version: latest    
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/download-artifact@v4
