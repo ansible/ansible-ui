@@ -47,6 +47,9 @@ export function PlatformSelectUsersStep() {
   const view = usePlatformMultiSelectListView<PlatformUser>(
     {
       url: gatewayV1API`/users/`,
+      queryParams: {
+        is_superuser: 'false',
+      },
       toolbarFilters,
       tableColumns,
     },

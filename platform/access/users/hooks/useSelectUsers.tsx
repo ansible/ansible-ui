@@ -16,6 +16,9 @@ function SelectUsers(props: {
   const tableColumns = useUsersColumns({ disableLinks: true });
   const view = usePlatformView<PlatformUser>({
     url: gatewayV1API`/users/`,
+    queryParams: {
+      is_superuser: 'false',
+    },
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

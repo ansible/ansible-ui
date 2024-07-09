@@ -1,0 +1,61 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "url": "/api/gateway/v1/users/2/",
+      "created_on": "2023-10-12T19:05:54.820054Z",
+      "created_by": "test",
+      "modified_on": "2023-10-12T19:05:54.820081Z",
+      "modified_by": "test",
+      "related": {},
+      "summary_fields": {},
+      "username": "test",
+      "email": "",
+      "first_name": "test",
+      "last_name": "",
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_platform_auditor": false,
+      "last_login_map_results": []
+    },
+    {
+      "id": 3,
+      "url": "/api/gateway/v1/users/3/",
+      "created_on": "2023-10-13T14:15:04.584833Z",
+      "created_by": "testuser2",
+      "modified_on": "2023-10-13T14:15:04.584844Z",
+      "modified_by": "testuser2",
+      "related": {},
+      "summary_fields": {},
+      "username": "testuser2",
+      "email": "",
+      "first_name": "Test",
+      "last_name": "User",
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_platform_auditor": false,
+      "last_login_map_results": []
+    },
+    {
+      "id": 4,
+      "url": "/api/gateway/v1/users/4/",
+      "created_on": "2023-10-13T14:33:42.132018Z",
+      "created_by": "test3",
+      "modified_on": "2023-10-13T14:33:42.132030Z",
+      "modified_by": "test3",
+      "related": {},
+      "summary_fields": {},
+      "username": "test3",
+      "email": "",
+      "first_name": "test",
+      "last_name": "test",
+      "password": "$encrypted$",
+      "is_superuser": false,
+      "is_platform_auditor": false,
+      "last_login_map_results": []
+    }
+  ]
+}

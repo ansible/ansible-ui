@@ -24,7 +24,9 @@ describe('PlatformOrganizationAddUsers', () => {
       },
       mockPlatformOrganization
     ).as('organization');
-    cy.intercept('GET', gatewayV1API`/users/*`, { fixture: 'platformUsers.json' });
+    cy.intercept('GET', gatewayV1API`/users/?is_superuser=false*`, {
+      fixture: 'platformNormalUsers.json',
+    }).as('userListFilteredByNormalUsers');
     cy.intercept('GET', gatewayV1API`/role_definitions/*`, {
       fixture: 'platformOrganizationMemberRole.json',
     });
@@ -54,6 +56,7 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Automation Decisions');
     cy.get('[data-cy="wizard-nav"] li').eq(4).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
+    cy.wait('@userListFilteredByNormalUsers');
   });
   it('should render with correct steps when only one service is enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
