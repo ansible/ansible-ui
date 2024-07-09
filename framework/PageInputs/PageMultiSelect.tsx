@@ -100,7 +100,7 @@ export interface PageMultiSelectProps<ValueT> {
 
   queryLabel?: (value: ValueT) => ReactNode;
 
-  isOptionValueEqual?: (a: ValueT, b: ValueT) => boolean;
+  compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
 }
 
 /**
@@ -153,7 +153,7 @@ export function PageMultiSelect<
     disableClearSelection,
     maxChipSize,
     queryLabel,
-    isOptionValueEqual,
+    compareOptionValues,
   } = props;
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
   const [searchValue, setSearchValue] = useOverridableState(
@@ -167,7 +167,7 @@ export function PageMultiSelect<
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
       const option = options.find((option) =>
-        isOptionValueEqual ? isOptionValueEqual(option.value, value) : option.value === value
+        compareOptionValues ? compareOptionValues(option.value, value) : option.value === value
       );
       if (option) {
         selectedOptions.push(option);
@@ -178,7 +178,7 @@ export function PageMultiSelect<
       }
     }
     return selectedOptions;
-  }, [options, queryLabel, values, isOptionValueEqual]);
+  }, [options, queryLabel, values, compareOptionValues]);
 
   const Toggle = (toggleRef: Ref<MenuToggleElement>) => {
     return (
@@ -271,14 +271,14 @@ export function PageMultiSelect<
         if (newSelectedOption) {
           if (
             previousValues?.find((value) =>
-              isOptionValueEqual
-                ? isOptionValueEqual(value, newSelectedOption.value)
+              compareOptionValues
+                ? compareOptionValues(value, newSelectedOption.value)
                 : value === newSelectedOption.value
             ) !== undefined
           ) {
             previousValues = previousValues.filter((value) =>
-              isOptionValueEqual
-                ? !isOptionValueEqual(value, newSelectedOption.value)
+              compareOptionValues
+                ? !compareOptionValues(value, newSelectedOption.value)
                 : value !== newSelectedOption.value
             );
           } else {
@@ -289,7 +289,7 @@ export function PageMultiSelect<
         return previousValues;
       });
     },
-    [onSelect, options, isOptionValueEqual]
+    [onSelect, options, compareOptionValues]
   );
 
   const searchRef = useRef<HTMLInputElement>(null);

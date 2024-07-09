@@ -29,7 +29,7 @@ export interface PageAsyncMultiSelectProps<ValueT>
 
   onBrowse?: () => void;
 
-  isOptionValueEqual?: (a: ValueT, b: ValueT) => boolean;
+  compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
 }
 
 /**
@@ -249,7 +249,7 @@ export function PageAsyncMultiSelect<
       disableClearSelection={props.disableClearSelection}
       disableClearChips={props.disableClearChips}
       queryLabel={props.queryLabel}
-      isOptionValueEqual={props.isOptionValueEqual}
+      compareOptionValues={props.compareOptionValues}
     />
   );
 }
