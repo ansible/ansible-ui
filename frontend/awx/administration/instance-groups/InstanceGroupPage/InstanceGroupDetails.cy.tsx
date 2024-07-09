@@ -1,6 +1,6 @@
+import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { InstanceGroupDetails } from './InstanceGroupDetails';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
 describe('Instance Group Details', () => {
   it('Render instance group details', () => {
@@ -28,7 +28,10 @@ describe('Instance Group Details', () => {
         instance_group.max_concurrent_jobs
       );
       cy.get('[data-cy="max-forks"]').should('have.text', instance_group.max_forks);
-      cy.get('[data-cy="used-capacity"]').should('have.text', instance_group.consumed_capacity);
+      cy.get('[data-cy="used-capacity"]').should(
+        'have.text',
+        `${Math.round(100 - instance_group.percent_capacity_remaining)}%`
+      );
       cy.get('[data-cy="created"]').should('have.text', formatDateString(instance_group.created));
       cy.get('[data-cy="last-modified"]').should(
         'have.text',
