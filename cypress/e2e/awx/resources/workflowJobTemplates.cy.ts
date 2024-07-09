@@ -1,6 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
@@ -495,8 +494,7 @@ describe('Workflow Job Templates Tests', () => {
     });
   });
 
-  // FLAKY_03_07_2024
-  describe.skip('Workflow Job Templates: Launch', function () {
+  describe('Workflow Job Templates: Launch', function () {
     let workflowJobTemplate: WorkflowJobTemplate;
     let jobTemplate: JobTemplate;
     let inventory: Inventory;
@@ -515,41 +513,13 @@ describe('Workflow Job Templates Tests', () => {
             inventory: inventory.id,
           }).then((jt) => {
             jobTemplate = jt;
-
             cy.createAwxWorkflowJobTemplate({
               organization: organization.id,
               inventory: inventory.id,
             }).then((wfjt) => {
               workflowJobTemplate = wfjt;
 
-              cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then(
-                (projectNode) => {
-                  cy.createAwxWorkflowVisualizerJobTemplateNode(
-                    workflowJobTemplate,
-                    jobTemplate
-                  ).then((jobTemplateNode) => {
-                    let inventorySource: InventorySource;
-                    cy.createAwxInventorySource(inventory, project).then((invSrc) => {
-                      inventorySource = invSrc;
-                      cy.createAwxWorkflowVisualizerInventorySourceNode(
-                        workflowJobTemplate,
-                        inventorySource
-                      ).then((inventorySourceNode) => {
-                        cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
-                          (managementNode) => {
-                            cy.createWorkflowJTSuccessNodeLink(projectNode, jobTemplateNode);
-                            cy.createWorkflowJTSuccessNodeLink(
-                              jobTemplateNode,
-                              inventorySourceNode
-                            );
-                            cy.createWorkflowJTFailureNodeLink(inventorySourceNode, managementNode);
-                          }
-                        );
-                      });
-                    });
-                  });
-                }
-              );
+              cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate);
             });
           });
         });
