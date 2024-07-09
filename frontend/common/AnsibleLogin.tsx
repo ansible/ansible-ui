@@ -123,7 +123,7 @@ export function AnsibleLogin(props: {
               typeof props.brandImg === 'string' ? (
                 <Brand src={props.brandImg} alt={props.brandImgAlt} />
               ) : (
-                props.brandImg
+                <BrandStyled>{props.brandImg}</BrandStyled>
               )
             }
           />
@@ -196,4 +196,8 @@ const ErrorSpanStyled = styled.span`
 
 const ErrorExclamationCircleIconStyled = styled(ExclamationCircleIcon)`
   color: var(--pf-v5-global--danger-color--100);
+`;
+
+const BrandStyled = styled.div`
+  margin-bottom: 16px;
 `;
