@@ -540,10 +540,10 @@ describe('Workflow Approvals Tests', () => {
 
                       // OK
                       
-                      /*cy.get('tbody tr').should('have.length', 1);
+                      cy.get('tbody tr').should('have.length', 1);
                       cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
                       
-                      
+                      /*
                       cy.navigateTo('awx', 'workflow-approvals');
                       cy.verifyPageTitle('Workflow Approvals');
                       cy.filterTableBySingleSelect('name', workflowApproval.name);
