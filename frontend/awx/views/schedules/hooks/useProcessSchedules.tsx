@@ -9,6 +9,7 @@ import { StandardizedFormData } from '../wizard/ScheduleAddWizard';
 import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
 import { useParams } from 'react-router-dom';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 
 export type CreateSchedulePayload = {
   name: string;
@@ -39,7 +40,7 @@ export type CreateSchedulePayload = {
         vault_id?: string;
       }[];
   labels?: { name: string; id: number }[];
-  instance_groups?: number[];
+  instance_groups?: InstanceGroup[];
   unified_job_template?: number;
 };
 

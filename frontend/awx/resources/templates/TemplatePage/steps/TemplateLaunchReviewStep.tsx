@@ -165,7 +165,19 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
         isEmpty={isEmpty(instance_groups)}
       >
         <LabelGroup>
-          {instance_groups?.map((ig) => <InstanceGroupDetail igId={ig} key={ig} />)}
+          {instance_groups?.map((ig) => (
+            <Label color="blue" key={ig.id}>
+              <Link
+                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                  params: {
+                    id: ig.id,
+                  },
+                })}
+              >
+                {ig.name}
+              </Link>
+            </Label>
+          ))}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Forks')}>{forks || 0}</PageDetail>
@@ -198,24 +210,6 @@ export function CredentialDetail({ credentialID }: { credentialID: number }) {
   return <CredentialLabel credential={credentialData} key={credentialID} />;
 }
 
-export function InstanceGroupDetail({ igId }: { igId: number }) {
-  const getPageUrl = useGetPageUrl();
-  const { data: IGData } = useGet<Credential>(awxAPI`/instance_groups/${igId.toString()}/`);
-  if (!IGData) return null;
-  return (
-    <Label color="blue" key={IGData.id}>
-      <Link
-        to={getPageUrl(AwxRoute.InstanceGroupDetails, {
-          params: {
-            id: IGData.id,
-          },
-        })}
-      >
-        {IGData.name}
-      </Link>
-    </Label>
-  );
-}
 function isEmpty(value: undefined | null | object[] | object): boolean {
   if (value === undefined || value === null) {
     return true;

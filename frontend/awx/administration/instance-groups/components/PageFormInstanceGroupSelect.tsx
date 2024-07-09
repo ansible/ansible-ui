@@ -22,7 +22,6 @@ export function PageFormInstanceGroupSelect<
   return (
     <PageFormMultiSelectAwxResource<InstanceGroup>
       {...props}
-      name={props.name}
       tableColumns={tableColumns}
       toolbarFilters={filters}
       queryPlaceholder={t('Loading instance groups...')}
@@ -30,9 +29,11 @@ export function PageFormInstanceGroupSelect<
       url={awxAPI`/instance_groups/`}
       id="instance-group-select"
       placeholder={t('Add instance groups')}
-      labelHelp={props.labelHelp}
       label={t('Instance Groups')}
-      isRequired={props.isRequired}
+      compareOptionValues={(
+        originalInstanceGroup: InstanceGroup,
+        selectedInistanceGroup: InstanceGroup
+      ) => originalInstanceGroup.id === selectedInistanceGroup.id}
     />
   );
 }

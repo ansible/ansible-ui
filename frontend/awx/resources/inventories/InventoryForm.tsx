@@ -39,7 +39,7 @@ import { LabelHelp } from './components/LabelHelp';
 import { valueToObject } from '../../../../framework';
 
 export type InventoryCreate = Inventory & {
-  instanceGroups: number[];
+  instanceGroups: InstanceGroup[];
   labels: Label[];
   inventories?: Inventory[];
   inputInventories?: InputInventory[];
@@ -474,12 +474,12 @@ async function submitLabels(inventory: Inventory, labels: Label[]) {
 
 async function submitInstanceGroups(
   inventory: Inventory,
-  currentInstanceGroups: number[],
+  currentInstanceGroups: InstanceGroup[],
   originalInstanceGroups: InstanceGroup[]
 ) {
-  const { added, removed } = getAddedAndRemoved(
-    originalInstanceGroups ?? ([] as InstanceGroup[]),
-    currentInstanceGroups ? currentInstanceGroups.map((id) => ({ id })) : ([] as { id: number }[])
+  const { added, removed } = getAddedAndRemoved<InstanceGroup>(
+    originalInstanceGroups,
+    currentInstanceGroups
   );
 
   if (added.length === 0 && removed.length === 0) {

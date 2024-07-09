@@ -127,7 +127,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
       launchConfigValue = {
         ...defaults,
-        instance_groups: instance_groups?.map(({ id }) => id),
+        instance_groups,
         inventory: inventory?.id ? inventory : null,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),
