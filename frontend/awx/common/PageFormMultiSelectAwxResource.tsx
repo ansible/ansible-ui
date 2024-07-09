@@ -31,6 +31,7 @@ export function PageFormMultiSelectAwxResource<
   additionalControls?: React.ReactNode;
   labelHelp?: string;
   queryParams?: QueryParams;
+  isOptionValueEqual?: (a: Value, b: Value) => boolean;
 }) {
   const id = useID(props);
 
@@ -144,6 +145,7 @@ export function PageFormMultiSelectAwxResource<
       }
       queryLabel={queryLabel}
       additionalControls={props.additionalControls}
+      isOptionValueEqual={props.isOptionValueEqual}
     />
   );
 }

@@ -51,6 +51,7 @@ export function PageFormCredentialSelect<
       toolbarFilters={credentialFilters}
       queryParams={props.queryParams}
       additionalControls={props.additionalControls}
+      isOptionValueEqual={(a: Credential, b: Credential) => a.id === b.id}
     />
   ) : (
     <PageFormSingleSelectAwxResource<Credential, TFieldValues, TFieldName>

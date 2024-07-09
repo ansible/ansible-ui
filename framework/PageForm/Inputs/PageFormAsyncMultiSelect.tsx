@@ -39,6 +39,7 @@ export type PageFormAsyncMultiSelectProps<
   | 'disableClearSelection'
   | 'onBrowse'
   | 'queryLabel'
+  | 'isOptionValueEqual'
 > &
   Pick<
     PageFormGroupProps,
@@ -102,6 +103,7 @@ export function PageFormAsyncMultiSelect<
               disableClearSelection={props.disableClearSelection}
               onBrowse={props.onBrowse}
               queryLabel={props.queryLabel}
+              isOptionValueEqual={props.isOptionValueEqual}
             />
           </PageFormGroup>
         );

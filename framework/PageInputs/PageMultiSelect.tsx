@@ -99,6 +99,8 @@ export interface PageMultiSelectProps<ValueT> {
   disableSortOptions?: boolean;
 
   queryLabel?: (value: ValueT) => ReactNode;
+
+  isOptionValueEqual?: (a: ValueT, b: ValueT) => boolean;
 }
 
 /**
@@ -164,8 +166,8 @@ export function PageMultiSelect<
     const selectedOptions: PageSelectOption<ValueT>[] = [];
     for (const value of values ?? []) {
       const option = options.find((option) =>
-        typeof value === 'object'
-          ? (option.value as { id: number }).id === (value as { id: number }).id
+        props.isOptionValueEqual
+          ? props.isOptionValueEqual(option.value, value)
           : option.value === value
       );
       if (option) {
@@ -270,14 +272,14 @@ export function PageMultiSelect<
         if (newSelectedOption) {
           if (
             previousValues?.find((value) =>
-              typeof value === 'object'
-                ? (value as { id: number }).id === (newSelectedOption.value as { id: number }).id
+              props.isOptionValueEqual
+                ? props.isOptionValueEqual(value, newSelectedOption.value)
                 : value === newSelectedOption.value
             ) !== undefined
           ) {
             previousValues = previousValues.filter((value) =>
-              typeof value === 'object'
-                ? (value as { id: number }).id !== (newSelectedOption.value as { id: number }).id
+              props.isOptionValueEqual
+                ? !props.isOptionValueEqual(value, newSelectedOption.value)
                 : value !== newSelectedOption.value
             );
           } else {
