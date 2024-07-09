@@ -3,10 +3,6 @@ import { tag } from '../../../support/tag';
 
 tag(['aaas-unsupported'], () => {
   describe('EDA Navigation Bar Functionality', () => {
-    before(() => {
-      cy.platformLogin();
-    });
-
     it('can visit the dashboard page and assert the data there', () => {
       cy.get('[data-cy="platform-overview"]').contains('Overview');
       cy.verifyPageTitle('Welcome to the Ansible Automation Platform');

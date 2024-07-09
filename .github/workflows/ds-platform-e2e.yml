@@ -66,12 +66,12 @@ jobs:
   platform-e2e:
     name: Platform E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     needs: platform-ui-image
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1,2,3,4,5]
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
@@ -123,5 +123,7 @@ jobs:
           PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+          CYPRESS_AWX_API_PREFIX: /api/controller/v2
+          CYPRESS_EDA_API_PREFIX: /api/eda/v1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0

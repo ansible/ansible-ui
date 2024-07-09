@@ -1,7 +1,6 @@
 describe('Ansible Lightspeed external Link Check', () => {
   it('should open external link in a new tab', () => {
     const ansibleLightSpeed_URL = 'https://developers.redhat.com/products/ansible/lightspeed';
-    cy.platformLogin();
     cy.contains('a', 'Ansible Lightspeed').click();
     cy.contains('h1', 'Ansible Lightspeed with IBM watsonx Code Assistant').should('be.visible');
     cy.checkAnchorLinks('Get started');

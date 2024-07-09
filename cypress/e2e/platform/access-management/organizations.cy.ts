@@ -4,14 +4,14 @@ import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOr
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { tag } from '../../../support/tag';
 
-describe('Organizations - create, edit and delete', () => {
+describe('Platform Organizations - Create, Edit and Delete', () => {
   const organizationName = 'Platform E2E Organization ' + randomString(4);
+  const orgDescription = 'orgDescription' + randomString(4);
   const listEditedOrganizationName = `edited Organization ${randomString(4)}`;
   const detailsEditedOrganizationName = `edited Organization ${randomString(4)}`;
   let organization: PlatformOrganization;
 
   beforeEach(() => {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((org) => {
       organization = org;
     });
@@ -26,24 +26,21 @@ describe('Organizations - create, edit and delete', () => {
   });
 
   it('creates a basic organization and deletes it from the details page', () => {
-    cy.get('[data-cy="create-organization"]').click();
-    cy.get('[data-cy="organization-name"]').type(organizationName);
+    cy.navigateTo('platform', 'organizations');
+    cy.verifyPageTitle('Organizations');
+    cy.clickLink(/^Create organization$/);
+    cy.getByDataCy('organization-name').type(organizationName);
+    cy.getByDataCy('organization-description').type(orgDescription);
     cy.clickButton('Next');
     cy.clickButton('Finish');
+    cy.getByDataCy('Details').should('be.visible');
     cy.verifyPageTitle(organizationName);
+    cy.getByDataCy('name').should('contain', organizationName);
+    cy.getByDataCy('description').should('contain', orgDescription);
     cy.clickPageAction('delete-organization');
     cy.get('#confirm').click();
-    cy.intercept('DELETE', gatewayV1API`/organizations/*`).as('delete');
     cy.clickButton(/^Delete organization/);
-    cy.wait('@delete');
-  });
-
-  it('renders the organization details page', () => {
-    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
-    cy.getByDataCy('name-column-cell').contains(organization.name).click();
-    cy.verifyPageTitle(organization.name);
-    cy.clickLink(/^Details$/);
-    cy.contains('#name', organization.name);
+    cy.verifyPageTitle('Organizations');
   });
 
   it('edits an organization from the list view', () => {
@@ -53,6 +50,26 @@ describe('Organizations - create, edit and delete', () => {
     cy.get('[data-cy="organization-name"]')
       .clear()
       .type(`${listEditedOrganizationName} from list page`);
+    const orgId = `${organization.id}`.toString();
+    cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
+    cy.wait('@edited')
+      .its('response.body.name')
+      .then((editedName) => {
+        cy.verifyPageTitle(`${editedName}`);
+      });
+  });
+
+  it('edits an organization from the details view', () => {
+    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+    cy.getByDataCy('name-column-cell').contains(organization.name).click();
+    cy.verifyPageTitle(organization.name);
+    cy.get('[data-cy="edit-organization"]').click();
+    cy.verifyPageTitle('Edit Organization');
+    cy.get('[data-cy="organization-name"]')
+      .clear()
+      .type(`${detailsEditedOrganizationName} from details page`);
     const orgId = `${organization.id}`.toString();
     cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
     cy.clickButton('Next');
@@ -77,27 +94,7 @@ describe('Organizations - create, edit and delete', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('edits an organization from the details view', () => {
-    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
-    cy.getByDataCy('name-column-cell').contains(organization.name).click();
-    cy.verifyPageTitle(organization.name);
-    cy.get('[data-cy="edit-organization"]').click();
-    cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]')
-      .clear()
-      .type(`${detailsEditedOrganizationName} from details page`);
-    const orgId = `${organization.id}`.toString();
-    cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
-    cy.clickButton('Next');
-    cy.clickButton('Finish');
-    cy.wait('@edited')
-      .its('response.body.name')
-      .then((editedName) => {
-        cy.verifyPageTitle(`${editedName}`);
-      });
-  });
-
-  it('bulk create and delete organization from the organizations list toolbar', () => {
+  it('bulk creates and deletes an organization from the organizations list toolbar', () => {
     let testOrganization1: PlatformOrganization;
     let testOrganization2: PlatformOrganization;
     cy.createPlatformOrganization().then((organization: PlatformOrganization) => {
@@ -130,11 +127,10 @@ describe('Organizations - create, edit and delete', () => {
   });
 });
 
-describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
+describe('Platform Organizations - Users, Admins, Teams and EE tabs', function () {
   let organization: PlatformOrganization;
 
   beforeEach(() => {
-    cy.platformLogin();
     cy.createPlatformOrganization().then((org) => {
       organization = org;
     });
@@ -150,7 +146,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
 
   // Organizations Users tab -  add roles to Users
   tag(['aaas-unsupported'], function () {
-    it('Organization user - can add a user, apply the roles to the users of an organization via the users tab', function () {
+    it('can add a user and apply the roles to the users of an organization via the users tab', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.createPlatformUser().then((createdUser2) => {
           cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
@@ -223,7 +219,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
 
   //Organizations Users tab - users row item modal check
   tag(['aaas-unsupported'], function () {
-    it('verify when no organization roles are added to a user, row item action modal displays a message', function () {
+    it('verifies the modal displayed when no organization roles are added to a user', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
@@ -257,7 +253,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
   });
 
   // Organizations Administrators tab
-  it('can add and remove users as administrators to the organization from the administrators tab', function () {
+  it('can add and remove users from an org using the administrators tab', function () {
     cy.createPlatformUser().then((user) => {
       // Organization Page
       cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
@@ -293,7 +289,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
 
   //Organizations teams tab - add roles to team
   tag(['aaas-unsupported'], function () {
-    it('Organization team - can add a team, apply and remove the roles from a team of an organization via the teams tab', function () {
+    it("can add a team and apply and remove the roles from an organization's team via the teams tab", function () {
       const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
       cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
         const createdPlatformTeam = team.name;
@@ -400,7 +396,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
 
   tag(['aaas-unsupported'], function () {
     //Organizations teams tab - teams row item modal check
-    it('verify when no organization roles are added to the team  the modal displays a message', function () {
+    it('verifies the modal displayed when organization roles are not added to the team', function () {
       const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
       cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
         const createdPlatformTeam = team.name;
@@ -423,7 +419,7 @@ describe('Platform Teams - Users, Admins, Teams and EE tabs', function () {
   });
 
   // Create team from teams tab
-  it('can create a team from the teams tab, add an organization and assert it is added, delete from details page of team', function () {
+  it('can create a team from the teams tab of an organization then delete team from details page', function () {
     // Organization Page
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.clickTableRowLink('name', organization.name, { disableFilter: true });

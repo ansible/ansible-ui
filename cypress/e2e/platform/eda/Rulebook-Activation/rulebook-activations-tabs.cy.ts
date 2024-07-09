@@ -15,7 +15,6 @@ tag(['aaas-unsupported'], () => {
     let edaRuleBook: EdaRulebook;
 
     before(() => {
-      cy.platformLogin();
       cy.ensureEdaCurrentUserAwxToken();
 
       cy.createEdaProject().then((project) => {

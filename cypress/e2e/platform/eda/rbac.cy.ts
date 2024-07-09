@@ -17,7 +17,6 @@ tag(['aaas-unsupported'], () => {
     let edaUser1: PlatformUser;
     let edaUser2: PlatformUser;
     before(() => {
-      cy.platformLogin();
       cy.createEdaProject().then((project) => {
         edaProject = project;
         cy.waitEdaProjectSync(project);
@@ -121,7 +120,6 @@ tag(['aaas-unsupported'], () => {
     let edaUser2: PlatformUser;
     let edaTeam: PlatformTeam;
     before(function () {
-      cy.platformLogin();
       cy.createEdaProject().then((project) => {
         edaProject = project;
         cy.waitEdaProjectSync(project);

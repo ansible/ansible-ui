@@ -4,7 +4,6 @@ import { Tacacs } from '../../../../../platform/interfaces/Tacacs';
 describe('TACACS Authentication form - create, edit, update and delete', () => {
   it('creates a TACACS authenticator', () => {
     const tacacsAuthenticator = randomE2Ename();
-    cy.platformLogin();
 
     cy.fixture('platform-authenticators/tacacs').then((tacacsData: Tacacs) => {
       // Authentication List Page

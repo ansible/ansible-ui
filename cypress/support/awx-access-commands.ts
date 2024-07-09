@@ -55,8 +55,7 @@ Cypress.Commands.add('deleteAwxUser', (user: AwxUser, options?: { failOnStatusCo
 });
 
 Cypress.Commands.add('getCurrentUser', () => {
-  const url = awxAPI`/me/`;
-  cy.pollAWXResults<AwxUser>(url).then((user) => {
-    return user[0];
-  });
+  cy.getCurrentPlatformUser().then((currentUser) =>
+    cy.getAwxUserByAnsibleId(currentUser.summary_fields.resource.ansible_id)
+  );
 });

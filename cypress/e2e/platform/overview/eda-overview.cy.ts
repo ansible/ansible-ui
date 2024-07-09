@@ -6,10 +6,6 @@ import { tag } from '../../../support/tag';
 
 tag(['aaas-unsupported'], () => {
   describe('Overview - EDA Cards', () => {
-    before(() => {
-      cy.platformLogin();
-    });
-
     it('verify the titles, subtitles and info icons on cards', () => {
       cy.navigateTo('platform', 'overview');
       cy.verifyPageTitle('Welcome to the Ansible Automation Platform');

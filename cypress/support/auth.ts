@@ -25,7 +25,6 @@ Cypress.Commands.add('login', () => {
   switch (devBaseUrlPort) {
     case '4100': // Platform
       cy.platformLogin();
-      cy.createGlobalPlatformOrganization();
       break;
     case '4101':
       cy.awxLogin();

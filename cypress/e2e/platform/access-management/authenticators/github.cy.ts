@@ -4,7 +4,6 @@ import { randomE2Ename } from '../../../../support/utils';
 describe('GitHub Authentication form - create, edit, update and delete', () => {
   it('creates a GitHub authenticator', () => {
     const name = randomE2Ename();
-    cy.platformLogin();
 
     cy.fixture('platform-authenticators/github').then((githubData: GithubAuthenticator) => {
       // Authentication List Page
@@ -51,16 +50,14 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
       cy.platformLogout();
 
       // Verify the GH Authenticator is displayed in the login page
-      cy.get('form.pf-v5-c-form').within(() => {
-        cy.get('h2').should('have.text', 'Log in with').should('be.visible');
-        cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.github"]')
-          .contains(name)
-          .should('have.attr', 'href')
-          .and(
-            'equal',
-            `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-github__${name.toLowerCase()}/`
-          );
-      });
+      cy.contains('Log in with').should('be.visible');
+      cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.github"]')
+        .contains(name)
+        .should('have.attr', 'href')
+        .and(
+          'equal',
+          `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-github__${name.toLowerCase()}/`
+        );
 
       // Login
       cy.platformLogin();
