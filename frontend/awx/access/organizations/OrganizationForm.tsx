@@ -22,7 +22,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 
 type IOrganizationData = Organization & {
-  instanceGroups?: number[];
+  instanceGroups?: InstanceGroup[];
 };
 
 export function CreateOrganization() {
@@ -40,7 +40,7 @@ export function CreateOrganization() {
     for (const ig of values.instanceGroups || []) {
       igRequests.push(
         postRequest(awxAPI`/organizations/${createdOrganization.id.toString()}/instance_groups/`, {
-          id: ig,
+          id: ig.id,
         })
       );
     }
@@ -92,9 +92,7 @@ export function EditOrganization() {
     const { instanceGroups, ...organization } = values;
     const { added, removed } = getAddedAndRemoved(
       originalInstanceGroups || [],
-      instanceGroups?.map((id) => ({
-        id,
-      })) || []
+      instanceGroups || []
     );
     const editedOrganization = await requestPatch<Organization>(
       awxAPI`/organizations/${id.toString()}/`,
@@ -114,7 +112,7 @@ export function EditOrganization() {
     for (const ig of added || []) {
       igRequests.push(
         postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
-          id: ig,
+          id: ig.id,
         })
       );
     }
@@ -139,7 +137,7 @@ export function EditOrganization() {
           onCancel={onCancel}
           defaultValue={{
             ...organization,
-            instanceGroups: originalInstanceGroups?.map(({ id }) => id) ?? undefined,
+            instanceGroups: originalInstanceGroups ?? [],
           }}
         >
           <OrganizationInputs orgId={organization.id} />

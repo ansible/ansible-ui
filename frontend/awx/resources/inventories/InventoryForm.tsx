@@ -169,7 +169,6 @@ export function EditInventory() {
   const iGroupsRequest = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
-
   const inventory = inventoryRequest.data;
   const igResponse = iGroupsRequest.data;
 
@@ -267,7 +266,7 @@ export function EditInventory() {
 
   const defaultValue =
     inventory.kind === 'smart'
-      ? { ...inventory, instanceGroups: originalInstanceGroups?.map(({ id }) => id) }
+      ? { ...inventory, instanceGroups: originalInstanceGroups }
       : inventory.kind === 'constructed'
         ? {
             ...inventory,
@@ -276,7 +275,7 @@ export function EditInventory() {
           }
         : {
             ...inventory,
-            instanceGroups: originalInstanceGroups?.map(({ id }) => id),
+            instanceGroups: originalInstanceGroups,
             labels: inventory.summary_fields?.labels?.results ?? [],
           };
 
@@ -334,9 +333,7 @@ export function useInventoryFormDetailLabels() {
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
-
   const inventoryFormDetailLables = useInventoryFormDetailLabels();
-
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -576,6 +573,9 @@ function PageFormMultiSelectInventories() {
       tableColumns={columns}
       toolbarFilters={filters}
       queryParams={{ kind: '' }}
+      compareOptionValues={(originalInv: Inventory, selectedInv: Inventory) =>
+        originalInv.id === selectedInv.id
+      }
     />
   );
 }

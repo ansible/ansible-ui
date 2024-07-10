@@ -16,7 +16,6 @@ import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemp
 import type { WizardFormValues } from '../types';
 import type { Survey } from '../../../../interfaces/Survey';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
-import { InstanceGroupDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
@@ -181,7 +180,19 @@ export function PromptReviewDetails() {
         isEmpty={isEmpty(instance_groups)}
       >
         <LabelGroup>
-          {instance_groups?.map((ig) => <InstanceGroupDetail igId={ig} key={ig} />)}
+          {instance_groups?.map((ig) => (
+            <Label color="blue" key={ig.id}>
+              <Link
+                to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                  params: {
+                    id: ig.id,
+                  },
+                })}
+              >
+                {ig.name}
+              </Link>
+            </Label>
+          ))}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Forks')}>{forks || 0}</PageDetail>

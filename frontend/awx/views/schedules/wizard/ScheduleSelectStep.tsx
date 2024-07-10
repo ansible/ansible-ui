@@ -140,7 +140,7 @@ export function ScheduleSelectStep() {
 
       launchConfigValue = {
         ...defaults,
-        instance_groups: defaults.instance_groups?.map(({ id }) => id) || [],
+        instance_groups: defaults.instance_groups || [],
         inventory: inventory?.id ? inventory : null,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),

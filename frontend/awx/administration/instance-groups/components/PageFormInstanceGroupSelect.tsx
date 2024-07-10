@@ -33,6 +33,9 @@ export function PageFormInstanceGroupSelect<
       labelHelp={props.labelHelp}
       label={t('Instance Groups')}
       isRequired={props.isRequired}
+      compareOptionValues={(originalIG: InstanceGroup, selectedIG: InstanceGroup) =>
+        originalIG.id === selectedIG.id
+      }
     />
   );
 }

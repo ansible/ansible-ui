@@ -2,6 +2,7 @@ import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
 import { Project } from './Project';
 import { Credential } from './Credential';
+import { InstanceGroup } from './InstanceGroup';
 
 export interface JobTemplateRelatedFields
   extends Pick<JobTemplate['related'], 'webhook_receiver' | 'callback' | 'webhook_key'> {
@@ -36,7 +37,7 @@ export interface JobTemplateForm
   enableHostConfig?: boolean;
   execution_environment: { id: number; name: string } | null;
   id?: number;
-  instance_groups: number[];
+  instance_groups: InstanceGroup[];
   inventory: { name?: string; id?: number } | null;
   isProvisioningCallbackEnabled: boolean;
   isWebhookEnabled: boolean;

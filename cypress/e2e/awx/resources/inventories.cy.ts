@@ -28,13 +28,14 @@ describe('Inventories Tests', () => {
             cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
               label = lbl;
             });
-            cy.createAwxInventory(organization).then((inv) => {
-              //the cy.createAwxInventory() custom command needs to be updated to accept the
-              //'kind' parameter, in order to work with the conditional in this spec file
-              inventory = inv;
-            });
             cy.createAwxInstanceGroup().then((ig) => {
               instanceGroup = ig;
+
+              cy.createAwxInventory(organization).then((inv) => {
+                //the cy.createAwxInventory() custom command needs to be updated to accept the
+                //'kind' parameter, in order to work with the conditional in this spec file
+                inventory = inv;
+              });
             });
             cy.createAwxUser({ organization: organization.id }).then((testUser) => {
               user = testUser;

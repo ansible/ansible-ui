@@ -39,7 +39,7 @@ export type CreateSchedulePayload = {
         vault_id?: string;
       }[];
   labels?: { name: string; id: number }[];
-  instance_groups?: number[];
+  instance_groups?: { id: number; name: string }[];
   unified_job_template?: number;
 };
 

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import {
+  Label,
   LabelGroup,
   TextList,
   TextListItem,
@@ -24,7 +25,7 @@ import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
 import { WebhookService } from '../../components/WebhookService';
-import { InstanceGroupDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
+import { Link } from 'react-router-dom';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -342,7 +343,7 @@ function CredentialsDetail({
 }) {
   const { t } = useTranslation();
   const isMatch = arrayIdsMatch(
-    credentials.map(({ id }) => id),
+    credentials.map(({ id }) => ({ id })),
     templateCredentials
   );
 
@@ -366,12 +367,17 @@ function InstanceGroupsDetail({
   instanceGroups = [],
   templateInstanceGroups = [],
 }: {
-  instanceGroups: number[];
+  instanceGroups: InstanceGroup[];
   templateInstanceGroups: InstanceGroup[];
 }) {
   const { t } = useTranslation();
-  const isMatch = arrayIdsMatch(instanceGroups, templateInstanceGroups);
-
+  const isMatch = arrayIdsMatch(
+    instanceGroups.map(({ id }) => ({
+      id,
+    })),
+    templateInstanceGroups
+  );
+  const getPageUrl = useGetPageUrl();
   return (
     <PromptDetail
       label={t`Instance groups`}
@@ -380,18 +386,30 @@ function InstanceGroupsDetail({
       overriddenValue={templateInstanceGroups.map((ig) => ig.name).join(', ')}
     >
       <LabelGroup>
-        {instanceGroups?.map((ig) => <InstanceGroupDetail igId={ig} key={ig} />)}
+        {instanceGroups?.map((ig) => (
+          <Label color="blue" key={ig.id}>
+            <Link
+              to={getPageUrl(AwxRoute.InstanceGroupDetails, {
+                params: {
+                  id: ig.id,
+                },
+              })}
+            >
+              {ig.name}
+            </Link>
+          </Label>
+        ))}
       </LabelGroup>
     </PromptDetail>
   );
 }
 
-function arrayIdsMatch(arr1: number[], arr2: { id: number }[]) {
+function arrayIdsMatch(arr1: { id: number }[], arr2: { id: number }[]) {
   if (arr1.length !== arr2.length) {
     return false;
   }
 
-  const idSet1 = new Set(arr1.map((obj) => obj));
+  const idSet1 = new Set(arr1.map((obj) => obj.id));
   const idSet2 = new Set(arr2.map((obj) => obj.id));
 
   if (idSet1.size !== idSet2.size) {

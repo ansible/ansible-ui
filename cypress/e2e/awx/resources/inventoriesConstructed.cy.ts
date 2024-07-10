@@ -81,10 +81,6 @@ describe('Constructed Inventories CRUD Tests', () => {
       pathname: awxAPI`/instance_groups/`,
       query: { name: instanceGroup.name },
     }).as('filterInstanceG');
-    // cy.filterTableByMultiSelect('name', [instanceGroup.name]);
-    // cy.wait('@filterInstanceG');
-    // cy.getByDataCy('checkbox-column-cell').click();
-    // cy.clickModalButton('Confirm');
     cy.intercept({
       method: 'GET',
       pathname: awxAPI`/inventories/`,

@@ -35,7 +35,7 @@ export function getJobTemplateDefaultValues(
     extra_vars: template.extra_vars || '---\n',
     forks: template.forks || 0,
     host_config_key: template.host_config_key || '',
-    instance_groups: instanceGroups?.map(({ id }) => id) || [],
+    instance_groups: instanceGroups || [],
     inventory: template.summary_fields?.inventory || null,
     job_slice_count: template.job_slice_count || 1,
     job_tags: parseStringToTagArray(template.job_tags || '') || [],

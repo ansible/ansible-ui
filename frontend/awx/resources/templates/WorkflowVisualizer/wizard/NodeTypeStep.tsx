@@ -122,12 +122,10 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           awxAPI`/workflow_job_templates/${template.id.toString()}/launch/`
         );
       }
-      const { job_tags, skip_tags, inventory, instance_groups, ...defaults } =
-        launchConfigResults?.defaults || {};
+      const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults?.defaults || {};
 
       launchConfigValue = {
         ...defaults,
-        instance_groups: instance_groups.map(({ id }) => id),
         inventory: inventory?.id ? inventory : null,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),

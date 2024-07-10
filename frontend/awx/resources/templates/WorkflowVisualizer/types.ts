@@ -20,6 +20,7 @@ import type { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { SummaryFieldInventory } from '../../../interfaces/summary-fields/summary-fields';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
@@ -125,7 +126,7 @@ export interface PromptFormValues {
         vault_id?: string;
       }[];
   credential_passwords?: { [key: string]: string };
-  instance_groups: number[];
+  instance_groups: InstanceGroup[];
   execution_environment: ExecutionEnvironment | { id: number; name: string } | null;
   diff_mode: boolean;
   extra_vars: string;
