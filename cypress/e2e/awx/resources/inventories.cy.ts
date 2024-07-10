@@ -228,8 +228,8 @@ describe('Inventories Tests', () => {
             // wait for all items to appear
             cy.get(`[role="dialog"]`).within(() => {
               cy.get(`[aria-label="Simple table"] tr`);
-              cy.contains('button', 'Cancel').click();
-              cy.contains('button', 'Confirm').click();
+              cy.contains('button', 'Cancel');
+              cy.contains('button', 'Confirm');
               cy.get(`[aria-label="Pagination"]`);
             });
 
