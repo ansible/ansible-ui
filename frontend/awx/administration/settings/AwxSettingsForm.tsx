@@ -16,6 +16,7 @@ import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFo
 
 export interface AwxSettingsOptionsResponse {
   actions: {
+    GET: Record<string, AwxSettingsOptionsAction>;
     PUT: Record<string, AwxSettingsOptionsAction>;
   };
 }
@@ -38,6 +39,7 @@ interface IOptionActionBase {
   required?: boolean;
   help_text?: string;
   hidden?: boolean;
+  defined_in_file?: boolean;
 }
 
 interface IOptionStringAction extends IOptionActionBase {
@@ -196,6 +198,7 @@ export function AwxSettingsForm(props: {
 
 export function OptionActionsFormInput(props: { name: string; option: AwxSettingsOptionsAction }) {
   const option = props.option;
+  const isReadOnly = props.option.defined_in_file;
 
   if (props.name.endsWith('SECRET') || props.name.endsWith('PASSWORD')) {
     return (
@@ -286,8 +289,9 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
             isRequired={option.required}
             isArray
             defaultValue={option.default}
-            enableUndo
-            enableReset
+            enableUndo={!isReadOnly}
+            enableReset={!isReadOnly}
+            isReadOnly={isReadOnly}
           />
         </PageFormSection>
       );
