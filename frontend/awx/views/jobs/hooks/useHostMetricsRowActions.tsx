@@ -19,7 +19,6 @@ export function useHostMetricsRowActions(onComplete: (host: HostMetric[]) => voi
         label: t(`Delete hostname`),
         onClick: (host: HostMetric) => deleteHostMetrics([host]),
         isDanger: true,
-        isPinned: true,
       },
     ];
   }, [deleteHostMetrics, t]);
