@@ -172,9 +172,9 @@ describe('Inventories Tests', () => {
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
 
           cy.createAwxOrganization().then((org) => {
-            cy.createAwxInventory(organization).then((inv1) => {
-              cy.createAwxInventory(organization).then((inv2) => {
-                cy.createAwxInventory(organization).then((inv3) => {
+            cy.createAwxInventory(org).then((inv1) => {
+              cy.createAwxInventory(org).then((inv2) => {
+                cy.createAwxInventory(org).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
 
                   cy.intercept(
