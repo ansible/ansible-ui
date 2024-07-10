@@ -170,6 +170,7 @@ export function useInventoryTypeToolbarFilter() {
         { label: t('Constructed inventory'), value: 'constructed' },
       ],
       placeholder: t('Select types'),
+      disableSortOptions: true,
     }),
     [t]
   );
