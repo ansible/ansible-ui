@@ -265,7 +265,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Execution environment'),
-        helpText: t('The execution environment that was be used when launching this job template.'),
+        helpText: t('The execution environment used to run the job.'),
         cell: (job: UnifiedJob) => (
           <Link
             to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
