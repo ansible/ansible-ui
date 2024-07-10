@@ -1251,6 +1251,10 @@ declare global {
         pageSize: number
       ): Chainable<EdaResult<EdaRulebookActivation>>;
       getEdaCredentials(page: number, pageSize: number): Chainable<EdaResult<EdaCredential>>;
+      getEdaCredentialTypes(
+        page: number,
+        pageSize: number
+      ): Chainable<EdaResult<EdaCredentialType>>;
       getEdaUsers(page: number, pageSize: number): Chainable<EdaResult<EdaUser>>;
       getEdaUser(id: number): Chainable<EdaUser>;
 
