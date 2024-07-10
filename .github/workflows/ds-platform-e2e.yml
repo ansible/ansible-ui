@@ -10,6 +10,9 @@ on:
         type: boolean
         required: false
         default: false
+      TAGS:
+        type: string
+        required: false
     secrets:
       PLATFORM_PASSWORD:
         required: true
@@ -117,6 +120,7 @@ jobs:
           parallel: true
           # auto-cancel-after-failures: 1
           config-file: cypress.platform.config.ts
+          tag: ${{ inputs.TAGS }}
         env:
           PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
           PLATFORM_USERNAME: e2e
