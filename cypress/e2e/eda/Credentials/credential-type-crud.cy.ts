@@ -102,7 +102,9 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.getEdaCredentialByName(cred.name).then((credential) => {
           cy.wrap(credential).should('not.be.undefined');
           if (credential) {
-            cy.deleteEdaCredential(credential);
+            cy.deleteEdaCredential(credential).then(() => {
+              cy.deleteEdaCredentialType(credtype);
+            });
             cy.navigateTo('eda', 'credential-types');
           }
         });
@@ -137,7 +139,9 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.getEdaCredentialByName(cred.name).then((credential) => {
           cy.wrap(credential).should('not.be.undefined');
           if (credential) {
-            cy.deleteEdaCredential(credential);
+            cy.deleteEdaCredential(credential).then(() => {
+              cy.deleteEdaCredentialType(credtype);
+            });
           }
         });
         cy.deleteEdaCredentialType(credtype);
