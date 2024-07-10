@@ -160,16 +160,17 @@ export function useInventoryTypeToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
     () => ({
-      key: 'kind',
+      key: 'inventory-type',
       label: t('Inventory type'),
       type: ToolbarFilterType.MultiSelect,
-      query: 'or__kind',
+      query: 'kind',
       options: [
         { label: t('Inventory'), value: '' },
         { label: t('Smart inventory'), value: 'smart' },
         { label: t('Constructed inventory'), value: 'constructed' },
       ],
       placeholder: t('Select types'),
+      disableSortOptions: true,
     }),
     [t]
   );
