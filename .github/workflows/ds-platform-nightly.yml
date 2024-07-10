@@ -1,0 +1,106 @@
+name: Platform Nightly
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        description: 'PLATFORM Server'
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      PLATFORM_SERVER: ${{ steps.step1.outputs.PLATFORM_SERVER }}
+    steps:
+      - id: step1
+        run: |
+          CURRENTDATE=$(date +'%Y%m%d')
+          if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
+            echo "PLATFORM_SERVER=${{ github.event.inputs.PLATFORM_SERVER || 'https://platform.ci-gw-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
+          else 
+            echo "PLATFORM_SERVER=https://platform.ci-gw-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+          fi
+
+  platform-e2e:
+    name: PLATFORM E2E
+    needs: setup
+    uses: ./.github/workflows/ds-platform-e2e.yml
+    with:
+      PLATFORM_SERVER: ${{ needs.setup.outputs.PLATFORM_SERVER }}
+      TAGS: nightly
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+
+  slack-success-notification:
+    name: Slack Success Notification
+    if: success()
+    needs:
+      - setup
+      - platform-e2e
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#00DD00",
+                    "blocks":
+                      [
+                        {
+                          "type": "section",
+                          "text":
+                            {
+                              "type": "mrkdwn",
+                              "text": "*PLATFORM E2E Nightly Success* - ${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.PLATFORM_SERVER }}|Server>"
+                            }
+                        }
+                      ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: failure()
+    needs:
+      - setup
+      - platform-e2e
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#FF0000",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*PLATFORM E2E Nightly Failed* - ${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.PLATFORM_SERVER }}|Server> - <!here>"
+                        }
+                      }
+                    ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
