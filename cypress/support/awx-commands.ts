@@ -29,6 +29,8 @@ import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from './formatApiPathForAwx';
+import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
+import { ContentTypeEnum } from '../../frontend/awx/interfaces/ContentType';
 
 //  AWX related custom command implementation
 
@@ -592,6 +594,56 @@ Cypress.Commands.add(
     }
   }
 );
+
+Cypress.Commands.add(
+  'getAwxRoles',
+  (queryParams?: { content_type__model?: string; managed?: boolean }) => {
+    let roleDefinitionsUrl = awxAPI`/role_definitions/?order_by=name`;
+    if (queryParams) {
+      const { content_type__model, managed } = queryParams;
+      roleDefinitionsUrl = content_type__model
+        ? (roleDefinitionsUrl += `&content_type__model=${content_type__model}`)
+        : roleDefinitionsUrl;
+      roleDefinitionsUrl =
+        managed !== undefined ? (roleDefinitionsUrl += `&managed=${managed}`) : roleDefinitionsUrl;
+    }
+
+    cy.requestGet<AwxItemsResponse<AwxRbacRole>>(roleDefinitionsUrl).then((response) => {
+      return response;
+    });
+  }
+);
+
+Cypress.Commands.add('getAwxRoleDetail', (roleID: string) => {
+  cy.requestGet<AwxRbacRole>(`/api/controller/v2/role_definitions/${roleID}/`);
+});
+
+Cypress.Commands.add(
+  'createAwxRole',
+  (roleName: string, description: string, content_type, permissions: string[]) => {
+    cy.requestPost<AwxRbacRole>(awxAPI`/role_definitions/`, {
+      name: roleName,
+      description: description,
+      content_type: content_type as ContentTypeEnum,
+      permissions: permissions,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'AWX Role :',
+      });
+    });
+  }
+);
+
+Cypress.Commands.add('deleteAwxRole', (awxRoleDefinition: AwxRbacRole) => {
+  cy.requestDelete(awxAPI`/role_definitions/${awxRoleDefinition.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'AWX ROLE DELETION :',
+      message: [`Deleted 👉  ${awxRoleDefinition.name}`],
+    });
+  });
+});
 
 Cypress.Commands.add(
   'createAwxProject',

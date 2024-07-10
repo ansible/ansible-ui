@@ -24,17 +24,17 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Survey, Spec as SurveySpec } from '../../frontend/awx/interfaces/Survey';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
-import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
+import { RoleDefinition } from '../../frontend/eda/interfaces/generated/eda-api';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -42,7 +42,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { RoleDefinitionCreate } from '../../frontend/eda/interfaces/generated/eda-api';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -893,7 +893,25 @@ declare global {
       createAwxTeam(awxTeam?: Partial<Team>): Chainable<Team>;
       createAwxUser(awxUser?: Partial<AwxUser>): Chainable<AwxUser>;
       getCurrentUser(): Chainable<AwxUser>;
-      getAwxRoles(): Chainable<RoleSerializerWithParentAccess>;
+      getAwxRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<AwxItemsResponse<AwxRbacRole>>;
+      getAwxRoleDetail(roleID: string): Chainable<AwxRbacRole>;
+
+      /**
+       * Creates an object to AWX role definition.
+       *
+       * @returns {Chainable<AwxRbacRole>}
+       */
+      createAwxRole(
+        roleName: string,
+        description: string,
+        content_type,
+        permissions: string[]
+      ): Chainable<AwxRbacRole>;
+
+      deleteAwxRole(awxRoleDefinition: AwxRbacRole): Chainable<void>;
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;
@@ -1372,7 +1390,10 @@ declare global {
        */
       deleteEdaCredentialType(delete_cred_type: EdaCredentialType): Chainable<void>;
 
-      getEdaRoles(content_type__model?: string): Chainable<EdaRbacRole[]>;
+      getEdaRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<EdaRbacRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
@@ -1430,14 +1451,16 @@ declare global {
       /**
        * Creates an object to EDA role definition.
        *
-       * @returns {Chainable<RoleDefinitionCreate>}
+       * @returns {Chainable<RoleDefinition>}
        */
       createEdaRoleDefinition(
         roleName: string,
         description: string,
         content_type,
         permissions
-      ): Chainable<RoleDefinitionCreate>;
+      ): Chainable<RoleDefinition>;
+
+      deleteEdaRoleDefinition(edaRoleDefinition: RoleDefinition): Chainable<void>;
 
       /**
        * Retrieves an EDA active user which is admin.

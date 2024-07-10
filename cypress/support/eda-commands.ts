@@ -27,6 +27,9 @@ import {
   ImportStateEnum,
   RestartPolicyEnum,
   StatusEnum,
+  RoleDefinition,
+  ContentTypeEnum,
+  PermissionsEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 
@@ -345,18 +348,62 @@ Cypress.Commands.add('getEdaCredentialTypeByName', (edaCredentialTypeName: strin
 });
 
 // Updated to use new /role_definitions endpoint for EDA RBAC
-Cypress.Commands.add('getEdaRoles', (content_type__model?: string) => {
-  const roleDefinitionsUrl = content_type__model
-    ? edaAPI`/role_definitions?content_type__model=${content_type__model}`
-    : edaAPI`/role_definitions/`;
-  cy.requestGet<EdaResult<EdaRbacRole>>(roleDefinitionsUrl).then((response) => {
-    const edaRoles = response.results;
-    return edaRoles;
-  });
-});
+Cypress.Commands.add(
+  'getEdaRoles',
+  (queryParams?: { content_type__model?: string; managed?: boolean }) => {
+    let roleDefinitionsUrl = edaAPI`/role_definitions/`;
+    if (queryParams) {
+      const { content_type__model, managed } = queryParams;
+      if (content_type__model) {
+        roleDefinitionsUrl += `?content_type__model=${content_type__model}`;
+        roleDefinitionsUrl =
+          managed !== undefined
+            ? (roleDefinitionsUrl += `&managed=${managed}`)
+            : roleDefinitionsUrl;
+      } else {
+        roleDefinitionsUrl =
+          managed !== undefined
+            ? (roleDefinitionsUrl += `?managed=${managed}`)
+            : roleDefinitionsUrl;
+      }
+    }
+
+    cy.requestGet<EdaResult<EdaRbacRole>>(roleDefinitionsUrl).then((response) => {
+      const edaRoles = response.results;
+      return edaRoles;
+    });
+  }
+);
 
 Cypress.Commands.add('getEdaRoleDetail', (roleID: string) => {
   cy.requestGet<EdaRbacRole>(edaAPI`/role_definitions/${roleID}`);
+});
+
+Cypress.Commands.add(
+  'createEdaRoleDefinition',
+  (roleName: string, description: string, content_type, permissions) => {
+    cy.requestPost<RoleDefinition>(edaAPI`/role_definitions/`, {
+      name: roleName,
+      description: description,
+      content_type: content_type as ContentTypeEnum,
+      permissions: permissions as PermissionsEnum[],
+    }).then(() => {
+      Cypress.log({
+        displayName: 'EDA Role Definition :',
+      });
+    });
+  }
+);
+
+Cypress.Commands.add('deleteEdaRoleDefinition', (edaRoleDefinition: RoleDefinition) => {
+  cy.requestDelete(edaAPI`/role_definitions/${edaRoleDefinition.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA ROLE DEFINITION DELETION :',
+      message: [`Deleted 👉  ${edaRoleDefinition.name}`],
+    });
+  });
 });
 
 Cypress.Commands.add('createEdaTeam', () => {
