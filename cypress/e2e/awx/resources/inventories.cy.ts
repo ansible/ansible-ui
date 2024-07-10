@@ -225,6 +225,14 @@ describe('Inventories Tests', () => {
             cy.getByDataCy('organization').click();
             cy.contains('button', 'Browse').click();
 
+            // wait for all items to appear
+            cy.get(`[role="dialog"]`).within(() => {
+              cy.get(`[aria-label="Simple table"] tr`);
+              cy.contains('button', 'Cancel').click();
+              cy.contains('button', 'Confirm').click();
+              cy.get(`[aria-label="Pagination"]`);
+            });
+
             cy.get(`[role="dialog"]`).within(() => {
               cy.filterTableByMultiSelect('name', [org.name]);
               cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
