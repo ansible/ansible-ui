@@ -27,3 +27,35 @@ jobs:
           git fetch https://github.com/ansible/ansible-ui.git main
           git merge --no-ff FETCH_HEAD -m "Merge from upstream"
           git push origin main
+
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: failure()
+    needs:
+      - sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#FF0000",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Upstream Sync Failure*"
+                        }
+                      }
+                    ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK          
