@@ -46,7 +46,12 @@ export interface BulkActionDialogProps<T extends object> {
   onComplete?: (successfulItems: T[]) => void;
 
   /** Callback called when the dialog closes. */
-  onClose?: () => void;
+  onClose?: (
+    status: 'success' | 'failures' | 'canceled',
+    successfulItems: T[],
+    failedItems: T[],
+    canceledItems: T[]
+  ) => void;
 
   /** The text to show for each item when the action is happening.
    * @example Deleting jobs...
@@ -119,8 +124,13 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
 
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
-    onClose?.();
-  }, [onClose, setDialog]);
+    onClose?.(
+      isCanceled ? 'canceled' : error ? 'failures' : 'success',
+      items.filter((item) => statuses?.[keyFn(item)] === null),
+      items.filter((item) => statuses?.[keyFn(item)] !== null),
+      items.filter((item) => statuses?.[keyFn(item)] === undefined)
+    );
+  }, [error, isCanceled, items, keyFn, onClose, setDialog, statuses]);
 
   useEffect(() => {
     async function process() {
@@ -314,9 +324,14 @@ export function useBulkActionDialog<T extends object>(
   const [props, setProps] = useState<BulkActionDialogProps<T>>();
   useEffect(() => {
     if (props) {
-      const onCloseHandler = () => {
+      const onCloseHandler = (
+        status: 'success' | 'failures' | 'canceled',
+        successfulItems: T[],
+        failedItems: T[],
+        canceledItems: T[]
+      ) => {
         setProps(undefined);
-        props.onClose?.();
+        props.onClose?.(status, successfulItems, failedItems, canceledItems);
       };
       setDialog(
         <BulkActionDialog<T>
