@@ -6,6 +6,8 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 // patternfly-charts-theme-dark.css must come after patternfly-charts.css
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
+import { Bullseye, Page, Spinner } from '@patternfly/react-core';
+import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
@@ -32,17 +34,27 @@ import { GatewayUIAuthProvider } from './GatewayUIAuth';
 export default function PlatformMain() {
   return (
     <BrowserRouter>
-      <PageFramework defaultRefreshInterval={10}>
-        <PlatformActiveUserProvider>
-          <PlatformLogin>
-            <GatewayUIAuthProvider>
-              <GatewayServicesProvider>
-                <PlatformMainInternal />
-              </GatewayServicesProvider>
-            </GatewayUIAuthProvider>
-          </PlatformLogin>
-        </PlatformActiveUserProvider>
-      </PageFramework>
+      <Suspense
+        fallback={
+          <Page>
+            <Bullseye>
+              <Spinner />
+            </Bullseye>
+          </Page>
+        }
+      >
+        <PageFramework defaultRefreshInterval={10}>
+          <PlatformActiveUserProvider>
+            <PlatformLogin>
+              <GatewayUIAuthProvider>
+                <GatewayServicesProvider>
+                  <PlatformMainInternal />
+                </GatewayServicesProvider>
+              </GatewayUIAuthProvider>
+            </PlatformLogin>
+          </PlatformActiveUserProvider>
+        </PageFramework>
+      </Suspense>
     </BrowserRouter>
   );
 }
