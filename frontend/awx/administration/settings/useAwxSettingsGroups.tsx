@@ -98,11 +98,25 @@ export function useAwxSettingsGroups() {
 
   const options = useMemo(() => {
     if (!optionsResponse.data?.actions.PUT) return undefined;
-    return Object.keys(optionsResponse.data.actions.PUT).reduce<
+    if (!optionsResponse.data?.actions.GET) return undefined;
+
+    const { actions } = optionsResponse.data;
+    const getKeys = Object.keys(actions.GET);
+    const putKeys = Object.keys(actions.PUT);
+
+    // Settings marked as 'defined_in_file' are read-only in the API
+    // and won't be included in the OPTIONS PUT response,
+    // as they are defined in a deployment file and cannot be modified.
+    // These settings do appear in the GET response.
+    const awxSettingsDefinedInFile = getKeys.filter(
+      (x) => !putKeys.includes(x) && actions.GET[x].defined_in_file
+    );
+
+    return [...putKeys, ...awxSettingsDefinedInFile].reduce<
       Record<string, AwxSettingsOptionsAction>
     >((acc, key) => {
       if (awxSettingsExcludeKeys.includes(key)) return acc;
-      const value = optionsResponse.data!.actions.PUT[key];
+      const value = awxSettingsDefinedInFile.includes(key) ? actions.GET[key] : actions.PUT[key];
       acc[key] = value;
       return acc;
     }, {});
