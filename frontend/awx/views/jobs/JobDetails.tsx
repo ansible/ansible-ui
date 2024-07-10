@@ -51,9 +51,7 @@ export function JobDetails() {
       <PageDetail
         isEmpty={!job.execution_node}
         label={t('Execution node')}
-        helpText={t(
-          'The execution environment that will be used when launching this job template. The resolved execution environment can be overridden by explicitly assigning a different one to this job template.'
-        )}
+        helpText={t('The execution node used to run the job.')}
       >
         {job.execution_node}
       </PageDetail>

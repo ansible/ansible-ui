@@ -12,7 +12,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   let instanceGroup: InstanceGroup;
   const invToDelete: Inventory[] = [];
   const constrInvToDelete: Inventory[] = [];
-  const invToCreate: number = 1;
+  const invToCreate: number = 3;
 
   before(() => {
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
@@ -32,11 +32,9 @@ describe('Constructed Inventories CRUD Tests', () => {
         inventoriesList.push(inv);
       });
     }
-    cy.createAwxConstructedInventory(organization, { input_inventory_count: 3 }).then(
-      (constInv) => {
-        constructedInv = constInv;
-      }
-    );
+    cy.createAwxConstructedInventory(organization).then((constInv) => {
+      constructedInv = constInv;
+    });
   });
 
   afterEach(() => {
@@ -51,7 +49,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.deleteAwxOrganization(organization);
   });
 
-  it.skip('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
+  it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
     invNames = inventoriesList.map(({ name }) => String(name));
     cy.intercept('POST', awxAPI`/constructed_inventories/`).as('createInv');
     const constInvName = 'E2E Constructed Inventory ' + randomString(4);
