@@ -15,7 +15,7 @@ export function useHostMetricsToolbarActions(onComplete: (host: HostMetric[]) =>
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected hostnames'),
+        label: t('Delete hostnames'),
         onClick: deleteHostMetrics,
         isDanger: true,
       },
