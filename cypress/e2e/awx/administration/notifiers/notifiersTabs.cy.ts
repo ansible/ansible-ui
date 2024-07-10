@@ -71,7 +71,6 @@ describe('Notifications', () => {
   });
 
   tag(['upstream'], () => {
-    //these tests will not function in a downstream build
     describe('Notifications Tab for Organizations', () => {
       const orgName = randomE2Ename();
 
