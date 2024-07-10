@@ -69,12 +69,12 @@ jobs:
   platform-e2e:
     name: Platform E2E
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     needs: platform-ui-image
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3,4,5]
+        containers: [1,2,3,4,5,6]
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
