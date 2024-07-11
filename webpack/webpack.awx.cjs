@@ -1,3 +1,4 @@
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const webpackConfig = require('./webpack.config');
 const env = require('./environment.cjs');
 const { AWX_SERVER } = env;
@@ -9,6 +10,14 @@ module.exports = function (env, argv) {
   // publicPath is the path where the bundle is served from
   // https://webpack.js.org/guides/public-path/
   config.output.publicPath = process.env.PUBLIC_PATH || process.env.ROUTE_PREFIX || '/';
+
+  // FavIcons
+  config.plugins.unshift(
+    new FaviconsWebpackPlugin({
+      logo: './frontend/assets/awx-icon.svg',
+      inject: true,
+    })
+  );
 
   config.devServer.proxy = {
     '/api': {

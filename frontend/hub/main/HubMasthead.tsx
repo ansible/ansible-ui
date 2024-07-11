@@ -8,11 +8,11 @@ import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMasthe
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
 import { usePageNotifications } from '../../../framework/PageNotifications/PageNotificationsProvider';
+import GalaxyBrand from '../../assets/galaxy-logo.svg';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
-import GalaxyBrand from '../../icons/galaxy-logo.svg';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubActiveUser } from '../common/useHubActiveUser';
@@ -56,7 +56,7 @@ export function HubMasthead() {
             <></>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/galaxy-logo.svg' })}
               data-cy="masthead-about"
             >
               {t('About')}
