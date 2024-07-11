@@ -213,13 +213,24 @@ export function JobTemplateDetails({
         label={t('Execution environment')}
         overriddenValue={template.summary_fields?.execution_environment?.name}
         isOverridden={
-          executionEnvironment?.id !== template.summary_fields?.execution_environment?.id
+          typeof executionEnvironment === 'object'
+            ? executionEnvironment?.id !== template.summary_fields?.execution_environment?.id
+            : executionEnvironment !== template.summary_fields?.execution_environment?.id
         }
       >
         <TextCell
-          text={executionEnvironment?.name}
+          text={
+            typeof executionEnvironment === 'object'
+              ? executionEnvironment?.name
+              : 'Need to get name from ID'
+          }
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: executionEnvironment?.id },
+            params: {
+              id:
+                typeof executionEnvironment === 'object'
+                  ? executionEnvironment?.id
+                  : executionEnvironment,
+            },
           })}
         />
       </PromptDetail>
