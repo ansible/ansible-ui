@@ -129,7 +129,7 @@ module.exports = function (env, argv) {
         ignoreOrder: false,
       }),
       new CopyPlugin({
-        patterns: [{ from: 'frontend/icons', to: 'static/media' }],
+        patterns: [{ from: 'frontend/assets', to: 'assets' }],
       }),
       new CompressionPlugin(),
     ].filter(Boolean),

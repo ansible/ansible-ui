@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../framework';
 
 export interface AnsibleAboutModalProps {
+  brandImageSrc: string;
   onClose?: () => void;
 }
 
@@ -18,7 +19,7 @@ function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         props.onClose?.();
       }}
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
-      brandImageSrc="/static/media/brand-logo.svg"
+      brandImageSrc={props.brandImageSrc}
       brandImageAlt={t('Brand Logo')}
       productName={process.env.PRODUCT ?? t('AWX')}
     >
