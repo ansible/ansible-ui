@@ -317,6 +317,52 @@ describe('Credentials', () => {
       cy.clickButton(/^Cancel/);
     });
   });
+
+  describe('Credentials Tabbed View - Job Templates', () => {
+    let machineCredential: Credential;
+    let awxOrganization: Organization;
+    let awxInventory: Inventory;
+
+    beforeEach(() => {
+      cy.createAwxOrganization().then((awxOrg) => {
+        awxOrganization = awxOrg;
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: awxOrganization.id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+        });
+
+        cy.createAwxInventory(awxOrganization).then((inv) => {
+          awxInventory = inv;
+        });
+      });
+    });
+
+    afterEach(() => {
+      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+      cy.deleteAwxInventory(awxInventory, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+    });
+
+    it('can create a job template within the context of credential job template tab', function () {
+      const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
+      cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
+      cy.clickTab('Job Templates', true);
+      cy.getByDataCy('create-template').click();
+      cy.verifyPageTitle('Create Job Template');
+      cy.getByDataCy('name').type(jobTemplateName);
+      cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
+      cy.selectDropdownOptionByResourceName('project', project.name);
+      cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+      cy.multiSelectByDataCy('credential', [machineCredential.name]);
+      cy.getByDataCy('Submit').click();
+    });
+  });
 });
 
 describe('Credentials: Credential Types Tests', () => {
@@ -508,52 +554,6 @@ describe('Credentials: Credential Types Tests', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
     cy.verifyPageTitle('Credentials');
-  });
-});
-
-describe('Credentials Tabbed View - Job Templates', () => {
-  let machineCredential: Credential;
-  let awxOrganization: Organization;
-  let awxInventory: Inventory;
-
-  beforeEach(() => {
-    cy.createAwxOrganization().then((awxOrg) => {
-      awxOrganization = awxOrg;
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: awxOrganization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential = cred;
-      });
-
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        awxInventory = inv;
-      });
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxInventory(awxInventory, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
-  });
-
-  it('can create a job template within the context of credential job template tab', function () {
-    const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
-    cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
-    cy.navigateTo('awx', 'credentials');
-    cy.filterTableByMultiSelect('name', [machineCredential.name]);
-    cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
-    cy.clickTab('Job Templates', true);
-    cy.getByDataCy('create-template').click();
-    cy.verifyPageTitle('Create Job Template');
-    cy.getByDataCy('name').type(jobTemplateName);
-    cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
-    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.multiSelectByDataCy('credential', [machineCredential.name]);
-    cy.getByDataCy('Submit').click();
   });
 });
 
