@@ -1043,8 +1043,7 @@ declare global {
        * This creates a user token in AWX that can be exported as a string and used in EDA.
        * @param awxToken
        */
-      createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
-
+      createAwxToken(oAuthAppId: number, scope: 'read' | 'write'): Chainable<AwxToken>;
       /**
        * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
        */
