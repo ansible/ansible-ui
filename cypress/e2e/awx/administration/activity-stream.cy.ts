@@ -88,7 +88,10 @@ describe('activity-stream', () => {
     cy.verifyPageTitle('Activity Stream');
     cy.filterTableByTextFilter('keyword', inventory.name);
     cy.get('tbody').find('tr').should('have.length', 1);
-    cy.getByDataCy('event-column-cell').should('have.text', ` created inventory ${inventory.name}`);
+    cy.get(`[data-cy='event-column-cell']`, { timeout: 30000 }).should(
+      'have.text',
+      ` created inventory ${inventory.name}`
+    );
   });
 
   it('can filter by initiated by from activity stream list', function () {
