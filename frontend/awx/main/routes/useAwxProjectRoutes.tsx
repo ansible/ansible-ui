@@ -41,7 +41,7 @@ export function useAwxProjectRoutes() {
         {
           id: AwxRoute.ProjectScheduleCreate,
           path: ':id/schedules/create',
-          element: <ScheduleAddWizard />,
+          element: <ScheduleAddWizard resourceEndPoint={awxAPI`/projects/`} />,
         },
         {
           id: AwxRoute.ProjectScheduleEdit,

@@ -148,14 +148,7 @@ export function SchedulePage(props: {
     return <AwxError error={relevantError} handleRefresh={relevantRefresh} />;
   }
   if (!schedule || !resource) return <LoadingPage breadcrumbs tabs />;
-  const tabParams: { id: string; schedule_id: string; [key: string]: string } = {
-    id: schedule.summary_fields.unified_job_template.id.toString(),
-    schedule_id: schedule.id.toString(),
-  };
-  if (isInventorySource && params.source_id) {
-    tabParams.source_id = params.source_id;
-    tabParams.inventory_type = INVENTORY_TYPE;
-  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -169,7 +162,6 @@ export function SchedulePage(props: {
           />
         }
       />
-
       <PageRoutedTabs backTab={props.backTab} tabs={props.tabs} params={params} />
     </PageLayout>
   );

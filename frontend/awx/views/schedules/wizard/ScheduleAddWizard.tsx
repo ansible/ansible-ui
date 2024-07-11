@@ -68,13 +68,13 @@ export function ScheduleAddWizard(props: {
       rrule: ruleset.toString(),
       ...rest,
     };
-
     try {
       const {
         schedule,
       }: {
         schedule: Schedule;
       } = await processSchedules(data);
+
       const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
       pageNavigate(pageUrl.pageId, { params: pageUrl.params });
     } catch (error) {
@@ -103,9 +103,8 @@ export function ScheduleAddWizard(props: {
       inputs: <SchedulePromptsStep />,
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { resource, schedule_type, launch_config } = wizardData;
-        console.log('here', { wizardData });
         if (
-          (schedule_type === 'workflow-job-template' || schedule_type === 'job-template') &&
+          (schedule_type === 'workflow_job_template' || schedule_type === 'job_template') &&
           resource &&
           launch_config
         ) {

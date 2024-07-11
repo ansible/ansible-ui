@@ -6,7 +6,6 @@ import { ScheduleFormWizard, ScheduleResourceType, ScheduleResources } from '../
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { requestGet } from '../../../../common/crud/Data';
 import { InventorySource } from '../../../interfaces/InventorySource';
-import { awxAPI } from '../../../common/api/awx-utils';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { PageWizardStep } from '../../../../../framework';
@@ -45,6 +44,7 @@ export function ScheduleSelectStep(props: {
         | Record<'details', Partial<ScheduleFormWizard>>
         | Record<'promptStep', { prompt: PromptFormValues }>
     ) => void;
+
     stepData: {
       details?: Partial<ScheduleFormWizard>;
       promptStep?: { prompt: PromptFormValues };
@@ -64,7 +64,7 @@ export function ScheduleSelectStep(props: {
       let scheduleResource: ScheduleResources;
       if (params.source_id) {
         scheduleResource = await requestGet<InventorySource>(
-          awxAPI`${props.resourceEndPoint ?? ''}${params.source_id}/`
+          `${props.resourceEndPoint ?? ''}${params.source_id}/`
         );
       } else {
         scheduleResource = await requestGet<ScheduleResources>(
@@ -120,9 +120,10 @@ export function ScheduleSelectStep(props: {
      */
 
     if (
+      !resource?.id ||
       props.resourceEndPoint === undefined ||
-      !props.resourceEndPoint?.includes('job_template') ||
-      !props.resourceEndPoint?.includes('workflow_job_template')
+      (!props.resourceEndPoint?.includes('job_template') &&
+        !props.resourceEndPoint?.includes('workflow_job_template'))
     ) {
       return;
     }
@@ -130,7 +131,7 @@ export function ScheduleSelectStep(props: {
       let launchConfigValue = {} as PromptFormValues;
 
       const launchConfigResults = await requestGet<LaunchConfiguration>(
-        awxAPI`/${props.resourceEndPoint ?? ''}/${resource.id.toString()}/launch/`
+        `${props.resourceEndPoint ?? ''}/${resource.id.toString()}/launch/`
       );
 
       const {
@@ -158,7 +159,7 @@ export function ScheduleSelectStep(props: {
 
         if (stepData.promptStep && resource) {
           const { isDirty: isNodeTypeDirty } = getFieldState('schedule_type');
-          if (!isNodeTypeDirty && resource.id === defaultValues?.resource?.id) {
+          if (!isNodeTypeDirty && resource?.id === defaultValues?.resource?.id) {
             setValue('prompt', { ...stepData.promptStep?.prompt });
           } else {
             /**  If the node type is not dirty and the node resource is not the same as the default value,

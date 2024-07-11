@@ -29,7 +29,7 @@
     "checks": "concurrently --kill-others-on-fail npm:tsc npm:tsc:framework npm:eslint npm:prettier -c auto",
     "upgrade": "npx npm-check-updates --upgrade --target minor --doctor -x '/^cypress/' && npm audit fix || true && npm dedup || true ",
     "cypress": "cypress open",
-    "e2e:awx": "cypress open --browser firefox --e2e --config-file=cypress.awx.config.ts",
+    "e2e:awx": "cypress open --browser chrome --e2e --config-file=cypress.awx.config.ts",
     "e2e:hub": "cypress open --browser chrome --e2e --config-file=cypress.hub.config.ts",
     "e2e:eda": "cypress open --browser chrome --e2e --config-file=cypress.eda.config.ts",
     "e2e:run": "concurrently npm:e2e:run:awx npm:e2e:run:hub npm:e2e:run:eda -c cyan,green,blue",

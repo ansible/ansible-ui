@@ -97,7 +97,7 @@ export function useAwxInventoryRoutes() {
         {
           id: AwxRoute.InventorySourceScheduleCreate,
           path: ':inventory_type/:id/sources/:source_id/schedules/create',
-          element: <ScheduleAddWizard />,
+          element: <ScheduleAddWizard resourceEndPoint={awxAPI`/inventory_sources/`} />,
         },
         {
           id: AwxRoute.InventorySourceScheduleEdit,

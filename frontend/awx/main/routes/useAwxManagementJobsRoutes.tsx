@@ -61,7 +61,7 @@ export function useAwxManagementJobsRoutes() {
         {
           id: AwxRoute.ManagementJobScheduleCreate,
           path: ':id/schedules/create',
-          element: <ScheduleAddWizard />,
+          element: <ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />,
         },
         {
           id: AwxRoute.ManagementJobPage,
