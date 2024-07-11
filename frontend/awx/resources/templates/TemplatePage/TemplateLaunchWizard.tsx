@@ -274,7 +274,7 @@ export function LaunchWizard({
         <PageFormCredentialSelect<TemplateLaunch>
           name="credentials"
           label={t('Credentials')}
-          placeholder={t('Add credentials')}
+          placeholder={t('Select credentials')}
           labelHelpTitle={t('Credentials')}
           labelHelp={t(
             'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
