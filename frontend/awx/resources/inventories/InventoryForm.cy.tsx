@@ -5,6 +5,7 @@ import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { CreateInventory, EditInventory, InventoryCreate } from './InventoryForm';
+import instanceGroupsResponse from '../../../../cypress/fixtures/instance_groups.json';
 
 export type RegularPayload = {
   kind: string;
@@ -117,13 +118,11 @@ describe('Create Edit Inventory Form', () => {
         cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
           cy.selectSingleSelectOption('[data-cy="organization"]', orgResponse.results[0].name);
         });
-        cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
         cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
-          cy.selectTableRowByCheckbox('name', ig_response.results[0].name, {
-            disableFilter: true,
-          })
+          cy.multiSelectByDataCy('instance-group-select-form-group', [
+            ig_response?.results[0]?.name,
+          ])
         );
-        cy.clickModalButton('Confirm');
 
         if (kind === '') {
           cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
@@ -175,25 +174,37 @@ describe('Create Edit Inventory Form', () => {
         { method: 'GET', url: '/api/v2/organizations/*/' },
         { fixture: 'organization.json' }
       );
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/instance_groups/*' },
-        { fixture: 'instance_groups.json' }
-      );
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/inventories/*/instance_groups/' },
-        { fixture: 'instance_groups.json' }
-      );
+
       cy.intercept({ method: 'GET', url: '/api/v2/labels/*' }, { fixture: 'labels.json' });
 
-      cy.fixture('instance_groups')
-        .then((ig_response: AwxItemsResponse<InstanceGroup>) => {
-          ig_response.results = [ig_response.results[0]];
-          cy.intercept(
-            { method: 'GET', url: '/api/v2/inventories/*/instance_groups/' },
-            { body: ig_response }
-          );
-        })
-        .as('loadIG');
+      /** Fetch instance groups that are attached to the inventory */
+
+      cy.intercept(
+        { method: 'GET', url: '/api/v2/inventories/*/instance_groups/' },
+        { ...instanceGroupsResponse, results: [instanceGroupsResponse.results[1]] }
+      ).as('loadIG');
+
+      /**Fetch all instance groups to show them in the form select component */
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '/api/v2/instance_groups/*',
+        },
+        { ...instanceGroupsResponse }
+      );
+      /** Fetch details about the instance groups that are attached to the inventory.
+       * This is a request handled by a framework component
+       */
+      cy.intercept(
+        { method: 'GET', url: `/api/v2/instance_groups/*/` },
+
+        { ...instanceGroupsResponse.results[1] }
+      );
+      /** Fetch instance groups options. Also a request handled by a framework component */
+      cy.intercept(
+        { method: 'OPTIONS', url: '/api/v2/instance_groups/*' },
+        { fixture: 'mock_options.json' }
+      );
     });
     kinds.forEach((kind) => {
       const path = '/inventories/:inventory_type/:id/edit';
@@ -237,13 +248,8 @@ describe('Create Edit Inventory Form', () => {
           cy.get('[data-cy="organization"]').should('contain', organization.name)
         );
         cy.get('[data-cy="variables"]').should('have.text', payload.variables);
-        cy.wait('@loadIG').then(() => {
-          cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
-            cy
-              .get('[data-cy="instance-group-select-form-group"]')
-              .should('contain', ig_response.results[0].name)
-          );
-        });
+        cy.get('[data-cy="instance-group-select-form-group"]').should('contain', 'default');
+
         if (kind === '') {
           cy.get('[data-cy="labels-form-group"]').should(
             'contain',
@@ -259,10 +265,6 @@ describe('Create Edit Inventory Form', () => {
       });
 
       it(`Check correct request body is passed after editing inventory (${kindLabel})`, () => {
-        cy.intercept(
-          { method: 'OPTIONS', url: '/api/v2/instance_groups/' },
-          { fixture: 'mock_options.json' }
-        );
         cy.fixture('inventory')
           .then((inventory: Inventory) => {
             inventory.kind = payload.kind as '' | 'smart' | 'constructed';
@@ -294,15 +296,14 @@ describe('Create Edit Inventory Form', () => {
         cy.get('[data-cy="description"]').type('Edited description');
         // cy.get('[data-cy="variables"]').type('s');
         cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
-          cy.selectSingleSelectOption('[data-cy="organization"]', orgResponse.results[1].name);
+          cy.singleSelectByDataCy('organization', orgResponse.results[1].name);
         });
-        cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
-        cy.fixture('instance_groups').then((ig_response: AwxItemsResponse<InstanceGroup>) =>
-          cy.selectTableRowByCheckbox('name', ig_response.results[0].name, {
-            disableFilter: true,
-          })
-        );
-        cy.clickModalButton('Confirm');
+
+        cy.multiSelectByDataCy('instance-group-select-form-group', [
+          instanceGroupsResponse.results[2].name,
+          instanceGroupsResponse.results[1].name,
+        ]);
+
         if (kind === 'smart') {
           cy.get('[data-cy="host-filter"]').clear();
           cy.get('[data-cy="host-filter"]').type('name__icontains=edited-local');
@@ -340,11 +341,11 @@ describe('Create Edit Inventory Form', () => {
             if ('disassociate' in editedIG) {
               expect(editedIG.disassociate).to.equal(true);
               cy.fixture('instance_groups').then((igResponse: AwxItemsResponse<InstanceGroup>) => {
-                expect(editedIG.id).to.equal(igResponse.results[0].id);
+                expect(editedIG.id).to.equal(igResponse.results[1].id);
               });
             } else {
               cy.fixture('instance_groups').then((igResponse: AwxItemsResponse<InstanceGroup>) => {
-                expect(editedIG.id).to.equal(igResponse.results[1].id);
+                expect(editedIG.id).to.equal(igResponse.results[2].id);
               });
             }
           }

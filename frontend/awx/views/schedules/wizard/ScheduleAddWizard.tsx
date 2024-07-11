@@ -19,7 +19,6 @@ import { ScheduleSelectStep } from './ScheduleSelectStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useNavigate } from 'react-router-dom';
 import { Schedule } from '../../../interfaces/Schedule';
@@ -93,7 +92,7 @@ export function ScheduleAddWizard() {
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { resource, schedule_type, launch_config } = wizardData;
         if (
-          (schedule_type === RESOURCE_TYPE.workflow_job || schedule_type === RESOURCE_TYPE.job) &&
+          (schedule_type === 'workflow-job-template' || schedule_type === 'job-template') &&
           resource &&
           launch_config
         ) {

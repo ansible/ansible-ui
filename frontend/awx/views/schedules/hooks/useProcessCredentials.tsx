@@ -21,8 +21,11 @@ export const useProcessCredentials = () => {
       const promptCredentials = credentials || [];
       const templateCredentials = launch_config?.defaults.credentials || [];
 
-      if (credentials) {
-        const { added, removed } = getAddedAndRemoved(promptCredentials, templateCredentials);
+      if (promptCredentials) {
+        const { added, removed } = getAddedAndRemoved(
+          promptCredentials.length ? promptCredentials : ([] as { id: number }[]),
+          templateCredentials
+        );
         const disassociationPromises = removed.map((credential: { id: number }) =>
           postDisassociate(
             awxAPI`/schedules/${scheduleId.toString()}/credentials/`,

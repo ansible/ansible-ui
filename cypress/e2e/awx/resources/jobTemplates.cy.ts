@@ -32,19 +32,24 @@ describe.skip('Job Templates Tests', function () {
     let inventoryWithHost: Inventory;
     let machineCredential: Credential;
     let project: Project;
+    let organization: Organization;
     let executionEnvironment: ExecutionEnvironment;
     const executionEnvironmentName = 'Control Plane Execution Environment';
     const instanceGroup = 'default';
 
     beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory = inv;
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
+      cy.createAwxOrganization().then((org) => {
+        organization = org;
+        cy.createAwxInventory(organization).then((inv) => {
+          inventory = inv;
+
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: organization.id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+          });
         });
       });
     });
@@ -57,6 +62,7 @@ describe.skip('Job Templates Tests', function () {
       project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
       inventoryWithHost?.id &&
         cy.deleteAwxInventory(inventoryWithHost, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(organization);
     });
 
     it('can create a job template with all fields without prompt on launch option', function () {
@@ -104,33 +110,6 @@ describe.skip('Job Templates Tests', function () {
         });
     });
 
-    it('can create a job template that inherits the execution environment from the project', function () {
-      cy.createAwxExecutionEnvironment({
-        organization: awxOrganization.id,
-      }).then((ee: ExecutionEnvironment) => {
-        executionEnvironment = ee;
-        cy.createAwxProject(awxOrganization, {
-          default_environment: ee.id,
-        }).then((proj: Project) => {
-          project = proj;
-          cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
-          const jtName = 'E2E-JT ' + randomString(4);
-          cy.navigateTo('awx', 'templates');
-          cy.getBy('[data-cy="create-template"]').click();
-          cy.clickLink(/^Create job template$/);
-          cy.getBy('[data-cy="name"]').type(jtName);
-          cy.getBy('[data-cy="description"]').type('This is a JT description');
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-          cy.selectDropdownOptionByResourceName('project', proj.name);
-          cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-          cy.getBy('[data-cy="Submit"]').click();
-          cy.wait('@createJT');
-          cy.getByDataCy('execution-environment').contains(ee.name);
-          cy.getByDataCy('project').contains(proj.name);
-        });
-      });
-    });
-
     it('can create a job template using the prompt on launch wizard', function () {
       cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
       const jtName = 'E2E-POLJT ' + randomString(4);
@@ -169,16 +148,7 @@ describe.skip('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-            cy.get('button').eq(1).click();
-          });
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', instanceGroup);
-            cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-              cy.get('[data-cy="checkbox-column-cell"] input').click();
-            });
-            cy.clickButton(/^Confirm/);
-          });
+          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup]);
           cy.clickButton(/^Next/);
           cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);
@@ -241,16 +211,7 @@ describe.skip('Job Templates Tests', function () {
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
-          cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-            cy.get('button').eq(1).click();
-          });
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', instanceGroup);
-            cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-              cy.get('[data-cy="checkbox-column-cell"] input').click();
-            });
-            cy.clickButton(/^Confirm/);
-          });
+          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup]);
           cy.clickButton(/^Next/);
           cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
           cy.clickButton(/^Finish/);

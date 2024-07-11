@@ -1,5 +1,4 @@
 import { Frequency, RRule } from 'rrule';
-import { ScheduleResourceType } from '../types';
 
 export const RULES_DEFAULT_VALUES = {
   freq: Frequency.YEARLY,
@@ -39,11 +38,3 @@ export const HOURS_OF_DAY = Array.from(Array(24), (_, i) => i).map((hour) => ({
   value: hour,
   label: `${hour}`,
 }));
-
-export const RESOURCE_TYPE: Record<ScheduleResourceType, ScheduleResourceType> = {
-  job: 'job',
-  workflow_job: 'workflow_job',
-  project_update: 'project_update',
-  inventory_update: 'inventory_update',
-  system_job: 'system_job',
-};
