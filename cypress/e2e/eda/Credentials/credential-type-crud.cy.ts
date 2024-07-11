@@ -204,7 +204,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
-    cy.contains('li', 'Credentials').click();
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.selectDropdownOptionByResourceName('credential-type-id', name);
@@ -233,7 +233,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
-    cy.contains('li', 'Credentials').click();
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.selectDropdownOptionByResourceName('credential-type-id', name);
@@ -262,7 +262,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
-    cy.contains('li', 'Credentials').click();
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(name);
