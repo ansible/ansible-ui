@@ -1,5 +1,7 @@
 const webpackConfig = require('../webpack/webpack.config');
 const webpack = require('webpack');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const GATEWAY_API_PREFIX = process.env.GATEWAY_API_PREFIX || '/api/gateway/v1';
 
@@ -11,6 +13,11 @@ module.exports = function (env, argv) {
   const config = webpackConfig(env, argv);
 
   config.entry = './platform/main/Platform.tsx';
+
+  config.plugins.unshift(
+    new FaviconsWebpackPlugin({ logo: 'platform/assets/redhat-icon.svg', inject: true })
+  );
+  config.plugins.unshift(new CopyPlugin({ patterns: [{ from: 'platform/assets', to: 'assets' }] }));
 
   config.devServer.proxy = {
     '/api': {
