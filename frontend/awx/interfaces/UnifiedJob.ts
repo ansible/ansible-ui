@@ -93,6 +93,17 @@ export interface UnifiedJob
     schedule?: string;
     system_job_template?: string;
   };
+  launch_type?:
+    | 'manual'
+    | 'relaunch'
+    | 'callback'
+    | 'scheduled'
+    | 'dependency'
+    | 'workflow'
+    | 'webhook'
+    | 'sync'
+    | 'scm'
+    | undefined;
   summary_fields: JobSummaryFields;
   launched_by: {
     id: number;
