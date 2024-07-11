@@ -19,6 +19,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 
 type IOrganizationData = Organization & {
   instanceGroups?: InstanceGroup[];
@@ -83,18 +84,22 @@ export function EditOrganization() {
     requestGet,
     swrOptions
   );
-  const instanceGroups = igResponse?.results;
+  const originalInstanceGroups = igResponse?.results;
 
   useInvalidateCacheOnUnmount();
 
   const onSubmit: PageFormSubmitHandler<IOrganizationData> = async (values) => {
     const { instanceGroups, ...organization } = values;
+    const { added, removed } = getAddedAndRemoved(
+      originalInstanceGroups || [],
+      instanceGroups || []
+    );
     const editedOrganization = await requestPatch<Organization>(
       awxAPI`/organizations/${id.toString()}/`,
       organization
     );
     const disassociateRequests = [];
-    for (const ig of instanceGroups || []) {
+    for (const ig of removed || []) {
       disassociateRequests.push(
         postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
           id: ig.id,
@@ -104,7 +109,7 @@ export function EditOrganization() {
     }
     await Promise.all(disassociateRequests);
     const igRequests = [];
-    for (const ig of values.instanceGroups || []) {
+    for (const ig of added || []) {
       igRequests.push(
         postRequest(awxAPI`/organizations/${editedOrganization.id.toString()}/instance_groups/`, {
           id: ig.id,
@@ -130,7 +135,10 @@ export function EditOrganization() {
           submitText={t('Save organization')}
           onSubmit={onSubmit}
           onCancel={onCancel}
-          defaultValue={{ ...organization, instanceGroups }}
+          defaultValue={{
+            ...organization,
+            instanceGroups: originalInstanceGroups ?? [],
+          }}
         >
           <OrganizationInputs orgId={organization.id} />
         </AwxPageForm>

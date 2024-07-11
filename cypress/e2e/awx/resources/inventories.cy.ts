@@ -28,13 +28,14 @@ describe('Inventories Tests', () => {
             cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
               label = lbl;
             });
-            cy.createAwxInventory(organization).then((inv) => {
-              //the cy.createAwxInventory() custom command needs to be updated to accept the
-              //'kind' parameter, in order to work with the conditional in this spec file
-              inventory = inv;
-            });
             cy.createAwxInstanceGroup().then((ig) => {
               instanceGroup = ig;
+
+              cy.createAwxInventory(organization).then((inv) => {
+                //the cy.createAwxInventory() custom command needs to be updated to accept the
+                //'kind' parameter, in order to work with the conditional in this spec file
+                inventory = inv;
+              });
             });
             cy.createAwxUser({ organization: organization.id }).then((testUser) => {
               user = testUser;
@@ -82,21 +83,11 @@ describe('Inventories Tests', () => {
           cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
             cy.get('[data-cy="edit-inventory"]').click();
           });
-          cy.get('#instance-group-select-form-group').within(() => {
-            cy.get('button[aria-label="Options menu"]').click();
-          });
-          const igName = instanceGroup?.name;
-          if (igName) {
-            cy.filterTableBySingleSelect('name', igName);
-            cy.selectTableRowByCheckbox('name', igName, {
-              disableFilter: true,
-            });
-            cy.contains('button', 'Confirm').click();
-            cy.contains('button', 'Save inventory').click(); //Add an interception call for the edited inventory
-            cy.verifyPageTitle(inventory.name);
-            //Add assertions to verify the updated information is reflecting on the details screen of the edited inventory
-            cy.hasDetail(/^Instance groups$/, igName);
-          }
+          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+          cy.contains('button', 'Save inventory').click(); //Add an interception call for the edited inventory
+          cy.verifyPageTitle(inventory.name);
+          //Add assertions to verify the updated information is reflecting on the details screen of the edited inventory
+          cy.hasDetail(/^Instance groups$/, instanceGroup.name);
         });
 
         it('can edit an inventory from the details view and assert info on details page', () => {

@@ -691,7 +691,7 @@ const useProcessInstanceGroups = () => {
       if (hasInstanceGroupsPrompt) {
         const { added, removed } = getAddedAndRemoved(
           launch_data?.original?.instance_groups || [],
-          launch_data?.instance_groups || ([] as InstanceGroup[])
+          launch_data?.instance_groups ? launch_data.instance_groups : ([] as { id: number }[])
         );
 
         const disassociationPromises = removed.map((group: { id: number }) =>

@@ -7,7 +7,6 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
 import { PageDetail, useGetPageUrl, TextCell } from '../../../../../../framework';
 import { useGet } from '../../../../../common/crud/useGet';
 import { JobTemplate } from '../../../../interfaces/JobTemplate';
@@ -26,6 +25,7 @@ import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
 import { WebhookService } from '../../components/WebhookService';
+import { Link } from 'react-router-dom';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -342,7 +342,10 @@ function CredentialsDetail({
   templateCredentials: Credential[];
 }) {
   const { t } = useTranslation();
-  const isMatch = arrayIdsMatch(credentials, templateCredentials);
+  const isMatch = arrayIdsMatch(
+    credentials.map(({ id }) => ({ id })),
+    templateCredentials
+  );
 
   return (
     <PromptDetail
@@ -364,13 +367,17 @@ function InstanceGroupsDetail({
   instanceGroups = [],
   templateInstanceGroups = [],
 }: {
-  instanceGroups: InstanceGroup[] | { id: number; name: string }[];
+  instanceGroups: InstanceGroup[];
   templateInstanceGroups: InstanceGroup[];
 }) {
   const { t } = useTranslation();
+  const isMatch = arrayIdsMatch(
+    instanceGroups.map(({ id }) => ({
+      id,
+    })),
+    templateInstanceGroups
+  );
   const getPageUrl = useGetPageUrl();
-  const isMatch = arrayIdsMatch(instanceGroups, templateInstanceGroups);
-
   return (
     <PromptDetail
       label={t`Instance groups`}
