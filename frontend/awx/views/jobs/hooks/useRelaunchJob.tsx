@@ -12,7 +12,7 @@ import {
   WorkflowJobRelaunch,
 } from '../../../interfaces/RelaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { getRelaunchEndpoint } from '../jobUtils';
+import { relaunchEndpoint } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -25,8 +25,6 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
   const pageNavigate = usePageNavigate();
 
   return async (job: UnifiedJob) => {
-    const relaunchEndpoint = getRelaunchEndpoint(job);
-
     if (!relaunchEndpoint) {
       return Promise.reject(new Error('Unable to retrieve launch configuration'));
     }
@@ -34,24 +32,26 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
       let relaunchConfig;
       switch (job.type) {
         case 'ad_hoc_command': {
-          relaunchConfig =
-            await requestGet<AwxItemsResponse<AdHocCommandRelaunch>>(relaunchEndpoint);
+          relaunchConfig = await requestGet<AwxItemsResponse<AdHocCommandRelaunch>>(
+            relaunchEndpoint(job)
+          );
           break;
         }
         case 'workflow_job': {
-          relaunchConfig =
-            await requestGet<AwxItemsResponse<WorkflowJobRelaunch>>(relaunchEndpoint);
+          relaunchConfig = await requestGet<AwxItemsResponse<WorkflowJobRelaunch>>(
+            relaunchEndpoint(job)
+          );
           break;
         }
         case 'job': {
-          relaunchConfig = await requestGet<JobRelaunch>(relaunchEndpoint);
+          relaunchConfig = await requestGet<JobRelaunch>(relaunchEndpoint(job));
           break;
         }
         case 'inventory_update':
-          relaunchConfig = await requestGet<InventorySourceUpdate>(relaunchEndpoint);
+          relaunchConfig = await requestGet<InventorySourceUpdate>(relaunchEndpoint(job));
           break;
         case 'project_update':
-          relaunchConfig = await requestGet<ProjectUpdateView>(relaunchEndpoint);
+          relaunchConfig = await requestGet<ProjectUpdateView>(relaunchEndpoint(job));
           break;
       }
 
@@ -69,24 +69,24 @@ export function useRelaunchJob(jobRelaunchParams?: JobRelaunch) {
         let relaunchJob;
         switch (job.type) {
           case 'ad_hoc_command': {
-            relaunchJob = await postRequest(relaunchEndpoint, {} as AdHocCommandRelaunch);
+            relaunchJob = await postRequest(relaunchEndpoint(job), {} as AdHocCommandRelaunch);
             break;
           }
           case 'workflow_job': {
-            relaunchJob = await postRequest(relaunchEndpoint, {} as WorkflowJobRelaunch);
+            relaunchJob = await postRequest(relaunchEndpoint(job), {} as WorkflowJobRelaunch);
             break;
           }
           case 'job': {
-            relaunchJob = await postRequest(relaunchEndpoint, {
+            relaunchJob = await postRequest(relaunchEndpoint(job), {
               ...jobRelaunchParams,
             } as JobRelaunch);
             break;
           }
           case 'inventory_update':
-            relaunchJob = await postRequest(relaunchEndpoint, {} as InventorySourceUpdate);
+            relaunchJob = await postRequest(relaunchEndpoint(job), {} as InventorySourceUpdate);
             break;
           case 'project_update':
-            relaunchJob = await postRequest(relaunchEndpoint, {} as ProjectUpdateView);
+            relaunchJob = await postRequest(relaunchEndpoint(job), {} as ProjectUpdateView);
             break;
         }
         navigate(getJobOutputUrl(relaunchJob as UnifiedJob));
