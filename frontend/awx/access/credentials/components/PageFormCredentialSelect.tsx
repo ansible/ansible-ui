@@ -40,7 +40,7 @@ export function PageFormCredentialSelect<
       name={props.name}
       id={props.id ? props.id : 'credential'}
       label={props.label ? props.label : t('Credential')}
-      placeholder={props.placeholder ? props.placeholder : t('Add credentials')}
+      placeholder={props.placeholder ? props.placeholder : t('Select credentials')}
       queryPlaceholder={t('Loading credentials...')}
       queryErrorText={t('Error loading credentials')}
       isRequired={props.isRequired}

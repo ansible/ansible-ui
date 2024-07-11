@@ -29,7 +29,7 @@ export function PageFormInstanceGroupSelect<
       queryErrorText={t('Error loading instance groups')}
       url={awxAPI`/instance_groups/`}
       id="instance-group-select"
-      placeholder={t('Add instance groups')}
+      placeholder={t('Select instance groups')}
       labelHelp={props.labelHelp}
       label={t('Instance Groups')}
       isRequired={props.isRequired}

@@ -95,7 +95,7 @@ export function PageFormExecutionEnvironmentSelect<
       label={props.label ?? t('Execution environment')}
       name={name}
       id="execution-environment-select"
-      placeholder={placeholder ?? t('Create execution environment')}
+      placeholder={placeholder ?? t('Select execution environment')}
       labelHelpTitle={t('Execution environment')}
       labelHelp={t('The container image to be used for execution.')}
       selectTitle={t('Select an execution environment')}
