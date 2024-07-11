@@ -346,7 +346,7 @@ describe('Credentials', () => {
       cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
     });
 
-    it('can create a job template within the context of credential job template tab', function () {
+    it('can create a job template within the context of credential job template tab', () => {
       const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
       cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
       cy.navigateTo('awx', 'credentials');
