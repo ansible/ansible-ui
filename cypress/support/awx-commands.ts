@@ -1196,16 +1196,6 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createAwxToken', (oAuthAppId: number, scope: 'read' | 'write') => {
-  const url = awxAPI`/tokens/`;
-  const body = {
-    application: oAuthAppId,
-    scope: scope,
-  };
-
-  return cy.requestPost<AwxToken>(url, body);
-});
-
 Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
   const url = awxAPI`/tokens/`;
   const body = { ...awxToken };
