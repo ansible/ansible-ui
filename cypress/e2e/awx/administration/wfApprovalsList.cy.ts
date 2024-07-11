@@ -11,7 +11,7 @@ import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
-describe.skip('Workflow Approvals Tests', () => {
+describe('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
   let user: AwxUser;
@@ -78,7 +78,7 @@ describe.skip('Workflow Approvals Tests', () => {
     cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
-  describe.skip('Workflow Approvals - Approve, Deny, Delete', () => {
+  describe('Workflow Approvals - Approve, Deny, Delete', () => {
     it('admin can approve and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-APPROVE-' + randomString(4),
@@ -578,7 +578,10 @@ describe.skip('Workflow Approvals Tests', () => {
             });
           }
         );
-        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+
+        if (workflowJobTemplate) {
+          cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+        }
       });
     });
 
