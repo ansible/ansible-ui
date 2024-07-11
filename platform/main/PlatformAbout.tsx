@@ -46,8 +46,8 @@ export const PlatformAbout: React.FunctionComponent = () => {
       }
       productName={t('Ansible Automation Platform 2.5')}
       trademark="Copyright 2024 Red Hat, Inc."
-      brandImageAlt={undefined as unknown as string}
-      brandImageSrc={undefined as unknown as string}
+      brandImageAlt={t('Brand Logo')}
+      brandImageSrc={'/assets/aap-logo.svg'}
     >
       <TextContent>
         <TextList component="dl">
