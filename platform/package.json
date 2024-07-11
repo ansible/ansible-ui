@@ -4,6 +4,7 @@
     "build": "cd .. && npm run clean && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' AWX_WEBSOCKET_PREFIX='/api/controller/v2/websocket/' HUB_API_PREFIX='/api/galaxy' webpack --mode production --config ./platform/webpack.platform.cjs --output-path build/platform",
     "e2e": "cd .. && cypress open --browser chrome --e2e --config-file=cypress.platform.config.ts",
     "e2e:run": "cd .. && TAGS='!upstream' cypress run --e2e --config-file=cypress.platform.config.ts",
+    "e2e:openshift:run": "cd .. && cypress run --e2e --config-file=cypress.platform.config.ts",
     "e2e:aaas:run": "cd .. && TAGS='!aaas-unsupported' cypress run --e2e --config-file=cypress.platform.config.ts",
     "component": "cd .. && cypress open --browser chrome --component --config-file=cypress.platform.config.ts",
     "component:run": "cd .. && cypress run --component --config-file=cypress.platform.config.ts",
