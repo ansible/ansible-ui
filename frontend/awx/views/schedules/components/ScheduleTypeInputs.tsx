@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import { RegularInventory } from '../../../interfaces/Inventory';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect } from '../../../../../framework';
-import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
 import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
@@ -34,8 +33,8 @@ export function ScheduleTypeInputs() {
           data-cy="schedule-type"
           label={t('Resource type')}
           options={[
-            { label: t('Job template'), value: RESOURCE_TYPE.job },
-            { label: t('Workflow job template'), value: RESOURCE_TYPE.workflow_job },
+            { label: t('Job template'), value: 'job-template' },
+            { label: t('Workflow job template'), value: 'workflow-job-template' },
             { label: t('Inventory source'), value: 'inventory_source' },
             { label: t('Project Sync'), value: 'project' },
             { label: t('Management job template'), value: 'management_job_template' },
@@ -45,8 +44,10 @@ export function ScheduleTypeInputs() {
 
         {scheduleType &&
           {
-            job: <PageFormJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />,
-            workflow_job: (
+            'job-template': (
+              <PageFormJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />
+            ),
+            'workflow-job-template': (
               <PageFormWorkflowJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />
             ),
             inventory_source: (

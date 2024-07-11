@@ -61,8 +61,8 @@ export interface ScheduleFormWizard {
 }
 
 export type ScheduleResourceType =
-  | 'job'
-  | 'workflow_job'
+  | 'job-template'
+  | 'workflow-job-template'
   | 'project_update'
   | 'inventory_update'
   | 'system_job';

@@ -3,7 +3,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import type { InstanceGroup } from '../../interfaces/InstanceGroup';
 
 describe('Create job template ', () => {
-  const instanceGroups: Partial<InstanceGroup>[] = [{ id: 123, name: 'default_group' }];
+  const instanceGroups: Pick<InstanceGroup, 'id' | 'name'>[] = [{ id: 123, name: 'default_group' }];
   beforeEach(() => {
     cy.intercept(
       {
@@ -147,19 +147,7 @@ describe('Create job template ', () => {
     cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
     cy.selectDropdownOptionByResourceName('project', 'Demo Project').as('ProjectInput');
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.wait('@getInstanceGroups')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-          cy.get('button').eq(1).click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click();
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
+    cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroups[0].name]);
     cy.clickButton('Create job template');
   });
 });

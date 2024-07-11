@@ -31,6 +31,7 @@ import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
 import { Credential } from '../../../interfaces/Credential';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -55,7 +56,7 @@ export interface TemplateLaunch {
   inventory: Inventory;
   credentials: Credential[];
   credential_passwords: { [key: string]: string };
-  instance_groups: { id: number; name: string }[];
+  instance_groups: InstanceGroup[];
   execution_environment: ExecutionEnvironment;
   diff_mode: boolean;
   extra_vars: string;
@@ -180,7 +181,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
         setValue(
           'credentials',
-          credentials.map((cred) => Number(cred.id))
+          credentials?.map((cred) => Number(cred.id))
         );
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
@@ -189,7 +190,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         setValue('forks', forks);
         setValue(
           'instance_groups',
-          instance_groups?.map((ig) => ig.id)
+          instance_groups.map(({ id }) => id)
         );
         setValue('inventory', inventory?.id);
         setValue('job_slice_count', job_slice_count);
