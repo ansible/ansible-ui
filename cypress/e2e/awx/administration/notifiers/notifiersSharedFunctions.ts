@@ -92,7 +92,16 @@ export function testDelete(name: string, options?: { details?: boolean }) {
 export function selectOrganization(orgName: string) {
   cy.get(`[data-cy="organization"]`).click();
   cy.contains('button', 'Browse').click();
+
+  // sync dialog
+  cy.get(`[role="dialog"]`).within(() => {
+    cy.contains('button', 'Confirm');
+    cy.contains('button', 'Cancel');
+    cy.get(`[aria-label="Simple table"]`);
+  });
+
   cy.filterTableByMultiSelect('name', [orgName]);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
 
   cy.contains(`[aria-label="Simple table"]`, orgName);
   cy.get(`[aria-label="Select row 0"]`).click();
