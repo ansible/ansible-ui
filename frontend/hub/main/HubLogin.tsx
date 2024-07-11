@@ -25,7 +25,7 @@ export function HubLogin(props: { children: React.ReactNode }) {
           refreshActiveHubUser?.();
           void mutate(() => true);
         }}
-        brandImg="/static/media/galaxy-logo.svg"
+        brandImg="/assets/galaxy-logo.svg"
         brandImgAlt={process.env.PRODUCT}
       />
     );
