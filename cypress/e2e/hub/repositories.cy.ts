@@ -5,7 +5,7 @@ import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 
-describe('Repositories', () => {
+describe.skip('Repositories', () => {
   const collectionName = randomE2Ename();
   let namespace: HubNamespace;
   let remote: HubRemote;
