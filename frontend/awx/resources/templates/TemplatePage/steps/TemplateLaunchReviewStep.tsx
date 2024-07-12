@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { useGet } from '../../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
@@ -15,6 +15,7 @@ import type { TemplateLaunch } from '../TemplateLaunchWizard';
 import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { Survey } from '../../../../interfaces/Survey';
+import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   if (!template) return '';
@@ -91,6 +92,11 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   } = wizardData as TemplateLaunch;
   const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
 
+  const { data: ee } = useGetItem<ExecutionEnvironment>(
+    awxAPI`/execution_environments/`,
+    execution_environment
+  );
+
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
     extraVarDetails = processSurvey(extra_vars, survey, surveyConfig ?? null);
@@ -142,10 +148,10 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       <PageDetail label={t`Execution environment`} isEmpty={isEmpty(execution_environment)}>
         <Link
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: execution_environment?.id },
+            params: execution_environment ? { id: execution_environment } : {},
           })}
         >
-          {execution_environment?.name}
+          {ee?.name}
         </Link>
       </PageDetail>
       <PageDetail label={t('Source control branch')}>{scm_branch}</PageDetail>
@@ -210,7 +216,7 @@ export function CredentialDetail({ credentialID }: { credentialID: number }) {
   return <CredentialLabel credential={credentialData} key={credentialID} />;
 }
 
-function isEmpty(value: undefined | null | object[] | object): boolean {
+function isEmpty(value: undefined | null | object[] | object | number): boolean {
   if (value === undefined || value === null) {
     return true;
   }
