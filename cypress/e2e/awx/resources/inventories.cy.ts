@@ -197,7 +197,7 @@ describe('Inventories Tests', () => {
       }
 
       if (kind === 'smart') {
-        it.skip('can create, edit a smart inventory, assert info on details page, and delete inventory', () => {
+        it('can create, edit a smart inventory, assert info on details page, and delete inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
@@ -215,6 +215,14 @@ describe('Inventories Tests', () => {
 
             cy.getByDataCy('organization').click();
             cy.contains('button', 'Browse').click();
+
+            // wait for all items to appear
+            cy.get(`[role="dialog"]`).within(() => {
+              cy.get(`[aria-label="Simple table"] tr`);
+              cy.contains('button', 'Cancel');
+              cy.contains('button', 'Confirm');
+              cy.get(`[aria-label="Pagination"]`);
+            });
 
             cy.get(`[role="dialog"]`).within(() => {
               cy.filterTableByMultiSelect('name', [org.name]);
