@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   CopyCell,
   LoadingPage,
@@ -35,10 +35,16 @@ import { DateTime } from 'luxon';
 import { RRuleSet, rrulestr } from 'rrule';
 import { RulesList } from '../components/RulesList';
 
-export function ScheduleDetails() {
+/**
+ *
+ * @param {boolean} [isSystemJobTemplateSchedule] - This is used to determine we need to render the
+ * created by / modified by values.  Since a system job template is create under the hood those
+ * two fields do not apply
+ *
+ */
+export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string; schedule_id: string }>();
-  const { pathname } = useLocation();
   const pageNavigate = usePageNavigate();
   const {
     data: schedule,
@@ -56,7 +62,6 @@ export function ScheduleDetails() {
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
-  const isSystemJobTemplateSchedule: boolean = pathname.includes('management-jobs');
 
   const hasDaysToKeep: boolean = JSON.stringify(schedule?.extra_data).includes('days');
   const extraData = schedule?.extra_data as string | object;
@@ -86,7 +91,7 @@ export function ScheduleDetails() {
         <PageDetail label={t('RruleSet')} fullWidth>
           <CopyCell text={schedule?.rrule.toString()} />
         </PageDetail>
-        {!isSystemJobTemplateSchedule && (
+        {!props.isSystemJobTemplateSchedule && (
           <>
             <UserDateDetail
               label={t('Created')}

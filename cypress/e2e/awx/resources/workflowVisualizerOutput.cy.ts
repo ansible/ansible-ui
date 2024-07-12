@@ -129,7 +129,7 @@ describe('Workflow Visualizer', () => {
       cy.getBy('li[data-cy="edit-node"]').click();
       cy.contains('Edit step').should('be.visible');
       cy.getByDataCy('Submit').click();
-      cy.getByDataCy('wizard-nav-item-nodePromptsStep').click();
+      cy.getByDataCy('wizard-nav-item-promptStep').click();
       cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
       cy.getBy('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
