@@ -61,6 +61,7 @@ export function useAwxInventoryRoutes() {
           path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/',
           element: (
             <SchedulePage
+              resourceEndPoint={awxAPI`/inventory_sources/`}
               initialBreadCrumbs={[
                 { label: t('Inventories'), to: AwxRoute.Inventories },
                 { id: 'inventory', to: AwxRoute.InventoryDetails },
@@ -96,12 +97,12 @@ export function useAwxInventoryRoutes() {
         {
           id: AwxRoute.InventorySourceScheduleCreate,
           path: ':inventory_type/:id/sources/:source_id/schedules/create',
-          element: <ScheduleAddWizard />,
+          element: <ScheduleAddWizard resourceEndPoint={awxAPI`/inventory_sources/`} />,
         },
         {
           id: AwxRoute.InventorySourceScheduleEdit,
           path: ':inventory_type/:id/sources/:source_id/schedules/:schedule_id/edit',
-          element: <ScheduleEditWizard />,
+          element: <ScheduleEditWizard resourceEndPoint={awxAPI`/inventory_sources/`} />,
         },
         {
           id: AwxRoute.InventorySourcePage,
@@ -121,7 +122,13 @@ export function useAwxInventoryRoutes() {
             {
               id: AwxRoute.InventorySourceSchedules,
               path: 'schedules',
-              element: <SchedulesList sublistEndpoint={awxAPI`/inventory_sources`} />,
+              element: (
+                <SchedulesList
+                  createSchedulePageId={AwxRoute.InventorySourceScheduleCreate}
+                  resourceType="inventory-sources"
+                  sublistEndpoint={awxAPI`/inventory_sources`}
+                />
+              ),
             },
           ],
         },
