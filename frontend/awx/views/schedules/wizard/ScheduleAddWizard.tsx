@@ -16,7 +16,7 @@ import { RulesStep } from './RulesStep';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { ScheduleSelectStep } from './ScheduleSelectStep';
-import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
+import { NodePromptsStep as SchedulePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
@@ -33,7 +33,19 @@ import { awxAPI } from '../../../common/api/awx-utils';
 export type StandardizedFormData = Omit<ScheduleFormWizard, 'rules' | 'exceptions'> & {
   rrule: string;
 };
-export function ScheduleAddWizard() {
+
+/**
+ *
+ * @param {string}[resourceEndPoint] - This passed down to the ScheduleSelectStep so it can fetch the resource
+ * to which the schedule belongs
+ * @param {boolean}[isTopLevelSchedule] - This passed down to the ScheduleSelectStep to determine if we need to render
+ * the scheduleType field and the resourceSelect field on the form.  If we did not get to the schedule create form from the top level
+ * schedules list then we know which resource this schedule will belong to once it is created
+ */
+export function ScheduleAddWizard(props: {
+  resourceEndPoint?: string;
+  isTopLevelSchedule?: boolean;
+}) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
@@ -56,13 +68,13 @@ export function ScheduleAddWizard() {
       rrule: ruleset.toString(),
       ...rest,
     };
-
     try {
       const {
         schedule,
       }: {
         schedule: Schedule;
       } = await processSchedules(data);
+
       const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
       pageNavigate(pageUrl.pageId, { params: pageUrl.params });
     } catch (error) {
@@ -83,16 +95,16 @@ export function ScheduleAddWizard() {
     {
       id: 'details',
       label: t('Details'),
-      inputs: <ScheduleSelectStep />,
+      inputs: <ScheduleSelectStep {...props} />,
     },
     {
-      id: 'nodePromptsStep',
+      id: 'promptStep',
       label: t('Prompts'),
-      inputs: <NodePromptsStep />,
+      inputs: <SchedulePromptsStep />,
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { resource, schedule_type, launch_config } = wizardData;
         if (
-          (schedule_type === 'workflow-job-template' || schedule_type === 'job-template') &&
+          (schedule_type === 'workflow_job_template' || schedule_type === 'job_template') &&
           resource &&
           launch_config
         ) {
@@ -139,7 +151,7 @@ export function ScheduleAddWizard() {
       label: t('Review'),
       inputs: <ScheduleReviewStep />,
 
-      validate: async (formData: object, wizardData: Partial<ScheduleFormWizard>) => {
+      validate: async (_formData: object, wizardData: Partial<ScheduleFormWizard>) => {
         if (!wizardData?.rules?.length) {
           const errors = {
             __all__: [t('Schedules must have at least one rule.')],
