@@ -753,7 +753,11 @@ declare global {
        *  with the name `E2E Application` and appends a random string at the end of the name
        * @returns {Chainable<Application>}
        */
-      createAwxApplication(): Chainable<Application>;
+      createAwxApplication(
+        authType: string,
+        clientType: 'confidential' | 'public' | undefined,
+        organization?: Organization
+      ): Chainable<Application>;
 
       createAwxWorkflowJobTemplate(
         workflowJobTemplate: Partial<WorkflowJobTemplate>
@@ -1051,7 +1055,6 @@ declare global {
        * @param awxToken
        */
       createAwxToken(awxToken?: Partial<AwxToken>): Chainable<AwxToken>;
-
       /**
        * This first searches AWX for an existing user token, and if one is not found, this command creates a new one.
        */
