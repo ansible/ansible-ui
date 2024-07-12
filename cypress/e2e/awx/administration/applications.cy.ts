@@ -5,7 +5,7 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { AwxToken } from '../../../../frontend/awx/interfaces/AwxToken';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
-describe('AAP Automation Execution OAuth Applications CRUD actions List page', () => {
+describe('AWX OAuth Applications CRUD actions List page', () => {
   let awxOrganization: Organization;
   beforeEach(() => {
     cy.createAwxOrganization().then((organization) => {
@@ -18,8 +18,8 @@ describe('AAP Automation Execution OAuth Applications CRUD actions List page', (
   const clientTypes = ['Confidential', 'Public'];
   authorizationGrantTypes.forEach((grantType) => {
     clientTypes.forEach((clientType) => {
-      it(`creates a new AAP AE OAuth application with grant type ${grantType} and client type ${clientType} and deletes from the details page`, () => {
-        const oauthApplicationName = `AE OAuth Application ${randomString(2)}`;
+      it(`creates a new AWX OAuth application with grant type ${grantType} and client type ${clientType} and deletes from the details page`, () => {
+        const oauthApplicationName = `AWX OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
         cy.getByDataCy('create-application').click();
@@ -69,7 +69,7 @@ describe('AAP Automation Execution OAuth Applications CRUD actions List page', (
   });
 });
 
-describe('AAP OAuth Applications CRUD actions Details page', () => {
+describe('AWX OAuth Applications CRUD actions Details page', () => {
   let awxOrganization: Organization;
   beforeEach(() => {
     cy.createAwxOrganization().then((organization) => {
@@ -82,8 +82,8 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
   const clientTypes = ['Confidential', 'Public'];
   authorizationGrantTypes.forEach((grantType) => {
     clientTypes.forEach((clientType) => {
-      it(`creates a new AAP AE OAuth application with grant type ${grantType} and client type ${clientType} and deletes from the list page`, () => {
-        const oauthApplicationName = `AE OAuth Application ${randomString(2)}`;
+      it(`creates a new AWX OAuth application with grant type ${grantType} and client type ${clientType} and deletes from the list page`, () => {
+        const oauthApplicationName = `AWX OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
         cy.getByDataCy('create-application').click();
@@ -134,24 +134,24 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
   });
 });
 
-describe('AAP AE OAuth Applications CRUD actions and Bulk Deletion', () => {
-  let awxAEApplication1: Application;
-  let awxAEApplication2: Application;
+describe('AWX OAuth Applications CRUD actions and Bulk Deletion', () => {
+  let awxApplication1: Application;
+  let awxApplication2: Application;
   beforeEach(() => {
     cy.createAwxApplication('authorization-code', 'public').then((OAuthApplication1) => {
-      awxAEApplication1 = OAuthApplication1;
+      awxApplication1 = OAuthApplication1;
     });
     cy.createAwxApplication('authorization-code', 'confidential').then((OAuthApplication2) => {
-      awxAEApplication2 = OAuthApplication2;
+      awxApplication2 = OAuthApplication2;
     });
     cy.navigateTo('awx', 'applications');
   });
 
   it('creates auth code applications (confidential & public clients) and performs bulk deletion from the list toolbar', () => {
     cy.verifyPageTitle('Applications');
-    cy.filterTableByMultiSelect('name', [`${awxAEApplication1.name}`, `${awxAEApplication2.name}`]);
-    cy.selectTableRow(`${awxAEApplication1.name}`, false);
-    cy.selectTableRow(`${awxAEApplication2.name}`, false);
+    cy.filterTableByMultiSelect('name', [`${awxApplication1.name}`, `${awxApplication2.name}`]);
+    cy.selectTableRow(`${awxApplication1.name}`, false);
+    cy.selectTableRow(`${awxApplication2.name}`, false);
     cy.clickToolbarKebabAction('delete-selected-applications');
     cy.clickModalConfirmCheckbox();
     cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteOAuthApp1');
@@ -169,7 +169,7 @@ describe('AAP AE OAuth Applications CRUD actions and Bulk Deletion', () => {
   });
 });
 
-describe('AAP OAuth Application Creation and AAP token association with it', () => {
+describe('AWX OAuth Application Creation and AWX token association with it', () => {
   let awxApplication: Application;
   let awxOrganization: Organization;
   beforeEach(() => {
@@ -208,11 +208,11 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
     });
     cy.clickToolbarKebabAction('delete-selected-tokens');
     cy.clickModalConfirmCheckbox();
-    cy.intercept('DELETE', awxAPI`/tokens/*/`).as('deleteAAPToken');
+    cy.intercept('DELETE', awxAPI`/tokens/*/`).as('deleteAWXToken');
     cy.getModal().within(() => {
       cy.clickButton(/^Delete token/);
-      cy.wait('@deleteAAPToken').then((deleteAAPToken) => {
-        expect(deleteAAPToken?.response?.statusCode).to.eql(204);
+      cy.wait('@deleteAWXToken').then((deleteAWXToken) => {
+        expect(deleteAWXToken?.response?.statusCode).to.eql(204);
         cy.contains(/^Success$/);
         cy.clickButton(/^Close$/);
       });
