@@ -122,7 +122,7 @@ describe('Execution Environments: User/Team access', () => {
         '1'
       );
       cy.clickButton(/^Finish/);
-      cy.wait('@userRoleAssignment')
+      cy.wait('@teamRoleAssignment')
         .its('response')
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
