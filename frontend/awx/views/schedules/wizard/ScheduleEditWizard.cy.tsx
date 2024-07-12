@@ -103,7 +103,7 @@ describe('ScheduleEditWizard', () => {
     });
 
     it('Should render the correct steps on initial ', () => {
-      cy.mount(<ScheduleEditWizard />, {
+      cy.mount(<ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
         initialEntries: ['/templates/job-template/7/schedules/1/edit'],
         path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
@@ -119,7 +119,7 @@ describe('ScheduleEditWizard', () => {
     });
 
     it('Should not go to next step due to failed validation', () => {
-      cy.mount(<ScheduleEditWizard />, {
+      cy.mount(<ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
         initialEntries: ['/templates/job-template/7/schedules/1/edit'],
         path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
@@ -138,7 +138,7 @@ describe('ScheduleEditWizard', () => {
     beforeEach(() => {
       cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
       cy.intercept('/api/v2/job_templates/100/launch/', {});
-      cy.mount(<ScheduleEditWizard />, {
+      cy.mount(<ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
         initialEntries: ['/templates/job-template/7/schedules/1/edit'],
         path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
@@ -226,7 +226,7 @@ describe('ScheduleEditWizard', () => {
       });
     });
     it('Should be able to add rules while editing a schedule.', () => {
-      cy.mount(<ScheduleEditWizard />, {
+      cy.mount(<ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
         initialEntries: ['/templates/job-template/7/schedules/1/edit'],
         path: '/templates/job-template/:id/schedules/:schedule_id/edit',
       });
