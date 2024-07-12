@@ -156,16 +156,16 @@ describe('Inventories Tests', () => {
           //Add an assertion that the inventory does not appear upon a list search
         });
 
-        it.skip('can bulk delete inventories from the list view and verify deletion', () => {
+        it('can bulk delete inventories from the list view and verify deletion', () => {
           //Assert:
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
 
           cy.createAwxOrganization().then((org) => {
-            cy.createAwxInventory(organization).then((inv1) => {
-              cy.createAwxInventory(organization).then((inv2) => {
-                cy.createAwxInventory(organization).then((inv3) => {
+            cy.createAwxInventory(org).then((inv1) => {
+              cy.createAwxInventory(org).then((inv2) => {
+                cy.createAwxInventory(org).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
 
                   cy.intercept(
