@@ -746,7 +746,12 @@ declare global {
        *  with the name `E2E Application` and appends a random string at the end of the name
        * @returns {Chainable<Application>}
        */
-      createAwxApplication(): Chainable<Application>;
+      // createAwxApplication(): Chainable<Application>;
+      createAwxApplication(
+        authType: string,
+        clientType: 'confidential' | 'public' | undefined,
+        organization?: Organization
+      ): Chainable<Application>;
 
       createAwxWorkflowJobTemplate(
         workflowJobTemplate: Partial<WorkflowJobTemplate>
