@@ -156,16 +156,16 @@ describe('Inventories Tests', () => {
           //Add an assertion that the inventory does not appear upon a list search
         });
 
-        it.skip('can bulk delete inventories from the list view and verify deletion', () => {
+        it('can bulk delete inventories from the list view and verify deletion', () => {
           //Assert:
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
 
           cy.createAwxOrganization().then((org) => {
-            cy.createAwxInventory(organization).then((inv1) => {
-              cy.createAwxInventory(organization).then((inv2) => {
-                cy.createAwxInventory(organization).then((inv3) => {
+            cy.createAwxInventory(org).then((inv1) => {
+              cy.createAwxInventory(org).then((inv2) => {
+                cy.createAwxInventory(org).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
 
                   cy.intercept(
@@ -197,7 +197,7 @@ describe('Inventories Tests', () => {
       }
 
       if (kind === 'smart') {
-        it.skip('can create, edit a smart inventory, assert info on details page, and delete inventory', () => {
+        it('can create, edit a smart inventory, assert info on details page, and delete inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
@@ -215,6 +215,14 @@ describe('Inventories Tests', () => {
 
             cy.getByDataCy('organization').click();
             cy.contains('button', 'Browse').click();
+
+            // wait for all items to appear
+            cy.get(`[role="dialog"]`).within(() => {
+              cy.get(`[aria-label="Simple table"] tr`);
+              cy.contains('button', 'Cancel');
+              cy.contains('button', 'Confirm');
+              cy.get(`[aria-label="Pagination"]`);
+            });
 
             cy.get(`[role="dialog"]`).within(() => {
               cy.filterTableByMultiSelect('name', [org.name]);
