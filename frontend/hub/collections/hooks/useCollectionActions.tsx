@@ -65,7 +65,7 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: KeyIcon,
-        label: t('Sign selected version'),
+        label: t('Sign version'),
         isHidden: () => (detail ? false : true),
         onClick: (collection) => {
           if (can_upload_signatures) {
@@ -103,7 +103,7 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: UploadIcon,
-        variant: ButtonVariant.secondary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Upload new version'),
         onClick: () => pageNavigate(HubRoute.UploadCollection),

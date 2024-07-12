@@ -21,7 +21,7 @@ describe('Remotes', () => {
     cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', numberOfRemotes);
     cy.get('[data-cy="select-all"]').click({ force: true });
-    cy.clickToolbarKebabAction('delete-selected-remotes');
+    cy.clickToolbarKebabAction('delete-remotes');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remotes$/);
     cy.contains(/^Success$/);
@@ -42,7 +42,7 @@ describe('Remotes', () => {
       cy.get('[data-cy="table-view"]').click();
       cy.contains(remote.name).should('be.visible');
       cy.get('#select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-remotes');
+      cy.clickToolbarKebabAction('delete-remotes');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remotes$/);
       cy.contains(/^Success$/);

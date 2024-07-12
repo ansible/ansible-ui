@@ -31,7 +31,7 @@ export function useRepositoryToolbarActions(view: IHubView<Repository>) {
       { type: PageActionType.Seperator },
       {
         icon: TrashIcon,
-        label: t('Delete repository'),
+        label: t('Delete repositories'),
         onClick: deleteRepositories,
         selection: PageActionSelection.Multiple,
         type: PageActionType.Button,

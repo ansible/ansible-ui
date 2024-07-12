@@ -26,6 +26,7 @@ export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
         selection: PageActionSelection.None,
         isPinned: true,
         icon: PlusCircleIcon,
+        variant: ButtonVariant.primary,
         label: t('Create role'),
         isDisabled: user?.is_superuser
           ? undefined
@@ -40,7 +41,7 @@ export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected roles'),
+        label: t('Delete roles'),
         onClick: deleteRoles,
         isDanger: true,
       },
@@ -61,6 +62,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Edit role'),
         isDisabled: (role) =>

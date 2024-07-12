@@ -24,22 +24,20 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Reject selected collections'),
-        onClick: rejectCollections,
-        isDanger: true,
+        icon: ThumbsUpIcon,
+        label: autoSign ? t('Approve and sign collections') : t('Approve and sign collections'),
+        onClick: (items) =>
+          approveCollection(items, copyToRepository, approveCollectionsFrameworkModal, true, t),
+        isDanger: false,
       },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: ThumbsUpIcon,
-        label: autoSign
-          ? t('Sign and approve selected collections')
-          : t('Approve selected collections'),
-        onClick: (items) =>
-          approveCollection(items, copyToRepository, approveCollectionsFrameworkModal, true, t),
-        isDanger: false,
+        icon: TrashIcon,
+        label: t('Reject collections'),
+        onClick: rejectCollections,
+        isDanger: true,
       },
     ],
     [t, rejectCollections, autoSign, approveCollectionsFrameworkModal, copyToRepository]

@@ -56,24 +56,25 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Delete selected environments'),
-        onClick: deleteExecutionEnvironments,
-        isDanger: true,
-        isDisabled: context.hasPermission('container.delete_containerrepository')
-          ? ''
-          : t`You do not have rights to this operation`,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        label: t('Sign selected environments'),
+        label: t('Sign execution environments'),
         onClick: signExecutionEnvironments,
         isDisabled:
           context.hasPermission('container.change_containernamespace') &&
           context.featureFlags.container_signing
             ? ''
             : t`You do not have rights to this operation`,
+      },
+      { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
+        label: t('Delete execution environments'),
+        onClick: deleteExecutionEnvironments,
+        isDanger: true,
+        isDisabled: context.hasPermission('container.delete_containerrepository')
+          ? ''
+          : t`You do not have rights to this operation`,
       },
     ],
     [t, context, deleteExecutionEnvironments, signExecutionEnvironments, pageNavigate]
