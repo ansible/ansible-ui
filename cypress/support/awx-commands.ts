@@ -1197,6 +1197,12 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('createAwxToken', (awxToken?: Partial<AwxToken>) => {
+  const url = awxAPI`/tokens/`;
+  const body = { ...awxToken };
+  return cy.requestPost<AwxToken>(url, body);
+});
+
 Cypress.Commands.add(
   'deleteAwxToken',
   (
@@ -1536,27 +1542,34 @@ Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: s
   cy.assertModalSuccess();
 });
 
-Cypress.Commands.add('createAwxApplication', () => {
-  return cy.requestPost<
-    Application,
-    Pick<
+Cypress.Commands.add(
+  'createAwxApplication',
+  (
+    authType: string,
+    clientType: 'confidential' | 'public' | undefined,
+    organization?: Organization
+  ) => {
+    return cy.requestPost<
       Application,
-      | 'name'
-      | 'description'
-      | 'organization'
-      | 'client_type'
-      | 'authorization_grant_type'
-      | 'redirect_uris'
-    >
-  >(awxAPI`/applications/`, {
-    name: 'E2E Application API ' + randomString(4),
-    description: 'E2E Application API Description',
-    organization: 1,
-    client_type: 'confidential',
-    authorization_grant_type: 'password',
-    redirect_uris: 'https://create_from_api.com',
-  });
-});
+      Pick<
+        Application,
+        | 'name'
+        | 'description'
+        | 'organization'
+        | 'client_type'
+        | 'authorization_grant_type'
+        | 'redirect_uris'
+      >
+    >(awxAPI`/applications/`, {
+      name: `AAP AE OAuth Application ${randomString(2)}`,
+      description: 'E2E Application Description',
+      organization: organization ? organization?.id : 1,
+      client_type: clientType,
+      authorization_grant_type: authType,
+      redirect_uris: authType === 'authorization-code' ? 'https://create_from_api.com' : '',
+    });
+  }
+);
 
 Cypress.Commands.add(
   'deleteAwxApplication',
