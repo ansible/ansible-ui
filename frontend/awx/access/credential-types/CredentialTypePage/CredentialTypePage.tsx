@@ -55,7 +55,7 @@ export function CredentialTypePage() {
         backTab={{
           label: t('Back to Credential Types'),
           page: AwxRoute.CredentialTypes,
-          persistentFilterKey: 'credential-types',
+          persistentFilterKey: 'credential_types',
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.CredentialTypeDetails },
