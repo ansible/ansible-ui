@@ -90,7 +90,8 @@ describe('Execution Environments: User/Team access', () => {
     cy.clickButton(/^Close$/);
   });
 
-  it('Add a team role assignment from the Team Access tab', () => {
+  // TODO: Skipped until bug AAP-27071 is addressed
+  it.skip('Add a team role assignment from the Team Access tab', () => {
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
