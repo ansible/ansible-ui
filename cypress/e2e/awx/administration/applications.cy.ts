@@ -53,7 +53,8 @@ describe('AWX OAuth Applications CRUD actions List page', () => {
         cy.hasDetail('Description', `${authGrantType} with ${appClientType} description`);
         //edit from list row and delete from details page
         cy.navigateTo('awx', 'applications');
-        cy.verifyPageTitle('Applications');
+        cy.verifyPageTitle('OAuth Applications');
+        cy.filterTableByMultiSelect('name', [oauthApplicationName]);
         cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
         cy.verifyPageTitle('Edit Application');
         cy.getByDataCy('description').clear().type(`${authGrantType} with ${appClientType} edited`);
@@ -117,8 +118,8 @@ describe('AWX OAuth Applications CRUD actions Details page', () => {
         cy.hasDetail('Description', `${authGrantType} with ${appClientType} description`);
         //delete from list page
         cy.navigateTo('awx', 'applications');
-        cy.verifyPageTitle('Applications');
-        cy.filterTableBySingleSelect('name', oauthApplicationName);
+        cy.verifyPageTitle('OAuth Applications');
+        cy.filterTableByMultiSelect('name', [oauthApplicationName]);
         cy.clickTableRowAction('name', oauthApplicationName, 'delete-application', {
           inKebab: true,
           disableFilter: true,
@@ -148,7 +149,7 @@ describe('AWX OAuth Applications CRUD actions and Bulk Deletion', () => {
   });
 
   it('creates auth code applications (confidential & public clients) and performs bulk deletion from the list toolbar', () => {
-    cy.verifyPageTitle('Applications');
+    cy.verifyPageTitle('OAuth Applications');
     cy.filterTableByMultiSelect('name', [`${awxApplication1.name}`, `${awxApplication2.name}`]);
     cy.selectTableRow(`${awxApplication1.name}`, false);
     cy.selectTableRow(`${awxApplication2.name}`, false);
@@ -185,7 +186,7 @@ describe('AWX OAuth Application Creation and AWX token association with it', () 
   });
 
   it('admin user creates an oauth application and associates an awx token with it, verifies the association in the application token tab', () => {
-    cy.verifyPageTitle('Applications');
+    cy.verifyPageTitle('OAuth Applications');
     cy.clickTableRowLink('name', `${awxApplication.name}`, { disableFilter: true });
     cy.verifyPageTitle(`${awxApplication.name}`);
     cy.clickTab('Tokens', true);
