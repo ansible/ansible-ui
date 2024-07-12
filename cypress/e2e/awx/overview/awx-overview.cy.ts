@@ -110,7 +110,7 @@ describe('AWX Overview', () => {
   });
 
   it('checks projects count and the max # of projects in the table', () => {
-    cy.intercept('GET', 'api/v2/projects/?order_by=-modified&page=1&page_size=10').as(
+    cy.intercept('GET', awxAPI`/projects/?order_by=-modified&page=1&page_size=10`).as(
       'getProjects'
     );
     cy.navigateTo('awx', 'overview');
@@ -148,7 +148,7 @@ describe('AWX Overview', () => {
   });
 
   it('checks inventories count and the max # of inventories in the table', () => {
-    cy.intercept('GET', 'api/v2/inventories/?order_by=-modified&page=1&page_size=10').as(
+    cy.intercept('GET', awxAPI`/inventories/?order_by=-modified&page=1&page_size=10`).as(
       'getInventories'
     );
     cy.navigateTo('awx', 'overview');

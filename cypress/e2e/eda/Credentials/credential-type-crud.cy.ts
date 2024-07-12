@@ -102,7 +102,9 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.getEdaCredentialByName(cred.name).then((credential) => {
           cy.wrap(credential).should('not.be.undefined');
           if (credential) {
-            cy.deleteEdaCredential(credential);
+            cy.deleteEdaCredential(credential).then(() => {
+              cy.deleteEdaCredentialType(credtype);
+            });
             cy.navigateTo('eda', 'credential-types');
           }
         });
@@ -137,7 +139,9 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
         cy.getEdaCredentialByName(cred.name).then((credential) => {
           cy.wrap(credential).should('not.be.undefined');
           if (credential) {
-            cy.deleteEdaCredential(credential);
+            cy.deleteEdaCredential(credential).then(() => {
+              cy.deleteEdaCredentialType(credtype);
+            });
           }
         });
         cy.deleteEdaCredentialType(credtype);
@@ -204,7 +208,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
-    cy.contains('li', 'Credentials').click();
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.selectDropdownOptionByResourceName('credential-type-id', name);
@@ -233,7 +237,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
-    cy.contains('li', 'Credentials').click();
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.selectDropdownOptionByResourceName('credential-type-id', name);
@@ -262,7 +266,7 @@ describe('EDA Credentials Type - Input Configuration', () => {
     cy.clickButton(/^Generate extra vars$/);
     cy.clickButton(/^Create credential type$/);
     cy.hasDetail('Name', name);
-    cy.contains('li', 'Credentials').click();
+    cy.navigateTo('eda', 'credentials');
     cy.get('h1').should('contain', 'Credentials');
     cy.clickButton(/^Create credential$/);
     cy.get('[data-cy="name"]').type(name);

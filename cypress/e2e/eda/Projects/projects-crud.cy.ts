@@ -7,8 +7,6 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Projects CRUD', () => {
-  before(() => cy.edaLogin());
-
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
     const name = 'E2E Project ' + randomString(4);
     cy.navigateTo('eda', 'projects');
@@ -16,6 +14,7 @@ describe('EDA Projects CRUD', () => {
     cy.clickButton(/^Create project$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="url"]').type('https://github.com/ansible/ansible-ui');
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(name);
     cy.getEdaProjectByName(name).then((project) => {

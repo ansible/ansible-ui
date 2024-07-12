@@ -19,7 +19,6 @@ import { ScheduleSelectStep } from './ScheduleSelectStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useNavigate } from 'react-router-dom';
 import { Schedule } from '../../../interfaces/Schedule';
@@ -58,13 +57,24 @@ export function ScheduleAddWizard() {
       ...rest,
     };
 
-    const {
-      schedule,
-    }: {
-      schedule: Schedule;
-    } = await processSchedules(data);
-    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-    pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    try {
+      const {
+        schedule,
+      }: {
+        schedule: Schedule;
+      } = await processSchedules(data);
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+      pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    } catch (error) {
+      const { fieldErrors } = awxErrorAdapter(error);
+      const missingResource = fieldErrors.find((err) => err?.name === 'resources_needed_to_start');
+      if (missingResource) {
+        const errors = {
+          __all__: [missingResource.message],
+        };
+        throw new RequestError('', '', 400, '', errors);
+      }
+    }
   };
 
   const onCancel = () => navigate(location.pathname.replace('create', ''));
@@ -82,7 +92,7 @@ export function ScheduleAddWizard() {
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { resource, schedule_type, launch_config } = wizardData;
         if (
-          (schedule_type === RESOURCE_TYPE.workflow_job || schedule_type === RESOURCE_TYPE.job) &&
+          (schedule_type === 'workflow-job-template' || schedule_type === 'job-template') &&
           resource &&
           launch_config
         ) {
@@ -139,7 +149,6 @@ export function ScheduleAddWizard() {
         }
 
         const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
-
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {

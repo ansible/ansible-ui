@@ -5,7 +5,7 @@ import {
   checkFactsInHost,
   checkHostGroup,
   createAndEditAndDeleteHost,
-  createHostAndLaunchJob,
+  launchHostJob,
   createHostAndCancelJob,
 } from '../../../support/hostsfunctions';
 
@@ -17,10 +17,10 @@ describe('Host Tests', () => {
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
       });
-      cy.createAwxProject({ organization: organization.id }).then((proj) => {
+      cy.createAwxProject(organization).then((proj) => {
         project = proj;
       });
     });
@@ -46,7 +46,10 @@ describe('Host Tests', () => {
   });
 
   it('can see and launch jobs from host jobs tab', () => {
-    createHostAndLaunchJob(inventory, organization.id, project.id);
+    cy.createInventoryHost(organization, '').then((result) => {
+      launchHostJob(result.inventory, result.host, organization.id, project.id, 'Host');
+      cy.deleteAwxInventory(result.inventory, { failOnStatusCode: false });
+    });
   });
 
   it('can cancel jobs from host jobs tab', () => {

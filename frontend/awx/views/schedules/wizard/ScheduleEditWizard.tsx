@@ -19,7 +19,6 @@ import { SurveyStep } from '../../../common/SurveyStep';
 import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -59,13 +58,24 @@ export function ScheduleEditWizard() {
       ...rest,
     };
 
-    const {
-      schedule,
-    }: {
-      schedule: Schedule;
-    } = await processSchedules(data);
-    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-    return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    try {
+      const {
+        schedule,
+      }: {
+        schedule: Schedule;
+      } = await processSchedules(data);
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+      return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    } catch (error) {
+      const { fieldErrors } = awxErrorAdapter(error);
+      const missingResource = fieldErrors.find((err) => err?.name === 'resources_needed_to_start');
+      if (missingResource) {
+        const errors = {
+          __all__: [missingResource.message],
+        };
+        throw new RequestError('', '', 400, '', errors);
+      }
+    }
   };
 
   const onCancel = () => navigate(-1);
@@ -83,7 +93,7 @@ export function ScheduleEditWizard() {
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { launch_config, resource, schedule_type } = wizardData;
         if (
-          (schedule_type === RESOURCE_TYPE.workflow_job || schedule_type === RESOURCE_TYPE.job) &&
+          (schedule_type === 'workflow-job-template' || schedule_type === 'job-template') &&
           resource &&
           launch_config
         ) {

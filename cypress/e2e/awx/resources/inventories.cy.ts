@@ -5,6 +5,8 @@ import { Label } from '../../../../frontend/awx/interfaces/Label';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 
 //This spec file needs to have tests added for constructed and smart inventories. See below.
 
@@ -21,20 +23,21 @@ describe('Inventories Tests', () => {
       if (kind === '') {
         beforeEach(() => {
           const orgName = 'E2E Organization Inv tests' + randomString(4);
-          cy.createAwxOrganization(orgName).then((org) => {
+          cy.createAwxOrganization({ name: orgName }).then((org) => {
             organization = org;
             cy.createAwxLabel({ organization: organization.id }).then((lbl) => {
               label = lbl;
             });
-            cy.createAwxInventory({ organization: organization.id }).then((inv) => {
-              //the cy.createAwxInventory() custom command needs to be updated to accept the
-              //'kind' parameter, in order to work with the conditional in this spec file
-              inventory = inv;
-            });
             cy.createAwxInstanceGroup().then((ig) => {
               instanceGroup = ig;
+
+              cy.createAwxInventory(organization).then((inv) => {
+                //the cy.createAwxInventory() custom command needs to be updated to accept the
+                //'kind' parameter, in order to work with the conditional in this spec file
+                inventory = inv;
+              });
             });
-            cy.createAwxUser(organization).then((testUser) => {
+            cy.createAwxUser({ organization: organization.id }).then((testUser) => {
               user = testUser;
               cy.giveUserInventoryAccess(inventory.name, user.id, 'Read');
             });
@@ -80,21 +83,11 @@ describe('Inventories Tests', () => {
           cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
             cy.get('[data-cy="edit-inventory"]').click();
           });
-          cy.get('#instance-group-select-form-group').within(() => {
-            cy.get('button[aria-label="Options menu"]').click();
-          });
-          const igName = instanceGroup?.name;
-          if (igName) {
-            cy.filterTableBySingleSelect('name', igName);
-            cy.selectTableRowByCheckbox('name', igName, {
-              disableFilter: true,
-            });
-            cy.contains('button', 'Confirm').click();
-            cy.contains('button', 'Save inventory').click(); //Add an interception call for the edited inventory
-            cy.verifyPageTitle(inventory.name);
-            //Add assertions to verify the updated information is reflecting on the details screen of the edited inventory
-            cy.hasDetail(/^Instance groups$/, igName);
-          }
+          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+          cy.contains('button', 'Save inventory').click(); //Add an interception call for the edited inventory
+          cy.verifyPageTitle(inventory.name);
+          //Add assertions to verify the updated information is reflecting on the details screen of the edited inventory
+          cy.hasDetail(/^Instance groups$/, instanceGroup.name);
         });
 
         it('can edit an inventory from the details view and assert info on details page', () => {
@@ -163,16 +156,16 @@ describe('Inventories Tests', () => {
           //Add an assertion that the inventory does not appear upon a list search
         });
 
-        it.skip('can bulk delete inventories from the list view and verify deletion', () => {
+        it('can bulk delete inventories from the list view and verify deletion', () => {
           //Assert:
           //(1) The presence of a certain number of inventories, utilize search to ensure the list only displays those inventories
           //(2) The absence of those inventories after the bulk deletion has been performed, by doing a search and by intercepting
           //.......the delete call and asserting the expected statusCode from the API (probably a 204)
 
           cy.createAwxOrganization().then((org) => {
-            cy.createAwxInventory({ organization: org.id }).then((inv1) => {
-              cy.createAwxInventory({ organization: org.id }).then((inv2) => {
-                cy.createAwxInventory({ organization: org.id }).then((inv3) => {
+            cy.createAwxInventory(org).then((inv1) => {
+              cy.createAwxInventory(org).then((inv2) => {
+                cy.createAwxInventory(org).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
 
                   cy.intercept(
@@ -204,19 +197,72 @@ describe('Inventories Tests', () => {
       }
 
       if (kind === 'smart') {
-        it('can create a smart inventory, assert info on details page, and delete inventory', () => {
+        it('can create, edit a smart inventory, assert info on details page, and delete inventory', () => {
           //Assert that user is on the form view to create an inventory
           //Add an interception call for the newly created inventory, which will allow for the deletion at the end of the test
           //Add assertions for the information visible on the details screen of the new inventory
           //Add assertion verifying that the inventory has now been deleted- including verifying the 204 statusCode and
           //filtering a list to show no results
-        });
 
-        it('can edit the smart host filter on a smart inventory from the details view and assert info on details page', () => {
-          //Create a smart inventory in the beforeEach hook
-          //Assert the original details of the inventory
-          //Assert the user navigating to the edit smart inventory form
-          //Assert the edited changes of the inventory
+          cy.createAwxOrganization().then((org) => {
+            const name = randomE2Ename();
+            cy.navigateTo('awx', 'inventories');
+            cy.getByDataCy('create-inventory').click();
+            cy.getByDataCy('create-smart-inventory').click();
+
+            cy.getByDataCy('name').type(name);
+            cy.getByDataCy('description').type('description');
+
+            cy.getByDataCy('organization').click();
+            cy.contains('button', 'Browse').click();
+
+            // wait for all items to appear
+            cy.get(`[role="dialog"]`).within(() => {
+              cy.get(`[aria-label="Simple table"] tr`);
+              cy.contains('button', 'Cancel');
+              cy.contains('button', 'Confirm');
+              cy.get(`[aria-label="Pagination"]`);
+            });
+
+            cy.get(`[role="dialog"]`).within(() => {
+              cy.filterTableByMultiSelect('name', [org.name]);
+              cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+              cy.get(`input[type="radio"]`).click();
+              cy.contains('button', 'Confirm').click();
+            });
+
+            cy.getByDataCy('host-filter').type('name=host1');
+            cy.getByDataCy('Submit').click();
+
+            // detail
+            cy.getByDataCy('name').should('have.text', name);
+            cy.getByDataCy('description').should('have.text', 'description');
+            cy.getByDataCy('organization').should('have.text', org.name);
+            cy.contains(`[data-cy="smart-host-filter"]`, 'name=host1');
+
+            // edit filter
+            cy.getByDataCy('edit-inventory').click();
+            cy.getByDataCy('host-filter').clear().type('name=host2');
+            cy.getByDataCy('description').clear().type('updated description');
+            cy.getByDataCy('Submit').click();
+
+            // verify changes in detail
+            cy.getByDataCy('description').should('have.text', 'updated description');
+            cy.contains(`[data-cy="smart-host-filter"]`, 'name=host2');
+
+            // delete
+            cy.clickKebabAction('actions-dropdown', 'delete-inventory');
+            cy.clickModalConfirmCheckbox();
+            cy.clickModalButton('Delete inventory');
+
+            cy.requestGet<AwxItemsResponse<Notification>>(awxAPI`/inventories/?name={name}`)
+              .its('results')
+              .then((results) => {
+                expect(results).to.have.length(0);
+              });
+
+            cy.deleteAwxOrganization(org);
+          });
         });
       }
     });

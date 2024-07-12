@@ -45,9 +45,9 @@ describe('Organizations: Edit and Delete', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -165,9 +165,9 @@ describe('Organizations: Users Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -180,10 +180,7 @@ describe('Organizations: Users Tab', function () {
   });
 
   it.skip('can add a brand new normal user to the Org', () => {});
-  it.skip('can add a brand new admin user to the Org', () => {});
   it.skip('can add a brand new auditor user to the Org', () => {});
-  it.skip('can add an existing user to an Org and assign a specific type of role to that user', () => {});
-  it.skip('can remove a user from the users tab of an Org', () => {});
   it.skip('can bulk remove users from the users tab of an Org', () => {});
 });
 
@@ -193,9 +190,9 @@ describe('Organizations: Teams Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -206,8 +203,6 @@ describe('Organizations: Teams Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can associate a team to an org and visit the teams tab of an org to view associated team', () => {});
   it.skip('can edit a team from the teams tab inside of an Org', () => {});
 });
 
@@ -217,9 +212,9 @@ describe('Organizations: Execution Environments Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -230,8 +225,6 @@ describe('Organizations: Execution Environments Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can create an EE with a specific Org and visit the EE tab of an org to view associated EE', () => {});
 });
 
 describe('Organizations: Notifications Tab', function () {
@@ -240,9 +233,9 @@ describe('Organizations: Notifications Tab', function () {
 
   beforeEach(function () {
     const orgName = randomE2Ename();
-    cy.createAwxOrganization(orgName).then((testOrganization) => {
+    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
       organization = testOrganization;
-      cy.createAwxUser(organization).then((testUser) => {
+      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
         user = testUser;
         cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
       });
@@ -253,6 +246,4 @@ describe('Organizations: Notifications Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
-
-  it.skip('can create a Notification with a specific Org and toggle the Notification on and off on the Notifications tab of the Org', () => {});
 });

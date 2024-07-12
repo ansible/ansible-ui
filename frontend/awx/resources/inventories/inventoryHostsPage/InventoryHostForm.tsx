@@ -309,10 +309,15 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
           name="inventory.name"
           label={t('Inventory')}
           isDisabled={true}
+          labelHelp={t(`The inventory that this host belongs to.`)}
         />
       )}
       {!props.inventory_host && !props.edit_mode && (
-        <PageFormSelectInventory name="inventory.id" isRequired />
+        <PageFormSelectInventory
+          name="inventory.id"
+          isRequired
+          labelHelp={t('Select the inventory that this host will belong to.')}
+        />
       )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />

@@ -9,8 +9,9 @@ import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 
-describe.skip('Workflow Approvals Tests', () => {
+describe('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
   let user: AwxUser;
@@ -29,24 +30,25 @@ describe.skip('Workflow Approvals Tests', () => {
       organization = org;
 
       cy.createAwxProject(
-        { organization: organization.id },
+        organization,
+        { name: randomE2Ename() },
         'https://github.com/ansible/test-playbooks'
       ).then((proj) => {
         project = proj;
 
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           user = u;
         });
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFApprove = u;
         });
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFDeny = u;
         });
-        cy.createAwxUser(organization).then((u) => {
+        cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFCancel = u;
         });
-        cy.createAwxInventory({ organization: organization.id })
+        cy.createAwxInventory(organization)
           .then((i) => {
             inventory = i;
           })
@@ -90,15 +92,14 @@ describe.skip('Workflow Approvals Tests', () => {
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
-
               cy.intercept(
                 'GET',
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
               ).as('thisWfjt');
-              cy.visit(
-                `/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`
-              );
-              cy.wait('@thisWfjt');
+              cy.navigateTo('awx', 'templates');
+              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+              cy.verifyPageTitle(workflowJobTemplate.name);
               cy.wait('@thisWfjt');
               cy.verifyPageTitle(`${workflowJobTemplate.name}`);
               cy.intercept(
@@ -177,11 +178,10 @@ describe.skip('Workflow Approvals Tests', () => {
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
-
-              cy.visit(
-                `/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`
-              );
-              cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+              cy.navigateTo('awx', 'templates');
+              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+              cy.verifyPageTitle(workflowJobTemplate.name);
               cy.intercept(
                 'POST',
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
@@ -252,11 +252,10 @@ describe.skip('Workflow Approvals Tests', () => {
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
-
-              cy.visit(
-                `/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`
-              );
-              cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+              cy.navigateTo('awx', 'templates');
+              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+              cy.verifyPageTitle(workflowJobTemplate.name);
               cy.intercept(
                 'POST',
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch`
@@ -327,7 +326,6 @@ describe.skip('Workflow Approvals Tests', () => {
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
-
               editWorkflowJobTemplate();
               workflowApprovalBulkAction('approve');
               deleteApprovalFromListToolbar();
@@ -351,7 +349,6 @@ describe.skip('Workflow Approvals Tests', () => {
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
-
               editWorkflowJobTemplate();
               workflowApprovalBulkAction('deny');
               deleteApprovalFromListToolbar();
@@ -367,7 +364,11 @@ describe.skip('Workflow Approvals Tests', () => {
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function editWorkflowJobTemplate() {
-    cy.visit(`/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/edit`);
+    cy.navigateTo('awx', 'templates');
+    cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+    cy.getTableRow('name', workflowJobTemplate.name, { disableFilter: true }).should('be.visible');
+    cy.selectTableRow(workflowJobTemplate.name, false);
+    cy.getBy('[data-cy="edit-template"]').click();
     cy.verifyPageTitle('Edit Workflow Job Template');
     cy.getByDataCy('allow_simultaneous').click();
     cy.intercept('PATCH', awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`).as(
@@ -485,15 +486,14 @@ describe.skip('Workflow Approvals Tests', () => {
             cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
-
               cy.intercept(
                 'POST',
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
               ).as('launched');
-              cy.visit(
-                `/templates/workflow-job-template/${workflowJobTemplate.id.toString()}/details`
-              );
-              cy.verifyPageTitle(`${workflowJobTemplate.name}`);
+              cy.navigateTo('awx', 'templates');
+              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+              cy.verifyPageTitle(workflowJobTemplate.name);
               cy.getByDataCy('launch-template').click();
               cy.wait('@launched')
                 .its('response.body')
@@ -502,10 +502,12 @@ describe.skip('Workflow Approvals Tests', () => {
                     (wfApprovalA) => {
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
-
-                      cy.visit(
-                        `/templates/workflow-job-template/${workflowJobTemplate.id}/user-access?page=1&perPage=100&sort=user__username`
-                      );
+                      cy.navigateTo('awx', 'templates');
+                      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+                      cy.clickTableRowLink('name', workflowJobTemplate.name, {
+                        disableFilter: true,
+                      });
+                      cy.get('a[href*="user-access"]').click();
                       cy.verifyPageTitle(workflowJobTemplate.name);
                       cy.get('tbody tr').should('have.length', 0);
                       cy.getByDataCy('add-roles').click();
@@ -576,16 +578,15 @@ describe.skip('Workflow Approvals Tests', () => {
             });
           }
         );
-        cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+
+        if (workflowJobTemplate) {
+          cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+        }
       });
     });
 
     it.skip('can assign a normal user admin access to a workflow approval', () => {
-      //as admin: assign normal user as wfjt admin
-      //log out
-      //log in as normal user
-      //acccess workflow approvals list, find specific workflow approval
-      //have normal user deny and then delete workflow approval to show admin rights
+      //This test needs to be written
     });
   });
 });

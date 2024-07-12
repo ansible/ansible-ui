@@ -34,12 +34,30 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         label: t('Upload collection'),
         onClick: () => pageNavigate(HubRoute.UploadCollection),
       },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: BanIcon,
+        label: t('Deprecate collections'),
+        onClick: (collections) => {
+          deprecateCollections(collections);
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: KeyIcon,
+        label: t('Sign collections'),
+        onClick: (collections) => {
+          signCollection(collections);
+        },
+      },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected collections'),
+        label: t('Delete collections'),
         onClick: (collections: CollectionVersionSearch[]) => {
           // filter them
           const foundCollections: string[] = [];
@@ -59,24 +77,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDisabled: context.hasPermission('ansible.delete_collection')
           ? ''
           : t`You do not have rights to this operation`,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: BanIcon,
-        label: t('Deprecate selected collections'),
-        onClick: (collections) => {
-          deprecateCollections(collections);
-        },
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
-        icon: KeyIcon,
-        label: t('Sign collection'),
-        onClick: (collections) => {
-          signCollection(collections);
-        },
       },
     ],
     [t, deleteCollections, context, pageNavigate, deprecateCollections, signCollection]

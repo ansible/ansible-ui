@@ -24,17 +24,17 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Survey, Spec as SurveySpec } from '../../frontend/awx/interfaces/Survey';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
-import { RoleSerializerWithParentAccess } from '../../frontend/awx/interfaces/generated-from-swagger/api';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
-import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
+import { RoleDefinition } from '../../frontend/eda/interfaces/generated/eda-api';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -42,7 +42,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { RoleDefinitionCreate } from '../../frontend/eda/interfaces/generated/eda-api';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -664,7 +664,7 @@ declare global {
       // AWX Commands
       // ==============================================================================================================
 
-      createAwxOrganization(orgName?: string, failOnStatusCode?: boolean): Chainable<Organization>;
+      createAwxOrganization(awxOrganization?: Partial<Organization>): Chainable<Organization>;
       editAwxApplication(application: Application, name: string): Chainable<Application>;
 
       /**
@@ -673,12 +673,13 @@ declare global {
        * @returns {Chainable<Project>}
        */
       createAwxProject(
-        project?: SetRequired<Partial<Omit<Project, 'id'>>, 'organization'>,
+        organization: Organization,
+        project?: Partial<Project>,
         scm_url?: string,
         skipSync?: boolean
       ): Chainable<Project>;
 
-      waitForProjectToFinishSyncing(projectId: number): Chainable<void>;
+      waitForProjectToFinishSyncing(projectId: number): Chainable<Project>;
 
       /** Create an execution environment in AWX */
       createAwxExecutionEnvironment(
@@ -694,16 +695,16 @@ declare global {
       ): Chainable<Credential>;
       /** Creates a credential type in AWX */
       createAwxCredentialType(): Chainable<CredentialType>;
-      /**
-       * Creates a project in AWX that is specific to being utilized in an EDA test.
-       */
-      createEdaSpecificAwxProject(options?: {
-        project?: Partial<Omit<Project, 'id'>>;
-      }): Chainable<Project>;
 
-      createAwxInventory(inventory?: Partial<Omit<Inventory, 'id'>>): Chainable<Inventory>;
+      createAwxInventory(
+        organization: Organization,
+        inventory?: Partial<Inventory>
+      ): Chainable<Inventory>;
 
-      createAwxConstructedInventory(organization: Organization): Chainable<Inventory>;
+      createAwxConstructedInventory(
+        organization: Organization,
+        params?: { source_vars?: boolean; input_inventory_count?: number }
+      ): Chainable<Inventory>;
 
       createAwxInventorySource(
         inventory: Partial<Pick<Inventory, 'id'>>,
@@ -768,6 +769,26 @@ declare global {
       ): Chainable<WorkflowJobTemplate>;
 
       getAwxInstanceGroupByName(instanceGroupName: string): Chainable<InstanceGroup>;
+
+      getAwxOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
+
+      getGatewayOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
+
+      getAwxUserByAnsibleId(userAnsibleId: string | undefined): Chainable<AwxUser>;
+
+      getAwxTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<Team>;
+
+      /**
+       * pollAWXResults - Polls AWX until results are found
+       * @param url The url for the get request
+       *
+       * @example
+       *  cy.pollAWXResults<Project>(awxAPI`/projects/`).then(
+       *    (projects: Project[]) => {
+       *      // Do something with projects
+       *    }
+       */
+      pollAWXResults<T = unknown>(url: string): Chainable<T[]>;
 
       renderWorkflowVisualizerNodesFromFixtureFile(
         workflowJobTemplateName: string,
@@ -855,9 +876,35 @@ declare global {
       giveUserTeamAccess(teamName: string, userId: number, roleName: string): Chainable<Role>;
 
       getAwxJobTemplateByName(awxJobTemplateName: string): Chainable<JobTemplate>;
-      createAwxTeam(organization: Organization): Chainable<Team>;
-      createAwxUser(organization: Organization): Chainable<AwxUser>;
-      getAwxRoles(): Chainable<RoleSerializerWithParentAccess>;
+
+      /**
+       * @Example
+       * ```tsx
+       * cy.createAwxUser({ organization: organization.id, is_superuser:true });
+       * ```
+       */
+      createAwxTeam(awxTeam?: Partial<Team>): Chainable<Team>;
+      createAwxUser(awxUser?: Partial<AwxUser>): Chainable<AwxUser>;
+      getCurrentUser(): Chainable<AwxUser>;
+      getAwxRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<AwxItemsResponse<AwxRbacRole>>;
+      getAwxRoleDetail(roleID: string): Chainable<AwxRbacRole>;
+
+      /**
+       * Creates an object to AWX role definition.
+       *
+       * @returns {Chainable<AwxRbacRole>}
+       */
+      createAwxRole(
+        roleName: string,
+        description: string,
+        content_type,
+        permissions: string[]
+      ): Chainable<AwxRbacRole>;
+
+      deleteAwxRole(awxRoleDefinition: AwxRbacRole): Chainable<void>;
       createAwxInstanceGroup(
         instanceGroup?: Partial<Omit<InstanceGroup, 'id'>>
       ): Chainable<InstanceGroup>;
@@ -1154,7 +1201,7 @@ declare global {
 
       createNotificationTemplate(
         notificationName: string,
-        organization_id?: number
+        organization: Organization
       ): Chainable<NotificationTemplate>;
 
       deleteNotificationTemplate(
@@ -1222,6 +1269,10 @@ declare global {
         pageSize: number
       ): Chainable<EdaResult<EdaRulebookActivation>>;
       getEdaCredentials(page: number, pageSize: number): Chainable<EdaResult<EdaCredential>>;
+      getEdaCredentialTypes(
+        page: number,
+        pageSize: number
+      ): Chainable<EdaResult<EdaCredentialType>>;
       getEdaUsers(page: number, pageSize: number): Chainable<EdaResult<EdaUser>>;
       getEdaUser(id: number): Chainable<EdaUser>;
 
@@ -1336,7 +1387,10 @@ declare global {
        */
       deleteEdaCredentialType(delete_cred_type: EdaCredentialType): Chainable<void>;
 
-      getEdaRoles(content_type__model?: string): Chainable<EdaRbacRole[]>;
+      getEdaRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<EdaRbacRole[]>;
       /**
        * Creates an EDA user and returns the same.
        *
@@ -1394,14 +1448,16 @@ declare global {
       /**
        * Creates an object to EDA role definition.
        *
-       * @returns {Chainable<RoleDefinitionCreate>}
+       * @returns {Chainable<RoleDefinition>}
        */
       createEdaRoleDefinition(
         roleName: string,
         description: string,
         content_type,
         permissions
-      ): Chainable<RoleDefinitionCreate>;
+      ): Chainable<RoleDefinition>;
+
+      deleteEdaRoleDefinition(edaRoleDefinition: RoleDefinition): Chainable<void>;
 
       /**
        * Retrieves an EDA active user which is admin.

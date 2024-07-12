@@ -5,8 +5,13 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Applications', () => {
   let app: Application;
+  let awxOrganization: Organization;
 
   beforeEach(() => {
+    cy.createAwxOrganization().then((thisAwxOrg) => {
+      awxOrganization = thisAwxOrg;
+    });
+
     cy.createAwxApplication().then((application: Application) => {
       app = application;
     });
@@ -14,6 +19,7 @@ describe('Applications', () => {
 
   afterEach(() => {
     cy.deleteAwxApplication(app.id.toString(), { failOnStatusCode: false });
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
   describe('Applications- CRUD functionality- List View', () => {
@@ -26,11 +32,11 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', awxOrganization.name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -43,10 +49,7 @@ describe('Applications', () => {
           // Assert application details
           cy.getByDataCy('name').should('have.text', appName);
           cy.getByDataCy('description').should('have.text', appDescription);
-          cy.getByDataCy('organization').should(
-            'have.text',
-            (this.globalAwxOrganization as Organization).name
-          );
+          cy.getByDataCy('organization').should('have.text', awxOrganization.name);
           cy.getByDataCy('authorization-grant-type').should('have.text', 'authorization-code');
           cy.getByDataCy('client-type').should('have.text', 'confidential');
           // Delete application from the list view
@@ -73,11 +76,11 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', awxOrganization.name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -90,10 +93,7 @@ describe('Applications', () => {
           // Assert application details
           cy.getByDataCy('name').should('have.text', appName);
           cy.getByDataCy('description').should('have.text', appDescription);
-          cy.getByDataCy('organization').should(
-            'have.text',
-            (this.globalAwxOrganization as Organization).name
-          );
+          cy.getByDataCy('organization').should('have.text', awxOrganization.name);
           cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
           cy.getByDataCy('client-type').should('have.text', 'confidential');
           cy.deleteAwxApplication(newApplication.id.toString(), { failOnStatusCode: false });
@@ -109,11 +109,11 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', awxOrganization.name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -126,10 +126,7 @@ describe('Applications', () => {
           // Assert application details
           cy.getByDataCy('name').should('have.text', appName);
           cy.getByDataCy('description').should('have.text', appDescription);
-          cy.getByDataCy('organization').should(
-            'have.text',
-            (this.globalAwxOrganization as Organization).name
-          );
+          cy.getByDataCy('organization').should('have.text', awxOrganization.name);
           cy.getByDataCy('authorization-grant-type').should('have.text', 'password');
           cy.getByDataCy('client-type').should('have.text', 'public');
           cy.deleteAwxApplication(newApplication.id.toString(), { failOnStatusCode: false });
@@ -144,7 +141,7 @@ describe('Applications', () => {
         inKebab: true,
         disableFilter: true,
       });
-      cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+      cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
       // Edit application
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.clickButton('Save application');
@@ -171,11 +168,11 @@ describe('Applications', () => {
       cy.verifyPageTitle('Create OAuth application');
       cy.getByDataCy('name').type(appName);
       cy.getByDataCy('description').type(appDescription);
-      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', awxOrganization.name);
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.getByDataCy('redirect-uris').type('https://create_from_api.com');
-      cy.intercept('POST', `api/v2/applications/`).as('createApp');
+      cy.intercept('POST', awxAPI`/applications/`).as('createApp');
       cy.clickButton('Create application');
       cy.wait('@createApp')
         .its('response.body')
@@ -188,10 +185,7 @@ describe('Applications', () => {
           // Assert application details
           cy.getByDataCy('name').should('have.text', appName);
           cy.getByDataCy('description').should('have.text', appDescription);
-          cy.getByDataCy('organization').should(
-            'have.text',
-            (this.globalAwxOrganization as Organization).name
-          );
+          cy.getByDataCy('organization').should('have.text', awxOrganization.name);
           cy.getByDataCy('authorization-grant-type').should('have.text', 'authorization-code');
           cy.getByDataCy('client-type').should('have.text', 'public');
           // Delete from Details View
@@ -221,7 +215,7 @@ describe('Applications', () => {
       cy.getByDataCy('client-type').should('have.text', 'confidential');
       // Edit application
       cy.clickButton('Edit application');
-      cy.intercept('PATCH', `api/v2/applications/*/`).as('editApp');
+      cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.clickButton('Save application');
       cy.wait('@editApp')

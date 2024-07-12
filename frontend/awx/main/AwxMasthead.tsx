@@ -8,6 +8,7 @@ import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMasthe
 import { PageNotificationsIcon } from '../../../framework/PageMasthead/PageNotificationsIcon';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
 import { usePageNotifications } from '../../../framework/PageNotifications/PageNotificationsProvider';
+import AwxBrand from '../../assets/awx-logo.svg';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { useGet } from '../../common/crud/useGet';
@@ -19,7 +20,6 @@ import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
 import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
-import AwxBrand from './awx-logo.svg';
 
 export function AwxMasthead() {
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ export function AwxMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/awx-logo.svg' })}
               data-cy="masthead-about"
             >
               {t('About')}

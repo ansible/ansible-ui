@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { PageMasthead, usePageNavigate } from '../../../framework';
 import { PageMastheadDropdown } from '../../../framework/PageMasthead/PageMastheadDropdown';
 import { PageThemeSwitcher } from '../../../framework/PageMasthead/PageThemeSwitcher';
+import EdaBrand from '../../assets/eda-logo.svg';
 import { useAnsibleAboutModal } from '../../common/AboutModal';
 import { PageRefreshIcon } from '../../common/PageRefreshIcon';
 import { postRequest } from '../../common/crud/Data';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';
-import EdaBrand from './eda-logo.svg';
 
 export function EdaMasthead() {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export function EdaMasthead() {
     refreshActiveEdaUser?.();
   }, [refreshActiveEdaUser]);
   return (
-    <PageMasthead brand={<EdaBrand style={{ height: 45, width: 45 }} />}>
+    <PageMasthead brand={<EdaBrand style={{ height: 48 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
         <ToolbarItem style={{ marginLeft: 'auto' }}>
           <PageRefreshIcon />
@@ -49,7 +49,7 @@ export function EdaMasthead() {
             </DropdownItem>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({})}
+              onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/eda-logo.svg' })}
               data-cy="masthead-about"
             >
               {t('About')}

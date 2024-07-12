@@ -7,24 +7,25 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { tag } from '../../../support/tag';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Credentials', () => {
-  let organization: Organization;
-  let user: AwxUser;
+  let awxOrganization: Organization;
+  let project: Project;
 
   before(() => {
     cy.createAwxOrganization().then((org) => {
-      organization = org;
-      cy.createAwxUser(organization).then((testUser) => {
-        user = testUser;
+      awxOrganization = org;
+      cy.createAwxProject(awxOrganization).then((proj) => {
+        project = proj;
       });
     });
   });
 
   after(() => {
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
   describe('Credentials: List View', () => {
@@ -32,11 +33,10 @@ describe('Credentials', () => {
     beforeEach(() => {
       cy.createAWXCredential({
         kind: 'machine',
-        organization: organization.id,
+        organization: awxOrganization.id,
         credential_type: 1,
       }).then((cred) => {
         credential = cred;
-        cy.giveUserCredentialsAccess(credential.name, user.id, 'Use');
       });
     });
     afterEach(() => {
@@ -129,12 +129,11 @@ describe('Credentials', () => {
       cy.createAWXCredential({
         name: 'E2E Credential ' + randomString(4),
         kind: 'Centrify Vault Credential Provider Lookup',
-        organization: organization.id,
+        organization: awxOrganization.id,
         credential_type: 25,
         inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
       }).then((cred) => {
         credential = cred;
-        cy.giveUserCredentialsAccess(credential.name, user.id, 'Use');
       });
     });
 
@@ -234,7 +233,7 @@ describe('Credentials', () => {
     });
 
     it('can display success toast message when running a test from the create credential form', () => {
-      cy.intercept('POST', '/api/v2/credential_types/25/test', {}).as('runTest');
+      cy.intercept('POST', awxAPI`/credential_types/25/test`, {}).as('runTest');
       cy.navigateTo('awx', 'credentials');
       cy.clickButton(/^Create credential/);
       cy.getByDataCy('name').type('foo');
@@ -259,18 +258,18 @@ describe('Credentials', () => {
       cy.clickButton(/^Cancel/);
     });
   });
+
   describe('Credentials Edit: External test modal', () => {
     let credential: Credential;
     before(() => {
       cy.createAWXCredential({
         name: 'E2E Credential ' + randomString(4),
         kind: 'Centrify Vault Credential Provider Lookup',
-        organization: organization.id,
+        organization: awxOrganization.id,
         credential_type: 25,
         inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
       }).then((cred) => {
         credential = cred;
-        cy.giveUserCredentialsAccess(credential.name, user.id, 'Use');
       });
     });
 
@@ -298,7 +297,7 @@ describe('Credentials', () => {
     });
 
     it('can display success toast message when running a test from the edit credential form', () => {
-      cy.intercept('POST', `/api/v2/credentials/${credential.id}/test`, {}).as('runTest');
+      cy.intercept('POST', awxAPI`/credentials/${credential.id.toString()}/test`, {}).as('runTest');
       cy.navigateTo('awx', 'credentials');
       cy.filterTableByMultiSelect('name', [credential.name]);
       cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
@@ -318,20 +317,64 @@ describe('Credentials', () => {
       cy.clickButton(/^Cancel/);
     });
   });
+
+  describe('Credentials Tabbed View - Job Templates', () => {
+    let machineCredential: Credential;
+    let awxOrganization: Organization;
+    let awxInventory: Inventory;
+
+    beforeEach(() => {
+      cy.createAwxOrganization().then((awxOrg) => {
+        awxOrganization = awxOrg;
+        cy.createAWXCredential({
+          kind: 'machine',
+          organization: awxOrganization.id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential = cred;
+        });
+
+        cy.createAwxInventory(awxOrganization).then((inv) => {
+          awxInventory = inv;
+        });
+      });
+    });
+
+    afterEach(() => {
+      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+      cy.deleteAwxInventory(awxInventory, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+    });
+
+    it('can create a job template within the context of credential job template tab', () => {
+      const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
+      cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
+      cy.clickTab('Job Templates', true);
+      cy.getByDataCy('create-template').click();
+      cy.verifyPageTitle('Create Job Template');
+      cy.getByDataCy('name').type(jobTemplateName);
+      cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
+      cy.selectDropdownOptionByResourceName('project', project.name);
+      cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+      cy.multiSelectByDataCy('credential', [machineCredential.name]);
+      cy.getByDataCy('Submit').click();
+    });
+  });
 });
 
-describe('Create Credentials of different types', () => {
+describe('Credentials: Credential Types Tests', () => {
   let organization: Organization;
-  before(() => {
-    cy.login();
-  });
   beforeEach(() => {
     cy.createAwxOrganization().then((o) => (organization = o));
   });
   afterEach(() => {
     cy.deleteAwxOrganization(organization);
   });
-  it('create credential using custom credential type', () => {
+
+  it('can create credential using custom credential type', () => {
     cy.createAwxCredentialType().then((credType) => {
       const credentialName = 'E2E Credential ' + randomString(4);
       cy.navigateTo('awx', 'credentials');
@@ -349,7 +392,8 @@ describe('Create Credentials of different types', () => {
       cy.deleteAwxCredentialType(credType);
     });
   });
-  it('vault id field can not be edited for Vault credential type', () => {
+
+  it('cannot edit vault id for Vault credential type', () => {
     const credentialName = 'E2E Credential ' + randomString(4);
     cy.navigateTo('awx', 'credentials');
     cy.clickButton(/^Create credential$/);
@@ -513,221 +557,175 @@ describe('Create Credentials of different types', () => {
   });
 });
 
-describe('Credentials Tabbed View - Job Templates', () => {
-  let machineCredential: Credential;
-  let awxOrganization: Organization;
-  let awxInventory: Inventory;
-
-  beforeEach(() => {
-    cy.awxLogin();
-    cy.createAwxOrganization().then((awxOrg) => {
-      awxOrganization = awxOrg;
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: awxOrganization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential = cred;
-      });
-
-      cy.createAwxInventory().then((inv) => {
-        awxInventory = inv;
-      });
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
-    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxInventory(awxInventory, { failOnStatusCode: false });
-  });
-
-  it('can create a job template within the context of credential job template tab', function () {
-    const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
-    cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
-    cy.navigateTo('awx', 'credentials');
-    cy.filterTableByMultiSelect('name', [machineCredential.name]);
-    cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
-    cy.clickTab('Job Templates', true);
-    cy.getByDataCy('create-template').click();
-    cy.verifyPageTitle('Create job template');
-    cy.getByDataCy('name').type(jobTemplateName);
-    cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-    cy.selectDropdownOptionByResourceName('project', `${(this.globalProject as Project).name}`);
-    cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-    cy.selectItemFromLookupModal('credential-select', machineCredential.name);
-    cy.getByDataCy('Submit').click();
-  });
-});
-
-describe('Credentials Tabbed View - Team and User Access', () => {
-  let machineCredential: Credential;
-  let createdAwxUser: AwxUser;
-  let awxOrganization: Organization;
-  let awxTeam: Team;
-  beforeEach(() => {
-    cy.awxLogin();
-    cy.createAwxOrganization().then((awxOrg) => {
-      awxOrganization = awxOrg;
-      cy.createAwxUser(awxOrganization).then((awxUser) => {
-        createdAwxUser = awxUser;
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
+tag(['upstream'], () => {
+  describe('Credentials Tabbed View - Team and User Access', () => {
+    let machineCredential: Credential;
+    let createdAwxUser: AwxUser;
+    let awxOrganization: Organization;
+    let awxTeam: Team;
+    beforeEach(() => {
+      cy.createAwxOrganization().then((awxOrg) => {
+        awxOrganization = awxOrg;
+        cy.createAwxUser({ organization: awxOrganization.id }).then((awxUser) => {
+          createdAwxUser = awxUser;
+          cy.createAWXCredential({
+            kind: 'machine',
+            organization: awxOrganization.id,
+            credential_type: 1,
+          }).then((cred) => {
+            machineCredential = cred;
+          });
+        });
+        cy.createAwxTeam({ organization: awxOrganization.id }).then((createdAwxTeam) => {
+          awxTeam = createdAwxTeam;
         });
       });
-      cy.createAwxTeam(awxOrganization).then((createdAwxTeam) => {
-        awxTeam = createdAwxTeam;
-      });
     });
-  });
 
-  afterEach(() => {
-    cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
-    cy.deleteAwxUser(createdAwxUser, { failOnStatusCode: false });
-    cy.deleteAwxTeam(awxTeam, { failOnStatusCode: false });
-  });
+    afterEach(() => {
+      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
+      cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+      cy.deleteAwxUser(createdAwxUser, { failOnStatusCode: false });
+      cy.deleteAwxTeam(awxTeam, { failOnStatusCode: false });
+    });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', awxAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
-    cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
+    function removeRoleFromListRow(roleName: string, assignmentType: string) {
+      cy.intercept('DELETE', awxAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+      cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
+      cy.getModal().within(() => {
+        cy.get('#confirm').click();
+        cy.clickButton(/^Remove role/);
+        cy.wait('@deleteRole')
+          .its('response')
+          .then((deleted) => {
+            expect(deleted?.statusCode).to.eql(204);
+            cy.contains(/^Success$/).should('be.visible');
+            cy.containsBy('button', /^Close$/).click();
+          });
+      });
+    }
+    it('create a new credential, assign a team and apply role(s)', () => {
+      cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
+      cy.clickTab('Team Access', true);
+
+      cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+      cy.getWizard().within(() => {
+        cy.contains('h1', 'Select team(s)').should('be.visible');
+        cy.filterTableByMultiSelect('name', [awxTeam.name]);
+        cy.selectTableRowByCheckbox('name', awxTeam.name, { disableFilter: true });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Select roles to apply').should('be.visible');
+        cy.filterTableByTextFilter('name', 'Credential Admin', {
+          disableFilterSelection: true,
         });
-    });
-  }
-  it('create a new credential, assign a team and apply role(s)', () => {
-    cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
-    cy.navigateTo('awx', 'credentials');
-    cy.filterTableByMultiSelect('name', [machineCredential.name]);
-    cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
-    cy.clickTab('Team Access', true);
-
-    cy.getByDataCy('add-roles').click();
-    cy.verifyPageTitle('Add roles');
-    cy.getWizard().within(() => {
-      cy.contains('h1', 'Select team(s)').should('be.visible');
-      cy.filterTableByMultiSelect('name', [awxTeam.name]);
-      cy.selectTableRowByCheckbox('name', awxTeam.name, { disableFilter: true });
-      cy.clickButton(/^Next/);
-      cy.contains('h1', 'Select roles to apply').should('be.visible');
-      cy.filterTableByTextFilter('name', 'Credential Admin', {
-        disableFilterSelection: true,
-      });
-      cy.selectTableRowByCheckbox('name', 'Credential Admin', {
-        disableFilter: true,
-      });
-      cy.filterTableByTextFilter('name', 'Credential Use', {
-        disableFilterSelection: true,
-      });
-      cy.selectTableRowByCheckbox('name', 'Credential Use', {
-        disableFilter: true,
-      });
-      cy.clickButton(/^Next/);
-      cy.contains('h1', 'Review').should('be.visible');
-      cy.verifyReviewStepWizardDetails('teams', [awxTeam.name], '1');
-      cy.verifyReviewStepWizardDetails(
-        'awxRoles',
-        [
-          'Credential Admin',
-          'Has all permissions to a single credential',
-          'Credential Use',
-          'Has use permissions to a single credential',
-        ],
-        '2'
-      );
-      cy.clickButton(/^Finish/);
-      cy.wait('@teamRoleAssignment')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(201);
+        cy.selectTableRowByCheckbox('name', 'Credential Admin', {
+          disableFilter: true,
         });
-    });
-    cy.getModal().within(() => {
-      cy.clickButton(/^Close$/);
-    });
-    cy.getModal().should('not.exist');
-    cy.verifyPageTitle(machineCredential.name);
-    cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
-      disableFilter: true,
-    });
-    removeRoleFromListRow('Credential Admin', 'team');
-    cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
-      disableFilter: true,
-    });
-    removeRoleFromListRow('Credential Use', 'team');
-  });
-
-  it('create a new credential, assign a user and apply role(s)', () => {
-    cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
-    cy.navigateTo('awx', 'credentials');
-    cy.filterTableByMultiSelect('name', [machineCredential.name]);
-    cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
-    cy.clickTab('User Access', true);
-
-    cy.getByDataCy('add-roles').click();
-    cy.verifyPageTitle('Add roles');
-    cy.getWizard().within(() => {
-      cy.contains('h1', 'Select user(s)').should('be.visible');
-      cy.selectTableRowByCheckbox('username', createdAwxUser.username);
-
-      cy.clickButton(/^Next/);
-      cy.contains('h1', 'Select roles to apply').should('be.visible');
-      cy.filterTableByTextFilter('name', 'Credential Admin', {
-        disableFilterSelection: true,
-      });
-      cy.selectTableRowByCheckbox('name', 'Credential Admin', {
-        disableFilter: true,
-      });
-      cy.filterTableByTextFilter('name', 'Credential Use', {
-        disableFilterSelection: true,
-      });
-      cy.selectTableRowByCheckbox('name', 'Credential Use', {
-        disableFilter: true,
-      });
-      cy.clickButton(/^Next/);
-      cy.contains('h1', 'Review').should('be.visible');
-      cy.verifyReviewStepWizardDetails('users', [createdAwxUser.username], '1');
-      cy.verifyReviewStepWizardDetails(
-        'awxRoles',
-        [
-          'Credential Admin',
-          'Has all permissions to a single credential',
-          'Credential Use',
-          'Has use permissions to a single credential',
-        ],
-        '2'
-      );
-      cy.clickButton(/^Finish/);
-      cy.wait('@userRoleAssignment')
-        .its('response')
-        .then((response) => {
-          expect(response?.statusCode).to.eql(201);
+        cy.filterTableByTextFilter('name', 'Credential Use', {
+          disableFilterSelection: true,
         });
+        cy.selectTableRowByCheckbox('name', 'Credential Use', {
+          disableFilter: true,
+        });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Review').should('be.visible');
+        cy.verifyReviewStepWizardDetails('teams', [awxTeam.name], '1');
+        cy.verifyReviewStepWizardDetails(
+          'awxRoles',
+          [
+            'Credential Admin',
+            'Has all permissions to a single credential',
+            'Credential Use',
+            'Has use permissions to a single credential',
+          ],
+          '2'
+        );
+        cy.clickButton(/^Finish/);
+        cy.wait('@teamRoleAssignment')
+          .its('response')
+          .then((response) => {
+            expect(response?.statusCode).to.eql(201);
+          });
+      });
+      cy.getModal().within(() => {
+        cy.clickButton(/^Close$/);
+      });
+      cy.getModal().should('not.exist');
+      cy.verifyPageTitle(machineCredential.name);
+      cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
+        disableFilter: true,
+      });
+      removeRoleFromListRow('Credential Admin', 'team');
+      cy.selectTableRowByCheckbox('team-name', awxTeam.name, {
+        disableFilter: true,
+      });
+      removeRoleFromListRow('Credential Use', 'team');
     });
-    cy.getModal().within(() => {
-      cy.clickButton(/^Close$/);
+
+    it('create a new credential, assign a user and apply role(s)', () => {
+      cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
+      cy.navigateTo('awx', 'credentials');
+      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
+      cy.clickTab('User Access', true);
+
+      cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+      cy.getWizard().within(() => {
+        cy.contains('h1', 'Select user(s)').should('be.visible');
+        cy.selectTableRowByCheckbox('username', createdAwxUser.username);
+
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Select roles to apply').should('be.visible');
+        cy.filterTableByTextFilter('name', 'Credential Admin', {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', 'Credential Admin', {
+          disableFilter: true,
+        });
+        cy.filterTableByTextFilter('name', 'Credential Use', {
+          disableFilterSelection: true,
+        });
+        cy.selectTableRowByCheckbox('name', 'Credential Use', {
+          disableFilter: true,
+        });
+        cy.clickButton(/^Next/);
+        cy.contains('h1', 'Review').should('be.visible');
+        cy.verifyReviewStepWizardDetails('users', [createdAwxUser.username], '1');
+        cy.verifyReviewStepWizardDetails(
+          'awxRoles',
+          [
+            'Credential Admin',
+            'Has all permissions to a single credential',
+            'Credential Use',
+            'Has use permissions to a single credential',
+          ],
+          '2'
+        );
+        cy.clickButton(/^Finish/);
+        cy.wait('@userRoleAssignment')
+          .its('response')
+          .then((response) => {
+            expect(response?.statusCode).to.eql(201);
+          });
+      });
+      cy.getModal().within(() => {
+        cy.clickButton(/^Close$/);
+      });
+      cy.getModal().should('not.exist');
+      cy.verifyPageTitle(machineCredential.name);
+      cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
+        disableFilter: true,
+      });
+      removeRoleFromListRow('Credential Admin', 'user');
+      cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
+        disableFilter: true,
+      });
+      removeRoleFromListRow('Credential Use', 'user');
     });
-    cy.getModal().should('not.exist');
-    cy.verifyPageTitle(machineCredential.name);
-    cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
-      disableFilter: true,
-    });
-    removeRoleFromListRow('Credential Admin', 'user');
-    cy.selectTableRowByCheckbox('username', createdAwxUser.username, {
-      disableFilter: true,
-    });
-    removeRoleFromListRow('Credential Use', 'user');
   });
 });

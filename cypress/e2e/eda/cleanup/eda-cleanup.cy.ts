@@ -14,8 +14,6 @@ function isOldResource(prefix: string, resource: { name?: string; created_at?: s
 }
 
 describe('EDA Cleanup', () => {
-  before(() => cy.edaLogin());
-
   it('cleanup old admin awx tokens', () => {
     cy.request<EdaResult<EdaControllerToken>>(edaAPI`/users/me/awx-tokens/`).then((response) => {
       const tokens = response.body.results;
@@ -60,11 +58,19 @@ describe('EDA Cleanup', () => {
     });
   });
 
-  it('cleanup old eda credentials', () => {
+  it('cleanup old eda credentials and types', () => {
     cy.getEdaCredentials(1, 100).then((result) => {
       for (const resource of result.results ?? []) {
         if (isOldResource('E2E Credential', resource)) {
           cy.deleteEdaCredential(resource);
+        }
+      }
+    });
+
+    cy.getEdaCredentialTypes(1, 100).then((result) => {
+      for (const resource of result.results ?? []) {
+        if (isOldResource('E2E Credential Type', resource)) {
+          cy.deleteEdaCredentialType(resource);
         }
       }
     });

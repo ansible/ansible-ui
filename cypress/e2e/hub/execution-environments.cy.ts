@@ -38,7 +38,7 @@ describe('Execution Environments', () => {
       cy.intercept('GET', hubAPI`/_ui/v1/execution-environments/registries/?limit=50`).as(
         'registries'
       );
-      cy.getByDataCy('add-execution-environment').click();
+      cy.getByDataCy('create-execution-environment').click();
       cy.wait('@registries')
         .its('response.body.data.length')
         .then((count) => {
