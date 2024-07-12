@@ -18,6 +18,7 @@ import { HostSelectDialog } from './useHostSelectDialog';
 import { IAwxView } from '../../../common/useAwxView';
 import { postRequest } from '../../../../common/crud/Data';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
   const [_, setDialog] = usePageDialog();
@@ -62,6 +63,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        icon: PlusCircleIcon,
         label: t('Add existing host'),
         isPinned: true,
         onClick: () =>
@@ -77,6 +79,7 @@ export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
+        icon: PlusCircleIcon,
         label: t('Create host'),
         isPinned: true,
         onClick: () =>
