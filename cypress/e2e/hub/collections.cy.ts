@@ -421,7 +421,7 @@ describe.skip('Collections', () => {
           //Select the first version of the collection in order to sign it
           cy.getByDataCy('version').should('contain', '1.0.0');
           cy.getByDataCy('signed-state').should('contain', 'Unsigned');
-          cy.selectDetailsPageKebabAction('sign-selected-version');
+          cy.selectDetailsPageKebabAction('sign-version');
           cy.getModal().then(() => {
             cy.clickButton(/^Close$/);
           });
