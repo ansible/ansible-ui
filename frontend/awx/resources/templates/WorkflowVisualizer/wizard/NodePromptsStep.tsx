@@ -11,7 +11,7 @@ import {
 import { PageFormCreatableSelect } from '../../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { PageFormSelectExecutionEnvironment } from '../../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
@@ -54,7 +54,7 @@ export function NodePromptsStep() {
     const defaultPromptValues = {
       credentials: prompt?.credentials ?? defaults.credentials,
       diff_mode: prompt?.diff_mode ?? defaults.diff_mode,
-      execution_environment: prompt?.execution_environment ?? defaults.execution_environment,
+      execution_environment: prompt?.execution_environment ?? defaults.execution_environment?.id,
       extra_vars: prompt?.extra_vars ?? defaults.extra_vars,
       forks: prompt?.forks ?? defaults.forks,
       instance_groups: prompt?.instance_groups ?? defaults.instance_groups,
@@ -103,11 +103,9 @@ export function NodePromptsStep() {
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_execution_environment_on_launch}>
-        <PageFormExecutionEnvironmentSelect<WizardFormValues>
-          name="prompt.execution_environment.name"
-          executionEnvironmentPath="prompt.execution_environment"
-          executionEnvironmentIdPath="prompt.execution_environment.id"
-          organizationId={organizationId?.toString() ?? ''}
+        <PageFormSelectExecutionEnvironment<WizardFormValues>
+          name="prompt.execution_environment"
+          organizationId={organizationId}
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_instance_groups_on_launch}>

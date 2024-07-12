@@ -145,6 +145,7 @@ export function ScheduleSelectStep(props: {
       launchConfigValue = {
         ...defaults,
         instance_groups: defaults.instance_groups || [],
+        execution_environment: defaults.execution_environment?.id,
         inventory: inventory?.id ? inventory : null,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),

@@ -8,7 +8,7 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { PageDetail, useGetPageUrl, TextCell } from '../../../../../../framework';
-import { useGet } from '../../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
@@ -26,6 +26,8 @@ import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
 import { WebhookService } from '../../components/WebhookService';
 import { Link } from 'react-router-dom';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -50,13 +52,24 @@ function useAggregateJobTemplateDetails({
     template?.related?.credentials
   );
 
+  const { data: fetchedEE } = useGetItem<ExecutionEnvironment>(
+    awxAPI`/execution_environments/`,
+    String(promptValues?.execution_environment)
+  );
+
   const credentials =
     promptValues?.credentials ?? nodeCredentials?.results ?? templateCredentials?.results;
   const diffMode = promptValues?.diff_mode ?? nodeValues?.diff_mode ?? template.diff_mode;
-  const executionEnvironment =
-    promptValues?.execution_environment ??
-    nodeValues?.summary_fields?.execution_environment ??
-    template.summary_fields.execution_environment;
+  let executionEnvironment: ExecutionEnvironment | undefined;
+
+  if (promptValues?.execution_environment && fetchedEE) {
+    executionEnvironment = fetchedEE;
+  } else {
+    executionEnvironment =
+      nodeValues?.summary_fields?.execution_environment ??
+      template.summary_fields.execution_environment;
+  }
+
   const forks = Number(promptValues?.forks ?? nodeValues?.forks ?? template.forks);
   const instanceGroups =
     promptValues?.instance_groups ?? nodeInstanceGroups?.results ?? templateInstanceGroups?.results;
@@ -219,7 +232,9 @@ export function JobTemplateDetails({
         <TextCell
           text={executionEnvironment?.name}
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: executionEnvironment?.id },
+            params: {
+              id: executionEnvironment?.id,
+            },
           })}
         />
       </PromptDetail>
