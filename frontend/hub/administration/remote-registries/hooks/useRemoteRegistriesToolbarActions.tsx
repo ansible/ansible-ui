@@ -34,7 +34,7 @@ export function useRemoteRegistriesToolbarActions(view: IHubView<RemoteRegistry>
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected remote registries'),
+        label: t('Delete remote registries'),
         onClick: deleteRemoteRegistries,
         isDanger: true,
       },

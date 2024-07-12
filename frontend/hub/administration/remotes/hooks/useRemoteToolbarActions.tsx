@@ -34,7 +34,7 @@ export function useRemoteToolbarActions(view: IHubView<HubRemote>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected remotes'),
+        label: t('Delete remotes'),
         onClick: deleteRemotes,
         isDanger: true,
       },

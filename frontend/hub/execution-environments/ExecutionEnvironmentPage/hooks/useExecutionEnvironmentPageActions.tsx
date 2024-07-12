@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  BuilderImageIcon,
+  CheckIcon,
+  PencilAltIcon,
+  SyncAltIcon,
+  TrashIcon,
+} from '@patternfly/react-icons';
 import { HubRoute } from '../../../main/HubRoutes';
 import {
   IPageAction,
@@ -46,7 +52,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit'),
+        label: t('Edit execution environment'),
         onClick: (ee) =>
           pageNavigate(HubRoute.EditExecutionEnvironment, { params: { id: ee?.name } }),
       },
@@ -54,7 +60,8 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: t('Sync from registry'),
+        icon: SyncAltIcon,
+        label: t('Sync execution environment'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
         onClick: (ee: ExecutionEnvironment) => syncExecutionEnvironments([ee]),
@@ -62,22 +69,25 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        icon: BuilderImageIcon,
         label: t('Use in controller'),
         onClick: () => {},
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete'),
-        onClick: (ee) => deleteExecutionEnvironments([ee]),
-        isDanger: true,
+        icon: CheckIcon,
+        label: t('Sign execution environment'),
+        onClick: (ee) => signExecutionEnvironments([ee]),
       },
+      { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        label: t('Sign'),
-        onClick: (ee) => signExecutionEnvironments([ee]),
+        icon: TrashIcon,
+        label: t('Delete execution environment'),
+        onClick: (ee) => deleteExecutionEnvironments([ee]),
+        isDanger: true,
       },
     ];
     return actions;

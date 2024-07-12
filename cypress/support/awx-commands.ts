@@ -255,6 +255,7 @@ Cypress.Commands.add('pollAWXResults', <T>(url: string) => {
     if (Array.isArray(result?.results) && result.results.length > 0) {
       cy.wrap(result.results);
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
       cy.wait(100).then(() => cy.pollAWXResults(url));
     }
   });

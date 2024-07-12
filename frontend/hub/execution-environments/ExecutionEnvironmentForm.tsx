@@ -198,7 +198,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         <HubPageForm<ExecutionEnvironmentFormProps>
           submitText={
             props.mode === 'edit'
-              ? t('Edit Execution Environment')
+              ? t('Save execution environment')
               : t('Create execution environment')
           }
           onCancel={() => navigate(HubRoute.ExecutionEnvironments)}
