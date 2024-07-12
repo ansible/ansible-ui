@@ -127,7 +127,7 @@ describe('Remote Registry', () => {
       cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
       cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
       cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
-      cy.clickButton(/^Edit remote registry$/);
+      cy.clickButton(/^Save remote registry$/);
       cy.clickButton(/^Clear all filters$/);
       cy.filterTableBySingleText(remoteRegistryName);
       cy.contains('tr', remoteRegistryName).within(() => {
