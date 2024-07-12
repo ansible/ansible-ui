@@ -600,7 +600,7 @@ describe('Schedules - Bulk deletion', () => {
     cy.filterTableByMultiSelect('name', arrayOfElementText);
     cy.get('tbody tr').should('have.length', 5);
     cy.getByDataCy('select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-schedules');
+    cy.clickToolbarKebabAction('delete-schedules');
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently delete schedule');
       cy.get('button').contains('Delete schedule').should('have.attr', 'aria-disabled', 'true');
