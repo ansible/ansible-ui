@@ -56,6 +56,16 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
           <PageFormSection title={section.title} key={section.title}>
             {Object.keys(section.options).map((key) => {
               const option = options[key];
+              /**
+               * The if block below is needed because the Gateway token name field
+               * should be disabled.  If a user edits it, the platform breaks.  From the api
+               * this field has a read_only value of false, which makes the field active and
+               * editable.  This should be fixed on the api side. Here is the issue
+               * https://issues.redhat.com/browse/AAP-26871
+               */
+              if (key === 'gateway_token_name') {
+                option.read_only = true;
+              }
               switch (option.type) {
                 case 'string':
                   return (
