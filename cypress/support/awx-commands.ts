@@ -1570,28 +1570,6 @@ Cypress.Commands.add(
   }
 );
 
-// Cypress.Commands.add('createAwxApplication', () => {
-//   return cy.requestPost<
-//     Application,
-//     Pick<
-//       Application,
-//       | 'name'
-//       | 'description'
-//       | 'organization'
-//       | 'client_type'
-//       | 'authorization_grant_type'
-//       | 'redirect_uris'
-//     >
-//   >(awxAPI`/applications/`, {
-//     name: 'E2E Application API ' + randomString(4),
-//     description: 'E2E Application API Description',
-//     organization: 1,
-//     client_type: 'confidential',
-//     authorization_grant_type: 'password',
-//     redirect_uris: 'https://create_from_api.com',
-//   });
-// });
-
 Cypress.Commands.add(
   'deleteAwxApplication',
   (

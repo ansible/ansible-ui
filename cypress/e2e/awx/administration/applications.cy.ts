@@ -115,8 +115,6 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         cy.verifyPageTitle(oauthApplicationName);
         cy.hasDetail('Name', oauthApplicationName);
         cy.hasDetail('Description', `${authGrantType} with ${appClientType} description`);
-        // cy.hasDetail('Authorization Grant Type', grantType);
-        // cy.hasDetail('Client Type', clientType);
         //delete from list page
         cy.navigateTo('awx', 'applications');
         cy.verifyPageTitle('Applications');
