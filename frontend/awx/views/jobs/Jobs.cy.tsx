@@ -32,7 +32,7 @@ describe('Jobs.cy.ts', () => {
         }).as('reqJobs');
         const job = jobs[0];
         cy.selectTableRow(job.name, false);
-        cy.clickToolbarKebabAction('delete-selected-jobs');
+        cy.clickToolbarKebabAction('delete-jobs');
         cy.contains('Permanently delete jobs').should('be.visible');
         cy.get('input[id="confirm"]').should('be.visible');
         cy.get('#confirm').click();
@@ -104,7 +104,7 @@ describe('Jobs.cy.ts', () => {
       .then((results: UnifiedJob[]) => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
         cy.selectTableRow(job.id.toString(), false);
-        cy.clickToolbarKebabAction('delete-selected-jobs');
+        cy.clickToolbarKebabAction('delete-jobs');
         cy.contains(
           '1 of the selected jobs cannot be deleted due to insufficient permissions.'
         ).should('be.visible');
@@ -174,7 +174,7 @@ describe('Jobs.cy.ts', () => {
       .then((results: UnifiedJob[]) => {
         const job = results[0];
         cy.selectTableRow(job.id.toString(), false);
-        cy.clickToolbarKebabAction('cancel-selected-jobs');
+        cy.clickToolbarKebabAction('cancel-jobs');
         cy.contains(
           '1 of the selected jobs cannot be canceled because they are not running.'
         ).should('be.visible');
