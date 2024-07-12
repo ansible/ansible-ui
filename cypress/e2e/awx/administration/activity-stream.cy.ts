@@ -28,27 +28,18 @@ describe('activity-stream', () => {
   });
 
   function openEventDetails(inventoryName: string) {
-    cy.getTableRow('event', ` created inventory ${inventoryName}`, { disableFilter: true }).within(
-      () => {
-        cy.getByDataCy('view-event-details').click();
-      }
-    );
+    cy.filterTableByTextFilter('keyword', `inventory ${inventoryName}`);
+    cy.getByDataCy('view-event-details').click();
   }
 
   it('event column displays correct info', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
-    cy.getTableRow('event', ` created inventory ${inventory.name}`, { disableFilter: true }).within(
-      () => {
-        cy.getByDataCy('event-column-cell').should(
-          'have.text',
-          ` created inventory ${inventory.name}`
-        );
-      }
-    );
+    cy.filterTableByTextFilter('keyword', `inventory ${inventory.name}`);
+    cy.contains(`created inventory ${inventory.name}`);
   });
 
-  it.skip('event details modal displays correct info', function () {
+  it('event details modal displays correct info', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
     openEventDetails(inventory.name);
