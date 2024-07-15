@@ -304,7 +304,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
-        cy.clickButton(/^New group/);
+        cy.clickButton(/^Create group/);
         cy.verifyPageTitle('Create new group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
@@ -348,7 +348,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
-        cy.clickButton(/^Existing group/);
+        cy.clickButton(/^Add existing group/);
         cy.filterTableByMultiSelect('name', [newGroup]);
         cy.selectTableRow(newGroup, false);
         cy.clickButton(/^Add groups/);
