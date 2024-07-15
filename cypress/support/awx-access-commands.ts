@@ -28,10 +28,25 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createAwxTeam', (awxTeam?: Partial<Team>) => {
-  const { related: _related, description: _description, ...rest } = awxTeam ?? {};
-  const platformTeam: Partial<PlatformTeam> = { ...rest };
-  cy.createPlatformTeam(platformTeam).then((platformTeam) =>
-    cy.getAwxTeamByAnsibleId(platformTeam.summary_fields.resource.ansible_id)
+  const {
+    related: _related,
+    description: _description,
+    organization: awxOrganizationId,
+    ...rest
+  } = awxTeam ?? {};
+  // Get the platform organization using the AWX organization ID
+  cy.requestGet<Organization>(awxAPI`/organizations/${awxOrganizationId.toString()}`).then(
+    (awxOrganization) => {
+      cy.getPlatformOrgByAnsibleId(awxOrganization.summary_fields.resource.ansible_id).then(
+        (platformOrg) => {
+          // Use the platform organization to create a platform team
+          const platformTeam: Partial<PlatformTeam> = { ...rest, organization: platformOrg.id };
+          cy.createPlatformTeam(platformTeam).then((platformTeam) =>
+            cy.getAwxTeamByAnsibleId(platformTeam.summary_fields.resource.ansible_id)
+          );
+        }
+      );
+    }
   );
 });
 
@@ -42,9 +57,28 @@ Cypress.Commands.add('deleteAwxTeam', (awxTeam: Team, options?: { failOnStatusCo
 });
 
 Cypress.Commands.add('createAwxUser', (awxUser?: Partial<AwxUser>) => {
-  const { related: _related, summary_fields: _summary_fields, ...rest } = awxUser ?? {};
-  cy.createPlatformUser(rest).then((platformUser) =>
-    cy.getAwxUserByAnsibleId(platformUser.summary_fields.resource.ansible_id)
+  const {
+    related: _related,
+    summary_fields: _summary_fields,
+    organization: awxOrganizationId,
+    ...rest
+  } = awxUser ?? {};
+
+  // Get the platform organization using the AWX organization ID
+  cy.requestGet<Organization>(awxAPI`/organizations/${awxOrganizationId.toString()}`).then(
+    (awxOrganization) => {
+      cy.getPlatformOrgByAnsibleId(awxOrganization.summary_fields.resource.ansible_id).then(
+        (platformOrg) => {
+          // Associate the created platform user with the platform organization
+          cy.createPlatformUser(rest).then((platformUser) => {
+            cy.associateUsersWithPlatformOrganization(platformOrg, [platformUser]).then(() => {
+              //  Retrieve the created organization from AWX
+              cy.getAwxUserByAnsibleId(platformUser.summary_fields.resource.ansible_id);
+            });
+          });
+        }
+      );
+    }
   );
 });
 

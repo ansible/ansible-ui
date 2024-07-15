@@ -129,7 +129,7 @@ Cypress.Commands.add('createPlatformUser', (user?: Partial<PlatformUser>) => {
   const userName = `platform-e2e-user-${randomString(2).toLowerCase()}`;
   cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
     username: userName,
-    password: randomString(10),
+    password: 'pw',
     ...user,
   });
 });
