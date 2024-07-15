@@ -40,7 +40,7 @@ describe('Project Edit, Copy, Sync', () => {
         .its('response.body')
         .then((edited: Project) => {
           expect(edited.name).to.eql(`${project.name} - edited`);
-          cy.verifyPageTitle(`${edited.name}`);
+          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
           cy.clickButton(/^Edit project$/);
           cy.get('[data-cy="name"]').clear().type(`${project.name}`);
           cy.clickButton(/^Save project$/);
@@ -50,7 +50,7 @@ describe('Project Edit, Copy, Sync', () => {
 
     it('can edit a project from the project details page', () => {
       cy.clickTableRowLink('name', project.name, { disableFilter: true });
-      cy.verifyPageTitle(project.name);
+      cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
       cy.clickButton(/^Edit project$/);
       cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
@@ -60,7 +60,7 @@ describe('Project Edit, Copy, Sync', () => {
         .its('response.body')
         .then((edited: Project) => {
           expect(edited.name).of.eql(`${project.name} - edited`);
-          cy.verifyPageTitle(`${project.name} - edited`);
+          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
           cy.clickButton(/^Edit project$/);
           cy.get('[data-cy="name"]').clear().type(`${project.name}`);
           cy.clickButton(/^Save project$/);
