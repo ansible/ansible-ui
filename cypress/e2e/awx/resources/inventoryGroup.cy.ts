@@ -69,7 +69,7 @@ describe('Inventory Groups', () => {
           cy.get('tbody tr').should('have.length', 1);
           cy.get('[data-cy="checkbox-column-cell"] input').click();
         });
-        cy.clickToolbarKebabAction('delete-selected-groups');
+        cy.clickToolbarKebabAction('delete-groups');
         cy.intercept('DELETE', awxAPI`/groups/*/`).as('deleted');
         cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
         cy.get('[data-cy="delete-group-modal-delete-button"]').click();
@@ -196,7 +196,7 @@ describe('Inventory Groups', () => {
         cy.get('tbody tr').should('have.length', 5);
         cy.getByDataCy('select-all').click();
         cy.intercept('DELETE', awxAPI`/groups/*/`).as('deleted');
-        cy.clickToolbarKebabAction('delete-selected-groups');
+        cy.clickToolbarKebabAction('delete-groups');
         cy.getModal().within(() => {
           cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
           cy.get('[data-cy="delete-group-modal-delete-button"]').click();
@@ -312,7 +312,7 @@ describe('Inventory Groups', () => {
         cy.filterTableByMultiSelect('name', [newRelatedGroup]);
         cy.selectTableRow(newRelatedGroup, false);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
-        cy.clickToolbarKebabAction('disassociate-selected-groups');
+        cy.clickToolbarKebabAction('disassociate-groups');
         cy.clickModalConfirmCheckbox();
         cy.clickButton(/^Disassociate groups/);
         cy.wait('@disassociateGroup')
@@ -372,7 +372,7 @@ describe('Inventory Groups', () => {
         cy.clickTab(/^Related Groups$/, true);
         cy.selectTableRow(newGroup, false);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
-        cy.clickToolbarKebabAction('disassociate-selected-groups');
+        cy.clickToolbarKebabAction('disassociate-groups');
         cy.clickModalConfirmCheckbox();
         cy.clickButton(/^Disassociate groups/);
         cy.wait('@disassociateGroup')
