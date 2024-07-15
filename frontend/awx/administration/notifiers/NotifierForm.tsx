@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
@@ -11,30 +12,24 @@ import {
   PageLayout,
   getPatternflyColor,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
+import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
+import { useGet } from '../../../common/crud/useGet';
+import { useOptions } from '../../../common/crud/useOptions';
+import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxError } from '../../common/AwxError';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
-
-import { awxAPI } from '../../common/api/awx-utils';
-import { useGet } from '../../../common/crud/useGet';
-import { AwxError } from '../../common/AwxError';
-import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-
-import { useOptions } from '../../../common/crud/useOptions';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { usePageNavigate } from '../../../../framework';
-
 import { InnerForm } from './NotifierFormInner';
-import { Trans } from 'react-i18next';
-import { NotifierFormMessages } from './NotifierFormMessages';
-import { areMessagesEmpty } from './NotifierFormMessages';
-import { useState } from 'react';
+import { NotifierFormMessages, areMessagesEmpty } from './NotifierFormMessages';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -153,7 +148,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
           fieldValue = fields[field];
           if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
             notification_configuration[field] = Number.parseInt(
-              notification_configuration[field] as string,
+              notification_configuration[field],
               10
             );
           }
