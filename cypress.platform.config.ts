@@ -25,6 +25,7 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/eda/Credentials/credential-type-crud.cy.ts',
   'cypress/e2e/awx/resources/inventoriesConstructed.cy.ts',
   'cypress/e2e/awx/administration/activity-stream.cy.ts',
+  'cypress/e2e/awx/administration/wfApprovalsList.cy.ts',
   'cypress/e2e/awx/resources/executionEnvironments.cy.ts',
   'cypress/e2e/platform/access-management/authenticators/google-oauth2.cy.ts',
   'cypress/e2e/awx/resources/inventoryHost/inventoryHostSmart.cy.ts',
