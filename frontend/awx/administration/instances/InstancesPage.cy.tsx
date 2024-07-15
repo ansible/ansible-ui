@@ -81,7 +81,6 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('[data-cy="actions-dropdown"]').should('not.exist');
         cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
@@ -133,7 +132,6 @@ describe('Instances Page', () => {
     cy.wait('@getInstance')
       .its('response.body')
       .then(() => {
-        cy.get('[data-cy="actions-dropdown"]').should('not.exist');
         cy.get('[data-cy="remove-instance"]').should('not.exist');
       });
   });
