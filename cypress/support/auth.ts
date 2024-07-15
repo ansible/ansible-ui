@@ -1,6 +1,7 @@
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
+import { gatewayV1API } from './formatApiPathForPlatform';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
   if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
@@ -92,10 +93,10 @@ Cypress.Commands.add('awxLogin', () => {
 });
 
 Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) => {
-  cy.awxLogout();
-  cy.requiredVariablesAreSet(['AWX_SERVER']);
+  cy.platformLogout();
+  cy.requiredVariablesAreSet(['PLATFORM_SERVER']);
   cy.session(
-    'AWX_TEST_USER',
+    'PLATFORM_TEST_USER',
     () => {
       window.localStorage.setItem('default-nav-expanded', 'true');
       window.localStorage.setItem('theme', 'light');
@@ -106,15 +107,21 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
         retryOnNetworkFailure: true,
       });
       cy.contains('Log in');
-      cy.wait(1000);
-      cy.get('#pf-login-username-id').type(username, { force: true, delay: 100 });
-      cy.get('#pf-login-password-id').type(password, { force: true, delay: 100 });
+      cy.wait(1); // Seems like sometimes when the page first comes up that the login form is not ready
+      cy.get('#pf-login-username-id').type(username, {
+        delay: 0,
+        force: true,
+      });
+      cy.get('#pf-login-password-id').type(password, {
+        delay: 0,
+        force: true,
+      });
       cy.contains('button', 'Log in').click();
-      cy.get('[data-cy="nav-toggle"]').should('exist');
+      cy.getByDataCy('nav-toggle').should('exist');
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: awxAPI`/me` });
+        cy.request({ method: 'GET', url: gatewayV1API`/me/` });
       },
       cacheAcrossSpecs: true,
     }
