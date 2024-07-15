@@ -31,7 +31,12 @@ export function useJobOutput(
   const [jobEventCount, setJobEventCount] = useState(1);
   const [jobEvents, setJobEvents] = useState<Record<number, JobEvent>>({});
 
-  const getJobOutputEvent = useCallback((counter: number) => jobEvents[counter + 1], [jobEvents]);
+  const getJobOutputEvent = useCallback(
+    (counter: number) => {
+      return jobEvents[counter];
+    },
+    [jobEvents]
+  );
 
   const isFiltered = Object.keys(filterState).length > 0;
   const isJobRunning = !job.status || runningJobTypes.includes(job.status);
