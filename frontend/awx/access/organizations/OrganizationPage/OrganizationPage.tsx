@@ -22,8 +22,8 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
+import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ export function OrganizationPage() {
     }
   });
 
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('organization');
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
       ...activityStream,

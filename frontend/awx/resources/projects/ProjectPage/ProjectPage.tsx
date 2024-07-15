@@ -13,6 +13,7 @@ import {
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -21,12 +22,11 @@ import { Organization } from '../../../interfaces/Organization';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useProjectActions } from '../hooks/useProjectActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('project');
   const {
     error: projectError,
     data: project,

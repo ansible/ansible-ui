@@ -5,14 +5,14 @@ import { useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { useGetItem, useGet } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { Job } from '../../../interfaces/Job';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useWorkflowApprovalsRowActions } from '../hooks/useWorkflowApprovalsRowActions';
-import { Job } from '../../../interfaces/Job';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function WorkflowApprovalPage() {
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ export function WorkflowApprovalPage() {
   );
 
   const getPageUrl = useGetPageUrl();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('workflow_approval');
   const actions = useWorkflowApprovalsRowActions(refresh);
 
   const error = workflowApprovalError || workflowJobError;

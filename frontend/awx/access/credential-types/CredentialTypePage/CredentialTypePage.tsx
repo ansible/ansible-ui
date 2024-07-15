@@ -16,12 +16,12 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
+import { useCredentialTypeRowActions } from '../hooks/useCredentialTypeActions';
 
 export function CredentialTypePage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('credential_type');
   const params = useParams<{ id: string }>();
   const {
     error,

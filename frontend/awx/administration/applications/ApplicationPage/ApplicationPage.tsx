@@ -11,16 +11,16 @@ import {
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Application } from '../../../interfaces/Application';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useApplicationActions } from '../hooks/useApplicationActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function ApplicationPage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('o_auth2_application');
   const params = useParams<{ id: string }>();
   const {
     error,
