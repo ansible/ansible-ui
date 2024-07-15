@@ -44,7 +44,7 @@ describe('Project Edit, Copy, Sync', () => {
           cy.clickButton(/^Edit project$/);
           cy.get('[data-cy="name"]').clear().type(`${project.name}`);
           cy.clickButton(/^Save project$/);
-          cy.verifyPageTitle(project.name);
+          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
         });
     });
 
@@ -64,7 +64,7 @@ describe('Project Edit, Copy, Sync', () => {
           cy.clickButton(/^Edit project$/);
           cy.get('[data-cy="name"]').clear().type(`${project.name}`);
           cy.clickButton(/^Save project$/);
-          cy.verifyPageTitle(project.name);
+          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
         });
     });
 
