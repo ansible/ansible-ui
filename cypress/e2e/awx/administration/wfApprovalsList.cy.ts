@@ -369,7 +369,7 @@ describe('Workflow Approvals Tests', () => {
     cy.getTableRow('name', workflowJobTemplate.name, { disableFilter: true }).should('be.visible');
     cy.selectTableRow(workflowJobTemplate.name, false);
     cy.getBy('[data-cy="edit-template"]').click();
-    cy.verifyPageTitle('Edit Workflow Job Template');
+    cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
     cy.getByDataCy('allow_simultaneous').click();
     cy.intercept('PATCH', awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`).as(
       'edited'
