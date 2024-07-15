@@ -162,7 +162,7 @@ describe('projects.cy.ts', () => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('a', 'Cancel selected projects')
+          .contains('a', 'Cancel projects')
           .click();
       });
       cy.get('.pf-v5-c-modal-box').within(() => {
@@ -189,7 +189,7 @@ describe('projects.cy.ts', () => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('a', 'Cancel selected projects')
+          .contains('a', 'Cancel projects')
           .click();
       });
       cy.get('.pf-v5-c-modal-box').within(() => {
