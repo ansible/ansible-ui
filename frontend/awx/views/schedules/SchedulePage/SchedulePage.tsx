@@ -1,6 +1,6 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
@@ -8,31 +8,36 @@ import { useAbortController } from '../../../../../framework/hooks/useAbortContr
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { requestGet } from '../../../../common/crud/Data';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { resourceEndPoints } from '../hooks/scheduleHelpers';
+import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { ScheduleResources, schedulePageUrl } from '../types';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
-import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
-
+import { INVENTORY_TYPE } from '../wizard/constants';
+/**
+ *
+ * @param {{label:string, page:string}[]} tab - The page property in the page id that comes from AwxRoute
+ * @param {{label: string; page: string; persistentFilterKey: string }} backTab
+ * @param {{ label?: string; id?: string; to: string }[]} initialBreadCrumbs- We use this prop to build our the urls and
+ * labels we need for the breadcrumbs
+ * @param {string} resourceEndPoint - This is a url that is used to fetch the resource to which the schedule belongs.
+ */
 export function SchedulePage(props: {
   tabs: { label: string; page: string }[];
   backTab: { label: string; page: string; persistentFilterKey: string };
   initialBreadCrumbs: { label?: string; id?: string; to: string }[];
+  resourceEndPoint: string;
 }) {
-  const viewActivityStreamAction = useViewActivityStream();
+  const viewActivityStreamAction = useViewActivityStream('schedule');
 
   const abortController = useAbortController();
   const [inventory, setInventory] = useState<Inventory | null>(null);
-  const { pathname } = useLocation();
-  const urlsplit = pathname.split('/');
-  const resourceType =
-    Object.keys(resourceEndPoints).find((route) => urlsplit.includes(route)) || '';
-  const isInventorySource = urlsplit.includes('sources');
+  const isInventorySource = props.initialBreadCrumbs.some(({ id }) => id === 'inventory_sources');
+
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; source_id?: string; schedule_id: string }>();
   const {
@@ -46,7 +51,7 @@ export function SchedulePage(props: {
     data: resource,
     refresh: resourceRefresh,
   } = useGetItem<ScheduleResources>(
-    `${resourceEndPoints[resourceType]}`,
+    `${props.resourceEndPoint}`,
     isInventorySource ? params.source_id : params.id
   );
   const getScheduleURL = useGetScheduleUrl();
@@ -76,13 +81,10 @@ export function SchedulePage(props: {
   }, [isInventorySource, params.id, abortController.signal]);
   const breadCrumbs = useMemo(() => {
     const completedBreadcrumbs = props.initialBreadCrumbs.map((route) => {
-      const isInventoryRoute = route.to.includes('-inventory-');
-      const inventoryType = 'inventory';
-
       const allParams = {
-        id: isInventoryRoute ? inventory?.id : resource?.id,
-        inventory_type: isInventoryRoute ? inventoryType : undefined,
-        source_id: isInventoryRoute ? resource?.id : undefined,
+        id: isInventorySource ? inventory?.id : resource?.id,
+        inventory_type: isInventorySource ? INVENTORY_TYPE : undefined,
+        source_id: isInventorySource ? resource?.id : undefined,
       };
 
       if (route.id === 'data') {
@@ -99,8 +101,8 @@ export function SchedulePage(props: {
           to: getPageUrl(route.to, {
             params: {
               id: inventory?.id,
-              inventory_type: isInventoryRoute ? inventoryType : undefined,
-              source_id: isInventoryRoute ? resource?.id : undefined,
+              inventory_type: isInventorySource ? INVENTORY_TYPE : undefined,
+              source_id: isInventorySource ? resource?.id : undefined,
             },
           }),
         };
@@ -120,7 +122,7 @@ export function SchedulePage(props: {
           to: getPageUrl(route.to, {
             params: {
               id: inventory?.id,
-              inventory_type: isInventoryRoute ? inventoryType : undefined,
+              inventory_type: isInventorySource ? INVENTORY_TYPE : undefined,
             },
           }),
         };
@@ -146,14 +148,7 @@ export function SchedulePage(props: {
     return <AwxError error={relevantError} handleRefresh={relevantRefresh} />;
   }
   if (!schedule || !resource) return <LoadingPage breadcrumbs tabs />;
-  const tabParams: { id: string; schedule_id: string; [key: string]: string } = {
-    id: schedule.summary_fields.unified_job_template.id.toString(),
-    schedule_id: schedule.id.toString(),
-  };
-  if (isInventorySource && params.source_id) {
-    tabParams.source_id = params.source_id;
-    tabParams.inventory_type = 'inventory';
-  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -167,7 +162,6 @@ export function SchedulePage(props: {
           />
         }
       />
-
       <PageRoutedTabs backTab={props.backTab} tabs={props.tabs} params={params} />
     </PageLayout>
   );

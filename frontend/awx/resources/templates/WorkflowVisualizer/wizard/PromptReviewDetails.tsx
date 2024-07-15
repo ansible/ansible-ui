@@ -6,7 +6,7 @@ import { PageDetail, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
-import { useGet } from '../../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
@@ -16,6 +16,7 @@ import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemp
 import type { WizardFormValues } from '../types';
 import type { Survey } from '../../../../interfaces/Survey';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
@@ -79,7 +80,6 @@ export function PromptReviewDetails() {
   } = usePageWizard() as {
     wizardData: PromptWizardFormValues;
   };
-  const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
 
   const {
     inventory,
@@ -99,6 +99,12 @@ export function PromptReviewDetails() {
     timeout,
     verbosity,
   } = prompt || {};
+
+  const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
+  const { data: ee } = useGetItem<ExecutionEnvironment>(
+    awxAPI`/execution_environments/`,
+    String(execution_environment)
+  );
 
   const jobTags = typeof job_tags === 'string' ? parseStringToTagArray(job_tags) : job_tags;
   const skipTags = typeof skip_tags === 'string' ? parseStringToTagArray(skip_tags) : skip_tags;
@@ -155,10 +161,10 @@ export function PromptReviewDetails() {
       <PageDetail label={t`Execution environment`} isEmpty={isEmpty(execution_environment)}>
         <Link
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: execution_environment?.id },
+            params: { id: execution_environment ? execution_environment.toString() : '' },
           })}
         >
-          {execution_environment?.name}
+          {ee?.name}
         </Link>
       </PageDetail>
       <PageDetail label={t('Source control branch')}>{scm_branch}</PageDetail>
@@ -225,7 +231,7 @@ export function CredentialDetail({ credentialID }: { credentialID: number }) {
   return <CredentialLabel credential={credentialData} key={credentialID} />;
 }
 
-function isEmpty(value: undefined | null | object[] | object): boolean {
+function isEmpty(value: undefined | null | object[] | object | number): boolean {
   if (value === undefined || value === null) {
     return true;
   }

@@ -13,13 +13,12 @@ import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
-import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
@@ -57,7 +56,7 @@ export interface TemplateLaunch {
   credentials: Credential[];
   credential_passwords: { [key: string]: string };
   instance_groups: InstanceGroup[];
-  execution_environment: ExecutionEnvironment;
+  execution_environment: number;
   diff_mode: boolean;
   extra_vars: string;
   forks: number;
@@ -185,7 +184,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         );
         setValue('credential_passwords', credential_passwords);
         setValue('diff_mode', diff_mode);
-        setValue('execution_environment', execution_environment?.id);
+        setValue('execution_environment', execution_environment);
         setValue('extra_vars', extra_vars);
         setValue('forks', forks);
         setValue(
@@ -325,11 +324,9 @@ export function LaunchWizard({
       id: 'execution-environment',
       label: t('Execution Environment'),
       inputs: (
-        <PageFormExecutionEnvironmentSelect<TemplateLaunch>
-          name="execution_environment.name"
-          executionEnvironmentPath="execution_environment"
-          executionEnvironmentIdPath="execution_environment.id"
-          organizationId={template.organization?.toString() ?? ''}
+        <PageFormSelectExecutionEnvironment<TemplateLaunch>
+          name="execution_environment"
+          organizationId={template.organization}
         />
       ),
       hidden: () => !template.ask_execution_environment_on_launch,
@@ -379,7 +376,7 @@ export function LaunchWizard({
     },
     'credential-passwords': {},
     'execution-environment': {
-      execution_environment: defaults.execution_environment,
+      execution_environment: defaults.execution_environment?.id,
     },
     'instance-groups': {
       instance_groups: defaults.instance_groups,

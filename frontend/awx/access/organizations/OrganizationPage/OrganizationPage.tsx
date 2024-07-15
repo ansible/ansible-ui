@@ -22,8 +22,8 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
+import { useDeleteOrganizations } from '../hooks/useDeleteOrganizations';
 
 export function OrganizationPage() {
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ export function OrganizationPage() {
     }
   });
 
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('organization');
   const itemActions: IPageAction<Organization>[] = useMemo(() => {
     const itemActions: IPageAction<Organization>[] = [
       ...activityStream,
@@ -111,7 +111,7 @@ export function OrganizationPageTabs(props: { organization: Organization }) {
         { label: t('Details'), page: AwxRoute.OrganizationDetails },
         { label: t('Users Access'), page: AwxRoute.OrganizationUsersAccess },
         { label: t('Teams Access'), page: AwxRoute.OrganizationTeamsAccess },
-        { label: t('Execution environments'), page: AwxRoute.OrganizationExecutionEnvironments },
+        { label: t('Execution Environments'), page: AwxRoute.OrganizationExecutionEnvironments },
         { label: t('Notifications'), page: AwxRoute.OrganizationNotifications },
       ]}
       params={{ id: organization.id }}

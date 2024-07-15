@@ -4,7 +4,6 @@ import { PageNavigationItem } from '../../../../framework';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { Schedules } from '../../views/schedules/Schedules';
 import { AwxRoute } from '../AwxRoutes';
-import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 
 export function useAwxSchedulesRoutes() {
   const { t } = useTranslation();
@@ -17,12 +16,7 @@ export function useAwxSchedulesRoutes() {
         {
           id: AwxRoute.CreateSchedule,
           path: 'create',
-          element: <ScheduleAddWizard />,
-        },
-        {
-          id: AwxRoute.EditSchedule,
-          path: ':schedule_id/edit',
-          element: <ScheduleEditWizard />,
+          element: <ScheduleAddWizard isTopLevelSchedule />,
         },
         {
           path: '',

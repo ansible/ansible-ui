@@ -60,18 +60,19 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.JobTemplateScheduleCreate,
               path: ':id/schedules/create',
-              element: <ScheduleAddWizard />,
+              element: <ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />,
             },
             {
               id: AwxRoute.JobTemplateScheduleEdit,
               path: ':id/schedules/:schedule_id/edit',
-              element: <ScheduleEditWizard />,
+              element: <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />,
             },
             {
               id: AwxRoute.JobTemplateSchedulePage,
               path: ':id/schedules/:schedule_id',
               element: (
                 <SchedulePage
+                  resourceEndPoint={awxAPI`/job_templates/`}
                   initialBreadCrumbs={[
                     { label: t('Templates'), to: AwxRoute.Templates },
                     { id: 'data', to: AwxRoute.JobTemplatePage },
@@ -146,7 +147,13 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.JobTemplateSchedules,
                   path: 'schedules',
-                  element: <SchedulesList sublistEndpoint={awxAPI`/job_templates`} />,
+                  element: (
+                    <SchedulesList
+                      createSchedulePageId={AwxRoute.JobTemplateScheduleCreate}
+                      resourceType="job-template"
+                      sublistEndpoint={awxAPI`/job_templates`}
+                    />
+                  ),
                 },
                 {
                   path: '',
@@ -187,18 +194,19 @@ export function useAwxTemplateRoutes() {
             {
               id: AwxRoute.WorkflowJobTemplateScheduleCreate,
               path: ':id/schedules/create',
-              element: <ScheduleAddWizard />,
+              element: <ScheduleAddWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateScheduleEdit,
               path: ':id/schedules/:schedule_id/edit',
-              element: <ScheduleEditWizard />,
+              element: <ScheduleEditWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />,
             },
             {
               id: AwxRoute.WorkflowJobTemplateSchedulePage,
               path: ':id/schedules/:schedule_id',
               element: (
                 <SchedulePage
+                  resourceEndPoint={awxAPI`/workflow_job_templates/`}
                   initialBreadCrumbs={[
                     { label: t('Templates'), to: AwxRoute.Templates },
                     { id: 'data', to: AwxRoute.WorkflowJobTemplatePage },
@@ -277,7 +285,13 @@ export function useAwxTemplateRoutes() {
                 {
                   id: AwxRoute.WorkflowJobTemplateSchedules,
                   path: 'schedules',
-                  element: <SchedulesList sublistEndpoint={awxAPI`/workflow_job_templates`} />,
+                  element: (
+                    <SchedulesList
+                      createSchedulePageId={AwxRoute.WorkflowJobTemplateScheduleCreate}
+                      resourceType="workflow-job-template"
+                      sublistEndpoint={awxAPI`/workflow_job_templates`}
+                    />
+                  ),
                 },
                 {
                   id: AwxRoute.WorkflowJobTemplateNotifications,

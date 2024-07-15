@@ -1,5 +1,5 @@
 import { Frequency, RRule } from 'rrule';
-
+export const INVENTORY_TYPE = 'inventory';
 export const RULES_DEFAULT_VALUES = {
   freq: Frequency.YEARLY,
   interval: 1,

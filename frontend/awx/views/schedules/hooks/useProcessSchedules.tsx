@@ -83,7 +83,7 @@ export const useProcessSchedule = () => {
         ...rest,
         ...restOfPrompt,
         inventory: inventory?.id,
-        execution_environment: execution_environment?.id,
+        execution_environment: execution_environment,
         skip_tags: hasSkipTags ? stringifyTags(prompt?.skip_tags) : undefined,
         job_tags: hasJobTags ? stringifyTags(job_tags) : undefined,
         enabled: enabled,

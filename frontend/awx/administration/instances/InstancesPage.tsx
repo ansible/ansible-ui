@@ -10,17 +10,17 @@ import {
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { useGet, useGetItem } from '../../../common/crud/useGet';
+import { useViewActivityStream } from '../../access/common/useViewActivityStream';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { Settings } from '../../interfaces/Settings';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useInstanceDetailsActions } from './hooks/useInstanceActions';
-import { useViewActivityStream } from '../../access/common/useViewActivityStream';
 
 export function InstancePage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('instance');
   const params = useParams<{ id: string }>();
   const { error, data: instance, refresh } = useGetItem<Instance>(awxAPI`/instances`, params.id);
   const { data } = useGet<Settings>(awxAPI`/settings/system/`);

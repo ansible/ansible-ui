@@ -7,19 +7,16 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetSchedulCreateUrl } from './scheduleHelpers';
 import { useDeleteSchedules } from './useDeleteSchedules';
 import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 
 export function useScheduleToolbarActions(
   onComplete: (schedules: Schedule[]) => void,
-  sublistEndPoint = awxAPI`/schedules/`,
+  createUrl: string,
   isMissingResource?: boolean
 ) {
-  const createUrl = useGetSchedulCreateUrl(sublistEndPoint);
-
   const { t } = useTranslation();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(sublistEndPoint);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
   const canCreateSchedule = Boolean(data && data.actions && data.actions['POST']);
 
   const deleteSchedules = useDeleteSchedules(onComplete);
@@ -48,7 +45,7 @@ export function useScheduleToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected schedules'),
+        label: t('Delete schedules'),
         onClick: deleteSchedules,
         isDisabled: (schedules) => cannotDeleteResources(schedules, t),
 

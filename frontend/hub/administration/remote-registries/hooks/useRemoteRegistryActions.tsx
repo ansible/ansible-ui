@@ -1,5 +1,5 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import { ListIcon, PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -69,6 +69,7 @@ export function useRemoteRegistryActions(options: {
         },
       },
       {
+        icon: ListIcon,
         label: t('Index execution environments'),
         onClick: (remoteRegistry) => {
           const alert: AlertProps = {

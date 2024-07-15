@@ -256,7 +256,7 @@ describe('Projects', () => {
       cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
         cy.get('input[aria-label="Select all rows"]').click();
       });
-      cy.clickToolbarKebabAction('delete-selected-schedules');
+      cy.clickToolbarKebabAction('delete-schedules');
       cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');
       cy.getModal().then(() => {
         cy.get('#confirm').click();

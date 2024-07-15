@@ -12,8 +12,8 @@ import { RulesList } from '../components/RulesList';
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
   job: AwxRoute.JobTemplateDetails,
-  project_update: AwxRoute.ProjectDetails,
-  system_job: AwxRoute.ManagementJobSchedules,
+  project: AwxRoute.ProjectDetails,
+  management_job_template: AwxRoute.ManagementJobSchedules,
   workflow_approval: AwxRoute.WorkflowApprovalDetails,
   workflow_job: AwxRoute.WorkflowJobTemplateDetails,
 };
@@ -38,7 +38,7 @@ export function ScheduleReviewStep() {
     rules,
   } = wizardData;
 
-  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
+  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'promptStep'));
   const resourceTypeDetail = useGetNodeTypeDetail(schedule_type);
 
   let resourceDetailsLink = getPageUrl(ResourceLink[schedule_type], {
@@ -83,7 +83,7 @@ export function ScheduleReviewStep() {
         <PageDetails numberOfColumns={'two'} disablePadding>
           <PageDetail label={t('Resource type')}>{resourceTypeDetail}</PageDetail>
           <PageDetail label={t('Resource')}>
-            <Link to={resourceDetailsLink}>{name}</Link>
+            <Link to={resourceDetailsLink}>{resource?.name}</Link>
           </PageDetail>
           <PageDetail label={t('Name')}>{name}</PageDetail>
           <PageDetail label={t('Description')}>{description}</PageDetail>

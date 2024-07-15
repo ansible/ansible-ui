@@ -41,7 +41,7 @@ describe('Remote Registry', () => {
       cy.get('[data-cy="table-view"]').click();
       cy.contains(remoteRegistry.name).should('be.visible');
       cy.get('#select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-remote-registries');
+      cy.clickToolbarKebabAction('delete-remote-registries');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remote registries$/);
       cy.contains(/^Success$/);
@@ -127,7 +127,7 @@ describe('Remote Registry', () => {
       cy.get('[data-cy="edit-remote-registry"]').click({ force: true });
       cy.url().should('include', `remote-registries/${remoteRegistryName}/edit`);
       cy.get('[data-cy="url"]').clear().type(RemoteRegistry.remoteURL);
-      cy.clickButton(/^Edit remote registry$/);
+      cy.clickButton(/^Save remote registry$/);
       cy.clickButton(/^Clear all filters$/);
       cy.filterTableBySingleText(remoteRegistryName);
       cy.contains('tr', remoteRegistryName).within(() => {

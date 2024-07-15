@@ -81,8 +81,8 @@ describe('Jobs', () => {
       cy.navigateTo('awx', 'jobs');
       cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
       cy.get('.pf-v5-c-dropdown__menu').within(() => {
-        cy.contains(/^Delete selected jobs$/).should('exist');
-        cy.contains(/^Cancel selected jobs$/).should('exist');
+        cy.contains(/^Delete jobs$/).should('exist');
+        cy.contains(/^Cancel jobs$/).should('exist');
       });
       cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
       const jobName = job.name ? job.name : '';
@@ -179,7 +179,7 @@ describe('Jobs', () => {
             cy.get('[data-cy="refresh"]').click();
             cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
             cy.selectTableRow(jobName, false);
-            cy.clickToolbarKebabAction('delete-selected-jobs');
+            cy.clickToolbarKebabAction('delete-jobs');
             cy.get('.pf-v5-c-modal-box__footer')
               .prev()
               .find('td[data-cy="status-column-cell"]')
