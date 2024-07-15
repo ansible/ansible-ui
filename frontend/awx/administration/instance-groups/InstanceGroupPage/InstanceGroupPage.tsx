@@ -11,16 +11,16 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInstanceGroupRowActions } from '../hooks/useInstanceGroupActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function InstanceGroupPage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('instance_group');
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const {

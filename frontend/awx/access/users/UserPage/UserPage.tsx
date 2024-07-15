@@ -22,8 +22,8 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { AwxUser } from '../../../interfaces/User';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useDeleteUsers } from '../hooks/useDeleteUsers';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
+import { useDeleteUsers } from '../hooks/useDeleteUsers';
 
 export function UserPage() {
   const { t } = useTranslation();
@@ -37,7 +37,7 @@ export function UserPage() {
       pageNavigate(AwxRoute.Users);
     }
   });
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('user');
   const itemActions: IPageAction<AwxUser>[] = useMemo(() => {
     const itemActions: IPageAction<AwxUser>[] = [
       ...activityStream,

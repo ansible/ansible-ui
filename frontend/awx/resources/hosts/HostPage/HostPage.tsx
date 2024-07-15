@@ -11,15 +11,15 @@ import {
 } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../hooks/useGetHost';
 import { useHostsActions } from '../hooks/useHostsActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function HostPage() {
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('host');
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();

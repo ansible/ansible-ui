@@ -8,15 +8,15 @@ import { useAbortController } from '../../../../../framework/hooks/useAbortContr
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { requestGet } from '../../../../common/crud/Data';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 import { useSchedulesActions } from '../hooks/useSchedulesActions';
 import { ScheduleResources, schedulePageUrl } from '../types';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
-import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 import { INVENTORY_TYPE } from '../wizard/constants';
 /**
  *
@@ -32,7 +32,7 @@ export function SchedulePage(props: {
   initialBreadCrumbs: { label?: string; id?: string; to: string }[];
   resourceEndPoint: string;
 }) {
-  const viewActivityStreamAction = useViewActivityStream();
+  const viewActivityStreamAction = useViewActivityStream('schedule');
 
   const abortController = useAbortController();
   const [inventory, setInventory] = useState<Inventory | null>(null);
