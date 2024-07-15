@@ -74,5 +74,5 @@ export interface RunCommandWizard {
   become_enabled: boolean;
   extra_vars: string;
   credential: number;
-  execution_environment: { name: string; id: string };
+  execution_environment: number;
 }
