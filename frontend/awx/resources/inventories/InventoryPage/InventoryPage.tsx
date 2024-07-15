@@ -13,6 +13,7 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -22,11 +23,10 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoryActions } from '../hooks/useInventoryActions';
 import { InventoryWithSource } from './InventoryDetails';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function InventoryPage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('inventory');
   const params = useParams<{ id: string; inventory_type: string }>();
 
   const urlType =

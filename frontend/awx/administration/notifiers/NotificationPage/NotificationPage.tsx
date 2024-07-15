@@ -13,18 +13,18 @@ import {
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useNotificationsWatch } from '../hooks/useNotificationsWatch';
 import { useNotifiersRowActions } from '../hooks/useNotifiersRowActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function NotificationPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('notification_template');
   const { runningNotifications, onNotifierStartTest, checkNotifiers } = useNotificationsWatch();
 
   // set refresh interval to be faster when test is running

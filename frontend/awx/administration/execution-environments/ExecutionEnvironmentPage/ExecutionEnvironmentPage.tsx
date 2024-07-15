@@ -10,11 +10,11 @@ import {
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useExecutionEnvRowActions } from '../hooks/useExecutionEnvRowActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function ExecutionEnvironmentPage() {
   const params = useParams<{ id: string }>();
@@ -32,7 +32,7 @@ export function ExecutionEnvironmentPage() {
     onCopy: (res: ExecutionEnvironment) =>
       pageNavigate(AwxRoute.ExecutionEnvironmentDetails, { params: { id: res.id } }),
   });
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream('execution_environment');
 
   return (
     <PageLayout>
