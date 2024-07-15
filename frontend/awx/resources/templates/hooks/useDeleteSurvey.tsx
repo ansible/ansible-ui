@@ -1,32 +1,26 @@
 import { useCallback } from 'react';
-import { useMatch } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useDeleteRequest } from '../../../../common/crud/useDeleteRequest';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import type { Spec, Survey } from '../../../interfaces/Survey';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 export function useDeleteSurvey(props: {
   onClose: () => void;
   onComplete: (questions: Spec[]) => void;
   onError: (err: unknown) => void;
+  id?: string;
+  templateType?: (JobTemplate | WorkflowJobTemplate)['type'];
 }) {
-  const { onClose, onComplete, onError } = props;
+  const { onClose, onComplete, onError, id, templateType } = props;
   const postRequest = usePostRequest();
   const deleteRequest = useDeleteRequest();
 
-  const jobTemplateSurveyId = useMatch(
-    '/templates/job-template/:id/survey'
-  )?.params?.id?.toString();
-  const workflowTemplateSurveyId = useMatch(
-    '/templates/workflow-job-template/:id/survey'
-  )?.params?.id?.toString();
-
-  const surveySpecEndpoint = jobTemplateSurveyId
-    ? awxAPI`/job_templates/${jobTemplateSurveyId}/survey_spec/`
-    : workflowTemplateSurveyId
-      ? awxAPI`/workflow_job_templates/${workflowTemplateSurveyId}/survey_spec/`
-      : '';
+  const surveySpecEndpoint = id
+    ? awxAPI`/${templateType === 'job_template' ? 'job_templates' : 'workflow_job_templates'}/${id}/survey_spec/`
+    : '';
 
   const { data } = useGet<Survey>(surveySpecEndpoint);
 
