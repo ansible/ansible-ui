@@ -16,6 +16,8 @@ import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEd
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { Survey } from '../../../../interfaces/Survey';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
+import { Inventory } from '../../../../interfaces/Inventory';
+import { ConditionalField } from './ConditionalField';
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   if (!template) return '';
@@ -72,30 +74,33 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { wizardData } = usePageWizard();
   const getPageUrl = useGetPageUrl();
   const {
-    inventory,
-    credentials,
-    instance_groups,
-    execution_environment,
-    diff_mode,
-    scm_branch,
-    extra_vars,
-    forks,
-    job_slice_count,
-    job_tags,
-    job_type,
-    labels,
-    limit,
-    skip_tags,
-    timeout,
-    verbosity,
+    prompt: {
+      inventory,
+      credentials,
+      instance_groups,
+      execution_environment,
+      diff_mode,
+      scm_branch,
+      extra_vars,
+      forks,
+      job_slice_count,
+      job_tags,
+      job_type,
+      labels,
+      limit,
+      skip_tags,
+      timeout,
+      verbosity,
+    },
     survey,
   } = wizardData as TemplateLaunch;
   const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
 
   const { data: ee } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
-    execution_environment
+    execution_environment ?? ''
   );
+  const { data: fullInventory } = useGetItem<Inventory>(awxAPI`/inventories/`, inventory?.id ?? '');
 
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
@@ -111,7 +116,6 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
     smart: 'smart_inventory',
     constructed: 'constructed_inventory',
   };
-
   return (
     <PageDetails numberOfColumns="multiple">
       <PageDetail label={t('Name')}>{template.name}</PageDetail>
@@ -125,15 +129,20 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           {template.summary_fields?.organization?.name}
         </Link>
       </PageDetail>
-      <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
-        <Link
-          to={getPageUrl(AwxRoute.InventoryDetails, {
-            params: { id: inventory?.id, inventory_type: inventoryUrlPaths[inventory?.kind] },
-          })}
-        >
-          {inventory?.name}
-        </Link>
-      </PageDetail>
+      <ConditionalField isHidden={!fullInventory}>
+        <PageDetail label={t`Inventory`} isEmpty={!fullInventory?.id}>
+          <Link
+            to={getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                id: fullInventory?.id,
+                inventory_type: inventoryUrlPaths[fullInventory?.kind as string],
+              },
+            })}
+          >
+            {inventory?.name}
+          </Link>
+        </PageDetail>
+      </ConditionalField>
       {template.type === 'job_template' && (
         <PageDetail label={t`Project`} isEmpty={!template.summary_fields.project}>
           <Link
