@@ -26,7 +26,7 @@ describe('Project Delete', () => {
 
   it('can get to the project delete dialog from the list toolbar', () => {
     cy.selectTableRowByCheckbox('name', `${project.name}`, { disableFilter: true });
-    cy.clickToolbarKebabAction('delete-selected-projects');
+    cy.clickToolbarKebabAction('delete-projects');
     expect(cy.getModal().contains('Permanently delete projects'));
     expect(cy.getModal().contains(project.name));
     cy.clickButton(/^Cancel$/);

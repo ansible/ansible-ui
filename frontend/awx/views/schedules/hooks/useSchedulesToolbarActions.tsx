@@ -45,7 +45,7 @@ export function useScheduleToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected schedules'),
+        label: t('Delete schedules'),
         onClick: deleteSchedules,
         isDisabled: (schedules) => cannotDeleteResources(schedules, t),
 

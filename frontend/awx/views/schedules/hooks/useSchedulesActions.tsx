@@ -16,6 +16,7 @@ import { Schedule } from '../../../interfaces/Schedule';
 import { useGetScheduleUrl } from './useGetScheduleUrl';
 import { useDeleteSchedules } from './useDeleteSchedules';
 import { schedulePageUrl } from '../types';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useSchedulesActions(options: {
   onScheduleDeleteCompleted: (schedules: Schedule[]) => void;
@@ -67,6 +68,7 @@ export function useSchedulesActions(options: {
         type: PageActionType.Link,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t(`Edit schedule`),
         isDisabled: (schedule) => cannotEditResource(schedule, t, canCreateSchedule),
         href: (schedule) => editHref(schedule),
