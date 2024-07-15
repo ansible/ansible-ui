@@ -68,7 +68,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
         jobOutputRows.push(row);
       }
     }
-    for (let counter = 0; counter < jobEventCount; counter++) {
+    for (let counter = 1; counter <= jobEventCount; counter++) {
       const jobEvent = getJobOutputEvent(counter);
       if (!jobEvent) jobOutputRows.push(counter);
       else
@@ -143,7 +143,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const visibleHostCounter = typeof visibleHost === 'object' && visibleHost.counter;
 
   const selectedRowHostData = visibleHostCounter
-    ? getJobOutputEvent(visibleHostCounter - 1)
+    ? getJobOutputEvent(visibleHostCounter)
     : undefined;
 
   const isHostModalOpen =

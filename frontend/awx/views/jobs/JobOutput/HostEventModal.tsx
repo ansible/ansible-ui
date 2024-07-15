@@ -96,14 +96,14 @@ export function HostEventModal(props: {
         </Tab>
         <Tab
           eventKey={1}
-          title={<TabTitleText>{t`JSON`}</TabTitleText>}
-          aria-label={t`JSON tab`}
-          ouiaId="json-tab"
+          title={<TabTitleText>{t`Data`}</TabTitleText>}
+          aria-label={t`Data tab`}
+          ouiaId="data-tab"
         >
           {activeTabKey === 1 && jsonObj ? (
             <PageDetailCodeEditor showCopyToClipboard value={JSON.stringify(jsonObj, null, 2)} />
           ) : (
-            <EmptyStateNoData description={t('There is no JSON')} title={t`No JSON Available`} />
+            <EmptyStateNoData description={t('There is no data')} title={t`No Data Available`} />
           )}
         </Tab>
         {stdOut?.length ? (
