@@ -189,7 +189,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         setValue('forks', forks);
         setValue(
           'instance_groups',
-          instance_groups.map(({ id }) => id)
+          instance_groups?.map(({ id }) => id)
         );
         setValue('inventory', inventory?.id);
         setValue('job_slice_count', job_slice_count);
