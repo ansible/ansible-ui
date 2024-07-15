@@ -23,7 +23,7 @@ describe('InventorySources.cy.ts', () => {
       .then((results: InventorySource[]) => {
         const source = results[0];
         cy.selectTableRow(source.name, false);
-        cy.clickToolbarKebabAction('delete-selected-sources');
+        cy.clickToolbarKebabAction('delete-sources');
         cy.contains('Permanently delete source').should('be.visible');
       });
   });

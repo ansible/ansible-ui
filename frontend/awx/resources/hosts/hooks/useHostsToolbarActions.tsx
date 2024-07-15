@@ -46,7 +46,7 @@ export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.secondary,
         isPinned: true,
-        label: t('Smart Inventory'),
+        label: t('Smart inventory'),
         isDisabled: () =>
           view?.filterState && Object.keys(view.filterState).length !== 0
             ? ''
@@ -61,7 +61,7 @@ export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected hosts'),
+        label: t('Delete hosts'),
         onClick: deleteHosts,
         isDanger: true,
         isDisabled: (hosts: AwxHost[]) => cannotDeleteResources(hosts, t),

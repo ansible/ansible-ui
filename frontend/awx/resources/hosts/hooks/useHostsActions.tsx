@@ -14,6 +14,7 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { useDeleteHosts } from './useDeleteHosts';
 import { useParams } from 'react-router-dom';
 import { requestPatch } from '../../../../common/crud/Data';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useHostsActions(
   onDelete: (host: AwxHost[]) => void,
@@ -59,6 +60,7 @@ export function useHostsActions(
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit host'),
         onClick: (host) => {
           if (params.id && params.inventory_type) {

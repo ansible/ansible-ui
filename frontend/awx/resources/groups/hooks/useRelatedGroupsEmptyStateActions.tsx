@@ -18,6 +18,7 @@ import { GroupSelectDialog } from './useGroupSelectDialog';
 import { postRequest } from '../../../../common/crud/Data';
 import { ButtonVariant } from '@patternfly/react-core';
 import { IAwxView } from '../../../common/useAwxView';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>) {
   const [_, setDialog] = usePageDialog();
@@ -63,7 +64,8 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        label: t('Existing group'),
+        icon: PlusCircleIcon,
+        label: t('Add existing group'),
         isPinned: true,
         onClick: () =>
           setDialog(
@@ -77,7 +79,8 @@ export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>
         type: PageActionType.Button,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
-        label: t('New group'),
+        icon: PlusCircleIcon,
+        label: t('Create group'),
         isPinned: true,
         onClick: () =>
           pageNavigate(String(AwxRoute.InventoryGroupRelatedGroupsCreate), {

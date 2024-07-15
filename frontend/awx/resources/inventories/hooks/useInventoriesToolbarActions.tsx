@@ -64,7 +64,7 @@ export function useInventoriesToolbarActions(view: IAwxView<Inventory>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected inventories'),
+        label: t('Delete inventories'),
         onClick: deleteInventories,
         isDanger: true,
       },
