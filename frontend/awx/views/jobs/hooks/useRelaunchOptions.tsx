@@ -16,7 +16,7 @@ export function useRelaunchOptions(): IPageAction<UnifiedJob>[] {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.secondary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: RocketIcon,
         label: t(`Relaunch job`),
