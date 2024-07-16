@@ -78,7 +78,7 @@ describe('Schedules - Create and Delete', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
-      cy.verifyPageTitle('Create Schedule');
+      cy.verifyPageTitle('Create schedule');
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
       cy.getByDataCy('name').type(`${scheduleName}`);
