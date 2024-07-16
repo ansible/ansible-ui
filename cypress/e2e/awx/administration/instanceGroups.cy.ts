@@ -587,7 +587,7 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
-      cy.clickTab(/^Team access$/, true);
+      cy.clickTab(/^Team Access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
         /^There are currently no teams assigned to this instance group./
       );
@@ -674,7 +674,7 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
-      cy.clickTab(/^Team access$/, true);
+      cy.clickTab(/^Team Access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
         /^There are currently no teams assigned to this instance group./
       );
@@ -796,7 +796,7 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
-      cy.clickTab(/^User access$/, true);
+      cy.clickTab(/^User Access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
         /^There are currently no users assigned to this instance group./
       );
@@ -877,7 +877,7 @@ describe(`Instance Groups`, () => {
         expect(currentUrl.includes('details')).to.be.true;
         expect(currentUrl.includes(`infrastructure/instance-groups`)).to.be.true;
       });
-      cy.clickTab(/^User access$/, true);
+      cy.clickTab(/^User Access$/, true);
       cy.get('.pf-v5-c-empty-state__title-text').contains(
         /^There are currently no users assigned to this instance group./
       );
