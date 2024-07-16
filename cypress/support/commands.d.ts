@@ -1678,7 +1678,7 @@ declare global {
        * @param scope
        * `cy.createPlatformToken(platformApplication.id, 'write')`
        */
-      createPlatformToken(oAuthAppId: number, scope: 'read' | 'write'): Chainable<Token>;
+      createPlatformToken(aapToken?: Partial<Token>): Chainable<Token>;
       /**
        * This command returns the current Platform User
        */
