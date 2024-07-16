@@ -15,8 +15,9 @@ import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-function ControllerTokenInputs() {
+function ControllerTokenInputs(props: { tokenPlaceHolder?: string }) {
   const { t } = useTranslation();
+  const { tokenPlaceHolder } = props;
   return (
     <>
       <PageFormTextInput<EdaControllerTokenCreate>
@@ -37,13 +38,19 @@ function ControllerTokenInputs() {
         label={t('Token')}
         isRequired
         maxLength={150}
-        placeholder={t('Enter controller token')}
+        placeholder={tokenPlaceHolder ?? t('Enter controller token')}
       />
     </>
   );
 }
 
-export function CreateControllerToken() {
+export function CreateControllerToken(props: {
+  breadCrumbTitle?: string;
+  pageTitle?: string;
+  tokenPlaceHolder?: string;
+  submitText?: string;
+}) {
+  const { breadCrumbTitle, pageTitle, tokenPlaceHolder, submitText } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
@@ -68,7 +75,7 @@ export function CreateControllerToken() {
         : getPageUrl(EdaRoute.MyPage, { params: { id: activeEdaUser?.id } }),
     },
     {
-      label: t('Controller tokens'),
+      label: breadCrumbTitle ?? t('Controller tokens'),
       to: canViewUsers
         ? getPageUrl(EdaRoute.UserTokens, { params: { id: activeEdaUser?.id } })
         : getPageUrl(EdaRoute.MyTokens, { params: { id: activeEdaUser?.id } }),
@@ -78,14 +85,14 @@ export function CreateControllerToken() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Create Controller Token')} breadcrumbs={breadcrumbs} />
+      <PageHeader title={pageTitle ?? t('Create Controller Token')} breadcrumbs={breadcrumbs} />
       <EdaPageForm
-        submitText={t('Create controller token')}
+        submitText={submitText ?? t('Create controller token')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
-        <ControllerTokenInputs />
+        <ControllerTokenInputs tokenPlaceHolder={tokenPlaceHolder} />
       </EdaPageForm>
     </PageLayout>
   );
