@@ -276,7 +276,7 @@ describe('Execution Environments', () => {
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 5);
       cy.getByDataCy('select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-execution-environments');
+      cy.clickToolbarKebabAction('delete-execution-environments');
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/execution_environments/*/`).as('deleteEE');
       cy.clickModalButton('Delete execution environments');
