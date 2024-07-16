@@ -47,10 +47,10 @@ export function CreateApplication(props: { onSuccessfulCreate: (app: Application
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Application')}
+        title={t('Create OAuth application')}
         breadcrumbs={[
-          { label: t('Applications'), to: getPageUrl(AwxRoute.Applications) },
-          { label: t('Create Application') },
+          { label: t('OAuth Applications'), to: getPageUrl(AwxRoute.Applications) },
+          { label: t('Create OAuth application') },
         ]}
       />
       <AwxPageForm
@@ -118,10 +118,18 @@ export function EditApplication() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Application')}
+        title={
+          application?.name
+            ? t('Edit {{applicationName}}', { applicationName: application?.name })
+            : t('OAuth Application')
+        }
         breadcrumbs={[
-          { label: t('Applications'), to: getPageUrl(AwxRoute.Applications) },
-          { label: t('Edit Application') },
+          { label: t('OAuth Applications'), to: getPageUrl(AwxRoute.Applications) },
+          {
+            label: application?.name
+              ? t('Edit {{applicationName}}', { applicationName: application?.name })
+              : t('OAuth Application'),
+          },
         ]}
       />
       <AwxPageForm<Application>
