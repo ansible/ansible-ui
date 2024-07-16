@@ -107,31 +107,10 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
   if (!config || !template) return <LoadingPage breadcrumbs tabs />;
   const handleSubmit = async (formValues: TemplateLaunch) => {
     if (formValues) {
-      const {
-        credential_passwords = {},
-        prompt: {
-          inventory,
-          credentials,
-          instance_groups,
-          execution_environment,
-          diff_mode,
-          scm_branch,
-          extra_vars,
-          forks,
-          job_slice_count,
-          job_tags,
-          job_type,
-          labels,
-          limit,
-          skip_tags,
-          timeout,
-          verbosity,
-        },
-        survey,
-      } = formValues;
+      const { credential_passwords = {}, prompt = undefined, survey } = formValues;
 
       try {
-        const labelPayload = await createLabelPayload(labels || [], template);
+        const labelPayload = await createLabelPayload(prompt?.labels || [], template);
 
         let payload: Partial<LaunchPayload> = {};
         const setValue = <K extends LaunchPayloadProperty>(key: K, value: LaunchPayload[K]) => {
@@ -152,36 +131,39 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
           payload[key] = value;
         };
-
-        setValue(
-          'credentials',
-          credentials?.map((cred) => Number(cred.id))
-        );
-        setValue('credential_passwords', credential_passwords);
-        setValue('diff_mode', diff_mode);
-        execution_environment && setValue('execution_environment', execution_environment);
-        setValue('extra_vars', extra_vars);
-        setValue('forks', forks);
-        setValue(
-          'instance_groups',
-          instance_groups?.map(({ id }) => id)
-        );
-        inventory?.id && setValue('inventory', inventory?.id);
-        setValue('job_slice_count', job_slice_count);
-        setValue('job_tags', job_tags?.map((tag) => tag.name).join(','));
-        setValue('job_type', job_type);
-        setValue('limit', limit);
-        setValue('scm_branch', scm_branch);
-        setValue('skip_tags', skip_tags?.map((tag) => tag.name).join(','));
-        setValue('timeout', timeout);
-        setValue('verbosity', verbosity);
-
+        if (prompt !== undefined) {
+          setValue(
+            'credentials',
+            (prompt?.credentials || []).map((cred) => Number(cred.id))
+          );
+          setValue('credential_passwords', credential_passwords);
+          setValue('diff_mode', prompt.diff_mode);
+          prompt?.execution_environment &&
+            setValue('execution_environment', prompt.execution_environment);
+          setValue('extra_vars', prompt?.extra_vars);
+          setValue('forks', prompt?.forks);
+          setValue(
+            'instance_groups',
+            prompt.instance_groups?.map(({ id }) => id)
+          );
+          prompt.inventory?.id && setValue('inventory', prompt.inventory?.id);
+          setValue('job_slice_count', prompt.job_slice_count);
+          setValue('job_tags', prompt.job_tags?.map((tag) => tag.name).join(','));
+          setValue('job_type', prompt.job_type);
+          setValue('limit', prompt.limit);
+          setValue('scm_branch', prompt.scm_branch);
+          setValue('skip_tags', prompt.skip_tags?.map((tag) => tag.name).join(','));
+          setValue('timeout', prompt.timeout);
+          setValue('verbosity', prompt.verbosity);
+        }
         if (labelPayload.length > 0) {
           setValue('labels', labelPayload);
         }
 
         if (config.survey_enabled && jobType === 'job_templates') {
-          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          const extraVarsObj = prompt?.extra_vars
+            ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
+            : {};
           setValue('extra_vars', {
             ...extraVarsObj,
             ...survey,
@@ -189,7 +171,9 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         }
 
         if (jobType === 'workflow_job_templates') {
-          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          const extraVarsObj = prompt?.extra_vars
+            ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
+            : {};
 
           payload = {
             ...payload,
