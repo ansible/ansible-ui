@@ -5,6 +5,7 @@ import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/Execut
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { randomString } from '../../../../framework/utils/random-string';
+import { runCommand } from './inventoryHost/runCommandFunction';
 
 describe('Inventory Groups', () => {
   let organization: Organization;
@@ -119,54 +120,16 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(inventory.name);
         cy.clickTab(/^Groups$/, true);
         cy.clickKebabAction('actions-dropdown', 'run-command');
-        cy.selectDropdownOptionByResourceName('module-name', 'shell');
-        cy.getByDataCy('module-args-form-group').type('argument');
-        cy.selectDropdownOptionByResourceName('verbosity', '1 (Verbose)');
-        cy.getByDataCy('limit-form-group').within(() => {
-          cy.get('input').clear().type('limit');
+
+        runCommand({
+          selections: 'all',
+          module: 'shell',
+          verbosity: '0-(normal)',
+          forks: 2,
+          show_changes: true,
+          become_enabled: true,
+          organization,
         });
-        cy.getByDataCy('forks-form-group').within(() => {
-          cy.get('input').clear().type('1');
-        });
-        cy.getByDataCy('diff-mode-form-group').within(() => {
-          cy.get('.pf-v5-c-form__group-control > label').click();
-        });
-        cy.getByDataCy('become_enabled').click();
-        cy.clickButton(/^Next$/);
-        cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
-        cy.clickButton(/^Next$/);
-        cy.singleSelectByDataCy('credential', machineCredential.name);
-        cy.clickButton(/^Next$/);
-        cy.getByDataCy('module').should('contain', 'shell');
-        cy.getByDataCy('arguments').should('contain', 'argument');
-        cy.getByDataCy('verbosity').should('contain', '1');
-        cy.getByDataCy('limit').should('contain', 'limit');
-        cy.getByDataCy('forks').should('contain', '1');
-        cy.getByDataCy('show-changes').should('contain', 'On');
-        cy.getByDataCy('privilege-escalation').should('contain', 'On');
-        cy.getByDataCy('credentials').should('contain', machineCredential.name);
-        cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
-        cy.get('[data-cy="Submit"]').click();
-        cy.verifyPageTitle('shell');
-        cy.url().then((currentUrl) => {
-          expect(currentUrl.includes('/jobs/command/')).to.be.true;
-          expect(currentUrl.includes('output')).to.be.true;
-        });
-        cy.getByDataCy('Output').should('exist');
-        cy.clickTab(/^Details$/, true);
-        cy.getByDataCy('type').should('contain', 'Command');
-        cy.getByDataCy('inventory').should('contain', inventory.name);
-        cy.getByDataCy('inventory').within(() => {
-          cy.get('a').click();
-        });
-        cy.verifyPageTitle(inventory.name);
-        cy.url().then((currentUrl) => {
-          expect(currentUrl.includes(`/infrastructure/inventories/inventory/${inventory.id}/`)).to
-            .be.true;
-        });
-        cy.clickTab(/^Jobs$/, true);
-        cy.clickTableRowLink('name', 'shell', { disableFilter: true });
-        cy.getByDataCy('inventory').should('contain', inventory.name);
       });
     });
 
@@ -205,7 +168,7 @@ describe('Inventory Groups', () => {
   });
 
   describe('Inventory Groups - Details View', () => {
-    it.skip('can create a group, assert info on details page, then delete group from the details page', () => {
+    it('can create a group, assert info on details page, then delete group from the details page', () => {
       cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
         const newGroupName = 'E2E Group ' + randomString(4);
@@ -377,16 +340,17 @@ describe('Inventory Groups', () => {
       });
     });
 
-    it.skip("can run an ad-hoc command against a group's related group list view", () => {
-      // TODO: run command is not currently working for related groups.
-      // https://issues.redhat.com/browse/AAP-24634
-
+    it("can run an ad-hoc command against a group's related group list view", () => {
       cy.createInventoryHostGroup(organization).then((result) => {
         const { inventory, group } = result;
         const newRelatedGroup = 'New test group' + randomString(4);
 
         cy.navigateTo('awx', 'inventories');
         cy.verifyPageTitle('Inventories');
+
+        cy.filterTableByMultiSelect('name', [inventory.name]);
+        cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickTab(/^Groups$/, true);
@@ -402,19 +366,16 @@ describe('Inventory Groups', () => {
         cy.selectTableRow(newRelatedGroup, false);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
         cy.clickToolbarKebabAction('run-command');
-        cy.clickKebabAction('actions-dropdown', 'run-command');
-        cy.selectDropdownOptionByResourceName('module-name', 'shell');
-        cy.clickModalConfirmCheckbox();
-        cy.clickButton(/^Disassociate groups/);
-        cy.wait('@disassociateGroup')
-          .its('response.statusCode')
-          .then((statusCode) => {
-            expect(statusCode).to.eql(204);
-          });
-        cy.assertModalSuccess();
-        cy.clickModalButton(/^Close/);
-        cy.clickButton(/^Clear all filters$/);
-        cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+
+        runCommand({
+          selections: newRelatedGroup,
+          module: 'shell',
+          verbosity: '0-(normal)',
+          forks: 2,
+          show_changes: true,
+          become_enabled: true,
+          organization,
+        });
       });
     });
   });
@@ -497,54 +458,23 @@ describe('Inventory Groups', () => {
       cy.filterTableBySingleSelect('name', thisHost.name + '-edited');
     });
 
-    it.skip("can run an ad-hoc command against a group's host", () => {
+    it("can run an ad-hoc command against a group's host", () => {
       //unskip this test when below issue is resolved
       cy.filterTableBySingleSelect('name', thisInventory.name);
       cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
       cy.verifyPageTitle(thisInventory.name);
       cy.clickTab(/^Hosts$/, true);
       cy.clickKebabAction('actions-dropdown', 'run-command');
-      cy.selectDropdownOptionByResourceName('module-name', 'shell');
-      cy.getByDataCy('module-args-form-group').type('argument');
-      cy.selectDropdownOptionByResourceName('verbosity', '1 (Verbose)');
-      cy.getByDataCy('limit-form-group').within(() => {
-        cy.get('input').clear().type('limit');
+
+      runCommand({
+        selections: 'all',
+        module: 'shell',
+        verbosity: '0-(normal)',
+        forks: 2,
+        show_changes: true,
+        become_enabled: true,
+        organization,
       });
-      cy.getByDataCy('forks-form-group').within(() => {
-        cy.get('input').clear().type('1');
-      });
-      cy.getByDataCy('diff-mode-form-group').within(() => {
-        cy.get('.pf-v5-c-form__group-control > label').click();
-      });
-      cy.getByDataCy('become_enabled').click();
-      cy.clickButton(/^Next$/);
-      cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
-      cy.clickButton(/^Next$/);
-      cy.getByDataCy('credential-select-form-group').within(() => {
-        cy.getBy('[aria-label="Options menu"]').click();
-      });
-      cy.get('[data-ouia-component-id="lookup-credential.name-button"]').click();
-      cy.getModal().within(() => {
-        cy.selectTableRowByCheckbox('name', machineCredential.name);
-        cy.clickButton(/^Confirm$/);
-      });
-      cy.clickButton(/^Next$/);
-      cy.getByDataCy('module').should('contain', 'shell');
-      cy.getByDataCy('arguments').should('contain', 'argument');
-      cy.getByDataCy('verbosity').should('contain', '1');
-      cy.getByDataCy('limit').should('contain', 'limit');
-      cy.getByDataCy('forks').should('contain', '1');
-      cy.getByDataCy('show-changes').should('contain', 'On');
-      cy.getByDataCy('privilege-escalation').should('contain', 'On');
-      cy.getByDataCy('credentials').should('contain', machineCredential.name);
-      cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
-      cy.get('[data-cy="Submit"]').click();
-      cy.verifyPageTitle('shell');
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('/jobs/command/')).to.be.true;
-        expect(currentUrl.includes('output')).to.be.true;
-      });
-      cy.getByDataCy('Output').should('exist');
     });
   });
 });
