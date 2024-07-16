@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
-import { PageSettings } from '../../../framework/PageSettings/PageSettings';
+import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
 import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
+import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { AwxSettings } from '../administration/settings/AwxSettings';
 import { AwxSettingsCategoryDetailsPage } from '../administration/settings/AwxSettingsCategoryDetails';
 import {
@@ -36,7 +38,6 @@ import { useAwxSchedulesRoutes } from './routes/useAwxSchedulesRoutes';
 import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
-import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 
 export function useAwxNavigation() {
@@ -223,7 +224,16 @@ export function useAwxNavigation() {
           id: AwxRoute.SettingsPreferences,
           label: t('User Preferences'),
           path: 'preferences',
-          element: <PageSettings />,
+          children: [
+            {
+              path: 'edit',
+              element: <PageSettingsForm />,
+            },
+            {
+              path: '',
+              element: <PageSettingsDetails />,
+            },
+          ],
         },
         {
           id: AwxRoute.SettingsSystem,

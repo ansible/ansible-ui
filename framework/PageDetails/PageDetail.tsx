@@ -4,6 +4,7 @@ import {
   DescriptionListTerm,
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
+import styled from 'styled-components';
 import { StandardPopover } from '../components/StandardPopover';
 import { useID } from '../hooks/useID';
 
@@ -31,9 +32,13 @@ export function PageDetail(props: {
           {helpText ? <StandardPopover header={label} content={helpText} /> : null}
         </DescriptionListTerm>
       )}
-      <DescriptionListDescription id={id} data-cy={id}>
+      <DescriptionListDescriptionStyled id={id} data-cy={id}>
         {children}
-      </DescriptionListDescription>
+      </DescriptionListDescriptionStyled>
     </DescriptionListGroup>
   );
 }
+
+const DescriptionListDescriptionStyled = styled(DescriptionListDescription)`
+  opacity: 0.8;
+`;
