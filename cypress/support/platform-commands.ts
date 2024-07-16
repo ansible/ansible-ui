@@ -391,12 +391,9 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('createPlatformToken', (oAuthAppId: number, scope: 'read' | 'write') => {
+Cypress.Commands.add('createPlatformToken', (aapToken?: Partial<Token>) => {
   const url = gatewayV1API`/tokens/`;
-  const body = {
-    application: oAuthAppId,
-    scope: scope,
-  };
+  const body = { ...aapToken };
 
   return cy.requestPost<Token>(url, body);
 });
