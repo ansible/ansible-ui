@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageFormSingleSelect } from '../PageForm/Inputs/PageFormSingleSelect';
+import { PageFormSelect } from '../PageForm/Inputs/PageFormSelect';
 import { PageForm } from '../PageForm/PageForm';
 import { PageHeader } from '../PageHeader';
 import { PageLayout } from '../PageLayout';
@@ -27,13 +27,7 @@ export function PageSettingsForm() {
       <PageHeader title={t('User Preferences')} titleHelp={t('Per user preferences.')} />
       <PageForm<IPageSettings>
         defaultValue={{
-          refreshInterval: 30,
-          theme: 'system',
-          tableLayout: 'comfortable',
-          formColumns: 'multiple',
-          formLayout: 'vertical',
-          dateFormat: 'date-time',
-          dataEditorFormat: 'yaml',
+          ...options.reduce((acc, option) => ({ ...acc, [option.name]: option.defaultValue }), {}),
           ...settings,
         }}
         submitText={t('Save user preferences')}
@@ -41,14 +35,17 @@ export function PageSettingsForm() {
         onSubmit={onSubmit}
       >
         {options.map((option) => (
-          <PageFormSingleSelect
+          <PageFormSelect
             name={option.name}
             key={option.name}
             label={option.label}
-            placeholder={t('Select {{label}}', { label: option.label })}
+            placeholderText={t('Select {{label}}', { label: option.label })}
             options={option.options}
             labelHelp={option.helpText}
             isRequired
+            enableUndo
+            enableReset
+            defaultValue={option.defaultValue}
           />
         ))}
       </PageForm>

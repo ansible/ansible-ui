@@ -6,6 +6,7 @@ export interface IPageSettingsOption {
   label: string;
   helpText: string;
   options: PageSelectOption<string | number>[];
+  defaultValue: string | number;
 }
 
 export function usePageSettingsOptions(): IPageSettingsOption[] {
@@ -25,6 +26,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
         { label: t('5 minutes'), value: 300 },
         { label: t('Never'), value: 0 },
       ],
+      defaultValue: 30,
     },
     {
       name: 'theme',
@@ -35,6 +37,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
         { label: t('Light'), value: 'light', description: t('Use the light color theme.') },
         { label: t('Dark'), value: 'dark', description: t('Use the dark color theme.') },
       ],
+      defaultValue: 'system',
     },
     {
       name: 'tableLayout',
@@ -52,6 +55,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
           description: t('Increase spacing and make the table more comfortable.'),
         },
       ],
+      defaultValue: 'comfortable',
     },
     {
       name: 'formColumns',
@@ -69,6 +73,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
           description: 'Display forms and details using multiple columns.',
         },
       ],
+      defaultValue: 'multiple',
     },
     // Comment this onw out as it causes issue for now
     // {
@@ -96,6 +101,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
           description: 'Show dates as date and time.',
         },
       ],
+      defaultValue: 'date-time',
     },
     {
       name: 'dataEditorFormat',
@@ -105,6 +111,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
         { label: t('YAML'), value: 'yaml' },
         { label: t('JSON'), value: 'json' },
       ],
+      defaultValue: 'yaml',
     },
   ];
 }
