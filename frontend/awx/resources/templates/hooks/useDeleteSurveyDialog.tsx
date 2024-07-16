@@ -8,6 +8,9 @@ import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { useDeleteSurvey } from './useDeleteSurvey';
 import { useSurveyColumns } from './useSurveyColumns';
 import type { Spec } from '../../../interfaces/Survey';
+import { useParams } from 'react-router-dom';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 const ModalBodyDiv = styled.div`
   display: flex;
@@ -23,10 +26,14 @@ const ConfirmBoxDiv = styled.div`
   align-items: center;
 `;
 
-export function useDeleteSurveyDialog(onComplete: (questions: Spec[]) => void) {
+export function useDeleteSurveyDialog(
+  onComplete: (questions: Spec[]) => void,
+  templateType?: (JobTemplate | WorkflowJobTemplate)['type']
+) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
   const alertToaster = usePageAlertToaster();
+  const { id } = useParams<{ id?: string }>();
 
   const onError = (error: unknown) => {
     const { genericErrors, fieldErrors } = awxErrorAdapter(error);
@@ -49,6 +56,8 @@ export function useDeleteSurveyDialog(onComplete: (questions: Spec[]) => void) {
         onClose={() => setDialog(undefined)}
         onComplete={onComplete}
         onError={onError}
+        id={id}
+        templateType={templateType}
       />
     );
   };
@@ -60,12 +69,14 @@ function DeleteSurveyDialog(props: {
   onClose: () => void;
   onComplete: (questions: Spec[]) => void;
   onError: (err: unknown) => void;
+  id?: string;
+  templateType?: (JobTemplate | WorkflowJobTemplate)['type'];
 }) {
-  const { questions, onClose, onComplete, onError } = props;
+  const { questions, onClose, onComplete, onError, id, templateType } = props;
   const { t } = useTranslation();
   const pagination = usePaged(questions);
   const modalColumns = useSurveyColumns();
-  const deleteSurvey = useDeleteSurvey({ onClose, onComplete, onError });
+  const deleteSurvey = useDeleteSurvey({ onClose, onComplete, onError, id, templateType });
   const [confirmed, setConfirmed] = useState(false);
 
   return (

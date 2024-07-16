@@ -1669,7 +1669,22 @@ Cypress.Commands.add(
       cy.get('a').click();
     });
     cy.verifyPageTitle(template.name);
+
+    cy.intercept(
+      'GET',
+      awxAPI`/${template.type === 'job_template' ? 'job_templates' : 'workflow_job_templates'}/${template.id.toString()}/survey_spec/`
+    ).as('getQuestions');
+
     cy.get('a[href*="survey"]').click();
+
+    cy.wait('@getQuestions')
+      .its('response.body')
+      .then((survey: Survey) => {
+        if (survey?.spec?.length > 0) cy.clickButton('create-question');
+        else cy.clickButton('Create survey question');
+      });
+
+    cy.contains('Question');
 
     cy.getByDataCy('question-name').type(spec.question_name ?? '');
     cy.getByDataCy('question-description').type(spec?.question_description ?? '');

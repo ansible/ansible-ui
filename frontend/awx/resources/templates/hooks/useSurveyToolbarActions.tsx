@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useMatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon, CogIcon } from '@patternfly/react-icons';
@@ -18,26 +17,26 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useParams } from 'react-router-dom';
 import { useManageSurveyQuestions } from './useManageSurveyQuestions';
 import type { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
-export function useSurveyToolbarActions(view: ISurveyView) {
+export function useSurveyToolbarActions(
+  view: ISurveyView,
+  templateType: (JobTemplate | WorkflowJobTemplate)['type']
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const { id } = useParams<{ id: string }>();
-  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
+  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh, templateType);
 
-  const jobTemplateSurvey = useMatch('/templates/job-template/:id/survey')?.params?.id?.toString();
-  const workflowTemplateSurvey = useMatch(
-    '/templates/workflow-job-template/:id/survey'
-  )?.params?.id?.toString();
+  const isJobTemplate = templateType === 'job_template';
 
-  const { openManageQuestionOrder } = useManageSurveyQuestions(jobTemplateSurvey);
+  const { openManageQuestionOrder } = useManageSurveyQuestions(isJobTemplate);
 
   const { data: options } = useOptions<OptionsResponse<ActionsResponse>>(
-    jobTemplateSurvey
-      ? awxAPI`/job_templates/${jobTemplateSurvey}/`
-      : workflowTemplateSurvey
-        ? awxAPI`/workflow_job_templates/${workflowTemplateSurvey}/`
-        : ''
+    id
+      ? awxAPI`/${isJobTemplate ? 'job_templates' : 'workflow_job_templates'}/${id.toString()}/`
+      : ''
   );
   const canModifySurvey = Boolean(options && options.actions && options.actions['PUT']);
 
@@ -57,9 +56,7 @@ export function useSurveyToolbarActions(view: ISurveyView) {
             ),
         onClick: () => {
           pageNavigate(
-            jobTemplateSurvey
-              ? AwxRoute.AddJobTemplateSurvey
-              : AwxRoute.AddWorkflowJobTemplateSurvey,
+            isJobTemplate ? AwxRoute.AddJobTemplateSurvey : AwxRoute.AddWorkflowJobTemplateSurvey,
             {
               params: { id },
             }
@@ -93,14 +90,6 @@ export function useSurveyToolbarActions(view: ISurveyView) {
             ),
       },
     ],
-    [
-      t,
-      openManageQuestionOrder,
-      deleteQuestions,
-      canModifySurvey,
-      id,
-      pageNavigate,
-      jobTemplateSurvey,
-    ]
+    [t, openManageQuestionOrder, deleteQuestions, canModifySurvey, id, pageNavigate, isJobTemplate]
   );
 }
