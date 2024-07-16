@@ -302,7 +302,7 @@ describe('Projects', () => {
         cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
         cy.selectTableRow(jobTemplate.name, false);
         cy.getBy('[data-cy="edit-template"]').click();
-        cy.verifyPageTitle('Edit Job Template');
+        cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
         cy.selectDropdownOptionByResourceName('project', thisProject.name);
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
         cy.getByDataCy('Submit').click();
