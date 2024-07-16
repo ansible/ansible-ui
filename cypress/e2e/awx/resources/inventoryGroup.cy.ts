@@ -459,7 +459,6 @@ describe('Inventory Groups', () => {
     });
 
     it("can run an ad-hoc command against a group's host", () => {
-      //unskip this test when below issue is resolved
       cy.filterTableBySingleSelect('name', thisInventory.name);
       cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
       cy.verifyPageTitle(thisInventory.name);
