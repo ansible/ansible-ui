@@ -77,7 +77,7 @@ describe('Create Edit Container Group Form', () => {
         path: '/instance-groups/container-group/:id/edit',
         initialEntries: [`/instance-groups/container-group/1/edit`],
       });
-      cy.verifyPageTitle('Edit Container Group');
+      cy.verifyPageTitle('Edit Test Container Group');
       cy.get('[data-cy="name"]').should('have.value', 'Test Container Group');
       cy.get('[data-cy="max-concurrent-jobs"]').should('have.value', '23');
       cy.get('[data-cy="max-forks"]').should('have.value', '12');

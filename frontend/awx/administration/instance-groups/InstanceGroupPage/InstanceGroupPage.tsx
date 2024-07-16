@@ -72,8 +72,8 @@ export function InstanceGroupPage() {
                 },
               ]
             : []),
-          { label: t('Team access'), page: AwxRoute.InstanceGroupTeamAccess },
-          { label: t('User access'), page: AwxRoute.InstanceGroupUserAccess },
+          { label: t('Team Access'), page: AwxRoute.InstanceGroupTeamAccess },
+          { label: t('User Access'), page: AwxRoute.InstanceGroupUserAccess },
           { label: t('Jobs'), page: AwxRoute.InstanceGroupJobs },
         ]}
         params={{ id: instanceGroup.id }}

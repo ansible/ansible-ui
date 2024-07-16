@@ -57,7 +57,7 @@ describe('Create Edit Instance Group Form', () => {
         path: '/instance-groups/:id/edit',
         initialEntries: [`/instance-groups/1/edit`],
       });
-      cy.verifyPageTitle('Edit Instance Group');
+      cy.verifyPageTitle('Edit controlplane');
       cy.get('[data-cy="name"]').should('have.value', 'controlplane');
       cy.get('[data-cy="policy-instance-minimum"]').should('have.value', '0');
       cy.get('[data-cy="policy-instance-percentage"]').should('have.value', '100');
