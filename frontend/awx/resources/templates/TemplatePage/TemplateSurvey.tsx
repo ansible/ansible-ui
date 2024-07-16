@@ -86,8 +86,8 @@ export function TemplateSurveyInternal({
     templateType: template.type,
     id: template.id.toString(),
   });
-  const toolbarActions = useSurveyToolbarActions(view);
-  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh);
+  const toolbarActions = useSurveyToolbarActions(view, template.type);
+  const deleteQuestions = useDeleteSurveyDialog(view.unselectItemsAndRefresh, template.type);
 
   const rowActions = useMemo<IPageAction<Spec>[]>(
     () => [

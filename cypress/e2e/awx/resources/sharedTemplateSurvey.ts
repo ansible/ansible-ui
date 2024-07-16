@@ -206,11 +206,10 @@ export class ReusableTemplateSurveyTestSuite {
 
         cy.navigateTo('awx', 'jobs');
         cy.verifyPageTitle('Jobs');
-        const jobId = job.id ? job.id.toString() : '';
-        const jobName = job.name ? job.name : '';
-        cy.filterTableByMultiSelect('id', [jobId]);
-        cy.clickTableRowLink('name', jobName, { disableFilter: true });
-        cy.verifyPageTitle(jobName);
+        cy.filterTableByMultiSelect('id', [job.id.toString()]);
+        cy.clickTableRowLink('name', job.name, { disableFilter: true });
+        cy.verifyPageTitle(job.name);
+        cy.clickTab('Details', true);
         cy.contains(survey.variable);
         if (survey.type === 'password') {
           cy.contains('$encrypted$');
