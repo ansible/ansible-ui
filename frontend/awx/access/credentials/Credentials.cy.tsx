@@ -27,7 +27,7 @@ describe('Credentials.cy.ts', () => {
       .then((results: Credential[]) => {
         const credential = results[0];
         cy.selectTableRow(credential.name, false);
-        cy.clickToolbarKebabAction('delete-selected-credentials');
+        cy.clickToolbarKebabAction('delete-credentials');
         cy.contains('Permanently delete credentials').should('be.visible');
       });
   });
