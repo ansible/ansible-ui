@@ -15,6 +15,9 @@ interface ContentTypeOption {
   display_name: string;
 }
 
+// The AWX role_definitions OPTIONS request has a different response structure than EDA
+type ContentTypeOptionTuple = [string, string];
+
 export function ResourceAccess(props: {
   service: 'awx' | 'eda' | 'hub';
   id: string;
@@ -37,12 +40,30 @@ export function ResourceAccess(props: {
 
   // This filter applies to a user/team's roles list to filter based on the resource types
   const contentTypeFilterOptions = useMemo(() => {
-    const options: ContentTypeOption[] = data?.actions?.POST?.content_type?.choices || [];
-    return options?.map(({ value }) => ({
-      value: value?.split('.').pop() || value,
-      label: getDisplayName(value, { isTitleCase: true }),
-    }));
+    const options: ContentTypeOption[] | ContentTypeOptionTuple[] =
+      data?.actions?.POST?.content_type?.choices || [];
+    const optionsArray = (options as ContentTypeOption[] | ContentTypeOptionTuple[])?.map(
+      (option) => {
+        if ((option as ContentTypeOption)?.value) {
+          return {
+            value:
+              (option as ContentTypeOption).value.split('.').pop() ||
+              (option as ContentTypeOption).value,
+            label: getDisplayName((option as ContentTypeOption).value, { isTitleCase: true }),
+          };
+        } else if (option && (option as ContentTypeOptionTuple)[0] !== null) {
+          return {
+            value:
+              (option as ContentTypeOptionTuple)[0].split('.').pop() ||
+              (option as ContentTypeOptionTuple)[0],
+            label: getDisplayName((option as ContentTypeOptionTuple)[0], { isTitleCase: true }),
+          };
+        }
+      }
+    );
+    return optionsArray.filter((option) => option !== undefined);
   }, [data?.actions?.POST?.content_type?.choices, getDisplayName]);
+
   if (isLoading || !data) {
     return <LoadingPage />;
   }
