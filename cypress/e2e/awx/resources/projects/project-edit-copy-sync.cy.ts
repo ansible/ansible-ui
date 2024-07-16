@@ -31,7 +31,7 @@ describe('Project Edit, Copy, Sync', () => {
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="edit-project"]').click();
       });
-      cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+      cy.verifyPageTitle(`Edit ${project.name}`);
       cy.get('[data-cy="name"]').should('have.value', `${project.name}`);
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
@@ -40,19 +40,19 @@ describe('Project Edit, Copy, Sync', () => {
         .its('response.body')
         .then((edited: Project) => {
           expect(edited.name).to.eql(`${project.name} - edited`);
-          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+          cy.verifyPageTitle(`${edited.name}`);
           cy.clickButton(/^Edit project$/);
           cy.get('[data-cy="name"]').clear().type(`${project.name}`);
           cy.clickButton(/^Save project$/);
-          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+          cy.verifyPageTitle(project.name);
         });
     });
 
     it('can edit a project from the project details page', () => {
       cy.clickTableRowLink('name', project.name, { disableFilter: true });
-      cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+      cy.verifyPageTitle(project.name);
       cy.clickButton(/^Edit project$/);
-      cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+      cy.verifyPageTitle(`Edit ${project.name}`);
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
       cy.clickButton(/^Save project$/);
@@ -60,11 +60,11 @@ describe('Project Edit, Copy, Sync', () => {
         .its('response.body')
         .then((edited: Project) => {
           expect(edited.name).of.eql(`${project.name} - edited`);
-          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+          cy.verifyPageTitle(`${project.name} - edited`);
           cy.clickButton(/^Edit project$/);
           cy.get('[data-cy="name"]').clear().type(`${project.name}`);
           cy.clickButton(/^Save project$/);
-          cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
+          cy.verifyPageTitle(project.name);
         });
     });
 
