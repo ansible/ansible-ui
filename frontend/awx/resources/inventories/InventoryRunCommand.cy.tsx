@@ -1,4 +1,6 @@
 import { InventoryRunCommand } from './InventoryRunCommand';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 
 describe('Run command wizard', () => {
   beforeEach(() => {
@@ -41,6 +43,21 @@ describe('Run command wizard', () => {
         fixture: 'execution_environments.json',
       }
     );
+    cy.fixture('execution_environments.json').then(
+      (eeResponse: AwxItemsResponse<ExecutionEnvironment>) => {
+        const ee = eeResponse.results.find((ee) => ee.id === 1);
+        cy.intercept(
+          {
+            method: 'GET',
+            url: `/api/v2/execution_environments/1/`,
+            hostname: 'localhost',
+          },
+          {
+            body: ee,
+          }
+        ).as('getEE');
+      }
+    );
   });
   it('review step has correct values', () => {
     cy.mount(<InventoryRunCommand />);
@@ -65,6 +82,7 @@ describe('Run command wizard', () => {
 
     cy.clickButton(/^Next$/);
     cy.wait('@getCredential');
+    cy.wait('@getEE');
     cy.getByDataCy('module').should('contain', 'shell');
     cy.getByDataCy('arguments').should('contain', 'argument');
     cy.getByDataCy('verbosity').should('contain', '1');
