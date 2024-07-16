@@ -78,7 +78,7 @@ export function CreateContainerGroup() {
         ]}
       />
       <AwxPageForm
-        submitText={t('Create Container Group')}
+        submitText={t('Create container group')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -160,7 +160,7 @@ export function EditContainerGroup() {
         ]}
       />
       <AwxPageForm
-        submitText={t('Save Container Group')}
+        submitText={t('Save container group')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}

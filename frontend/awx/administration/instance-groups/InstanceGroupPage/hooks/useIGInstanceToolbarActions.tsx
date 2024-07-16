@@ -14,6 +14,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { useOptions } from '../../../../../common/crud/useOptions';
 import { OptionsResponse, ActionsResponse } from '../../../../interfaces/OptionsResponse';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function useIGInstanceToolbarActions(view: IAwxView<Instance>) {
   const healthCheckAction = useRunHealthCheckToolbarAction(view, true);
@@ -41,7 +42,8 @@ function useIGInstanceAssociateToolbarAction(view: IAwxView<Instance>) {
       type: PageActionType.Button,
       selection: PageActionSelection.None,
       variant: ButtonVariant.primary,
-      label: t('Associate'),
+      icon: PlusCircleIcon,
+      label: t('Associate instance'),
       isPinned: true,
       isDisabled: () =>
         canAssociateInstance ? '' : t('You do not have permission to associate an instance.'),
@@ -67,7 +69,7 @@ function useIGInstanceDisassociateToolbarAction(view: IAwxView<Instance>) {
       type: PageActionType.Button,
       selection: PageActionSelection.Multiple,
       variant: ButtonVariant.primary,
-      label: t('Disassociate'),
+      label: t('Disassociate instance'),
       isPinned: true,
       onClick: disassociateInstance,
       isDisabled: (instances: Instance[]) =>
