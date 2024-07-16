@@ -87,7 +87,7 @@ export function ResourcePeersList(props: { url: string }) {
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading peers')}
       emptyStateTitle={t('No peers found')}
-      emptyStateDescription={t('Please add Peers to populate this list.')}
+      emptyStateDescription={t('Please associate peers to populate this list.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={t('Associate peer')}
       emptyStateButtonClick={() =>
