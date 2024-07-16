@@ -60,7 +60,7 @@ export function WorkflowApprovalPage() {
         }}
         tabs={[
           { label: t('Details'), page: AwxRoute.WorkflowApprovalDetails },
-          { label: t('Workflow job details'), page: AwxRoute.WorkflowApprovalWorkflowJobDetails },
+          { label: t('Workflow Job Details'), page: AwxRoute.WorkflowApprovalWorkflowJobDetails },
         ]}
         params={{
           id: params.id || 0,
