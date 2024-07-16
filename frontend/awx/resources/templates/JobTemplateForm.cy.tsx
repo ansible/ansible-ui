@@ -93,7 +93,7 @@ describe('Create job template ', () => {
 
   it('Component renders', () => {
     cy.mount(<CreateJobTemplate />);
-    cy.verifyPageTitle('Create Job Template');
+    cy.verifyPageTitle('Create job template');
   });
 
   it('Should display field error messages on internal server error', () => {
