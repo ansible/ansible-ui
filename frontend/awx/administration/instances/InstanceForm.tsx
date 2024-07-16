@@ -38,10 +38,10 @@ export function AddInstance() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add instance')}
+        title={t('Create instance')}
         breadcrumbs={[
           { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
-          { label: t('Add instance') },
+          { label: t('Create instance') },
         ]}
       />
       <AwxPageForm
@@ -88,10 +88,18 @@ export function EditInstance() {
     return (
       <PageLayout>
         <PageHeader
-          title={t('Edit instance')}
+          title={
+            instance?.hostname
+              ? t('Edit {{instanceName}}', { instanceName: instance?.hostname })
+              : t('Instances')
+          }
           breadcrumbs={[
             { label: t('Instances'), to: getPageUrl(AwxRoute.Instances) },
-            { label: t('Edit instance') },
+            {
+              label: instance?.hostname
+                ? t('Edit {{instanceName}}', { instanceName: instance?.hostname })
+                : t('Instances'),
+            },
           ]}
         />
         <AwxPageForm
