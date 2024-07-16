@@ -21,7 +21,7 @@ tag(['upstream'], () => {
       const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
       // Navigate to the create instance page
       cy.getByDataCy('add-instance').click();
-      cy.getByDataCy('page-title').should('contain', 'Add instance');
+      cy.getByDataCy('page-title').should('contain', 'Create instance');
       // Create a new instance
       cy.getByDataCy('hostname').type(instanceHostname);
       cy.getByDataCy('listener-port').type('9999');

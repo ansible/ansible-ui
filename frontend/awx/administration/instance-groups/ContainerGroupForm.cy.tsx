@@ -18,7 +18,7 @@ describe('Create Edit Container Group Form', () => {
     });
     it('should validate required fields on save', () => {
       cy.mount(<CreateContainerGroup />);
-      cy.clickButton(/^Create Container Group$/);
+      cy.clickButton(/^Create container group$/);
       cy.contains('Name is required.').should('be.visible');
     });
 
@@ -38,7 +38,7 @@ describe('Create Edit Container Group Form', () => {
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
-      cy.clickButton(/^Create Container Group$/);
+      cy.clickButton(/^Create container group$/);
       cy.wait('@createIG')
         .its('request.body')
         .then((createdIG) => {
@@ -97,7 +97,7 @@ describe('Create Edit Container Group Form', () => {
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
 
-      cy.clickButton(/^Save Container Group$/);
+      cy.clickButton(/^Save container group$/);
       cy.wait('@editCg')
         .its('request.body')
         .then((editedCg: ContainerGroup) => {
