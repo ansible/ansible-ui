@@ -55,14 +55,12 @@ interface StatusProps {
   label: string;
 }
 
-type HostStatusCountType = 'ok' | 'skipped' | 'changed' | 'failures' | 'dark';
-type WorkflowStatusCountType = JobStatus | 'dark';
-
 type CommonStatusType = Record<'dark', StatusProps>;
+type HostStatusCountType = 'ok' | 'skipped' | 'changed' | 'failures' | 'dark';
 type HostStatusType = Record<HostStatusCountType, StatusProps>;
-type WorkflowStatusType = Record<WorkflowStatusCountType, StatusProps>;
 
-type WFNodesStatusProps = Partial<Record<WorkflowStatusCountType, number>>;
+type WorkflowStatusType = Record<JobStatus, StatusProps>;
+type WFNodesStatusProps = Partial<Record<JobStatus, number>>;
 
 export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
   const { t } = useTranslation();
@@ -100,16 +98,16 @@ export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
       color: pfDanger,
       label: t`Failed`,
     },
-    dark: {
-      color: pfUnreachable,
-      label: t`Unreachable`,
-    },
   };
 
   const segments: WFNodesStatusProps = {};
 
   props.nodes.map((node) => {
-    const nodeStatus = (node?.summary_fields?.job?.status ?? 'dark') as WorkflowStatusCountType;
+    if (!node?.summary_fields?.job?.status) {
+      return;
+    }
+
+    const nodeStatus = node.summary_fields.job.status as JobStatus;
 
     const nodeVal = segments[nodeStatus];
     segments[nodeStatus] = nodeStatus in segments && nodeVal ? nodeVal + 1 : 1;
