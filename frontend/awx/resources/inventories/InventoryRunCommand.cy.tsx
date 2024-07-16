@@ -59,15 +59,7 @@ describe('Run command wizard', () => {
     cy.getByDataCy('become_enabled').click();
     cy.get('.view-line').type('test: "test"');
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('execution-environment-select-form-group').within(() => {
-      cy.getBy('[aria-label="Options menu"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.getByDataCy('row-id-1').within(() => {
-        cy.get('[data-cy="checkbox-column-cell"] input').click();
-      });
-      cy.clickButton(/^Confirm/);
-    });
+    cy.singleSelectByDataCy('executionEnvironment', 'AWX EE (latest)');
     cy.clickButton(/^Next$/);
     cy.selectSingleSelectOption('[data-cy="credential"]', 'Demo Credential');
 
