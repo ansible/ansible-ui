@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageFormSelect } from '../PageForm/Inputs/PageFormSelect';
+import { PageFormSingleSelect } from '../PageForm/Inputs/PageFormSingleSelect';
 import { PageForm } from '../PageForm/PageForm';
 import { PageHeader } from '../PageHeader';
 import { PageLayout } from '../PageLayout';
@@ -35,16 +35,15 @@ export function PageSettingsForm() {
         onSubmit={onSubmit}
       >
         {options.map((option) => (
-          <PageFormSelect
+          <PageFormSingleSelect
+            id={option.name.toLowerCase()}
             name={option.name}
             key={option.name}
             label={option.label}
-            placeholderText={t('Select {{label}}', { label: option.label })}
+            placeholder={t('Select {{label}}', { label: option.label })}
             options={option.options}
             labelHelp={option.helpText}
             isRequired
-            enableUndo
-            enableReset
             defaultValue={option.defaultValue}
           />
         ))}

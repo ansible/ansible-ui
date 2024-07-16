@@ -56,7 +56,11 @@ export function PageSettingsDetails() {
 function PageSettingsDetail(props: { option: IPageSettingsOption; value: string | number }) {
   const optionLabel = props.option.options.find((option) => option.value === props.value)?.label;
   return (
-    <PageDetail label={props.option.label} helpText={props.option.helpText}>
+    <PageDetail
+      label={props.option.label}
+      helpText={props.option.helpText}
+      id={props.option.name.toLowerCase()}
+    >
       {optionLabel}
     </PageDetail>
   );
