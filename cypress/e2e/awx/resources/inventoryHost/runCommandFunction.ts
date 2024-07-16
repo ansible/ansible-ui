@@ -1,5 +1,4 @@
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 export function runCommand(params: {
   selections: string;
@@ -42,18 +41,7 @@ export function runCommand(params: {
         cy.getByDataCy('Submit').click();
 
         // Execution environment tab
-        cy.get(`[aria-label="Options menu"]`).click();
-
-        cy.intercept(
-          'GET',
-          awxAPI`/execution_environments/?order_by=name&or__organization__isnull=True&or__organization__id=${organization.id.toString()}&name=${executionEnvironment.name}*`
-        ).as('getExecutionEnvironment');
-        cy.filterTableBySingleSelect('name', executionEnvironment.name);
-        cy.wait('@getExecutionEnvironment');
-
-        cy.getByDataCy('checkbox-column-cell').click();
-
-        cy.contains('button', 'Confirm').click();
+        cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
 
         cy.getByDataCy('Submit').click();
 
