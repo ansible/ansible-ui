@@ -3,7 +3,7 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
 
-describe.skip('Workflow Job Templates Surveys', function () {
+describe('Workflow Job Templates Surveys', function () {
   let inventory: Inventory;
   let workflowJobTemplate: WorkflowJobTemplate;
   let awxOrganization: Organization;

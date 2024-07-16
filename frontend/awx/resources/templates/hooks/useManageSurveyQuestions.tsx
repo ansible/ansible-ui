@@ -7,11 +7,11 @@ import { Spec, Survey } from '../../../interfaces/Survey';
 import { useParams } from 'react-router-dom';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 
-export function useManageSurveyQuestions(jobTemplateSurvey?: string) {
+export function useManageSurveyQuestions(isJobTemplate: boolean) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const postRequest = usePostRequest();
-  const endpoint = awxAPI`/${jobTemplateSurvey ? 'job_templates' : 'workflow_job_templates'}/${params.id?.toString() ?? ''}/survey_spec/`;
+  const endpoint = awxAPI`/${isJobTemplate ? 'job_templates' : 'workflow_job_templates'}/${params.id?.toString() ?? ''}/survey_spec/`;
   const columns = useMemo(
     () => [
       {
