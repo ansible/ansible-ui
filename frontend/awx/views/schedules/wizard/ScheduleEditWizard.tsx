@@ -98,7 +98,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { launch_config, resource, schedule_type } = wizardData;
         if (
-          (schedule_type === 'workflow-job-template' || schedule_type === 'job-template') &&
+          (schedule_type === 'workflow_job' || schedule_type === 'job') &&
           resource &&
           launch_config
         ) {

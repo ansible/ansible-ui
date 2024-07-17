@@ -33,8 +33,8 @@ export function ScheduleTypeInputs() {
           data-cy="schedule-type"
           label={t('Resource type')}
           options={[
-            { label: t('Job template'), value: 'job-template' },
-            { label: t('Workflow job template'), value: 'workflow-job-template' },
+            { label: t('Job template'), value: 'job_template' },
+            { label: t('Workflow job template'), value: 'workflow_job_template' },
             { label: t('Inventory source'), value: 'inventory_source' },
             { label: t('Project Sync'), value: 'project' },
             { label: t('Management job template'), value: 'management_job_template' },
@@ -44,10 +44,10 @@ export function ScheduleTypeInputs() {
 
         {scheduleType &&
           {
-            'job-template': (
+            job_template: (
               <PageFormJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />
             ),
-            'workflow-job-template': (
+            workflow_job_template: (
               <PageFormWorkflowJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />
             ),
             inventory_source: (

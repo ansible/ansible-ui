@@ -38,8 +38,10 @@ export function ScheduleReviewStep() {
     rules,
   } = wizardData;
 
-  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'promptStep'));
-  const resourceTypeDetail = useGetNodeTypeDetail(schedule_type);
+  const hasPromptDetails = Boolean(
+    visibleSteps.find((step) => step.id === 'promptStep' || step.id === 'survey')
+  );
+  const resourceTypeDetail = useGetScheduleTypeDetail(schedule_type);
 
   let resourceDetailsLink = getPageUrl(ResourceLink[schedule_type], {
     params: { id: resource?.id },
@@ -103,17 +105,17 @@ export function ScheduleReviewStep() {
     </>
   );
 }
-
-function useGetNodeTypeDetail(type: string) {
+function useGetScheduleTypeDetail(type: string) {
   const { t } = useTranslation();
   const typeMapping: { [key: string]: string } = {
     job: t('Job Template'),
-    'job-template': t('Job Template'),
+    job_template: t('Job Template'),
     workflow_job: t('Workflow Job Template'),
+    workflow_job_template: t('Workflow Job Template'),
     project_update: t('Project Update'),
     inventory_update: t('Inventory Update'),
-    workflow_approval: t('Workflow Approval'),
     system_job: t('Management Job'),
+    management_job_template: t('Management Job'),
   };
   return typeMapping[type];
 }
