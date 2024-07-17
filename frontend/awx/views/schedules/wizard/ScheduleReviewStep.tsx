@@ -108,6 +108,7 @@ function useGetNodeTypeDetail(type: string) {
   const { t } = useTranslation();
   const typeMapping: { [key: string]: string } = {
     job: t('Job Template'),
+    'job-template': t('Job Template'),
     workflow_job: t('Workflow Job Template'),
     project_update: t('Project Update'),
     inventory_update: t('Inventory Update'),
