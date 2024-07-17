@@ -25,7 +25,7 @@ import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguratio
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
+import { PageFormSelectInventory } from '../../inventories/components/PageFormInventorySelect';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
@@ -262,7 +262,7 @@ export function LaunchWizard({
     {
       id: 'inventory',
       label: t('Inventory'),
-      inputs: <PageFormInventorySelect<TemplateLaunch> name="inventory" isRequired />,
+      inputs: <PageFormSelectInventory<TemplateLaunch> name="inventory.id" isRequired />,
       hidden: () => !template.ask_inventory_on_launch,
     },
     {

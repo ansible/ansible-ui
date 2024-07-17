@@ -9,6 +9,8 @@ import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
 import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { Icon, Tooltip } from '@patternfly/react-core';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },
@@ -22,6 +24,7 @@ export function PageFormSingleSelectAwxResource<
   isRequired?: boolean;
   isDisabled?: string;
   url: string;
+  missingResource?: (resource: Resource) => string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
   defaultSelection?: Value[];
@@ -34,7 +37,7 @@ export function PageFormSingleSelectAwxResource<
   queryParams?: QueryParams;
 }) {
   const id = useID(props);
-
+  const { missingResource } = props;
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
@@ -65,11 +68,21 @@ export function PageFormSingleSelectAwxResource<
         return {
           remaining: response.count - response.results.length,
           options:
-            response.results?.map((resource) => ({
-              label: resource.name,
-              value: resource.id as PathValue<FormData, Name>,
-              description: resource.description,
-            })) ?? [],
+            response.results?.map((resource) => {
+              const content = missingResource && missingResource(resource);
+              return {
+                label: resource.name,
+                value: resource.id as PathValue<FormData, Name>,
+                description: resource.description,
+                icon: content ? (
+                  <Tooltip content={missingResource(resource)} position="right">
+                    <Icon status="danger">
+                      <ExclamationTriangleIcon />
+                    </Icon>
+                  </Tooltip>
+                ) : undefined,
+              };
+            }) ?? [],
           next: response.results[response.results.length - 1]?.name,
         };
       } catch (error) {
@@ -80,7 +93,7 @@ export function PageFormSingleSelectAwxResource<
         };
       }
     },
-    [props.url, props.queryParams]
+    [missingResource, props.queryParams, props.url]
   );
 
   const [_, setDialog] = usePageDialog();

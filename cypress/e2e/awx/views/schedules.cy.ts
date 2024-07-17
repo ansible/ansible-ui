@@ -322,7 +322,7 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule Inventory ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
-      cy.selectDropdownOptionByResourceName('inventory', `${inventory.name}`);
+      cy.singleSelectByDataCy('inventory', `${inventory.name}`);
       cy.selectDropdownOptionByResourceName('inventory-source-select', `${inventorySource.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');

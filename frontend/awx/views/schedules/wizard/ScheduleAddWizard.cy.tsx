@@ -87,6 +87,8 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.singleSelectByDataCy('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
 
@@ -245,6 +247,10 @@ describe('ScheduleAddWizard', () => {
         });
       });
 
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
+      cy.singleSelectByDataCy('inventory', 'Mock Inventory');
+      cy.selectDropdownOptionByResourceName('inventory-source-select', 'Mock Inventory source');
+
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
 
@@ -332,7 +338,7 @@ describe('ScheduleAddWizard', () => {
       });
 
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.singleSelectByDataCy('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -408,6 +414,32 @@ describe('ScheduleAddWizard', () => {
         cy.get('button[data-cy="delete-rule"]').click();
         cy.get('tr[data-cy="row-id-2"]').should('not.exist');
       });
+    });
+  });
+
+  describe('Saving a schedule', () => {
+    beforeEach(() => {
+      cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
+      cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
+      cy.intercept('/api/v2/job_templates/100/launch/', {});
+      cy.mount(<ScheduleAddWizard />, {
+        initialEntries: ['/schedules/add'],
+        path: '/schedules/add',
+      });
+
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.singleSelectByDataCy('job-template-select', 'Mock Job Template');
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
+      cy.clickButton(/^Next$/);
     });
   });
 });

@@ -16,7 +16,7 @@ import { PageFormInstanceGroupSelect } from '../../../../administration/instance
 import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
+import { PageFormSelectInventory } from '../../../inventories/components/PageFormInventorySelect';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { ConditionalField } from '../../TemplatePage/steps/ConditionalField';
 import { PromptFormValues, WizardFormValues } from '../types';
@@ -88,7 +88,7 @@ export function NodePromptsStep() {
   return (
     <PageFormGrid isVertical singleColumn>
       <ConditionalField isHidden={!config.ask_inventory_on_launch}>
-        <PageFormInventorySelect<WizardFormValues> name="prompt.inventory" isRequired />
+        <PageFormSelectInventory<WizardFormValues> name="prompt.inventory.id" isRequired />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_credential_on_launch}>
         <PageFormCredentialSelect<WizardFormValues>

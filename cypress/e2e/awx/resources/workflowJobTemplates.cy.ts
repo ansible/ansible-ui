@@ -52,7 +52,7 @@ describe('Workflow Job Templates Tests', () => {
           });
           cy.get('[data-cy="description"]').type('this is a new description');
           cy.singleSelectBy('[data-cy="organization"]', organization.name);
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+          cy.singleSelectByDataCy('inventory', inventory.name);
           cy.get('[data-cy="limit"]').type('mock-limit');
           cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
           cy.selectDropdownOptionByResourceName('labels', label.name.toString());
@@ -91,7 +91,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.get('[data-cy="name"]').type(jtName);
       cy.get('[data-cy="description"]').type('this is a description');
       cy.singleSelectBy('[data-cy="organization"]', organization.name);
-      cy.selectDropdownOptionByResourceName('inventory', inventory.name);
+      cy.singleSelectByDataCy('inventory', inventory.name);
       cy.get('[data-cy="limit"]').type('mock-limit');
       cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
       cy.selectDropdownOptionByResourceName('labels', label.name.toString());

@@ -39,6 +39,7 @@ export type PageFormAsyncSingleSelectProps<
   | 'onBrowse'
   | 'queryLabel'
   | 'writeInOption'
+  | 'icon'
 > &
   Pick<
     PageFormGroupProps,
