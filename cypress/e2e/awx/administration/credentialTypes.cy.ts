@@ -179,7 +179,7 @@ describe('Credential Types', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableBySingleSelect('name', 'Google Compute Engine');
       cy.selectTableRowByCheckbox('name', 'Google Compute Engine', { disableFilter: true });
-      cy.clickToolbarKebabAction('delete-selected-credential-types');
+      cy.clickToolbarKebabAction('delete-credential-types');
       cy.getModal().within(() => {
         cy.getByDataCy('alert-toaster')
           .should('be.visible')
@@ -273,7 +273,7 @@ describe('Credential Types', () => {
     it('shows a bulk deletion dialog with warnings for managed credential types', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.get('#select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-credential-types');
+      cy.clickToolbarKebabAction('delete-credential-types');
       cy.contains(
         'of the selected credential types cannot be deleted because they are read-only.'
       ).should('be.visible');
@@ -298,7 +298,7 @@ describe('Credential Types', () => {
       cy.filterTableByMultiSelect('name', [credType1.name, credType2.name]);
       cy.selectTableRow(credType1.name, false);
       cy.selectTableRow(credType2.name, false);
-      cy.clickToolbarKebabAction('delete-selected-credential-types');
+      cy.clickToolbarKebabAction('delete-credential-types');
       cy.intercept('DELETE', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
         'deleteCredType1'
       );

@@ -142,7 +142,7 @@ describe('Organizations: Edit and Delete', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.selectTableRow(organization.name, false);
-    cy.clickToolbarKebabAction('delete-selected-organizations');
+    cy.clickToolbarKebabAction('delete-organizations');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.intercept('DELETE', awxAPI`/organizations/${organization.id.toString()}`).as('delete');
