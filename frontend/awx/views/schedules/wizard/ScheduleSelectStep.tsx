@@ -12,6 +12,7 @@ import { PageWizardStep } from '../../../../../framework';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { awxAPI } from '../../../common/api/awx-utils';
 
 /**
  *
@@ -118,27 +119,32 @@ export function ScheduleSelectStep(props: {
     /** Only job templates and workflow job templates need to be able to fetch
      * the launch configuration.
      */
+    const resourceIsNotATemplate =
+      resource?.type !== 'job_template' && resource?.type !== 'workflow_job_template';
 
     if (
       !resource?.id ||
-      props.resourceEndPoint === undefined ||
-      (!props.resourceEndPoint?.includes('job_template') &&
-        !props.resourceEndPoint?.includes('workflow_job_template'))
+      (resourceIsNotATemplate &&
+        !props.resourceEndPoint?.includes('/job_template') &&
+        !props.resourceEndPoint?.includes('/workflow_job_template'))
     ) {
       return;
     }
     const setLaunchToWizardData = async () => {
+      let endPoint = '';
+      resource.type === 'job_template'
+        ? (endPoint = awxAPI`/job_templates/${resource.id.toString()}/launch/`)
+        : resource.type === 'workflow_job_template'
+          ? (endPoint = awxAPI`/workflow_job_templates/${resource.id.toString()}/launch/`)
+          : (endPoint = `${props.resourceEndPoint ?? ''}/${resource.id.toString()}/launch/`);
       let launchConfigValue = {} as PromptFormValues;
 
-      const launchConfigResults = await requestGet<LaunchConfiguration>(
-        `${props.resourceEndPoint ?? ''}/${resource.id.toString()}/launch/`
-      );
+      const launchConfigResults = await requestGet<LaunchConfiguration>(endPoint);
 
       const {
         job_tags = '',
         skip_tags = '',
         inventory,
-
         ...defaults
       } = launchConfigResults.defaults;
 
