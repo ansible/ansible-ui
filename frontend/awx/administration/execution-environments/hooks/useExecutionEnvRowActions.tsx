@@ -1,4 +1,4 @@
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,7 +18,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AlertProps } from '@patternfly/react-core';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 
 type ExecutionEnvironmentActionOptions = {
   onDelete: (executionEnvironments: ExecutionEnvironment[]) => void;
@@ -37,6 +37,7 @@ export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnviron
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         isPinned: true,
         label: t('Edit execution environment'),
         isDisabled: (executionEnvironment) => cannotEditResource(executionEnvironment, t),
@@ -48,7 +49,7 @@ export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnviron
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
+        icon: CopyIcon,
         isPinned: false,
         label: t('Copy execution environment'),
         isDisabled: (executionEnvironment) => cannotCopyResource(executionEnvironment, t),
