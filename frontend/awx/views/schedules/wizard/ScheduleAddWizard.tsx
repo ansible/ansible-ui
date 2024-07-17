@@ -197,10 +197,10 @@ export function ScheduleAddWizard(props: {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Schedule')}
+        title={t('Create schedule')}
         breadcrumbs={[
           { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
-          { label: t('Create Schedule') },
+          { label: t('Create schedule') },
         ]}
       />
       <PageWizard<ScheduleFormWizard>
