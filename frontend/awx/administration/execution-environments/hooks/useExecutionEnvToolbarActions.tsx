@@ -46,7 +46,7 @@ export function useExecutionEnvToolbarActions(view: IAwxView<ExecutionEnvironmen
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected execution environments'),
+        label: t('Delete execution environments'),
         isDisabled: (executionEnvironments) => cannotDeleteResources(executionEnvironments, t),
         onClick: deleteExecutionEnvironments,
         isDanger: true,
