@@ -46,7 +46,7 @@ export function useCredentialTypeToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected credential types'),
+        label: t('Delete credential types'),
         onClick: deleteCredentialTypes,
         isDanger: true,
       },
@@ -86,6 +86,7 @@ export function useCredentialTypeRowActions(
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit credential type'),
         isDisabled: (credentialType: CredentialType) =>
           cannotEditManagedCredentialType(credentialType)

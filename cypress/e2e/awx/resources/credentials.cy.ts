@@ -85,7 +85,7 @@ describe('Credentials', () => {
       cy.navigateTo('awx', 'credentials');
       cy.filterTableByMultiSelect('name', [credential.name]);
       cy.selectTableRowByCheckbox('name', credential.name, { disableFilter: true });
-      cy.clickToolbarKebabAction('delete-selected-credentials');
+      cy.clickToolbarKebabAction('delete-credentials');
       cy.get('#confirm').click();
       cy.intercept('DELETE', awxAPI`/credentials/${credential.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete credential/);
@@ -113,7 +113,7 @@ describe('Credentials', () => {
       cy.getByDataCy('checkbox-column-cell').within(() => {
         cy.get('input').click();
       });
-      cy.clickToolbarKebabAction('delete-selected-credentials');
+      cy.clickToolbarKebabAction('delete-credentials');
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete credential/);
