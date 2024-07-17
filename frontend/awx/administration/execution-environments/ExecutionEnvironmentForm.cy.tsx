@@ -111,7 +111,7 @@ describe('Create Edit Execution Environment Form', () => {
         path: '/execution-environments/:id/edit',
         initialEntries: [`/execution-environments/2/edit`],
       });
-      cy.verifyPageTitle('Edit Execution Environment');
+      cy.verifyPageTitle('Edit Test name');
       cy.get('[data-cy="name"]').should('have.value', 'Test name');
     });
 
