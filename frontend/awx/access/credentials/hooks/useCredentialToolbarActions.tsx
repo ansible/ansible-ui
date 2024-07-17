@@ -33,7 +33,7 @@ export function useCredentialToolbarActions(view: IAwxView<Credential>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected credentials'),
+        label: t('Delete credentials'),
         onClick: deleteCredentials,
         isDanger: true,
       },
