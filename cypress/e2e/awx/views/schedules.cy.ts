@@ -78,7 +78,7 @@ describe('Schedules - Create and Delete', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
-      cy.verifyPageTitle('Create Schedule');
+      cy.verifyPageTitle('Create schedule');
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
       cy.getByDataCy('name').type(`${scheduleName}`);
@@ -342,12 +342,12 @@ describe('Schedules - Create and Delete', () => {
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
       cy.clickButton(/^Finish$/);
       cy.verifyPageTitle(`${scheduleName}`);
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
       cy.get('button[data-cy="actions-dropdown"]').click();
       cy.getBy('[data-cy="delete-schedule"]').click();
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete schedule');
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
     });
   });
 
