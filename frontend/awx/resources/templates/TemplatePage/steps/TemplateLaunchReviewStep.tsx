@@ -97,7 +97,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
     execution_environment
   );
 
-  let extraVarDetails = extra_vars || '{}';
+  let extraVarDetails = template.extra_vars || '{}';
   if (survey) {
     extraVarDetails = processSurvey(extra_vars, survey, surveyConfig ?? null);
   }
