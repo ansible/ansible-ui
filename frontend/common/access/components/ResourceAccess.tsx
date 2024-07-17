@@ -9,11 +9,15 @@ import { edaAPI } from '../../../eda/common/eda-utils';
 import { awxAPI } from '../../../awx/common/api/awx-utils';
 import { Access } from './Access';
 import { useGetLinkToResourcePage } from '../hooks/useGetLinkToResourcePage';
+import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 
 interface ContentTypeOption {
   value: string;
   display_name: string;
 }
+
+// The AWX role_definitions OPTIONS request has a different response structure than EDA
+type ContentTypeOptionTuple = [string, string];
 
 export function ResourceAccess(props: {
   service: 'awx' | 'eda' | 'hub';
@@ -37,12 +41,29 @@ export function ResourceAccess(props: {
 
   // This filter applies to a user/team's roles list to filter based on the resource types
   const contentTypeFilterOptions = useMemo(() => {
-    const options: ContentTypeOption[] = data?.actions?.POST?.content_type?.choices || [];
-    return options?.map(({ value }) => ({
-      value: value?.split('.').pop() || value,
-      label: getDisplayName(value, { isTitleCase: true }),
-    }));
+    const options: ContentTypeOption[] | ContentTypeOptionTuple[] =
+      data?.actions?.POST?.content_type?.choices || [];
+    const optionsArray: PageSelectOption<string>[] = [];
+    (options as ContentTypeOption[] | ContentTypeOptionTuple[])?.forEach((option) => {
+      if ((option as ContentTypeOption)?.value) {
+        optionsArray.push({
+          value:
+            (option as ContentTypeOption).value.split('.').pop() ||
+            (option as ContentTypeOption).value,
+          label: getDisplayName((option as ContentTypeOption).value, { isTitleCase: true }),
+        });
+      } else if (option && (option as ContentTypeOptionTuple)[0] !== null) {
+        optionsArray.push({
+          value:
+            (option as ContentTypeOptionTuple)[0].split('.').pop() ||
+            (option as ContentTypeOptionTuple)[0],
+          label: getDisplayName((option as ContentTypeOptionTuple)[0], { isTitleCase: true }),
+        });
+      }
+    });
+    return optionsArray;
   }, [data?.actions?.POST?.content_type?.choices, getDisplayName]);
+
   if (isLoading || !data) {
     return <LoadingPage />;
   }
