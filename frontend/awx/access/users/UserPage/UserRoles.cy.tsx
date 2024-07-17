@@ -28,6 +28,15 @@ describe('AWX user roles', () => {
       cy.contains('th', 'Role');
       cy.contains('th', 'Type');
     });
+    it('should have filters for Role Name and Resource Type', () => {
+      cy.openToolbarFilterTypeSelect().within(() => {
+        cy.contains(/^Role name$/).should('be.visible');
+        cy.contains(/^Resource type$/).should('be.visible');
+        cy.get('button[id="resource-type"]').click();
+      });
+      cy.get('[data-cy="filter-input"]').click();
+      cy.contains(/^Credential$/).should('be.visible');
+    });
     it('Can remove role', () => {
       cy.intercept(
         { method: 'DELETE', url: awxAPI`/role_user_assignments/249/` },
