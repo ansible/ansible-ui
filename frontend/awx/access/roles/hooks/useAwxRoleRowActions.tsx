@@ -62,6 +62,7 @@ export function useAwxRoleRowActions(onComplete: (roles: AwxRbacRole[]) => void)
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
         isPinned: true,
+        variant: ButtonVariant.primary,
         label: t('Edit role'),
         isDisabled: (role) =>
           role.managed

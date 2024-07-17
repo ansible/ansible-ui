@@ -40,7 +40,7 @@ export function useAwxRoleToolbarActions(onComplete: (roles: AwxRbacRole[]) => v
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected roles'),
+        label: t('Delete roles'),
         onClick: deleteRoles,
         isDanger: true,
       },
