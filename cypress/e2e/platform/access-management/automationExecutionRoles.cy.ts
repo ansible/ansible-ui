@@ -341,7 +341,7 @@ describe('Automation Execution: Roles', () => {
         cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
           cy.getBy('[data-cy="select-all"]').click();
         });
-        cy.clickToolbarKebabAction('delete-selected-roles');
+        cy.clickToolbarKebabAction('delete-roles');
         cy.getModal().within(() => {
           cy.get('#confirm').click();
           cy.get('[data-ouia-component-id="submit"]').click();
