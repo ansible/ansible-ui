@@ -47,7 +47,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: PlusCircleIcon,
-        label: t('Add users to selected teams'),
+        label: t('Add users to teams'),
         onClick: () => selectUsersAddTeams(view.selectedItems),
       },
       {
@@ -62,7 +62,7 @@ export function useTeamToolbarActions(view: IAwxView<Team>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected teams'),
+        label: t('Delete teams'),
         onClick: deleteTeams,
         isDanger: true,
       },
