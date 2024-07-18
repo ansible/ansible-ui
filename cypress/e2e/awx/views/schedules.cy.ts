@@ -409,8 +409,7 @@ describe('Schedules - Create and Delete', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    //SKIP DUE TO AAP-27278
-    it.skip('can create a complex schedule and navigate to details page', () => {
+    it('can create a complex schedule and navigate to details page', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
@@ -419,32 +418,20 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
       cy.clickButton(/^Next$/);
-      cy.get('[data-cy="wizard-nav"] li').contains('Prompts');
 
-      cy.getByDataCy('wizard-nav').then(($el) => {
-        if ($el.length === 6) {
-          ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach(
-            (text, index) => {
-              cy.get('li')
-                .eq(index)
-                .should((step) => expect(step.text().trim()).to.equal(text));
-            }
-          );
-        } else {
-          cy.get('[data-cy="wizard-nav"] li').first().should('contain.text', 'Details').click();
-          cy.clickButton(/^Next$/);
-        }
+      cy.getByDataCy('wizard-nav').within(() => {
+        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
       });
 
       //Prompts step
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
-      cy.get('input[placeholder="Select or create job tags"]').type('test_job_tag', {
-        delay: 500,
-      });
+      cy.get('input[placeholder="Select or create job tags"]').type('test_job_tag');
       cy.get('[id="prompt.job_tags"]').find('button').click();
-      cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag', {
-        delay: 500,
-      });
+      cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag');
       cy.get('[id="prompt.skip_tags"]').find('button').click();
       cy.clickButton(/^Next$/);
 
