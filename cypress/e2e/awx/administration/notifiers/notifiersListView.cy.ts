@@ -98,7 +98,7 @@ describe('Notifications: List View', () => {
       cy.get('[data-cy="checkbox-column-cell"]').within(() => {
         cy.get('input').click();
       });
-      cy.clickToolbarKebabAction('delete-selected-notifiers');
+      cy.clickToolbarKebabAction('delete-notifiers');
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete notifiers/);
@@ -126,7 +126,7 @@ describe('Notifications: List View', () => {
           .within(() => {
             cy.get('input').click();
           });
-        cy.clickToolbarKebabAction('delete-selected-notifiers');
+        cy.clickToolbarKebabAction('delete-notifiers');
         cy.getModal().within(() => {
           cy.get('#confirm').click();
           cy.clickButton(/^Delete notifiers/);

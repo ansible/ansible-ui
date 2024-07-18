@@ -77,7 +77,7 @@ describe('Notifiers.cy.tsx', () => {
       );
       cy.mount(<Notifiers />);
       cy.get('[type="checkbox"][id="select-all"]').check();
-      cy.clickToolbarKebabAction('delete-selected-notifiers');
+      cy.clickToolbarKebabAction('delete-notifiers');
       cy.contains('Delete notifiers').should('be.visible');
     });
 
@@ -87,7 +87,7 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifiers />);
-      cy.get('[data-cy="add-notifier"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="create-notifier"]').should('have.attr', 'aria-disabled', 'true');
     });
 
     it('Add notifier button is enabled if the user has the correct permissions', () => {
@@ -112,7 +112,7 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifiers />);
-      cy.get('[data-cy="add-notifier"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="create-notifier"]').should('have.attr', 'aria-disabled', 'false');
     });
 
     it('Copy notifier button is enabled if the user has the correct permissions', () => {
@@ -158,8 +158,8 @@ describe('Notifiers.cy.tsx', () => {
       );
       cy.mount(<Notifiers />);
       cy.contains(/^No notifiers found.$/);
-      cy.contains(/^Please add notifiers to populate this list.$/);
-      cy.contains('button', /^Add notifier$/).should('be.visible');
+      cy.contains(/^Please create notifiers to populate this list.$/);
+      cy.contains('button', /^Create notifier$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to add notifier', () => {
@@ -169,11 +169,11 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'emptyList.json' }
       );
       cy.mount(<Notifiers />);
-      cy.contains(/^You do not have permission to add notifiers.$/);
+      cy.contains(/^You do not have permission to create notifiers.$/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Add notifier$/).should('not.exist');
+      cy.contains('button', /^Create notifier$/).should('not.exist');
     });
   });
 });
