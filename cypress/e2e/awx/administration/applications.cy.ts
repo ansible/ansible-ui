@@ -22,7 +22,7 @@ describe('AWX OAuth Applications CRUD actions List page', () => {
         const oauthApplicationName = `AWX OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
-        cy.getByDataCy('create-application').click();
+        cy.getByDataCy('create-OAuth-application').click();
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
         cy.singleSelectByDataCy('organization', `${awxOrganization.name}`);
@@ -55,7 +55,7 @@ describe('AWX OAuth Applications CRUD actions List page', () => {
         cy.navigateTo('awx', 'applications');
         cy.verifyPageTitle('OAuth Applications');
         cy.filterTableByMultiSelect('name', [oauthApplicationName]);
-        cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
+        cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-OAuth-application', false);
         cy.verifyPageTitle('Edit Application');
         cy.getByDataCy('description').clear().type(`${authGrantType} with ${appClientType} edited`);
         cy.getByDataCy('Submit').click();
@@ -87,7 +87,7 @@ describe('AWX OAuth Applications CRUD actions Details page', () => {
         const oauthApplicationName = `AWX OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
-        cy.getByDataCy('create-application').click();
+        cy.getByDataCy('create-OAuth-application').click();
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
         cy.singleSelectByDataCy('organization', `${awxOrganization.name}`);
@@ -120,7 +120,7 @@ describe('AWX OAuth Applications CRUD actions Details page', () => {
         cy.navigateTo('awx', 'applications');
         cy.verifyPageTitle('OAuth Applications');
         cy.filterTableByMultiSelect('name', [oauthApplicationName]);
-        cy.clickTableRowAction('name', oauthApplicationName, 'delete-application', {
+        cy.clickTableRowAction('name', oauthApplicationName, 'delete-OAuth-application', {
           inKebab: true,
           disableFilter: true,
         });
