@@ -177,7 +177,7 @@ describe('Teams: Add and Remove users', () => {
 
     // Remove users
     cy.filterTableBySingleSelect('name', team.name);
-    cy.clickTableRowAction('name', team.name, 'remove-users', {
+    cy.clickTableRowAction('name', team.name, 'remove-users-from-teams', {
       inKebab: true,
       disableFilter: true,
     });
