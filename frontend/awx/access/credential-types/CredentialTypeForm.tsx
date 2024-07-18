@@ -38,10 +38,10 @@ export function CreateCredentialType() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Credential Type')}
+        title={t('Create credential type')}
         breadcrumbs={[
           { label: t('Credential Types'), to: getPageUrl(AwxRoute.CredentialTypes) },
-          { label: t('Create Credential Type') },
+          { label: t('Create credential type') },
         ]}
       />
       <AwxPageForm<CredentialType>
@@ -79,10 +79,18 @@ export function EditCredentialType() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Credential Type')}
+        title={
+          credentialType?.name
+            ? t('Edit {{credentialtypeName}}', { credentialtypeName: credentialType?.name })
+            : t('Credential Types')
+        }
         breadcrumbs={[
           { label: t('Credential Types'), to: getPageUrl(AwxRoute.CredentialTypes) },
-          { label: t('Edit Credential Type') },
+          {
+            label: credentialType?.name
+              ? t('Edit {{credentialtypeName}}', { credentialtypeName: credentialType?.name })
+              : t('Credential Types'),
+          },
         ]}
       />
       {hasCredentialType && (
