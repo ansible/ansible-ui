@@ -468,7 +468,7 @@ describe('Inventory Groups', () => {
       cy.clickModalButton(/^Close/);
       cy.intercept('POST', awxAPI`/hosts/`).as('createHost');
       cy.clickButton(/^Create host$/);
-      cy.verifyPageTitle('Create Host');
+      cy.verifyPageTitle('Create host');
       cy.getByDataCy('name').type(newHostName);
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Create host$/);
@@ -492,7 +492,7 @@ describe('Inventory Groups', () => {
         disableFilter: true,
       });
       cy.intercept('PATCH', awxAPI`/hosts/*/`).as('editHost');
-      cy.verifyPageTitle('Edit host');
+      cy.verifyPageTitle(`Edit ${thisHost.name}`);
       cy.getByDataCy('name').type('-edited');
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Save host$/);
