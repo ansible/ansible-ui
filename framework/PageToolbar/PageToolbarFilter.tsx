@@ -349,7 +349,7 @@ function ToolbarFilterComponent(props: {
           value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
           onSelect={(item) => setFilterValues(() => [item!])}
           options={filter.options}
-          isRequired={filter.isRequired}
+          isRequired={filter.isRequired || !filter.isPinned}
           disableSortOptions={filter.disableSortOptions}
         />
       );
