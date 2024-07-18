@@ -1,0 +1,40 @@
+name: Platform component tests
+
+on:
+  workflow_call:
+
+jobs:
+  component:
+    name: Component
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        task: [
+          "platform"
+        ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Run Cypress component tests for ${{ matrix.task }}
+        run: npm run component:${{ matrix.task }}
+        working-directory: ./platform

@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-   
+
   platform-e2e:
     name: Platform E2E
     needs: packages
@@ -44,6 +44,11 @@ jobs:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
       PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+
+  platform-component:
+    name: Platform Component
+    needs: packages
+    uses: ./.github/workflows/ds-platform-component.yml
 
   platform-checks:
     runs-on: ubuntu-latest

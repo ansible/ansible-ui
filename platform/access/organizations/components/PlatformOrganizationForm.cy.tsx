@@ -135,7 +135,7 @@ describe('PlatformOrganizationForm', () => {
     cy.get('[data-cy="organization-description"]').type('test description');
     cy.get('[data-cy="execution-environment-select"]').should('not.exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('not.exist');
-    cy.get('[data-cy="credential-select-form-group"]').should('not.exist');
+    cy.get('[data-cy="credential-form-group"]').should('not.exist');
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
     cy.contains(`Description`).should('be.visible');
@@ -167,7 +167,7 @@ describe('PlatformOrganizationForm', () => {
     cy.get('[data-cy="organization-description"]').type('test description');
     cy.get('[data-cy="execution-environment-select"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-select-form-group"]').should('exist');
+    cy.get('[data-cy="credential-form-group"]').should('exist');
     cy.get('[data-cy="maxhosts"]').should('exist');
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
@@ -197,7 +197,7 @@ describe('PlatformOrganizationForm', () => {
     cy.get('[data-cy="organization-description"]').type('test description');
     cy.get('[data-cy="execution-environment-select"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-select-form-group"]').should('exist');
+    cy.get('[data-cy="credential-form-group"]').should('exist');
     cy.get('[data-cy="maxhosts"]').should('not.exist');
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
@@ -262,32 +262,14 @@ describe('PlatformOrganizationForm', () => {
           cy.clickButton(/^Confirm/);
         });
       });
-    cy.wait('@getInstanceGroups')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click({ multiple: true });
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
-    cy.wait('@getGalaxyCredentials')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="credential-select-form-group"]`).within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click({ multiple: true });
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
+    cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
+      cy.getBy('button[data-cy="instance-group-select"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
+    cy.get(`[data-cy*="credential-form-group"]`).within(() => {
+      cy.getBy('button[data-cy="credential"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
     cy.clickButton('Next');
     cy.clickButton('Next');
     cy.clickButton('Next');
@@ -329,7 +311,7 @@ describe('PlatformOrganizationForm', () => {
     cy.get('#maxhosts').should('have.value', 0);
     cy.get('[data-cy="execution-environment-select"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-select-form-group"]').should('exist');
+    cy.get('[data-cy="credential-form-group"]').should('exist');
     cy.wait('@getExecutionEnvironments')
       .its('response.body.results')
       .then(() => {
@@ -343,32 +325,14 @@ describe('PlatformOrganizationForm', () => {
           cy.clickButton(/^Confirm/);
         });
       });
-    cy.wait('@getInstanceGroups')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click({ multiple: true });
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
-    cy.wait('@getGalaxyCredentials')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="credential-select-form-group"]`).within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click({ multiple: true });
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
+    cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
+      cy.getBy('button[data-cy="instance-group-select"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
+    cy.get(`[data-cy*="credential-form-group"]`).within(() => {
+      cy.getBy('button[data-cy="credential"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
     cy.clickButton('Next');
     cy.clickButton('Next');
     cy.clickButton('Next');
@@ -411,7 +375,7 @@ describe('PlatformOrganizationForm', () => {
     cy.get('[data-cy="maxHosts"]').should('not.exist');
     cy.get('[data-cy="execution-environment-select"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-select-form-group"]').should('exist');
+    cy.get('[data-cy="credential-form-group"]').should('exist');
     cy.wait('@getExecutionEnvironments')
       .its('response.body.results')
       .then(() => {
@@ -425,32 +389,14 @@ describe('PlatformOrganizationForm', () => {
           cy.clickButton(/^Confirm/);
         });
       });
-    cy.wait('@getInstanceGroups')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click({ multiple: true });
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
-    cy.wait('@getGalaxyCredentials')
-      .its('response.body.results')
-      .then(() => {
-        cy.get(`[data-cy*="credential-select-form-group"]`).within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click({ multiple: true });
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
+    cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
+      cy.getBy('button[data-cy="instance-group-select"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
+    cy.get(`[data-cy*="credential-form-group"]`).within(() => {
+      cy.getBy('button[data-cy="credential"]').click();
+    });
+    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
     cy.clickButton('Next');
     cy.clickButton('Next');
     cy.clickButton('Next');
