@@ -2,12 +2,13 @@
   "scripts": {
     "start": "cd .. && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' AWX_WEBSOCKET_PREFIX='/api/controller/v2/websocket/' HUB_API_PREFIX='/api/galaxy' webpack serve --mode development --config ./platform/webpack.platform.cjs --port 4100 --open",
     "build": "cd .. && npm run clean && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' AWX_WEBSOCKET_PREFIX='/api/controller/v2/websocket/' HUB_API_PREFIX='/api/galaxy' webpack --mode production --config ./platform/webpack.platform.cjs --output-path build/platform",
+    "cypress": "cd .. && cypress open --config-file=cypress.platform.config.ts",
     "e2e": "cd .. && cypress open --browser chrome --e2e --config-file=cypress.platform.config.ts",
     "e2e:run": "cd .. && TAGS='!upstream' cypress run --e2e --config-file=cypress.platform.config.ts",
     "e2e:openshift:run": "cd .. && cypress run --e2e --config-file=cypress.platform.config.ts",
     "e2e:aaas:run": "cd .. && TAGS='!aaas-unsupported' cypress run --e2e --config-file=cypress.platform.config.ts",
-    "component": "cd .. && cypress open --browser chrome --component --config-file=cypress.platform.config.ts",
-    "component:run": "cd .. && cypress run --component --config-file=cypress.platform.config.ts",
+    "component": "CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=600000 concurrently --kill-others-on-fail npm:component:* -c auto",
+    "component:platform": "cd .. && CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=600000 cypress run --component --config-file=cypress.platform.config.ts",
     "docker:build": "cd .. && docker build --file platform/Dockerfile --target platform-ui --tag platform-ui .",
     "docker:run": "echo https://localhost:4100 && docker run --name platform-ui --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui"
   }
