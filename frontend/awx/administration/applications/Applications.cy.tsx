@@ -46,7 +46,11 @@ describe('Applications List', () => {
 
     it('Create application button is disabled if the user does not have permission to create application', () => {
       cy.mount(<Applications />);
-      cy.contains('button', /^Create application$/).should('have.attr', 'aria-disabled', 'true');
+      cy.contains('button', /^Create OAuth application$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Delete application row action is disabled if the user does not have permission to delete application', () => {
@@ -72,12 +76,12 @@ describe('Applications List', () => {
         .then(() => {
           cy.contains('tr', 'test').within(() => {
             cy.get('button.toggle-kebab').click();
+            cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete OAuth application$/).should(
+              'have.attr',
+              'aria-disabled',
+              'true'
+            );
           });
-          cy.contains('#delete-application', /^Delete application$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
     });
 
@@ -104,7 +108,11 @@ describe('Applications List', () => {
         .then(() => {
           cy.contains('tr', 'test').within(() => {
             cy.get('[data-cy="actions-column-cell"]').within(() => {
-              cy.get(`[data-cy="edit-application"]`).should('have.attr', 'aria-disabled', 'true');
+              cy.get(`[data-cy="edit-OAuth-application"]`).should(
+                'have.attr',
+                'aria-disabled',
+                'true'
+              );
             });
           });
         });
@@ -128,7 +136,11 @@ describe('Applications List', () => {
         },
       }));
       cy.mount(<Applications />);
-      cy.contains('button', /^Create application$/).should('have.attr', 'aria-disabled', 'false');
+      cy.contains('button', /^Create OAuth application$/).should(
+        'have.attr',
+        'aria-disabled',
+        'false'
+      );
     });
 
     it('Delete application row action is enabled if the user has permission to delete application', () => {
@@ -136,6 +148,11 @@ describe('Applications List', () => {
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
+        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete OAuth application$/).should(
+          'have.attr',
+          'aria-disabled',
+          'false'
+        );
       });
       cy.contains('#delete-application', /^Delete application$/).should(
         'not.have.attr',
@@ -149,7 +166,11 @@ describe('Applications List', () => {
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.edit: false
         cy.get('[data-cy="actions-column-cell"]').within(() => {
-          cy.get(`[data-cy="edit-application"]`).should('have.attr', 'aria-disabled', 'false');
+          cy.get(`[data-cy="edit-OAuth-application"]`).should(
+            'have.attr',
+            'aria-disabled',
+            'false'
+          );
         });
       });
     });
@@ -201,7 +222,7 @@ describe('Applications List', () => {
       cy.mount(<Applications />);
       cy.contains(/^There are currently no applications added$/);
       cy.contains(/^Please create an application by using the button below.$/);
-      cy.contains('button', /^Create application$/).should('be.visible');
+      cy.contains('button', /^Create OAuth application$/).should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create applications', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
@@ -214,7 +235,7 @@ describe('Applications List', () => {
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create application$/).should('not.exist');
+      cy.contains('button', /^Create OAuth application$/).should('not.exist');
     });
   });
 });

@@ -7,7 +7,7 @@ describe('Create Edit Application Form', () => {
   describe('Create Application', () => {
     it('should validate required fields on save', () => {
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Organization is required.').should('be.visible');
       cy.contains('Authorization grant type is required.').should('be.visible');
@@ -24,12 +24,12 @@ describe('Create Edit Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create Application');
+      cy.get('[data-cy="name"]').type('Create OAuth application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Password');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.wait('@createApplication')
         .its('request.body')
         .then((createdApplication: Application) => {
@@ -53,13 +53,13 @@ describe('Create Edit Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create Application');
+      cy.get('[data-cy="name"]').type('Create OAuth application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').type('https://www.google.com');
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.wait('@createApplication')
         .its('request.body')
         .then((createdApplication: Application) => {
@@ -84,13 +84,13 @@ describe('Create Edit Application Form', () => {
         fixture: 'application.json',
       }).as('createApplication');
       cy.mount(<CreateApplication onSuccessfulCreate={(app: Application) => app} />);
-      cy.get('[data-cy="name"]').type('Create Application');
+      cy.get('[data-cy="name"]').type('Create OAuth application');
       cy.get('[data-cy="description"]').type('mock application description');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
       cy.selectDropdownOptionByResourceName('authorization-grant-type', 'Authorization code');
       cy.selectDropdownOptionByResourceName('client-type', 'Confidential');
       cy.get('[data-cy="redirect-uris"]').clear();
-      cy.clickButton(/^Create application$/);
+      cy.clickButton(/^Create OAuth application$/);
       cy.get('.pf-v5-c-helper-text__item-text').contains('Redirect uris is required.');
     });
   });
@@ -143,7 +143,7 @@ describe('Create Edit Application Form', () => {
       cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');
       cy.get('[data-cy="redirect-uris"]').clear();
       cy.get('[data-cy="redirect-uris"]').type('https://www.google-edited.com');
-      cy.clickButton(/^Save application$/);
+      cy.clickButton(/^Save OAuth application$/);
       cy.wait('@editApplication')
         .its('request.body')
         .then((editedApplication: Application) => {
@@ -189,7 +189,7 @@ describe('Create Edit Application Form', () => {
           cy.selectDropdownOptionByResourceName('client-type', 'Public');
           cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');
           cy.get('[data-cy="redirect-uris"]').clear();
-          cy.clickButton(/^Save application$/);
+          cy.clickButton(/^Save OAuth application$/);
           cy.wait('@editApplication')
             .its('request.body')
             .then((editedApplication: Application) => {
@@ -219,7 +219,7 @@ describe('Create Edit Application Form', () => {
       cy.selectDropdownOptionByResourceName('client-type', 'Public');
       cy.get('[data-cy="redirect-uris"]').should('have.value', 'https://www.google.com');
       cy.get('[data-cy="redirect-uris"]').clear();
-      cy.clickButton(/^Save application$/);
+      cy.clickButton(/^Save OAuth application$/);
       cy.get('.pf-v5-c-helper-text__item-text').contains('Redirect uris is required');
     });
   });

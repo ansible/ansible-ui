@@ -15,11 +15,11 @@ describe('ApplicationPage', () => {
   });
   it('Should show enabled edit button', () => {
     cy.mount(<ApplicationPage />);
-    cy.get('[data-cy="edit-application"]').should('have.attr', 'aria-disabled', 'false');
+    cy.get('[data-cy="edit-OAuth-application"]').should('have.attr', 'aria-disabled', 'false');
   });
   it('Should show enabled delete button', () => {
     cy.mount(<ApplicationPage />);
-    cy.get('[data-cy="delete-application"]').should('have.attr', 'aria-disabled', 'false');
+    cy.get('[data-cy="delete-OAuth-application"]').should('have.attr', 'aria-disabled', 'false');
   });
   it('Should hide edit button', () => {
     cy.fixture('application')
@@ -40,7 +40,7 @@ describe('ApplicationPage', () => {
         cy.mount(<ApplicationPage />);
       })
       .then(() => {
-        cy.get('[data-cy="edit-application"]').should('not.exist');
+        cy.get('[data-cy="edit-OAuth-application"]').should('not.exist');
       });
   });
 
@@ -63,7 +63,7 @@ describe('ApplicationPage', () => {
         cy.mount(<ApplicationPage />);
       })
       .then(() => {
-        cy.get('[data-cy="delete-application"]').should('not.exist');
+        cy.get('[data-cy="delete-OAuth-application"]').should('not.exist');
       });
   });
 });
