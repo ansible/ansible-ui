@@ -12,6 +12,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
 import { useParams } from 'react-router-dom';
 import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useInventoriesGroupActions() {
   const { t } = useTranslation();
@@ -33,6 +34,7 @@ export function useInventoriesGroupActions() {
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit group'),
         isHidden: () => params.inventory_type === 'constructed_inventory',
         onClick: (group) =>

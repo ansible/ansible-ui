@@ -103,7 +103,7 @@ export function InventorySources() {
         }
         emptyStateIcon={canCreateSource ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateSource ? t('Add source') : undefined}
+        emptyStateButtonText={canCreateSource ? t('Create source') : undefined}
         emptyStateButtonClick={
           canCreateSource
             ? () =>

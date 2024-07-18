@@ -57,7 +57,7 @@ types.forEach((type) => {
           .then((results: InventoryGroup[]) => {
             const group = results[0];
             cy.selectTableRow(group.name, false);
-            cy.clickToolbarKebabAction('delete-selected-groups');
+            cy.clickToolbarKebabAction('delete-groups');
             cy.get('[data-cy="delete-group-modal-delete-button"]').should('be.disabled');
             cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
             cy.get('[data-cy="delete-group-modal-delete-button"]').should('be.enabled');
