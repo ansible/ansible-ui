@@ -66,7 +66,7 @@ describe('Organizations: Edit and Delete', function () {
     cy.getByDataCy('actions-column-cell').within(() => {
       cy.getByDataCy('edit-organization').click();
     });
-    cy.verifyPageTitle('Edit Organization');
+    cy.verifyPageTitle(`Edit ${organization.name}`);
     cy.getByDataCy('name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
@@ -86,18 +86,18 @@ describe('Organizations: Edit and Delete', function () {
     cy.get('[data-cy="name-column-cell"]').within(() => {
       cy.get('a').click();
     });
-    cy.verifyPageTitle(`${organization.name}`);
+    cy.verifyPageTitle(organization.name);
     cy.containsBy('button', /^Edit organization/).click();
-    cy.verifyPageTitle('Edit Organization');
+    cy.verifyPageTitle(`Edit ${organization.name}`);
     cy.getByDataCy('name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
     cy.containsBy('button', /^Save organization/).click();
-    cy.verifyPageTitle('now-edited ' + `${stringRandom}`);
+    cy.verifyPageTitle(organization.name);
     cy.getByDataCy('edit-organization').click();
     cy.getByDataCy('name').clear().type(`${organization.name}`);
     cy.containsBy('button', /^Save organization/).click();
-    cy.verifyPageTitle(`${organization.name}`);
+    cy.verifyPageTitle(organization.name);
   });
 
   it('can delete an organization from the details page', function () {
