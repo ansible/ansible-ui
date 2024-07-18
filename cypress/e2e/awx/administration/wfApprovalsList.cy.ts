@@ -459,7 +459,7 @@ describe('Workflow Approvals Tests', () => {
       cy.getByDataCy('actions-dropdown')
         .click()
         .then(() => {
-          cy.getByDataCy('delete').click();
+          cy.getByDataCy('delete-workflow-approvals').click();
         });
     });
     cy.getModal().within(() => {

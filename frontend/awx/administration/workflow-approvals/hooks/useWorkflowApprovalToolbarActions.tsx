@@ -41,7 +41,7 @@ export function useWorkflowApprovalToolbarActions(view: IAwxView<WorkflowApprova
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete'),
+        label: t('Delete workflow approvals'),
         onClick: deleteWorkflowApprovals,
         isDanger: true,
       },
