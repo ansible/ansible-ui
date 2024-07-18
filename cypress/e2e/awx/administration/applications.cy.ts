@@ -56,14 +56,14 @@ describe('AWX OAuth Applications CRUD actions List page', () => {
         cy.verifyPageTitle('OAuth Applications');
         cy.filterTableByMultiSelect('name', [oauthApplicationName]);
         cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-OAuth-application', false);
-        cy.verifyPageTitle('Edit Application');
+        cy.verifyPageTitle(`Edit ${oauthApplicationName}`);
         cy.getByDataCy('description').clear().type(`${authGrantType} with ${appClientType} edited`);
         cy.getByDataCy('Submit').click();
         cy.verifyPageTitle(oauthApplicationName);
-        cy.clickButton(/^Delete application/);
+        cy.clickButton(/^Delete OAuth application/);
         cy.getModal().within(() => {
           cy.get('#confirm').click();
-          cy.clickButton(/^Delete application/);
+          cy.clickButton(/^Delete OAuth application/);
         });
       });
     });
@@ -126,7 +126,7 @@ describe('AWX OAuth Applications CRUD actions Details page', () => {
         });
         cy.clickModalConfirmCheckbox();
         cy.getModal().within(() => {
-          cy.clickButton(/^Delete application/);
+          cy.clickButton(/^Delete OAuth application/);
           cy.clickButton(/^Close/);
         });
         cy.clickButton(/^Clear all filters$/);
@@ -153,12 +153,12 @@ describe('AWX OAuth Applications CRUD actions and Bulk Deletion', () => {
     cy.filterTableByMultiSelect('name', [`${awxApplication1.name}`, `${awxApplication2.name}`]);
     cy.selectTableRow(`${awxApplication1.name}`, false);
     cy.selectTableRow(`${awxApplication2.name}`, false);
-    cy.clickToolbarKebabAction('delete-selected-applications');
+    cy.clickToolbarKebabAction('delete-OAuth-applications');
     cy.clickModalConfirmCheckbox();
     cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteOAuthApp1');
     cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteOAuthApp2');
     cy.getModal().within(() => {
-      cy.clickButton(/^Delete application/);
+      cy.clickButton(/^Delete OAuth application/);
       cy.wait(['@deleteOAuthApp1', '@deleteOAuthApp2']).then((deleteOAuthApp) => {
         expect(deleteOAuthApp[0]?.response?.statusCode).to.eql(204);
         expect(deleteOAuthApp[1]?.response?.statusCode).to.eql(204);
