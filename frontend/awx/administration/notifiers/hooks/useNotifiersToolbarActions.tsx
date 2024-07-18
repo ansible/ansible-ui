@@ -1,4 +1,4 @@
-import { PlusIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -38,8 +38,8 @@ export function useNotifiersToolbarActions(
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
-        label: t('Add notifier'),
+        icon: PlusCircleIcon,
+        label: t('Create notifier'),
         onClick: () => pageNavigate(AwxRoute.AddNotificationTemplate),
         isDisabled: () =>
           canAddNotificationTemplate
@@ -52,7 +52,7 @@ export function useNotifiersToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected notifiers'),
+        label: t('Delete notifiers'),
         onClick: deleteNotifiers,
         isDisabled: (notification) => cannotDeleteResources(notification, t),
         isDanger: true,
