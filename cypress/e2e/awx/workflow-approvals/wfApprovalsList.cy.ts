@@ -429,8 +429,13 @@ describe('Workflow Approvals Tests', () => {
   function deleteApprovalFromListToolbar() {
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.getByDataCy('select-all').click();
-    cy.clickToolbarKebabAction('delete');
-
+    cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+      cy.getByDataCy('actions-dropdown')
+        .click()
+        .then(() => {
+          cy.getByDataCy('delete-workflow-approvals').click();
+        });
+    });
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
