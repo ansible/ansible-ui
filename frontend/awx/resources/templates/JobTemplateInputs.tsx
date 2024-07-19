@@ -198,7 +198,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         }
         name="verbosity"
         type="number"
-        labelHelpTitle={t('Limit')}
+        labelHelpTitle={t('Verbosity')}
         labelHelp={t('Control the level of output ansible will produce as the playbook executes.')}
         label={t('Verbosity')}
       />
