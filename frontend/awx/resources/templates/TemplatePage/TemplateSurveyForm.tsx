@@ -239,7 +239,7 @@ export function TemplateSurveyForm(props: IProps) {
     <AwxPageForm
       onSubmit={onSubmit}
       onCancel={() => pageNavigateSurveyRoute()}
-      submitText={mode === 'add' ? t('Create question') : t('Save question')}
+      submitText={mode === 'add' ? t('Create survey question') : t('Save survey question')}
       defaultValue={initialValues}
       disableSubmitOnEnter
     >

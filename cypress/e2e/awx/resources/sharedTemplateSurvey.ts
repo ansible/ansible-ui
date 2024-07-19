@@ -56,7 +56,7 @@ export class ReusableTemplateSurveyTestSuite {
     cy.getByDataCy('name-column-cell').contains(question?.question_name);
     cy.getByDataCy('type-column-cell').contains(question?.type);
     cy.getByDataCy('default-column-cell').contains(question?.default);
-    cy.getByDataCy('edit-question').click();
+    cy.getByDataCy('edit-survey-question').click();
     cy.getByDataCy('question-name').clear().type('foo');
     cy.getByDataCy('question-description').clear();
     cy.selectDropdownOptionByResourceName('type', 'Integer');
