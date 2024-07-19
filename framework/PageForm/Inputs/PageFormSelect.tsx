@@ -202,6 +202,7 @@ export function PageFormSelect<
             <div style={{ display: 'flex' }}>
               <Select
                 id={id}
+                itemID={id}
                 placeholderText={placeholderText}
                 variant="single"
                 aria-describedby={`${id}-form-group`}

@@ -2,7 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
-import { PageSettings } from '../../../framework/PageSettings/PageSettings';
+import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
 import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
 import { RolePage } from '../access/roles/RolePage/RolePage';
@@ -509,7 +510,16 @@ export function useHubNavigation() {
           id: HubRoute.SettingsPreferences,
           label: t('User Preferences'),
           path: 'preferences',
-          element: <PageSettings />,
+          children: [
+            {
+              path: 'edit',
+              element: <PageSettingsForm />,
+            },
+            {
+              path: '',
+              element: <PageSettingsDetails />,
+            },
+          ],
         },
       ],
     },
