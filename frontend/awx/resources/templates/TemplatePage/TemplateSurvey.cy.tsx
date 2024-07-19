@@ -73,7 +73,7 @@ describe('TemplateSurvey', () => {
         .parent()
         .within(() => {
           cy.get('[data-cy="actions-column-cell"]').within(() => {
-            cy.get('[data-cy="edit-question"]').should('have.attr', 'aria-disabled', 'true');
+            cy.get('[data-cy="edit-survey-question"]').should('have.attr', 'aria-disabled', 'true');
           });
           cy.getByDataCy('actions-dropdown').click();
         });
