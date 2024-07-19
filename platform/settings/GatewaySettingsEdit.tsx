@@ -1,17 +1,24 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { PageForm, PageFormTextInput, PageHeader, PageLayout } from '../../framework';
+import { useOutletContext } from 'react-router-dom';
+import {
+  PageForm,
+  PageFormTextInput,
+  PageHeader,
+  PageLayout,
+  usePageNavigate,
+} from '../../framework';
 import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSingleSelect } from '../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
 import { requestPut } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../api/gateway-api-utils';
+import { PlatformRoute } from '../main/PlatformRoutes';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 
 export function GatewaySettingsEdit(props: { categoryId?: string }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const { settings, options, refresh } = useOutletContext<{
     options: Record<string, GatewaySettingsOption>;
     settings: Record<string, unknown>;
@@ -48,8 +55,9 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
           }
           await requestPut(gatewayAPI`/settings/all/`, values);
           await refresh();
-          navigate('..');
+          pageNavigate(PlatformRoute.GatewaySettings);
         }}
+        onCancel={() => pageNavigate(PlatformRoute.GatewaySettings)}
         defaultValue={settings}
       >
         {category.sections.map((section) => (
@@ -103,8 +111,8 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       isRequired={option.required}
                       isReadOnly={option.read_only}
                       options={[
-                        { label: t('Enabled'), value: 'true' },
-                        { label: t('Disabled'), value: 'false' },
+                        { label: t('Enabled'), value: true },
+                        { label: t('Disabled'), value: false },
                       ]}
                       // helperText={key}
                     />

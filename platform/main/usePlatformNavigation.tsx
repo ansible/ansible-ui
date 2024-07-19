@@ -268,6 +268,7 @@ export function usePlatformNavigation() {
             ],
           },
           {
+            id: PlatformRoute.GatewaySettings,
             label: t('Platform gateway'),
             path: 'platform-gateway',
             element: <GatewaySettings />,
