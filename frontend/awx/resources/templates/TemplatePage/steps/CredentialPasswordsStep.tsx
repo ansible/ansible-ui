@@ -12,7 +12,9 @@ export function CredentialPasswordsStep<T extends LaunchConfiguration | Relaunch
   const { config } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
-  const { credentials } = wizardData as TemplateLaunch;
+  const {
+    prompt: { credentials },
+  } = wizardData as TemplateLaunch;
   const vaultsThatPrompt: string[] = [];
   let showCredentialPasswordSsh = false;
   let showCredentialPasswordPrivilegeEscalation = false;
@@ -37,7 +39,7 @@ export function CredentialPasswordsStep<T extends LaunchConfiguration | Relaunch
     });
   } else if (credentials) {
     credentials.forEach((credential) => {
-      if (!credential.inputs && 'defaults' in config) {
+      if (!('inputs' in credential) && 'defaults' in config) {
         const launchConfigCredential = config.defaults.credentials.find(
           (defaultCred) => defaultCred.id === credential.id
         );
@@ -60,19 +62,20 @@ export function CredentialPasswordsStep<T extends LaunchConfiguration | Relaunch
           vaultsThatPrompt.push(...vaultPasswordIds);
         }
       } else {
-        if (credential?.inputs?.password === 'ASK') {
+        const inputCheck = 'inputs' in credential;
+        if (inputCheck && credential?.inputs?.password === 'ASK') {
           showCredentialPasswordSsh = true;
         }
 
-        if (credential?.inputs?.become_password === 'ASK') {
+        if (inputCheck && credential?.inputs?.become_password === 'ASK') {
           showCredentialPasswordPrivilegeEscalation = true;
         }
 
-        if (credential?.inputs?.ssh_key_unlock === 'ASK') {
+        if (inputCheck && credential?.inputs?.ssh_key_unlock === 'ASK') {
           showCredentialPasswordPrivateKeyPassphrase = true;
         }
 
-        if (credential?.inputs?.vault_password === 'ASK') {
+        if (inputCheck && credential?.inputs?.vault_password === 'ASK') {
           vaultsThatPrompt.push(credential.inputs.vault_id?.toString() ?? '');
         }
       }
