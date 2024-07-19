@@ -62,7 +62,7 @@ export class ReusableTemplateSurveyTestSuite {
     cy.selectDropdownOptionByResourceName('type', 'Integer');
     cy.getByDataCy('question-max').type('0');
     cy.getByDataCy('question-default').clear().type('1337');
-    cy.clickButton('Save question');
+    cy.clickButton('Save survey question');
     cy.getByDataCy('name-column-cell').contains('foo');
     cy.getByDataCy('type-column-cell').contains('integer');
     cy.getByDataCy('default-column-cell').contains('1337');
