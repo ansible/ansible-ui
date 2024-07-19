@@ -48,7 +48,7 @@ export function AwxOverview() {
             <InfoCircleIcon />{' '}
             <Trans>
               You are currently viewing a tech preview of the new {{ product }} user interface. To
-              return to the original interface, click <a href="/">here</a>.
+              return to the original interface, click <a href="/ui_legacy/">here</a>.
             </Trans>
           </p>
         </Banner>
