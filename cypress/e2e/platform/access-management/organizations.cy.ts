@@ -26,8 +26,6 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
   });
 
   it('creates a basic organization and deletes it from the details page', () => {
-    cy.navigateTo('platform', 'organizations');
-    cy.verifyPageTitle('Organizations');
     cy.clickLink(/^Create organization$/);
     cy.getByDataCy('organization-name').type(organizationName);
     cy.getByDataCy('organization-description').type(orgDescription);
@@ -65,9 +63,9 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.getByDataCy('name-column-cell').contains(organization.name).click();
     cy.verifyPageTitle(organization.name);
-    cy.get('[data-cy="edit-organization"]').click();
+    cy.getByDataCy('edit-organization').click();
     cy.verifyPageTitle('Edit Organization');
-    cy.get('[data-cy="organization-name"]')
+    cy.getByDataCy('organization-name')
       .clear()
       .type(`${detailsEditedOrganizationName} from details page`);
     const orgId = `${organization.id}`.toString();

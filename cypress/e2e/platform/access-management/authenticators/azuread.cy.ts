@@ -62,7 +62,7 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
 
     // Authentication List Page
     cy.navigateTo('platform', 'authenticators');
-    cy.verifyPageTitle('Authentication');
+    cy.verifyPageTitle('Authentication Methods');
 
     // Edit the GitHub authenticator
     cy.clickTableRowAction('name', azureAdAuthenticator, 'edit-authenticator');
@@ -82,7 +82,8 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
 
     // Authentication List Page
     cy.navigateTo('platform', 'authenticators');
-    cy.verifyPageTitle('Authentication');
+    cy.verifyPageTitle('Authentication Methods');
+    cy.searchAndDisplayResourceByFilterOption(azureAdAuthenticator + '_edited', 'name');
 
     // Delete the GitHub authenticator
     cy.clickTableRowAction('name', azureAdAuthenticator + '_edited', 'delete-authentication', {

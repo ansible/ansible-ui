@@ -42,6 +42,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
       );
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
+      cy.verifyPageTitle('Authentication Methods');
 
       // Enables the TACACS authenticator
       cy.getTableRow('name', tacacsAuthenticator).within(() => {
@@ -50,7 +51,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
 
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
+      cy.verifyPageTitle('Authentication Methods');
 
       // Edit the TACACS authenticator
       cy.clickTableRowAction('name', tacacsAuthenticator, 'edit-authenticator');
@@ -70,8 +71,8 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
 
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
-
+      cy.verifyPageTitle('Authentication Methods');
+      cy.searchAndDisplayResourceByFilterOption(tacacsAuthenticator + '_edited', 'name');
       // Delete the TACACS authenticator
       cy.clickTableRowAction('name', tacacsAuthenticator + '_edited', 'delete-authentication', {
         inKebab: true,
