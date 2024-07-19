@@ -68,8 +68,11 @@ const HubBanner = (_props: unknown) => {
     <>
       <Banner variant="blue" style={{ textAlign: 'center' }}>
         <Trans>
-          This is the tech preview of Automation Hub. For the full experience of Automation Hub,
-          click <ExternalLink href={mapHubRoute(pathname)}>here.</ExternalLink>
+          This experience in in tech preview and may not function as expected. Please use the the{' '}
+          <ExternalLink href={mapHubRoute(pathname)}>
+            full experience of Automation Hub
+          </ExternalLink>{' '}
+          for production.
         </Trans>
       </Banner>
       <div style={{ height: 'calc(100% - 29px)' }}>
