@@ -15,14 +15,15 @@ import {
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useGet } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { Credential } from '../../../interfaces/Credential';
 import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
@@ -167,12 +168,10 @@ export function RunCommandExecutionEnvionment(props: { orgId: string }) {
   const { t } = useTranslation();
   return (
     <PageFormSection>
-      <PageFormExecutionEnvironmentSelect
-        name="execution_environment.name"
-        executionEnvironmentIdPath="execution_environment.id"
+      <PageFormSelectExecutionEnvironment
+        name="execution_environment"
         label={t('Execution Environment')}
-        placeholder={t('Select execution environment')}
-        organizationId={props.orgId ?? ''}
+        organizationId={Number(props.orgId) ?? ''}
       />
     </PageFormSection>
   );
@@ -217,6 +216,11 @@ export function RunCommandReviewStep() {
   } = wizardData;
   const { data: credential } = useGet<Credential>(awxAPI`/credentials/${credentialId.toString()}/`);
 
+  const { data: fetchedEE } = useGetItem<ExecutionEnvironment>(
+    awxAPI`/execution_environments/`,
+    execution_environment
+  );
+
   return (
     <>
       <PageFormSection title={t('Review')} singleColumn>
@@ -250,10 +254,10 @@ export function RunCommandReviewStep() {
           <PageDetail label={t('Execution environment')}>
             <Link
               to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-                params: { id: execution_environment.id },
+                params: { id: String(execution_environment) },
               })}
             >
-              {execution_environment.name}
+              {fetchedEE?.name}
             </Link>
           </PageDetail>
         </PageDetails>
