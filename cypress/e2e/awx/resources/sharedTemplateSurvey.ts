@@ -194,7 +194,6 @@ export class ReusableTemplateSurveyTestSuite {
           });
       }
     });
-    cy.clickButton('Finish');
     cy.intercept('POST', awxAPI`/${this.templateType}/${this.template.id.toString()}/launch/`).as(
       'postLaunch'
     );
@@ -202,7 +201,9 @@ export class ReusableTemplateSurveyTestSuite {
     cy.wait('@postLaunch')
       .its('response.body')
       .then((job: Job) => {
-        if (['running', 'pending'].includes(job.status ?? '')) cy.cancelJob(job);
+        job.type === 'job'
+          ? cy.waitForTemplateStatus(job.id.toString())
+          : cy.waitForWorkflowJobStatus(job.id.toString());
 
         cy.navigateTo('awx', 'jobs');
         cy.verifyPageTitle('Jobs');

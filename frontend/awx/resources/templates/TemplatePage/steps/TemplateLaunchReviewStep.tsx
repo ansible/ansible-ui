@@ -16,6 +16,8 @@ import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEd
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { Survey } from '../../../../interfaces/Survey';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
+import { Inventory } from '../../../../interfaces/Inventory';
+import { ConditionalField } from './ConditionalField';
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   if (!template) return '';
@@ -71,51 +73,36 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const getPageUrl = useGetPageUrl();
-  const {
-    inventory,
-    credentials,
-    instance_groups,
-    execution_environment,
-    diff_mode,
-    scm_branch,
-    extra_vars,
-    forks,
-    job_slice_count,
-    job_tags,
-    job_type,
-    labels,
-    limit,
-    skip_tags,
-    timeout,
-    verbosity,
-    survey,
-  } = wizardData as TemplateLaunch;
+  const { prompt = undefined, survey } = wizardData as TemplateLaunch;
   const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
 
   const { data: ee } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
-    execution_environment
+    prompt?.execution_environment ?? ''
+  );
+  const { data: fullInventory } = useGetItem<Inventory>(
+    awxAPI`/inventories/`,
+    prompt?.inventory?.id ?? ''
   );
 
-  let extraVarDetails = extra_vars || '{}';
+  let extraVarDetails = prompt?.extra_vars || '{}';
   if (survey) {
-    extraVarDetails = processSurvey(extra_vars, survey, surveyConfig ?? null);
+    extraVarDetails = processSurvey(prompt?.extra_vars ?? '', survey, surveyConfig ?? null);
   }
 
   <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />;
 
-  const verbosityString = useVerbosityString(verbosity);
+  const verbosityString = useVerbosityString(prompt?.verbosity);
 
   const inventoryUrlPaths: { [key: string]: string } = {
     '': 'inventory',
     smart: 'smart_inventory',
     constructed: 'constructed_inventory',
   };
-
   return (
     <PageDetails numberOfColumns="multiple">
       <PageDetail label={t('Name')}>{template.name}</PageDetail>
-      <PageDetail label={t('Job type')}>{job_type}</PageDetail>
+      <PageDetail label={t('Job type')}>{prompt?.job_type}</PageDetail>
       <PageDetail label={t('Organization')} isEmpty={!template.summary_fields.organization}>
         <Link
           to={getPageUrl(AwxRoute.OrganizationDetails, {
@@ -125,15 +112,20 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           {template.summary_fields?.organization?.name}
         </Link>
       </PageDetail>
-      <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
-        <Link
-          to={getPageUrl(AwxRoute.InventoryDetails, {
-            params: { id: inventory?.id, inventory_type: inventoryUrlPaths[inventory?.kind] },
-          })}
-        >
-          {inventory?.name}
-        </Link>
-      </PageDetail>
+      <ConditionalField isHidden={!fullInventory}>
+        <PageDetail label={t`Inventory`} isEmpty={!fullInventory?.id}>
+          <Link
+            to={getPageUrl(AwxRoute.InventoryDetails, {
+              params: {
+                id: fullInventory?.id,
+                inventory_type: inventoryUrlPaths[fullInventory?.kind as string],
+              },
+            })}
+          >
+            {prompt?.inventory?.name}
+          </Link>
+        </PageDetail>
+      </ConditionalField>
       {template.type === 'job_template' && (
         <PageDetail label={t`Project`} isEmpty={!template.summary_fields.project}>
           <Link
@@ -145,22 +137,22 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           </Link>
         </PageDetail>
       )}
-      <PageDetail label={t`Execution environment`} isEmpty={isEmpty(execution_environment)}>
+      <PageDetail label={t`Execution environment`} isEmpty={isEmpty(prompt?.execution_environment)}>
         <Link
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: execution_environment ? { id: execution_environment } : {},
+            params: prompt?.execution_environment ? { id: prompt?.execution_environment } : {},
           })}
         >
           {ee?.name}
         </Link>
       </PageDetail>
-      <PageDetail label={t('Source control branch')}>{scm_branch}</PageDetail>
+      <PageDetail label={t('Source control branch')}>{prompt?.scm_branch}</PageDetail>
       {template.type === 'job_template' && (
         <PageDetail label={t('Playbook')}>{template?.playbook}</PageDetail>
       )}
-      <PageDetail label={t('Credentials')} isEmpty={isEmpty(credentials)}>
+      <PageDetail label={t('Credentials')} isEmpty={isEmpty(prompt?.credentials)}>
         <LabelGroup>
-          {credentials?.map((credential) => (
+          {prompt?.credentials?.map((credential) => (
             <CredentialDetail credentialID={credential.id} key={credential.id} />
           ))}
         </LabelGroup>
@@ -168,10 +160,10 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       <PageDetail
         label={t`Instance groups`}
         helpText={t`The instance groups for this job template to run on.`}
-        isEmpty={isEmpty(instance_groups)}
+        isEmpty={isEmpty(prompt?.instance_groups)}
       >
         <LabelGroup>
-          {instance_groups?.map((ig) => (
+          {prompt?.instance_groups?.map((ig) => (
             <Label color="blue" key={ig.id}>
               <Link
                 to={getPageUrl(AwxRoute.InstanceGroupDetails, {
@@ -186,22 +178,26 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Forks')}>{forks || 0}</PageDetail>
-      <PageDetail label={t('Limit')}>{limit}</PageDetail>
+      <PageDetail label={t('Forks')}>{prompt?.forks || 0}</PageDetail>
+      <PageDetail label={t('Limit')}>{prompt?.limit}</PageDetail>
       <PageDetail label={t('Verbosity')}>{verbosityString}</PageDetail>
-      <PageDetail label={t('Timeout')}>{timeout || 0}</PageDetail>
-      <PageDetail label={t('Show changes')}>{diff_mode ? t`On` : t`Off`}</PageDetail>
-      <PageDetail label={t('Job slicing')}>{job_slice_count}</PageDetail>
-      <PageDetail label={t('Labels')} isEmpty={isEmpty(labels)}>
+      <PageDetail label={t('Timeout')}>{prompt?.timeout || 0}</PageDetail>
+      <PageDetail label={t('Show changes')}>{prompt?.diff_mode ? t`On` : t`Off`}</PageDetail>
+      <PageDetail label={t('Job slicing')}>{prompt?.job_slice_count}</PageDetail>
+      <PageDetail label={t('Labels')} isEmpty={isEmpty(prompt?.labels)}>
         <LabelGroup>
-          {labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
+          {prompt?.labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Job tags')} isEmpty={isEmpty(job_tags)}>
-        <LabelGroup>{job_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
+      <PageDetail label={t('Job tags')} isEmpty={isEmpty(prompt?.job_tags)}>
+        <LabelGroup>
+          {prompt?.job_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}
+        </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Skip tags')} isEmpty={isEmpty(skip_tags)}>
-        <LabelGroup>{skip_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}</LabelGroup>
+      <PageDetail label={t('Skip tags')} isEmpty={isEmpty(prompt?.skip_tags)}>
+        <LabelGroup>
+          {prompt?.skip_tags?.map(({ name }) => <Label key={name}>{name}</Label>)}
+        </LabelGroup>
       </PageDetail>
       <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />
     </PageDetails>
