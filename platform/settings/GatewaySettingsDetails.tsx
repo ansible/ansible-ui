@@ -32,7 +32,7 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
         variant: ButtonVariant.primary,
         icon: PencilAltIcon,
         label: t('Edit'),
-        onClick: () => navigate('./edit', { replace: true }),
+        onClick: () => navigate('./edit'),
         isPinned: true,
       },
     ],
@@ -61,19 +61,19 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
               switch (typeof value) {
                 case 'string':
                   return (
-                    <PageDetail key={key} label={option.label}>
+                    <PageDetail key={key} label={option.label} helpText={option.help_text}>
                       {value}
                     </PageDetail>
                   );
                 case 'number':
                   return (
-                    <PageDetail key={key} label={option.label}>
+                    <PageDetail key={key} label={option.label} helpText={option.help_text}>
                       {value}
                     </PageDetail>
                   );
                 case 'boolean':
                   return (
-                    <PageDetail key={key} label={option.label}>
+                    <PageDetail key={key} label={option.label} helpText={option.help_text}>
                       {value ? t('Enabled') : t('Disabled')}
                     </PageDetail>
                   );

@@ -75,4 +75,5 @@ export enum PlatformRoute {
   ApiTokens = 'platform-api-tokens',
   SubscriptionWizard = 'platform-subscription-wizard',
   SubscriptionDetails = 'platform-subscription-details',
+  GatewaySettings = 'platform-gateway-settings',
 }
