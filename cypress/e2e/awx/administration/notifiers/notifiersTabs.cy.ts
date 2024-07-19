@@ -1,10 +1,8 @@
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { WorkflowJobTemplate } from '../../../../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { tag } from '../../../../support/tag';
 import { randomE2Ename } from '../../../../support/utils';
 import { testDelete, testNotification } from './notifiersSharedFunctions';
-import { tag } from '../../../../support/tag';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 
@@ -135,76 +133,8 @@ describe('Notifications', () => {
     //These tests live in the jobTemplates.cy.ts spec file
   });
 
-  describe('Notifications Tab for Workflow Job Templates', () => {
-    const wfJobTemplateName = randomE2Ename();
-    const inventoryName = randomE2Ename();
-    let wfJobTemplate: WorkflowJobTemplate;
-    let inventory: Inventory;
-
-    beforeEach(() => {
-      cy.createAwxInventory(awxOrganization, { name: inventoryName }).then((inv) => {
-        inventory = inv;
-        cy.createAwxWorkflowJobTemplate({
-          organization: awxOrganization.id,
-          inventory: inventory.id,
-          name: wfJobTemplateName,
-        }).then((jt) => {
-          wfJobTemplate = jt;
-        });
-      });
-    });
-
-    afterEach(() => {
-      cy.deleteAwxWorkflowJobTemplate(wfJobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    });
-
-    it('can navigate to the Workflow Job Templates -> Notifications list and then to the details page of the Notification', () => {
-      const notificationName = randomE2Ename();
-      cy.createNotificationTemplate(notificationName, awxOrganization).then(() => {
-        moveToNotification('templates', wfJobTemplateName, notificationName);
-      });
-    });
-
-    it('can toggle the Workflow Job Templates -> Notification on and off for job approval', () => {
-      testToggle(
-        'templates',
-        wfJobTemplateName,
-        'Click to enable approval',
-        'Click to disable approval',
-        awxOrganization
-      );
-    });
-
-    it('can toggle the Workflow Job Templates -> Notification on and off for job start', () => {
-      testToggle(
-        'templates',
-        wfJobTemplateName,
-        'Click to enable start',
-        'Click to disable start',
-        awxOrganization
-      );
-    });
-
-    it('can toggle the Workflow Job Templates -> Notification on and off for job success', () => {
-      testToggle(
-        'templates',
-        wfJobTemplateName,
-        'Click to enable success',
-        'Click to disable success',
-        awxOrganization
-      );
-    });
-
-    it('can toggle the Workflow Job Templates -> Notification on and off for job failure', () => {
-      testToggle(
-        'templates',
-        wfJobTemplateName,
-        'Click to enable failure',
-        'Click to disable failure',
-        awxOrganization
-      );
-    });
+  describe.skip('Notifications Tab for Workflow Job Templates', () => {
+    //These tests live in the workflowJobTemplates.cy.ts spec file
   });
 
   function testToggle(
