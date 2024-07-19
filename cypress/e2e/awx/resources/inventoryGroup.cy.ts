@@ -133,16 +133,7 @@ describe('Inventory Groups', () => {
         });
         cy.getByDataCy('become_enabled').click();
         cy.clickButton(/^Next$/);
-        cy.getByDataCy('execution-environment-select-form-group').within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.filterTableBySingleSelect('name', executionEnvironment.name);
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click();
-          });
-          cy.clickButton(/^Confirm/);
-        });
+        cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
         cy.clickButton(/^Next$/);
         cy.singleSelectByDataCy('credential', machineCredential.name);
         cy.clickButton(/^Next$/);
@@ -527,18 +518,8 @@ describe('Inventory Groups', () => {
       });
       cy.getByDataCy('become_enabled').click();
       cy.clickButton(/^Next$/);
-      cy.getByDataCy('execution-environment-select-form-group').within(() => {
-        cy.getBy('[aria-label="Options menu"]').click();
-      });
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.filterTableBySingleSelect('name', executionEnvironment.name);
-        cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-          cy.get('[data-cy="checkbox-column-cell"] input').click();
-        });
-        cy.clickButton(/^Confirm/);
-      });
+      cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
       cy.clickButton(/^Next$/);
-      // TODO: modal is closed instanly, possible cause: https://issues.redhat.com/browse/AAP-23766
       cy.getByDataCy('credential-select-form-group').within(() => {
         cy.getBy('[aria-label="Options menu"]').click();
       });
