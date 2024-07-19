@@ -53,260 +53,260 @@ describe('ScheduleAddWizard', () => {
     credential_type: 2,
   };
 
-  // describe('Prompted schedule', () => {
-  //   beforeEach(() => {
-  //     cy.intercept(
-  //       { method: 'OPTIONS', url: awxAPI`/credentials/*` },
-  //       { fixture: 'credentials.json' }
-  //     );
+  describe('Prompted schedule', () => {
+    beforeEach(() => {
+      cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/credentials/*` },
+        { fixture: 'credentials.json' }
+      );
 
-  //     cy.intercept(
-  //       { method: 'GET', url: awxAPI`/credential_types/*` },
-  //       { fixture: 'credentialTypes.json' }
-  //     );
-  //   });
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/credential_types/*` },
+        { fixture: 'credentialTypes.json' }
+      );
+    });
 
-  //   it('job template should render the correct steps initially', () => {
-  //     cy.intercept(awxAPI`/job_templates/266/`, mockTemplate);
-  //     cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
-  //     cy.intercept('/api/v2/job_templates/*/credentials/', {
-  //       count: 1,
-  //       results: [mockTemplateCredential],
-  //     });
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
-  //       initialEntries: ['/templates/job-templates/266/schedules/create'],
-  //       path: '/templates/job-templates/:id/schedules/create',
-  //     });
+    it('job template should render the correct steps initially', () => {
+      cy.intercept(awxAPI`/job_templates/266/`, mockTemplate);
+      cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
+      cy.intercept('/api/v2/job_templates/*/credentials/', {
+        count: 1,
+        results: [mockTemplateCredential],
+      });
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
+        initialEntries: ['/templates/job-templates/266/schedules/create'],
+        path: '/templates/job-templates/:id/schedules/create',
+      });
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       cy.get('li').should('have.length', 4);
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
 
-  //     cy.get('[data-cy="name"]').type('Test Schedule');
-  //     cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
-  //   });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
 
-  //   it('workflow job template should render the correct steps initially', () => {
-  //     cy.intercept('/api/v2/workflow_job_templates/*/credentials/', {
-  //       count: 1,
-  //       results: [mockTemplateCredential],
-  //     });
-  //     cy.intercept('/api/v2/workflow_job_templates/*/launch/', launchConfig);
-  //     cy.intercept(awxAPI`/workflow_job_templates/*/`, mockTemplate);
-  //     cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
+    it('workflow job template should render the correct steps initially', () => {
+      cy.intercept('/api/v2/workflow_job_templates/*/credentials/', {
+        count: 1,
+        results: [mockTemplateCredential],
+      });
+      cy.intercept('/api/v2/workflow_job_templates/*/launch/', launchConfig);
+      cy.intercept(awxAPI`/workflow_job_templates/*/`, mockTemplate);
+      cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
 
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />, {
-  //       initialEntries: ['/templates/workflow-job-templates/266/schedules/create'],
-  //       path: '/templates/workflow-job-templates/:id/schedules/create',
-  //     });
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />, {
+        initialEntries: ['/templates/workflow-job-templates/266/schedules/create'],
+        path: '/templates/workflow-job-templates/:id/schedules/create',
+      });
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       cy.get('li').should('have.length', 4);
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
 
-  //     cy.get('[data-cy="name"]').type('Test Schedule');
-  //     cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
-  //   });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
 
-  //   it('project does not render prompt and survey steps', () => {
-  //     cy.intercept(
-  //       { method: 'GET', url: awxAPI`/projects/*` },
-  //       {
-  //         count: 1,
-  //         results: [
-  //           {
-  //             id: 100,
-  //             name: 'Mock Project',
-  //             description: 'Project Description',
-  //             type: 'project',
-  //           },
-  //         ],
-  //       }
-  //     );
+    it('project does not render prompt and survey steps', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/projects/*` },
+        {
+          count: 1,
+          results: [
+            {
+              id: 100,
+              name: 'Mock Project',
+              description: 'Project Description',
+              type: 'project',
+            },
+          ],
+        }
+      );
 
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/projects/`} />, {
-  //       initialEntries: ['/projects/6/schedules/create'],
-  //       path: '/projects/:id/schedules/create',
-  //     });
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/projects/`} />, {
+        initialEntries: ['/projects/6/schedules/create'],
+        path: '/projects/:id/schedules/create',
+      });
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       cy.get('li').should('have.length', 4);
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
 
-  //     cy.get('[data-cy="name"]').type('Test Schedule');
-  //     cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
-  //   });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
 
-  //   it('management job does not render prompt and survey steps', () => {
-  //     cy.intercept(
-  //       { method: 'GET', url: awxAPI`/system_job_templates/*/` },
-  //       {
-  //         id: 1,
-  //         type: 'system_job_template',
-  //         name: 'Cleanup Job Details',
-  //       }
-  //     );
+    it('management job does not render prompt and survey steps', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/system_job_templates/*/` },
+        {
+          id: 1,
+          type: 'system_job_template',
+          name: 'Cleanup Job Details',
+        }
+      );
 
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
-  //       initialEntries: ['/administration/management-jobs/2/schedules/create'],
-  //       path: '/administration/management-jobs/:id/schedules/create',
-  //     });
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
+        initialEntries: ['/administration/management-jobs/2/schedules/create'],
+        path: '/administration/management-jobs/:id/schedules/create',
+      });
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       cy.get('li').should('have.length', 4);
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
 
-  //     cy.get('[data-cy="name"]').type('Test Schedule');
-  //     cy.get('[data-cy="schedule-days-to-keep"]').type('77');
-  //     cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.get('[data-cy="schedule-days-to-keep"]').type('77');
+      cy.clickButton(/^Next$/);
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
-  //   });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
 
-  //   it('inventory source does not render prompt and survey steps', () => {
-  //     cy.intercept(
-  //       { method: 'GET', url: awxAPI`/inventories/*/` },
+    it('inventory source does not render prompt and survey steps', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/inventories/*/` },
 
-  //       {
-  //         id: 1,
-  //         type: 'inventory',
-  //         name: 'Mock Inventory',
-  //       }
-  //     );
-  //     cy.intercept(
-  //       { method: 'GET', url: awxAPI`/inventories/1/inventory_sources/*/` },
-  //       {
-  //         id: 2,
-  //         type: 'inventory_source',
-  //         name: 'Mock Inventory source',
-  //       }
-  //     );
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/inventory_sources/`} />, {
-  //       initialEntries: ['/infrastructure/inventories/inventory/1/sources/1/schedules/create'],
-  //       path: '/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/create',
-  //     });
+        {
+          id: 1,
+          type: 'inventory',
+          name: 'Mock Inventory',
+        }
+      );
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/inventories/1/inventory_sources/*/` },
+        {
+          id: 2,
+          type: 'inventory_source',
+          name: 'Mock Inventory source',
+        }
+      );
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/inventory_sources/`} />, {
+        initialEntries: ['/infrastructure/inventories/inventory/1/sources/1/schedules/create'],
+        path: '/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/create',
+      });
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       cy.get('li').should('have.length', 4);
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        cy.get('li').should('have.length', 4);
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
 
-  //     cy.get('[data-cy="name"]').type('Test Schedule');
-  //     cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.clickButton(/^Next$/);
 
-  //     cy.get('[data-cy="wizard-nav"]').within(() => {
-  //       ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-  //         cy.get('li')
-  //           .eq(index)
-  //           .should((el) => expect(el.text().trim()).to.equal(text));
-  //       });
-  //     });
-  //   });
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+    });
 
-  //   it('job template should not go to next step due to name failed validation', () => {
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
-  //       initialEntries: ['/templates/job-template/8/schedules/create'],
-  //       path: '/templates/job-template/:id/schedules/create',
-  //     });
-  //     cy.clickButton(/^Next$/);
-  //     cy.get('[data-cy="name-form-group"]').within(() => {
-  //       cy.get('span.pf-v5-c-helper-text__item-text').should(
-  //         'have.text',
-  //         'Schedule name is required.'
-  //       );
-  //     });
-  //     cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
-  //       cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
-  //     });
-  //   });
+    it('job template should not go to next step due to name failed validation', () => {
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/job_templates/`} />, {
+        initialEntries: ['/templates/job-template/8/schedules/create'],
+        path: '/templates/job-template/:id/schedules/create',
+      });
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name-form-group"]').within(() => {
+        cy.get('span.pf-v5-c-helper-text__item-text').should(
+          'have.text',
+          'Schedule name is required.'
+        );
+      });
+      cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
+        cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
+      });
+    });
 
-  //   it('management job template should not go to next step due to name and days field failed validation', () => {
-  //     cy.intercept(
-  //       { method: 'GET', url: awxAPI`/system_job_templates/*/` },
-  //       {
-  //         id: 1,
-  //         type: 'system_job_template',
-  //         name: 'Cleanup Job Details',
-  //       }
-  //     );
-  //     cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
-  //       initialEntries: ['/administration/management-jobs/5/schedules/create'],
-  //       path: '/administration/management-jobs/:id/schedules/create',
-  //     });
-  //     cy.get('[data-cy="name"]').type('Test Schedule');
-  //     cy.get('[data-cy="name"]').clear();
-  //     cy.clickButton(/^Next$/);
-  //     cy.get('[data-cy="name-form-group"]').within(() => {
-  //       cy.get('span.pf-v5-c-helper-text__item-text').should(
-  //         'have.text',
-  //         'Schedule name is required.'
-  //       );
-  //     });
-  //     cy.get('[data-cy="schedule-days-to-keep-form-group"]').within(() => {
-  //       cy.get('span.pf-v5-c-helper-text__item-text').should(
-  //         'have.text',
-  //         'Days of data to keep is required.'
-  //       );
-  //     });
-  //     cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
-  //       cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
-  //     });
-  //   });
-  // });
+    it('management job template should not go to next step due to name and days field failed validation', () => {
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/system_job_templates/*/` },
+        {
+          id: 1,
+          type: 'system_job_template',
+          name: 'Cleanup Job Details',
+        }
+      );
+      cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
+        initialEntries: ['/administration/management-jobs/5/schedules/create'],
+        path: '/administration/management-jobs/:id/schedules/create',
+      });
+      cy.get('[data-cy="name"]').type('Test Schedule');
+      cy.get('[data-cy="name"]').clear();
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="name-form-group"]').within(() => {
+        cy.get('span.pf-v5-c-helper-text__item-text').should(
+          'have.text',
+          'Schedule name is required.'
+        );
+      });
+      cy.get('[data-cy="schedule-days-to-keep-form-group"]').within(() => {
+        cy.get('span.pf-v5-c-helper-text__item-text').should(
+          'have.text',
+          'Days of data to keep is required.'
+        );
+      });
+      cy.get('[data-cy="wizard-nav-item-details"]').within(() => {
+        cy.get('button').should('have.attr', 'class').and('contain', 'pf-m-current');
+      });
+    });
+  });
   describe('Rules step', () => {
     beforeEach(() => {
       cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
@@ -325,7 +325,6 @@ describe('ScheduleAddWizard', () => {
         ask_credential_on_launch: false,
         survey_enabled: false,
       });
-      // cy.intercept('/api/v2/job_templates/100/launch/', {});
       cy.mount(<ScheduleAddWizard isTopLevelSchedule />, {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
