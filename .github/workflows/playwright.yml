@@ -44,6 +44,7 @@ jobs:
   playwright:
     name: 'Playwright Tests'
     runs-on: ubuntu-latest
+    needs: awx-ui-image
     container:
       image: mcr.microsoft.com/playwright:v1.45.1-jammy
     steps:
