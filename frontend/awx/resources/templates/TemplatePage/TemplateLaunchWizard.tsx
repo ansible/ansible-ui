@@ -12,25 +12,24 @@ import {
 import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
-import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
-import { PageFormInstanceGroupSelect } from '../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
-import type { Inventory } from '../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import { PageFormInventorySelect } from '../../inventories/components/PageFormInventorySelect';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
-import { CredentialPasswordsStep, OtherPromptsStep, TemplateLaunchReviewStep } from './steps';
+import { TemplateLaunchPromptStep } from './steps/TemplateLaunchPromptStep';
+import { PromptFormValues } from '../WorkflowVisualizer/types';
+import { CredentialPasswordsStep, TemplateLaunchReviewStep } from './steps';
+import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { RequestError } from '../../../../common/crud/RequestError';
 import { Credential } from '../../../interfaces/Credential';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -52,24 +51,11 @@ export const formFieldToLaunchConfig = {
 };
 
 export interface TemplateLaunch {
-  inventory: Inventory;
-  credentials: Credential[];
-  credential_passwords: { [key: string]: string };
-  instance_groups: InstanceGroup[];
-  execution_environment: number;
-  diff_mode: boolean;
-  extra_vars: string;
-  forks: number;
-  job_slice_count: number;
-  job_tags: { name: string }[];
-  job_type: string;
-  labels: { name: string; id?: number }[];
-  limit: string;
-  scm_branch: string;
-  skip_tags: { name: string }[];
-  timeout: number;
-  verbosity: number;
+  resource: JobTemplate;
+  prompt: PromptFormValues;
   survey: { [key: string]: string | string[] };
+  credential_passwords: { [key: string]: string };
+  launch_config: LaunchConfiguration;
 }
 
 interface LaunchPayload {
@@ -93,19 +79,8 @@ interface LaunchPayload {
 }
 type LaunchPayloadProperty = keyof LaunchPayload;
 
-const acceptableCredentialKinds = [
-  'machine',
-  'cloud',
-  'net',
-  'ssh',
-  'vault',
-  'kubernetes',
-  'cryptography',
-];
-
 export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
-
   const postRequest = usePostRequest<Partial<LaunchPayload>, UnifiedJob>();
   const createLabelPayload = useLabelPayload();
 
@@ -124,39 +99,18 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
     error: getLaunchError,
     refresh: getLaunchRefresh,
   } = useGet<LaunchConfiguration>(awxAPI`/${jobType}/${resourceId}/launch/`);
-
   const error = getTemplateError || getLaunchError;
   const refresh = getTemplateRefresh || getLaunchRefresh;
   const getJobOutputUrl = useGetJobOutputUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!config || !template) return <LoadingPage breadcrumbs tabs />;
-
   const handleSubmit = async (formValues: TemplateLaunch) => {
     if (formValues) {
-      const {
-        inventory,
-        credentials,
-        credential_passwords,
-        instance_groups,
-        execution_environment,
-        diff_mode,
-        scm_branch,
-        extra_vars,
-        forks,
-        job_slice_count,
-        job_tags,
-        job_type,
-        labels,
-        limit,
-        skip_tags,
-        survey,
-        timeout,
-        verbosity,
-      } = formValues;
+      const { credential_passwords = {}, prompt = undefined, survey } = formValues;
 
       try {
-        const labelPayload = await createLabelPayload(labels || [], template);
+        const labelPayload = await createLabelPayload(prompt?.labels || [], template);
 
         let payload: Partial<LaunchPayload> = {};
         const setValue = <K extends LaunchPayloadProperty>(key: K, value: LaunchPayload[K]) => {
@@ -177,36 +131,39 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
           payload[key] = value;
         };
-
-        setValue(
-          'credentials',
-          credentials?.map((cred) => Number(cred.id))
-        );
-        setValue('credential_passwords', credential_passwords);
-        setValue('diff_mode', diff_mode);
-        setValue('execution_environment', execution_environment);
-        setValue('extra_vars', extra_vars);
-        setValue('forks', forks);
-        setValue(
-          'instance_groups',
-          instance_groups?.map(({ id }) => id)
-        );
-        setValue('inventory', inventory?.id);
-        setValue('job_slice_count', job_slice_count);
-        setValue('job_tags', job_tags?.map((tag) => tag.name).join(','));
-        setValue('job_type', job_type);
-        setValue('limit', limit);
-        setValue('scm_branch', scm_branch);
-        setValue('skip_tags', skip_tags?.map((tag) => tag.name).join(','));
-        setValue('timeout', timeout);
-        setValue('verbosity', verbosity);
-
+        if (prompt !== undefined) {
+          setValue(
+            'credentials',
+            (prompt?.credentials || []).map((cred) => Number(cred.id))
+          );
+          setValue('credential_passwords', credential_passwords);
+          setValue('diff_mode', prompt.diff_mode);
+          prompt?.execution_environment &&
+            setValue('execution_environment', prompt.execution_environment);
+          setValue('extra_vars', prompt?.extra_vars);
+          setValue('forks', prompt?.forks);
+          setValue(
+            'instance_groups',
+            prompt.instance_groups?.map(({ id }) => id)
+          );
+          prompt.inventory?.id && setValue('inventory', prompt.inventory?.id);
+          setValue('job_slice_count', prompt.job_slice_count);
+          setValue('job_tags', prompt.job_tags?.map((tag) => tag.name).join(','));
+          setValue('job_type', prompt.job_type);
+          setValue('limit', prompt.limit);
+          setValue('scm_branch', prompt.scm_branch);
+          setValue('skip_tags', prompt.skip_tags?.map((tag) => tag.name).join(','));
+          setValue('timeout', prompt.timeout);
+          setValue('verbosity', prompt.verbosity);
+        }
         if (labelPayload.length > 0) {
           setValue('labels', labelPayload);
         }
 
         if (config.survey_enabled && jobType === 'job_templates') {
-          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          const extraVarsObj = prompt?.extra_vars
+            ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
+            : {};
           setValue('extra_vars', {
             ...extraVarsObj,
             ...survey,
@@ -214,7 +171,9 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         }
 
         if (jobType === 'workflow_job_templates') {
-          const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+          const extraVarsObj = prompt?.extra_vars
+            ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
+            : {};
 
           payload = {
             ...payload,
@@ -258,38 +217,123 @@ export function LaunchWizard({
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const { defaults } = config;
+  const readOnlyLabels = defaults?.labels?.map((label) => ({
+    ...label,
+    isReadOnly: true,
+  }));
+
+  const initialValues = {
+    resource: template,
+    credential_passwords: {},
+    prompt: {
+      inventory: defaults.inventory.id ? defaults.inventory : null,
+      credentials: defaults?.credentials,
+      execution_environment: defaults.execution_environment?.id,
+      instance_groups: defaults.instance_groups,
+      diff_mode: defaults.diff_mode,
+      scm_branch: defaults.scm_branch,
+      extra_vars: defaults.extra_vars,
+      forks: defaults.forks,
+      job_slice_count: defaults.job_slice_count,
+      job_tags: parseStringToTagArray(defaults.job_tags),
+      job_type: defaults.job_type,
+      labels: readOnlyLabels,
+      limit: defaults.limit,
+      skip_tags: parseStringToTagArray(defaults.skip_tags),
+      timeout: defaults.timeout,
+      verbosity: defaults.verbosity,
+    },
+    launch_config: config,
+    survey: {},
+  };
+  const credentialVaultId = function (
+    selectedCredential:
+      | Credential
+      | {
+          id: number;
+          name: string;
+          credential_type: number;
+          passwords_needed?: string[];
+          vault_id?: string;
+        }
+  ) {
+    if (
+      selectedCredential &&
+      'inputs' in selectedCredential &&
+      'vault_id' in selectedCredential['inputs']
+    ) {
+      return selectedCredential.inputs.vault_id;
+    }
+    if (selectedCredential && 'vault_id' in selectedCredential) {
+      return selectedCredential.vault_id;
+    }
+    return undefined;
+  };
+
   const steps: PageWizardStep[] = [
     {
-      id: 'inventory',
-      label: t('Inventory'),
-      inputs: <PageFormInventorySelect<TemplateLaunch> name="inventory" isRequired />,
+      id: 'nodePromptsStep',
+      label: t('Prompts'),
+      inputs: <TemplateLaunchPromptStep defaultValues={initialValues} />,
       hidden: () => !template.ask_inventory_on_launch,
+      validate: async (formData) => {
+        const missingCredentialTypes: string[] = [];
+        await requestGet<AwxItemsResponse<Credential>>(
+          awxAPI`/job_templates/${template.id?.toString()}/credentials/`
+        ).then(({ results: originalCredentials }) => {
+          const {
+            prompt: { credentials: selectedCredentials },
+          } = formData as TemplateLaunch;
+          if (originalCredentials.length > 0 && selectedCredentials) {
+            originalCredentials.forEach((originalCredential) => {
+              if (
+                !selectedCredentials.find((selectedCredential) => {
+                  const selectedCredentialVaultID = credentialVaultId(selectedCredential);
+                  const originalCredentialVaultID = credentialVaultId(originalCredential);
+                  return (
+                    (selectedCredential?.credential_type === originalCredential?.credential_type &&
+                      !selectedCredentialVaultID &&
+                      !originalCredentialVaultID) ||
+                    (originalCredentialVaultID &&
+                      selectedCredentialVaultID === originalCredentialVaultID)
+                  );
+                })
+              ) {
+                missingCredentialTypes.push(
+                  originalCredential?.inputs?.vault_id
+                    ? `${originalCredential?.summary_fields.credential_type.name} | ${originalCredential.inputs.vault_id}`
+                    : originalCredential?.summary_fields.credential_type.name
+                );
+              }
+            });
+          }
+          if (missingCredentialTypes.length > 0) {
+            const errors = {
+              __all__: [
+                t(
+                  `Job Template default credentials must be replaced with one of the same type.  Please select a credential for the following types in order to proceed: ${missingCredentialTypes.join(
+                    ', '
+                  )}`
+                ),
+              ],
+            };
+            throw new RequestError('', '', 400, '', errors);
+          }
+
+          return undefined;
+        });
+      },
     },
     {
-      id: 'credentials',
-      label: t('Credentials'),
-      hidden: () => !template.ask_credential_on_launch,
-      inputs: (
-        <PageFormCredentialSelect<TemplateLaunch>
-          name="credentials"
-          label={t('Credentials')}
-          placeholder={t('Select credentials')}
-          labelHelpTitle={t('Credentials')}
-          labelHelp={t(
-            'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
-          )}
-          isMultiple
-          queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
-        />
-      ),
-    },
-    {
-      id: 'credential-passwords',
+      id: 'credential_passwords',
       label: t('Credential Passwords'),
       hidden: (wizardValues: Partial<TemplateLaunch>) => {
+        const { prompt = {} } = wizardValues;
+        if (!prompt && !config) return true;
         const credentials =
-          'credentials' in wizardValues
-            ? (wizardValues.credentials as Credential[])
+          'credentials' in prompt
+            ? (wizardValues?.prompt?.credentials as Credential[])
             : (config.defaults.credentials as unknown as Credential[]);
 
         const launchConfigAsksCredentials = config.ask_credential_on_launch;
@@ -321,34 +365,6 @@ export function LaunchWizard({
       inputs: <CredentialPasswordsStep<LaunchConfiguration> config={config} />,
     },
     {
-      id: 'execution-environment',
-      label: t('Execution Environment'),
-      inputs: (
-        <PageFormSelectExecutionEnvironment<TemplateLaunch>
-          name="execution_environment"
-          organizationId={template.organization}
-        />
-      ),
-      hidden: () => !template.ask_execution_environment_on_launch,
-    },
-    {
-      id: 'instance-groups',
-      label: t('Instance Groups'),
-      hidden: () => !template.ask_instance_groups_on_launch,
-      inputs: (
-        <PageFormInstanceGroupSelect<TemplateLaunch>
-          name="instance_groups"
-          labelHelp={t(`Select the instance groups for this template to run on.`)}
-        />
-      ),
-    },
-    {
-      id: 'other-prompts',
-      label: t('Other prompts'),
-      hidden: () => !shouldShowOtherStep(config),
-      inputs: <OtherPromptsStep config={config} template={template} />,
-    },
-    {
       id: 'survey',
       label: t('Survey'),
       hidden: () => !config?.survey_enabled,
@@ -360,43 +376,6 @@ export function LaunchWizard({
       element: <TemplateLaunchReviewStep template={template} />,
     },
   ];
-
-  const { defaults } = config;
-  const readOnlyLabels = defaults?.labels?.map((label) => ({
-    ...label,
-    isReadOnly: true,
-  }));
-
-  const initialValues = {
-    inventory: {
-      inventory: defaults.inventory.id ? defaults.inventory : null,
-    },
-    credentials: {
-      credentials: defaults?.credentials,
-    },
-    'credential-passwords': {},
-    'execution-environment': {
-      execution_environment: defaults.execution_environment?.id,
-    },
-    'instance-groups': {
-      instance_groups: defaults.instance_groups,
-    },
-    'other-prompts': {
-      diff_mode: defaults.diff_mode,
-      scm_branch: defaults.scm_branch,
-      extra_vars: defaults.extra_vars,
-      forks: defaults.forks,
-      job_slice_count: defaults.job_slice_count,
-      job_tags: parseStringToTagArray(defaults.job_tags),
-      job_type: defaults.job_type,
-      labels: readOnlyLabels,
-      limit: defaults.limit,
-      skip_tags: parseStringToTagArray(defaults.skip_tags),
-      timeout: defaults.timeout,
-      verbosity: defaults.verbosity,
-    },
-    survey: {},
-  };
 
   return (
     <PageLayout>
@@ -417,22 +396,5 @@ export function LaunchWizard({
         errorAdapter={awxErrorAdapter}
       />
     </PageLayout>
-  );
-}
-
-function shouldShowOtherStep(launchData: LaunchConfiguration) {
-  return (
-    launchData.ask_job_type_on_launch ||
-    launchData.ask_limit_on_launch ||
-    launchData.ask_verbosity_on_launch ||
-    launchData.ask_tags_on_launch ||
-    launchData.ask_skip_tags_on_launch ||
-    launchData.ask_variables_on_launch ||
-    launchData.ask_scm_branch_on_launch ||
-    launchData.ask_diff_mode_on_launch ||
-    launchData.ask_labels_on_launch ||
-    launchData.ask_forks_on_launch ||
-    launchData.ask_job_slice_count_on_launch ||
-    launchData.ask_timeout_on_launch
   );
 }
