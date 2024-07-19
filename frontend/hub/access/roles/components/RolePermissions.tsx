@@ -52,7 +52,6 @@ export function RolePermissions(props: { role: Role; showCustom?: boolean; showE
                 (permission) => model_permissions?.[permission]?.name || permission
               )}
               numLabels={3}
-              wrapLabels
             />
           </DescriptionListDescription>
         </DescriptionListGroup>
