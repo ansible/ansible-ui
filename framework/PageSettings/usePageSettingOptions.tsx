@@ -75,16 +75,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
       ],
       defaultValue: 'multiple',
     },
-    // Comment this onw out as it causes issue for now
-    // {
-    //   name: 'formLayout',
-    //   label: t('Form layout'),
-    //   helpText: t('Select the layout for forms.'),
-    //   options: [
-    //     { label: t('Vertical'), value: 'vertical' },
-    //     { label: t('Horizontal'), value: 'horizontal' },
-    //   ],
-    // },
+
     {
       name: 'dateFormat',
       label: t('Date format'),

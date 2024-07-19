@@ -24,7 +24,7 @@ export function PageSettingsForm() {
   const options = usePageSettingsOptions();
   return (
     <PageLayout>
-      <PageHeader title={t('User Preferences')} titleHelp={t('Per user preferences.')} />
+      <PageHeader title={t('User preferences')} titleHelp={t('Per user preferences.')} />
       <PageForm<IPageSettings>
         defaultValue={{
           ...options.reduce((acc, option) => ({ ...acc, [option.name]: option.defaultValue }), {}),
