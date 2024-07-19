@@ -33,7 +33,7 @@ export function ManagementJobs() {
         titleHelp={t(
           'Management Jobs assist in the cleaning of old data including system tracking information, tokens, job histories, and activity streams.'
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/management_jobs.html`}
+        titleDocLink={getDocsBaseUrl(config, 'managementJobs')}
       />
       <PageTable<SystemJobTemplate>
         id="awx-management-jobs"

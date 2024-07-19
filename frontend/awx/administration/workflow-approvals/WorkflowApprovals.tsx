@@ -59,7 +59,7 @@ export function WorkflowApprovals() {
           `A workflow approval represents a pause in a workflow where approval is needed before the workflow continues executing.`,
           { product }
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/workflows.html`}
+        titleDocLink={getDocsBaseUrl(config, 'workflows')}
         description={t(
           `A workflow approval represents a pause in a workflow where approval is needed before the workflow continues executing.`,
           { product }
