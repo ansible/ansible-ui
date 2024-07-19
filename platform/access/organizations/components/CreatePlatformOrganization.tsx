@@ -62,11 +62,11 @@ export function CreatePlatformOrganization() {
               }
             );
           }
-          if (values.executionEnvironment && Object.keys(values.executionEnvironment).length > 0) {
+          if (values.executionEnvironment) {
             await updateControllerOrganizationRequest(
               awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
               {
-                default_environment: values.executionEnvironment.id,
+                default_environment: values.executionEnvironment,
                 max_hosts: values?.maxHosts ?? 0,
               }
             );

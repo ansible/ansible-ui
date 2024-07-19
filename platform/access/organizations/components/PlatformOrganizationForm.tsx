@@ -9,7 +9,6 @@ import {
 import { Credential as ControllerCredential } from '../../../../frontend/awx/interfaces/Credential';
 import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { SummaryFieldsExecutionEnvironment } from '../../../../frontend/awx/interfaces/summary-fields/summary-fields';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
@@ -22,7 +21,7 @@ export interface OrganizationWizardFormValues {
   organization: PlatformOrganization;
   instanceGroups?: ControllerInstanceGroup[];
   galaxyCredentials?: ControllerCredential[];
-  executionEnvironment?: SummaryFieldsExecutionEnvironment;
+  executionEnvironment?: number;
   maxHosts?: number;
 }
 
@@ -102,7 +101,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
       organization: organization || {},
       galaxyCredentials: galaxyCredentials || [],
       instanceGroups: instanceGroups || [],
-      executionEnvironment: controllerOrganization?.summary_fields?.default_environment || {},
+      executionEnvironment: controllerOrganization?.summary_fields?.default_environment?.id,
       maxHosts: controllerOrganization?.max_hosts || 0,
     },
   };

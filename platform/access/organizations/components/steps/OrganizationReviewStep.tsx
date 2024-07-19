@@ -9,6 +9,9 @@ import { CredentialLabel } from '../../../../../frontend/awx/common/CredentialLa
 import { ExecutionEnvironmentDetail } from '../../../../../frontend/awx/common/ExecutionEnvironmentDetail';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
 import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
+import { useGetItem } from '../../../../../frontend/common/crud/useGet';
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';
 
 export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {
   const { t } = useTranslation();
@@ -20,6 +23,16 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
   const { organization, instanceGroups, galaxyCredentials, maxHosts, executionEnvironment } =
     wizardData as OrganizationWizardFormValues;
 
+  let fetchedEE: ExecutionEnvironment | undefined;
+
+  const { data } = useGetItem<ExecutionEnvironment>(
+    awxAPI`/execution_environments/`,
+    executionEnvironment
+  );
+  if (data) {
+    fetchedEE = data;
+  }
+
   return (
     <>
       <TextContent style={{ marginBottom: 25 }}>
@@ -28,10 +41,10 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{organization.name}</PageDetail>
         <PageDetail label={t('Description')}>{organization?.description}</PageDetail>
-        {executionEnvironment && executionEnvironment.name !== undefined && (
+        {fetchedEE && fetchedEE.name !== undefined && (
           <ExecutionEnvironmentDetail
             virtualEnvironment={controllerOrganization?.custom_virtualenv || undefined}
-            executionEnvironment={executionEnvironment}
+            executionEnvironment={fetchedEE}
             verifyMissingVirtualEnv
             isDefaultEnvironment
             helpText={t`The execution environment that will be used for jobs

@@ -133,9 +133,9 @@ describe('PlatformOrganizationForm', () => {
     cy.mount(<PlatformOrganizationForm handleSubmit={handleSubmit} />);
     cy.get('[data-cy="organization-name"]').type('test organization');
     cy.get('[data-cy="organization-description"]').type('test description');
-    cy.get('[data-cy="execution-environment-select"]').should('not.exist');
+    cy.get('[data-cy="executionEnvironment"]').should('not.exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('not.exist');
-    cy.get('[data-cy="credential-form-group"]').should('not.exist');
+    cy.get('[data-cy="credential"]').should('not.exist');
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
     cy.contains(`Description`).should('be.visible');
@@ -165,9 +165,9 @@ describe('PlatformOrganizationForm', () => {
     );
     cy.get('[data-cy="organization-name"]').type('test organization');
     cy.get('[data-cy="organization-description"]').type('test description');
-    cy.get('[data-cy="execution-environment-select"]').should('exist');
+    cy.get('[data-cy="executionEnvironment"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-form-group"]').should('exist');
+    cy.get('[data-cy="credential"]').should('exist');
     cy.get('[data-cy="maxhosts"]').should('exist');
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
@@ -195,9 +195,9 @@ describe('PlatformOrganizationForm', () => {
     );
     cy.get('[data-cy="organization-name"]').type('test organization');
     cy.get('[data-cy="organization-description"]').type('test description');
-    cy.get('[data-cy="execution-environment-select"]').should('exist');
+    cy.get('[data-cy="executionEnvironment"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-form-group"]').should('exist');
+    cy.get('[data-cy="credential"]').should('exist');
     cy.get('[data-cy="maxhosts"]').should('not.exist');
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
@@ -249,29 +249,9 @@ describe('PlatformOrganizationForm', () => {
     cy.get('[data-cy="organization-name"]').type('test organization');
     cy.get('[data-cy="organization-description"]').type('test description');
     cy.get('[data-cy="maxhosts"]').type('1');
-    cy.wait('@getExecutionEnvironments')
-      .its('response.body.results')
-      .then(() => {
-        cy.getByDataCy('execution-environment-select-form-group').within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click();
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
-    cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-      cy.getBy('button[data-cy="instance-group-select"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
-    cy.get(`[data-cy*="credential-form-group"]`).within(() => {
-      cy.getBy('button[data-cy="credential"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
-    cy.clickButton('Next');
-    cy.clickButton('Next');
+    cy.singleSelectByDataCy('executionEnvironment', '1');
+    cy.singleSelectByDataCy('instance-group-select', '1');
+    cy.singleSelectByDataCy('credential', '1');
     cy.clickButton('Next');
     cy.clickButton('Finish').then(() => {
       expect(handleSubmit).to.be.called;
@@ -280,9 +260,9 @@ describe('PlatformOrganizationForm', () => {
       expect(data.organization.name).to.equal('test organization');
       expect(data.organization.description).to.equal('test description');
       expect(data.maxHosts).to.deep.equal(1);
-      expect(data.instanceGroups).to.deep.equal(mockInstanceGroups);
-      expect(data.galaxyCredentials).to.deep.equal(mockGalaxyCredentials);
-      expect(data.executionEnvironment).to.deep.equal(mockExecutionEnvironment);
+      expect(data.instanceGroups?.map((ig) => ig.id)).to.deep.equal([1]);
+      expect(data.galaxyCredentials?.map((cred) => cred.id)).to.deep.equal([1]);
+      expect(data.executionEnvironment).to.deep.equal(mockExecutionEnvironment.id);
     });
   });
 
@@ -309,32 +289,12 @@ describe('PlatformOrganizationForm', () => {
       platformOrganization.description
     );
     cy.get('#maxhosts').should('have.value', 0);
-    cy.get('[data-cy="execution-environment-select"]').should('exist');
+    cy.get('[data-cy="executionEnvironment"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-form-group"]').should('exist');
-    cy.wait('@getExecutionEnvironments')
-      .its('response.body.results')
-      .then(() => {
-        cy.getByDataCy('execution-environment-select-form-group').within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click();
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
-    cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-      cy.getBy('button[data-cy="instance-group-select"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
-    cy.get(`[data-cy*="credential-form-group"]`).within(() => {
-      cy.getBy('button[data-cy="credential"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
-    cy.clickButton('Next');
-    cy.clickButton('Next');
+    cy.get('[data-cy="credential"]').should('exist');
+    cy.singleSelectByDataCy('executionEnvironment', '1');
+    cy.singleSelectByDataCy('instance-group-select', '1');
+    cy.singleSelectByDataCy('credential', '1');
     cy.clickButton('Next');
     cy.clickButton('Finish').then(() => {
       expect(handleSubmit).to.be.called;
@@ -342,9 +302,9 @@ describe('PlatformOrganizationForm', () => {
       const data = (args[0] || {}) as OrganizationWizardFormValues;
       expect(data.organization.name).to.equal(platformOrganization.name);
       expect(data.organization.description).to.equal(platformOrganization.description);
-      expect(data.instanceGroups).to.deep.equal(mockInstanceGroups);
-      expect(data.galaxyCredentials).to.deep.equal(mockGalaxyCredentials);
-      expect(data.executionEnvironment).to.deep.equal(mockExecutionEnvironment);
+      expect(data.instanceGroups?.map((ig) => ig.id)).to.deep.equal([1]);
+      expect(data.galaxyCredentials?.map((cred) => cred.id)).to.deep.equal([1]);
+      expect(data.executionEnvironment).to.deep.equal(mockExecutionEnvironment.id);
       expect(data.maxHosts).to.equal(controllerOrganization.max_hosts);
     });
   });
@@ -373,32 +333,12 @@ describe('PlatformOrganizationForm', () => {
       platformOrganization.description
     );
     cy.get('[data-cy="maxHosts"]').should('not.exist');
-    cy.get('[data-cy="execution-environment-select"]').should('exist');
+    cy.get('[data-cy="executionEnvironment"]').should('exist');
     cy.get('[data-cy="instance-group-select-form-group"]').should('exist');
-    cy.get('[data-cy="credential-form-group"]').should('exist');
-    cy.wait('@getExecutionEnvironments')
-      .its('response.body.results')
-      .then(() => {
-        cy.getByDataCy('execution-environment-select-form-group').within(() => {
-          cy.getBy('[aria-label="Options menu"]').click();
-        });
-        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-          cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-            cy.get('[data-cy="checkbox-column-cell"] input').click();
-          });
-          cy.clickButton(/^Confirm/);
-        });
-      });
-    cy.get(`[data-cy*="instance-group-select-form-group"]`).within(() => {
-      cy.getBy('button[data-cy="instance-group-select"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
-    cy.get(`[data-cy*="credential-form-group"]`).within(() => {
-      cy.getBy('button[data-cy="credential"]').click();
-    });
-    cy.get('[data-ouia-component-type="PF5/Checkbox"]').click({ multiple: true });
-    cy.clickButton('Next');
-    cy.clickButton('Next');
+    cy.get('[data-cy="credential"]').should('exist');
+    cy.singleSelectByDataCy('executionEnvironment', '1');
+    cy.singleSelectByDataCy('instance-group-select', '1');
+    cy.singleSelectByDataCy('credential', '1');
     cy.clickButton('Next');
     cy.clickButton('Finish').then(() => {
       expect(handleSubmit).to.be.called;
@@ -406,9 +346,9 @@ describe('PlatformOrganizationForm', () => {
       const data = (args[0] || {}) as OrganizationWizardFormValues;
       expect(data.organization.name).to.equal(platformOrganization.name);
       expect(data.organization.description).to.equal(platformOrganization.description);
-      expect(data.instanceGroups).to.deep.equal(mockInstanceGroups);
-      expect(data.galaxyCredentials).to.deep.equal(mockGalaxyCredentials);
-      expect(data.executionEnvironment).to.deep.equal(mockExecutionEnvironment);
+      expect(data.instanceGroups?.map((ig) => ig.id)).to.deep.equal([1]);
+      expect(data.galaxyCredentials?.map((cred) => cred.id)).to.deep.equal([1]);
+      expect(data.executionEnvironment).to.deep.equal(mockExecutionEnvironment.id);
     });
   });
 });
