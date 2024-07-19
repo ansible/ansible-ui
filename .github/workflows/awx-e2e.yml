@@ -12,12 +12,10 @@ on:
         default: false
       USE_DASHBOARD:
         type: boolean
-        required: true
         default: false
       BROWSER:
         type: string
-        required: false
-        default: 'chrome' 
+        default: chrome
       TAGS:
         type: string
         required: false
@@ -101,7 +99,7 @@ jobs:
       - name: Load container image
         if: ${{ !inputs.SKIP_JOB }}
         run: docker load --input awx-ui.tar
-        
+
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/checkout@v4
