@@ -64,28 +64,11 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.clickButton(/^Create constructed inventory$/);
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/organizations/`,
-      query: { name__icontains: organization.name },
-    }).as('filterOrg');
-    cy.singleSelectBy('[data-cy="organization"]', organization.name);
-    cy.wait('@filterOrg');
+
+    cy.singleSelectByDataCy('organization', organization.name);
     // this can be simplified if we include data-cy to the search button of instance groups
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
-
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/instance_groups/`,
-      query: { name: instanceGroup.name },
-    }).as('filterInstanceG');
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/inventories/`,
-      query: { name__icontains: invNames[invToCreate - 1] },
-    }).as('filterInputInventories');
-    cy.multiSelectBy('[data-cy="inventories"]', invNames);
-    cy.wait('@filterInputInventories');
+    cy.multiSelectByDataCy('inventories', invNames);
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
     cy.getByDataCy('limit').type('5');
@@ -158,7 +141,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+  it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     //Create a constructed inventory in the beforeEach hook
     //Assert the original details of the inventory
     //Assert the user navigating to the edit constructed inventory form
@@ -166,6 +149,43 @@ describe('Constructed Inventories CRUD Tests', () => {
     //Add bad variables
     //Assert the edited changes of the inventory
     //Run a sync and assert failure of the job
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableBySingleSelect('name', constructedInv.name);
+    cy.clickTableRowLink('name', constructedInv.name, { disableFilter: true });
+    cy.verifyPageTitle(constructedInv.name);
+
+    //assert original details of inventory
+
+    cy.getByDataCy('edit-inventory').click();
+
+    cy.dataEditorTypeByDataCy(
+      'source-vars',
+      `
+      plugin: constructed\n
+      strict: true\n
+      use_extra_vars: test
+      `
+    );
+    //cy.dataEditorTypeByDataCy('source-vars', `groups: name: test_group bad_key: test_value`);
+    cy.clickButton(/^Save inventory$/);
+
+    cy.verifyPageTitle(constructedInv.name);
+
+    cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
+    cy.clickButton(/^Sync inventory$/);
+    cy.wait('@syncInventory')
+      .then((response) => {
+        expect(response.response?.statusCode).to.be.equal(202);
+      })
+      .its('response.body.id')
+      .then((jobID: number) => {
+        cy.verifyPageTitle(constructedInv.name);
+        cy.getByDataCy('last-job-status').contains('Failed');
+        cy.waitForJobToProcessEvents(jobID.toString(), 'inventory_updates');
+
+        cy.getByDataCy('last-job-status').click();
+        cy.contains('Error: Invalid constructed inventory variable');
+      });
   });
 });
 
