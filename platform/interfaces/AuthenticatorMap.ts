@@ -51,6 +51,7 @@ export interface AuthenticatorMap {
   authenticator: number;
   order: number;
   organization: string;
+  role: string;
   revoke: boolean;
   triggers: AuthenticatorMapTriggers;
   map_type: AuthenticatorMapType;

@@ -166,6 +166,8 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
             name: mapping.name,
             revoke: mapping.revoke,
             ...parseTrigger(mapping),
+            organization: mapping.organization,
+            role: mapping.role,
           };
         }),
     };

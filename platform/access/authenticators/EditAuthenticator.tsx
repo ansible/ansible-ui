@@ -1,14 +1,12 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
 import {
   postRequest,
   requestDelete,
   requestGet,
   requestPatch,
-  swrOptions,
 } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../../api/gateway-api-utils';
@@ -22,6 +20,8 @@ import {
   buildTriggers,
   formatConfiguration,
 } from './components/AuthenticatorForm';
+import { PlatformItemsResponse } from '../../interfaces/PlatformItemsResponse';
+import { AwxError } from '../../../frontend/awx/common/AwxError';
 
 type Errors = { [key: string]: string } | undefined;
 
@@ -32,19 +32,37 @@ export function EditAuthenticator() {
   const params = useParams<{ id?: string }>();
 
   const id = Number(params.id);
-  const { data: authenticator } = useSWR<Authenticator>(
-    gatewayAPI`/authenticators/${id.toString()}/`,
-    requestGet,
-    swrOptions
-  );
-  const { data: mappingsResponse } = useSWR<{ results: AuthenticatorMap[] }>(
-    gatewayAPI`/authenticators/${id.toString()}/authenticator_maps/`,
-    requestGet,
-    swrOptions
-  );
-  const mappings = mappingsResponse?.results;
+  const [mappings, setMappings] = useState<AuthenticatorMap[]>();
+  const [authenticator, setAuthenticator] = useState<Authenticator>();
+  const [error, setError] = useState<Error>();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const mappingsResponse = await requestGet<PlatformItemsResponse<AuthenticatorMap>>(
+          gatewayAPI`/authenticators/${id.toString()}/authenticator_maps/`
+        );
+        const authenticator = await requestGet<Authenticator>(
+          gatewayAPI`/authenticators/${id.toString()}/`
+        );
+        setMappings(mappingsResponse?.results);
+        setAuthenticator(authenticator);
+      } catch (error) {
+        const errorObj = new Error(String(error));
+        setError(errorObj);
+      }
+    }
+    void fetchData();
+  }, [id]);
 
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
+
+  if (error) {
+    //Using AwxError component but there is no AWX specific logic
+    //this component can also be used for gateway without issue
+    return <AwxError error={error} />;
+  }
+
   if (!plugins || !authenticator || !mappings) {
     return <LoadingPage />;
   }
