@@ -7,21 +7,21 @@ type LabelsWithLinksProps = {
   labels?: never;
   labelsWithLinks: LabelWithLink[];
   numLabels?: number;
-  wrapLabels?: boolean;
+  noWrap?: boolean;
 };
 
 type LabelsProps = {
   labels: string[];
   labelsWithLinks?: never;
   numLabels?: number;
-  wrapLabels?: boolean;
+  noWrap?: boolean;
 };
 
 export function LabelsCell(props: LabelsProps | LabelsWithLinksProps) {
   return (
     <LabelGroup
       numLabels={props.numLabels ?? 999}
-      style={props.wrapLabels ? undefined : { flexWrap: 'nowrap' }}
+      style={props.noWrap ? { flexWrap: 'nowrap' } : undefined}
     >
       {props.labels
         ? props.labels.map((label) => <Label key={label}>{label}</Label>)
