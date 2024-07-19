@@ -5,6 +5,7 @@ import { PageSettings } from '../../../framework/PageSettings/PageSettings';
 import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
+import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { AwxSettings } from '../administration/settings/AwxSettings';
 import { AwxSettingsCategoryDetailsPage } from '../administration/settings/AwxSettingsCategoryDetails';
 import {
@@ -36,7 +37,6 @@ import { useAwxSchedulesRoutes } from './routes/useAwxSchedulesRoutes';
 import { useAwxTeamsRoutes } from './routes/useAwxTeamsRoutes';
 import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
-import { CreateRole, EditRole } from '../access/roles/RoleForm';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 
 export function useAwxNavigation() {
@@ -61,17 +61,16 @@ export function useAwxNavigation() {
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
   const { activeAwxUser } = useAwxActiveUser();
-  const navigationItems: PageNavigationItem[] = [
+
+  const overview: PageNavigationItem[] = [
     {
       id: AwxRoute.Overview,
       label: t('Overview'),
       path: 'overview',
       element: <AwxOverview />,
     },
-    awxJobsRoutes,
-    awxTemplateRoutes,
-    awxSchedulesRoutes,
-    awxProjectRoutes,
+  ];
+  const infrastructureItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Infrastructure,
       label: t('Infrastructure'),
@@ -98,29 +97,19 @@ export function useAwxNavigation() {
             awxExecutionEnvironmentsRoutes,
           ],
     },
+  ];
+  const analyticsItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Analytics,
       label: t('Analytics'),
       path: 'analytics',
       children: [
-        // {
-        //   id: AwxRoute.Reports,
-        //   label: t('Reports'),
-        //   path: 'reports',
-        //   element: <ReportsList />,
-        // },
         {
           id: AwxRoute.AutomationCalculator,
           label: t('Automation Calculator'),
           path: 'automation-calculator',
           element: <Reports />,
         },
-        // {
-        //   id: AwxRoute.AnalyticsBuilder,
-        //   label: t('Analytics builder'),
-        //   path: 'builder',
-        //   element: <Test />,
-        // },
         {
           id: AwxRoute.HostMetrics,
           label: t('Host Metrics'),
@@ -135,6 +124,8 @@ export function useAwxNavigation() {
         },
       ],
     },
+  ];
+  const administrationItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Administration,
       label: t('Administration'),
@@ -149,6 +140,8 @@ export function useAwxNavigation() {
           ]
         : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes, awxApplicationsRoutes],
     },
+  ];
+  const accessItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Access,
       label: t('Access Management'),
@@ -214,6 +207,8 @@ export function useAwxNavigation() {
         awxCredentialTypesRoutes,
       ],
     },
+  ];
+  const settingsItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Settings,
       label: t('Settings'),
@@ -291,10 +286,24 @@ export function useAwxNavigation() {
         },
       ],
     },
+  ];
+
+  const navigationItems = [
+    ...overview,
+    awxJobsRoutes,
+    awxTemplateRoutes,
+    awxSchedulesRoutes,
+    awxProjectRoutes,
+    ...infrastructureItems,
+    ...(activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor ? analyticsItems : []),
+    ...administrationItems,
+    ...accessItems,
+    ...settingsItems,
     {
       path: '',
       element: <Navigate to={'./overview'} replace />,
     },
   ];
+
   return navigationItems;
 }
