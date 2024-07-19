@@ -5,7 +5,6 @@ import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Schedules - Create and Delete', () => {
@@ -194,98 +193,8 @@ describe('Schedules - Create and Delete', () => {
     });
   });
 
-  describe('Schedules - Create schedule of resource type Workflow job template', () => {
-    let organization: Organization;
-    let inventory: Inventory;
-    let workflowTemplate: WorkflowJobTemplate;
-
-    beforeEach(() => {
-      cy.createAwxOrganization().then((o) => {
-        organization = o;
-        cy.createAwxInventory(organization).then((i) => {
-          inventory = i;
-          cy.createAwxWorkflowJobTemplate({
-            name: 'E2E Workflow Job Template ' + randomString(4),
-            organization: organization.id,
-            inventory: inventory.id,
-          }).then((wfjt) => {
-            workflowTemplate = wfjt;
-          });
-        });
-      });
-    });
-
-    afterEach(() => {
-      cy.deleteAwxWorkflowJobTemplate(workflowTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    });
-
-    it('can create a simple schedule of resource type Workflow job template, then delete the schedule', () => {
-      cy.navigateTo('awx', 'schedules');
-      cy.verifyPageTitle('Schedules');
-      const scheduleName = 'E2E Simple Schedule WFJT' + randomString(4);
-      cy.getByDataCy('create-schedule').click();
-      cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
-      cy.selectDropdownOptionByResourceName(
-        'workflow-job-template-select',
-        `${workflowTemplate.name}`
-      );
-      cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.singleSelectByDataCy('timezone', 'Zulu');
-      cy.clickButton(/^Next$/);
-      cy.getByDataCy('interval').clear().type('100');
-      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.getByDataCy('count-form-group').type('17');
-      cy.getByDataCy('add-rule-button').click();
-      cy.get('tr[data-cy="row-id-1"]').within(() => {
-        cy.get('td[data-cy="rrule-column-cell"]').should(
-          'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
-        );
-      });
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Next$/);
-      cy.get('tr[data-cy="row-id-1"]').should('be.visible');
-      cy.clickButton(/^Finish$/);
-      cy.verifyPageTitle(`${scheduleName}`);
-      cy.navigateTo('awx', 'schedules');
-      cy.filterTableBySingleSelect('name', scheduleName);
-      cy.getBy('tbody').within(() => {
-        cy.clickKebabAction('actions-dropdown', 'delete-schedule');
-      });
-      cy.intercept('DELETE', awxAPI`/schedules/*`).as('deleted');
-      cy.getModal().within(() => {
-        cy.getBy('input[id="confirm"]').click();
-        cy.getBy('[data-ouia-component-id="submit"]').click();
-        cy.wait('@deleted')
-          .its('response')
-          .then((response) => {
-            expect(response?.statusCode).to.eql(204);
-          });
-        cy.clickButton('Close');
-      });
-      cy.clickButton('Clear all filters');
-      const dataCy = 'name';
-      cy.get('#filter').click();
-      cy.document().its('body').find('#filter-search').type(dataCy.replaceAll('-', ' '));
-      cy.document()
-        .its('body')
-        .find('#filter-select')
-        .within(() => {
-          cy.getByDataCy(dataCy).click();
-        });
-
-      cy.getBy('#filter-input').click();
-      cy.document()
-        .its('body')
-        .find('.pf-v5-c-menu__content')
-        .within(() => {
-          cy.getByDataCy('search-input').type(scheduleName);
-          cy.contains('.pf-v5-c-menu__item-text', 'No results found').should('be.visible');
-        });
-      cy.deleteAwxWorkflowJobTemplate(workflowTemplate, { failOnStatusCode: false });
-    });
+  describe.skip('Schedules - Create schedule of resource type Workflow job template', () => {
+    //These tests live in the workflowJobTemplates.cy.ts spec file
   });
 
   describe('Schedules - Create schedule of resource type Inventory source', () => {

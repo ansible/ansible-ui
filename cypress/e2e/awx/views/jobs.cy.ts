@@ -6,7 +6,6 @@ import { Job } from '../../../../frontend/awx/interfaces/Job';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Jobs', () => {
@@ -360,73 +359,7 @@ describe('Jobs', () => {
     });
   });
 
-  describe('Workflow template: Output and Details Screen', () => {
-    let workflowJobTemplate: WorkflowJobTemplate;
-    let jobTemplate: JobTemplate;
-    let inventory: Inventory;
-
-    beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((i) => {
-        inventory = i;
-        cy.createAwxJobTemplate({
-          organization: awxOrganization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => {
-          jobTemplate = jt;
-          cy.createAwxWorkflowJobTemplate({
-            organization: awxOrganization.id,
-            inventory: inventory.id,
-          }).then((wfjt) => {
-            workflowJobTemplate = wfjt;
-            cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
-              (jobTemplateNode) => {
-                cy.createAwxWorkflowVisualizerManagementNode(workflowJobTemplate, 2).then(
-                  (managementNode) => {
-                    cy.createWorkflowJTFailureNodeLink(jobTemplateNode, managementNode);
-                  }
-                );
-              }
-            );
-          });
-        });
-      });
-    });
-
-    afterEach(function () {
-      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    });
-
-    it('can launch a Workflow job, let it finish, and assert expected results on the output screen', () => {
-      cy.navigateTo('awx', 'templates');
-      cy.verifyPageTitle('Templates');
-      cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
-      cy.intercept(
-        'POST',
-        awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
-      ).as('postLaunch');
-      cy.getByDataCy('launch-template').click();
-      cy.wait('@postLaunch')
-        .then((response) => {
-          expect(response?.response?.statusCode).to.eql(201);
-        })
-        .its('response.body')
-        .then((wfJob: WorkflowJobTemplate) => {
-          cy.waitForWorkflowJobStatus(wfJob.id.toString());
-          cy.verifyPageTitle(workflowJobTemplate.name);
-          cy.url().then((currentUrl) => {
-            expect(currentUrl.includes(`/jobs/workflow/${wfJob.id}/output`)).to.be.true;
-          });
-          cy.clickTab(/^Details$/, true);
-          cy.url().then((currentUrl) => {
-            expect(currentUrl.includes(`/jobs/workflow/${wfJob.id}/details`)).to.be.true;
-          });
-          cy.getByDataCy('name').should('contain', workflowJobTemplate.name);
-          cy.getByDataCy('type').should('contain', 'Workflow job');
-          cy.getByDataCy('inventory').should('contain', inventory.name);
-        });
-    });
+  describe.skip('Workflow template: Output and Details Screen', () => {
+    //These tests live in the workflowJobTemplates.cy.ts spec file
   });
 });
