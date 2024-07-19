@@ -77,7 +77,7 @@ describe('TemplateSurvey', () => {
           });
           cy.get('.pf-v5-c-dropdown__toggle').click();
           cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains('Delete question')
+            .contains('Delete survey question')
             .should('have.attr', 'aria-disabled', 'true');
         });
     });

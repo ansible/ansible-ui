@@ -39,7 +39,7 @@ export class ReusableTemplateSurveyTestSuite {
       'POST',
       awxAPI`/${this.templateType}/${this.template.id.toString()}/survey_spec/`
     ).as('createQuestion');
-    cy.clickButton('Create question');
+    cy.clickButton('Create survey question');
     cy.wait('@createQuestion');
     cy.contains('Survey disabled');
     cy.get('[for="survey-switch"]').click();
@@ -76,7 +76,7 @@ export class ReusableTemplateSurveyTestSuite {
       cy.contains(question.default);
       cy.contains('text');
       cy.getByDataCy('actions-dropdown').click();
-      cy.contains('Delete question').click();
+      cy.contains('Delete survey question').click();
     });
     cy.clickModalConfirmCheckbox();
     cy.intercept(
