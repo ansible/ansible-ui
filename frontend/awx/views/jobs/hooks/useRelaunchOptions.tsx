@@ -11,6 +11,8 @@ export function useRelaunchOptions(): IPageAction<UnifiedJob>[] {
   const relaunchJob = useRelaunchJob();
   const relaunchAllHosts = useRelaunchJob({ hosts: 'all' });
   const relaunchFailedHosts = useRelaunchJob({ hosts: 'failed' });
+  const relaunchRunJobType = useRelaunchJob({ job_type: 'run' });
+  const relaunchCheckJobType = useRelaunchJob({ job_type: 'check' });
   return useMemo(
     () => [
       {
@@ -22,8 +24,30 @@ export function useRelaunchOptions(): IPageAction<UnifiedJob>[] {
         label: t(`Relaunch job`),
         isHidden: (job: UnifiedJob) =>
           !(job.type !== 'system_job' && job.summary_fields?.user_capabilities?.start) ||
-          (job.status === 'failed' && job.type === 'job'),
+          job.type === 'job',
         onClick: (job: UnifiedJob) => void relaunchJob(job),
+      },
+      {
+        type: PageActionType.Dropdown,
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        icon: RocketIcon,
+        label: t(`Relaunch job with`),
+        isHidden: (job: UnifiedJob) => job.type !== 'job' || job.status === 'failed',
+        actions: [
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
+            label: t(`Job type run`),
+            onClick: (job: UnifiedJob) => void relaunchRunJobType(job),
+          },
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
+            label: t(`Job type check`),
+            onClick: (job: UnifiedJob) => void relaunchCheckJobType(job),
+          },
+        ],
       },
       {
         type: PageActionType.Dropdown,
@@ -50,6 +74,13 @@ export function useRelaunchOptions(): IPageAction<UnifiedJob>[] {
         ],
       },
     ],
-    [t, relaunchAllHosts, relaunchFailedHosts, relaunchJob]
+    [
+      t,
+      relaunchRunJobType,
+      relaunchCheckJobType,
+      relaunchAllHosts,
+      relaunchFailedHosts,
+      relaunchJob,
+    ]
   );
 }
