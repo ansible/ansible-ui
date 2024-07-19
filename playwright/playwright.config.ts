@@ -75,10 +75,11 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: process.env.CI
     ? {
-        command: 'npm run docker:run:awx',
+        command: 'npm run awx',
         url: 'https://localhost:4101',
         reuseExistingServer: !process.env.CI,
         timeout: 300 * 1000,
+        ignoreHTTPSErrors: true,
       }
     : undefined,
 });

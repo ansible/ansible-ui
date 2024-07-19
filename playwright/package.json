@@ -4,6 +4,7 @@
     "ui": "playwright test --ui",
     "test:chrome": "playwright test --project=chromium",
     "codegen:awx": "npx playwright codegen https://localhost:4101 --ignore-https-errors",
+    "awx": "cd .. && npm run awx",
     "docker:run:awx": "cd .. && npm run docker:run:awx"
   }
 }
