@@ -1,21 +1,20 @@
 import {
   Button,
   EmptyState,
+  EmptyStateActions,
   EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
   EmptyStateIcon,
   Stack,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-export function PageNotFound(props: { dashboardUrl?: string }) {
+export function PageNotFound() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { dashboardUrl } = props;
   return (
     <EmptyState isFullHeight>
       <EmptyStateHeader
@@ -28,7 +27,7 @@ export function PageNotFound(props: { dashboardUrl?: string }) {
         <EmptyStateActions>
           <Stack hasGutter>
             <Button onClick={() => navigate(-1)}>{t('Return to previous page')}</Button>
-            <Button component={(props) => <Link to={dashboardUrl} {...props} />}>
+            <Button component={(props) => <Link to="/" {...props} />}>
               {t('Return to dashboard')}
             </Button>
           </Stack>
