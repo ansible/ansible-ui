@@ -49,6 +49,7 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.clickButton('Finish');
     cy.verifyPageTitle(localAuthenticator);
     cy.navigateTo('platform', 'authenticators');
+    cy.verifyPageTitle('Authentication Methods');
     cy.searchAndDisplayResourceByFilterOption(localAuthenticator, 'name');
     cy.clickTableRowAction('name', localAuthenticator, 'delete-authentication', {
       inKebab: true,

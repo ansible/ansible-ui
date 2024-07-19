@@ -8,7 +8,7 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
     cy.fixture('platform-authenticators/google-oauth2').then((data: GoogleOAuth2) => {
       const googleData = data;
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
+      cy.verifyPageTitle('Authentication Methods');
       // creates a new Google OAuth2 authenticator
       cy.containsBy('a', 'Create authentication').click();
       cy.selectAuthenticationType('google-oauth');
@@ -48,16 +48,10 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
 
       // enable the Google OAuth2 authenticator
       cy.navigateTo('platform', 'authenticators');
+      cy.verifyPageTitle('Authentication Methods');
 
       // edit and update
-      cy.searchAndDisplayResourceByFilterOption(googleAuthenticator, 'name').then(() => {
-        cy.contains('tr', googleAuthenticator).within(() => {
-          cy.get('[data-cy=toggle-switch]').click();
-          cy.getByDataCy('actions-column-cell').within(() => {
-            cy.getByDataCy('edit-authenticator').click();
-          });
-        });
-      });
+      cy.clickTableRowAction('name', googleAuthenticator, 'edit-authenticator');
       cy.get('[data-cy="name"]').clear().type(`${googleAuthenticator} Updated`);
       cy.clickButton('Next');
       cy.clickButton('Next');
@@ -67,6 +61,8 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
 
       //delete the created Google OAuth2 authenticator
       cy.navigateTo('platform', 'authenticators');
+      cy.verifyPageTitle('Authentication Methods');
+      cy.searchAndDisplayResourceByFilterOption(`${googleAuthenticator} Updated`, 'name');
       cy.clickTableRowAction('name', `${googleAuthenticator} Updated`, 'delete-authentication', {
         inKebab: true,
         disableFilter: true,

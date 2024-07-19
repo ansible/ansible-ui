@@ -1,4 +1,4 @@
-describe.skip('Platform Header Toolbar - Help Menu', () => {
+describe('Platform Header Toolbar - Help Menu', () => {
   it('checks the help menu items', () => {
     cy.visit('/');
 

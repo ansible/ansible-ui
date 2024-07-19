@@ -8,7 +8,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
     cy.fixture('platform-authenticators/github').then((githubData: GithubAuthenticator) => {
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
+      cy.verifyPageTitle('Authentication Methods');
 
       // Click on the Create Authentication button
       cy.containsBy('a', 'Create authentication').click();
@@ -40,6 +40,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
+      cy.verifyPageTitle('Authentication Methods');
 
       // Enable the GitHub authenticator
       cy.getTableRow('name', name).within(() => {
@@ -64,7 +65,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
+      cy.verifyPageTitle('Authentication Methods');
 
       // Edit the GitHub authenticator
       cy.clickTableRowAction('name', name, 'edit-authenticator');
@@ -84,8 +85,8 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
-
+      cy.verifyPageTitle('Authentication Methods');
+      cy.searchAndDisplayResourceByFilterOption(name + '_edited', 'name');
       // Delete the GitHub authenticator
       cy.clickTableRowAction('name', name + '_edited', 'delete-authentication', { inKebab: true });
       cy.getModal().within(() => {

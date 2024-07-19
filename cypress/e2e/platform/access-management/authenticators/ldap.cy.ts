@@ -68,6 +68,7 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       cy.verifyPageTitle(ldapAuthenticator);
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
+      cy.verifyPageTitle('Authentication Methods');
 
       // Enables the LDAP authenticator
       cy.getTableRow('name', ldapAuthenticator).within(() => {
@@ -96,7 +97,8 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
 
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
-      cy.verifyPageTitle('Authentication');
+      cy.verifyPageTitle('Authentication Methods');
+      cy.searchAndDisplayResourceByFilterOption(ldapAuthenticator + '_edited', 'name');
 
       // Delete the LDAP authenticator
       cy.clickTableRowAction('name', ldapAuthenticator + '_edited', 'delete-authentication', {
