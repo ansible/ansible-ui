@@ -5,9 +5,9 @@ const authenticator = {
   name: 'Local Database Authenticator',
   id: 1,
   url: '/api/gateway/v1/authenticators/1/',
-  created_on: '2023-11-01T20:57:51.965351Z',
+  created: '2023-11-01T20:57:51.965351Z',
   created_by: null,
-  modified_on: '2023-11-01T20:57:51.966029Z',
+  modified: '2023-11-01T20:57:51.966029Z',
   modified_by: null,
   related: {
     'authenticator-map': '/api/gateway/v1/authenticators/1/authenticator_maps/',

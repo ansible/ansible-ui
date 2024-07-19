@@ -11,9 +11,9 @@ export interface Authenticator {
   name: string;
   id: number;
   url: string;
-  created_on: string;
+  created: string;
   created_by?: string;
-  modified_on: string;
+  modified: string;
   modified_by?: string;
   related: {
     [key: string]: string;

@@ -29,12 +29,12 @@ export function useOrganizationColumns(options?: {
     onClick: nameColumnClick,
   });
   const createdColumn = useCreatedColumn({
-    sort: 'created_on',
+    sort: 'created',
     // hideByDefaultInTableView: true,
     ...options,
   });
   const modifiedColumn = useModifiedColumn({
-    sort: 'modified_on',
+    sort: 'modified',
     // hideByDefaultInTableView: true,
     ...options,
   });

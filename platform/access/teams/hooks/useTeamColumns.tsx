@@ -28,12 +28,12 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
   );
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn({
-    sort: 'created_on',
+    sort: 'created',
     // hideByDefaultInTableView: true,
     ...options,
   });
   const modifiedColumn = useModifiedColumn({
-    sort: 'modified_on',
+    sort: 'modified',
     // hideByDefaultInTableView: true,
     ...options,
   });
