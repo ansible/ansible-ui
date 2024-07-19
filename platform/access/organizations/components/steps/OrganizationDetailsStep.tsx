@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageFormTextInput } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../../../frontend/awx/access/credentials/components/PageFormCredentialSelect';
-import { PageFormExecutionEnvironmentSelect } from '../../../../../frontend/awx/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { PageFormSelectExecutionEnvironment } from '../../../../../frontend/awx/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
@@ -50,12 +50,10 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
 
   return (
     <>
-      <PageFormExecutionEnvironmentSelect
-        organizationId={controllerOrganization ? controllerOrganization.id.toString() : undefined}
-        name="executionEnvironment.name"
+      <PageFormSelectExecutionEnvironment
+        organizationId={controllerOrganization ? controllerOrganization.id : undefined}
+        name="executionEnvironment"
         label={t('Default execution environment')}
-        executionEnvironmentPath="executionEnvironment"
-        executionEnvironmentIdPath="executionEnvironment.id"
       />
       <PageFormInstanceGroupSelect
         name="instanceGroups"

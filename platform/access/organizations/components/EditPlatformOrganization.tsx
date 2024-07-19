@@ -96,9 +96,7 @@ export function EditPlatformOrganization() {
           updateControllerOrganizationRequest(
             awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
             {
-              default_environment: values?.executionEnvironment?.name
-                ? values?.executionEnvironment?.id
-                : null,
+              default_environment: values?.executionEnvironment ?? null,
               max_hosts: values?.maxHosts ? values?.maxHosts : 0,
             }
           )
