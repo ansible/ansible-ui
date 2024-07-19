@@ -88,7 +88,7 @@ jobs:
     needs: awx-ui-image
     strategy:
       matrix:
-        containers: ${{ inputs.USE_DASHBOARD && '[1,2,3,4]' || '[1]' }}
+        containers: ${{ fromJSON(inputs.USE_DASHBOARD == 'true' && '[1, 2, 3, 4]' || '[1]') }}
 
     steps:
       - name: Download container image
