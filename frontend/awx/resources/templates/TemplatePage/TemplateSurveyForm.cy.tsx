@@ -7,7 +7,7 @@ const verifyRequestBody = (
 ) => {
   cy.intercept('POST', '/api/v2/job_templates/*/survey_spec/').as('newQuestion');
 
-  if (variable) cy.contains('Save question').click();
+  if (variable) cy.contains('Save survey question').click();
   else cy.contains('Create survey question').click();
 
   cy.wait('@newQuestion').then((intercept) => {
