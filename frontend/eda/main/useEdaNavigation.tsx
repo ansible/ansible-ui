@@ -1,24 +1,51 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
+import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
-import { PageSettings } from '../../../framework/PageSettings/PageSettings';
+import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
+import { EdaCredentialTypeAddTeams } from '../access/credential-types/components/EdaCredentialTypeAddTeams';
+import { EdaCredentialTypeAddUsers } from '../access/credential-types/components/EdaCredentialTypeAddUsers';
+import {
+  CreateCredentialType,
+  EditCredentialType,
+} from '../access/credential-types/CredentialTypeForm';
+import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
+import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
+import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
+import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
+import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
+import { CredentialTypes } from '../access/credential-types/CredentialTypes';
+import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
+import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
+import { CreateCredential, EditCredential } from '../access/credentials/CredentialForm';
 import { CredentialDetails } from '../access/credentials/CredentialPage/CredentialDetails';
 import { CredentialPage } from '../access/credentials/CredentialPage/CredentialPage';
+import { CredentialTeamAccess } from '../access/credentials/CredentialPage/CredentialTeamAccess';
+import { CredentialUserAccess } from '../access/credentials/CredentialPage/CredentialUserAccess';
 import { Credentials } from '../access/credentials/Credentials';
-import { CreateCredential, EditCredential } from '../access/credentials/CredentialForm';
 import { EdaRoleDetails } from '../access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../access/roles/EdaRolePage';
 import { EdaRoles } from '../access/roles/EdaRoles';
 import { CreateRole, EditRole } from '../access/roles/RoleForm';
+import { EdaAddTeamRoles } from '../access/teams/EdaAddTeamRoles';
+import { EdaTeamRoles } from '../access/teams/TeamPage/EdaTeamRoles';
+import { TeamDetails } from '../access/teams/TeamPage/TeamDetails';
+import { CreateTeam, EditTeam } from '../access/teams/TeamPage/TeamForm';
+import { TeamPage } from '../access/teams/TeamPage/TeamPage';
+import { Teams } from '../access/teams/Teams';
 import { CreateControllerToken } from '../access/users/CreateControllerToken';
+import { EdaAddUserRoles } from '../access/users/EdaAddUserRoles';
 import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser';
 import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
 import { EdaMyDetails } from '../access/users/UserPage/EdaMyDetails';
 import { EdaUserDetails } from '../access/users/UserPage/EdaUserDetails';
+import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
 import { MyPage } from '../access/users/UserPage/MyPage';
 import { UserPage } from '../access/users/UserPage/UserPage';
 import { Users } from '../access/users/Users';
-import { EdaAddUserRoles } from '../access/users/EdaAddUserRoles';
+import { EdaDecisionEnvironmentAddTeams } from '../decision-environments/components/EdaDecisionEnvironmentAddTeams';
+import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
 import {
   CreateDecisionEnvironment,
   EditDecisionEnvironment,
@@ -29,6 +56,8 @@ import { DecisionEnvironmentTeamAccess } from '../decision-environments/Decision
 import { DecisionEnvironmentUserAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentUserAccess';
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
 import { EdaOverview } from '../overview/EdaOverview';
+import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
+import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
 import { CreateProject, EditProject } from '../projects/EditProject';
 import { ProjectDetails } from '../projects/ProjectPage/ProjectDetails';
 import { ProjectPage } from '../projects/ProjectPage/ProjectPage';
@@ -42,6 +71,8 @@ import { RuleAuditEvents } from '../rule-audit/RuleAuditPage/RuleAuditEvents';
 import { RuleAuditPage } from '../rule-audit/RuleAuditPage/RuleAuditPage';
 import { ActivationInstanceDetails } from '../rulebook-activations/ActivationInstancePage/ActivationInstanceDetails';
 import { ActivationInstancePage } from '../rulebook-activations/ActivationInstancePage/ActivationInstancePage';
+import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
+import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
 import { CreateRulebookActivation } from '../rulebook-activations/RulebookActivationForm';
 import { RulebookActivationDetails } from '../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
 import { RulebookActivationHistory } from '../rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
@@ -53,38 +84,8 @@ import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { Webhooks } from '../webhooks/Webhooks';
-import { CredentialTypes } from '../access/credential-types/CredentialTypes';
-import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
-import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
-import { CredentialTeamAccess } from '../access/credentials/CredentialPage/CredentialTeamAccess';
-import { CredentialUserAccess } from '../access/credentials/CredentialPage/CredentialUserAccess';
-import {
-  CreateCredentialType,
-  EditCredentialType,
-} from '../access/credential-types/CredentialTypeForm';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
-import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
-import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
-import { EdaDecisionEnvironmentAddTeams } from '../decision-environments/components/EdaDecisionEnvironmentAddTeams';
-import { EdaDecisionEnvironmentAddUsers } from '../decision-environments/components/EdaDecisionEnvironmentAddUsers';
-import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
-import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
-import { PageNotImplemented } from '../../../framework';
-import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
-import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
-import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
-import { EdaCredentialTypeAddUsers } from '../access/credential-types/components/EdaCredentialTypeAddUsers';
-import { EdaCredentialTypeAddTeams } from '../access/credential-types/components/EdaCredentialTypeAddTeams';
-import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
-import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
-import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
-import { EdaAddTeamRoles } from '../access/teams/EdaAddTeamRoles';
-import { EdaTeamRoles } from '../access/teams/TeamPage/EdaTeamRoles';
-import { TeamPage } from '../access/teams/TeamPage/TeamPage';
-import { TeamDetails } from '../access/teams/TeamPage/TeamDetails';
-import { CreateTeam, EditTeam } from '../access/teams/TeamPage/TeamForm';
-import { Teams } from '../access/teams/Teams';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -671,7 +672,16 @@ export function useEdaNavigation() {
           id: EdaRoute.SettingsPreferences,
           label: t('User Preferences'),
           path: 'preferences',
-          element: <PageSettings />,
+          children: [
+            {
+              path: 'edit',
+              element: <PageSettingsForm />,
+            },
+            {
+              path: '',
+              element: <PageSettingsDetails />,
+            },
+          ],
         },
       ],
     },
