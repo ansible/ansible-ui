@@ -9,14 +9,18 @@ on:
       SKIP_JOB:
         type: boolean
         default: false
+        required: false
       USE_DASHBOARD:
         type: boolean
         default: false
+        required: false
       BROWSER:
         type: string
         default: chrome
+        required: false
       TAGS:
         type: string
+        required: false
 
     secrets:
       AWX_PASSWORD:
