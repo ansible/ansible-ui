@@ -86,7 +86,7 @@ export function useSurveyToolbarActions(
         isDisabled: canModifySurvey
           ? undefined
           : t(
-              'You do not have permission to delete questions. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to delete survey questions. Please contact your system administrator if there is an issue with your access.'
             ),
       },
     ],
