@@ -9,8 +9,8 @@ import { PlatformRoute } from '../../../main/PlatformRoutes';
 export function useAuthenticatorsColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const createdColumn = useCreatedColumn({ sort: 'created_on' });
-  const modifiedColumn = useModifiedColumn({ sort: 'modified_on' });
+  const createdColumn = useCreatedColumn({ sort: 'created' });
+  const modifiedColumn = useModifiedColumn({ sort: 'modified' });
   const tableColumns = useMemo<ITableColumn<Authenticator>[]>(
     () => [
       {

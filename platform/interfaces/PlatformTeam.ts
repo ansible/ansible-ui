@@ -3,9 +3,9 @@ export interface PlatformTeam {
   description: string;
   id: number;
   url: string;
-  created_on: string;
+  created: string;
   created_by: string;
-  modified_on: string;
+  modified: string;
   modified_by: string;
   related: {
     created_by: string;

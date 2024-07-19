@@ -38,8 +38,8 @@ const platformOrganization = {
   url: '/api/platform/organizations/1/',
   name: 'Platform organization',
   description: 'Platform organization description',
-  created_on: '2021-01-01T00:00:00Z',
-  modified_on: '2021-01-01T00:00:00Z',
+  created: '2021-01-01T00:00:00Z',
+  modified: '2021-01-01T00:00:00Z',
   created_by: 1,
   modified_by: 1,
   related: {

@@ -3,9 +3,9 @@ export interface PlatformOrganization {
   description: string;
   id: number;
   url: string;
-  created_on: string;
+  created: string;
   created_by: number;
-  modified_on: string;
+  modified: string;
   modified_by: number;
   related: {
     created_by: string;

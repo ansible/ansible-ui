@@ -9,10 +9,10 @@ export function useUsersColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn({
-    sort: 'created_on',
+    sort: 'created',
   });
   const modifiedColumn = useModifiedColumn({
-    sort: 'modified_on',
+    sort: 'modified',
   });
 
   const tableColumns = useMemo<ITableColumn<PlatformUser>[]>(

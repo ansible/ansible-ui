@@ -5,9 +5,9 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 const mockUser = {
   id: 1,
   url: gatewayV1API`/users/1/`,
-  created_on: '2023-11-01T20:04:54.789802Z',
+  created: '2023-11-01T20:04:54.789802Z',
   created_by: 'admin',
-  modified_on: '2023-11-01T20:04:54.789827Z',
+  modified: '2023-11-01T20:04:54.789827Z',
   modified_by: 'admin',
   related: {},
   summary_fields: {},
@@ -35,8 +35,8 @@ describe('Platform user details', () => {
     cy.get('[data-cy="email"]').should('have.text', 'new-user@sample.com');
     cy.get('[data-cy="username"]').should('have.text', 'new-user');
     cy.get('[data-cy="last-login"]').should('have.text', formatDateString(mockUser.last_login));
-    cy.get('[data-cy="created"]').should('have.text', formatDateString(mockUser.created_on));
-    cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockUser.modified_on));
+    cy.get('[data-cy="created"]').should('have.text', formatDateString(mockUser.created));
+    cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockUser.modified));
     cy.get('[data-cy="organization"]')
       .should('contain', 'Demo')
       .and('contain', 'Default')

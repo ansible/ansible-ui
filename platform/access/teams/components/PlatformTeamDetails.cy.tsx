@@ -15,15 +15,12 @@ describe('PlatformTeamDetails', () => {
       'contain',
       mockPlatformTeam.summary_fields.organization.name
     );
-    cy.get('[data-cy="created"]').should('contain', formatDateString(mockPlatformTeam.created_on));
+    cy.get('[data-cy="created"]').should('contain', formatDateString(mockPlatformTeam.created));
     cy.get('[data-cy="created"]').should(
       'contain',
       mockPlatformTeam.summary_fields.created_by.username
     );
-    cy.get('[data-cy="modified"]').should(
-      'contain',
-      formatDateString(mockPlatformTeam.modified_on)
-    );
+    cy.get('[data-cy="modified"]').should('contain', formatDateString(mockPlatformTeam.modified));
     cy.get('[data-cy="modified"]').should(
       'contain',
       mockPlatformTeam.summary_fields.modified_by.username
