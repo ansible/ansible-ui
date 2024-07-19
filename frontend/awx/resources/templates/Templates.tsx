@@ -21,7 +21,7 @@ export function Templates() {
         titleHelp={t(
           'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/job_templates.html`}
+        titleDocLink={getDocsBaseUrl(config, 'templates')}
         description={t(
           'A job template is a definition and set of parameters for running an Ansible job.'
         )}

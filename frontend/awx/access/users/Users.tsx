@@ -210,7 +210,7 @@ export function Users() {
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/users.html`}
+        titleDocLink={getDocsBaseUrl(config, 'users')}
         description={t(
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }

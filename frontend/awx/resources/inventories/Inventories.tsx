@@ -100,7 +100,7 @@ export function Inventories() {
         titleHelp={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/inventories.html`}
+        titleDocLink={getDocsBaseUrl(config, 'inventories')}
         description={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}

@@ -50,7 +50,7 @@ export function AwxMasthead() {
               id="documentation"
               icon={<ExternalLinkAltIcon />}
               component="a"
-              href={`${getDocsBaseUrl(config)}/html/userguide/index.html`}
+              href={getDocsBaseUrl(config, 'index')}
               target="_blank"
               data-cy="masthead-documentation"
             >
