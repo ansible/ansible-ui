@@ -101,7 +101,7 @@ Cypress.Commands.add('createPlatformOrganization', (org?: Partial<PlatformOrgani
     org = {};
   }
   if (!org.name) {
-    org.name = `Platform E2E Organization-${randomString(3).toLowerCase()}`;
+    org.name = `Platform E2E Organization-${randomString(4).toLowerCase()}`;
   }
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, org);
 });
@@ -126,7 +126,7 @@ Cypress.Commands.add(
 responsible for creating a new platform user. Here's a breakdown of what it does: */
 
 Cypress.Commands.add('createPlatformUser', (user?: Partial<PlatformUser>) => {
-  const userName = `platform-e2e-user-${randomString(2).toLowerCase()}`;
+  const userName = `platform-e2e-user-${randomString(4).toLowerCase()}`;
   cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
     username: userName,
     password: 'pw',
@@ -153,7 +153,7 @@ Cypress.Commands.add(
 /* This `Cypress.Commands.add('createPlatformTeam', ...)` function is a custom Cypress command that is
 responsible for creating a new platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add('createPlatformTeam', function (platformTeam: Partial<PlatformTeam>) {
-  const teamName = `Platform E2E Team-${randomString(3).toLowerCase()}`;
+  const teamName = `Platform E2E Team-${randomString(4).toLowerCase()}`;
   cy.requestPost<Partial<PlatformTeam>>(gatewayV1API`/teams/`, {
     name: teamName,
     ...platformTeam,
@@ -380,7 +380,7 @@ Cypress.Commands.add(
         | 'redirect_uris'
       >
     >(gatewayV1API`/applications/`, {
-      name: `AAP OAuth Application ${randomString(2)}`,
+      name: `AAP OAuth Application ${randomString(4)}`,
       description: 'E2E Application Description',
       organization: organization ? organization?.id : 1,
       client_type: clientType,
