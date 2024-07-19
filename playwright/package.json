@@ -3,8 +3,6 @@
     "test": "playwright test",
     "ui": "playwright test --ui",
     "test:chrome": "playwright test --project=chromium",
-    "codegen:awx": "npx playwright codegen https://localhost:4101 --ignore-https-errors",
-    "awx": "cd .. && UI_MODE=AWX webpack serve --mode development --config ./webpack/webpack.awx.cjs --port 4101",
-    "docker:run:awx": "cd .. && npm run docker:run:awx"
+    "codegen:awx": "npx playwright codegen https://localhost:4101 --ignore-https-errors"
   }
 }
