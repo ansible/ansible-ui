@@ -195,6 +195,7 @@ export function useCreatedColumn(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
   sort?: string;
+  userDetailsPageId?: string;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -228,10 +229,13 @@ export function useCreatedColumn(options?: {
             onClick={
               options?.disableLinks || !('summary_fields' in item)
                 ? undefined
-                : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.created_by?.id },
-                    })
+                : () => {
+                    pageNavigate(options?.userDetailsPageId || AwxRoute.UserDetails, {
+                      params: {
+                        id: item.summary_fields?.created_by?.id,
+                      },
+                    });
+                  }
             }
           />
         );
@@ -245,7 +249,14 @@ export function useCreatedColumn(options?: {
       dashboard: 'hidden',
       priority: ColumnPriority.last,
     }),
-    [t, options?.disableSort, options?.sort, options?.disableLinks, pageNavigate]
+    [
+      t,
+      options?.disableSort,
+      options?.sort,
+      options?.disableLinks,
+      options?.userDetailsPageId,
+      pageNavigate,
+    ]
   );
   return column;
 }
@@ -254,6 +265,7 @@ export function useModifiedColumn(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
   sort?: string;
+  userDetailsPageId?: string;
 }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -280,8 +292,10 @@ export function useModifiedColumn(options?: {
               options?.disableLinks || !('summary_fields' in item)
                 ? undefined
                 : () =>
-                    pageNavigate(AwxRoute.UserDetails, {
-                      params: { id: item.summary_fields?.modified_by?.id },
+                    pageNavigate(options?.userDetailsPageId || AwxRoute.UserDetails, {
+                      params: {
+                        id: item.summary_fields?.modified_by?.id,
+                      },
                     })
             }
           />
@@ -296,7 +310,14 @@ export function useModifiedColumn(options?: {
       dashboard: 'hidden',
       priority: ColumnPriority.last,
     }),
-    [t, options?.disableSort, options?.sort, options?.disableLinks, pageNavigate]
+    [
+      t,
+      options?.disableSort,
+      options?.sort,
+      options?.disableLinks,
+      options?.userDetailsPageId,
+      pageNavigate,
+    ]
   );
   return column;
 }
