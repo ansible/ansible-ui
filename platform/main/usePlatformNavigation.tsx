@@ -32,6 +32,7 @@ import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayServices';
+import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
@@ -104,6 +105,7 @@ export function usePlatformNavigation() {
 
   const navigate = useNavigate();
   const { activePlatformUser } = usePlatformActiveUser();
+  const managedCloudInstall = useIsManagedCloudInstall() ?? false;
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
     removeNavigationItemById(awxNav, AwxRoute.Overview);
@@ -206,9 +208,12 @@ export function usePlatformNavigation() {
     });
 
     const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
-    if (analytics) {
+    if (analytics && 'children' in analytics) {
       analytics.label = t('Automation Analytics');
       analytics.hidden = !awxService;
+      managedCloudInstall
+        ? removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage)
+        : null;
       navigationItems.push(analytics);
     }
 
@@ -397,6 +402,7 @@ export function usePlatformNavigation() {
     activePlatformUser?.is_superuser,
     activePlatformUser?.is_platform_auditor,
     resources,
+    managedCloudInstall,
     authenticators,
     roles,
     applications,
