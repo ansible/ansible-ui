@@ -30,6 +30,7 @@ import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { RequestError } from '../../../../common/crud/RequestError';
 import { Credential } from '../../../interfaces/Credential';
+import { shouldHideOtherStep } from '../WorkflowVisualizer/wizard/helpers';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -276,7 +277,7 @@ export function LaunchWizard({
       id: 'nodePromptsStep',
       label: t('Prompts'),
       inputs: <TemplateLaunchPromptStep defaultValues={initialValues} />,
-      hidden: () => !template.ask_inventory_on_launch,
+      hidden: () => shouldHideOtherStep(config),
       validate: async (formData) => {
         const missingCredentialTypes: string[] = [];
         await requestGet<AwxItemsResponse<Credential>>(
