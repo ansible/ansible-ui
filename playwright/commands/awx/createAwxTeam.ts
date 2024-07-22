@@ -4,7 +4,7 @@ import { navigateTo } from '../navigateTo';
 export async function createAwxTeam(page: Page, organizationName: string) {
   const randomName = 'E2E' + Math.random().toString(36).substring(7);
   await navigateTo(page, 'Access Management', 'awx-teams');
-  await page.click('#create-team');
+  await page.getByRole('button', { name: 'Create team' }).click();
   await page.fill('#name', randomName);
   await page.click('#organization');
   await page.getByLabel('Search input').fill(organizationName);
