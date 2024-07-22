@@ -12,7 +12,6 @@ import styled from 'styled-components';
 import { usePageDialog } from '../../framework';
 
 export interface AnsibleAboutModalProps {
-  brandImageSrc: string;
   versionInfo?: ProductVersionInfo;
   userInfo?: string;
   onClose?: () => void;
@@ -36,7 +35,13 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
         props.onClose?.();
       }}
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
-      brandImageSrc={props.brandImageSrc}
+      brandImageSrc={
+        process.env.PRODUCT === 'Automation Hub'
+          ? '/static/media/galaxy-logo-ansibull.png'
+          : process.env.PRODUCT === 'Event Driven Automation'
+            ? '/static/media/eda-icon.svg'
+            : '/static/media/awx-logo.svg'
+      }
       brandImageAlt={t('Brand Logo')}
       productName={upstreamServices(process.env.PRODUCT, t) ?? t('AWX')}
     >
