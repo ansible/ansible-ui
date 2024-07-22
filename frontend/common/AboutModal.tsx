@@ -52,7 +52,9 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
               product !== 'galaxy_ng_commit' &&
               product !== 'ha' &&
               product !== 'instances' &&
-              product !== 'instance_groups'
+              product !== 'instance_groups' &&
+              product !== 'time_zone' &&
+              product !== 'deployment_type'
           )
           .map(([product, info]) => (
             <DescriptionListGroup key={product}>

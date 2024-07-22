@@ -7,7 +7,7 @@ export function useEdaProductVersionInfo() {
   const [, setError] = useState<Error>();
   const [productVersionInfo, setProductVersionInfo] = useState<ProductVersionInfo>();
   useEffect(() => {
-    fetch(edaAPI`/ping/`)
+    fetch(edaAPI`/config/`)
       .then((response) => response.json())
       .then((data) => setProductVersionInfo(data as ProductVersionInfo))
       .catch((err) => {
