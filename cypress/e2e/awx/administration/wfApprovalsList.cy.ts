@@ -459,7 +459,7 @@ describe('Workflow Approvals Tests', () => {
       cy.getByDataCy('actions-dropdown')
         .click()
         .then(() => {
-          cy.getByDataCy('delete').click();
+          cy.getByDataCy('delete-workflow-approvals').click();
         });
     });
     cy.getModal().within(() => {
@@ -545,7 +545,7 @@ describe('Workflow Approvals Tests', () => {
                         cy.getByDataCy('checkbox-column-cell').click();
                       });
                       cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-                        cy.getByDataCy('approve').click();
+                        cy.getByDataCy('delete-workflow-approvals').click();
                       });
                       cy.getModal().within(() => {
                         cy.get('#confirm').click();
