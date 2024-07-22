@@ -18,7 +18,6 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.clickButton('Next');
       // Authentication Wizard - Authentication Details Step
       cy.get('[data-cy="name"]').type(azureAdAuthenticator);
-      cy.get('[data-cy="configuration-input-CALLBACK_URL"]').type(azureADData.callbackUrl);
       cy.get('[data-cy="configuration-input-KEY"]').type(azureADData.oidcKey);
       cy.get('[data-cy="configuration-input-SECRET"]').type(azureADData.oidcSecret);
       cy.clickButton('Next');
@@ -28,10 +27,6 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.verifyPageTitle(azureAdAuthenticator);
 
       cy.get('[data-cy="name"]').should('have.text', azureAdAuthenticator);
-      cy.get('[data-cy="azure-ad-oauth2-callback-url"]').should(
-        'have.text',
-        azureADData.callbackUrl
-      );
       cy.get('[data-cy="oidc-key"]').should('have.text', azureADData.oidcKey);
       cy.get('[data-cy="oidc-secret"]').should('have.text', '$encrypted$');
 

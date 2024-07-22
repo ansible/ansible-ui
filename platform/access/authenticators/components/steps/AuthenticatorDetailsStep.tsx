@@ -52,10 +52,17 @@ export function AuthenticatorDetailsStep(props: {
     }
     return plugin.type === (wizardData as AuthenticatorFormValues).type;
   });
-  const schema = authenticatorPlugin?.configuration_schema || [];
+  let schema = authenticatorPlugin?.configuration_schema || [];
   const textFields: PluginConfiguration[] = [];
   const boolFields: PluginConfiguration[] = [];
   const dataFields: PluginConfiguration[] = [];
+
+  const type = authenticatorPlugin?.type || '';
+  if (!props.authenticator && (type.includes('github') || type.includes('azuread'))) {
+    // Omit Github/Azuread callback URL field on create
+    // This allows the API to automatically generate one
+    schema = schema.filter((s) => s.name !== 'CALLBACK_URL');
+  }
 
   schema.forEach((field) => {
     if (textInputTypes.includes(field.type)) {
