@@ -37,10 +37,10 @@ export function AnsibleAboutModal(props: AnsibleAboutModalProps) {
       trademark={t(`Copyright {{fullYear}} Red Hat, Inc.`, { fullYear: new Date().getFullYear() })}
       brandImageSrc={
         process.env.PRODUCT === 'Automation Hub'
-          ? '/static/media/galaxy-logo-ansibull.png'
+          ? '/assets/galaxy-logo-ansibull.png'
           : process.env.PRODUCT === 'Event Driven Automation'
-            ? '/static/media/eda-icon.svg'
-            : '/static/media/awx-logo.svg'
+            ? '/assets/eda-icon.svg'
+            : '/assets/awx-logo.svg'
       }
       brandImageAlt={t('Brand Logo')}
       productName={upstreamServices(process.env.PRODUCT, t) ?? t('AWX')}
