@@ -73,3 +73,11 @@ jobs:
         AWX_SERVER: ${{ vars.AWX_SERVER }}
         AWX_USERNAME: e2e
         AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: Tests Results
+        path: results.xml
+        reporter: jest-junit
