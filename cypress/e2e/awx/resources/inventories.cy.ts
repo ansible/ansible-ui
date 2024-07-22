@@ -147,7 +147,7 @@ describe('Inventories Tests', () => {
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.selectTableRowByCheckbox('name', inventory.name, { disableFilter: true });
           //Add an assertion that the expected inventory name appears where it should
-          cy.clickToolbarKebabAction('delete-selected-inventories');
+          cy.clickToolbarKebabAction('delete-inventories');
           cy.get('#confirm').click();
           cy.clickButton(/^Delete inventory/);
           cy.contains(/^Success$/); //Add assertion here; cy.contains is not enough of an assertion by itself
@@ -182,7 +182,7 @@ describe('Inventories Tests', () => {
 
                   cy.getByDataCy('select-all').click();
 
-                  cy.clickToolbarKebabAction('delete-selected-inventories');
+                  cy.clickToolbarKebabAction('delete-inventories');
 
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete inventories/);

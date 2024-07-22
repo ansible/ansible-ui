@@ -70,7 +70,7 @@ describe('Inventory Groups', () => {
           cy.get('tbody tr').should('have.length', 1);
           cy.get('[data-cy="checkbox-column-cell"] input').click();
         });
-        cy.clickToolbarKebabAction('delete-selected-groups');
+        cy.clickToolbarKebabAction('delete-groups');
         cy.intercept('DELETE', awxAPI`/groups/*/`).as('deleted');
         cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
         cy.get('[data-cy="delete-group-modal-delete-button"]').click();
@@ -150,7 +150,7 @@ describe('Inventory Groups', () => {
         cy.get('tbody tr').should('have.length', 5);
         cy.getByDataCy('select-all').click();
         cy.intercept('DELETE', awxAPI`/groups/*/`).as('deleted');
-        cy.clickToolbarKebabAction('delete-selected-groups');
+        cy.clickToolbarKebabAction('delete-groups');
         cy.getModal().within(() => {
           cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
           cy.get('[data-cy="delete-group-modal-delete-button"]').click();
@@ -258,7 +258,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
-        cy.clickButton(/^New group/);
+        cy.clickButton(/^Create group/);
         cy.verifyPageTitle('Create new group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
@@ -266,7 +266,7 @@ describe('Inventory Groups', () => {
         cy.filterTableByMultiSelect('name', [newRelatedGroup]);
         cy.selectTableRow(newRelatedGroup, false);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
-        cy.clickToolbarKebabAction('disassociate-selected-groups');
+        cy.clickToolbarKebabAction('disassociate-groups');
         cy.clickModalConfirmCheckbox();
         cy.clickButton(/^Disassociate groups/);
         cy.wait('@disassociateGroup')
@@ -302,7 +302,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
-        cy.clickButton(/^Existing group/);
+        cy.clickButton(/^Add existing group/);
         cy.filterTableByMultiSelect('name', [newGroup]);
         cy.selectTableRow(newGroup, false);
         cy.clickButton(/^Add groups/);
@@ -326,7 +326,7 @@ describe('Inventory Groups', () => {
         cy.clickTab(/^Related Groups$/, true);
         cy.selectTableRow(newGroup, false);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
-        cy.clickToolbarKebabAction('disassociate-selected-groups');
+        cy.clickToolbarKebabAction('disassociate-groups');
         cy.clickModalConfirmCheckbox();
         cy.clickButton(/^Disassociate groups/);
         cy.wait('@disassociateGroup')

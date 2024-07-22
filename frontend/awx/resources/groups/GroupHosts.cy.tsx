@@ -80,13 +80,10 @@ describe('GroupHosts', () => {
         .then(() => {
           if (kind === '') {
             cy.get('[data-cy="checkbox-column-cell"] > label > input').click();
-            cy.get('[data-cy="disassociate-selected-hosts"]').click();
+            cy.get('[data-cy="disassociate-hosts"]').click();
             cy.contains('Disassociate host from group?');
           } else {
-            cy.get('body').should(
-              'not.have.descendants',
-              '[data-cy="disassociate-selected-hosts"]'
-            );
+            cy.get('body').should('not.have.descendants', '[data-cy="disassociate-hosts"]');
           }
         });
     });

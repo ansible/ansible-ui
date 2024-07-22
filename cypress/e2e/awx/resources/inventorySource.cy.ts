@@ -72,7 +72,7 @@ describe('Inventory Sources', () => {
         }).then((cred) => {
           credential = cred;
           goToSourceList(inventory.name);
-          cy.clickButton(/^Add source/);
+          cy.clickButton(/^Create source/);
           cy.verifyPageTitle('Add new source');
           cy.getBy('[data-cy="name"]').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
