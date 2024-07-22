@@ -8,7 +8,7 @@ export async function filterTable(organizationName: string, page: Page) {
 }
 
 export async function clearTableFilters(page: Page) {
-  if (await page.locator('#filter-input-clear').isVisible()) {
-    await page.locator('#filter-input-clear').click();
+  if (await page.getByRole('button', { name: 'Clear all filters' }).isVisible()) {
+    await page.getByRole('button', { name: 'Clear all filters' }).click();
   }
 }
