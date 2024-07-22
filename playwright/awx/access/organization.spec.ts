@@ -8,6 +8,7 @@ test.describe('AWX Organization', { tag: ['@awx'] }, () => {
     await awxLogin(page);
   });
 
+  // @redundant
   // This test is redundant because other tests already test the functionality
   // such as the team and project tests.
   // We still want to keep it to show how to create and delete an organization
