@@ -7,7 +7,11 @@ test.beforeEach(async ({ page }) => {
   await awxLogin(page);
 });
 
-test('should be able to create an organization and delete an organization', async ({ page }) => {
-  const organizationName = await createAwxOrganization(page);
-  await deleteAwxOrganization(page, organizationName);
-});
+test(
+  'should be able to create an organization and delete an organization',
+  { tag: ['@awx'] },
+  async ({ page }) => {
+    const organizationName = await createAwxOrganization(page);
+    await deleteAwxOrganization(page, organizationName);
+  }
+);
