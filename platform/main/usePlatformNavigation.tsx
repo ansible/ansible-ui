@@ -7,7 +7,6 @@ import {
   findNavigationItemById,
   removeNavigationItemById,
 } from '../../framework';
-import { PageSettings } from '../../framework/PageSettings/PageSettings';
 import { AwxSettingsCategoryDetailsPage } from '../../frontend/awx/administration/settings/AwxSettingsCategoryDetails';
 import { AwxSettingsCategoryForm } from '../../frontend/awx/administration/settings/AwxSettingsCategoryForm';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
@@ -36,6 +35,8 @@ import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayS
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
+import { PageSettingsForm } from '../../framework/PageSettings/PageSettingsForm';
+import { PageSettingsDetails } from '../../framework/PageSettings/PageSettingsDetails';
 
 const mapHubRoute = (url: string) => {
   const matches: Record<string, string> = {
@@ -287,7 +288,16 @@ export function usePlatformNavigation() {
             id: AwxRoute.SettingsPreferences,
             label: t('User Preferences'),
             path: 'preferences',
-            element: <PageSettings />,
+            children: [
+              {
+                path: 'edit',
+                element: <PageSettingsForm />,
+              },
+              {
+                path: '',
+                element: <PageSettingsDetails />,
+              },
+            ],
           },
           {
             id: AwxRoute.SettingsSystem,
