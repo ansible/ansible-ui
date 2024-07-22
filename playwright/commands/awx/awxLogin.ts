@@ -19,6 +19,9 @@ export async function awxLogin(page: Page) {
   // Click the login button
   await page.click('button[type="submit"]');
 
+  // Check "Do not show this message again."
+  await page.getByRole('dialog').locator('input[type="checkbox"]').check();
+
   // Close the welcome modal
   await page.click('button[aria-label="Close"]');
 

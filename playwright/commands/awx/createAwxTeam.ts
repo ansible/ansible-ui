@@ -3,8 +3,8 @@ import { clickButtonByLabel } from '../common/clickButton';
 import { createE2EName } from '../common/createE2EName';
 import { enterTextByLabel } from '../common/enterText';
 import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
+import { navigateTo } from '../common/navigateTo';
 import { singleSelectByLabel } from '../common/singleSelectByLabel';
-import { navigateTo } from '../navigateTo';
 
 /**
  * Create an AWX team.

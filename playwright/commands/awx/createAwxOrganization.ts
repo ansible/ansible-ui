@@ -4,7 +4,7 @@ import { clickLinkByLabel } from '../common/clickLink';
 import { createE2EName } from '../common/createE2EName';
 import { enterTextByLabel } from '../common/enterText';
 import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
-import { navigateTo } from '../navigateTo';
+import { navigateTo } from '../common/navigateTo';
 
 /**
  * Create an AWX organization.

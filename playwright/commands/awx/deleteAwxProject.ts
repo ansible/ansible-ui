@@ -4,7 +4,7 @@ import { clickPageAction } from '../common/clickPageAction';
 import { clickSubmit } from '../common/clickSubmit';
 import { clickTableRow } from '../common/clickTableRow';
 import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
-import { filterTable } from '../common/filterTable';
+import { clearTableFilters, filterTable } from '../common/filterTable';
 
 export async function deleteAwxProject(projectName: string, page: Page) {
   // Navigate to projects
@@ -12,6 +12,7 @@ export async function deleteAwxProject(projectName: string, page: Page) {
   await expectPageTitleToContain('Projects', page);
 
   // Filter the table to only show the project
+  await clearTableFilters(page);
   await filterTable(projectName, page);
 
   // Click the project

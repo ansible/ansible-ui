@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { expectPageTitleToContain } from './common/expectPageTitleToContain';
+import { expectPageTitleToContain } from './expectPageTitleToContain';
 
 export async function navigateTo(parentLabel: string, label: string, page: Page) {
   const nav = page.locator('.pf-v5-c-nav');

@@ -6,3 +6,9 @@ export async function filterTable(organizationName: string, page: Page) {
   await page.locator('#filter-input-select').getByLabel(organizationName).click();
   await page.click('#filter-input');
 }
+
+export async function clearTableFilters(page: Page) {
+  if (await page.locator('#filter-input-clear').isVisible()) {
+    await page.locator('#filter-input-clear').click();
+  }
+}

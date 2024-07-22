@@ -4,14 +4,15 @@ import { clickPageAction } from '../common/clickPageAction';
 import { clickSubmit } from '../common/clickSubmit';
 import { clickTableRow } from '../common/clickTableRow';
 import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
-import { filterTable } from '../common/filterTable';
-import { navigateTo } from '../navigateTo';
+import { clearTableFilters, filterTable } from '../common/filterTable';
+import { navigateTo } from '../common/navigateTo';
 
 export async function deleteAwxTeam(teamName: string, page: Page) {
   // Navigate to teams
   await navigateTo('Access Management', 'Teams', page);
 
   // Filter the table to only show the team
+  await clearTableFilters(page);
   await filterTable(teamName, page);
 
   // Click the team
