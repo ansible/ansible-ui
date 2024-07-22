@@ -20,7 +20,6 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
       // Authentication Wizard - Authentication Details Step
       cy.get('[data-cy="name"]').type(name);
-      cy.get('[data-cy="configuration-input-CALLBACK_URL"]').type(githubData.callbackUrl);
       cy.get('[data-cy="configuration-input-KEY"]').type(githubData.oauth2Key);
       cy.get('[data-cy="configuration-input-SECRET"]').type(githubData.oauth2Secret);
       cy.clickButton('Next');
@@ -34,7 +33,6 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
       // Authentication Details Page
       cy.verifyPageTitle(name);
       cy.get('[data-cy="name"]').should('have.text', name);
-      cy.get('[data-cy="github-oauth2-callback-url"]').should('have.text', githubData.callbackUrl);
       cy.get('[data-cy="github-oauth2-key"]').should('have.text', githubData.oauth2Key);
       cy.get('[data-cy="github-oauth2-secret"]').should('have.text', '$encrypted$');
 
