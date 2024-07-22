@@ -6,18 +6,25 @@ import { deleteAwxOrganization } from '../commands/awx/deleteAwxOrganization';
 import { deleteAwxProject } from '../commands/awx/deleteAwxProject';
 import { syncAwxProject } from '../commands/awx/syncAwxProject';
 
-test.beforeEach(async ({ page }) => {
-  await awxLogin(page);
-});
+test.describe('AWX Project', { tag: ['@awx'] }, () => {
+  test.beforeEach(async ({ page }) => {
+    await awxLogin(page);
+  });
 
-test(
-  'should be able to create a project and delete a project',
-  { tag: ['@awx'] },
-  async ({ page }) => {
+  test('should be able to create, sync, and delete a project', async ({ page }) => {
+    // Create an organization
     const organizationName = await createAwxOrganization(page);
-    const projectName = await createAwxProject(page, { organizationName });
-    await syncAwxProject(page, projectName);
-    await deleteAwxProject(page, projectName);
-    await deleteAwxOrganization(page, organizationName);
-  }
-);
+
+    // Create a project
+    const projectName = await createAwxProject({ organizationName }, page);
+
+    // Sync the project
+    await syncAwxProject(projectName, page);
+
+    // Delete the project
+    await deleteAwxProject(projectName, page);
+
+    // Delete the organization
+    await deleteAwxOrganization(organizationName, page);
+  });
+});

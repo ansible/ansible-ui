@@ -5,13 +5,22 @@ import { createAwxTeam } from '../../commands/awx/createAwxTeam';
 import { deleteAwxOrganization } from '../../commands/awx/deleteAwxOrganization';
 import { deleteAwxTeam } from '../../commands/awx/deleteAwxTeam';
 
-test.beforeEach(async ({ page }) => {
-  await awxLogin(page);
-});
+test.describe('AWX Team', { tag: ['@awx'] }, () => {
+  test.beforeEach(async ({ page }) => {
+    await awxLogin(page);
+  });
 
-test('should be able to create a team and delete a team', { tag: ['@awx'] }, async ({ page }) => {
-  const organizationName = await createAwxOrganization(page);
-  const teamName = await createAwxTeam(page, { organizationName });
-  await deleteAwxTeam(page, teamName);
-  await deleteAwxOrganization(page, organizationName);
+  test('should be able to create and delete a team', async ({ page }) => {
+    // Create an organization
+    const organizationName = await createAwxOrganization(page);
+
+    // Create a team
+    const teamName = await createAwxTeam({ organizationName }, page);
+
+    // Delete the team
+    await deleteAwxTeam(teamName, page);
+
+    // Delete the organization
+    await deleteAwxOrganization(organizationName, page);
+  });
 });

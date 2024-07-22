@@ -1,19 +1,42 @@
-import { Page, expect } from '@playwright/test';
-import { createE2EName } from '../createE2EName';
+import { Page } from '@playwright/test';
+import { clickButtonByLabel } from '../common/clickButton';
+import { createE2EName } from '../common/createE2EName';
+import { enterTextByLabel } from '../common/enterText';
+import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
+import { singleSelectByLabel } from '../common/singleSelectByLabel';
 import { navigateTo } from '../navigateTo';
 
+/**
+ * Create an AWX team.
+ */
 export async function createAwxTeam(
-  page: Page,
-  options: { teamName?: string; organizationName: string }
+  options: { teamName?: string; organizationName: string },
+  page: Page
 ) {
+  // Create a random team name if one is not provided
   const teamName = options.teamName ?? createE2EName();
-  await navigateTo(page, 'Access Management', 'awx-teams');
-  await page.getByRole('button', { name: 'Create team' }).click();
-  await page.fill('#name', teamName);
-  await page.click('#organization');
-  await page.getByLabel('Search input').fill(options.organizationName);
-  await page.click(`text=${options.organizationName}`);
-  await page.click('button[type="submit"]');
-  await expect(page.locator('.pf-v5-c-title')).toContainText(teamName);
+
+  // Navigate to the teams page
+  await navigateTo('Access Management', 'Teams', page);
+
+  // Click the create team button
+  await clickButtonByLabel('Create team', page);
+
+  // Verify we are on the create team page
+  await expectPageTitleToContain('Create Team', page);
+
+  // Enter the team name
+  await enterTextByLabel('Name', teamName, page);
+
+  // Select the organization
+  await singleSelectByLabel('Organization', options.organizationName, page);
+
+  // Submit the form
+  await clickButtonByLabel('Create team', page);
+
+  // Verify we are on the team page - which indicates the team was created
+  await expectPageTitleToContain(teamName, page);
+
+  // Return the team name
   return teamName;
 }

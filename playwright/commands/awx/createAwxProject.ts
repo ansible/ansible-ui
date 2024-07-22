@@ -1,60 +1,52 @@
-import { expect, Page } from '@playwright/test';
-import { createE2EName } from '../createE2EName';
+import { Page } from '@playwright/test';
+import { clickButtonByLabel } from '../common/clickButton';
+import { clickLinkByLabel } from '../common/clickLink';
+import { createE2EName } from '../common/createE2EName';
+import { enterTextByLabel } from '../common/enterText';
+import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
+import { singleSelectByLabel } from '../common/singleSelectByLabel';
 
+/**
+ * Create an AWX project.
+ */
 export async function createAwxProject(
-  page: Page,
   options: {
     projectName?: string;
     organizationName: string;
-  }
+  },
+  page: Page
 ) {
+  // Create a random project name if one is not provided
   const projectName = options.projectName ?? createE2EName();
+
+  // Get the organization name
   const organizationName = options.organizationName;
 
-  await page.getByRole('link', { name: 'Projects', exact: true }).click();
+  // Navigate to the projects page
+  await clickLinkByLabel('Projects', page);
 
-  await page.getByRole('link', { name: 'Create project' }).click();
+  // Click the create project button
+  await clickLinkByLabel('Create project', page);
 
-  await page.getByLabel('Name').fill(projectName);
+  // Enter the project name
+  await enterTextByLabel('Name', projectName, page);
 
-  await page.getByLabel('Organization *').click();
-  await page.getByLabel('Search input').fill(organizationName);
-  await page.getByRole('option', { name: organizationName }).click();
+  // Select the organization
+  await singleSelectByLabel('Organization', organizationName, page);
 
+  // Select the SCM type
   await page.getByLabel('Choose a Source Control Type').click();
   await page.getByRole('option', { name: 'Git' }).click();
 
-  await page.getByLabel('Source Control URL').fill('https://github.com/ansible/ansible-ui');
+  // Enter the SCM URL
+  await enterTextByLabel('Source Control URL', 'https://github.com/ansible/ansible-ui', page);
 
-  await page.getByRole('button', { name: 'Create project' }).click();
+  // Submit the form
+  await clickButtonByLabel('Create project', page);
 
-  await expect(page.locator('.pf-v5-c-title')).toContainText(projectName);
+  // Verify we are on the project page - which indicates the project was created
+  await expectPageTitleToContain(projectName, page);
 
+  // Return the project name
   return projectName;
 }
-
-// it('can create a project and then delete it from the project details page', () => {
-//   const projectName = 'E2E Project ' + randomString(4);
-//   cy.navigateTo('awx', 'projects');
-//   cy.verifyPageTitle('Projects');
-//   cy.clickLink(/^Create project$/);
-//   cy.get('[data-cy="name"]').type(projectName);
-//   cy.singleSelectByDataCy('organization', `${organization.name}`);
-//   cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
-//   cy.get('[data-cy="scm-url"]').type('https://github.com/ansible/ansible-ui');
-//   cy.get('[data-cy="option-allow-override"]').click();
-//   cy.intercept('POST', awxAPI`/projects/`).as('newProject');
-//   cy.clickButton(/^Create project$/);
-//   cy.wait('@newProject')
-//     .its('response.body')
-//     .then((project: Project) => {
-//       cy.verifyPageTitle(project.name);
-//       cy.hasDetail(/^Organization$/, `${organization.name}`);
-//       cy.hasDetail(/^Source control type$/, 'Git');
-//       cy.hasDetail(/^Enabled options$/, 'Allow branch override');
-//       cy.waitForProjectToFinishSyncing(project.id).then((syncedProject) => {
-//         cy.contains('[data-cy="last-job-status"]', 'Success');
-//         cy.deleteAwxProject(syncedProject, { failOnStatusCode: false });
-//       });
-//     });
-// });

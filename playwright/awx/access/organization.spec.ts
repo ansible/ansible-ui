@@ -3,15 +3,24 @@ import { awxLogin } from '../../commands/awx/awxLogin';
 import { createAwxOrganization } from '../../commands/awx/createAwxOrganization';
 import { deleteAwxOrganization } from '../../commands/awx/deleteAwxOrganization';
 
-test.beforeEach(async ({ page }) => {
-  await awxLogin(page);
-});
+test.describe('AWX Organization', { tag: ['@awx'] }, () => {
+  test.beforeEach(async ({ page }) => {
+    await awxLogin(page);
+  });
 
-test(
-  'should be able to create an organization and delete an organization',
-  { tag: ['@awx'] },
-  async ({ page }) => {
-    const organizationName = await createAwxOrganization(page);
-    await deleteAwxOrganization(page, organizationName);
-  }
-);
+  // This test is redundant because other tests already test the functionality
+  // such as the team and project tests.
+  // We still want to keep it to show how to create and delete an organization
+  // but we tag it as redundant so it is not run by pull requests.
+  test(
+    'should be able to create and delete an organization',
+    { tag: ['@redundant'] },
+    async ({ page }) => {
+      // Create an organization
+      const organizationName = await createAwxOrganization(page);
+
+      // Delete the organization
+      await deleteAwxOrganization(organizationName, page);
+    }
+  );
+});

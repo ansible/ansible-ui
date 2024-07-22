@@ -1,18 +1,38 @@
-import { expect, Page } from '@playwright/test';
-import { createE2EName } from '../createE2EName';
+import { Page } from '@playwright/test';
+import { clickButtonByLabel } from '../common/clickButton';
+import { clickLinkByLabel } from '../common/clickLink';
+import { createE2EName } from '../common/createE2EName';
+import { enterTextByLabel } from '../common/enterText';
+import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
 import { navigateTo } from '../navigateTo';
 
+/**
+ * Create an AWX organization.
+ */
 export async function createAwxOrganization(
   page: Page,
   options: {
     organizationName?: string;
   } = {}
 ) {
+  // Create a random organization name if one is not provided
   const organizationName = options.organizationName ?? createE2EName();
-  await navigateTo(page, 'Access Management', 'awx-organizations');
-  await page.click('#create-organization');
-  await page.fill('#name', organizationName);
-  await page.click('button[type="submit"]');
-  await expect(page.locator('.pf-v5-c-title')).toContainText(organizationName);
+
+  // Navigate to the organizations page
+  await navigateTo('Access Management', 'Organizations', page);
+
+  // Click the create organization button
+  await clickLinkByLabel('Create organization', page);
+
+  // Enter the organization name
+  await enterTextByLabel('Name', organizationName, page);
+
+  // Submit the form
+  await clickButtonByLabel('Create organization', page);
+
+  // Verify we are on the organization page - which indicates the organization was created
+  await expectPageTitleToContain(organizationName, page);
+
+  // Return the organization name
   return organizationName;
 }

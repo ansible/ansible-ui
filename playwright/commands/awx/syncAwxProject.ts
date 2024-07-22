@@ -1,13 +1,14 @@
-import { expect, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { expectRowToContain } from '../common/clickTableRow';
+import { filterTable } from '../common/filterTable';
 
-export async function syncAwxProject(page: Page, projectName: string) {
+export async function syncAwxProject(projectName: string, page: Page) {
+  // Navigate to projects
   await page.click('#awx-projects');
-  await page.click('#filter-input');
-  await page.getByLabel('Search input').fill(projectName);
-  await page.locator('#filter-input-select').getByLabel(projectName).click();
-  await page.click('#filter-input');
 
-  const td = page.locator(`td >> text=${projectName}`);
-  const tr = page.locator('tr').filter({ has: td });
-  await expect(tr).toContainText('Success', { timeout: 2 * 60 * 1000 });
+  // Filter the table to only show the project
+  await filterTable(projectName, page);
+
+  // Verify the project is in a success state
+  await expectRowToContain(projectName, 'Success', page, 60 * 1000);
 }

@@ -1,16 +1,35 @@
-import { expect, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { clickConfirm } from '../common/clickConfirm';
+import { clickPageAction } from '../common/clickPageAction';
+import { clickSubmit } from '../common/clickSubmit';
+import { clickTableRow } from '../common/clickTableRow';
+import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
+import { filterTable } from '../common/filterTable';
 import { navigateTo } from '../navigateTo';
 
-export async function deleteAwxOrganization(page: Page, organizationName: string) {
-  await navigateTo(page, 'Access Management', 'awx-organizations');
-  await page.click('#filter-input');
-  await page.getByLabel('Search input').fill(organizationName);
-  await page.locator('#filter-input-select').getByLabel(organizationName).click();
-  await page.click('#filter-input');
-  await page.click(`td >> a >> text=${organizationName}`);
-  await page.getByRole('button', { name: 'Actions' }).click();
-  await page.getByText('Delete organization').click();
-  await page.click('#confirm');
-  await page.click('#submit');
-  await expect(page.getByRole('heading', { name: 'Organizations' })).toBeVisible();
+export async function deleteAwxOrganization(organizationName: string, page: Page) {
+  // Navigate to organizations
+  await navigateTo('Access Management', 'Organizations', page);
+
+  // Filter the table to only show the organization
+  await filterTable(organizationName, page);
+
+  // Click the organization
+  await clickTableRow(organizationName, page);
+
+  // Verify we are on the organization page
+  await expectPageTitleToContain(organizationName, page);
+
+  // Click the delete action
+  await clickPageAction('Delete organization', page);
+
+  // Confirm the delete
+  await clickConfirm(page);
+
+  // Submit the delete
+  await clickSubmit(page);
+
+  // Verify we are back on the organizations page
+  // Which indicates the organization was deleted
+  await expectPageTitleToContain('Organizations', page);
 }
