@@ -143,6 +143,7 @@ describe('Schedules - Create and Delete', () => {
   });
 
   describe('Schedules - Create schedule of resource type Management job template', () => {
+    // watch
     it('can create a simple schedule of resource type Management job template, then delete the schedule', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
