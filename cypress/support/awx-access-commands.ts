@@ -35,7 +35,7 @@ Cypress.Commands.add('createAwxTeam', (awxTeam?: Partial<Team>) => {
     ...rest
   } = awxTeam ?? {};
   // Get the platform organization using the AWX organization ID
-  cy.requestGet<Organization>(awxAPI`/organizations/${awxOrganizationId.toString()}`).then(
+  cy.requestGet<Organization>(awxAPI`/organizations/${awxOrganizationId!.toString()}`).then(
     (awxOrganization) => {
       cy.getPlatformOrgByAnsibleId(awxOrganization.summary_fields.resource.ansible_id).then(
         (platformOrg) => {
@@ -65,7 +65,7 @@ Cypress.Commands.add('createAwxUser', (awxUser?: Partial<AwxUser>) => {
   } = awxUser ?? {};
 
   // Get the platform organization using the AWX organization ID
-  cy.requestGet<Organization>(awxAPI`/organizations/${awxOrganizationId.toString()}`).then(
+  cy.requestGet<Organization>(awxAPI`/organizations/${awxOrganizationId!.toString()}`).then(
     (awxOrganization) => {
       cy.getPlatformOrgByAnsibleId(awxOrganization.summary_fields.resource.ansible_id).then(
         (platformOrg) => {
