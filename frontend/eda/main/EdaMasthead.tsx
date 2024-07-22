@@ -51,7 +51,11 @@ export function EdaMasthead() {
             <DropdownItem
               id="about"
               onClick={() =>
-                openAnsibleAboutModal({ versionInfo, userInfo: activeEdaUser?.username })
+                openAnsibleAboutModal({
+                  brandImageSrc: '/assets/eda-icon.svg',
+                  versionInfo,
+                  userInfo: activeEdaUser?.username,
+                })
               }
               data-cy="masthead-about"
             >

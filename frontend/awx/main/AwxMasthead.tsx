@@ -61,7 +61,11 @@ export function AwxMasthead() {
             <DropdownItem
               id="about"
               onClick={() =>
-                openAnsibleAboutModal({ versionInfo, userInfo: activeAwxUser?.username })
+                openAnsibleAboutModal({
+                  brandImageSrc: '/assets/awx-logo.svg',
+                  versionInfo,
+                  userInfo: activeAwxUser?.username,
+                })
               }
               data-cy="masthead-about"
             >

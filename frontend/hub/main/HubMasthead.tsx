@@ -58,7 +58,11 @@ export function HubMasthead() {
             <DropdownItem
               id="about"
               onClick={() =>
-                openAnsibleAboutModal({ versionInfo, userInfo: activeHubUser?.username })
+                openAnsibleAboutModal({
+                  brandImageSrc: '/assets/galaxy-logo-ansibull.png',
+                  versionInfo,
+                  userInfo: activeHubUser?.username,
+                })
               }
               data-cy="masthead-about"
             >
