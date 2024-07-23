@@ -102,7 +102,7 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
         cy.selectTableRow(testOrganization1.name);
         cy.clearAllFilters();
         cy.selectTableRow(testOrganization2.name);
-        cy.clickToolbarKebabAction('delete-selected-organizations');
+        cy.clickToolbarKebabAction('delete-organizations');
         cy.intercept('DELETE', gatewayV1API`/organizations/${testOrganization1.id.toString()}/`).as(
           'edaPlatformOrg1'
         );
@@ -200,7 +200,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
           cy.verifyPageTitle(organization.name);
           cy.selectTableRowByCheckbox('username', createdUser1.username);
           cy.selectTableRowByCheckbox('username', createdUser2.username);
-          cy.clickToolbarKebabAction('remove-selected-users');
+          cy.clickToolbarKebabAction('remove-users');
           cy.getModal().within(() => {
             cy.get('#confirm').click();
             cy.get('#submit').click();

@@ -36,7 +36,7 @@ describe('Organizations list', () => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete selected organizations')
+          .contains('Delete organizations')
           .should('be.visible');
       });
     });

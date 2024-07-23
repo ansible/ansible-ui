@@ -36,7 +36,7 @@ describe('Organization admins list', () => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Remove selected administrators')
+          .contains('Remove administrators')
           .should('be.visible');
       });
     });
