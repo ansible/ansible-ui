@@ -23,10 +23,10 @@ describe('Constructed Inventories CRUD Tests', () => {
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;
       });
-    });
-    cy.createInventoryHost(organization, 'constructed').then((result) => {
-      const { inventory: inv } = result;
-      newInventory = inv;
+      cy.createInventoryHost(organization, 'constructed').then((result) => {
+        const { inventory: inv } = result;
+        newInventory = inv;
+      });
     });
   });
 
@@ -72,7 +72,8 @@ describe('Constructed Inventories CRUD Tests', () => {
 
     cy.singleSelectByDataCy('organization', organization.name);
     // this can be simplified if we include data-cy to the search button of instance groups
-    cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+    //cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+    cy.multiSelectByDataCy('instance-group-select', [instanceGroup.name]);
     cy.multiSelectByDataCy('inventories', invNames);
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
@@ -96,13 +97,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     });
 
     // Assert the inventory doesn't exist anymore
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/inventories/`,
-      query: { name__icontains: constInvName },
-    }).as('filterInventory');
     cy.filterTableBySingleSelect('name', constInvName, true);
-    cy.wait('@filterInventory');
+    cy.contains('No results found');
   });
 
   it('can edit and run a sync on the edited constructed inventory', () => {
@@ -147,42 +143,31 @@ describe('Constructed Inventories CRUD Tests', () => {
   });
 
   it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
-    //Create a constructed inventory in the beforeEach hook
-    //Assert the original details of the inventory
-    //Assert the user navigating to the edit constructed inventory form
-    //Assert the change to the strict setting
-    //Add bad variables
-    //Assert the edited changes of the inventory
     //Run a sync and assert failure of the job
     cy.navigateTo('awx', 'inventories');
-    // cy.pause();
     cy.filterTableBySingleSelect('name', newInventory.name);
     cy.clickTableRowLink('name', newInventory.name, { disableFilter: true });
+
+    //Assert the original details of the inventory
     cy.verifyPageTitle(newInventory.name);
+    cy.getByDataCy('organization').contains(organization.name);
 
-    //assert original details of inventory
-
+    //Assert the user navigating to the edit constructed inventory form
     cy.getByDataCy('edit-inventory').click();
+    cy.verifyPageTitle('Edit Constructed Inventory');
 
-    // cy.dataEditorTypeByDataCy(
-    //   'source-vars',
-    //   `
-    //   plugin: constructed\n
-    //   strict: true\n
-    //   use_extra_vars: test
-    //   `
-    // );
     cy.getByDataCy('toggle-json').click();
-    // cy.dataEditorTypeByDataCy('source-vars', 'plugin: constructed\nstrict: 7');
+    //Assert the change to the strict setting
+    //Add bad variables
     cy.get('[data-cy="source-vars"]').type(
-      `{{}    "plugin": "constructed",
-  "strict": true,
-  "groups": {
-    "is_shutdown": "state | default('running') == 'shutdown'",
-    "product_dev": "account_alias == 'product_dev'"
-  }}`
+      `{{}    
+      "plugin": "constructed",
+      "strict": true,
+      "groups": {
+      "is_shutdown": "state | default('running') == 'shutdown'",
+      "product_dev": "account_alias == 'product_dev'"
+      }}`
     );
-    //cy.dataEditorTypeByDataCy('source-vars', `groups: name: test_group bad_key: test_value`);
     cy.clickButton(/^Save inventory$/);
     cy.verifyPageTitle('Edit Constructed Inventory');
 
@@ -193,11 +178,10 @@ describe('Constructed Inventories CRUD Tests', () => {
         expect(response.response?.statusCode).to.be.equal(202);
       })
       .its('response.body.id')
-      .then((jobID: number) => {
+      .then(() => {
         cy.verifyPageTitle(newInventory.name);
+        //Run a sync and assert failure of the job
         cy.getByDataCy('last-job-status').contains('Failed');
-        cy.waitForJobToProcessEvents(jobID.toString(), 'inventory_updates');
-
         cy.getByDataCy('last-job-status').click();
         cy.contains('Failed');
       });
