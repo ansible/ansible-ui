@@ -57,7 +57,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         cy.getTableRowByText(platformTeam.name).within(() => {
           cy.get('#edit-team').click();
         });
-        cy.verifyPageTitle('Edit team');
+        cy.verifyPageTitle(`Edit ${platformTeam.name}`);
         cy.get('[data-cy="name"]').clear().type(`${platformTeam.name} edited from list page`);
         cy.clickButton(/^Save team$/);
         cy.verifyPageTitle('Teams');
@@ -92,25 +92,23 @@ describe('Platform Teams - Create, Edit and Delete', function () {
   it('can edit a team with an org and a user from the details page and delete it from the ui', function () {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.associateUsersWithPlatformTeam(platformTeam, [createdPlatformUser]).then(() => {
-        cy.searchAndDisplayResource(platformTeam.name).then(() => {
-          cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
-          cy.clickPageAction('edit-team');
-          cy.verifyPageTitle('Edit team');
-          cy.getByDataCy('name').clear().type(`${platformTeam.name} edited from details page`);
-          cy.getByDataCy('Submit').click();
-          cy.verifyPageTitle(platformTeam.name);
-          cy.clickPageAction('delete-team');
-          cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
-            'deleteTeam'
-          );
-          cy.get('#confirm').click();
-          cy.clickButton(/^Delete team/);
-          cy.wait('@deleteTeam')
-            .its('response')
-            .then((response) => {
-              expect(response?.statusCode).to.eql(204);
-            });
-        });
+        cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
+        cy.clickPageAction('edit-team');
+        cy.verifyPageTitle(`Edit ${platformTeam.name}`);
+        cy.getByDataCy('name').clear().type(`${platformTeam.name} edited from details page`);
+        cy.getByDataCy('Submit').click();
+        cy.verifyPageTitle(platformTeam.name);
+        cy.clickPageAction('delete-team');
+        cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
+          'deleteTeam'
+        );
+        cy.get('#confirm').click();
+        cy.clickButton(/^Delete team/);
+        cy.wait('@deleteTeam')
+          .its('response')
+          .then((response) => {
+            expect(response?.statusCode).to.eql(204);
+          });
       });
       cy.deletePlatformUser(createdPlatformUser, { failOnStatusCode: false });
     });

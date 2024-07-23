@@ -15,7 +15,7 @@ describe('Users - Create, Edit and Delete', () => {
       cy.clickTableRowAction('username', createdPlatformUser.username, 'edit-user', {
         inKebab: true,
       });
-      cy.verifyPageTitle('Edit user');
+      cy.verifyPageTitle(`Edit ${createdPlatformUser.username}`);
       cy.get('[data-cy="username"]').clear().type(`edited-${createdPlatformUser.username}`);
       cy.get('[data-cy="Submit"]').click();
       cy.verifyPageTitle('Users');
@@ -33,7 +33,7 @@ describe('Users - Create, Edit and Delete', () => {
       cy.clickTableRowLink('username', createdPlatformUser.username);
       cy.contains('a[role="tab"]', 'Details').click();
       cy.get('[data-cy="edit-user"]').click();
-      cy.verifyPageTitle('Edit user');
+      cy.verifyPageTitle(`Edit ${createdPlatformUser.username}`);
       cy.get('[data-cy="username"]').clear().type(`edited-${createdPlatformUser.username}`);
       cy.get('[data-cy="Submit"]').click();
       cy.clickPageAction('delete-user');
