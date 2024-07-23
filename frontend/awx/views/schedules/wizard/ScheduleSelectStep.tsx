@@ -102,7 +102,7 @@ export function ScheduleSelectStep(props: {
         keepDefaultValues: true,
       });
       setWizardData({ ...currentFormValues, launch_config: null });
-      setStepData({ details: currentFormValues });
+      setStepData({ ...stepData, details: currentFormValues });
     }
   }, [
     scheduleType,
@@ -113,6 +113,7 @@ export function ScheduleSelectStep(props: {
     setWizardData,
     setStepData,
     getValues,
+    stepData,
   ]);
 
   useEffect(() => {
