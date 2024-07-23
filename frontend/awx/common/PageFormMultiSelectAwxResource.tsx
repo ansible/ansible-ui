@@ -32,7 +32,10 @@ export function PageFormMultiSelectAwxResource<
   labelHelp?: string;
   queryParams?: QueryParams;
   compareOptionValues?: (a: Value, b: Value) => boolean;
+  validate?: (items: Value[]) => Promise<string | undefined>;
+  formatLabel?: (item: Resource) => string;
 }) {
+  const { formatLabel = undefined } = props;
   const id = useID(props);
 
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
@@ -66,9 +69,9 @@ export function PageFormMultiSelectAwxResource<
           remaining: response.count - response.results.length,
           options:
             response.results?.map((resource) => ({
-              label: resource.name,
               value: resource as PathValue<FormData, Name>,
               description: resource.description,
+              label: formatLabel ? formatLabel(resource) : resource.name,
             })) ?? [],
           next: response.results[response.results.length - 1]?.name,
         };
@@ -80,7 +83,7 @@ export function PageFormMultiSelectAwxResource<
         };
       }
     },
-    [props.url, props.queryParams]
+    [props.url, props.queryParams, formatLabel]
   );
 
   const [_, setDialog] = usePageDialog();
@@ -146,6 +149,7 @@ export function PageFormMultiSelectAwxResource<
       queryLabel={queryLabel}
       additionalControls={props.additionalControls}
       compareOptionValues={props.compareOptionValues}
+      validate={props.validate}
     />
   );
 }
