@@ -1,14 +1,15 @@
+import { t } from 'i18next';
 import {
-  createContext,
   ReactNode,
-  useState,
-  useEffect,
-  useContext,
-  useMemo,
+  createContext,
   useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { useURLSearchParams } from '../components/useURLSearchParams';
-import type { PageWizardStep, PageWizardState, PageWizardParentStep } from './types';
+import type { PageWizardParentStep, PageWizardState, PageWizardStep } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 export function usePageWizard() {
@@ -71,7 +72,12 @@ export function PageWizardProvider<T extends object>(props: {
       const isLastStep =
         activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
       if (isLastStep) {
-        return onSubmit(wizardData as T);
+        try {
+          await onSubmit(wizardData as T);
+        } catch (e) {
+          setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
+        }
+        return;
       }
 
       const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
@@ -87,7 +93,7 @@ export function PageWizardProvider<T extends object>(props: {
       setActiveStep(nextStep);
       return Promise.resolve();
     },
-    [activeStep, steps, onSubmit, setSearchParams, wizardData]
+    [activeStep, steps, onSubmit, setSearchParams, wizardData, setSubmitError]
   );
 
   const onBack = useCallback(() => {
