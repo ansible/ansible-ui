@@ -85,6 +85,7 @@ function StepErrors() {
 
 function RequestErrorAlert(props: { error?: unknown }) {
   const { t } = useTranslation();
+  const error = props.error as Error & { json?: Record<string, string> };
   if (!props.error) return null;
   if (!(props.error instanceof Error)) {
     if (typeof props.error === 'string') {
@@ -92,10 +93,9 @@ function RequestErrorAlert(props: { error?: unknown }) {
     }
     return <Alert variant="danger" title={t('An error occurred.')} />;
   }
-  if ('message' in props.error) {
+  if ('message' in props.error && !error.json) {
     return <Alert variant="danger" title={props.error.message} />;
   }
-  const error = props.error as Error & { json?: Record<string, string> };
   if (error.json) {
     return (
       <Alert variant="danger" title={error.message} isInline>
