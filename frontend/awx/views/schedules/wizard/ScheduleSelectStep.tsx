@@ -113,6 +113,7 @@ export function ScheduleSelectStep(props: {
     setWizardData,
     setStepData,
     getValues,
+    stepData,
   ]);
 
   useEffect(() => {
