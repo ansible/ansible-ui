@@ -84,7 +84,6 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
       cy.verifyPageTitle('Authentication Methods');
-      cy.searchAndDisplayResourceByFilterOption(name + '_edited', 'name');
       // Delete the GitHub authenticator
       cy.clickTableRowAction('name', name + '_edited', 'delete-authentication', { inKebab: true });
       cy.getModal().within(() => {
@@ -94,6 +93,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
         cy.containsBy('button', /^Close$/).click();
       });
       cy.getModal().should('not.exist');
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

@@ -1,9 +1,9 @@
-import { randomString } from '../../../../../framework/utils/random-string';
 import { GoogleOAuth2 } from '../../../../../platform/interfaces/GoogleOAuth2Authenticator';
+import { randomE2Ename } from '../../../../support/utils';
 
 describe('Google OAuth2 Authentication form - create, edit, update and delete', () => {
   it('creates a Google OAuth2 authenticator', () => {
-    const googleAuthenticator = `E2E Google OAuth2 Authenticator ${randomString(4)}`;
+    const googleAuthenticator = randomE2Ename();
 
     cy.fixture('platform-authenticators/google-oauth2').then((data: GoogleOAuth2) => {
       const googleData = data;
@@ -52,20 +52,18 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
 
       // edit and update
       cy.clickTableRowAction('name', googleAuthenticator, 'edit-authenticator');
-      cy.get('[data-cy="name"]').clear().type(`${googleAuthenticator} Updated`);
+      cy.get('[data-cy="name"]').clear().type(`${googleAuthenticator} edited`);
       cy.clickButton('Next');
       cy.clickButton('Next');
       cy.clickButton('Finish');
 
-      cy.verifyPageTitle(`${googleAuthenticator} Updated`);
+      cy.verifyPageTitle(`${googleAuthenticator} edited`);
 
       //delete the created Google OAuth2 authenticator
       cy.navigateTo('platform', 'authenticators');
       cy.verifyPageTitle('Authentication Methods');
-      cy.searchAndDisplayResourceByFilterOption(`${googleAuthenticator} Updated`, 'name');
-      cy.clickTableRowAction('name', `${googleAuthenticator} Updated`, 'delete-authentication', {
+      cy.clickTableRowAction('name', `${googleAuthenticator} edited`, 'delete-authentication', {
         inKebab: true,
-        disableFilter: true,
       });
       cy.getModal().within(() => {
         cy.get('#confirm').click();
@@ -73,6 +71,8 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
         cy.contains(/^Success$/).should('be.visible');
         cy.containsBy('button', /^Close$/).click();
       });
+      cy.getModal().should('not.exist');
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

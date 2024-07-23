@@ -1700,7 +1700,13 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
-
+      deleteAuthenticator(
+        authenticator: Authenticator,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
       createGlobalPlatformOrganization(): Chainable<void>;
       createPlatformTeam(platformTeam: Partial<PlatformTeam>): Cypress.Chainable<PlatformTeam>;
       deletePlatformTeam(

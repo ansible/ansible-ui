@@ -1,4 +1,3 @@
-import { randomString } from '../../../../framework/utils/random-string';
 import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
@@ -30,7 +29,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
   it('can create a basic team in the ui', function () {
     cy.intercept('POST', gatewayV1API`/teams/`).as('createPlatformTeam');
     cy.containsBy('a', 'Create team').click();
-    const teamName = randomE2Ename();
+    const teamName = `Platform E2E Team ${randomE2Ename()}`;
     cy.getByDataCy('name').type(teamName);
     cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
     cy.getByDataCy('Submit').click();
@@ -75,15 +74,18 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         );
         cy.clickTableRowKebabAction(`${platformTeam.name} edited from list page`, 'delete-team');
         cy.clickModalConfirmCheckbox();
-        cy.clickButton(/^Delete team/);
-        cy.wait('@deleteTeam')
-          .its('response')
-          .then((response) => {
-            expect(response?.statusCode).to.eql(204);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-            cy.clickButton(/^Clear all filters$/);
-          });
+        cy.getModal().within(() => {
+          cy.clickButton(/^Delete team/);
+          cy.wait('@deleteTeam')
+            .its('response')
+            .then((response) => {
+              expect(response?.statusCode).to.eql(204);
+              cy.contains(/^Success$/);
+              cy.clickButton(/^Close$/);
+            });
+        });
+        cy.getModal().should('not.exist');
+        cy.clickButton(/^Clear all filters$/);
       });
       cy.deletePlatformUser(createdPlatformUser, { failOnStatusCode: false });
     });
@@ -116,7 +118,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
 
   it('can bulk delete a team from the teams list toolbar', function () {
     cy.createPlatformTeam({
-      name: `E2E Platform Team ${randomString(5)}`,
+      name: `Platform E2E Team ${randomE2Ename()}`,
       organization: platformOrganization.id,
     }).then((testPlatformTeam1: PlatformTeam) => {
       cy.selectTableRow(platformTeam.name);
@@ -147,7 +149,7 @@ describe('Platform Teams - Tabs Tests', function () {
     cy.createPlatformOrganization().then((org) => {
       platformOrganization = org;
       cy.createPlatformTeam({
-        name: `Platform E2E Team ${randomString(3)}`,
+        name: `Platform E2E Team ${randomE2Ename()}`,
         organization: platformOrganization.id,
       }).then((testPlatformTeam: PlatformTeam) => {
         platformTeam = testPlatformTeam;
