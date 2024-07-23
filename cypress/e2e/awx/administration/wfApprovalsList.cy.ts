@@ -14,10 +14,7 @@ import { randomE2Ename } from '../../../support/utils';
 describe('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
-  let user: AwxUser;
   let userWFApprove: AwxUser;
-  let userWFDeny: AwxUser;
-  let userWFCancel: AwxUser;
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let workflowJobTemplate: WorkflowJobTemplate;
@@ -25,7 +22,7 @@ describe('Workflow Approvals Tests', () => {
   let approvalWFNode: WorkflowNode;
   let jobName = '';
 
-  beforeEach(function () {
+  beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
 
@@ -35,18 +32,8 @@ describe('Workflow Approvals Tests', () => {
         'https://github.com/ansible/test-playbooks'
       ).then((proj) => {
         project = proj;
-
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          user = u;
-        });
         cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFApprove = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFDeny = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFCancel = u;
         });
         cy.createAwxInventory(organization)
           .then((i) => {
@@ -72,10 +59,7 @@ describe('Workflow Approvals Tests', () => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFApprove, { failOnStatusCode: false });
-    cy.deleteAwxUser(userWFCancel, { failOnStatusCode: false });
-    cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
   });
 
   describe('Workflow Approvals - Approve, Deny, Delete', () => {
@@ -138,7 +122,6 @@ describe('Workflow Approvals Tests', () => {
                           .then((response) => {
                             expect(response?.statusCode).to.eql(204);
                           });
-                        cy.reload();
                         cy.getByDataCy('status-column-cell').should('have.text', 'Approved');
                         cy.intercept(
                           'DELETE',
@@ -214,7 +197,6 @@ describe('Workflow Approvals Tests', () => {
                         .then((response) => {
                           expect(response?.statusCode).to.eql(204);
                         });
-                      cy.reload();
                       cy.getByDataCy('status-column-cell').should('have.text', 'Denied');
                       cy.intercept(
                         'DELETE',
@@ -286,7 +268,6 @@ describe('Workflow Approvals Tests', () => {
                         .then((response) => {
                           expect(response?.statusCode).to.eql(202);
                         });
-                      cy.reload();
                       cy.getByDataCy('status-column-cell').should('have.text', 'Canceled');
                       cy.intercept(
                         'DELETE',
@@ -314,7 +295,7 @@ describe('Workflow Approvals Tests', () => {
   });
 
   describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
-    it(`can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk approve, then bulk delete from list toolbar`, () => {
+    it('can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk approve, then bulk delete from list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-BULK APPROVE-' + randomString(4),
         organization: organization.id,
@@ -392,6 +373,7 @@ describe('Workflow Approvals Tests', () => {
       'POST',
       awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
     ).as('launched');
+    cy.verifyPageTitle(workflowJobTemplate.name);
     cy.getByDataCy('launch-template').click();
     cy.wait('@launched')
       .its('response.body')
