@@ -22,7 +22,7 @@ describe('Workflow Approvals Tests', () => {
   let approvalWFNode: WorkflowNode;
   let jobName = '';
 
-  beforeEach(() => {
+  before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
 
@@ -55,19 +55,18 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  afterEach(() => {
+  after(() => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFApprove, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   describe('Workflow Approvals - Approve, Deny, Delete', () => {
     it('admin can approve and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-APPROVE-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -152,8 +151,6 @@ describe('Workflow Approvals Tests', () => {
     it('admin can deny and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-DENY-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -225,8 +222,6 @@ describe('Workflow Approvals Tests', () => {
     it('admin can cancel and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-CANCEL-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -298,8 +293,6 @@ describe('Workflow Approvals Tests', () => {
     it('can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk approve, then bulk delete from list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-BULK APPROVE-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -321,8 +314,6 @@ describe('Workflow Approvals Tests', () => {
     it('can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk deny, then bulk delete from list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-BULK DENY-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -456,8 +447,6 @@ describe('Workflow Approvals Tests', () => {
     it('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-USER APPROVE-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
