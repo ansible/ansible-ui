@@ -13,7 +13,7 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.containsBy('a', 'Create authentication').click();
 
       // Authentication Wizard - Authentication Type Step
-      cy.verifyPageTitle('Create Authentication');
+      cy.verifyPageTitle('Create authentication');
       cy.selectAuthenticationType('azuread');
       cy.clickButton('Next');
       // Authentication Wizard - Authentication Details Step

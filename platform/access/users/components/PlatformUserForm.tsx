@@ -314,10 +314,14 @@ export function EditPlatformUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit user')}
+        title={user?.username ? t('Edit {{userName}}', { userName: user?.username }) : t('Users')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
-          { label: t('Edit user') },
+          {
+            label: user?.username
+              ? t('Edit {{userName}}', { userName: user?.username })
+              : t('Users'),
+          },
         ]}
       />
       <PageForm<IUserInput>

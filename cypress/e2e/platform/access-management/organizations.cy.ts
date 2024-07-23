@@ -44,7 +44,7 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
   it('edits an organization from the list view', () => {
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.getByDataCy('edit-organization').click();
-    cy.verifyPageTitle('Edit Organization');
+    cy.verifyPageTitle(`Edit ${organization.name}`);
     cy.get('[data-cy="organization-name"]')
       .clear()
       .type(`${listEditedOrganizationName} from list page`);
@@ -63,9 +63,9 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.getByDataCy('name-column-cell').contains(organization.name).click();
     cy.verifyPageTitle(organization.name);
-    cy.getByDataCy('edit-organization').click();
-    cy.verifyPageTitle('Edit Organization');
-    cy.getByDataCy('organization-name')
+    cy.get('[data-cy="edit-organization"]').click();
+    cy.verifyPageTitle(`Edit ${organization.name}`);
+    cy.get('[data-cy="organization-name"]')
       .clear()
       .type(`${detailsEditedOrganizationName} from details page`);
     const orgId = `${organization.id}`.toString();

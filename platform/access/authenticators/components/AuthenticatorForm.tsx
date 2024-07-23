@@ -176,10 +176,18 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
   return (
     <PageLayout>
       <PageHeader
-        title={authenticator ? t('Edit Authentication') : t('Create Authentication')}
+        title={
+          authenticator
+            ? t('Edit {{authenticatorName}}', { authenticatorName: authenticator?.name })
+            : t('Create authentication')
+        }
         breadcrumbs={[
-          { label: t('Authentication'), to: getPageUrl(PlatformRoute.Authenticators) },
-          { label: t('Create Authentication') },
+          { label: t('Authentication Methods'), to: getPageUrl(PlatformRoute.Authenticators) },
+          {
+            label: authenticator
+              ? t('Edit {{authenticatorName}}', { authenticatorName: authenticator?.name })
+              : t('Create authentication'),
+          },
         ]}
       />
       <PageWizard<AuthenticatorFormValues>

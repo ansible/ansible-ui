@@ -60,7 +60,7 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         //edit from list row and delete from details page
         cy.navigateTo('platform', 'applications-page');
         cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
-        cy.verifyPageTitle('Edit application');
+        cy.verifyPageTitle(`Edit ${oauthApplicationName}`);
         cy.getByDataCy('description').clear().type(`${authGrantType} with ${appClientType} edited`);
         cy.getByDataCy('Submit').click();
         cy.verifyPageTitle(oauthApplicationName);

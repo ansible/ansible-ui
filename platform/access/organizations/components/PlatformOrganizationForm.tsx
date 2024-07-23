@@ -109,10 +109,18 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
   return (
     <PageLayout>
       <PageHeader
-        title={organization ? t('Edit Organization') : t('Create Organization')}
+        title={
+          organization
+            ? t('Edit {{organizationName}}', { organizationName: organization?.name })
+            : t('Create organization')
+        }
         breadcrumbs={[
           { label: t('Organizations'), to: getPageUrl(PlatformRoute.Organizations) },
-          { label: organization ? t('Edit Organization') : t('Create Organization') },
+          {
+            label: organization
+              ? t('Edit {{organizationName}}', { organizationName: organization?.name })
+              : t('Create organization'),
+          },
         ]}
       />
       <PageWizard<OrganizationWizardFormValues>

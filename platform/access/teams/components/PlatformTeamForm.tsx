@@ -74,10 +74,10 @@ export function EditPlatformTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit team')}
+        title={team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Teams')}
         breadcrumbs={[
           { label: t('Teams'), to: getPageUrl(PlatformRoute.Teams) },
-          { label: t('Edit team') },
+          { label: team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Teams') },
         ]}
       />
       <PageForm
