@@ -39,7 +39,7 @@ describe('Organization users list', () => {
         cy.get('.toggle-kebab')
           .click()
           .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Remove selected users')
+          .contains('Remove users')
           .should('be.visible');
       });
       // Row actions are visible

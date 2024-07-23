@@ -22,7 +22,7 @@ export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) 
     selectUsers(
       t('Add administrators'),
       t('Select users below to be added to this organization as administrators.'),
-      t('Save'),
+      t('Add administrators'),
       async (users: PlatformUser[]) => {
         if (!organization) return;
         await postRequest(

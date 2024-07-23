@@ -11,7 +11,7 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import {
@@ -74,6 +74,7 @@ export function PlatformOrganizationTeams() {
             )
       }
       emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
+      emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
       emptyStateButtonClick={
         canCreateTeam ? () => pageNavigate(PlatformRoute.CreateTeam) : undefined

@@ -10,7 +10,7 @@ import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useMemo } from 'react';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useParams } from 'react-router-dom';
 import { useRemoveOrganizationAdmins } from './useRemoveOrganizationAdmins';
@@ -57,8 +57,8 @@ export function useOrganizationAdminsToolbarActions(view: IPlatformView<Platform
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Remove selected administrators'),
+        icon: MinusCircleIcon,
+        label: t('Remove administrators'),
         isDisabled: canEditOrganization
           ? undefined
           : t(
@@ -96,7 +96,7 @@ export function useOrganizationAdminsRowActions(view: IPlatformView<PlatformUser
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove administrator'),
         isDisabled: canEditOrganization
           ? ''

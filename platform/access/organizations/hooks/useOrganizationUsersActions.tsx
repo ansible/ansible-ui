@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CogIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -79,8 +79,8 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Remove selected users'),
+        icon: MinusCircleIcon,
+        label: t('Remove users'),
         isDisabled: canEditOrganization
           ? undefined
           : t(
@@ -187,7 +187,7 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove user'),
         isDisabled: canEditOrganization
           ? ''

@@ -50,7 +50,7 @@ export function useOrganizationToolbarActions(view: IPlatformView<PlatformOrgani
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected organizations'),
+        label: t('Delete organizations'),
         onClick: deleteOrganizations,
         isDanger: true,
       },
@@ -135,6 +135,7 @@ export function useOrganizationPageActions(
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit organization'),
         isDisabled: cannotEditOrganization,
         onClick: (organization: PlatformOrganization) =>
