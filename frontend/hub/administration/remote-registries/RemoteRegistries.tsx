@@ -35,6 +35,10 @@ export function RemoteRegistries() {
         description={t(
           'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
         )}
+        titleHelpTitle={t('Remote Registries')}
+        titleHelp={t(
+          'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+        )}
       />
       <PageTable<RemoteRegistry>
         id="hub-remote-registries-table"

@@ -35,6 +35,10 @@ export function Repositories() {
         description={t(
           'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
         )}
+        titleHelpTitle={t('Repositories')}
+        titleHelp={t(
+          'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
+        )}
       />
       <PageTable<Repository>
         id="hub-repositories-table"
