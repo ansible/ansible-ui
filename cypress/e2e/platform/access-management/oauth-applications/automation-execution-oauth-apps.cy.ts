@@ -81,7 +81,7 @@ describe('AAP Automation Execution OAuth Applications CRUD actions List page', (
   });
 });
 
-describe('AAP OAuth Applications CRUD actions Details page', () => {
+describe('AAP AE OAuth Applications CRUD actions Details page', () => {
   let platformOrganization: PlatformOrganization;
   beforeEach(() => {
     cy.createPlatformOrganization().then((organization) => {
@@ -202,7 +202,7 @@ describe('AAP AE OAuth Applications CRUD actions and Bulk Deletion', () => {
   });
 });
 
-describe('AAP OAuth Application Creation and AAP token association with it', () => {
+describe('Automation Execution OAuth Application Creation and AWX token association with it', () => {
   let platformAEApplication: Application;
   let awxOrganization: Organization;
   beforeEach(() => {
@@ -222,13 +222,15 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
     cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
   });
 
-  it('admin user creates an AAP AE oauth application and associates an AAP token with it, verifies the association in the application token tab', () => {
+  it('admin user creates an AAP AE oauth application and associates an AWX token with it, verifies the association in the application token tab', () => {
     cy.verifyPageTitle('Applications');
     cy.clickTab('Automation Execution', true);
     cy.contains(
       'h4',
       'These OAuth Applications only apply to resources in the context of automation execution.'
     );
+    cy.url().should('include', '/access/applications/controller');
+    cy.filterTableByMultiSelect('name', [platformAEApplication.name]);
     cy.clickTableRowLink('name', platformAEApplication.name, { disableFilter: true });
     cy.verifyPageTitle(platformAEApplication.name);
     cy.clickTab('Tokens', true);

@@ -80,5 +80,6 @@ describe('Platform Basic Authentication', () => {
       cy.containsBy('button', /^Close$/).click();
     });
     cy.getModal().should('not.exist');
+    cy.clickButton(/^Clear all filters$/);
   });
 });

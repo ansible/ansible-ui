@@ -1,5 +1,5 @@
-import { randomString } from '../../../../../framework/utils/random-string';
 import { Authenticator } from '../../../../../platform/interfaces/Authenticator';
+import { randomE2Ename } from '../../../../support/utils';
 
 describe('Authenticators - Local CRUD UI', () => {
   beforeEach(() => {
@@ -8,7 +8,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('creates a local authenticator, search and delete', () => {
-    const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
@@ -20,7 +20,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('creates a local authenticator, delete from the list view', () => {
-    const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
@@ -38,7 +38,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('create local authenticator via wizard, authenticator details, review and render the authenticator', () => {
-    const localAuthenticator = `Platform Local Authenticator Enabled ${randomString(4)}`;
+    const localAuthenticator = randomE2Ename();
     cy.get('[data-cy="create-authentication"]').click();
     cy.url().should('contain', '/access/authenticators/create');
     cy.selectAuthenticationType('local');
@@ -64,7 +64,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('user can toggle a created authenticator, can enable or disable it', () => {
-    const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.verifyPageTitle('Authentication Methods');
@@ -90,7 +90,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('should be able to edit the authenticator from the list page', () => {
-    const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
@@ -108,7 +108,7 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('should be able to edit the authenticator from the details page', () => {
-    const localAuthenticatorName = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
@@ -124,8 +124,8 @@ describe('Authenticators - Local CRUD UI', () => {
   });
 
   it('should be able to bulk delete authenticators using the page toolbar', () => {
-    const localAuthenticatorName1 = `Platform Local Authenticator ${randomString(4)}`;
-    const localAuthenticatorName2 = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName1 = randomE2Ename();
+    const localAuthenticatorName2 = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName1).then(
       (createdLocalAuthenticator1: Authenticator) => {
         cy.createLocalPlatformAuthenticator(localAuthenticatorName2).then(
@@ -162,8 +162,8 @@ describe('Authenticators - Local CRUD UI', () => {
   //passes locally but not on the CI server as the manage order modal doesn't display paginated authenticators
   //discussed with Laura, needs some BE work, bug ticket #
   it.skip('should be able to manage the order the authenticators', () => {
-    const localAuthenticatorName1 = `Platform Local Authenticator ${randomString(4)}`;
-    const localAuthenticatorName2 = `Platform Local Authenticator ${randomString(4)}`;
+    const localAuthenticatorName1 = randomE2Ename();
+    const localAuthenticatorName2 = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName1).then(
       (createdLocalAuthenticator1: Authenticator) => {
         cy.createLocalPlatformAuthenticator(localAuthenticatorName2).then(

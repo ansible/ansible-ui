@@ -3,12 +3,13 @@ import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { tag } from '../../../support/tag';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
-  const organizationName = 'Platform E2E Organization ' + randomString(4);
+  const organizationName = `e2e org ${randomE2Ename()}`;
   const orgDescription = 'orgDescription' + randomString(4);
-  const listEditedOrganizationName = `edited Organization ${randomString(4)}`;
-  const detailsEditedOrganizationName = `edited Organization ${randomString(4)}`;
+  const listEditedOrganizationName = `E2E Platform Org ${randomE2Ename()}`;
+  const detailsEditedOrganizationName = `E2E Platform Org ${randomE2Ename()}`;
   let organization: PlatformOrganization;
 
   beforeEach(() => {

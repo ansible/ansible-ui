@@ -98,8 +98,6 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
       cy.verifyPageTitle('Authentication Methods');
-      cy.searchAndDisplayResourceByFilterOption(ldapAuthenticator + '_edited', 'name');
-
       // Delete the LDAP authenticator
       cy.clickTableRowAction('name', ldapAuthenticator + '_edited', 'delete-authentication', {
         inKebab: true,
@@ -111,6 +109,7 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
         cy.containsBy('button', /^Close$/).click();
       });
       cy.getModal().should('not.exist');
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

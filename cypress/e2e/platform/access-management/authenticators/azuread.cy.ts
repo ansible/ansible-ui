@@ -54,14 +54,11 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
 
     // Login
     cy.platformLogin();
-
     // Authentication List Page
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication Methods');
-
     // Edit the GitHub authenticator
     cy.clickTableRowAction('name', azureAdAuthenticator, 'edit-authenticator');
-
     // Authentication Wizard
     cy.get('[data-cy="name"]')
       .clear()
@@ -69,17 +66,13 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
     cy.clickButton('Next');
     cy.clickButton('Next');
     cy.clickButton('Finish');
-
     // Authentication Details Page
     // Verify the edited AzureAD authenticator
     cy.verifyPageTitle(azureAdAuthenticator + '_edited');
     cy.get('[data-cy="name"]').should('have.text', azureAdAuthenticator + '_edited');
-
     // Authentication List Page
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication Methods');
-    cy.searchAndDisplayResourceByFilterOption(azureAdAuthenticator + '_edited', 'name');
-
     // Delete the GitHub authenticator
     cy.clickTableRowAction('name', azureAdAuthenticator + '_edited', 'delete-authentication', {
       inKebab: true,
@@ -91,5 +84,6 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.containsBy('button', /^Close$/).click();
     });
     cy.getModal().should('not.exist');
+    cy.clickButton(/^Clear all filters$/);
   });
 });

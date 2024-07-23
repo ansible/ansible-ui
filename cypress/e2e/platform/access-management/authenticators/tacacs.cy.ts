@@ -72,7 +72,6 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
       // Authentication List Page
       cy.navigateTo('platform', 'authenticators');
       cy.verifyPageTitle('Authentication Methods');
-      cy.searchAndDisplayResourceByFilterOption(tacacsAuthenticator + '_edited', 'name');
       // Delete the TACACS authenticator
       cy.clickTableRowAction('name', tacacsAuthenticator + '_edited', 'delete-authentication', {
         inKebab: true,
@@ -84,6 +83,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
         cy.containsBy('button', /^Close$/).click();
       });
       cy.getModal().should('not.exist');
+      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

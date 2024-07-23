@@ -13,6 +13,7 @@ import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
+import { randomE2Ename } from './utils';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -79,6 +80,21 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'deleteAuthenticator',
+  (
+    authenticator: Authenticator,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    if (authenticator.id !== 1) {
+      cy.requestDelete(gatewayV1API`/authenticators/${authenticator.id.toString()}/`, options);
+    }
+  }
+);
+
+Cypress.Commands.add(
   'deleteLocalPlatformAuthenticator',
   (
     localAuthenticator: Authenticator,
@@ -101,7 +117,7 @@ Cypress.Commands.add('createPlatformOrganization', (org?: Partial<PlatformOrgani
     org = {};
   }
   if (!org.name) {
-    org.name = `Platform E2E Organization-${randomString(4).toLowerCase()}`;
+    org.name = `E2E Platform Org ${randomE2Ename().toLowerCase()}`;
   }
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, org);
 });
@@ -153,7 +169,7 @@ Cypress.Commands.add(
 /* This `Cypress.Commands.add('createPlatformTeam', ...)` function is a custom Cypress command that is
 responsible for creating a new platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add('createPlatformTeam', function (platformTeam: Partial<PlatformTeam>) {
-  const teamName = `Platform E2E Team-${randomString(4).toLowerCase()}`;
+  const teamName = `Platform E2E Team-${randomString(3).toLowerCase()}`;
   cy.requestPost<Partial<PlatformTeam>>(gatewayV1API`/teams/`, {
     name: teamName,
     ...platformTeam,
