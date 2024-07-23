@@ -10,32 +10,11 @@ import { hubAPI } from '../../frontend/hub/common/api/formatPath';
 export const PlatformAbout: React.FunctionComponent = () => {
   const awxInfo = useGet<{ version: string }>(awxAPI`/ping/`);
   const hubInfo = useGet<{ galaxy_ng_version: string }>(hubAPI`/`);
-  const edaInfo = useGet<{ version: string }>(edaAPI`/ping/`);
-  // const gatewayPing = useGet<{
-  //   pong: string;
-  //   status: string;
-  //   db_connected: boolean;
-  //   proxy_exception: string;
-  //   proxy_connected: boolean;
-  // }>(gatewayV1API`/ping/`);
+  const edaInfo = useGet<{ version: string }>(edaAPI`/config/`);
 
-  const awxVersion = awxInfo.data?.version
-    ? awxInfo.data?.version
-    : awxInfo.isLoading
-      ? ''
-      : t('Unknown');
-
-  const hubVersion = hubInfo.data?.galaxy_ng_version
-    ? hubInfo.data?.galaxy_ng_version
-    : hubInfo.isLoading
-      ? ''
-      : t('Unknown');
-
-  const edaVersion = edaInfo.data?.version
-    ? edaInfo.data?.version
-    : edaInfo.isLoading
-      ? ''
-      : t('Unknown');
+  const awxVersion = awxInfo.data?.version;
+  const hubVersion = hubInfo.data?.galaxy_ng_version;
+  const edaVersion = edaInfo.data?.version;
 
   const [_, setPageDialog] = usePageDialog();
   return (
@@ -51,12 +30,24 @@ export const PlatformAbout: React.FunctionComponent = () => {
     >
       <TextContent>
         <TextList component="dl">
-          <TextListItem component="dt">{t('Automation Controller Version')}</TextListItem>
-          <TextListItem component="dd">{awxVersion}</TextListItem>
-          <TextListItem component="dt">{t('Automation Hub Version')}</TextListItem>
-          <TextListItem component="dd">{hubVersion}</TextListItem>
-          <TextListItem component="dt">{t('Event Driven Automation Version')}</TextListItem>
-          <TextListItem component="dd">{edaVersion}</TextListItem>
+          {awxVersion && (
+            <>
+              <TextListItem component="dt">{t('Automation Controller Version')}</TextListItem>
+              <TextListItem component="dd">{awxVersion}</TextListItem>
+            </>
+          )}
+          {edaVersion && (
+            <>
+              <TextListItem component="dt">{t('Event Driven Automation Version')}</TextListItem>
+              <TextListItem component="dd">{edaVersion}</TextListItem>
+            </>
+          )}
+          {hubVersion && (
+            <>
+              <TextListItem component="dt">{t('Automation Hub Version')}</TextListItem>
+              <TextListItem component="dd">{hubVersion}</TextListItem>
+            </>
+          )}
         </TextList>
       </TextContent>
     </AboutModal>
