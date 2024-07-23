@@ -12,8 +12,8 @@ describe('EDA Projects CRUD', () => {
     cy.navigateTo('eda', 'projects');
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
-    cy.get('[data-cy="name"]').type(name);
-    cy.get('[data-cy="url"]').type('https://github.com/ansible/ansible-ui');
+    cy.getByDataCy('name').type(name);
+    cy.getByDataCy('url').type('https://github.com/ansible/ansible-ui');
     cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(name);
@@ -27,11 +27,12 @@ describe('EDA Projects CRUD', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.waitEdaProjectSync(edaProject);
       cy.navigateTo('eda', 'projects');
-      cy.get('h1').should('contain', 'Projects');
+      cy.verifyPageTitle('Projects');
       cy.clickTableRow(edaProject.name);
-      cy.get('[data-cy="edit-project"]').click();
+      cy.verifyPageTitle(`${edaProject.name}`);
+      cy.getByDataCy('edit-project').click();
       cy.verifyPageTitle(`Edit ${edaProject.name}`);
-      cy.get('[data-cy="name"]')
+      cy.getByDataCy('name')
         .clear()
         .type(edaProject.name + ' edited');
       cy.clickButton(/^Save project$/);
