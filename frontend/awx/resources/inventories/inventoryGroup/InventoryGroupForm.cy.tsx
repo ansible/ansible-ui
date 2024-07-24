@@ -21,7 +21,7 @@ describe('CreateGroup', () => {
       .its('results')
       .should('be.an', 'array')
       .then(() => {
-        cy.contains('Create new group');
+        cy.contains('Create group');
       });
   });
 

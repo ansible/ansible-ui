@@ -86,7 +86,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       pathname: awxAPI`/inventories/`,
       query: { name__icontains: invNames[invToCreate - 1] },
     }).as('filterInputInventories');
-    cy.multiSelectBy('[data-cy="inventories"]', invNames);
+    cy.multiSelectByDataCy('inventories', invNames);
     cy.wait('@filterInputInventories');
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
