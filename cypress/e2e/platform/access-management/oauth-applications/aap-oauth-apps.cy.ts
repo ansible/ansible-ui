@@ -141,7 +141,10 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         cy.navigateTo('platform', 'applications-page');
         cy.verifyPageTitle('Applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
-          cy.clickTableRowKebabAction(oauthApplicationName, 'delete-application');
+          cy.clickTableRowAction('name', oauthApplicationName, 'delete-application', {
+            inKebab: true,
+            disableFilter: true,
+          });
           cy.clickModalConfirmCheckbox();
           cy.intercept('DELETE', gatewayV1API`/applications/*/`).as('deleteApplication');
           cy.getModal().within(() => {

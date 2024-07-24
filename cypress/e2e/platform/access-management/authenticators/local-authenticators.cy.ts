@@ -95,7 +95,7 @@ describe('Authenticators - Local CRUD UI', () => {
       (createdLocalAuthenticator: Authenticator) => {
         cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
         cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'edit-authenticator', {
-          inKebab: true,
+          inKebab: false,
         });
         cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
         cy.clickButton('Next');

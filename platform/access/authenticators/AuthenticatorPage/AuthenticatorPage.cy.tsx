@@ -44,12 +44,8 @@ describe('AuthenticatorPage', () => {
     cy.mount(<AuthenticatorPage />);
     cy.wait('@getOptions');
     cy.contains('button', 'Edit authenticator').should('have.attr', 'aria-disabled', 'false');
-    cy.get('button[aria-label="Actions"]').click();
-    cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete authenticator').should(
-      'have.attr',
-      'aria-disabled',
-      'false'
-    );
+    cy.getByDataCy('actions-dropdown').click();
+    cy.contains('button', 'Delete authenticator').should('not.have.attr', 'aria-disabled', 'true');
     cy.get('.pf-v5-c-switch__input').should('have.length', 1);
     cy.get('.pf-v5-c-switch__input').should('not.be.disabled');
   });
@@ -65,12 +61,8 @@ describe('AuthenticatorPage', () => {
     cy.mount(<AuthenticatorPage />);
     cy.wait('@getOptions');
     cy.contains('button', 'Edit authenticator').should('have.attr', 'aria-disabled', 'true');
-    cy.get('button[aria-label="Actions"]').click();
-    cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete authenticator').should(
-      'have.attr',
-      'aria-disabled',
-      'true'
-    );
+    cy.getByDataCy('actions-dropdown').click();
+    cy.contains('button', 'Delete authenticator').should('have.attr', 'aria-disabled', 'true');
     cy.get('.pf-v5-c-switch__input').should('have.length', 1);
     cy.get('.pf-v5-c-switch__input').should('be.disabled');
   });

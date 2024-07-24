@@ -33,11 +33,15 @@ describe('Team users list', () => {
       // Toolbar actions are visible
       cy.get(`[data-cy="add-user(s)"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Remove selected users')
-          .should('be.visible');
+        cy.get('.toggle-kebab').click();
+        cy.document()
+          .its('body')
+          .find('.pf-v5-c-menu__content')
+          .within(() => {
+            cy.get('button')
+              .contains(/^Remove selected users$/)
+              .should('be.visible');
+          });
       });
     });
     it('Add user(s) button is disabled if the user does not have required permissions', () => {
