@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
@@ -52,6 +53,7 @@ export function AnsibleLogin(props: {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [helperText, setHelperText] = useState<ReactNode>('');
+  const location = useLocation();
 
   const { loginApiUrl } = props;
   const onSubmit = useCallback(async () => {
@@ -110,7 +112,7 @@ export function AnsibleLogin(props: {
     }
   }, [loginApiUrl, password, props, t, username]);
 
-  const hasAuthFailedFlag = window.location.search.includes('auth_failed');
+  const hasAuthFailedFlag = location.search.includes('auth_failed');
   useEffect(() => {
     if (hasAuthFailedFlag) {
       setHelperText(<ErrorSpanStyled>{t('Unable to complete social auth login')}</ErrorSpanStyled>);
