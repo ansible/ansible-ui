@@ -22,10 +22,12 @@ describe('CredentialPage', () => {
       cy.intercept('GET', '/api/v2/credentials/*', credential);
     });
     cy.mount(<CredentialPage />);
-    cy.get('.toggle-kebab')
-      .click()
-      .get('a.pf-m-aria-disabled ')
-      .should('have.attr', 'aria-disabled', 'true');
+    cy.getByDataCy('actions-dropdown').click();
+    cy.contains('#delete-credential', /^Delete credential$/).should(
+      'have.attr',
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('Should disable edit button', () => {
@@ -34,7 +36,11 @@ describe('CredentialPage', () => {
       cy.intercept('GET', '/api/v2/credentials/*', credential);
     });
     cy.mount(<CredentialPage />);
-    cy.get('#edit-credential').should('have.attr', 'aria-disabled', 'true');
+    cy.contains('#edit-credential', /^Edit credential$/).should(
+      'have.attr',
+      'aria-disabled',
+      'true'
+    );
   });
   it('Should render all the tabs', () => {
     const tabNames: string[] = [

@@ -148,6 +148,7 @@ describe('Workflow Approvals Tests', () => {
                         cy.getByDataCy('actions-column-cell').within(() => {
                           cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
                         });
+
                         cy.actionsWFApprovalConfirmModal('delete');
                         cy.wait('@deleteWFA')
                           .its('response')
@@ -456,12 +457,9 @@ describe('Workflow Approvals Tests', () => {
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.getByDataCy('select-all').click();
     cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-      cy.getByDataCy('actions-dropdown')
-        .click()
-        .then(() => {
-          cy.getByDataCy('delete').click();
-        });
+      cy.getByDataCy('actions-dropdown').click();
     });
+    cy.getByDataCy('delete').click();
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
@@ -558,12 +556,9 @@ describe('Workflow Approvals Tests', () => {
                         cy.getByDataCy('checkbox-column-cell').click();
                       });
                       cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-                        cy.getByDataCy('actions-dropdown')
-                          .click()
-                          .then(() => {
-                            cy.get('[data-cy="delete"]').click();
-                          });
+                        cy.getByDataCy('actions-dropdown').click();
                       });
+                      cy.get('[data-cy="delete"]').click();
                       cy.getModal().within(() => {
                         cy.get('[data-cy="alert-toaster"]').should(
                           'contain',
