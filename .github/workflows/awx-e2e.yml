@@ -68,7 +68,7 @@ jobs:
     name: AWX E2E
     runs-on: ubuntu-latest
     concurrency: 
-      group: AWX E2E
+      group: AWX-E2E-${{ matrix.containers }}
       cancel-in-progress: false
     needs: awx-ui-image
     strategy:
