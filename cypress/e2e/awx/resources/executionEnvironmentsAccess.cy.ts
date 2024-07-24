@@ -40,6 +40,7 @@ describe('Execution Environments: User/Team access', () => {
   });
 
   it('Add a user role assignment from the User Access tab', () => {
+    cy.addEERolesToUsersInOrganization(organization.name);
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
@@ -90,8 +91,9 @@ describe('Execution Environments: User/Team access', () => {
     cy.clickButton(/^Close$/);
   });
 
-  // TODO: Skipped until bug AAP-27071 is addressed
+  // There's inconsistency with Users -> creating a team with an org doesn't show it under the org so skipping for time being
   it.skip('Add a team role assignment from the Team Access tab', () => {
+    cy.addEERolesToTeamsInOrganization(organization.name);
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
