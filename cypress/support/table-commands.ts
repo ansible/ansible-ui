@@ -137,7 +137,12 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('clickKebabAction', (kebabDataCy: string, actionDataCy: string) => {
   cy.getByDataCy(kebabDataCy).click();
-  cy.getByDataCy(actionDataCy).click();
+  cy.document()
+    .its('body')
+    .find('.pf-v5-c-menu__content')
+    .within(() => {
+      cy.get(`[data-cy="${actionDataCy}"] button`).click();
+    });
 });
 
 Cypress.Commands.add(

@@ -40,12 +40,12 @@ describe('Credentials.cy.ts', () => {
         const credential = results[1]; // credential with summary_fields.user_capabilities.delete: false
         cy.contains('tr', credential.name).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete credential$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#delete-credential', /^Delete credential$/).should(
+          'have.attr',
+          'aria-disabled',
+          'true'
+        );
       });
   });
 

@@ -276,7 +276,10 @@ describe.skip('Inventory Sources', () => {
       }).then((schedule1: Schedule) => {
         goToSourceDetails(inventory.name, inventorySource.name);
         cy.clickTab('Schedules', true);
-        cy.clickTableRowKebabAction(scheduleName, 'delete-schedule', false);
+        cy.clickTableRowAction('name', scheduleName, 'delete-schedule', {
+          inKebab: true,
+          disableFilter: true,
+        });
         cy.intercept('DELETE', awxAPI`/schedules/${schedule1.id.toString()}/`).as('deleteSchedule');
         cy.clickModalConfirmCheckbox();
         cy.clickButton('Delete schedule');

@@ -158,13 +158,7 @@ describe('projects.cy.ts', () => {
       cy.mount(<Projects />);
       cy.filterTableByMultiSelect('name', [' Project 1 Org 0']);
       cy.selectTableRowByCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
-      cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('a', 'Cancel projects')
-          .click();
-      });
+      cy.clickToolbarKebabAction('cancel-projects');
       cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected project sync jobs cannot be canceled because they are not running.'
@@ -185,13 +179,7 @@ describe('projects.cy.ts', () => {
       cy.selectTableRowByCheckbox('name', ' Project 2 Org 0', {
         disableFilter: true,
       });
-      cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('a', 'Cancel projects')
-          .click();
-      });
+      cy.clickToolbarKebabAction('cancel-projects');
       cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
           '1 of the selected project sync jobs cannot be cancelled due to insufficient permissions.'
@@ -212,14 +200,14 @@ describe('projects.cy.ts', () => {
         .parent()
         .within(() => {
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-v5-c-dropdown__toggle').click();
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains(/^Copy project$/)
-            .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains(/^Delete project$/)
-            .should('have.attr', 'aria-disabled', 'true');
+          cy.getByDataCy('actions-dropdown').click();
         });
+      cy.contains('#copy-project', /^Copy project$/).should('have.attr', 'aria-disabled', 'true');
+      cy.contains('#delete-project', /^Delete project$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Sync project kebab button is visible for project with non-active sync status and is hidden for project with active sync status', () => {

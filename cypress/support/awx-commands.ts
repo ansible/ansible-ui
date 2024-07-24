@@ -425,7 +425,12 @@ Cypress.Commands.add('hasTooltip', (label: string | RegExp) => {
 Cypress.Commands.add('clickToolbarKebabAction', (dataCy: string) => {
   cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
     cy.getByDataCy('actions-dropdown').click();
-    cy.getByDataCy(dataCy).click();
+    cy.document()
+      .its('body')
+      .find('.pf-v5-c-menu__content')
+      .within(() => {
+        cy.getByDataCy(dataCy).click();
+      });
   });
 });
 
@@ -475,18 +480,18 @@ Cypress.Commands.add(
     });
   }
 );
-Cypress.Commands.add(
-  'clickListCardKebabAction',
-  (id: number, name: string | RegExp, dataCyLabel: string | RegExp) => {
-    cy.get(`[data-ouia-component-id="${id}"]`).within(() => {
-      cy.get('[data-cy*="actions-dropdown"]')
-        .click()
-        .then(() => {
-          cy.get(`[data-cy=${dataCyLabel}]`).click();
-        });
-    });
-  }
-);
+
+Cypress.Commands.add('clickListCardKebabAction', (id: number, dataCyLabel: string) => {
+  cy.get(`[data-ouia-component-id="${id}"]`).within(() => {
+    cy.get('[data-cy*="actions-dropdown"]').click();
+    cy.document()
+      .its('body')
+      .find('.pf-v5-c-menu__content')
+      .within(() => {
+        cy.getByDataCy(dataCyLabel).click();
+      });
+  });
+});
 
 Cypress.Commands.add(
   'clickTableRowPinnedAction',

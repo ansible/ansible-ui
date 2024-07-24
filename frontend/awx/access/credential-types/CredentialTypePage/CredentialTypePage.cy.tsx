@@ -26,8 +26,8 @@ describe('CredentialTypePage', () => {
       credentialType.summary_fields.user_capabilities.delete = false;
     });
     cy.mount(<CredentialTypePage />);
-    cy.get('button[aria-label="Actions"]').click();
-    cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete credential type').should(
+    cy.getByDataCy('actions-dropdown').click();
+    cy.contains('#delete-credential-type', /^Delete credential type$/).should(
       'have.attr',
       'aria-disabled',
       'true'

@@ -59,8 +59,10 @@ describe('Remote Registry', () => {
         'contain',
         RemoteRegistry.initialSyncStatus
       );
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="sync-remote-registry"]').click({ force: true });
+      cy.clickTableRowAction('name', remoteRegistryName, 'sync-remote-registry', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('[data-cy="sync-status-column-cell"]').should('contain', RemoteRegistry.syncStatus);
       cy.deleteRemoteRegistry(remoteRegistry.id);
     });
@@ -73,13 +75,15 @@ describe('Remote Registry', () => {
         cy.navigateTo('hub', RemoteRegistry.url);
         cy.url().should('include', 'remote-registries');
         cy.filterTableBySingleText(remoteRegistry.name);
-        cy.get('[data-cy="actions-column-cell"]').click();
-        cy.get('[data-cy="index-execution-environments"]')
-          .should('be.visible')
-          .click({ force: true });
+        cy.clickTableRowAction('name', remoteRegistry.name, 'index-execution-environments', {
+          disableFilter: true,
+          inKebab: true,
+        });
         cy.hasAlert(`Indexing remote registry ${remoteRegistry.name}`);
-        cy.get('[data-cy="actions-column-cell"]').click();
-        cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
+        cy.clickTableRowAction('name', remoteRegistry.name, 'delete-remote-registry', {
+          disableFilter: true,
+          inKebab: true,
+        });
         cy.get('#confirm').click();
         cy.clickButton(/^Delete remote registries/);
         cy.clickButton(/^Close$/);
@@ -101,8 +105,10 @@ describe('Remote Registry', () => {
     cy.contains('Remote registries').click();
     cy.url().should('include', RemoteRegistry.url);
     cy.filterTableBySingleText(remoteRegistryName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-remote-registry"]').click({ force: true });
+    cy.clickTableRowAction('name', remoteRegistryName, 'delete-remote-registry', {
+      disableFilter: true,
+      inKebab: true,
+    });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote registries/);
     cy.clickButton(/^Close$/);

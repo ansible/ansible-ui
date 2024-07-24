@@ -30,12 +30,12 @@ describe('Credential Types List', () => {
       cy.mount(<CredentialTypes />);
       cy.contains('tr', 'VMware vCenter').within(() => {
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete credential type$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
       });
+      cy.contains('#delete-credential-type', /^Delete credential type$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Delete credential type row action is disabled if the user does not have permission to edit credential types', () => {
@@ -43,12 +43,12 @@ describe('Credential Types List', () => {
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete credential type$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
       });
+      cy.contains('#delete-credential-type', /^Delete credential type$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Edit credential type row action is disabled for a managed credential type', () => {
