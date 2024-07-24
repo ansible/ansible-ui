@@ -19,6 +19,7 @@ import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import AAPLogo from '../assets/aap-logo.svg';
 import RedHatIcon from '../assets/redhat-icon.svg';
+import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { PlatformAbout } from './PlatformAbout';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
@@ -31,6 +32,7 @@ export function PlatformMasthead() {
   const isSmOrLarger = useBreakpoint('sm');
   const [_dialog, setDialog] = usePageDialog();
   const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
+  const quickStarts = useQuickStarts();
 
   const logout = useCallback(async () => {
     try {
@@ -75,13 +77,15 @@ export function PlatformMasthead() {
             >
               {t('Documentation')}
             </DropdownItem>
-            <DropdownItem
-              id="about"
-              onClick={() => pageNavigate(PlatformRoute.QuickStarts)}
-              data-cy="masthead-quickstarts"
-            >
-              {t('Quickstarts')}
-            </DropdownItem>
+            {quickStarts.length > 0 ? (
+              <DropdownItem
+                id="about"
+                onClick={() => pageNavigate(PlatformRoute.QuickStarts)}
+                data-cy="masthead-quickstarts"
+              >
+                {t('Quick starts')}
+              </DropdownItem>
+            ) : null}
             <DropdownItem
               id="about"
               onClick={() => setDialog(<PlatformAbout />)}
