@@ -43,7 +43,7 @@ export function RuleForm(props: {
     formState: { defaultValues },
     setValue,
   } = useFormContext();
-  const { activeStep, wizardData } = usePageWizard();
+  const { activeStep, wizardData, stepData } = usePageWizard();
   const ruleId = typeof props.isOpen === 'number' && props.isOpen;
 
   const {
@@ -57,7 +57,10 @@ export function RuleForm(props: {
 
   useEffect(() => {
     if (ruleId) {
-      const rules = getValues('rules') as RuleListItemType[];
+      const rules = isRulesStep
+        ? (stepData.rules as { rules: RuleListItemType[] }).rules
+        : (stepData.exceptions as { exceptions: RuleListItemType[] }).exceptions;
+
       const ruleOptions = rules[rules.findIndex((r) => r.id === ruleId)].rule.options;
       const { until } = ruleOptions;
 
@@ -75,7 +78,7 @@ export function RuleForm(props: {
         { keepDefaultValues: true }
       );
     }
-  }, [getValues, reset, props.isOpen, timezone, ruleId]);
+  }, [getValues, reset, props.isOpen, timezone, ruleId, isRulesStep, stepData]);
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
     delete values.id;
