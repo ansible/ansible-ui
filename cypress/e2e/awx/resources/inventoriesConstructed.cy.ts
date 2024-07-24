@@ -73,7 +73,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.singleSelectByDataCy('organization', organization.name);
     // this can be simplified if we include data-cy to the search button of instance groups
     //cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
-    cy.multiSelectByDataCy('instance-group-select', [instanceGroup.name]);
+    //cy.multiSelectByDataCy('instance-group-select', [instanceGroup.name]);
+    cy.singleSelectByDataCy('instance-group-select', instanceGroup.name);
     cy.multiSelectByDataCy('inventories', invNames);
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
