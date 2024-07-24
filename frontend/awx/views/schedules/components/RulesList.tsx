@@ -12,10 +12,11 @@ import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { RuleListItemType } from '../types';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Label, LabelGroup } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core';
 import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { postRequest } from '../../../../common/crud/Data';
+import { LabelGroupWrapper } from '../../../../common/label-group-wrapper';
 
 export function RulesList(props: {
   setIsOpen?: (isOpen: boolean | number) => void;
@@ -64,13 +65,13 @@ export function RulesList(props: {
           occurrences.map(({ id, local }) => {
             if (id === item.id) {
               labels = (
-                <LabelGroup numLabels={5}>
+                <LabelGroupWrapper numLabels={5}>
                   {local.map((dateTimeString) => (
                     <Label key={dateTimeString}>
                       {formatDateString(dateTimeString, item.rule.options.tzid as string)}
                     </Label>
                   ))}
-                </LabelGroup>
+                </LabelGroupWrapper>
               );
             }
           });
