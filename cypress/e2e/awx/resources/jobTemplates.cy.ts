@@ -142,9 +142,7 @@ describe.skip('Job Templates Tests', function () {
           });
           cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
             cy.filterTableBySingleSelect('name', executionEnvironmentName);
-            cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-              cy.get('[data-cy="checkbox-column-cell"] input').click();
-            });
+            cy.selectTableRowByCheckbox('name', executionEnvironmentName, { disableFilter: true });
             cy.clickButton(/^Confirm/);
           });
           cy.clickButton(/^Next/);
@@ -546,9 +544,9 @@ describe.skip('Job Templates Tests', function () {
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
         'copyTemplate'
       );
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('actions-dropdown').click();
-        cy.getByDataCy('copy-template').click();
+      cy.clickTableRowAction('name', jobTemplate.name, 'copy-template', {
+        inKebab: true,
+        disableFilter: true,
       });
       cy.wait('@copyTemplate')
         .its('response.body.name')
@@ -630,10 +628,7 @@ describe.skip('Job Templates Tests', function () {
     it('can delete a job template from the list line item', function () {
       cy.navigateTo('awx', 'templates');
       cy.filterTableBySingleSelect('name', jobTemplate.name);
-      cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('actions-dropdown').click();
-        cy.getByDataCy('delete-template').click();
-      });
+      cy.clickTableRowKebabAction(jobTemplate.name, 'delete-template');
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('deleteJT');
       cy.clickModalButton('Delete template');

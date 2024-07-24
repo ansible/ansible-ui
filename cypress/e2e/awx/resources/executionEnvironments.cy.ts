@@ -83,7 +83,10 @@ describe('Execution Environments', () => {
       cy.clickTab(/^Back to Execution Environments$/, true);
       cy.verifyPageTitle('Execution Environments');
       cy.filterTableBySingleSelect('name', execEnvName);
-      cy.clickTableRowKebabAction(execEnvName, 'delete-execution-environment', false);
+      cy.clickTableRowAction('name', execEnvName, 'delete-execution-environment', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/execution_environments/*/`).as('deleteEE');
       cy.clickModalButton('Delete execution environments');
@@ -130,7 +133,10 @@ describe('Execution Environments', () => {
       cy.verifyPageTitle(awxOrganization.name);
       cy.clickTab(/^Execution Environments$/, true);
       cy.filterTableBySingleSelect('name', execEnvName);
-      cy.clickTableRowKebabAction(execEnvName, 'delete-execution-environment', false);
+      cy.clickTableRowAction('name', execEnvName, 'delete-execution-environment', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/execution_environments/*/`).as('deleteEE');
       cy.clickModalButton('Delete execution environments');
@@ -166,17 +172,10 @@ describe('Execution Environments', () => {
       cy.hasDetail('Name', execEnvName);
       cy.hasDetail('Image', image);
       cy.hasDetail('Organization', awxOrganization.name);
-      cy.getByDataCy('actions-dropdown')
-        .click()
-        .then(() => {
-          cy.get('[data-cy="delete-execution-environment"]').should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
-          cy.logout();
-          cy.login();
-        });
+      cy.getByDataCy('actions-dropdown').click();
+      cy.get('#delete-execution-environment').should('have.attr', 'aria-disabled', 'true');
+      cy.logout();
+      cy.login();
     });
   });
 
@@ -363,7 +362,10 @@ describe('Execution Environments', () => {
       cy.getByDataCy('image').should('contain', image);
       cy.clickTab(/^Templates$/, true);
       cy.filterTableBySingleSelect('name', jtName);
-      cy.clickTableRowKebabAction(jtName, 'delete-template', false);
+      cy.clickTableRowAction('name', jtName, 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/job_templates/*/`).as('deleteJT');
       cy.clickModalButton('Delete template');

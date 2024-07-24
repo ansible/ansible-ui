@@ -111,12 +111,12 @@ describe('Workflow Approvals List', () => {
       cy.contains('tr', 'read only approval').within(() => {
         // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete workflow approval$/).should(
-          'have.attr',
-          'aria-disabled',
-          'true'
-        );
       });
+      cy.contains('#delete-workflow-approval', /^Delete workflow approval$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Delete workflow approval row action is enabled if the user has permission to delete workflow approvals', () => {
@@ -124,12 +124,12 @@ describe('Workflow Approvals List', () => {
       cy.contains('tr', 'can delete approval').within(() => {
         // user_capabilities.delete: true
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete workflow approval$/).should(
-          'have.attr',
-          'aria-disabled',
-          'false'
-        );
       });
+      cy.contains('#delete-workflow-approval', /^Delete workflow approval$/).should(
+        'not.have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Approve row action is enabled if the user has permission to approve', () => {
@@ -222,7 +222,10 @@ describe('Workflow Approvals List', () => {
         statusCode: 204,
       }).as('deleteRequest');
       cy.filterTableByMultiSelect('name', ['can delete approval']);
-      cy.clickTableRowKebabAction('can delete approval', 'delete-workflow-approval', false);
+      cy.clickTableRowAction('name', 'can delete approval', 'delete-workflow-approval', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete workflow approvals/);
       cy.wait('@deleteRequest');

@@ -554,15 +554,10 @@ declare global {
 
       /**
        * Finds a list card containing text and clicks action specified by label.
-       * @param name
-       * @param label
-       * @param filter
+       * @param id
+       * @param dataCyLabel
        */
-      clickListCardKebabAction(
-        id: number,
-        name: string | RegExp,
-        dataCyLabel: string | RegExp
-      ): Chainable<void>;
+      clickListCardKebabAction(id: number, dataCyLabel: string): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowPinnedAction(

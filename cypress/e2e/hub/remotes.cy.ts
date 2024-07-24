@@ -64,8 +64,10 @@ describe('Remotes', () => {
     cy.contains('Remotes').click();
     cy.url().should('include', Remotes.url);
     cy.filterTableBySingleText(remoteName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-remote"]').click({ force: true });
+    cy.clickTableRowAction('remote-name', remoteName, 'delete-remote', {
+      disableFilter: true,
+      inKebab: true,
+    });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote/);
     cy.contains(/^Success$/);
@@ -95,8 +97,10 @@ describe('Remotes', () => {
     cy.wait('@remote').then(() => {
       cy.contains('Remotes').click();
       cy.filterTableBySingleText(remoteName);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-remote"]').click({ force: true });
+      cy.clickTableRowAction('remote-name', remoteName, 'delete-remote', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remote/);
       cy.contains(/^Success$/);

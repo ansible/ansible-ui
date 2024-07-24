@@ -59,7 +59,7 @@ describe('Inventories', () => {
       }));
       cy.mount(<Inventories />);
       cy.contains('button', /^Create inventory$/).as('createButton');
-      cy.get('@createButton').should('have.attr', 'disabled');
+      cy.get('@createButton').should('have.attr', 'aria-disabled', 'true');
       cy.get('@createButton').click({ force: true });
       cy.hasTooltip(
         /^You do not have permission to create an inventory. Please contact your organization administrator if there is an issue with your access.$/
@@ -76,10 +76,8 @@ describe('Inventories', () => {
 
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.get('.pf-v5-c-dropdown__menu-item')
-              .contains(/^Delete inventory$/)
-              .as('deleteButton');
           });
+          cy.contains('#delete-inventory', /^Delete inventory$/).as('deleteButton');
           cy.get('@deleteButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@deleteButton').click();
           cy.hasTooltip('The inventory cannot be deleted due to insufficient permission');
@@ -114,10 +112,8 @@ describe('Inventories', () => {
 
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.get('.pf-v5-c-dropdown__menu-item')
-              .contains(/^Copy inventory$/)
-              .as('copyButton');
           });
+          cy.contains('button', /^Copy inventory$/).as('copyButton');
           cy.get('@copyButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@copyButton').click();
           cy.get('@copyButton').hasTooltip(
@@ -135,10 +131,8 @@ describe('Inventories', () => {
           const inventory = results.find((i) => i.id === 1);
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.get('.pf-v5-c-dropdown__menu-item')
-              .contains(/^Copy inventory$/)
-              .as('copyButton');
           });
+          cy.contains('button', /^Copy inventory$/).as('copyButton');
           cy.get('@copyButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@copyButton').click();
           cy.get('@copyButton').hasTooltip('Inventories with sources cannot be copied');
@@ -181,15 +175,11 @@ describe('Inventories', () => {
       cy.contains(/^Please create an inventory by using the button below.$/);
       cy.contains('button', /^Create inventory$/).should('be.visible');
       cy.contains('button', /^Create inventory$/).click();
-      cy.get('.pf-v5-c-dropdown__menu-item')
-        .contains(/^Create inventory$/)
-        .should('exist');
-      cy.get('.pf-v5-c-dropdown__menu-item')
-        .contains(/^Create smart inventory$/)
-        .should('exist');
-      cy.get('.pf-v5-c-dropdown__menu-item')
-        .contains(/^Create constructed inventory$/)
-        .should('exist');
+      cy.contains('#create-inventory', /^Create inventory$/).should('exist');
+      cy.contains('#create-smart-inventory', /^Create smart inventory$/).should('exist');
+      cy.contains('#create-constructed-inventory', /^Create constructed inventory$/).should(
+        'exist'
+      );
     });
 
     it('display Empty state for user without permission to create teams', () => {

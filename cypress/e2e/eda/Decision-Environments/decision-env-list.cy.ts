@@ -49,7 +49,7 @@ describe('EDA Decision Environment List', () => {
       cy.setTableView('table');
       cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
       cy.setTableView('card');
-      cy.clickListCardKebabAction(edaDE.id, edaDE.name, 'delete-decision-environment');
+      cy.clickListCardKebabAction(edaDE.id, 'delete-decision-environment');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete decision environment/);
       cy.contains(/^Success$/);
