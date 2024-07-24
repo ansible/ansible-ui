@@ -32,8 +32,10 @@ export function EdaRulebookActivationsCard() {
       height="md"
       linkText={t('View all Rulebook Activations')}
       to={getPageUrl(EdaRoute.RulebookActivations)}
-      helpTitle={t('Rulebook activations')}
-      help={t('Rulebook activations are rulebooks that have been activated to run.')}
+      helpTitle={t('Rulebook Activations')}
+      help={t(
+        'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
+      )}
     >
       <PageTable
         disableBodyPadding={true}

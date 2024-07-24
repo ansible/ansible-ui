@@ -106,9 +106,9 @@ describe('RulebookActivations.cy.ts', () => {
     cy.mount(<RulebookActivations />);
     cy.get('h1').should('contain', 'Rulebook Activations');
     cy.get('tbody').find('tr').should('have.length', 10);
-    cy.contains(/^Rulebook activations are rulebooks that have been activated to run.$/).should(
-      'be.visible'
-    );
+    cy.contains(
+      /^Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.$/
+    ).should('be.visible');
     cy.get('[data-cy="id-column-header"]').should('be.visible');
     cy.get('[data-cy="name-column-header"]').should('be.visible');
     cy.get('[data-cy="status-column-header"]').should('be.visible');

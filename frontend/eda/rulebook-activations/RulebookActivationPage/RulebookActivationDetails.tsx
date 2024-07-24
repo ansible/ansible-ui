@@ -71,7 +71,7 @@ export function RulebookActivationDetails() {
         </PageDetail>
         <PageDetail
           label={t('Project')}
-          helpText={t('Projects are a logical collection of rulebooks.')}
+          helpText={t('A project is a logical collection of rulebooks.')}
         >
           {rulebookActivation && rulebookActivation.project?.id ? (
             <Link
