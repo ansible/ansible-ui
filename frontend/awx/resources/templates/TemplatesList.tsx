@@ -136,7 +136,7 @@ export function TemplatesList(props: {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: 'Delete selected templates',
+        label: 'Delete templates',
         onClick: deleteTemplates,
         isDanger: true,
       },

@@ -96,7 +96,7 @@ export function TemplateSurveyInternal({
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit question'),
+        label: t('Edit survey question'),
         isDisabled: () =>
           canCreateSurvey ? undefined : t('You do not have permission to edit this question.'),
         onClick: (question) => {
@@ -115,7 +115,7 @@ export function TemplateSurveyInternal({
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete question'),
+        label: t('Delete survey question'),
         isDisabled: () =>
           canDeleteSurvey ? undefined : t('You do not have permission to delete this question.'),
         onClick: (question) => deleteQuestions([question]),

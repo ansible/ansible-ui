@@ -48,7 +48,7 @@ export function useSurveyToolbarActions(
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create question'),
+        label: t('Create survey question'),
         isDisabled: canModifySurvey
           ? undefined
           : t(
@@ -80,13 +80,13 @@ export function useSurveyToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected questions'),
+        label: t('Delete survey questions'),
         onClick: deleteQuestions,
         isDanger: true,
         isDisabled: canModifySurvey
           ? undefined
           : t(
-              'You do not have permission to delete questions. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to delete survey questions. Please contact your system administrator if there is an issue with your access.'
             ),
       },
     ],
