@@ -29,11 +29,13 @@ export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?:
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn({
     sort: 'created',
+    userDetailsPageId: PlatformRoute.UserDetails,
     // hideByDefaultInTableView: true,
     ...options,
   });
   const modifiedColumn = useModifiedColumn({
     sort: 'modified',
+    userDetailsPageId: PlatformRoute.UserDetails,
     // hideByDefaultInTableView: true,
     ...options,
   });

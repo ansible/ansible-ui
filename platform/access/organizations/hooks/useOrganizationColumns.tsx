@@ -30,11 +30,13 @@ export function useOrganizationColumns(options?: {
   });
   const createdColumn = useCreatedColumn({
     sort: 'created',
+    userDetailsPageId: PlatformRoute.UserDetails,
     // hideByDefaultInTableView: true,
     ...options,
   });
   const modifiedColumn = useModifiedColumn({
     sort: 'modified',
+    userDetailsPageId: PlatformRoute.UserDetails,
     // hideByDefaultInTableView: true,
     ...options,
   });
