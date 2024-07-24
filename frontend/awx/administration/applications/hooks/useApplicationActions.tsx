@@ -11,6 +11,7 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Application } from '../../../interfaces/Application';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteApplications } from '../hooks/useDeleteApplications';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useApplicationActions(options: {
   onApplicationsDeleted: (applications: Application[]) => void;
@@ -29,7 +30,8 @@ export function useApplicationActions(options: {
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit application'),
+        variant: ButtonVariant.primary,
+        label: t('Edit OAuth application'),
         ouiaId: 'application-detail-edit-button',
         onClick: (application) =>
           pageNavigate(AwxRoute.EditApplication, { params: { id: application.id } }),
@@ -43,14 +45,14 @@ export function useApplicationActions(options: {
           !application?.summary_fields.user_capabilities.delete || activeAwxUser?.is_system_auditor
             ? true
             : false,
-        label: t('Delete application'),
+        label: t('Delete OAuth application'),
         onClick: (application) => {
           if (!application) return;
           deleteApplications([application]);
         },
         ouiaId: 'application-detail-delete-button',
         isDanger: true,
-        isPinned: true,
+        isPinned: false,
       },
     ];
     return itemActions;

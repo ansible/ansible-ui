@@ -1469,7 +1469,7 @@ Cypress.Commands.add(
     cy.verifyPageTitle('OAuth Applications');
     //Filter by app name
     cy.searchAndDisplayResource(customAppName);
-    cy.get(`[data-cy="edit-application"]`).click();
+    cy.get(`[data-cy="edit-OAuth-application"]`).click();
     cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
     cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
     cy.clickButton('Save application');
@@ -1523,7 +1523,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('deleteCustomAWXApplicationFromListView', (customAppName: string) => {
   cy.clickTab(/^Back to Applications$/, true);
   cy.verifyPageTitle('OAuth Applications');
-  cy.clickTableRowKebabAction(customAppName, 'delete-application');
+  cy.clickTableRowKebabAction(customAppName, 'delete-OAuth-application');
   cy.intercept('DELETE', awxAPI`/applications/*/`).as('deleteApp');
   //Verify Delete modal
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
