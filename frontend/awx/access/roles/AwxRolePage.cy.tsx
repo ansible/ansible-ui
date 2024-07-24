@@ -50,11 +50,9 @@ describe('AwxRoles', () => {
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
 
   it('should enable edit and delete row action for editable roles when user is superuser', () => {
@@ -63,11 +61,9 @@ describe('AwxRoles', () => {
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'false');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'false');
+        cy.getByDataCy('actions-dropdown').click();
       });
+    cy.contains('#delete-role', /^Delete role$/).should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('should disable edit and delete row action for editable roles when user is normal user', () => {
@@ -76,11 +72,9 @@ describe('AwxRoles', () => {
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
 
   it('should enable Create Role button if the user has permission to create roles', () => {

@@ -220,7 +220,10 @@ describe('Credential Types', () => {
         });
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [editedCredentialTypeName]);
-      cy.clickTableRowKebabAction(`${editedCredentialTypeName}`, 'delete-credential-type', false);
+      cy.clickTableRowAction('name', editedCredentialTypeName, 'delete-credential-type', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.intercept('DELETE', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
         'deleteCredType'
@@ -285,7 +288,10 @@ describe('Credential Types', () => {
     it('can delete a credential type from the list row action', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
-      cy.clickTableRowKebabAction(credType1.name, 'delete-credential-type', false);
+      cy.clickTableRowAction('name', credType1.name, 'delete-credential-type', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);

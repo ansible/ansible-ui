@@ -75,11 +75,13 @@ describe('TemplateSurvey', () => {
           cy.get('[data-cy="actions-column-cell"]').within(() => {
             cy.get('[data-cy="edit-question"]').should('have.attr', 'aria-disabled', 'true');
           });
-          cy.get('.pf-v5-c-dropdown__toggle').click();
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains('Delete question')
-            .should('have.attr', 'aria-disabled', 'true');
+          cy.getByDataCy('actions-dropdown').click();
         });
+      cy.contains('#delete-question', /^Delete question$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
   });
 

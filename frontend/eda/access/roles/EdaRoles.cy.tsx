@@ -1,5 +1,7 @@
 // import { ToolbarFilterType } from '../../../../framework';
 // import * as useOptions from '../../../common/crud/useOptions';
+import { EdaItemsResponse } from '../../common/EdaItemsResponse';
+import { EdaRole } from '../../interfaces/EdaRole';
 import { EdaRoles } from './EdaRoles';
 
 /*
@@ -55,42 +57,81 @@ describe('EdaRoles.cy.ts', () => {
   });
 
   it('Disables edit and delete row action for built-in roles', () => {
+    cy.fixture('edaRoleDefinitions').then((edaRoles: EdaItemsResponse<EdaRole>) => {
+      const role = edaRoles.results.find((role) => role.name === 'Activation Admin');
+      cy.intercept(
+        { method: 'GET', url: '/api/eda/v1/role_definitions/*' },
+        {
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            page: 1,
+            results: [role],
+          },
+        }
+      );
+    });
     cy.mountEda(<EdaRoles />);
     cy.contains('td', 'Activation Admin')
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
 
   it('Enables edit and delete row action for editable roles when user is superuser', () => {
+    cy.fixture('edaRoleDefinitions').then((edaRoles: EdaItemsResponse<EdaRole>) => {
+      const role = edaRoles.results.find((role) => role.name === 'View projects');
+      cy.intercept(
+        { method: 'GET', url: '/api/eda/v1/role_definitions/*' },
+        {
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            page: 1,
+            results: [role],
+          },
+        }
+      );
+    });
     cy.mountEda(<EdaRoles />);
     cy.contains('td', 'View projects')
       .parent()
       .within(() => {
-        cy.get('#edit-role').should('have.attr', 'aria-disabled', 'false');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'false');
+        cy.get('#edit-role').should('not.have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
+    cy.contains('#delete-role', /^Delete role$/).should('not.have.attr', 'aria-disabled', 'true');
   });
 
   it('Disables edit and delete row action for editable roles when user is normal user', () => {
+    cy.fixture('edaRoleDefinitions').then((edaRoles: EdaItemsResponse<EdaRole>) => {
+      const role = edaRoles.results.find((role) => role.name === 'View projects');
+      cy.intercept(
+        { method: 'GET', url: '/api/eda/v1/role_definitions/*' },
+        {
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            page: 1,
+            results: [role],
+          },
+        }
+      );
+    });
     cy.mountEda(<EdaRoles />, undefined, 'edaNormalUser.json');
     cy.contains('td', 'View projects')
       .parent()
       .within(() => {
         cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
-        cy.get('.pf-v5-c-dropdown__toggle').click();
-        cy.get('.pf-v5-c-dropdown__menu-item')
-          .contains(/^Delete role$/)
-          .should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
 
   it('Create Role button is enabled if the user has permission to create roles', () => {

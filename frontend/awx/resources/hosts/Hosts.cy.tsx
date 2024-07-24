@@ -381,7 +381,7 @@ function disableDeleteRowAction(component: React.ReactElement, params: paramsTyp
     .then(() => {
       cy.mount(component, params);
       cy.get(`tr [data-cy="actions-dropdown"]`).click();
-      cy.get(`[data-cy="delete-host"]`).as('deleteButton');
+      cy.get('#delete-host').as('deleteButton');
       cy.get('@deleteButton').should('have.attr', 'aria-disabled', 'true');
       cy.get('@deleteButton').click();
       cy.hasTooltip('This cannot be deleted due to insufficient permission');

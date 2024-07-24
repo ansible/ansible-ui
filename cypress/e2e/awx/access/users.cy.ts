@@ -112,7 +112,9 @@ describe('Users Delete Actions', () => {
 
   it('deletes a user from the users list row item', () => {
     cy.navigateTo('awx', 'users');
-    cy.clickTableRowKebabAction(user.username, 'delete-user');
+    cy.clickTableRowAction('username', user.username, 'delete-user', {
+      inKebab: true,
+    });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete user/);
     cy.contains(/^Success$/);

@@ -89,7 +89,7 @@ describe('Topology view', () => {
         });
         cy.url().should('include', '/infrastructure/instances/');
         cy.getByDataCy('page-title').contains(node);
-        cy.clickKebabAction('actions-dropdown', 'remove-instance');
+        cy.clickPageAction('remove-instance');
         cy.clickModalConfirmCheckbox();
         cy.clickButton('Remove instance');
         cy.navigateTo('awx', 'topology-view');

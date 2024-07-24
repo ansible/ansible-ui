@@ -66,7 +66,10 @@ describe('Credentials', () => {
     it('can delete machine credential from the list row action', () => {
       cy.navigateTo('awx', 'credentials');
       cy.filterTableByMultiSelect('name', [credential.name]);
-      cy.clickTableRowKebabAction(credential.name, 'delete-credential', false);
+      cy.clickTableRowAction('name', credential.name, 'delete-credential', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.intercept('DELETE', awxAPI`/credentials/${credential.id.toString()}/`).as('deleted');
       cy.clickButton(/^Delete credential/);

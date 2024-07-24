@@ -99,7 +99,10 @@ describe('Inventory Groups', () => {
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickTab(/^Groups$/, true);
         cy.filterTableByMultiSelect('name', [group.name]);
-        cy.clickTableRowKebabAction(group.name, 'edit-group', false);
+        cy.clickTableRowAction('name', group.name, 'edit-group', {
+          inKebab: false,
+          disableFilter: true,
+        });
         cy.verifyPageTitle('Edit group');
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
@@ -119,7 +122,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickTab(/^Groups$/, true);
-        cy.clickKebabAction('actions-dropdown', 'run-command');
+        cy.clickButton(/^Run Command$/);
 
         runCommand({
           selections: 'all',
@@ -365,7 +368,7 @@ describe('Inventory Groups', () => {
         cy.filterTableBySingleSelect('name', newRelatedGroup);
         cy.selectTableRow(newRelatedGroup, false);
         cy.intercept('POST', awxAPI`/groups/*/children/`).as('disassociateGroup');
-        cy.clickToolbarKebabAction('run-command');
+        cy.clickButton(/^Run Command$/);
 
         runCommand({
           selections: newRelatedGroup,
@@ -463,7 +466,7 @@ describe('Inventory Groups', () => {
       cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
       cy.verifyPageTitle(thisInventory.name);
       cy.clickTab(/^Hosts$/, true);
-      cy.clickKebabAction('actions-dropdown', 'run-command');
+      cy.clickButton(/^Run Command$/);
 
       runCommand({
         selections: 'all',
