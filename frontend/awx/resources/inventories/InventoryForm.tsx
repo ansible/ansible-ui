@@ -98,10 +98,10 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
   const getPageUrl = useGetPageUrl();
   const title =
     inventoryKind === ''
-      ? t('Create Inventory')
+      ? t('Create inventory')
       : inventoryKind === 'smart'
-        ? t('Create Smart Inventory')
-        : t('Create Constructed Inventory');
+        ? t('Create smart inventory')
+        : t('Create constructed inventory');
 
   const defaultValue =
     inventoryKind === 'smart'
@@ -257,13 +257,6 @@ export function EditInventory() {
     );
   }
 
-  const title =
-    inventory.kind === ''
-      ? t('Edit Inventory')
-      : inventory.kind === 'smart'
-        ? t('Edit Smart Inventory')
-        : t('Edit Constructed Inventory');
-
   const defaultValue =
     inventory.kind === 'smart'
       ? { ...inventory, instanceGroups: originalInstanceGroups }
@@ -282,10 +275,18 @@ export function EditInventory() {
   return (
     <PageLayout>
       <PageHeader
-        title={title}
+        title={
+          inventory?.name
+            ? t('Edit {{inventoryName}}', { inventoryName: inventory?.name })
+            : t('Inventory')
+        }
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
-          { label: title },
+          {
+            label: inventory?.name
+              ? t('Edit {{inventoryName}}', { inventoryName: inventory?.name })
+              : t('Inventory'),
+          },
         ]}
       />
       <AwxPageForm<InventoryCreate>

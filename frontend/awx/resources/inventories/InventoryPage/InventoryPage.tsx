@@ -139,7 +139,7 @@ export function InventoryPage() {
           !isSmartInventory &&
             !isConstructedInventory && { label: t('Sources'), page: AwxRoute.InventorySources },
           { label: t('Jobs'), page: AwxRoute.InventoryJobs },
-          { label: t('Job templates'), page: AwxRoute.InventoryJobTemplates },
+          { label: t('Job Templates'), page: AwxRoute.InventoryJobTemplates },
         ]}
         params={params}
         componentParams={{ inventory }}

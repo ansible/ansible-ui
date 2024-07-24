@@ -52,7 +52,7 @@ export function InventoryHostPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Host Details')}
+        title={host?.name}
         breadcrumbs={[
           {
             label: t('Inventories'),

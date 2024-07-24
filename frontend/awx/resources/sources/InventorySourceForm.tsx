@@ -79,7 +79,7 @@ export function CreateInventorySource() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add new source')}
+        title={t('Create source')}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           {
@@ -100,7 +100,7 @@ export function CreateInventorySource() {
               },
             }),
           },
-          { label: t('Add') },
+          { label: t('Create source') },
         ]}
       />
       <AwxPageForm
@@ -185,7 +185,7 @@ export function EditInventorySource() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit source')}
+        title={t('Edit {{sourceName}}', { sourceName: inventorySource?.name })}
         breadcrumbs={[
           { label: t('Inventories'), to: getPageUrl(AwxRoute.Inventories) },
           {
@@ -206,7 +206,7 @@ export function EditInventorySource() {
               },
             }),
           },
-          { label: t('Edit') },
+          { label: t('Edit {{sourceName}}', { sourceName: inventorySource?.name }) },
         ]}
       />
       <AwxPageForm

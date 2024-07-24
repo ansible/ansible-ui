@@ -138,7 +138,7 @@ describe.skip('Inventory Sources', () => {
       goToSourceList(inventory.name);
       // Create inventory source
       cy.getBy('#add-source').click();
-      cy.verifyPageTitle('Add new source');
+      cy.verifyPageTitle('Create source');
       cy.getBy('[data-cy="name"]').type('amazon ec2 source');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
       cy.getBy('[data-cy="host-filter"]').type('/^test$/');
