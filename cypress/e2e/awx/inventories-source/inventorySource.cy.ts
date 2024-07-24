@@ -124,8 +124,8 @@ describe('Inventory Sources', () => {
     it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page, ', () => {
       goToSourceList(inventory.name);
       // Create inventory source
-      cy.getByDataCy('create-source').click();
-      cy.verifyPageTitle('Add new source');
+      cy.getByDataCy('add-source').click();
+      cy.verifyPageTitle('Create source');
       cy.getByDataCy('name').type('amazon ec2 source');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
       cy.getByDataCy('host-filter').type('/^test$/');
