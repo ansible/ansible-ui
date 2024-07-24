@@ -1,23 +1,11 @@
-import { AllQuickStartStates, QuickStart, QuickStartContainer } from '@patternfly/quickstarts';
-import { ReactNode, useMemo, useState } from 'react';
-import { useHasHubService } from '../../main/GatewayServices';
-import { useFindingContentQuickStart } from './useFindingContentQuickStart';
+import { AllQuickStartStates, QuickStartContainer } from '@patternfly/quickstarts';
+import { ReactNode, useState } from 'react';
+import { useQuickStarts } from './useQuickStarts';
 
 export function QuickStartProvider(props: { children: ReactNode }) {
-  // const awxService = useAwxService();
-  // const edaService = useEdaService();
-  const hubService = useHasHubService();
-
   const [activeQuickStartID, setActiveQuickStartID] = useState('');
   const [allQuickStartStates, setAllQuickStartStates] = useState<AllQuickStartStates>({});
-  const findingContentQuickStart: QuickStart | undefined = useFindingContentQuickStart();
-  const quickStarts = useMemo<QuickStart[]>(() => {
-    const quickStarts: QuickStart[] = [];
-    if (hubService) {
-      quickStarts.push(findingContentQuickStart);
-    }
-    return quickStarts;
-  }, [findingContentQuickStart, hubService]);
+  const quickStarts = useQuickStarts();
   return (
     <QuickStartContainer
       quickStarts={quickStarts}

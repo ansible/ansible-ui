@@ -20,9 +20,10 @@ import { AwxRecentProjectsCard } from '../../frontend/awx/overview/cards/AwxRece
 import { EdaDecisionEnvironmentsCard } from '../../frontend/eda/overview/cards/EdaDecisionEnvironmentsCard';
 import { EdaRuleAuditCard } from '../../frontend/eda/overview/cards/EdaRuleAuditCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
-import { useHasAwxService, useHasEdaService, useHasHubService } from '../main/GatewayServices';
+import { useHasAwxService, useHasEdaService } from '../main/GatewayServices';
 import { useIsManagedCloudInstall } from '../main/GatewayUIAuth';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
+import { useQuickStarts } from './quickstarts/useQuickStarts';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
 export function PlatformOverview() {
@@ -30,8 +31,8 @@ export function PlatformOverview() {
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
   const awxService = useHasAwxService();
   const edaService = useHasEdaService();
-  const hubService = useHasHubService();
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
+  const quickStarts = useQuickStarts();
   return (
     <PageLayout>
       <PageHeader
@@ -50,7 +51,7 @@ export function PlatformOverview() {
           .filter((resource) => {
             switch (resource.id) {
               case 'quick-starts':
-                return !!hubService && !managedCloudInstall;
+                return quickStarts.length > 0 && !managedCloudInstall;
               case 'counts':
               case 'job_activity':
               case 'recent_jobs':
