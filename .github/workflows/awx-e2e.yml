@@ -67,7 +67,9 @@ jobs:
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    concurrency: AWX E2E
+    concurrency: 
+      group: AWX E2E
+      cancel-in-progress: false
     needs: awx-ui-image
     strategy:
       fail-fast: false
