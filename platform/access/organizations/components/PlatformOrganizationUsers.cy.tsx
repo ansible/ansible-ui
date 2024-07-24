@@ -36,11 +36,15 @@ describe('Organization users list', () => {
       // Toolbar actions are visible
       cy.get(`[data-cy="add-users"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Remove users')
-          .should('be.visible');
+        cy.get('.toggle-kebab').click();
+        cy.document()
+          .its('body')
+          .find('.pf-v5-c-menu__content')
+          .within(() => {
+            cy.get('button')
+              .contains(/^Remove users$/)
+              .should('be.visible');
+          });
       });
       // Row actions are visible
       cy.contains('td', 'test-user1')
@@ -48,7 +52,14 @@ describe('Organization users list', () => {
         .within(() => {
           cy.get('[data-cy="manage-roles"]').should('exist');
           cy.get('button.toggle-kebab').click();
-          cy.get('a[data-cy="remove-user"]').should('exist');
+          cy.document()
+            .its('body')
+            .find('.pf-v5-c-menu__content')
+            .within(() => {
+              cy.get('button')
+                .contains(/^Remove user$/)
+                .should('exist');
+            });
         });
     });
     it('Add users button is disabled if the user does not have required permissions', () => {

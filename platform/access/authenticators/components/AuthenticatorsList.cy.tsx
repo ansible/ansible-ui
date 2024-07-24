@@ -30,11 +30,15 @@ describe('Authenticators list', () => {
       // Toolbar actions are visible
       cy.get(`[data-cy="create-authentication"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete selected authentications')
-          .should('be.visible');
+        cy.get('.toggle-kebab').click();
+        cy.document()
+          .its('body')
+          .find('.pf-v5-c-menu__content')
+          .within(() => {
+            cy.get('button')
+              .contains(/^Delete selected authentications$/)
+              .should('be.visible');
+          });
       });
     });
 

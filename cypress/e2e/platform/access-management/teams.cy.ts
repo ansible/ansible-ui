@@ -72,7 +72,12 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
           'deleteTeam'
         );
-        cy.clickTableRowKebabAction(`${platformTeam.name} edited from list page`, 'delete-team');
+        cy.clickTableRowAction(
+          'name',
+          `${platformTeam.name} edited from list page`,
+          'delete-team',
+          { disableFilter: false, inKebab: true }
+        );
         cy.clickModalConfirmCheckbox();
         cy.getModal().within(() => {
           cy.clickButton(/^Delete team/);

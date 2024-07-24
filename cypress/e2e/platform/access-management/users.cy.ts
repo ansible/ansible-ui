@@ -13,7 +13,7 @@ describe('Users - Create, Edit and Delete', () => {
   it('edits a user from the list view and deletes it from the ui', () => {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.clickTableRowAction('username', createdPlatformUser.username, 'edit-user', {
-        inKebab: true,
+        inKebab: false,
       });
       cy.verifyPageTitle(`Edit ${createdPlatformUser.username}`);
       cy.get('[data-cy="username"]').clear().type(`edited-${createdPlatformUser.username}`);

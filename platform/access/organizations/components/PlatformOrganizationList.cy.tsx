@@ -33,11 +33,15 @@ describe('Organizations list', () => {
       // Toolbar actions are visible
       cy.get(`[data-cy="create-organization"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete organizations')
-          .should('be.visible');
+        cy.get('.toggle-kebab').click();
+        cy.document()
+          .its('body')
+          .find('.pf-v5-c-menu__content')
+          .within(() => {
+            cy.get('button')
+              .contains(/^Delete organizations$/)
+              .should('be.visible');
+          });
       });
     });
     it('Create Organization button is disabled if the user does not have permission to create organizations', () => {
@@ -69,8 +73,8 @@ describe('Organizations list', () => {
       cy.contains('tr', 'Default').within(() => {
         cy.get('[data-cy="edit-organization"]').should('have.attr', 'aria-disabled', 'true');
         cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="delete-organization"]').should('have.attr', 'aria-disabled', 'true');
       });
+      cy.get('#delete-organization').should('have.attr', 'aria-disabled', 'true');
     });
   });
   describe('Empty list', () => {

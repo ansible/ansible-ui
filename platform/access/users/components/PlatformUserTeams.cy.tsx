@@ -53,11 +53,15 @@ describe('User teams list', () => {
       cy.get('[data-cy="add-team(s)"]').should('have.attr', 'aria-disabled', 'false');
 
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Remove selected teams')
-          .should('be.visible');
+        cy.get('.toggle-kebab').click();
+        cy.document()
+          .its('body')
+          .find('.pf-v5-c-menu__content')
+          .within(() => {
+            cy.get('button')
+              .contains(/^Remove selected teams$/)
+              .should('be.visible');
+          });
       });
     });
   });

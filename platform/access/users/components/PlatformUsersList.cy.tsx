@@ -33,11 +33,15 @@ describe('Users list', () => {
       // Toolbar actions are visible
       cy.get(`[data-cy="create-user"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab')
-          .click()
-          .get('.pf-v5-c-dropdown__menu-item')
-          .contains('Delete selected users')
-          .should('be.visible');
+        cy.get('.toggle-kebab').click();
+        cy.document()
+          .its('body')
+          .find('.pf-v5-c-menu__content')
+          .within(() => {
+            cy.get('button')
+              .contains(/^Delete selected users$/)
+              .should('be.visible');
+          });
       });
       // Row actions are visible
       cy.get('tbody')
@@ -47,12 +51,16 @@ describe('Users list', () => {
           cy.get(`[data-cy="edit-user"]`)
             .should('be.visible')
             .should('have.attr', 'aria-disabled', 'false');
-          cy.get('.toggle-kebab')
-            .click()
-            .get('.pf-v5-c-dropdown__menu-item')
-            .contains('Delete user')
-            .should('be.visible')
-            .should('have.attr', 'aria-disabled', 'false');
+          cy.get('.toggle-kebab').click();
+          cy.document()
+            .its('body')
+            .find('.pf-v5-c-menu__content')
+            .within(() => {
+              cy.get('button')
+                .contains(/^Delete user$/)
+                .should('be.visible')
+                .should('not.have.attr', 'aria-disabled', 'true');
+            });
         });
     });
     it('Edit and delete buttons are disabled if managed = true', () => {
@@ -83,13 +91,12 @@ describe('Users list', () => {
           cy.get(`[data-cy="edit-user"]`)
             .should('be.visible')
             .should('have.attr', 'aria-disabled', 'true');
-          cy.get('.toggle-kebab')
-            .click()
-            .get('.pf-v5-c-dropdown__menu-item')
-            .contains('Delete user')
-            .should('be.visible')
-            .should('have.attr', 'aria-disabled', 'true');
+          cy.get('.toggle-kebab').click();
         });
+      cy.get('#delete-user')
+        .should('be.visible')
+        .should('have.attr', 'aria-disabled', 'true')
+        .contains(/^Delete user$/);
     });
     it('Create User button is disabled if the user does not have permission to create users', () => {
       cy.mount(<PlatformUsersList />);
