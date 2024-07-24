@@ -67,7 +67,7 @@ jobs:
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    # timeout-minutes: 20
+    concurrency: AWX E2E
     needs: awx-ui-image
     strategy:
       fail-fast: false
