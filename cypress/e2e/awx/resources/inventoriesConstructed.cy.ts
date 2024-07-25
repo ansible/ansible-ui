@@ -69,28 +69,29 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.clickButton(/^Create constructed inventory$/);
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/organizations/`,
-      query: { name__icontains: organization.name },
-    }).as('filterOrg');
     cy.singleSelectBy('[data-cy="organization"]', organization.name);
-    cy.wait('@filterOrg');
     // this can be simplified if we include data-cy to the search button of instance groups
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
 
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/instance_groups/`,
-      query: { name: instanceGroup.name },
-    }).as('filterInstanceG');
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/inventories/`,
-      query: { name__icontains: invNames[invToCreate - 1] },
-    }).as('filterInputInventories');
-    cy.multiSelectBy('[data-cy="inventories"]', invNames);
-    cy.wait('@filterInputInventories');
+    //get inventories select
+    cy.get('form')
+      .contains('button', /^Select inventories$/)
+      .click();
+    cy.get('form')
+      .document()
+      .its('body')
+      .find('.pf-v5-c-menu__content')
+      .within(() => {
+        cy.getByDataCy('search-input').within(() => {
+          cy.get('input').clear().type(invNames[0]);
+        });
+        cy.contains('.pf-v5-c-menu__item-text', invNames[0])
+          .parent()
+          .within(() => {
+            cy.get('input').click();
+          });
+      });
+
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
     cy.getByDataCy('limit').type('5');
@@ -113,13 +114,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     });
 
     // Assert the inventory doesn't exist anymore
-    cy.intercept({
-      method: 'GET',
-      pathname: awxAPI`/inventories/`,
-      query: { name__icontains: constInvName },
-    }).as('filterInventory');
     cy.filterTableBySingleSelect('name', constInvName, true);
-    cy.wait('@filterInventory');
+    cy.contains('No results found');
   });
 
   it('can edit and run a sync on the edited constructed inventory', () => {
