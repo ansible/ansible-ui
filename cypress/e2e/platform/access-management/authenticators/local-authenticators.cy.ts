@@ -13,7 +13,7 @@ describe('Authenticators - Local CRUD UI', () => {
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
         cy.verifyPageTitle(localAuthenticatorName);
-        cy.get('a[data-cy="Authenticators"]').click();
+        cy.clickLink('Authenticators');
         cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator);
       }
     );
@@ -23,7 +23,6 @@ describe('Authenticators - Local CRUD UI', () => {
     const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
-        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
         cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'delete-authentication', {
           inKebab: true,
         });
@@ -43,14 +42,13 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.url().should('contain', '/access/authenticators/create');
     cy.selectAuthenticationType('local');
     cy.clickButton('Next');
-    cy.get('[data-cy="name"]').type(localAuthenticator);
+    cy.getByDataCy('name').type(localAuthenticator);
     cy.clickButton('Next');
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.verifyPageTitle(localAuthenticator);
     cy.navigateTo('platform', 'authenticators');
     cy.verifyPageTitle('Authentication Methods');
-    cy.searchAndDisplayResourceByFilterOption(localAuthenticator, 'name');
     cy.clickTableRowAction('name', localAuthenticator, 'delete-authentication', {
       inKebab: true,
     });
@@ -68,7 +66,6 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.verifyPageTitle('Authentication Methods');
-        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
         cy.contains('tr', createdLocalAuthenticator.name).within(() => {
           cy.get('[data-cy=toggle-switch]').click();
           cy.get('.pf-v5-c-switch__label.pf-m-on')
@@ -77,13 +74,12 @@ describe('Authenticators - Local CRUD UI', () => {
         });
         cy.contains('h4', `${createdLocalAuthenticator.name} enabled.`);
         cy.contains('tr', createdLocalAuthenticator.name).within(() => {
-          cy.get('[data-cy=toggle-switch]').click();
+          cy.getByDataCy('toggle-switch').click();
           cy.get('.pf-v5-c-switch__label.pf-m-off')
             .should('contain.text', 'Disabled')
             .should('be.be.visible');
         });
         cy.contains('h4', `${createdLocalAuthenticator.name} disabled.`);
-        cy.clickButton(/^Clear all filters$/);
         cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator);
       }
     );
@@ -93,11 +89,10 @@ describe('Authenticators - Local CRUD UI', () => {
     const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
-        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
         cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'edit-authenticator', {
           inKebab: false,
         });
-        cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
+        cy.getByDataCy('name').clear().type(`${createdLocalAuthenticator.name} Edited`);
         cy.clickButton('Next');
         cy.clickButton('Next');
         cy.clickButton('Finish');
@@ -112,8 +107,8 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
-        cy.get('[data-cy="edit-authenticator"]').click();
-        cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
+        cy.getByDataCy('edit-authenticator').click();
+        cy.getByDataCy('name').clear().type(`${createdLocalAuthenticator.name} Edited`);
         cy.clickButton('Next');
         cy.clickButton('Next');
         cy.clickButton('Finish');
