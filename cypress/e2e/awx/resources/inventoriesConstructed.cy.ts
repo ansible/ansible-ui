@@ -41,7 +41,6 @@ describe('Constructed Inventories CRUD Tests', () => {
   });
 
   after(() => {
-    //cy.deleteAwxInventory(newInventory);
     cy.deleteAwxInventory(newInventory);
     cy.deleteAwxInstanceGroup(instanceGroup);
     cy.deleteAwxOrganization(organization);
@@ -183,7 +182,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       .its('response.statusCode')
       .then((statusCode) => {
         expect(statusCode).to.be.equal(200);
-        cy.verifyPageTitle(constructedInv.name);
+        cy.verifyPageTitle(newInventory.name);
       });
 
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
