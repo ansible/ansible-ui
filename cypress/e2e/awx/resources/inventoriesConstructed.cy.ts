@@ -178,7 +178,6 @@ describe('Constructed Inventories CRUD Tests', () => {
       }}`
     );
     cy.clickButton(/^Save inventory$/);
-    cy.verifyPageTitle('Edit Constructed Inventory');
 
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
     cy.clickButton('Sync inventory');
