@@ -25,6 +25,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { AwxError } from '../../../common/AwxError';
+
 export function pad(num: number) {
   if (typeof num === 'string') {
     return num;
@@ -52,6 +53,7 @@ export function RuleForm(props: {
     timezone = 'America/New_York',
     startDateTime: { date, time },
   } = wizardData as ScheduleFormWizard;
+
   const isRulesStep = activeStep && activeStep.id === 'rules';
   const weekdayOptions = useGetWeekdayOptions();
   const frequencyOptions = useGetFrequencyOptions();
@@ -78,11 +80,14 @@ export function RuleForm(props: {
       );
     }
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
+
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
 
-    if (values.until && values.count) {
+    if ((values.until?.date || values.until?.time) && values.count) {
       setError(t(`You can't use both 'Until' and 'Count' fields at the same time`));
+      setValue('until', { date: undefined, time: undefined });
+      setValue('count', undefined);
       return;
     }
 
