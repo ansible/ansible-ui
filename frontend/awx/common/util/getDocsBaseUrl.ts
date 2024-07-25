@@ -32,7 +32,7 @@ export function getDocsBaseUrl(
   config: Config | null | undefined,
   doc: keyof docPathDictionary
 ): string {
-  const version = '2.4';
+  const version = config?.platformVersion || '2.5';
   const licenseType = config?.license_info?.license_type;
   if (licenseType && licenseType !== 'open') {
     return `https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/${version}/html/${downstreamPaths[doc]}`;
