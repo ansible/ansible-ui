@@ -25,12 +25,7 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/awx/resources/inventoriesConstructed.cy.ts',
   'cypress/e2e/awx/administration/wfApprovalsList.cy.ts',
   'cypress/e2e/awx/resources/executionEnvironmentsAccess.cy.ts', // TODO: The role assignment assertions in the platform will fail due to the bug AAP-25268 (currently in progress)
-  // Skipping all WFJT related tests due to bug AAP-27078 and potentially related to AAP-27171
-  'cypress/e2e/awx/resources/workflowJobTemplates.cy.ts',
-  'cypress/e2e/awx/resources/workflowJobTemplateSurveys.cy.ts',
-  'cypress/e2e/awx/resources/workflowVisualizerCRUD.cy.ts',
-  'cypress/e2e/awx/resources/workflowVisualizerOutput.cy.ts',
-  'cypress/e2e/awx/administration/wfApprovalsList.cy.ts',
+  'cypress/e2e/awx/resources/inventoryHost/inventoryHostSmart.cy.ts',
 ];
 baseConfig.e2e!.baseUrl = 'https://localhost:4100';
 baseConfig.component!.specPattern = 'platform/**/*.cy.{js,jsx,ts,tsx}';
