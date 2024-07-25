@@ -108,6 +108,7 @@ export function PageHeader(props: PageHeaderProps) {
   const isXl = useBreakpoint('xl');
   const isMdOrLarger = useBreakpoint('md');
   const [translations] = useFrameworkTranslations();
+
   const { tabBreadcrumb } = usePageBreadcrumbs();
 
   const pageBreadcrumbs = useMemo(() => {
@@ -192,7 +193,6 @@ export function PageHeader(props: PageHeaderProps) {
                 <Skeleton width="160px" />
               </Title>
             )}
-
             {isMdOrLarger && description && (
               <div data-cy="app-description" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
                 {description}

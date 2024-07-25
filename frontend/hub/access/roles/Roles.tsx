@@ -14,7 +14,13 @@ export function Roles() {
   const { t } = useTranslation();
   return (
     <PageLayout>
-      <PageHeader title={t('Roles')} />
+      <PageHeader
+        title={t('Roles')}
+        titleHelpTitle={t('Roles')}
+        titleHelp={t(
+          'A role represents a set of actions that a team or user may perform on a resource or set of resources.'
+        )}
+      />
       <HubRolesTable />
     </PageLayout>
   );
