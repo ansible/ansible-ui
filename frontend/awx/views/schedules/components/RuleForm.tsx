@@ -1,6 +1,6 @@
 import { ActionGroup, Button, Chip, ChipGroup } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
@@ -24,6 +24,7 @@ import { useGet24HourTime } from '../hooks/useGet24HourTime';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { AwxError } from '../../../common/AwxError';
 export function pad(num: number) {
   if (typeof num === 'string') {
     return num;
@@ -35,6 +36,7 @@ export function RuleForm(props: {
   isOpen: boolean | number;
   setIsOpen: (isOpen: boolean) => void;
 }) {
+  const [error, setError] = useState<string>('');
   const { t } = useTranslation();
   const get24Hour = useGet24HourTime();
   const {
@@ -78,6 +80,14 @@ export function RuleForm(props: {
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
+
+    if (values.until && values.count) {
+      setError(t(`You can't use both 'Until' and 'Count' fields at the same time`));
+      return;
+    }
+
+    setError('');
+
     delete values.id;
     const { rules = [], exceptions = [], until = null, ...rest } = values;
     const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
@@ -393,6 +403,7 @@ export function RuleForm(props: {
           {t('Discard')}
         </Button>
       </ActionGroup>
+      {error && <AwxError error={{ message: error }} />}
     </PageFormSection>
   );
 }
