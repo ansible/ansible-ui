@@ -64,7 +64,7 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
     cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
     cy.getByDataCy('name-column-cell').contains(organization.name).click();
     cy.verifyPageTitle(organization.name);
-    cy.get('[data-cy="edit-organization"]').click();
+    cy.getByDataCy('edit-organization').click();
     cy.verifyPageTitle(`Edit ${organization.name}`);
     cy.get('[data-cy="organization-name"]')
       .clear()
