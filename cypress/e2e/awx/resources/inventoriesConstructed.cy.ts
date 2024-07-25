@@ -75,7 +75,26 @@ describe('Constructed Inventories CRUD Tests', () => {
     //cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
     //cy.multiSelectByDataCy('instance-group-select', [instanceGroup.name]);
     cy.singleSelectByDataCy('instance-group-select', instanceGroup.name);
-    cy.multiSelectByDataCy('inventories', invNames);
+
+    //get inventories select
+    cy.get('form')
+      .contains('button', /^Select inventories$/)
+      .click();
+    cy.get('form')
+      .document()
+      .its('body')
+      .find('.pf-v5-c-menu__content')
+      .within(() => {
+        cy.getByDataCy('search-input').within(() => {
+          cy.get('input').clear().type(invNames[0]);
+        });
+        cy.contains('.pf-v5-c-menu__item-text', invNames[0])
+          .parent()
+          .within(() => {
+            cy.get('input').click();
+          });
+      });
+
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
     cy.getByDataCy('limit').type('5');
@@ -274,17 +293,17 @@ describe('Constructed Inventories CRUD Tests', () => {
         });
     });
   });
-
-  function generateRandom(min = 0, max = 5) {
-    // find diff
-    const difference = max - min;
-    // generate random number
-    let rand = Math.random();
-    // multiply with difference
-    rand = Math.floor(rand * difference);
-    // add with min value
-    rand = rand + min;
-
-    return rand;
-  }
 });
+
+function generateRandom(min = 0, max = 5) {
+  // find diff
+  const difference = max - min;
+  // generate random number
+  let rand = Math.random();
+  // multiply with difference
+  rand = Math.floor(rand * difference);
+  // add with min value
+  rand = rand + min;
+
+  return rand;
+}
