@@ -4,19 +4,19 @@ import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
+import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
 import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
-import type { JobTemplate } from '../../../../interfaces/JobTemplate';
-import { AwxRoute } from '../../../../main/AwxRoutes';
-import type { TemplateLaunch } from '../TemplateLaunchWizard';
-import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
-import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import { Survey } from '../../../../interfaces/Survey';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../interfaces/Inventory';
+import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import { Survey } from '../../../../interfaces/Survey';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import type { TemplateLaunch } from '../TemplateLaunchWizard';
 import { ConditionalField } from './ConditionalField';
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
@@ -89,8 +89,6 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   if (survey) {
     extraVarDetails = processSurvey(prompt?.extra_vars ?? '', survey, surveyConfig ?? null);
   }
-
-  <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />;
 
   const verbosityString = useVerbosityString(prompt?.verbosity);
 
