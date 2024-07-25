@@ -205,7 +205,7 @@ export function Users() {
     <PageLayout>
       <PageHeader
         title={t('Users')}
-        titleHelpTitle={t('User')}
+        titleHelpTitle={t('Users')}
         titleHelp={t(
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }

@@ -27,11 +27,11 @@ export function ManagementJobs() {
       <PageHeader
         title={t('Management Jobs')}
         description={t(
-          'Management Jobs assist in the cleaning of old data including system tracking information, tokens, job histories, and activity streams.'
+          'Management jobs assist in the cleaning of old data including system tracking information, tokens, job histories, and activity streams.'
         )}
         titleHelpTitle={t('Management Jobs')}
         titleHelp={t(
-          'Management Jobs assist in the cleaning of old data including system tracking information, tokens, job histories, and activity streams.'
+          'Management jobs assist in the cleaning of old data including system tracking information, tokens, job histories, and activity streams.'
         )}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/management_jobs.html`}
       />

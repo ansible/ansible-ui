@@ -96,7 +96,7 @@ export function Inventories() {
     <PageLayout>
       <PageHeader
         title={t('Inventories')}
-        titleHelpTitle={t('Inventory')}
+        titleHelpTitle={t('Inventories')}
         titleHelp={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}

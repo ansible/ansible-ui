@@ -33,21 +33,21 @@ export function Teams() {
     <PageLayout>
       <PageHeader
         title={t('Teams')}
-        titleHelpTitle={t('Team')}
+        titleHelpTitle={t('Teams')}
         titleHelp={[
           t(
-            'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+            'A team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
           ),
           t(
             'Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations.'
           ),
           t(
-            'For instance, permissions may be granted to a whole Team rather than each user on the Team.'
+            'For instance, permissions may be granted to a whole team rather than each user on the team.'
           ),
         ]}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/teams.html`}
         description={t(
-          'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+          'A team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}
         headerActions={<ActivityStreamIcon type={'team'} />}
       />
