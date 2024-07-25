@@ -14,10 +14,7 @@ import { randomE2Ename } from '../../../support/utils';
 describe('Workflow Approvals Tests', () => {
   let organization: Organization;
   let project: Project;
-  let user: AwxUser;
   let userWFApprove: AwxUser;
-  let userWFDeny: AwxUser;
-  let userWFCancel: AwxUser;
   let inventory: Inventory;
   let jobTemplate: JobTemplate;
   let workflowJobTemplate: WorkflowJobTemplate;
@@ -25,7 +22,7 @@ describe('Workflow Approvals Tests', () => {
   let approvalWFNode: WorkflowNode;
   let jobName = '';
 
-  beforeEach(function () {
+  before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
 
@@ -35,18 +32,8 @@ describe('Workflow Approvals Tests', () => {
         'https://github.com/ansible/test-playbooks'
       ).then((proj) => {
         project = proj;
-
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          user = u;
-        });
         cy.createAwxUser({ organization: organization.id }).then((u) => {
           userWFApprove = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFDeny = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFCancel = u;
         });
         cy.createAwxInventory(organization)
           .then((i) => {
@@ -68,22 +55,18 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  afterEach(() => {
+  after(() => {
     cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxUser(userWFApprove, { failOnStatusCode: false });
-    cy.deleteAwxUser(userWFCancel, { failOnStatusCode: false });
-    cy.deleteAwxUser(userWFDeny, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   describe('Workflow Approvals - Approve, Deny, Delete', () => {
     it('admin can approve and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-APPROVE-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -138,7 +121,6 @@ describe('Workflow Approvals Tests', () => {
                           .then((response) => {
                             expect(response?.statusCode).to.eql(204);
                           });
-                        cy.reload();
                         cy.getByDataCy('status-column-cell').should('have.text', 'Approved');
                         cy.intercept(
                           'DELETE',
@@ -169,8 +151,6 @@ describe('Workflow Approvals Tests', () => {
     it('admin can deny and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-DENY-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -214,7 +194,6 @@ describe('Workflow Approvals Tests', () => {
                         .then((response) => {
                           expect(response?.statusCode).to.eql(204);
                         });
-                      cy.reload();
                       cy.getByDataCy('status-column-cell').should('have.text', 'Denied');
                       cy.intercept(
                         'DELETE',
@@ -243,8 +222,6 @@ describe('Workflow Approvals Tests', () => {
     it('admin can cancel and then delete a workflow approval from the list row item', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-CANCEL-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -286,7 +263,6 @@ describe('Workflow Approvals Tests', () => {
                         .then((response) => {
                           expect(response?.statusCode).to.eql(202);
                         });
-                      cy.reload();
                       cy.getByDataCy('status-column-cell').should('have.text', 'Canceled');
                       cy.intercept(
                         'DELETE',
@@ -314,11 +290,9 @@ describe('Workflow Approvals Tests', () => {
   });
 
   describe('Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete', () => {
-    it(`can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk approve, then bulk delete from list toolbar`, () => {
+    it('can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk approve, then bulk delete from list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-BULK APPROVE-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -340,8 +314,6 @@ describe('Workflow Approvals Tests', () => {
     it('can enable concurrent jobs in a WFJT with a WF approval node, launch multiple jobs, bulk deny, then bulk delete from list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-BULK DENY-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -392,6 +364,7 @@ describe('Workflow Approvals Tests', () => {
       'POST',
       awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
     ).as('launched');
+    cy.verifyPageTitle(workflowJobTemplate.name);
     cy.getByDataCy('launch-template').click();
     cy.wait('@launched')
       .its('response.body')
@@ -456,10 +429,8 @@ describe('Workflow Approvals Tests', () => {
   function deleteApprovalFromListToolbar() {
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.getByDataCy('select-all').click();
-    cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-      cy.getByDataCy('actions-dropdown').click();
-    });
-    cy.getByDataCy('delete').click();
+    cy.clickToolbarKebabAction('delete');
+
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
@@ -474,8 +445,6 @@ describe('Workflow Approvals Tests', () => {
     it('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-USER APPROVE-' + randomString(4),
-        organization: organization.id,
-        inventory: inventory.id,
       }).then((wfjt) => {
         workflowJobTemplate = wfjt;
         cy.createAwxWorkflowVisualizerJobTemplateNode(workflowJobTemplate, jobTemplate).then(
@@ -555,10 +524,7 @@ describe('Workflow Approvals Tests', () => {
                         cy.getByDataCy('status-column-cell').should('contain', 'Approve');
                         cy.getByDataCy('checkbox-column-cell').click();
                       });
-                      cy.get('[data-ouia-component-id="page-toolbar"]').within(() => {
-                        cy.getByDataCy('actions-dropdown').click();
-                      });
-                      cy.get('[data-cy="delete"]').click();
+                      cy.clickToolbarKebabAction('delete');
                       cy.getModal().within(() => {
                         cy.get('[data-cy="alert-toaster"]').should(
                           'contain',
