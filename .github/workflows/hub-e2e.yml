@@ -69,6 +69,9 @@ jobs:
     runs-on: ubuntu-latest
     # timeout-minutes: 20
     needs: hub-ui-image
+    concurrency: 
+      group: HUB-E2E-${{ matrix.containers }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:

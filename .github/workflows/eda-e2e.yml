@@ -67,10 +67,13 @@ jobs:
     runs-on: ubuntu-latest
     # timeout-minutes: 15
     needs: eda-ui-image
+    concurrency: 
+      group: EDA-E2E-${{ matrix.containers }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        containers: [1,2]
     steps:
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
