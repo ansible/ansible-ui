@@ -13,23 +13,30 @@ describe('Workflow Job Templates Tests', () => {
   let organization: Organization;
   let inventory: Inventory;
   let label: Label;
-
-  beforeEach(() => {
-    cy.createAwxOrganization().then((o) => {
-      organization = o;
-      cy.createAwxInventory(organization).then((i) => {
-        inventory = i;
-      });
-      cy.createAwxLabel({ organization: organization.id }).then((l) => {
-        label = l;
-      });
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
+      organization = org;
     });
+  });
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+  });
+  beforeEach(() => {
+    // cy.createAwxOrganization().then((o) => {
+    //   organization = o;
+    cy.createAwxInventory(organization).then((i) => {
+      inventory = i;
+    });
+    cy.createAwxLabel({ organization: organization.id }).then((l) => {
+      label = l;
+    });
+    // });
   });
 
   afterEach(() => {
     cy.deleteAwxLabel(label, { failOnStatusCode: false });
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    // cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   describe('Workflow Job Templates: Create', function () {
@@ -117,14 +124,14 @@ describe('Workflow Job Templates Tests', () => {
 
   describe('Workflow Job Templates: Edit', function () {
     let workflowJobTemplate: WorkflowJobTemplate;
-    let newOrganization: Organization;
+    // let newOrganization: Organization;
     let inventory: Inventory;
     let tokenCredential: Credential;
 
     beforeEach(function () {
-      cy.createAwxOrganization().then((orgA) => {
-        newOrganization = orgA;
-      });
+      // cy.createAwxOrganization().then((orgA) => {
+      //   newOrganization = orgA;
+      // });
       cy.createAwxInventory(organization).then((i) => {
         inventory = i;
 
@@ -140,7 +147,7 @@ describe('Workflow Job Templates Tests', () => {
     afterEach(function () {
       cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(newOrganization, { failOnStatusCode: false });
+      // cy.deleteAwxOrganization(newOrganization, { failOnStatusCode: false });
     });
 
     it('can edit a workflow job template from the details view', () => {
@@ -153,7 +160,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.clickLink('Edit template');
       cy.get('[data-cy="name"]').clear().type(newName);
       cy.get('[data-cy="description"]').type('this is a new description');
-      cy.singleSelectByDataCy('organization', newOrganization.name);
+      cy.singleSelectByDataCy('organization', organization.name);
       cy.clickButton(/^Save workflow job template$/);
       cy.verifyPageTitle(newName);
       cy.getByDataCy('name').should('contain', newName);
@@ -266,7 +273,7 @@ describe('Workflow Job Templates Tests', () => {
       });
       cy.get('[data-cy="name"]').clear().type(newName);
       cy.get('[data-cy="description"]').type('this is a new description');
-      cy.singleSelectByDataCy('organization', newOrganization.name);
+      cy.singleSelectByDataCy('organization', organization.name);
       cy.clickButton(/^Save workflow job template$/);
       cy.verifyPageTitle(newName);
       cy.getByDataCy('name').should('contain', newName);
@@ -696,30 +703,30 @@ describe('Workflow Job Templates Tests', () => {
   }
 
   describe('Schedules - Create schedule of resource type Workflow job template', () => {
-    let organization: Organization;
+    // let organization: Organization;
     let inventory: Inventory;
     let workflowTemplate: WorkflowJobTemplate;
 
     beforeEach(() => {
-      cy.createAwxOrganization().then((o) => {
-        organization = o;
-        cy.createAwxInventory(organization).then((i) => {
-          inventory = i;
-          cy.createAwxWorkflowJobTemplate({
-            name: 'E2E Workflow Job Template ' + randomString(4),
-            organization: organization.id,
-            inventory: inventory.id,
-          }).then((wfjt) => {
-            workflowTemplate = wfjt;
-          });
+      // cy.createAwxOrganization().then((o) => {
+      //   organization = o;
+      cy.createAwxInventory(organization).then((i) => {
+        inventory = i;
+        cy.createAwxWorkflowJobTemplate({
+          name: 'E2E Workflow Job Template ' + randomString(4),
+          organization: organization.id,
+          inventory: inventory.id,
+        }).then((wfjt) => {
+          workflowTemplate = wfjt;
         });
+        // });
       });
     });
 
     afterEach(() => {
       cy.deleteAwxWorkflowJobTemplate(workflowTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+      // cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
     it('can create a simple schedule of resource type Workflow job template, then delete the schedule', () => {

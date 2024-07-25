@@ -27,7 +27,7 @@ describe('Notifications', () => {
 
     it('can edit a Notification on its details page and assert the edited info', () => {
       cy.navigateTo('awx', 'notification-templates');
-      testNotification('Email', { details: true, skipMessages: true });
+      testNotification('Email', awxOrganization, { details: true, skipMessages: true });
     });
 
     it('can test the Notification on its details page and assert that the test completed', () => {

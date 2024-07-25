@@ -17,39 +17,39 @@ describe('Notifications: List View', () => {
   });
 
   it('can create, edit a new Email Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Email');
+    testNotification('Email', organization);
   });
 
   it('can create a new Grafana Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Grafana');
+    testNotification('Grafana', organization);
   });
 
   it('can create, edit a new IRC Notification in the AAP UI, assert the info in the list view, and delete the notification', () => {
-    testNotification('IRC');
+    testNotification('IRC', organization);
   });
 
   it('can create, edit a new Mattermost Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Mattermost');
+    testNotification('Mattermost', organization);
   });
 
   it('can create, edit a new Pagerduty Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Pagerduty');
+    testNotification('Pagerduty', organization);
   });
 
   it('can create, edit a new Rocket.Chat Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Rocket.Chat');
+    testNotification('Rocket.Chat', organization);
   });
 
   it('can create, edit a new Slack Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Slack');
+    testNotification('Slack', organization);
   });
 
   it('can create, edit a new Twilio Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Twilio');
+    testNotification('Twilio', organization);
   });
 
   it('can create, edit a new Webhook Notification, assert the info in the list view, and delete the notification', () => {
-    testNotification('Webhook');
+    testNotification('Webhook', organization);
   });
 
   /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */

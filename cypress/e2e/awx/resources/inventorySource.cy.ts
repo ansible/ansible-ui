@@ -16,18 +16,25 @@ describe('Inventory Sources', () => {
   let inventory: Inventory;
   let inventorySource: InventorySource;
   let organization: Organization;
-
-  beforeEach(function () {
-    cy.createAwxOrganization().then(function (org) {
+  before(() => {
+    cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAwxInventory(organization).then((inv) => {
-        inventory = inv;
-        cy.createAwxProject(organization).then((proj) => {
-          project = proj;
-          cy.createAwxInventorySource(inv, project).then((invSrc) => {
-            inventorySource = invSrc;
-          });
+    });
+  });
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+  });
+  beforeEach(function () {
+    // cy.createAwxOrganization().then(function (org) {
+    //   organization = org;
+    cy.createAwxInventory(organization).then((inv) => {
+      inventory = inv;
+      cy.createAwxProject(organization).then((proj) => {
+        project = proj;
+        cy.createAwxInventorySource(inv, project).then((invSrc) => {
+          inventorySource = invSrc;
         });
+        // });
       });
     });
   });

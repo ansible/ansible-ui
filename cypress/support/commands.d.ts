@@ -683,10 +683,7 @@ declare global {
 
       /** Creates a credential in AWX */
       createAWXCredential(
-        credential: SetRequired<
-          Partial<Omit<Credential, 'id'>>,
-          'organization' | 'kind' | 'credential_type'
-        >
+        credential: SetRequired<Partial<Omit<Credential, 'id'>>, 'kind' | 'credential_type'>
       ): Chainable<Credential>;
       /** Creates a credential type in AWX */
       createAwxCredentialType(): Chainable<CredentialType>;

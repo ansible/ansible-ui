@@ -552,14 +552,14 @@ Cypress.Commands.add('clickPageAction', (dataCy: string) => {
 
 Cypress.Commands.add(
   'createAWXCredential',
-  (credential: SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>) => {
-    cy.requestPost<
-      SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>,
-      Credential
-    >(awxAPI`/credentials/`, {
-      name: 'E2E Credential ' + randomString(4),
-      ...credential,
-    });
+  (credential: SetRequired<Partial<Credential>, 'kind' | 'credential_type'>) => {
+    cy.requestPost<SetRequired<Partial<Credential>, 'kind' | 'credential_type'>, Credential>(
+      awxAPI`/credentials/`,
+      {
+        name: 'E2E Credential ' + randomString(4),
+        ...credential,
+      }
+    );
   }
 );
 

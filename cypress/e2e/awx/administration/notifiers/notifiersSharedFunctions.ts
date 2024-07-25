@@ -3,59 +3,61 @@ import { AwxItemsResponse } from '../../../../../frontend/awx/common/AwxItemsRes
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Notification } from '../../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { randomE2Ename } from '../../../../support/utils';
+import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 
 export function testNotification(
   type: string,
+  organization: Organization,
   options?: { details?: boolean; skipMessages?: boolean }
 ) {
   const notificationName = randomE2Ename();
-  const orgName = randomE2Ename();
-  cy.createAwxOrganization({ name: orgName }).then(() => {
-    cy.navigateTo('awx', 'notification-templates');
-    cy.get(`[data-cy="add-notifier"]`).click();
-    cy.verifyPageTitle('Add notifier');
+  // const orgName = randomE2Ename();
+  // cy.createAwxOrganization({ name: orgName }).then(() => {
+  cy.navigateTo('awx', 'notification-templates');
+  cy.get(`[data-cy="add-notifier"]`).click();
+  cy.verifyPageTitle('Add notifier');
 
-    fillBasicData(notificationName, type);
-    fillNotificationType(type);
-    selectOrganization(orgName);
-    verifyDefaultsMessages(type);
+  fillBasicData(notificationName, type);
+  fillNotificationType(type);
+  selectOrganization(organization.name);
+  verifyDefaultsMessages(type);
 
-    cy.get(`[data-cy="Submit"]`).click();
+  cy.get(`[data-cy="Submit"]`).click();
 
-    // test detail
-    testBasicData(notificationName, type, orgName);
-    testNotificationType(type);
+  // test detail
+  testBasicData(notificationName, type, organization.name);
+  testNotificationType(type);
 
-    // test edit
-    if (options?.details === true) {
-      cy.getByDataCy(`edit-notifier`).click();
-    } else {
-      // if not in detail, we go back to list and click edit there
-      cy.getByDataCy('back-to notifiers').click();
-      cy.filterTableByMultiSelect('name', [notificationName]);
-      cy.contains(notificationName);
-      cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
-      cy.getByDataCy(`edit-notifier`).click();
-    }
+  // test edit
+  if (options?.details === true) {
+    cy.getByDataCy(`edit-notifier`).click();
+  } else {
+    // if not in detail, we go back to list and click edit there
+    cy.getByDataCy('back-to notifiers').click();
+    cy.filterTableByMultiSelect('name', [notificationName]);
+    cy.contains(notificationName);
+    cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
+    cy.getByDataCy(`edit-notifier`).click();
+  }
 
-    const name2 = randomE2Ename();
-    editBasicData(name2);
-    editNotificationType(type);
+  const name2 = randomE2Ename();
+  editBasicData(name2);
+  editNotificationType(type);
 
-    if (!options?.skipMessages) {
-      editCustomMessages(type);
-    }
-    cy.get(`[data-cy="Submit"]`).click();
+  if (!options?.skipMessages) {
+    editCustomMessages(type);
+  }
+  cy.get(`[data-cy="Submit"]`).click();
 
-    testBasicDataEdited(name2, orgName);
-    testNotificationTypeEdited(type);
+  testBasicDataEdited(name2, organization.name);
+  testNotificationTypeEdited(type);
 
-    if (!options?.skipMessages) {
-      verifyEditedMessages(type);
-    }
+  if (!options?.skipMessages) {
+    verifyEditedMessages(type);
+  }
 
-    testDelete(name2, options);
-  });
+  testDelete(name2, options);
+  // });
 }
 
 export function testDelete(name: string, options?: { details?: boolean }) {

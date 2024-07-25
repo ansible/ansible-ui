@@ -16,21 +16,26 @@ describe('Inventory Groups', () => {
   function generateGroupName(): string {
     return `test-${testSignature}-inventory-group-${randomString(5, undefined, { isLowercase: true })}`;
   }
-
-  beforeEach(() => {
+  before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: organization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential = cred;
-      });
-      cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
-        executionEnvironment = ee;
-      });
     });
+  });
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+  });
+  beforeEach(() => {
+    cy.createAWXCredential({
+      kind: 'machine',
+      organization: organization.id,
+      credential_type: 1,
+    }).then((cred) => {
+      machineCredential = cred;
+    });
+    cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {
+      executionEnvironment = ee;
+    });
+    // });
   });
 
   afterEach(() => {

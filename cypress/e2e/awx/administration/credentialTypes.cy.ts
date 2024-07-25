@@ -16,30 +16,30 @@ describe('Credential Types', () => {
     const credentialName = 'E2E Custom Credential ' + randomString(4);
 
     beforeEach(function () {
-      cy.createAwxOrganization().then((org) => {
-        awxOrganization = org;
+      // cy.createAwxOrganization().then((org) => {
+      //   awxOrganization = org;
 
-        cy.createAwxCredentialType().then((credentialType: CredentialType) => {
-          credType1 = credentialType;
+      cy.createAwxCredentialType().then((credentialType: CredentialType) => {
+        credType1 = credentialType;
 
-          cy.createAWXCredential({
-            name: credentialName,
-            kind: 'gce',
-            organization: awxOrganization.id,
-            credential_type: credType1.id,
-          }).then((cred) => {
-            credential = cred;
-          });
-        });
-
-        cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
-          inputCredType = JSON.stringify(credentialType);
-        });
-
-        cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
-          injectorCredType = JSON.stringify(credentialType);
+        cy.createAWXCredential({
+          name: credentialName,
+          kind: 'gce',
+          // organization: awxOrganization.id,
+          credential_type: credType1.id,
+        }).then((cred) => {
+          credential = cred;
         });
       });
+
+      cy.fixture('credTypes-input-config').then((credentialType: CredentialType) => {
+        inputCredType = JSON.stringify(credentialType);
+      });
+
+      cy.fixture('credTypes-injector-config').then((credentialType: CredentialType) => {
+        injectorCredType = JSON.stringify(credentialType);
+      });
+      // });
     });
 
     afterEach(() => {

@@ -4,23 +4,32 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Users List Actions', () => {
   let organization: Organization;
   let user: AwxUser;
-
-  beforeEach(() => {
-    cy.createAwxOrganization().then((org) => {
+  before(() => {
+    const orgName = randomE2Ename();
+    cy.createAwxOrganization({ name: orgName }).then((org) => {
       organization = org;
-      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-        user = testUser;
-      });
     });
+  });
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+  });
+  beforeEach(() => {
+    // cy.createAwxOrganization().then((org) => {
+    //   organization = org;
+    cy.createAwxUser({ organization: organization.id }).then((testUser) => {
+      user = testUser;
+    });
+    // });
   });
 
   afterEach(() => {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    // cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('renders the users list page', () => {

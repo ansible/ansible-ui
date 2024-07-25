@@ -24,48 +24,56 @@ describe('Workflow Approvals Tests', () => {
   let jobTemplateNode: WorkflowNode;
   let approvalWFNode: WorkflowNode;
   let jobName = '';
-
-  beforeEach(function () {
-    cy.createAwxOrganization().then((org) => {
+  before(() => {
+    const orgName = randomE2Ename();
+    cy.createAwxOrganization({ name: orgName }).then((org) => {
       organization = org;
-
-      cy.createAwxProject(
-        organization,
-        { name: randomE2Ename() },
-        'https://github.com/ansible/test-playbooks'
-      ).then((proj) => {
-        project = proj;
-
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          user = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFApprove = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFDeny = u;
-        });
-        cy.createAwxUser({ organization: organization.id }).then((u) => {
-          userWFCancel = u;
-        });
-        cy.createAwxInventory(organization)
-          .then((i) => {
-            inventory = i;
-          })
-          .then(() => {
-            cy.createAwxJobTemplate(
-              {
-                organization: organization.id,
-                project: project.id,
-                inventory: inventory.id,
-              },
-              'hello world.yml'
-            ).then((jt) => {
-              jobTemplate = jt;
-            });
-          });
-      });
     });
+  });
+  after(() => {
+    cy.deleteAwxOrganization(organization);
+  });
+  beforeEach(function () {
+    // cy.createAwxOrganization().then((org) => {
+    //   organization = org;
+
+    cy.createAwxProject(
+      organization,
+      { name: randomE2Ename() },
+      'https://github.com/ansible/test-playbooks'
+    ).then((proj) => {
+      project = proj;
+
+      cy.createAwxUser({ organization: organization.id }).then((u) => {
+        user = u;
+      });
+      cy.createAwxUser({ organization: organization.id }).then((u) => {
+        userWFApprove = u;
+      });
+      cy.createAwxUser({ organization: organization.id }).then((u) => {
+        userWFDeny = u;
+      });
+      cy.createAwxUser({ organization: organization.id }).then((u) => {
+        userWFCancel = u;
+      });
+      cy.createAwxInventory(organization)
+        .then((i) => {
+          inventory = i;
+        })
+        .then(() => {
+          cy.createAwxJobTemplate(
+            {
+              organization: organization.id,
+              project: project.id,
+              inventory: inventory.id,
+            },
+            'hello world.yml'
+          ).then((jt) => {
+            jobTemplate = jt;
+          });
+        });
+    });
+    // });
   });
 
   afterEach(() => {
@@ -361,7 +369,7 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  /* 
+  /*
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function editWorkflowJobTemplate() {
@@ -384,7 +392,7 @@ describe('Workflow Approvals Tests', () => {
       });
   }
 
-  /* 
+  /*
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function workflowApprovalBulkAction(selectorDataCy: 'approve' | 'deny') {
@@ -450,7 +458,7 @@ describe('Workflow Approvals Tests', () => {
       });
   }
 
-  /* 
+  /*
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function deleteApprovalFromListToolbar() {
