@@ -10,7 +10,6 @@ baseConfig.e2e!.specPattern = [
   'cypress/e2e/resource_cleanup_downstream/*.cy.ts',
 ];
 baseConfig.e2e!.excludeSpecPattern = [
-  'cypress/e2e/awx/resources/inventorySource.cy.ts',
   'cypress/e2e/awx/access/*.cy.ts',
   'cypress/e2e/awx/administration/applications.cy.ts',
   'cypress/e2e/awx/administration/settings.cy.ts',
