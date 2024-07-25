@@ -13,6 +13,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   const invToDelete: Inventory[] = [];
   const constrInvToDelete: Inventory[] = [];
   const invToCreate: number = 3;
+  let newInventory: Inventory;
 
   before(() => {
     cy.login();
@@ -21,6 +22,10 @@ describe('Constructed Inventories CRUD Tests', () => {
       organization = org;
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;
+      });
+      cy.createInventoryHost(organization, 'constructed').then((result) => {
+        const { inventory: inv } = result;
+        newInventory = inv;
       });
     });
   });
@@ -158,14 +163,49 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
-    //Create a constructed inventory in the beforeEach hook
+  it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+    //Run a sync and assert failure of the job
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableBySingleSelect('name', newInventory.name);
+    cy.clickTableRowLink('name', newInventory.name, { disableFilter: true });
+
     //Assert the original details of the inventory
+    cy.verifyPageTitle(newInventory.name);
+    cy.getByDataCy('organization').contains(organization.name);
+
     //Assert the user navigating to the edit constructed inventory form
+    cy.getByDataCy('edit-inventory').click();
+    cy.verifyPageTitle('Edit Constructed Inventory');
+
+    cy.getByDataCy('toggle-json').click();
     //Assert the change to the strict setting
     //Add bad variables
-    //Assert the edited changes of the inventory
-    //Run a sync and assert failure of the job
+    cy.get('[data-cy="source-vars"]').type(
+      `{{}    
+      "plugin": "constructed",
+      "strict": true,
+      "groups": {
+      "is_shutdown": "state | default('running') == 'shutdown'",
+      "product_dev": "account_alias == 'product_dev'"
+      }}`
+    );
+    cy.clickButton(/^Save inventory$/);
+    cy.verifyPageTitle('Edit Constructed Inventory');
+
+    cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
+    cy.clickButton(/^Sync inventory$/);
+    cy.wait('@syncInventory')
+      .then((response) => {
+        expect(response.response?.statusCode).to.be.equal(202);
+      })
+      .its('response.body.id')
+      .then(() => {
+        cy.verifyPageTitle(newInventory.name);
+        //Run a sync and assert failure of the job
+        cy.getByDataCy('last-job-status').contains('Failed');
+        cy.getByDataCy('last-job-status').click();
+        cy.contains('Failed');
+      });
   });
 });
 
