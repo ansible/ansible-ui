@@ -181,7 +181,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.verifyPageTitle('Edit Constructed Inventory');
 
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
-    cy.clickButton(/^Sync inventory$/);
+    cy.clickButton('Sync inventory');
     cy.wait('@syncInventory')
       .then((response) => {
         expect(response.response?.statusCode).to.be.equal(202);
