@@ -408,7 +408,7 @@ export function RuleForm(props: {
           {t('Discard')}
         </Button>
       </ActionGroup>
-      {error && <AwxError error={{ message: error }} />}
+      {error && <AwxError error={{ name: '', message: error }} />}
     </PageFormSection>
   );
 }
