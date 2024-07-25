@@ -1,5 +1,4 @@
-import { Trans } from 'react-i18next';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ansibleDocUrls } from '../../../main/ansibleDocsUrls';
 
@@ -40,7 +39,7 @@ export function LabelHelp(props: { inventoryKind: string }) {
       <br />
       <Trans>
         View JSON examples at{' '}
-        <Link to="http://www.json.org" target="_blank" rel="noopener noreferrer">
+        <Link to="https://www.json.org" target="_blank" rel="noopener noreferrer">
           www.json.org
         </Link>
       </Trans>
@@ -48,7 +47,7 @@ export function LabelHelp(props: { inventoryKind: string }) {
       <Trans>
         View YAML examples at{' '}
         <Link
-          to="http://docs.ansible.com/YAMLSyntax.html"
+          to="https://docs.ansible.com/YAMLSyntax.html"
           target="_blank"
           rel="noopener noreferrer"
         >
