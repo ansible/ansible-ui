@@ -1,6 +1,6 @@
 import { Config } from '../../interfaces/Config';
 
-export interface docPathDictionary {
+export interface DocPathDictionary {
   credentialTypes: string;
   credentials: string;
   organizations: string;
@@ -30,7 +30,7 @@ export interface docPathDictionary {
 
 export function getDocsBaseUrl(
   config: Config | null | undefined,
-  doc: keyof docPathDictionary
+  doc: keyof DocPathDictionary
 ): string {
   const version = config?.platformVersion || '2.5';
   const licenseType = config?.license_info?.license_type;
@@ -41,7 +41,7 @@ export function getDocsBaseUrl(
   }
 }
 
-const upstreamPaths: docPathDictionary = {
+const upstreamPaths: DocPathDictionary = {
   credentialTypes: 'userguide/credential_types.html',
   credentials: 'userguide/credentials.html',
   organizations: 'userguide/organizations.html',
@@ -70,7 +70,7 @@ const upstreamPaths: docPathDictionary = {
   schedules: 'userguide/scheduling.html',
 };
 
-const downstreamPaths: docPathDictionary = {
+const downstreamPaths: DocPathDictionary = {
   credentialTypes: 'automation_controller_user_guide/assembly-controller-custom-credentials',
   credentials: 'automation_controller_user_guide/controller-credentials',
   organizations: 'automation_controller_user_guide/assembly-controller-organizations',
