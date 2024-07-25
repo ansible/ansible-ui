@@ -81,6 +81,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       .document()
       .its('body')
       .find('.pf-v5-c-menu__content')
+      .should('have.length', 1)
       .within(() => {
         cy.getByDataCy('search-input').within(() => {
           cy.get('input').clear().type(invNames[0]);
