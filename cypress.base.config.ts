@@ -58,6 +58,18 @@ export const baseConfig: Cypress.ConfigOptions = {
             },
           ],
         },
+        optimization: {
+          splitChunks: {
+            cacheGroups: {
+              vendors: {
+                name: 'vendors',
+                test: /[\\/]node_modules[\\/]/,
+                chunks: 'all',
+                enforce: true,
+              },
+            },
+          },
+        },
         plugins: [
           new DefinePlugin({
             'process.env.AWX_API_PREFIX': JSON.stringify(env.AWX_API_PREFIX),

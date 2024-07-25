@@ -15,12 +15,8 @@ describe('TeamPage', () => {
     cy.contains('button', 'Edit team').should('have.attr', 'aria-disabled', 'false');
   });
   it('Delete button is visible but disabled due to lack of permissions to delete', () => {
-    cy.get('button[aria-label="Actions"]').click();
-    cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete team').should(
-      'have.attr',
-      'aria-disabled',
-      'true'
-    );
+    cy.getByDataCy('actions-dropdown').click();
+    cy.contains('#delete-team', /^Delete team$/).should('have.attr', 'aria-disabled', 'true');
   });
   it('Displays tabs for Details, Access and Roles', () => {
     cy.get('.pf-v5-c-tabs__item').should('have.length', 4);

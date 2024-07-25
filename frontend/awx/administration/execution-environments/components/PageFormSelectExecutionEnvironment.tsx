@@ -38,10 +38,10 @@ export function PageFormSelectExecutionEnvironment<
     <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>
       name={props.name}
       id="executionEnvironment"
-      label={props.label ?? t('ExecutionEnvironment')}
-      placeholder={t('Select executionEnvironment')}
-      queryPlaceholder={t('Loading executionEnvironments...')}
-      queryErrorText={t('Error loading executionEnvironments')}
+      label={props.label ?? t('Execution Environment')}
+      placeholder={t('Select execution environment')}
+      queryPlaceholder={t('Loading execution environments...')}
+      queryErrorText={t('Error loading execution environments')}
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
@@ -95,7 +95,7 @@ export function PageFormExecutionEnvironmentSelect<
       label={props.label ?? t('Execution environment')}
       name={name}
       id="execution-environment-select"
-      placeholder={placeholder ?? t('Create execution environment')}
+      placeholder={placeholder ?? t('Select execution environment')}
       labelHelpTitle={t('Execution environment')}
       labelHelp={t('The container image to be used for execution.')}
       selectTitle={t('Select an execution environment')}

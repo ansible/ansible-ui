@@ -12,8 +12,8 @@ import { RulesList } from '../components/RulesList';
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
   job: AwxRoute.JobTemplateDetails,
-  project_update: AwxRoute.ProjectDetails,
-  system_job: AwxRoute.ManagementJobSchedules,
+  project: AwxRoute.ProjectDetails,
+  management_job_template: AwxRoute.ManagementJobSchedules,
   workflow_approval: AwxRoute.WorkflowApprovalDetails,
   workflow_job: AwxRoute.WorkflowJobTemplateDetails,
 };
@@ -38,8 +38,10 @@ export function ScheduleReviewStep() {
     rules,
   } = wizardData;
 
-  const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
-  const resourceTypeDetail = useGetNodeTypeDetail(schedule_type);
+  const hasPromptDetails = Boolean(
+    visibleSteps.find((step) => step.id === 'promptStep' || step.id === 'survey')
+  );
+  const resourceTypeDetail = useGetScheduleTypeDetail(schedule_type);
 
   let resourceDetailsLink = getPageUrl(ResourceLink[schedule_type], {
     params: { id: resource?.id },
@@ -83,7 +85,7 @@ export function ScheduleReviewStep() {
         <PageDetails numberOfColumns={'two'} disablePadding>
           <PageDetail label={t('Resource type')}>{resourceTypeDetail}</PageDetail>
           <PageDetail label={t('Resource')}>
-            <Link to={resourceDetailsLink}>{name}</Link>
+            <Link to={resourceDetailsLink}>{resource?.name}</Link>
           </PageDetail>
           <PageDetail label={t('Name')}>{name}</PageDetail>
           <PageDetail label={t('Description')}>{description}</PageDetail>
@@ -103,16 +105,17 @@ export function ScheduleReviewStep() {
     </>
   );
 }
-
-function useGetNodeTypeDetail(type: string) {
+function useGetScheduleTypeDetail(type: string) {
   const { t } = useTranslation();
   const typeMapping: { [key: string]: string } = {
     job: t('Job Template'),
+    job_template: t('Job Template'),
     workflow_job: t('Workflow Job Template'),
+    workflow_job_template: t('Workflow Job Template'),
     project_update: t('Project Update'),
     inventory_update: t('Inventory Update'),
-    workflow_approval: t('Workflow Approval'),
     system_job: t('Management Job'),
+    management_job_template: t('Management Job'),
   };
   return typeMapping[type];
 }

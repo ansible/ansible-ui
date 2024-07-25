@@ -4,10 +4,12 @@ describe('AWX Settings', () => {
   it('should be able to change user preferences', () => {
     cy.navigateTo('awx', 'settings-preferences');
     cy.verifyPageTitle('User Preferences');
+    cy.clickButton(/^Edit$/);
     cy.singleSelectBy('#tablelayout', 'Compact');
     cy.getByDataCy('Submit').click();
     cy.navigateTo('awx', 'settings-preferences');
     cy.get('#tablelayout').should('contain', 'Compact');
+    cy.clickButton(/^Edit$/);
     cy.singleSelectBy('#tablelayout', 'Comfortable');
     cy.getByDataCy('Submit').click();
   });

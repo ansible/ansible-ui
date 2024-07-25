@@ -151,7 +151,7 @@ describe('TemplatesList', () => {
 
     it('Create Template button is disabled if the user does not have permission to create templates', () => {
       cy.mount(<TemplatesList />);
-      cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('be.disabled');
+      cy.contains('button', /^Create template$/).should('have.attr', 'aria-disabled', 'true');
     });
 
     it('Should render template create form for users with proper permissions', () => {
@@ -172,7 +172,7 @@ describe('TemplatesList', () => {
         },
       }));
       cy.mount(<TemplatesList />);
-      cy.contains('.pf-v5-c-dropdown__toggle', 'Create template').should('not.be.disabled');
+      cy.contains('button', /^Create template$/).should('not.be.disabled');
     });
 
     it('Delete Template button renders delete modal', () => {

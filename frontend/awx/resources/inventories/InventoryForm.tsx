@@ -41,7 +41,7 @@ import { valueToObject } from '../../../../framework';
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];
   labels: Label[];
-  inventories?: number[];
+  inventories?: Inventory[];
   inputInventories?: InputInventory[];
 };
 
@@ -169,7 +169,6 @@ export function EditInventory() {
   const iGroupsRequest = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/inventories/${id.toString()}/instance_groups/`
   );
-
   const inventory = inventoryRequest.data;
   const igResponse = iGroupsRequest.data;
 
@@ -272,7 +271,7 @@ export function EditInventory() {
         ? {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            inventories: inputInventoriesResponse?.results?.map((item) => item.id),
+            inventories: inputInventoriesResponse?.results as Inventory[],
           }
         : {
             ...inventory,
@@ -322,15 +321,19 @@ export function useInventoryFormDetailLabels() {
     limit: t(
       `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
     ),
+    prevent_instance_group_fallback: t(
+      `Prevent instance group fallback: If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.`
+    ),
+    input_inventories: t(
+      `Input Inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution`
+    ),
   };
 }
 
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
-
   const inventoryFormDetailLables = useInventoryFormDetailLabels();
-
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -431,9 +434,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
       {inventoryKind === '' && (
         <PageFormGroup
           label={t('Options')}
-          labelHelp={t(
-            'If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.'
-          )}
+          labelHelp={inventoryFormDetailLables.prevent_instance_group_fallback}
         >
           <PageFormCheckbox<InventoryCreate>
             label={t('Prevent instance group fallback')}
@@ -473,9 +474,9 @@ async function submitInstanceGroups(
   currentInstanceGroups: InstanceGroup[],
   originalInstanceGroups: InstanceGroup[]
 ) {
-  const { added, removed } = getAddedAndRemoved(
-    originalInstanceGroups ?? ([] as InstanceGroup[]),
-    currentInstanceGroups ?? ([] as InstanceGroup[])
+  const { added, removed } = getAddedAndRemoved<InstanceGroup>(
+    originalInstanceGroups,
+    currentInstanceGroups
   );
 
   if (added.length === 0 && removed.length === 0) {
@@ -503,46 +504,38 @@ async function submitInputInventories(
   currentInputInventories: InputInventory[],
   originalInputInventories: InputInventory[]
 ) {
-  const { added, removed } = getAddedAndRemoved(
-    originalInputInventories ?? ([] as InputInventory[]),
-    currentInputInventories ?? ([] as InputInventory[])
-  );
-
-  if (added.length === 0 && removed.length === 0) {
-    return;
-  }
-
-  const disassociationPromises = removed.map((item: { id: number }) =>
-    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+  for (const item of originalInputInventories) {
+    await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
       id: item.id,
       disassociate: true,
-    })
-  );
-  const associationPromises = added.map((item: { id: number }) =>
-    postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
-      id: item.id,
-    })
-  );
+    });
+  }
 
-  const results = await Promise.all([...disassociationPromises, ...associationPromises]);
-  return results;
+  for (const item of currentInputInventories) {
+    await postRequest(awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`, {
+      id: item.id,
+    });
+  }
 }
 
 type InputInventory = { id: number; url: string; type: string; name: string };
 
-async function loadInputInventories(inventories: number[], t: TFunction<'translation', undefined>) {
+async function loadInputInventories(
+  inventories: Inventory[],
+  t: TFunction<'translation', undefined>
+) {
   const promises: unknown[] = [];
   const inventoriesData: InputInventory[] = inventories.map((inv) => {
-    return { id: inv, url: '', type: '', name: '' };
+    return { id: inv.id, url: '', type: '', name: '' };
   });
 
-  inventories.forEach((id) => {
+  inventories.forEach((inventory) => {
     const promise = requestGet<AwxItemsResponse<Inventory>>(
-      awxAPI`/inventories/?id=${id.toString()}`
+      awxAPI`/inventories/?id=${inventory.id.toString()}`
     )
       .then((result: AwxItemsResponse<Inventory>) => {
         if (result.results.length > 0) {
-          const inv = inventoriesData.find((inv) => inv.id === id);
+          const inv = inventoriesData.find((inv) => inv.id === inventory.id);
           if (inv) {
             inv.url = result.results[0].url || '';
             inv.type = result.results[0].type || '';
@@ -550,7 +543,7 @@ async function loadInputInventories(inventories: number[], t: TFunction<'transla
         }
       })
       .catch(() => {
-        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id: id }));
+        throw new Error(t(`Error loading input inventory with id {{id}}.`, { id: inventory.id }));
       });
 
     promises.push(promise);
@@ -564,6 +557,8 @@ function PageFormMultiSelectInventories() {
   const filters = useInventoriesFilters();
   const columns = useInventoriesColumns();
   const { t } = useTranslation();
+  const labels = useInventoryFormDetailLabels();
+
   return (
     <PageFormMultiSelectAwxResource<Inventory>
       name={'inventories'}
@@ -573,11 +568,14 @@ function PageFormMultiSelectInventories() {
       queryPlaceholder={t('Loading inventories...')}
       queryErrorText={t('Error loading inventories')}
       isRequired={true}
-      labelHelp={t(`Select Input Inventories for the constructed inventory plugin.`)}
+      labelHelp={labels.input_inventories}
       url={awxAPI`/inventories/`}
       tableColumns={columns}
       toolbarFilters={filters}
       queryParams={{ kind: '' }}
+      compareOptionValues={(originalInv: Inventory, selectedInv: Inventory) =>
+        originalInv.id === selectedInv.id
+      }
     />
   );
 }

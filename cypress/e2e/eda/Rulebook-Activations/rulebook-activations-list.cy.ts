@@ -97,8 +97,9 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
 
   it('can delete a single Rulebook Activation from the line item on the list view', () => {
     cy.navigateTo('eda', 'rulebook-activations');
-    cy.edaRuleBookActivationCheckbox(edaRBA1.name).within(() => {
-      cy.clickPageAction('delete-rulebook-activation');
+    cy.clickTableRowAction('name', edaRBA1.name, 'delete-rulebook-activation', {
+      disableFilter: true,
+      inKebab: true,
     });
     cy.get('div[role="dialog"]').within(() => {
       cy.get('.pf-v5-c-check__label').should(
@@ -123,7 +124,7 @@ describe('EDA rulebook activations- Create, Edit, Delete', () => {
           cy.get('input[type=checkbox]').check();
         });
     });
-    cy.clickToolbarKebabAction('delete-activations');
+    cy.clickToolbarKebabAction('delete-rulebook-activations');
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA2.id.toString()}/`).as('rba2');
     cy.intercept('DELETE', edaAPI`/activations/${edaRBA3.id.toString()}/`).as('rba3');
     cy.clickModalConfirmCheckbox();

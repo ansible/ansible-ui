@@ -1,8 +1,8 @@
-import { randomE2Ename } from '../../../../support/utils';
 import { getDefaultMessages } from '../../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
 import { AwxItemsResponse } from '../../../../../frontend/awx/common/AwxItemsResponse';
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { Notification } from '../../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { randomE2Ename } from '../../../../support/utils';
 
 export function testNotification(
   type: string,
@@ -10,7 +10,7 @@ export function testNotification(
 ) {
   const notificationName = randomE2Ename();
   const orgName = randomE2Ename();
-  cy.createAwxOrganization(orgName).then(() => {
+  cy.createAwxOrganization({ name: orgName }).then(() => {
     cy.navigateTo('awx', 'notification-templates');
     cy.get(`[data-cy="add-notifier"]`).click();
     cy.verifyPageTitle('Add notifier');
@@ -92,7 +92,16 @@ export function testDelete(name: string, options?: { details?: boolean }) {
 export function selectOrganization(orgName: string) {
   cy.get(`[data-cy="organization"]`).click();
   cy.contains('button', 'Browse').click();
+
+  // sync dialog
+  cy.get(`[role="dialog"]`).within(() => {
+    cy.contains('button', 'Confirm');
+    cy.contains('button', 'Cancel');
+    cy.get(`[aria-label="Simple table"]`);
+  });
+
   cy.filterTableByMultiSelect('name', [orgName]);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
 
   cy.contains(`[aria-label="Simple table"]`, orgName);
   cy.get(`[aria-label="Select row 0"]`).click();

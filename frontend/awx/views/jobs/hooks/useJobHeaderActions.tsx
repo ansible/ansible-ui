@@ -50,7 +50,7 @@ export function useJobHeaderActions(onComplete: (jobs: UnifiedJob[]) => void) {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: DownloadIcon,
-        label: t(`Download Output`),
+        label: t(`Download output`),
         onClick: (job: UnifiedJob) => downloadJobOutput(job),
         ouiaId: 'job-detail-download-button',
         isHidden: (job: UnifiedJob) => !job.related.stdout,

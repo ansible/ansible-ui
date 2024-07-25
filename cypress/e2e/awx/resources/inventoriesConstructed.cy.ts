@@ -15,8 +15,9 @@ describe('Constructed Inventories CRUD Tests', () => {
   const invToCreate: number = 3;
 
   before(() => {
+    cy.login();
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
-    cy.createAwxOrganization(orgName).then((org) => {
+    cy.createAwxOrganization({ name: orgName }).then((org) => {
       organization = org;
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;
@@ -28,7 +29,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     inventoriesList = [];
     invNames = [];
     for (let i = 0; i < invToCreate; i++) {
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventoriesList.push(inv);
       });
     }
@@ -59,10 +60,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     const verbosityValue = generateRandom(0, 2);
 
     cy.navigateTo('awx', 'inventories');
-    cy.getByDataCy('create-inventory').click();
-    cy.get('.pf-v5-c-dropdown__menu').within(() => {
-      cy.get('[data-cy="create-constructed-inventory"]').click();
-    });
+    cy.clickButton(/^Create inventory$/);
+    cy.clickButton(/^Create constructed inventory$/);
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
     cy.intercept({
@@ -73,16 +72,13 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.singleSelectBy('[data-cy="organization"]', organization.name);
     cy.wait('@filterOrg');
     // this can be simplified if we include data-cy to the search button of instance groups
-    cy.getByDataCy('instance-group-select-form-group').find('[aria-label="Options menu"]').click();
+    cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
+
     cy.intercept({
       method: 'GET',
       pathname: awxAPI`/instance_groups/`,
       query: { name: instanceGroup.name },
     }).as('filterInstanceG');
-    cy.filterTableByMultiSelect('name', [instanceGroup.name]);
-    cy.wait('@filterInstanceG');
-    cy.getByDataCy('checkbox-column-cell').click();
-    cy.clickModalButton('Confirm');
     cy.intercept({
       method: 'GET',
       pathname: awxAPI`/inventories/`,
@@ -162,12 +158,6 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
-    //Create a constructed inventory in the beforeEach hook
-    //Assert the original order of the input inventories
-    //Assert the UI change to the order of input inventories
-  });
-
   it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     //Create a constructed inventory in the beforeEach hook
     //Assert the original details of the inventory
@@ -176,6 +166,93 @@ describe('Constructed Inventories CRUD Tests', () => {
     //Add bad variables
     //Assert the edited changes of the inventory
     //Run a sync and assert failure of the job
+  });
+});
+
+describe('Constructed Inventories CRUD Tests - reorder input inventories', () => {
+  let organization: Organization;
+  let constructedInv: Inventory;
+  let instanceGroup: InstanceGroup;
+  const constrInvToDelete: Inventory[] = [];
+
+  before(() => {
+    const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
+    cy.createAwxOrganization({ name: orgName }).then((org) => {
+      organization = org;
+      cy.createAwxInstanceGroup().then((ig) => {
+        instanceGroup = ig;
+      });
+    });
+  });
+
+  beforeEach(() => {
+    cy.createAwxConstructedInventory(organization, { source_vars: true }).then((constInv) => {
+      constructedInv = constInv;
+    });
+  });
+
+  afterEach(() => {
+    constrInvToDelete.push(constructedInv);
+  });
+
+  after(() => {
+    cy.deleteAwxInstanceGroup(instanceGroup);
+    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
+    cy.deleteAwxOrganization(organization);
+  });
+
+  it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
+    //Create a constructed inventory in the beforeEach hook
+    //Assert the original order of the input inventories
+    //Assert the UI change to the order of input inventories
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [constructedInv.name]);
+    cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+    cy.contains('a', constructedInv.name).click();
+
+    let expectedOrder: string[] = [];
+
+    cy.getByDataCy('input-inventories');
+
+    // get initial order
+    cy.get(`[data-cy="input-inventories"] ul > li`) // Adjust the selector to match your list items
+      .should(($lis) => {
+        expectedOrder = $lis.map((index, el) => Cypress.$(el).text()).get();
+      })
+      .then(() => {
+        cy.getByDataCy('edit-inventory').click();
+
+        // remove one item
+        cy.contains(`[aria-label="Chip group category"] li`, expectedOrder[0]).within(() => {
+          cy.get('button').click();
+        });
+
+        const deletedItem = expectedOrder[0];
+        expectedOrder = expectedOrder.slice(1);
+        expectedOrder.push(deletedItem);
+
+        // now add it also in GUI
+        cy.get(`[aria-label="Search input"]`).type(deletedItem);
+        cy.contains('label', deletedItem).within(() => {
+          cy.get('input').click();
+        });
+
+        cy.clickButton(/^Save inventory$/);
+        cy.getByDataCy('input-inventories');
+
+        cy.navigateTo('awx', 'inventories');
+        cy.filterTableByMultiSelect('name', [constructedInv.name]);
+        cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+        cy.contains('a', constructedInv.name).click();
+        // verify order
+        cy.getByDataCy('input-inventories');
+
+        cy.get(`[data-cy="input-inventories"] ul > li`) // Adjust the selector to match your list items
+          .should(($lis) => {
+            const actualOrder = $lis.map((index, el) => Cypress.$(el).text()).get();
+            expect(actualOrder).to.deep.equal(expectedOrder);
+          });
+      });
   });
 });
 

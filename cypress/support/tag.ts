@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 /**
  * This function is used to filter tests based on the TAGS environment variable.

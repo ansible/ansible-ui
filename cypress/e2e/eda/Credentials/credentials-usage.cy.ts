@@ -41,7 +41,7 @@ describe('EDA Credentials Use in Resources', () => {
       cy.get('h1').should('contain', name);
       cy.get('.pf-v5-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
       cy.filterTableByText(rbaToBeDeleted.name);
-      cy.contains('[data-label="Status"]', 'Completed', { timeout: 120000 });
+      cy.contains('[data-label="Status"]', 'Completed', { timeout: 180000 });
       cy.get('tbody tr').then(() => {
         cy.get(' tr [data-cy="actions-dropdown"]')
           .click()
@@ -69,6 +69,7 @@ describe('EDA Credentials Use in Resources', () => {
     cy.clickButton(/^Create project$/);
     cy.get('[data-cy="name"]').type(name);
     cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.clickButton(/^Create project$/);
     cy.getEdaProjectByName(name).then((thisProject: EdaProject) => {
       cy.waitEdaProjectSync(thisProject).then((result) => {

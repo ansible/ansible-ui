@@ -183,6 +183,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       </PageDetail>
       <PageDetail
         label={t`Input inventories`}
+        helpText={inventoryFormDetailLables.input_inventories}
         isEmpty={
           typeof inputInventoriesError === 'undefined' &&
           (!inputInventories || inputInventories?.results.length === 0)
@@ -242,7 +243,11 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
           })
         }
       />
-      <PageDetail label={t('Enabled options')} isEmpty={!inventory.prevent_instance_group_fallback}>
+      <PageDetail
+        label={t('Enabled options')}
+        isEmpty={!inventory.prevent_instance_group_fallback}
+        helpText={inventoryFormDetailLables.prevent_instance_group_fallback}
+      >
         <TextList component={TextListVariants.ul}>
           {inventory.prevent_instance_group_fallback && (
             <TextListItem component={TextListItemVariants.li}>

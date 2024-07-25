@@ -16,6 +16,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { Job } from '../../interfaces/Job';
 import { useVerbosityString } from '../../common/useVerbosityString';
+import { UnifiedJob } from '../../interfaces/UnifiedJob';
 
 export function JobDetails() {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ export function JobDetails() {
 
   return (
     <PageDetails>
-      <PageDetailsFromColumns columns={columns} item={job} />
+      <PageDetailsFromColumns columns={columns} item={job as UnifiedJob} />
       <PageDetail isEmpty={!job.playbook} label={t('Playbook')}>
         {job.playbook}
       </PageDetail>
@@ -51,9 +52,7 @@ export function JobDetails() {
       <PageDetail
         isEmpty={!job.execution_node}
         label={t('Execution node')}
-        helpText={t(
-          'The execution environment that will be used when launching this job template. The resolved execution environment can be overridden by explicitly assigning a different one to this job template.'
-        )}
+        helpText={t('The execution node used to run the job.')}
       >
         {job.execution_node}
       </PageDetail>

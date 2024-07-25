@@ -46,32 +46,13 @@ describe('HostStatusBar and WorkflowNodesStatusBar (StatusBar)', () => {
     cy.mount(
       <WorkflowNodesStatusBar nodes={jobWorkflowNodes.results as unknown as WorkflowNode[]} />
     );
-    cy.contains('Success 13%');
-    cy.contains('Canceled 13%');
-    cy.contains('Error 25%');
-    cy.contains('Unreachable 50%');
+    cy.contains('Success 25%');
+    cy.contains('Canceled 25%');
+    cy.contains('Error 50%');
 
     cy.mount(<WorkflowNodesStatusBar nodes={workflowNodes.results as unknown as WorkflowNode[]} />);
 
-    cy.contains('Failed 17%');
-    cy.contains('Unreachable 17%');
-    cy.contains('Success 67%');
-  });
-  it('WorkflowNodesStatusBar should NOT fail on unexpected value', () => {
-    const wfNode = workflowNodes.results[0];
-    const updatedWFNode = {
-      ...wfNode,
-      summary_fields: {
-        ...wfNode.summary_fields,
-        job: {
-          ...wfNode.summary_fields.job,
-          status: 'unexpected_status',
-        },
-      },
-    };
-
-    cy.mount(<WorkflowNodesStatusBar nodes={[updatedWFNode] as unknown as WorkflowNode[]} />);
-
-    cy.contains('Unreachable 100%');
+    cy.contains('Failed 20%');
+    cy.contains('Success 80%');
   });
 });

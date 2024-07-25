@@ -223,7 +223,7 @@ export function useSaveVisualizer(templateId: string) {
 
         // Prompt values
         setValue('diff_mode', launch_data?.diff_mode, true);
-        setValue('execution_environment', launch_data?.execution_environment?.id, true);
+        setValue('execution_environment', launch_data?.execution_environment, true);
         setValue('forks', launch_data?.forks, true);
         setValue('inventory', launch_data?.inventory?.id, true);
         setValue('job_slice_count', launch_data?.job_slice_count, true);
@@ -317,7 +317,7 @@ export function useSaveVisualizer(templateId: string) {
 
           // Prompt values
           setValue('diff_mode', launch_data?.diff_mode, true);
-          setValue('execution_environment', launch_data?.execution_environment?.id, true);
+          setValue('execution_environment', launch_data?.execution_environment, true);
           setValue('forks', launch_data?.forks, true);
           setValue('inventory', launch_data?.inventory?.id, true);
           setValue('job_slice_count', launch_data?.job_slice_count, true);
@@ -691,7 +691,7 @@ const useProcessInstanceGroups = () => {
       if (hasInstanceGroupsPrompt) {
         const { added, removed } = getAddedAndRemoved(
           launch_data?.original?.instance_groups || [],
-          launch_data?.instance_groups || ([] as InstanceGroup[])
+          launch_data?.instance_groups ? launch_data.instance_groups : ([] as { id: number }[])
         );
 
         const disassociationPromises = removed.map((group: { id: number }) =>

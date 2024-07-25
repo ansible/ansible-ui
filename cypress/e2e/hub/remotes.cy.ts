@@ -21,7 +21,7 @@ describe('Remotes', () => {
     cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', numberOfRemotes);
     cy.get('[data-cy="select-all"]').click({ force: true });
-    cy.clickToolbarKebabAction('delete-selected-remotes');
+    cy.clickToolbarKebabAction('delete-remotes');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remotes$/);
     cy.contains(/^Success$/);
@@ -42,7 +42,7 @@ describe('Remotes', () => {
       cy.get('[data-cy="table-view"]').click();
       cy.contains(remote.name).should('be.visible');
       cy.get('#select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-remotes');
+      cy.clickToolbarKebabAction('delete-remotes');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remotes$/);
       cy.contains(/^Success$/);
@@ -64,8 +64,10 @@ describe('Remotes', () => {
     cy.contains('Remotes').click();
     cy.url().should('include', Remotes.url);
     cy.filterTableBySingleText(remoteName);
-    cy.get('[data-cy="actions-column-cell"]').click();
-    cy.get('[data-cy="delete-remote"]').click({ force: true });
+    cy.clickTableRowAction('remote-name', remoteName, 'delete-remote', {
+      disableFilter: true,
+      inKebab: true,
+    });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote/);
     cy.contains(/^Success$/);
@@ -95,8 +97,10 @@ describe('Remotes', () => {
     cy.wait('@remote').then(() => {
       cy.contains('Remotes').click();
       cy.filterTableBySingleText(remoteName);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-remote"]').click({ force: true });
+      cy.clickTableRowAction('remote-name', remoteName, 'delete-remote', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remote/);
       cy.contains(/^Success$/);

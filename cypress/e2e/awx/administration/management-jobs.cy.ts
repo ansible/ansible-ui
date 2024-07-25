@@ -11,7 +11,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
       'Cleanup Expired Sessions',
       'Cleanup Job Details',
     ];
-    cy.intercept('GET', 'api/v2/system_job_templates/?order_by=name&page=1&page_size=10').as(
+    cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
       'getManagementJobsListPage'
     );
     cy.navigateTo('awx', 'management-jobs');
@@ -31,7 +31,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
   const managementJobs = ['Cleanup Expired OAuth 2 Tokens', 'Cleanup Expired Sessions'];
   managementJobs.forEach((jobName) => {
     it(`admin can launch management job: ${jobName}`, () => {
-      cy.intercept('GET', 'api/v2/system_job_templates/?order_by=name&page=1&page_size=10').as(
+      cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'
       );
       cy.navigateTo('awx', 'management-jobs');
@@ -41,7 +41,9 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
         .then((results: SystemJobTemplate[]) => {
           const jobId = results.find((job) => job.name === jobName)?.id;
           if (jobId) {
-            cy.intercept('POST', `/api/v2/system_job_templates/${jobId}/launch/`).as('launchJob');
+            cy.intercept('POST', awxAPI`/system_job_templates/${jobId.toString()}/launch/`).as(
+              'launchJob'
+            );
             cy.clickTableRowAction('name', jobName, 'launch-management-job', {
               inKebab: false,
               disableFilter: true,
@@ -56,7 +58,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                   cy.getByDataCy('id').should('have.text', jobId);
                   cy.getByDataCy('name').should('have.text', jobName);
                   cy.getByDataCy('type').should('have.text', 'Management job');
-                  cy.intercept('DELETE', `api/v2/system_jobs/${jobId}/`).as('deleteMgtJob');
+                  cy.intercept('DELETE', awxAPI`/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete job/);
@@ -77,7 +79,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
   const rententionDays = '4';
   managementJobsWithModal.forEach((jobName) => {
     it(`admin can launch management job: ${jobName} with the retention days set`, () => {
-      cy.intercept('GET', 'api/v2/system_job_templates/?order_by=name&page=1&page_size=10').as(
+      cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'
       );
       cy.navigateTo('awx', 'management-jobs');
@@ -87,7 +89,9 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
         .then((results: SystemJobTemplate[]) => {
           const jobId = results.find((job) => job.name === jobName)?.id;
           if (jobId) {
-            cy.intercept('POST', `/api/v2/system_job_templates/${jobId}/launch/`).as('launchJob');
+            cy.intercept('POST', awxAPI`/system_job_templates/${jobId.toString()}/launch/`).as(
+              'launchJob'
+            );
             cy.clickTableRowAction('name', jobName, 'launch-management-job', {
               inKebab: false,
               disableFilter: true,
@@ -105,7 +109,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                   cy.getByDataCy('id').should('have.text', jobId);
                   cy.getByDataCy('name').should('have.text', jobName);
                   cy.getByDataCy('type').should('have.text', 'Management job');
-                  cy.intercept('DELETE', `api/v2/system_jobs/${jobId}/`).as('deleteMgtJob');
+                  cy.intercept('DELETE', awxAPI`/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete job/);
@@ -269,7 +273,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
             cy.verifyPageTitle(jobName);
             cy.clickTab('Schedules', true);
 
-            cy.intercept('POST', `api/v2/system_job_templates/${jobId}/schedules/`).as(
+            cy.intercept('POST', awxAPI`/system_job_templates/${jobId.toString()}/schedules/`).as(
               'createSchedule'
             );
             cy.getByDataCy('create-schedule').click();
@@ -344,6 +348,18 @@ describe.skip('Management Jobs - Schedules Tab', () => {
 });
 
 describe('Management Jobs - Notifications Tab', function () {
+  let awxOrganization: Organization;
+
+  before(function () {
+    cy.createAwxOrganization().then((thisOrg) => {
+      awxOrganization = thisOrg;
+    });
+  });
+
+  after(function () {
+    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  });
+
   const managementJobsList = [
     'Cleanup Activity Stream',
     'Cleanup Expired OAuth 2 Tokens',
@@ -367,7 +383,7 @@ describe('Management Jobs - Notifications Tab', function () {
       cy.verifyPageTitle('Add notifier');
       cy.getByDataCy('name').type(notifierName);
       cy.getByDataCy('description').type('AWX Notifier Description');
-      cy.singleSelectByDataCy('organization', (this.globalAwxOrganization as Organization).name);
+      cy.singleSelectByDataCy('organization', awxOrganization.name);
       cy.singleSelectByDataCy('notification_type', 'Pagerduty');
       cy.getByDataCy('notification-configuration-subdomain').type('pagerduty.com');
       cy.getByDataCy('notification-configuration-token').type('token');

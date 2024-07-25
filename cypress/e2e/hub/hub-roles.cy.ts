@@ -74,7 +74,7 @@ describe('Hub roles', () => {
     cy.navigateTo('hub', 'roles');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.get('#select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-roles');
+    cy.clickToolbarKebabAction('delete-roles');
     cy.contains('of the selected roles cannot be deleted because they are built-in.').should(
       'be.visible'
     );
@@ -85,7 +85,7 @@ describe('Hub roles', () => {
   it('delete a role from the list row action', () => {
     cy.createHubRole().then((createdRole: Role) => {
       cy.navigateTo('hub', 'roles');
-      cy.clickTableRowKebabAction(createdRole.name, 'delete-role', true);
+      cy.clickTableRowAction('name', createdRole.name, 'delete-role', { inKebab: true });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete role/);
       cy.contains(/^Success$/);

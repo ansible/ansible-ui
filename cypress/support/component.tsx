@@ -29,19 +29,20 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
 import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import '../../frontend/common/i18n';
+import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
+import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
+import './awx-access-commands';
 import './awx-commands';
 import './awx-user-access-commands';
 import './common-commands';
 import './core-commands';
 import './e2e';
 import './eda-commands';
+import { edaAPI } from './formatApiPathForEDA';
 import './hub-commands';
 import './rest-commands';
-import { edaAPI } from './formatApiPathForEDA';
-import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -137,3 +138,5 @@ before(() => {
     },
   };
 });
+
+// Cypress.Keyboard.defaults({ keystrokeDelay: 0 });

@@ -1,5 +1,4 @@
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 export function runCommand(params: {
   selections: string;
@@ -42,30 +41,30 @@ export function runCommand(params: {
         cy.getByDataCy('Submit').click();
 
         // Execution environment tab
-        cy.get(`[aria-label="Options menu"]`).click();
-
-        cy.intercept(
-          'GET',
-          awxAPI`/execution_environments/?order_by=name&or__organization__isnull=True&or__organization__id=${organization.id.toString()}&name=${executionEnvironment.name}*`
-        ).as('getExecutionEnvironment');
-        cy.filterTableBySingleSelect('name', executionEnvironment.name);
-        cy.wait('@getExecutionEnvironment');
-
-        cy.getByDataCy('checkbox-column-cell').click();
-
-        cy.contains('button', 'Confirm').click();
+        cy.singleSelectByDataCy('executionEnvironment', executionEnvironment.name);
 
         cy.getByDataCy('Submit').click();
 
         // Credentials tab
 
-        // not sure why this is needed, but it ensures the test stability
-        //cy.wait(4000);
+        // check that everything is correctly rendered in the form, so it does not fail sometimes
+        cy.getByDataCy('wizard');
+        cy.getByDataCy('wizard-nav');
+        cy.getByDataCy('credential');
+        cy.getByDataCy('credential-form-group');
+        cy.getByDataCy('wizard-footer');
+        cy.getByDataCy('Submit');
+        cy.getByDataCy('wizard-back');
+        cy.getByDataCy('wizard-cancel');
+        cy.contains(`[data-cy='credential']`, 'Select credential');
+
         cy.getByDataCy('credential').click();
         cy.get(`[role='listbox'] button`);
         cy.contains('button', 'Browse').click();
 
         cy.filterTableByMultiSelect('name', [credential.name]);
+        cy.get(`[aria-label="Simple table"] tr`, { timeout: 8000 }).should('have.length', 2);
+
         cy.get(`[data-cy="checkbox-column-cell"] input`).click();
 
         cy.contains('button', 'Confirm').click();
@@ -92,6 +91,9 @@ export function runCommand(params: {
         cy.getByDataCy('forks').contains(params.forks.toString());
 
         cy.getByDataCy('execution-environment').contains(executionEnvironment.name);
+
+        cy.deleteAwxCredential(credential, { failOnStatusCode: false });
+        cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
       });
     }
   );

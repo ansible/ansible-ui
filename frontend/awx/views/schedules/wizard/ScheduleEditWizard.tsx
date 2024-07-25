@@ -16,10 +16,9 @@ import { RulesStep } from './RulesStep';
 import { RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { NodePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
+import { NodePromptsStep as PromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { RESOURCE_TYPE } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { Schedule } from '../../../interfaces/Schedule';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -33,7 +32,12 @@ import { RequestError } from '../../../../common/crud/RequestError';
 import { postRequest } from '../../../../common/crud/Data';
 import { useSetRRuleItemToRuleSet } from '../hooks/useSetRRuleItemToRuleSet';
 
-export function ScheduleEditWizard() {
+/**
+ *
+ * @param {string} resourceEndPoint - This is passed down to the <ScheduleSelectStep/> so it can fetch the resource
+ * to which the schedule belongs
+ */
+export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
@@ -59,13 +63,24 @@ export function ScheduleEditWizard() {
       ...rest,
     };
 
-    const {
-      schedule,
-    }: {
-      schedule: Schedule;
-    } = await processSchedules(data);
-    const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-    return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    try {
+      const {
+        schedule,
+      }: {
+        schedule: Schedule;
+      } = await processSchedules(data);
+      const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
+      return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+    } catch (error) {
+      const { fieldErrors } = awxErrorAdapter(error);
+      const missingResource = fieldErrors.find((err) => err?.name === 'resources_needed_to_start');
+      if (missingResource) {
+        const errors = {
+          __all__: [missingResource.message],
+        };
+        throw new RequestError('', '', 400, '', errors);
+      }
+    }
   };
 
   const onCancel = () => navigate(-1);
@@ -74,16 +89,16 @@ export function ScheduleEditWizard() {
     {
       id: 'details',
       label: t('Details'),
-      inputs: <ScheduleSelectStep />,
+      inputs: <ScheduleSelectStep {...props} />,
     },
     {
-      id: 'nodePromptsStep',
+      id: 'promptStep',
       label: t('Prompts'),
-      inputs: <NodePromptsStep />,
+      inputs: <PromptsStep />,
       hidden: (wizardData: Partial<ScheduleFormWizard>) => {
         const { launch_config, resource, schedule_type } = wizardData;
         if (
-          (schedule_type === RESOURCE_TYPE.workflow_job || schedule_type === RESOURCE_TYPE.job) &&
+          (schedule_type === 'workflow_job' || schedule_type === 'job') &&
           resource &&
           launch_config
         ) {
@@ -176,7 +191,7 @@ export function ScheduleEditWizard() {
       timezone: schedule?.timezone,
       schedule_days_to_keep: schedule.extra_data.days,
     },
-    nodePromptsStep: {
+    promptStep: {
       prompt: {},
     },
     rules: { ...RULES_DEFAULT_VALUES, rules },
@@ -186,10 +201,18 @@ export function ScheduleEditWizard() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Schedule')}
+        title={
+          schedule?.name
+            ? t('Edit {{scheduleName}}', { scheduleName: schedule?.name })
+            : t('Schedule')
+        }
         breadcrumbs={[
           { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
-          { label: t('Edit Schedule') },
+          {
+            label: schedule?.name
+              ? t('Edit {{scheduleName}}', { scheduleName: schedule?.name })
+              : t('Schedule'),
+          },
         ]}
       />
       <PageWizard<ScheduleFormWizard>

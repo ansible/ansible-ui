@@ -9,8 +9,6 @@ import {
   Node,
 } from '@patternfly/react-topology';
 import type { Credential } from '../../../interfaces/Credential';
-import type { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
-import type { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { InventorySource } from '../../../interfaces/InventorySource';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -21,6 +19,7 @@ import type { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { SummaryFieldInventory } from '../../../interfaces/summary-fields/summary-fields';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
@@ -126,8 +125,8 @@ export interface PromptFormValues {
         vault_id?: string;
       }[];
   credential_passwords?: { [key: string]: string };
-  instance_groups: InstanceGroup[] | { id: number; name: string }[];
-  execution_environment: ExecutionEnvironment | { id: number; name: string } | null;
+  instance_groups: InstanceGroup[];
+  execution_environment: number | null | undefined;
   diff_mode: boolean;
   extra_vars: string;
   forks: number;

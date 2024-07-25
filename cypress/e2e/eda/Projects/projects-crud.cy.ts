@@ -7,15 +7,14 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('EDA Projects CRUD', () => {
-  before(() => cy.edaLogin());
-
   it('can create a Project, sync it, and assert the information showing on the details page', () => {
     const name = 'E2E Project ' + randomString(4);
     cy.navigateTo('eda', 'projects');
     cy.get('h1').should('contain', 'Projects');
     cy.clickButton(/^Create project$/);
-    cy.get('[data-cy="name"]').type(name);
-    cy.get('[data-cy="url"]').type('https://github.com/ansible/ansible-ui');
+    cy.getByDataCy('name').type(name);
+    cy.getByDataCy('url').type('https://github.com/ansible/ansible-ui');
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.clickButton(/^Create project$/);
     cy.verifyPageTitle(name);
     cy.getEdaProjectByName(name).then((project) => {
@@ -28,11 +27,12 @@ describe('EDA Projects CRUD', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.waitEdaProjectSync(edaProject);
       cy.navigateTo('eda', 'projects');
-      cy.get('h1').should('contain', 'Projects');
+      cy.verifyPageTitle('Projects');
       cy.clickTableRow(edaProject.name);
-      cy.get('[data-cy="edit-project"]').click();
+      cy.verifyPageTitle(`${edaProject.name}`);
+      cy.getByDataCy('edit-project').click();
       cy.verifyPageTitle(`Edit ${edaProject.name}`);
-      cy.get('[data-cy="name"]')
+      cy.getByDataCy('name')
         .clear()
         .type(edaProject.name + ' edited');
       cy.clickButton(/^Save project$/);

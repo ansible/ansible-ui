@@ -73,12 +73,8 @@ describe('Roles List', () => {
     cy.mount(<Roles />);
     cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
       cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete role$/).should(
-        'have.attr',
-        'aria-disabled',
-        'true'
-      );
     });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
     cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
       cy.get('[data-cy="actions-column-cell"]').within(() => {
         cy.get(`[data-cy="edit-role"]`).should('have.attr', 'aria-disabled', 'true');
@@ -100,12 +96,8 @@ describe('Roles List', () => {
     });
     cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
       cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete role$/).should(
-        'have.attr',
-        'aria-disabled',
-        'true'
-      );
     });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
   it('Row actions for an editable role are enabled if the user is a super user', () => {
     cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
@@ -119,12 +111,8 @@ describe('Roles List', () => {
     });
     cy.contains('tr', 'galaxy.demorole').within(() => {
       cy.get('button.toggle-kebab').click();
-      cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete role$/).should(
-        'have.attr',
-        'aria-disabled',
-        'false'
-      );
     });
+    cy.contains('#delete-role', /^Delete role$/).should('not.have.attr', 'aria-disabled', 'true');
   });
   it('Create Role button is enabled if the user has permission to create roles', () => {
     cy.stub(useHubContext, 'useHubContext').callsFake(() => ({

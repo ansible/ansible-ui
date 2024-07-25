@@ -15,8 +15,8 @@ import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useTeamActions } from '../hooks/useTeamActions';
 import { useViewActivityStream } from '../../common/useViewActivityStream';
+import { useTeamActions } from '../hooks/useTeamActions';
 
 export function TeamPage() {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export function TeamPage() {
     onTeamsDeleted: () => pageNavigate(AwxRoute.Teams),
     isDetailsPageAction: true,
   });
-  const viewActivityStreamAction = useViewActivityStream();
+  const viewActivityStreamAction = useViewActivityStream('team');
   const getPageUrl = useGetPageUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

@@ -172,7 +172,7 @@ describe('Namespaces', () => {
     cy.filterTableBySingleText(testSignature);
     cy.get('tbody').find('tr').should('have.length', 5);
     cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
-    cy.clickToolbarKebabAction('delete-selected-namespaces');
+    cy.clickToolbarKebabAction('delete-namespaces');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
     cy.contains(/^Success$/);

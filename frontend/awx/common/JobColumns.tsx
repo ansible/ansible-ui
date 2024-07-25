@@ -18,7 +18,7 @@ import { useOptions } from '../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { UnifiedJob } from '../interfaces/UnifiedJob';
 import { AwxRoute } from '../main/AwxRoutes';
-import { getLaunchedByDetails, getScheduleUrl, isJobRunning } from '../views/jobs/jobUtils';
+import { useGetLaunchedByDetails, useGetScheduleUrl, isJobRunning } from '../views/jobs/jobUtils';
 import { awxAPI } from './api/awx-utils';
 
 export function useJobIdColumn<T extends UnifiedJob>() {
@@ -184,7 +184,7 @@ export function useJobFinishedColumn<T extends UnifiedJob>(
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Finished'),
-      cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.started} />,
+      cell: (job: UnifiedJob) => job.finished && <DateTimeCell value={job.finished} />,
       sort: 'finished',
       card: cardOption ?? ColumnCardOption.hidden,
       list: listOption ?? ColumnListOption.secondary,
@@ -208,15 +208,18 @@ export function useJobScheduleColumn<T extends UnifiedJob>(
   defaultSort?: 'asc' | 'desc'
 ) {
   const { t } = useTranslation();
-
+  const getScheduleUrl = useGetScheduleUrl();
   const column = useMemo<ITableColumn<T>>(
     () => ({
       header: t('Schedule'),
-      cell: (job: UnifiedJob) => (
-        <Link to={job.summary_fields?.schedule ? getScheduleUrl(job) ?? '' : ''}>
-          {job.summary_fields?.schedule?.name}
-        </Link>
-      ),
+      cell: (job: UnifiedJob) => {
+        const scheduleUrl = getScheduleUrl(job);
+        return (
+          <Link to={job.summary_fields?.schedule && scheduleUrl ? scheduleUrl : ''}>
+            {job.summary_fields?.schedule?.name}
+          </Link>
+        );
+      },
       value: (job: UnifiedJob) => job.summary_fields?.schedule?.name,
       table: tableOption ?? ColumnTableOption.expanded,
       card: cardOption ?? ColumnCardOption.hidden,
@@ -225,7 +228,16 @@ export function useJobScheduleColumn<T extends UnifiedJob>(
       modal: modalOption ?? ColumnModalOption.hidden,
       dashboard: dashboardOption ?? ColumnDashboardOption.hidden,
     }),
-    [cardOption, dashboardOption, defaultSort, listOption, modalOption, t, tableOption]
+    [
+      cardOption,
+      dashboardOption,
+      defaultSort,
+      listOption,
+      modalOption,
+      t,
+      tableOption,
+      getScheduleUrl,
+    ]
   );
 
   return column;
@@ -333,6 +345,7 @@ export function useJobLaunchedByColumn<T extends UnifiedJob>(
   defaultSort?: 'asc' | 'desc'
 ) {
   const { t } = useTranslation();
+  const getLaunchedByDetails = useGetLaunchedByDetails();
 
   const column = useMemo<ITableColumn<T>>(
     () => ({
@@ -352,7 +365,16 @@ export function useJobLaunchedByColumn<T extends UnifiedJob>(
       modal: modalOption ?? ColumnModalOption.hidden,
       dashboard: dashboardOption ?? ColumnDashboardOption.hidden,
     }),
-    [cardOption, dashboardOption, defaultSort, listOption, modalOption, t, tableOption]
+    [
+      cardOption,
+      dashboardOption,
+      defaultSort,
+      listOption,
+      modalOption,
+      t,
+      tableOption,
+      getLaunchedByDetails,
+    ]
   );
 
   return column;
@@ -367,6 +389,7 @@ export function useJobScehduleColumn<T extends UnifiedJob>(
   defaultSort?: 'asc' | 'desc'
 ) {
   const { t } = useTranslation();
+  const getScheduleUrl = useGetScheduleUrl();
 
   const column = useMemo<ITableColumn<T>>(
     () => ({
@@ -389,7 +412,16 @@ export function useJobScehduleColumn<T extends UnifiedJob>(
       modal: modalOption ?? ColumnModalOption.hidden,
       dashboard: dashboardOption ?? ColumnDashboardOption.hidden,
     }),
-    [cardOption, dashboardOption, defaultSort, listOption, modalOption, t, tableOption]
+    [
+      cardOption,
+      dashboardOption,
+      defaultSort,
+      listOption,
+      modalOption,
+      t,
+      tableOption,
+      getScheduleUrl,
+    ]
   );
 
   return column;

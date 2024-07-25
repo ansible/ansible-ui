@@ -12,17 +12,17 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 describe('Inventory Sources', () => {
   const scheduleName = 'e2e-' + randomString(4);
 
-  let organization: Organization;
   let project: Project;
   let inventory: Inventory;
   let inventorySource: InventorySource;
+  let organization: Organization;
 
   beforeEach(function () {
     cy.createAwxOrganization().then(function (org) {
       organization = org;
-      cy.createAwxInventory({ organization: organization.id }).then((inv) => {
+      cy.createAwxInventory(organization).then((inv) => {
         inventory = inv;
-        cy.createAwxProject({ organization: organization.id }).then((proj) => {
+        cy.createAwxProject(organization).then((proj) => {
           project = proj;
           cy.createAwxInventorySource(inv, project).then((invSrc) => {
             inventorySource = invSrc;
@@ -59,7 +59,6 @@ describe('Inventory Sources', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       const credentialName = 'e2e-' + randomString(4);
       const executionEnvironmentName = 'e2e-' + randomString(4);
-
       let credential: Credential;
       let executionEnvironment: ExecutionEnvironment;
 
@@ -72,9 +71,7 @@ describe('Inventory Sources', () => {
           credential_type: 9,
         }).then((cred) => {
           credential = cred;
-
           goToSourceList(inventory.name);
-
           cy.clickButton(/^Add source/);
           cy.verifyPageTitle('Add new source');
           cy.getBy('[data-cy="name"]').type('project source');
@@ -125,7 +122,6 @@ describe('Inventory Sources', () => {
 
     it('can access the Edit form of an existing Source from the list view, update info, and verify the presence of edited info on the details page', () => {
       goToSourceList(inventory.name);
-
       cy.clickTableRowAction('name', inventorySource.name, 'edit-inventory-source', {
         disableFilter: true,
       });
@@ -194,6 +190,84 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source Schedules List Page', () => {
+    it('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
+      cy.navigateTo('awx', 'inventories');
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+      cy.verifyPageTitle(inventory.name);
+      cy.clickLink(/^Sources$/);
+      cy.getByDataCy('name-column-cell')
+        .should('contain', inventorySource.name)
+        .within(() => {
+          cy.clickLink(inventorySource.name);
+        });
+      cy.clickTab('Schedules', true);
+      cy.clickButton('Create schedule');
+      cy.get('[data-cy="wizard-nav"]').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+      cy.getByDataCy('name').clear().type('new schedule');
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Save rule$/);
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Finish$/);
+      cy.verifyPageTitle('new schedule');
+      cy.get('.pf-v5-c-switch__label.pf-m-on')
+        .should('have.text', 'Schedule enabled')
+        .should('be.visible');
+      cy.getByDataCy('name').should('contain', 'new schedule');
+      cy.getByDataCy('next-run').should('exist');
+      cy.getByDataCy('first-run').should('exist');
+      cy.getByDataCy('time-zone').should('contain', 'America/New_York');
+    });
+
+    it("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
+      cy.createAWXSchedule({
+        name: scheduleName,
+        unified_job_template: inventorySource.id,
+        rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+      }).then((schedule1: Schedule) => {
+        cy.navigateTo('awx', 'inventories');
+        cy.filterTableBySingleSelect('name', inventory.name);
+        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+        cy.verifyPageTitle(inventory.name);
+        cy.clickLink(/^Sources$/);
+        cy.getByDataCy('name-column-cell')
+          .should('contain', inventorySource.name)
+          .within(() => {
+            cy.clickLink(inventorySource.name);
+          });
+        cy.clickTab('Schedules', true);
+        cy.clickTableRowAction('name', scheduleName, 'edit-schedule', {
+          disableFilter: true,
+        });
+        cy.intercept('PATCH', awxAPI`/schedules/${schedule1.id.toString()}/`).as('editSchedule');
+        cy.getByDataCy('description').should('be.empty');
+        cy.getByDataCy('description').type('mock description');
+        cy.getByDataCy('timezone').should('contain', schedule1.timezone);
+        cy.singleSelectByDataCy('timezone', 'America/New_York');
+        cy.clickButton(/^Next$/);
+        cy.clickButton(/^Next$/);
+        cy.clickButton(/^Next$/);
+        cy.clickButton(/^Finish$/);
+        cy.wait('@editSchedule')
+          .then((response) => {
+            expect(response?.response?.statusCode).to.eql(200);
+          })
+          .its('response.body')
+          .then((response: Schedule) => {
+            expect(response.name).contains(scheduleName);
+            expect(response.description).contains('mock description');
+            expect(response.timezone).contains('America/New_York');
+          });
+      });
+    });
+
     it('can delete a single schedule from the Source Schedule list and confirm delete', () => {
       cy.createAWXSchedule({
         name: scheduleName,
@@ -201,9 +275,11 @@ describe('Inventory Sources', () => {
         rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
       }).then((schedule1: Schedule) => {
         goToSourceDetails(inventory.name, inventorySource.name);
-
         cy.clickTab('Schedules', true);
-        cy.clickTableRowKebabAction(scheduleName, 'delete-schedule', false);
+        cy.clickTableRowAction('name', scheduleName, 'delete-schedule', {
+          inKebab: true,
+          disableFilter: true,
+        });
         cy.intercept('DELETE', awxAPI`/schedules/${schedule1.id.toString()}/`).as('deleteSchedule');
         cy.clickModalConfirmCheckbox();
         cy.clickButton('Delete schedule');
@@ -220,9 +296,11 @@ describe('Inventory Sources', () => {
     let notification: NotificationTemplate;
 
     beforeEach(() => {
-      cy.createNotificationTemplate('e2e-' + randomString(4)).then((notificationTemplate) => {
-        notification = notificationTemplate;
-      });
+      cy.createNotificationTemplate('e2e-' + randomString(4), organization).then(
+        (notificationTemplate) => {
+          notification = notificationTemplate;
+        }
+      );
     });
 
     afterEach(() => {
@@ -231,7 +309,6 @@ describe('Inventory Sources', () => {
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Start', () => {
       goToSourceDetails(inventory.name, inventorySource.name);
-
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
@@ -268,7 +345,6 @@ describe('Inventory Sources', () => {
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
       goToSourceDetails(inventory.name, inventorySource.name);
-
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',

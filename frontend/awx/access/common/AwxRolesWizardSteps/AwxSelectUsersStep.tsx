@@ -46,6 +46,9 @@ export function AwxSelectUsersStep(props: { descriptionForUsersSelection?: strin
   const view = useAwxMultiSelectListView<AwxUser>(
     {
       url: awxAPI`/users/`,
+      queryParams: {
+        is_superuser: 'false',
+      },
       toolbarFilters,
       tableColumns,
     },

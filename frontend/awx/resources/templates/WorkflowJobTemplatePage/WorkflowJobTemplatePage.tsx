@@ -13,6 +13,7 @@ import {
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -21,11 +22,12 @@ import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTemplateActions } from '../hooks/useTemplateActions';
-import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream();
+  const activityStream = useViewActivityStream(
+    'job_template+workflow_job_template+workflow_job_template_node'
+  );
   const params = useParams<{ id: string }>();
   const { activeAwxUser } = useAwxActiveUser();
   const {
@@ -94,6 +96,7 @@ export function WorkflowJobTemplatePage() {
         }}
         tabs={tabs}
         params={{ id: template.id }}
+        componentParams={{ template }}
       />
     </PageLayout>
   );

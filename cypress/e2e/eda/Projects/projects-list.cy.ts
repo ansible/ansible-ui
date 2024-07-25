@@ -6,8 +6,6 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 //Tests a user's ability to perform necessary actions on the Projects list in the EDA UI.
 
 describe('EDA Projects List', () => {
-  before(() => cy.edaLogin());
-
   it('renders the EDA projects page', () => {
     cy.navigateTo('eda', 'projects');
     cy.verifyPageTitle('Projects');
@@ -19,7 +17,7 @@ describe('EDA Projects List', () => {
       cy.clickTableRow(edaProject.name);
       cy.verifyPageTitle(edaProject.name);
       cy.clickLink(/^Details$/);
-      cy.get('#name').should('contain', edaProject.name);
+      cy.verifyPageTitle(edaProject.name);
       cy.deleteEdaProject(edaProject);
     });
   });
@@ -28,7 +26,7 @@ describe('EDA Projects List', () => {
     cy.createEdaProject().then((edaProject) => {
       cy.navigateTo('eda', 'projects');
       cy.filterTableByText(edaProject.name);
-      cy.get('td[data-label="Name"]').should('contain', edaProject.name);
+      cy.get('td[data-cy=name-column-cell]').should('contain', edaProject.name);
       cy.deleteEdaProject(edaProject);
     });
   });
