@@ -6,14 +6,10 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Constructed Inventories CRUD Tests', () => {
   let organization: Organization;
-  let inventoriesList: Inventory[] = [];
-  let invNames: string[] = [];
   let constructedInv: Inventory;
   let instanceGroup: InstanceGroup;
-  const invToDelete: Inventory[] = [];
-  const constrInvToDelete: Inventory[] = [];
-  const invToCreate: number = 3;
   let newInventory: Inventory;
+  let inventory: Inventory;
 
   before(() => {
     cy.login();
@@ -31,32 +27,27 @@ describe('Constructed Inventories CRUD Tests', () => {
   });
 
   beforeEach(() => {
-    inventoriesList = [];
-    invNames = [];
-    for (let i = 0; i < invToCreate; i++) {
-      cy.createAwxInventory(organization).then((inv) => {
-        inventoriesList.push(inv);
-      });
-    }
+    cy.createAwxInventory(organization).then((inv) => {
+      inventory = inv;
+    });
     cy.createAwxConstructedInventory(organization).then((constInv) => {
       constructedInv = constInv;
     });
   });
 
   afterEach(() => {
-    constrInvToDelete.push(constructedInv);
-    invToDelete.push(...inventoriesList);
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxConstructedInventory(constructedInv);
   });
 
   after(() => {
+    //cy.deleteAwxInventory(newInventory);
+    cy.deleteAwxInventory(newInventory);
     cy.deleteAwxInstanceGroup(instanceGroup);
-    invToDelete.map((inventory) => cy.deleteAwxInventory(inventory, { failOnStatusCode: false }));
-    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
     cy.deleteAwxOrganization(organization);
   });
 
   it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
-    invNames = inventoriesList.map(({ name }) => String(name));
     cy.intercept('POST', awxAPI`/constructed_inventories/`).as('createInv');
     const constInvName = 'E2E Constructed Inventory ' + randomString(4);
     // generates random values to be used during the test.
@@ -84,9 +75,9 @@ describe('Constructed Inventories CRUD Tests', () => {
       .should('have.length', 1)
       .within(() => {
         cy.getByDataCy('search-input').within(() => {
-          cy.get('input').clear().type(invNames[0]);
+          cy.get('input').clear().type(inventory.name);
         });
-        cy.contains('.pf-v5-c-menu__item-text', invNames[0])
+        cy.contains('.pf-v5-c-menu__item-text', inventory.name)
           .parent()
           .within(() => {
             cy.get('input').click();
