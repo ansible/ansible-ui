@@ -27,25 +27,30 @@ export function RulesList(props: {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const [occurrences, setOccurrences] = useState<
-    { utc: string[]; local: string[]; id: number }[] | []
+    { utc: string[]; local: string[]; id: number; error: string }[] | []
   >([]);
 
   useEffect(() => {
     async function fetchRules() {
       const promises = await Promise.all(
         props.rules.map(async ({ rule, id }) => {
-          const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
-            awxAPI`/schedules/preview/`,
-            {
-              rrule: rule.toString(),
-            }
-          );
+          try {
+            const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
+              awxAPI`/schedules/preview/`,
+              {
+                rrule: rule.toString(),
+              }
+            );
 
-          return {
-            utc,
-            local,
-            id,
-          };
+            return {
+              utc,
+              local,
+              id,
+              error: '',
+            };
+          } catch (ex) {
+            return { utc: [], local: [], id: -1, error: 'Error' + ex?.toString() };
+          }
         })
       );
 
@@ -61,9 +66,9 @@ export function RulesList(props: {
       {
         header: props.ruleType === 'rules' ? t('Rules') : t('Exceptions'),
         cell: (item: RuleListItemType) => {
-          let labels;
-          occurrences.map(({ id, local }) => {
-            if (id === item.id) {
+          let labels: JSX.Element | undefined = undefined;
+          occurrences.map(({ id, local, error }) => {
+            if (id === item.id && !error) {
               labels = (
                 <LabelGroupWrapper numLabels={5}>
                   {local.map((dateTimeString) => (
@@ -74,7 +79,12 @@ export function RulesList(props: {
                 </LabelGroupWrapper>
               );
             }
+
+            if (!labels) {
+              labels = <div>{t(`Error loading preview`)}</div>;
+            }
           });
+
           return labels;
         },
       },
