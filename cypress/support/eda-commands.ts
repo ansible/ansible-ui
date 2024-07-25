@@ -142,8 +142,19 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   });
   cy.requestGet<EdaResult<EdaProject>>(edaAPI`/projects/?name=${edaProject.name}`).then(
     (result) => {
-      if (Array.isArray(result?.results) && result.results.length === 1) {
-        const project = result.results[0];
+      let index = 0;
+      if (Array.isArray(result?.results)) {
+        if (result.results.length > 1) {
+          index = result.results.findIndex((project) => project.name === edaProject.name);
+        }
+        if (index < 0) {
+          Cypress.log({
+            displayName: 'No project with this name found.',
+            message: [`No project with this name found.`],
+          });
+          return;
+        }
+        const project = result.results[index];
         if (project.import_state === ImportStateEnum.Completed) {
           Cypress.log({
             displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
@@ -173,7 +184,7 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
         }
       } else {
         Cypress.log({
-          displayName: 'Multiple projects are being returned by this query.',
+          displayName: 'No projects are being returned by this query.',
           message: [`Adjust query and try again.`],
         });
         return;
