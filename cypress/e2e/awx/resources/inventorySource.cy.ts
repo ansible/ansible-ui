@@ -9,7 +9,7 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-describe.skip('Inventory Sources', () => {
+describe('Inventory Sources', () => {
   const scheduleName = 'e2e-' + randomString(4);
 
   let project: Project;

@@ -18,7 +18,6 @@ import { hubAPI } from '../common/api/formatPath';
 import { useHubActiveUser } from '../common/useHubActiveUser';
 import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
-import { HubRoute } from './HubRoutes';
 
 export function HubMasthead() {
   const { t } = useTranslation();
@@ -111,7 +110,10 @@ export function useHubNotifications() {
             variant: 'info',
 
             // TODO to should goto the specific approval page instead of the approvals page
-            to: getPageUrl(HubRoute.Approvals, { query: { status: 'pipeline=staging' } }),
+            // to: getPageUrl(HubRoute.Approvals, { query: { status: 'pipeline=staging' } }),
+
+            // go to full experience approvals
+            to: '/ui/approval-dashboard/',
           })) ?? [],
       };
       return { ...groups };
