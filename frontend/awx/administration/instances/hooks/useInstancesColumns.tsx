@@ -78,7 +78,7 @@ export function useInstancesColumns(
         list: 'subtitle',
       },
       {
-        header: t('Capacity Adjustment'),
+        header: t('Capacity adjustment'),
         cell: (instance: Instance) => {
           const instanceForks = computeForks(
             instance.mem_capacity,
