@@ -5,10 +5,10 @@ export type HubUser = {
   first_name: string;
   groups: HubUserGroup[];
   id: number;
-  is_anonymous: boolean;
+  is_anonymous?: boolean;
   is_superuser: boolean;
   last_name: string;
-  model_permissions: HubUserPermissions;
+  model_permissions?: HubUserPermissions;
   username: string;
   password?: string;
 };
