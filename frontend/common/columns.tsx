@@ -227,7 +227,9 @@ export function useCreatedColumn(options?: {
               'summary_fields' in item ? item.summary_fields?.created_by?.username : undefined
             }
             onClick={
-              options?.disableLinks || !('summary_fields' in item)
+              options?.disableLinks ||
+              !('summary_fields' in item) ||
+              item.summary_fields?.created_by?.username === '_system'
                 ? undefined
                 : () => {
                     pageNavigate(options?.userDetailsPageId || AwxRoute.UserDetails, {
@@ -289,7 +291,9 @@ export function useModifiedColumn(options?: {
               'summary_fields' in item ? item.summary_fields?.modified_by?.username : undefined
             }
             onClick={
-              options?.disableLinks || !('summary_fields' in item)
+              options?.disableLinks ||
+              !('summary_fields' in item) ||
+              item.summary_fields?.modified_by?.username === '_system'
                 ? undefined
                 : () =>
                     pageNavigate(options?.userDetailsPageId || AwxRoute.UserDetails, {
