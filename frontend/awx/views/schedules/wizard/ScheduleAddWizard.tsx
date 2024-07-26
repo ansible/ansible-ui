@@ -63,7 +63,7 @@ export function ScheduleAddWizard(props: {
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
     const { rules, exceptions, ...rest } = formValues;
     const ruleset = getRuleSet(rules, exceptions);
-
+    console.log({ ruleset });
     const data: StandardizedFormData = {
       rrule: ruleset.toString(),
       ...rest,
@@ -151,7 +151,7 @@ export function ScheduleAddWizard(props: {
       label: t('Review'),
       inputs: <ScheduleReviewStep />,
 
-      validate: async (_formData: object, wizardData: Partial<ScheduleFormWizard>) => {
+      validate: async (formData: object, wizardData: Partial<ScheduleFormWizard>) => {
         if (!wizardData?.rules?.length) {
           const errors = {
             __all__: [t('Schedules must have at least one rule.')],
@@ -160,7 +160,9 @@ export function ScheduleAddWizard(props: {
           throw new RequestError('', '', 400, '', errors);
         }
 
+        console.log({ formData });
         const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
+        console.log({ ruleset });
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {
@@ -189,6 +191,9 @@ export function ScheduleAddWizard(props: {
       resource: '',
       startDateTime: { date: currentDate, time: time },
       timezone: 'America/New_York',
+      endType: 'never',
+      count: undefined,
+      until: null,
     },
     rules: { ...RULES_DEFAULT_VALUES, rules: [] },
     exceptions: { ...RULES_DEFAULT_VALUES, exceptions: [] },

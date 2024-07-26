@@ -32,8 +32,10 @@ export function RulesList(props: {
 
   useEffect(() => {
     async function fetchRules() {
+      console.log('here');
       const promises = await Promise.all(
         props.rules.map(async ({ rule, id }) => {
+          console.log({ rule });
           try {
             const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
               awxAPI`/schedules/preview/`,

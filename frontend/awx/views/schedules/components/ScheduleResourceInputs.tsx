@@ -21,6 +21,7 @@ export function ScheduleResourceInputs() {
     (resource.name.includes('Cleanup Activity Stream') ||
       resource.name.includes('Cleanup Job Details'));
   const { timeZones, links } = useGetTimezones();
+  const endType = useWatch({ name: 'endType' }) as string;
 
   useEffect(() => {
     if (!links) {
@@ -58,6 +59,38 @@ export function ScheduleResourceInputs() {
           helperText={timezoneMessage}
           isRequired
         />
+        <PageFormSingleSelect
+          disableSortOptions
+          name="endType"
+          label={t('Schedule ending type')}
+          placeholder={t('Method used to stop schedule')}
+          options={[
+            { value: 'never', label: t('Never'), description: t('Never ending schedule') },
+            { value: 'count', label: t('Count'), description: t('Stop after a number of runs') },
+            { value: 'date', label: t('Until'), description: t('Stop on a specific date') },
+          ]}
+        />
+        {endType === 'count' && (
+          <PageFormTextInput<ScheduleFormWizard>
+            labelHelpTitle={t('Count')}
+            label={t('Count')}
+            name={`count`}
+            placeholder="5"
+            labelHelp={t('The number of time this rule should be used.')}
+            min={0}
+            max={999}
+            type="number"
+          />
+        )}
+        {endType === 'date' && (
+          <PageFormDateTimePicker<ScheduleFormWizard>
+            name={`until`}
+            timePlaceHolder="HH:MM AM/PM"
+            label={t('Until')}
+            labelHelpTitle={t('Until')}
+            labelHelp={t('Use this rule until the specified date/time')}
+          />
+        )}
         {hasDaysToKeepField && (
           <PageFormTextInput<ScheduleFormWizard>
             name={'schedule_days_to_keep'}

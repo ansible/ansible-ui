@@ -152,9 +152,9 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
 
           throw new RequestError('', '', 400, '', errors);
         }
-
+        console.log(formData);
         const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
-
+        console.log(ruleset);
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {

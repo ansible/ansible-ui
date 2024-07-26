@@ -10,8 +10,9 @@ export const RULES_DEFAULT_VALUES = {
   bymonthday: null,
   byyearday: null,
   bysetpos: null,
-  until: { endDate: '', endTime: '' },
-  count: null,
+  // endType: '',
+  // until: { endDate: '', endTime: '' },
+  // count: null,
   byminute: null,
   byhour: null,
 };

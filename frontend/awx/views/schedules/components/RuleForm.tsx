@@ -1,7 +1,7 @@
 import { ActionGroup, Button, Chip, ChipGroup } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
 import {
@@ -25,6 +25,8 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
 import { AwxError } from '../../../common/AwxError';
+import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { buildDateTime, buildRuleObj } from '../hooks/useSetRRuleItemToRuleSet';
 
 export function pad(num: number) {
   if (typeof num === 'string') {
@@ -52,6 +54,9 @@ export function RuleForm(props: {
   const {
     timezone = 'America/New_York',
     startDateTime: { date, time },
+    endType,
+    until,
+    count,
   } = wizardData as ScheduleFormWizard;
 
   const isRulesStep = activeStep && activeStep.id === 'rules';
@@ -80,60 +85,69 @@ export function RuleForm(props: {
       );
     }
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
-
+  // const endType = useWatch({ name: 'endType' }) as string;
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
-
-    if ((values.until?.date || values.until?.time) && values.count) {
-      setError(t(`You can't use both 'Until' and 'Count' fields at the same time`));
-      setValue('until', { date: undefined, time: undefined });
-      setValue('count', undefined);
-      return;
-    }
-
-    setError('');
-
     delete values.id;
-    const { rules = [], exceptions = [], until = null, ...rest } = values;
+    // delete values.endType;
+    const { rules = [], exceptions = [], ...rest } = values;
     const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
     const dateString = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(minute)}00`;
     const rrulestring = `DTSTART;TZID=${timezone}:${dateString}`;
     const ruleStart = RRule.fromString(rrulestring);
-    const rule = new RRule({ ...ruleStart.options, ...rest });
-    if (until !== null) {
-      const { time: untilTime, date: untilDate } = until;
 
-      if (untilDate && untilTime) {
-        const utcDate = DateTime.fromISO(`${date}`, { zone: timezone })
-          .set(get24Hour(untilTime))
-          .toUTC();
-        const { year, month, day, hour, minute } = utcDate;
-        rule.options.until = datetime(year, month, day, hour, minute);
+    const rule = new RRule({ ...ruleStart.options, ...rest });
+
+    // let untilString;
+    if (endType !== 'never') {
+      if (until?.date && until?.time) {
+        rule.options.until = buildDateTime(until.date, until.time, timezone);
       } else {
-        if (untilDate) {
+        if (until?.date) {
+          rule.options.until = buildDateTime(until.date, '12:00 pm', timezone);
+          console.log({ ruleStart, rrulestring });
           // This block is used when the user enters a date, but no time.
           // We use the date given, and the current time based on the timezone given
           // in the first step, or default to America/New_York.
 
-          const utcDate = DateTime.fromISO(`${date}`, { zone: timezone }).toUTC();
-          const { year, day, month, hour, minute } = utcDate;
-          rule.options.until = datetime(year, month, day, hour, minute);
+          // untilString = DateTime.fromISO(`${until?.date}`, { zone: timezone });
+          // const { year, day, month, hour, minute } = utcDate;
+
+          // until = datetime(year, month, day, hour, minute);
+          // console.log('else if', {
+          //   dt: datetime(year, month, day, hour, minute),
+          //   until: rule.options.until,
+          //   utcDate: utcDate.toString(),
+          // });
         }
-        if (untilTime) {
+        if (until?.time) {
           // This block is used when the user enters a time, but no date.
           // We use the time given, and the tomorrow's date based on the timezone given
           // in the first step, or default to America/New_York.
 
-          const { year, day, month, hour, minute } = DateTime.now()
-            .plus({ days: 1 })
-            .set(get24Hour(untilTime))
-            .toUTC();
+          // untilString = DateTime.now()
+          //   .plus({ days: 1 })
+          //   .set(get24Hour(until?.time))
+          //   // .toUTC()
+          //   .toString();
+          const { hour, minute } = get24Hour(until?.time);
+          rule.options.until = buildDateTime(
+            DateTime.now().plus({ days: 1 }).toString(),
+            `${hour}${minute}`,
+            timezone
+          );
 
-          rule.options.until = datetime(year, month, day, hour, minute);
+          // untilString = datetime(year, month, day, hour, minute);
         }
       }
     }
+    // const rrulestring = `DTSTART;TZID=${timezone}:${dateString}`;
+
+    // const ruleStart = RRule.fromString(rrulestring);
+    // ruleStart.options.until = untilString;
+    // console.log({ rrulestring, ruleStart });
+    // const rule = new RRule({ ...ruleStart.options, ...rest });
 
     const itemId = ruleId
       ? ruleId
@@ -361,24 +375,6 @@ export function RuleForm(props: {
           labelHelpTitle={t('Occurrences')}
           label={t('Occurrences')}
           disableSortOptions
-        />
-
-        <PageFormTextInput<RuleFields>
-          labelHelpTitle={t('Count')}
-          label={t('Count')}
-          name={`count`}
-          placeholder="5"
-          labelHelp={t('The number of time this rule should be used.')}
-          min={0}
-          max={999}
-          type="number"
-        />
-        <PageFormDateTimePicker<RuleFields>
-          name={`until`}
-          timePlaceHolder="HH:MM AM/PM"
-          label={t('Until')}
-          labelHelpTitle={t('Until')}
-          labelHelp={t('Use this rule until the specified date/time')}
         />
       </PageFormSection>
 

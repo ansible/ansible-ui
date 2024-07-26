@@ -38,13 +38,17 @@ export interface RuleFields {
   bysetpos: null;
   byminute: null;
   byhour: null;
-  until: { date: string; time: string } | null;
-  count: null;
+  // endType: string | undefined;
+  // until: { date: string; time: string } | null;
+  // count: null;
   rules: RuleListItemType[] | [];
   exceptions: RuleListItemType[] | [];
 }
 export interface ScheduleFormWizard {
   resourceInventory?: number;
+  endType: string | undefined;
+  until: { date: string; time: string } | null;
+  count: null;
   name: string;
   description?: string;
   schedule_type: string;
