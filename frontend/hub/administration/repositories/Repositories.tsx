@@ -32,6 +32,10 @@ export function Repositories() {
     <PageLayout>
       <PageHeader
         title={t('Repositories')}
+        titleHelpTitle={t('Repositories')}
+        titleHelp={t(
+          'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
+        )}
         description={t(
           'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
         )}
