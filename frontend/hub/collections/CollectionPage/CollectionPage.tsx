@@ -137,12 +137,12 @@ export function CollectionPage() {
     return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
   }
 
-  if (!collection) {
-    return <HubError handleRefresh={collectionRequest.refresh} />;
-  }
-
   if (!collectionRequest.data && !collectionRequest.error) {
     return <LoadingPage />;
+  }
+
+  if (!collection) {
+    return <HubError handleRefresh={collectionRequest.refresh} />;
   }
 
   return (
