@@ -307,7 +307,7 @@ export function RuleForm(props: {
           name={`byyearday`}
           placeholder={t('Select days')}
           options={DAYS_OF_YEAR}
-          label={t('Day(s) of Year')}
+          label={t('Day(s) of year')}
           labelHelp={
             <>
               <div>
@@ -322,7 +322,7 @@ export function RuleForm(props: {
               </ChipGroup>
             </>
           }
-          labelHelpTitle={t('Day(s) of Year')}
+          labelHelpTitle={t('Day(s) of year')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
