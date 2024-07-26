@@ -93,6 +93,11 @@ export function Organizations() {
     <PageLayout>
       <PageHeader
         title={t('Organizations')}
+        titleHelpTitle={t('Organizations')}
+        titleHelp={t(
+          `An Organization is a logical collection of Users, Teams and Projects and is the highest level in the {{product}} object hierarchy.`,
+          { product }
+        )}
         description={t(
           `An Organization is a logical collection of Users, Teams and Projects and is the highest level in the {{product}} object hierarchy.`,
           { product }

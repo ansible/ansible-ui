@@ -30,6 +30,10 @@ export function Credentials() {
     <PageLayout>
       <PageHeader
         title={t('Credentials')}
+        titleHelpTitle={t('Credentials')}
+        titleHelp={t(
+          'Credentials are utilized by EDA for authentication when launching rulebooks.'
+        )}
         description={t(
           'Credentials are utilized by EDA for authentication when launching rulebooks.'
         )}
