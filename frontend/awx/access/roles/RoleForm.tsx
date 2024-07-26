@@ -135,7 +135,7 @@ function AwxRoleInputs(props: { disableContentType?: boolean }) {
       <PageFormTextInput<AwxRbacRole> name="description" label={t('Description')} />
       <PageFormSelect
         name={'content_type'}
-        label={t('Content Type')}
+        label={t('Content type')}
         placeholderText={t('Select a content type')}
         options={Object.entries(awxRoleMetadata.content_types)
           .filter(([option]) => option !== 'shared.team')
