@@ -136,7 +136,7 @@ function useRelatedGroupsColumn() {
 
   const column: ITableColumn<AwxHost> = useMemo(
     () => ({
-      header: t('Related Groups'),
+      header: t('Related groups'),
       cell: (host) => {
         const groups: { results: Array<{ id: number; name: string }>; count: number } = host
           ?.summary_fields?.groups ?? {
@@ -144,7 +144,7 @@ function useRelatedGroupsColumn() {
           count: 0,
         };
         return (
-          <ChipGroup aria-label={t`Related Groups`}>
+          <ChipGroup aria-label={t`Related groups`}>
             {groups.results.map((group) => (
               <Chip key={group.name} isReadOnly>
                 {group.name}
