@@ -1,6 +1,5 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
@@ -9,317 +8,208 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
-describe.skip('Job Templates Tests', function () {
+describe('Job Templates Tests', function () {
   let awxOrganization: Organization;
-  let project: Project;
+  let awxProject: Project;
+  let awxInventory: Inventory;
+  let jobTemplate: JobTemplate;
 
   before(function () {
     cy.createAwxOrganization().then((thisAwxOrg) => {
       awxOrganization = thisAwxOrg;
       cy.createAwxProject(awxOrganization).then((proj) => {
-        project = proj;
+        awxProject = proj;
+      });
+      cy.createAwxInventory(awxOrganization).then((inv) => {
+        awxInventory = inv;
       });
     });
   });
 
   after(function () {
-    cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+    awxInventory && cy.deleteAwxInventory(awxInventory, { failOnStatusCode: false });
+    awxProject && cy.deleteAwxProject(awxProject, { failOnStatusCode: false });
+    awxOrganization && cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  });
+
+  afterEach(function () {
+    jobTemplate && cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
   });
 
   describe('Job Templates Tests: Create', function () {
-    let inventory: Inventory;
-    let inventoryWithHost: Inventory;
     let machineCredential: Credential;
-    let project: Project;
-    let organization: Organization;
-    let executionEnvironment: ExecutionEnvironment;
-    const executionEnvironmentName = 'Control Plane Execution Environment';
-    const instanceGroup = 'default';
-
-    beforeEach(function () {
-      cy.createAwxOrganization().then((org) => {
-        organization = org;
-        cy.createAwxInventory(organization).then((inv) => {
-          inventory = inv;
-
-          cy.createAWXCredential({
-            kind: 'machine',
-            organization: organization.id,
-            credential_type: 1,
-          }).then((cred) => {
-            machineCredential = cred;
-          });
-        });
-      });
-    });
 
     afterEach(function () {
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-      executionEnvironment?.id &&
-        cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
-      project?.id && cy.deleteAwxProject(project, { failOnStatusCode: false });
-      inventoryWithHost?.id &&
-        cy.deleteAwxInventory(inventoryWithHost, { failOnStatusCode: false });
-      cy.deleteAwxOrganization(organization);
+      machineCredential && cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
     });
 
-    it('can create a job template with all fields without prompt on launch option', function () {
-      cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
+    it('can create a job template and assert the information showing on the details page', function () {
       const jtName = 'E2E-JT ' + randomString(4);
+      const jtDescription = 'This is a JT description';
+
+      cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
       cy.navigateTo('awx', 'templates');
       cy.getBy('[data-cy="create-template"]').click();
       cy.clickLink(/^Create job template$/);
       cy.getBy('[data-cy="name"]').type(jtName);
-      cy.getBy('[data-cy="description"]').type('This is a JT description');
-      cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
+      cy.getBy('[data-cy="description"]').type(jtDescription);
+      cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
+      cy.selectDropdownOptionByResourceName('project', awxProject.name);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.getBy('[data-cy="Submit"]').click();
       cy.wait('@createJT')
-        .its('response.body.id')
-        .then((id: string) => {
-          cy.log(id);
-          cy.verifyPageTitle(jtName);
-          cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jtName]);
-          cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
-          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
-          cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
-          cy.wait('@postLaunch')
-            .its('response.body.id')
-            .then((jobId: string) => {
-              cy.waitForTemplateStatus(jobId);
-            });
-          cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jtName]);
-          cy.clickTableRowAction('name', jtName, 'delete-template', {
-            inKebab: true,
-            disableFilter: true,
-          });
-          cy.intercept('DELETE', awxAPI`/job_templates/${id}/`).as('deleteJobTemplate');
-          cy.clickModalConfirmCheckbox();
-          cy.getBy('[data-ouia-component-id="submit"]').click();
-          cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
-            expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
-          });
-          cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
-          cy.clearAllFilters();
+        .its('response.body')
+        .then((result: JobTemplate) => {
+          jobTemplate = result;
         });
+
+      cy.verifyPageTitle(jtName);
+      cy.hasDetail(/^Name$/, jtName);
+      cy.hasDetail(/^Description$/, jtDescription);
+      cy.hasDetail(/^Job type$/, 'run');
+      cy.hasDetail(/^Organization$/, awxOrganization.name);
+      cy.hasDetail(/^Inventory$/, awxInventory.name);
+      cy.hasDetail(/^Project$/, awxProject.name);
+      cy.hasDetail(/^Playbook$/, 'hello_world.yml');
     });
 
-    it('can create a job template using the prompt on launch wizard', function () {
-      cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
+    it('can create a job template with prompted fields, launch from the list view, and complete launch via wizard', function () {
       const jtName = 'E2E-POLJT ' + randomString(4);
-      cy.navigateTo('awx', 'templates');
-      cy.getBy('[data-cy="create-template"]').click();
-      cy.clickLink(/^Create job template$/);
-      cy.getBy('[data-cy="name"]').type(jtName);
-      cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
-      cy.selectPromptOnLaunch('inventory');
-      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
-      cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-      cy.selectPromptOnLaunch('execution_environment');
-      cy.selectPromptOnLaunch('credential');
-      cy.selectPromptOnLaunch('instance_groups');
-      cy.getBy('[data-cy="Submit"]').click();
-      cy.wait('@createPOLJT')
-        .its('response.body.id')
-        .then((id: string) => {
-          cy.verifyPageTitle(jtName);
-          cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jtName]);
-          cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
-          cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-          cy.clickButton(/^Next/);
-          cy.multiSelectByDataCy('credential', [machineCredential.name]);
-          cy.clickButton(/^Next/);
-          cy.get(`[data-cy*="execution-environment-select-form-group"]`).within(() => {
-            cy.get('button').eq(1).click();
+
+      cy.createAWXCredential({
+        kind: 'machine',
+        organization: awxOrganization.id,
+        credential_type: 1,
+      }).then((cred) => {
+        machineCredential = cred;
+
+        cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
+        cy.navigateTo('awx', 'templates');
+        cy.getBy('[data-cy="create-template"]').click();
+        cy.clickLink(/^Create job template$/);
+        cy.getBy('[data-cy="name"]').type(jtName);
+        cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
+        cy.selectPromptOnLaunch('inventory');
+        cy.selectDropdownOptionByResourceName('project', `${awxProject.name}`);
+        cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+        cy.selectPromptOnLaunch('execution_environment');
+        cy.selectPromptOnLaunch('credential');
+        cy.selectPromptOnLaunch('instance_groups');
+        cy.getBy('[data-cy="Submit"]').click();
+        cy.wait('@createPOLJT')
+          .its('response.body')
+          .then((jt: JobTemplate) => {
+            jobTemplate = jt;
+            cy.verifyPageTitle(jtName);
+            cy.navigateTo('awx', 'templates');
+            cy.filterTableByMultiSelect('name', [jtName]);
+            cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
+            cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
+            cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
+            cy.multiSelectByDataCy('credential', [machineCredential.name]);
+            // close credential select dropdown
+            cy.get('body').click(0, 0);
+            cy.singleSelectBy(
+              '[data-cy="executionEnvironment"]',
+              'Control Plane Execution Environment'
+            );
+            cy.multiSelectByDataCy('instance-group-select-form-group', ['default']);
+            cy.clickButton(/^Next/);
+            cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
+              'postLaunch'
+            );
+            cy.clickButton(/^Finish/);
+            cy.wait('@postLaunch')
+              .its('response.body.id')
+              .then((jobId: string) => {
+                cy.log(jobId);
+                cy.waitForTemplateStatus(jobId);
+              });
+            cy.getByDataCy('job-status-label').should('not.contain', 'Running');
           });
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', executionEnvironmentName);
-            cy.selectTableRowByCheckbox('name', executionEnvironmentName, { disableFilter: true });
-            cy.clickButton(/^Confirm/);
-          });
-          cy.clickButton(/^Next/);
-          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup]);
-          cy.clickButton(/^Next/);
-          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
-          cy.clickButton(/^Finish/);
-          cy.wait('@postLaunch')
-            .its('response.body.id')
-            .then((jobId: string) => {
-              cy.log(jobId);
-              cy.waitForTemplateStatus(jobId);
-            });
-          cy.navigateTo('awx', 'templates');
-          cy.intercept('DELETE', awxAPI`/job_templates/${id}/`).as('deleteJobTemplate');
-          cy.filterTableByMultiSelect('name', [jtName]);
-          cy.clickTableRowAction('name', jtName, 'delete-template', {
-            inKebab: true,
-            disableFilter: true,
-          });
-          cy.clickModalConfirmCheckbox();
-          cy.getBy('[data-ouia-component-id="submit"]').click();
-          cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
-            expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
-          });
-          cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
-          cy.clearAllFilters();
-        });
+      });
     });
 
     it('can launch a job template from the details page launch button using the prompt on launch', function () {
-      cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
       const jtName = 'E2E-POLJT ' + randomString(4);
-      cy.navigateTo('awx', 'templates');
-      cy.getBy('[data-cy="create-template"]').click();
-      cy.clickLink(/^Create job template$/);
-      cy.getBy('[data-cy="name"]').type(jtName);
-      cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
-      cy.selectPromptOnLaunch('inventory');
-      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
-      cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
-      cy.selectPromptOnLaunch('execution_environment');
-      cy.selectPromptOnLaunch('credential');
-      cy.selectPromptOnLaunch('instance_groups');
-      cy.getBy('[data-cy="Submit"]').click();
-      cy.wait('@createPOLJT')
-        .its('response.body.id')
-        .then((id: string) => {
-          cy.verifyPageTitle(jtName);
-          cy.clickButton(/^Launch template$/);
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-          cy.clickButton(/^Next/);
-          cy.selectItemFromLookupModal('credential-select', machineCredential.name);
-          cy.clickButton(/^Next/);
-          cy.get(`[data-cy*="execution-environment-select-form-group"]`).within(() => {
-            cy.get('button').eq(1).click();
-          });
-          cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-            cy.filterTableBySingleSelect('name', executionEnvironmentName);
-            cy.get('[data-ouia-component-id="simple-table"] tbody').within(() => {
-              cy.get('[data-cy="checkbox-column-cell"] input').click();
-            });
-            cy.clickButton(/^Confirm/);
-          });
-          cy.clickButton(/^Next/);
-          cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup]);
-          cy.clickButton(/^Next/);
-          cy.intercept('POST', awxAPI`/job_templates/${id}/launch/`).as('postLaunch');
-          cy.clickButton(/^Finish/);
-          cy.wait('@postLaunch')
-            .its('response.body.id')
-            .then((jobId: string) => {
-              cy.waitForTemplateStatus(jobId);
-            });
-          cy.navigateTo('awx', 'templates');
-          cy.intercept('DELETE', awxAPI`/job_templates/${id}/`).as('deleteJobTemplate');
-          cy.filterTableByMultiSelect('name', [jtName]);
-          cy.clickTableRowAction('name', jtName, 'delete-template', {
-            inKebab: true,
-            disableFilter: true,
-          });
-          cy.clickModalConfirmCheckbox();
-          cy.getBy('[data-ouia-component-id="submit"]').click();
-          cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
-            expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
-          });
-          cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
-          cy.clearAllFilters();
-        });
-    });
 
-    it('can create a job template, select concurrent jobs, launch the job template two times and verify that both jobs appear in the table', function () {
-      const jtName = 'E2E Concurrent JT ' + randomString(4);
-      cy.createAwxProject(
-        awxOrganization,
-        { name: randomE2Ename() },
-        'https://github.com/ansible/test-playbooks'
-      ).then((gitProject: Project) => {
-        cy.createInventoryHost(awxOrganization, '').then((inventoryHost) => {
-          const { inventory } = inventoryHost;
-          inventoryWithHost = inventory;
-          cy.navigateTo('awx', 'templates');
-          cy.getBy('[data-cy="create-template"]').click();
-          cy.clickLink(/^Create job template$/);
-          cy.getByDataCy('name').type(jtName);
-          cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-          cy.selectDropdownOptionByResourceName('project', gitProject.name);
-          cy.selectDropdownOptionByResourceName('playbook', 'debug-loop.yml');
-          cy.getByDataCy('allow_simultaneous').click();
-          cy.clickButton('Create job template');
-          cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launchTemplate');
-          cy.clickButton('Launch template');
-          cy.wait('@launchTemplate')
-            .its('response.body')
-            .then(({ id: jobId, name }: { id: number; name: string }) => {
-              cy.url().should('contain', `/jobs/playbook/${jobId}/output`);
-              cy.contains('Running');
-              cy.contains(jtName);
-              cy.intercept('POST', awxAPI`/jobs/${jobId.toString()}/relaunch/`).as('relaunchJob');
-              cy.getByDataCy('relaunch-job').click();
-              cy.wait('@relaunchJob')
-                .its('response.body')
-                .then(({ id: jobId2, name: name2 }: { id: number; name: string }) => {
-                  cy.url().should('contain', `/jobs/playbook/${jobId2}/output`);
-                  cy.contains('Running');
-                  cy.contains(jtName);
-                  cy.navigateTo('awx', 'jobs');
-                  cy.filterTableByMultiSelect('name', [name, name2]);
-                  cy.contains('Running').each(($element) => {
-                    cy.wrap($element).should('be.visible');
-                  });
-                });
-            });
-        });
+      cy.createAWXCredential({
+        kind: 'machine',
+        organization: awxOrganization.id,
+        credential_type: 1,
+      }).then((cred) => {
+        machineCredential = cred;
+        cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
+        cy.navigateTo('awx', 'templates');
+        cy.getBy('[data-cy="create-template"]').click();
+        cy.clickLink(/^Create job template$/);
+        cy.getBy('[data-cy="name"]').type(jtName);
+        cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
+        cy.selectPromptOnLaunch('inventory');
+        cy.selectDropdownOptionByResourceName('project', awxProject.name);
+        cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+        cy.selectPromptOnLaunch('execution_environment');
+        cy.selectPromptOnLaunch('credential');
+        cy.selectPromptOnLaunch('instance_groups');
+        cy.getBy('[data-cy="Submit"]').click();
+        cy.wait('@createPOLJT')
+          .its('response.body')
+          .then((jt: JobTemplate) => {
+            jobTemplate = jt;
+            cy.verifyPageTitle(jtName);
+            cy.clickButton(/^Launch template$/);
+            cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
+            cy.multiSelectByDataCy('credential', [machineCredential.name]);
+            // close credential select dropdown
+            cy.get('body').click(0, 0);
+            cy.singleSelectBy(
+              '[data-cy="executionEnvironment"]',
+              'Control Plane Execution Environment'
+            );
+            cy.multiSelectByDataCy('instance-group-select-form-group', ['default']);
+            cy.clickButton(/^Next/);
+            cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`).as(
+              'postLaunch'
+            );
+            cy.clickButton(/^Finish/);
+            cy.wait('@postLaunch')
+              .its('response.body.id')
+              .then((jobId: string) => {
+                cy.waitForTemplateStatus(jobId);
+              });
+            cy.getByDataCy('job-status-label').should('not.contain', 'Running');
+          });
       });
     });
   });
 
   describe('Job Templates Tests: Edit', function () {
-    let inventory: Inventory;
-    let inventory2: Inventory;
-    let machineCredential: Credential;
+    let inventoryToAssign: Inventory;
+    let inventoryToDelete: Inventory;
+    let jobTemplateToEdit: JobTemplate;
     let githubCredential: Credential;
-    let jobTemplate: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory = inv;
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
-          cy.createAwxJobTemplate({
-            organization: awxOrganization.id,
-            project: project.id,
-            inventory: inventory.id,
-          }).then((jt1) => {
-            jobTemplate = jt1;
-          });
-        });
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: awxProject.id,
+        inventory: awxInventory.id,
+      }).then((jt) => {
+        jobTemplate = jt;
       });
     });
 
     afterEach(function () {
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      inventory2?.id && cy.deleteAwxInventory(inventory2, { failOnStatusCode: false });
-      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-      githubCredential?.id && cy.deleteAwxCredential(githubCredential, { failOnStatusCode: false });
+      jobTemplateToEdit && cy.deleteAwxJobTemplate(jobTemplateToEdit, { failOnStatusCode: false });
+      githubCredential && cy.deleteAwxCredential(githubCredential, { failOnStatusCode: false });
+      inventoryToAssign && cy.deleteAwxInventory(inventoryToAssign, { failOnStatusCode: false });
+      inventoryToDelete && cy.deleteAwxInventory(inventoryToDelete, { failOnStatusCode: false });
     });
 
     it('can edit a job template using the kebab menu of the template list page', function () {
       const newName = (jobTemplate.name ?? '') + ' edited';
+      const newDescription = 'this is a new description after editing';
+
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [jobTemplate.name]);
       cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
@@ -327,7 +217,7 @@ describe.skip('Job Templates Tests', function () {
       cy.getBy('[data-cy="edit-template"]').click();
       cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
       cy.getBy('[data-cy="name"]').clear().type(newName);
-      cy.getBy('[data-cy="description"]').type('this is a new description after editing');
+      cy.getBy('[data-cy="description"]').type(newDescription);
       cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('editJT');
       cy.clickButton(/^Save job template$/);
       cy.wait('@editJT')
@@ -335,47 +225,90 @@ describe.skip('Job Templates Tests', function () {
         .then((name: string) => {
           expect(newName).to.be.equal(name);
         });
+
       cy.verifyPageTitle(newName);
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
-        'deleteJobTemplate'
-      );
-      cy.selectDetailsPageKebabAction('delete-template');
-      cy.wait('@deleteJobTemplate').then((deleteJobTemplate) => {
-        expect(deleteJobTemplate?.response?.statusCode).to.eql(204);
-      });
-      cy.verifyPageTitle('Templates');
+      cy.hasDetail(/^Name$/, newName);
+      cy.hasDetail(/^Description$/, newDescription);
+    });
+
+    it('can edit a job template using the edit template button on details page', function () {
+      const newName = (jobTemplate.name ?? '') + ' edited';
+      const newDescription = 'this is a new description after editing';
+
+      cy.navigateTo('awx', 'templates');
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
+      cy.verifyPageTitle(jobTemplate.name);
+      cy.clickLink(/^Edit template$/);
+      cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
+      cy.getBy('[data-cy="name"]').clear().type(newName);
+      cy.getBy('[data-cy="description"]').type(newDescription);
+      cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('editJT');
+      cy.clickButton(/^Save job template$/);
+      cy.wait('@editJT')
+        .its('response.body')
+        .then((response: JobTemplate) => {
+          expect(response.name).to.eql(newName);
+        });
+
+      cy.verifyPageTitle(newName);
+      cy.hasDetail(/^Name$/, newName);
+      cy.hasDetail(/^Description$/, newDescription);
     });
 
     it('can assign a new inventory to a job template if the originally assigned inventory was deleted', function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory2 = inv;
-        cy.navigateTo('awx', 'templates');
-        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-        cy.clickTableRowLink('name', jobTemplate.name, {
-          disableFilter: true,
+      cy.createAwxInventory(awxOrganization).then((inv1) => {
+        inventoryToAssign = inv1;
+        cy.createAwxInventory(awxOrganization).then((inv2) => {
+          inventoryToDelete = inv2;
+
+          cy.createAwxJobTemplate({
+            organization: awxOrganization.id,
+            project: awxProject.id,
+            inventory: inventoryToDelete.id,
+          }).then((jt) => {
+            jobTemplateToEdit = jt;
+
+            cy.navigateTo('awx', 'templates');
+            cy.filterTableByMultiSelect('name', [jobTemplateToEdit.name]);
+            cy.clickTableRowLink('name', jobTemplateToEdit.name, {
+              disableFilter: true,
+            });
+            // verify job template inventory detail
+            cy.verifyPageTitle(jobTemplateToEdit.name);
+            cy.getByDataCy('inventory')
+              .contains(jobTemplateToEdit.summary_fields.inventory.name)
+              .click();
+            // delete job template inventory
+            cy.clickKebabAction('actions-dropdown', 'delete-inventory');
+            cy.clickModalConfirmCheckbox();
+            cy.intercept('DELETE', awxAPI`/inventories/${inventoryToDelete.id.toString()}/`).as(
+              'deleteInventory'
+            );
+            cy.clickModalButton('Delete inventory');
+            cy.wait('@deleteInventory');
+            cy.navigateTo('awx', 'templates');
+            cy.filterTableByMultiSelect('name', [jobTemplateToEdit.name]);
+            cy.clickTableRowLink('name', jobTemplateToEdit.name, {
+              disableFilter: true,
+            });
+            // verify job template inventory deleted detail
+            cy.verifyPageTitle(jobTemplateToEdit.name);
+            cy.hasDetail(/^Inventory$/, 'Deleted');
+            // edit job template inventory
+            cy.clickLink('Edit template');
+            cy.selectDropdownOptionByResourceName('inventory', inventoryToAssign.name);
+            cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplateToEdit.id.toString()}/`).as(
+              'saveJT'
+            );
+            cy.clickButton('Save job template');
+            cy.wait('@saveJT');
+            // verify job template edited inventory detail
+            cy.verifyPageTitle(jobTemplateToEdit.name);
+            cy.hasDetail(/^Name$/, jobTemplateToEdit.name);
+            cy.hasDetail(/^Inventory$/, inventoryToAssign.name);
+          });
         });
-        cy.verifyPageTitle(jobTemplate.name);
-        cy.getByDataCy('inventory').contains(jobTemplate.summary_fields.inventory.name).click();
-        cy.clickKebabAction('actions-dropdown', 'delete-inventory');
-        cy.clickModalConfirmCheckbox();
-        cy.intercept('DELETE', awxAPI`/inventories/${inventory.id.toString()}/`).as(
-          'deleteInventory'
-        );
-        cy.clickModalButton('Delete inventory');
-        cy.wait('@deleteInventory');
-        cy.navigateTo('awx', 'templates');
-        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-        cy.clickTableRowLink('name', jobTemplate.name, {
-          disableFilter: true,
-        });
-        cy.verifyPageTitle(jobTemplate.name);
-        cy.getByDataCy('inventory').contains('Deleted');
-        cy.clickLink('Edit template');
-        cy.selectDropdownOptionByResourceName('inventory', inv.name);
-        cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('saveJT');
-        cy.clickButton('Save job template');
-        cy.wait('@saveJT');
-        cy.contains(inv.name).should('be.visible');
       });
     });
 
@@ -445,7 +378,7 @@ describe.skip('Job Templates Tests', function () {
         credential_type: 11,
       }).then((ghCred) => {
         githubCredential = ghCred;
-        let webhookKey: string;
+
         cy.navigateTo('awx', 'templates');
         cy.verifyPageTitle('Templates');
         cy.filterTableByMultiSelect('name', [jobTemplate.name]);
@@ -466,7 +399,8 @@ describe.skip('Job Templates Tests', function () {
         cy.wait('@getWebhookKey')
           .its('response.body.webhook_key')
           .then((webhook_key: string) => {
-            webhookKey = webhook_key;
+            let webhookKey: string = webhook_key;
+
             cy.getByDataCy('webhook_credential').should('have.text', ghCred.name);
             cy.getByDataCy('webhook-service-form-group').contains('GitHub');
             cy.getByDataCy('webhook-key').should('have.value', webhookKey);
@@ -493,49 +427,23 @@ describe.skip('Job Templates Tests', function () {
           });
       });
     });
-
-    it('can edit a job template using the edit template button on details page', function () {
-      const newName = (jobTemplate.name ?? '') + ' edited';
-      cy.navigateTo('awx', 'templates');
-      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-      cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
-      cy.verifyPageTitle(jobTemplate.name);
-      cy.clickLink(/^Edit template$/);
-      cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
-      cy.getBy('[data-cy="name"]').clear().type(newName);
-      cy.getBy('[data-cy="description"]').type('this is a new description after editing');
-      cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('editJT');
-      cy.clickButton(/^Save job template$/);
-      cy.wait('@editJT')
-        .its('response.body')
-        .then((response: JobTemplate) => {
-          expect(response.name).to.eql(newName);
-          cy.verifyPageTitle(response.name);
-          cy.getByDataCy('name').should('contain', response.name);
-        });
-    });
   });
 
   describe('Job Templates Tests: Copy', function () {
-    let inventory: Inventory;
-    let jobTemplate: JobTemplate;
+    let copiedJobTemplate: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory = inv;
-        cy.createAwxJobTemplate({
-          organization: awxOrganization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => {
-          jobTemplate = jt;
-        });
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: awxProject.id,
+        inventory: awxInventory.id,
+      }).then((jt) => {
+        jobTemplate = jt;
       });
     });
 
     afterEach(function () {
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      copiedJobTemplate && cy.deleteAwxJobTemplate(copiedJobTemplate, { failOnStatusCode: false });
     });
 
     it('can copy an existing job template from the list', function () {
@@ -549,10 +457,15 @@ describe.skip('Job Templates Tests', function () {
         disableFilter: true,
       });
       cy.wait('@copyTemplate')
-        .its('response.body.name')
-        .then((copiedName: string) => {
+        .its('response.body')
+        .then((jt: JobTemplate) => {
+          copiedJobTemplate = jt;
           cy.clearAllFilters();
-          cy.filterTableBySingleSelect('name', copiedName);
+          cy.filterTableBySingleSelect('name', copiedJobTemplate.name);
+          cy.clickTableRowLink('name', copiedJobTemplate.name, {
+            disableFilter: true,
+          });
+          cy.verifyPageTitle(copiedJobTemplate.name);
         });
     });
 
@@ -570,65 +483,42 @@ describe.skip('Job Templates Tests', function () {
       cy.getByDataCy('alert-toaster').contains(`${jobTemplate.name} copied.`);
       cy.wait('@copyTemplate')
         .its('response.body')
-        .then(({ name }: { name: string }) => {
+        .then((jt: JobTemplate) => {
+          copiedJobTemplate = jt;
           cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-          cy.clickTableRowLink('name', jobTemplate.name, {
+          cy.filterTableByMultiSelect('name', [copiedJobTemplate.name]);
+          cy.clickTableRowLink('name', copiedJobTemplate.name, {
             disableFilter: true,
           });
-          cy.verifyPageTitle(name);
+          cy.verifyPageTitle(copiedJobTemplate.name);
         });
     });
   });
 
   describe('Job Templates Tests: Delete', function () {
-    let inventory: Inventory;
-    let deletedInventory: Inventory;
-    let machineCredential: Credential;
-    let jobTemplate: JobTemplate;
     let jobTemplate2: JobTemplate;
-    let jobTemplateWithDeletedInventory: JobTemplate;
 
     beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory = inv;
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
-          machineCredential = cred;
-          cy.createAwxJobTemplate({
-            organization: awxOrganization.id,
-            project: project.id,
-            inventory: inventory.id,
-          }).then((jt1) => {
-            jobTemplate = jt1;
-          });
-          cy.createAwxJobTemplate({
-            organization: awxOrganization.id,
-            project: project.id,
-            inventory: inventory.id,
-          }).then((jt2) => {
-            jobTemplate2 = jt2;
-          });
-        });
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: awxProject.id,
+        inventory: awxInventory.id,
+      }).then((jt) => {
+        jobTemplate = jt;
       });
     });
 
     afterEach(function () {
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxJobTemplate(jobTemplate2, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      cy.deleteAwxCredential(machineCredential, { failOnStatusCode: false });
-      jobTemplateWithDeletedInventory?.id &&
-        cy.deleteAwxJobTemplate(jobTemplateWithDeletedInventory, { failOnStatusCode: false });
+      jobTemplate2 && cy.deleteAwxJobTemplate(jobTemplate2, { failOnStatusCode: false });
     });
 
     it('can delete a job template from the list line item', function () {
       cy.navigateTo('awx', 'templates');
       cy.filterTableBySingleSelect('name', jobTemplate.name);
-      cy.clickTableRowKebabAction(jobTemplate.name, 'delete-template');
+      cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('deleteJT');
       cy.clickModalButton('Delete template');
@@ -661,79 +551,38 @@ describe.skip('Job Templates Tests', function () {
       cy.verifyPageTitle('Templates');
     });
 
-    it('can delete a resource related to a JT and view warning on the JT', function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        deletedInventory = inv;
-        cy.createAwxJobTemplate({
-          organization: awxOrganization.id,
-          project: project.id,
-          inventory: deletedInventory.id,
-        }).then((jt) => {
-          jobTemplateWithDeletedInventory = jt;
-          cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jobTemplateWithDeletedInventory.name]);
-          cy.clickTableRowLink('name', jobTemplateWithDeletedInventory.name, {
-            disableFilter: true,
-          });
-          cy.verifyPageTitle(jobTemplateWithDeletedInventory.name);
-          cy.getByDataCy('inventory').contains(deletedInventory.name).click();
-          cy.clickKebabAction('actions-dropdown', 'delete-inventory');
-          cy.clickModalConfirmCheckbox();
-          cy.intercept('DELETE', awxAPI`/inventories/${deletedInventory.id.toString()}/`).as(
-            'deleteInventory'
-          );
-          cy.clickModalButton('Delete inventory');
-          cy.wait('@deleteInventory')
-            .its('response')
-            .then((response) => {
-              expect(response?.statusCode).to.eql(202);
-            });
-          cy.navigateTo('awx', 'templates');
-          cy.filterTableByMultiSelect('name', [jobTemplateWithDeletedInventory.name]);
-          cy.clickTableRowLink('name', jobTemplateWithDeletedInventory.name, {
-            disableFilter: true,
-          });
-          cy.verifyPageTitle(jobTemplateWithDeletedInventory.name);
-          cy.getByDataCy('inventory').contains('Deleted');
-        });
-      });
-    });
-
     it('can bulk delete job templates from the list page', function () {
-      cy.navigateTo('awx', 'templates');
-      cy.filterTableByMultiSelect('name', [jobTemplate.name, jobTemplate2.name]);
-      cy.selectTableRow(jobTemplate.name, false);
-      cy.selectTableRow(jobTemplate2.name, false);
-      cy.clickToolbarKebabAction('delete-selected-templates');
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
-        'deleteJobTemplate1'
-      );
-      cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate2.id.toString()}/`).as(
-        'deleteJobTemplate2'
-      );
-      cy.clickModalConfirmCheckbox();
-      cy.clickModalButton('Delete template');
-      cy.wait(['@deleteJobTemplate1', '@deleteJobTemplate2']).then((jtArray) => {
-        expect(jtArray[0]?.response?.statusCode).to.eql(204);
-        expect(jtArray[1]?.response?.statusCode).to.eql(204);
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: awxProject.id,
+        inventory: awxInventory.id,
+      }).then((jt) => {
+        jobTemplate2 = jt;
+        cy.navigateTo('awx', 'templates');
+        cy.filterTableByMultiSelect('name', [jobTemplate.name, jobTemplate2.name]);
+        cy.selectTableRow(jobTemplate.name, false);
+        cy.selectTableRow(jobTemplate2.name, false);
+        cy.clickToolbarKebabAction('delete-selected-templates');
+        cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+          'deleteJobTemplate1'
+        );
+        cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate2.id.toString()}/`).as(
+          'deleteJobTemplate2'
+        );
+        cy.clickModalConfirmCheckbox();
+        cy.clickModalButton('Delete template');
+        cy.wait(['@deleteJobTemplate1', '@deleteJobTemplate2']).then((jtArray) => {
+          expect(jtArray[0]?.response?.statusCode).to.eql(204);
+          expect(jtArray[1]?.response?.statusCode).to.eql(204);
+        });
+        cy.assertModalSuccess();
+        cy.clickButton(/^Close$/);
+        cy.clearAllFilters();
       });
-      cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
-      cy.clearAllFilters();
     });
-  });
-
-  describe('Schedules Tab for Job Templates', () => {
-    //These tests live on the schedules.cy.ts spec file
-  });
-
-  describe('Surveys Tab for Job Templates', () => {
-    //These tests live on the jobTemplateSurvey.cy.ts spec file
   });
 
   describe('Notifications Tab for Job Templates', () => {
-    let inventory: Inventory;
-    let jobTemplate: JobTemplate;
     let notification: NotificationTemplate;
 
     function toggleNotificationType(type: 'start' | 'success' | 'failure') {
@@ -773,27 +622,21 @@ describe.skip('Job Templates Tests', function () {
     }
 
     beforeEach(function () {
-      cy.createAwxInventory(awxOrganization).then((inv) => {
-        inventory = inv;
+      cy.createAwxJobTemplate({
+        organization: awxOrganization.id,
+        project: awxProject.id,
+        inventory: awxInventory.id,
+      }).then((jt) => {
+        jobTemplate = jt;
 
-        cy.createAwxJobTemplate({
-          organization: awxOrganization.id,
-          project: project.id,
-          inventory: inventory.id,
-        }).then((jt) => {
-          jobTemplate = jt;
-
-          cy.createNotificationTemplate(randomE2Ename(), awxOrganization).then((n) => {
-            notification = n;
-          });
+        cy.createNotificationTemplate(randomE2Ename(), awxOrganization).then((n) => {
+          notification = n;
         });
       });
     });
 
     afterEach(function () {
       cy.deleteNotificationTemplate(notification, { failOnStatusCode: false });
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
 
     it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
