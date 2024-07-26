@@ -79,7 +79,8 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     : true;
 
   const isLoading =
-    (!executionEnvironment.data || (isRemote && !singleRegistry.data)) && mode === 'edit';
+    (!executionEnvironment.data || (isRemote && singleRegistryUrl && !singleRegistry.data)) &&
+    mode === 'edit';
 
   if (mode === 'edit' && !tagsSet && isLoading === false) {
     setTagsSet(true);
