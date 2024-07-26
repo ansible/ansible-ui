@@ -65,7 +65,7 @@ export function SubscriptionDetails() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Subscription')}
+        title={t('Subscription Settings')}
         headerActions={
           <PageActions<CredentialType> actions={actions} position={DropdownPosition.right} />
         }

@@ -38,7 +38,7 @@ export function AuthenticatorsList() {
     <PageLayout>
       <PageHeader
         title={t('Authentication Methods')}
-        titleHelpTitle={t('Authentication Method')}
+        titleHelpTitle={t('Authentication Methods')}
         titleHelp={t(
           `Set up and manage your organization's authentication methods, which are used to simplify the login experience.`
         )}

@@ -10,10 +10,12 @@ export function PlatformApplicationsPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Applications')}
+        title={t('OAuth Applications')}
         description={t(
           'Create and configure token-based authentication for external applications.'
         )}
+        titleHelpTitle={t('OAuth Applications')}
+        titleHelp={t('Create and configure token-based authentication for external applications.')}
       />
       <PageRoutedTabs
         tabs={[

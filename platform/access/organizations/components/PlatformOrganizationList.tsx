@@ -55,7 +55,7 @@ export function PlatformOrganizationList() {
       <PageHeader
         title={t('Organizations')}
         description={t('An organization is a logical collection of users, teams, and resources.')}
-        titleHelpTitle={t('Organization')}
+        titleHelpTitle={t('Organizations')}
         titleHelp={[t('An organization is a logical collection of users, teams, and resources.')]}
         titleDocLink="https://docs.ansible.com"
       />
