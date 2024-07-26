@@ -56,7 +56,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add user to teams'),
+        label: t('Add users to teams'),
         isDisabled: canAddUserToTeam
           ? undefined
           : t(
@@ -69,7 +69,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
-        label: t('Remove user from selected teams'),
+        label: t('Remove users from teams'),
         onClick: () => removeTeamsFromUsers([user], view.selectedItems),
         isDanger: true,
       },

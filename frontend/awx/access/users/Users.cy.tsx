@@ -66,7 +66,7 @@ describe('Users.cy.ts', () => {
       .then((results: AwxUser[]) => {
         const user = results[0];
         cy.selectTableRow(user.username, false);
-        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.clickToolbarKebabAction('delete-users');
         cy.contains('Permanently delete users').should('be.visible');
       });
   });

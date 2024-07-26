@@ -55,7 +55,7 @@ function UserOrganizationsInternal(props: { user: AwxUser }) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add user to organizations'),
+        label: t('Add users to organizations'),
         onClick: () => selectOrganizationsAddUsers([user]),
       },
       { type: PageActionType.Seperator },
@@ -63,7 +63,7 @@ function UserOrganizationsInternal(props: { user: AwxUser }) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: MinusCircleIcon,
-        label: t('Remove user from selected organizations'),
+        label: t('Remove users from organizations'),
         onClick: () =>
           removeOrganizationsFromUsers([user], view.selectedItems, view.unselectItemsAndRefresh),
         isDanger: true,
