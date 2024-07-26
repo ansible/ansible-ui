@@ -20,7 +20,7 @@ export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) 
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
-      header: t('Id'),
+      header: t('ID'),
       cell: (team) => team.id,
       minWidth: 0,
       table: isHidden ? ColumnTableOption.hidden : undefined,

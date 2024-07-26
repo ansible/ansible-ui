@@ -104,7 +104,7 @@ describe('TemplatesList', () => {
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.exist');
         cy.contains(/^Description$/).should('be.visible');
-        cy.contains(/^Created by$/).should('be.visible');
+        cy.contains(/^Created$/).should('be.visible');
         cy.contains(/^Modified by$/).should('be.visible');
       });
     });
