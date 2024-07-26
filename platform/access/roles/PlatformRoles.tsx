@@ -15,6 +15,10 @@ export function PlatformRoles() {
         description={t(
           'A role represents set of actions that a team or user may perform on a resource or set of resources.'
         )}
+        titleHelpTitle={t('Roles')}
+        titleHelp={t(
+          'A role represents set of actions that a team or user may perform on a resource or set of resources.'
+        )}
       />
       <PlatformServiceNavigation awx={AwxRoute.Roles} eda={EdaRoute.Roles} hub={HubRoute.Roles} />
     </PageLayout>

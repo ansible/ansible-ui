@@ -52,7 +52,7 @@ export function PlatformTeamList() {
       <PageHeader
         title={t('Teams')}
         description={t('A team is a group of users that can be assigned permissions to resources.')}
-        titleHelpTitle={t('Team')}
+        titleHelpTitle={t('Teams')}
         titleHelp={[
           t('A team is a group of users that can be assigned permissions to resources.'),
           t(

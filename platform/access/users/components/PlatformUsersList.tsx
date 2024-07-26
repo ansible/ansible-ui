@@ -54,7 +54,7 @@ export function PlatformUsersList() {
         description={t(
           'A user is someone who has access with associated permissions and credentials.'
         )}
-        titleHelpTitle={t('User')}
+        titleHelpTitle={t('Users')}
         titleHelp={[
           t('A user is someone who has access with associated permissions and credentials.'),
         ]}
