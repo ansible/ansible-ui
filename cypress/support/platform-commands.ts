@@ -13,7 +13,6 @@ import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { awxAPI } from './formatApiPathForAwx';
 import './rest-commands';
-import { randomE2Ename } from './utils';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -117,7 +116,7 @@ Cypress.Commands.add('createPlatformOrganization', (org?: Partial<PlatformOrgani
     org = {};
   }
   if (!org.name) {
-    org.name = `E2E Platform Org ${randomE2Ename().toLowerCase()}`;
+    org.name = `E2E Platform Org ${randomString(4)}`;
   }
   cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, org);
 });

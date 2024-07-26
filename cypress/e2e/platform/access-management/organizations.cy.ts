@@ -263,6 +263,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
 
       // Add Administrator
       cy.getByDataCy('add-administrators').click();
+      cy.contains('h1', 'Add administrators');
       cy.getModal().within(() => {
         cy.selectTableRowByCheckbox('username', user.username);
         cy.getBy('#submit').click();
