@@ -81,7 +81,7 @@ function EmailForm() {
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.recipients'}
-        label={t('Recipient List')}
+        label={t('Recipient list')}
         isRequired
         labelHelp={getLabelHelp('email', 'recipients', t)}
       />
@@ -89,7 +89,7 @@ function EmailForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.sender'}
-        label={t('Sender Email')}
+        label={t('Sender email')}
         isRequired
         validate={(value) => validateEmail(value, t)}
       />
@@ -112,7 +112,7 @@ function EmailForm() {
       />
 
       <PageFormGroup
-        label={t('Email Options ')}
+        label={t('Email options ')}
         labelHelp={
           <Trans>
             See Django{' '}
@@ -150,7 +150,7 @@ function SlackForm() {
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.channels'}
-        label={t('Destination Channels')}
+        label={t('Destination channels')}
         isRequired
         labelHelp={getLabelHelp('slack', 'channels', t)}
       />
@@ -178,14 +178,14 @@ function TwilioForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.account_token'}
-        label={t('Account Token')}
+        label={t('Account token')}
         isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.from_number'}
-        label={t('Source Phone Number')}
+        label={t('Source phone number')}
         validate={(value) => twilioPhoneNumber(value, t)}
         isRequired
         labelHelp={getLabelHelp('twilio', 'from_number', t)}
@@ -193,7 +193,7 @@ function TwilioForm() {
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.to_numbers'}
-        label={t('Destination SMS Numbers')}
+        label={t('Destination SMS numbers')}
         validate={(value) => twilioPhoneNumber(value, t)}
         labelHelp={getLabelHelp('twilio', 'to_numbers', t)}
         isRequired
@@ -216,21 +216,21 @@ function PagerdutyForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.token'}
-        label={t('API Token')}
+        label={t('API token')}
         isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.service_key'}
-        label={t('API Service/Integration Key')}
+        label={t('API service/integration key')}
         isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.client_name'}
-        label={t('Client Identifier')}
+        label={t('Client identifier')}
         isRequired
       />
     </>
@@ -252,7 +252,7 @@ function GrafanaForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.grafana_key'}
-        label={t('Grafana API Key')}
+        label={t('Grafana API key')}
         isRequired
       />
 
@@ -316,15 +316,15 @@ function WebhookForm() {
 
       <PageFormDataEditor<NotificationTemplate>
         name={headersPath}
-        label={t('HTTP Headers')}
+        label={t('HTTP headers')}
         format="object"
         labelHelp={getLabelHelp('webhook', 'headers', t)}
-        labelHelpTitle={t('HTTP Headers')}
+        labelHelpTitle={t('HTTP headers')}
       />
 
       <PageFormSingleSelect<NotificationTemplate>
         name={'notification_configuration.http_method'}
-        label={t('HTTP Method')}
+        label={t('HTTP method')}
         placeholder={t('Choose an HTTP method')}
         isRequired
         options={[
@@ -417,20 +417,20 @@ function IrcForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.password'}
-        label={t('IRC Server Password')}
+        label={t('IRC server password')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type="number"
         name={'notification_configuration.port'}
-        label={t('IRC Server Port')}
+        label={t('IRC server port')}
         isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.server'}
-        label={t('IRC Server Address')}
+        label={t('IRC server address')}
         isRequired
         validate={(item) => validateUrl(item, t)}
       />
@@ -438,13 +438,13 @@ function IrcForm() {
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.nickname'}
-        label={t('IRC Nick')}
+        label={t('IRC nick')}
         isRequired
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.targets'}
-        label={t('Destination Channels or Users')}
+        label={t('Destination channels or users')}
         isRequired
         labelHelp={getLabelHelp('irc', 'targets', t)}
       />
