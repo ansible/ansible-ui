@@ -36,14 +36,14 @@ export function ApplicationDetailInner(props: { application: Application }) {
           />
         )}
       </PageDetail>
-      <PageDetail label={t('Authorization Grant Type')}>
+      <PageDetail label={t('Authorization grant type')}>
         {props.application.authorization_grant_type}
       </PageDetail>
       <PageDetail label={t('Client ID')}>
         <CopyCell text={props.application.client_id} />
       </PageDetail>
       <PageDetail label={t('Redirect URIs')}>{props.application.redirect_uris}</PageDetail>
-      <PageDetail label={t('Client Type')}>{props.application.client_type}</PageDetail>
+      <PageDetail label={t('Client type')}>{props.application.client_type}</PageDetail>
       <PageDetail label={t('Created')}>
         <DateTimeCell value={props.application.created} />
       </PageDetail>
