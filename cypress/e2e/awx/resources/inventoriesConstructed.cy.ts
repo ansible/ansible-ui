@@ -19,6 +19,9 @@ describe('Constructed Inventories CRUD Tests', () => {
       cy.createAwxInstanceGroup().then((ig) => {
         instanceGroup = ig;
       });
+      cy.createAwxInventory(organization).then((inv) => {
+        inventory = inv;
+      });
       cy.createInventoryHost(organization, 'constructed').then((result) => {
         const { inventory: inv } = result;
         newInventory = inv;
@@ -27,20 +30,17 @@ describe('Constructed Inventories CRUD Tests', () => {
   });
 
   beforeEach(() => {
-    cy.createAwxInventory(organization).then((inv) => {
-      inventory = inv;
-    });
     cy.createAwxConstructedInventory(organization).then((constInv) => {
       constructedInv = constInv;
     });
   });
 
   afterEach(() => {
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxConstructedInventory(constructedInv);
   });
 
   after(() => {
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     cy.deleteAwxInventory(newInventory);
     cy.deleteAwxInstanceGroup(instanceGroup);
     cy.deleteAwxOrganization(organization);
