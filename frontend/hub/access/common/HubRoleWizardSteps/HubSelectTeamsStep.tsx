@@ -33,7 +33,7 @@ export function HubSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
 
   const view = useHubMultiSelectListView<HubTeam>(
     {
-      url: hubAPI`/_ui/v1/groups/`,
+      url: hubAPI`/_ui/v2/teams/`,
       toolbarFilters,
       tableColumns,
     },
