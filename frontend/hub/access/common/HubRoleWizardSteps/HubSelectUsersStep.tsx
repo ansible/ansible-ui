@@ -45,7 +45,7 @@ export function HubSelectUsersStep(props: { descriptionForUsersSelection?: strin
 
   const view = useHubMultiSelectListView<HubUser>(
     {
-      url: hubAPI`/_ui/v1/users/`,
+      url: hubAPI`/_ui/v2/users/`,
       queryParams: {
         is_superuser: 'false',
       },
