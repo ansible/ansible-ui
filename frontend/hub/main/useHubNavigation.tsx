@@ -64,6 +64,7 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -315,6 +316,11 @@ export function useHubNavigation() {
                   path: 'versions',
                   id: HubRoute.RepositoryVersions,
                   element: <RepositoryVersions />,
+                },
+                {
+                  path: 'distributions',
+                  id: HubRoute.RepositoryDistributions,
+                  element: <RepositoryDistributions />,
                 },
                 {
                   path: '',
