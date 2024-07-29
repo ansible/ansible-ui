@@ -328,8 +328,8 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInpu
     <>
       <PageFormTextInput<RemoteRegistryProps>
         name="name"
-        label={t('Remote name')}
-        placeholder={t('Enter a remote name')}
+        label={t('Name')}
+        placeholder={t('Enter a remote registry name')}
         isRequired
         isDisabled={disableEditName}
       />
