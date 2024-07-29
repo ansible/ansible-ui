@@ -4,6 +4,7 @@ import {
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
+  PageFormTextArea,
   PageFormTextInput,
 } from '../../../../../framework';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
@@ -28,7 +29,6 @@ export const textInputTypes = [
   'ChoiceField',
   'DNField',
   'PublicCert',
-  'PrivateKey',
 ];
 export const dataInputTypes = [
   'JSONField',
@@ -38,6 +38,7 @@ export const dataInputTypes = [
   'LDAPSearchField',
   'UserAttrMap',
 ];
+export const textareaInputTypes = ['PrivateKey'];
 
 export function AuthenticatorDetailsStep(props: {
   plugins: AuthenticatorPlugins;
@@ -54,6 +55,7 @@ export function AuthenticatorDetailsStep(props: {
   });
   let schema = authenticatorPlugin?.configuration_schema || [];
   const textFields: PluginConfiguration[] = [];
+  const textareaFields: PluginConfiguration[] = [];
   const boolFields: PluginConfiguration[] = [];
   const dataFields: PluginConfiguration[] = [];
 
@@ -71,6 +73,8 @@ export function AuthenticatorDetailsStep(props: {
       boolFields.push(field);
     } else if (dataInputTypes.includes(field.type)) {
       dataFields.push(field);
+    } else if (textareaInputTypes.includes(field.type)) {
+      textareaFields.push(field);
     }
   });
 
@@ -109,6 +113,22 @@ export function AuthenticatorDetailsStep(props: {
               placeholder={`Enter ${field.ui_field_label || field.name}`}
             />
           )
+        )}
+        {textareaFields.length > 0 && (
+          <PageFormSection singleColumn>
+            {textareaFields.map((field) => (
+              <PageFormTextArea
+                id={`configuration-textarea-${field.name}`}
+                name={`configuration.${field.name}`}
+                key={field.name}
+                label={field.ui_field_label || field.name}
+                labelHelpTitle={field.ui_field_label || field.name}
+                labelHelp={field.help_text}
+                isRequired={field.required}
+                placeholder={`Enter ${field.ui_field_label || field.name}`}
+              />
+            ))}
+          </PageFormSection>
         )}
         {boolFields.length > 0 && (
           <PageFormSection singleColumn>
