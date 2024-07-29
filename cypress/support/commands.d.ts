@@ -1217,6 +1217,9 @@ declare global {
         }
       ): Chainable<void>;
 
+      addEERolesToUsersInOrganization(organizationName: string): Chainable<void>;
+      addEERolesToTeamsInOrganization(organizationName: string): Chainable<void>;
+
       // ==============================================================================================================
       // EDA Commands
       // ==============================================================================================================
