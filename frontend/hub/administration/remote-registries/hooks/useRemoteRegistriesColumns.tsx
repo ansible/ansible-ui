@@ -32,7 +32,7 @@ export function useRemoteRegistriesColumns(_options?: {
         list: 'name',
       },
       {
-        header: t('Sync Status'),
+        header: t('Sync status'),
         cell: (remoteRegistry) => {
           if (Object.keys(remoteRegistry.last_sync_task).length > 0) {
             return <StatusCell status={remoteRegistry.last_sync_task.state} />;
@@ -42,7 +42,7 @@ export function useRemoteRegistriesColumns(_options?: {
         },
       },
       {
-        header: t('Last Sync'),
+        header: t('Last sync'),
         type: 'datetime',
         value: (remoteRegistry) => remoteRegistry.last_sync_task.finished_at,
         list: 'secondary',
@@ -60,7 +60,7 @@ export function useRemoteRegistriesColumns(_options?: {
         list: 'secondary',
       },
       {
-        header: t('Last Updated'),
+        header: t('Last modified'),
         type: 'datetime',
         value: (remoteRegistry) => remoteRegistry.updated_at,
         table: ColumnTableOption.expanded,
