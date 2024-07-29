@@ -278,10 +278,10 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           additionalControls={
             <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
           }
-          labelHelpTitle={t('Extra Variables')}
+          labelHelpTitle={t('Extra variables')}
           labelHelp={t(`Optional extra variables to be applied to job template`)}
           format="yaml"
-          label={t('Extra Variables')}
+          label={t('Extra variables')}
           name="extra_vars"
         />
       </PageFormSection>

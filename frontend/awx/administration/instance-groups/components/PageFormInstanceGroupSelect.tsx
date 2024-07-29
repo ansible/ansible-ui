@@ -31,7 +31,7 @@ export function PageFormInstanceGroupSelect<
       id="instance-group-select"
       placeholder={t('Select instance groups')}
       labelHelp={props.labelHelp}
-      label={t('Instance Groups')}
+      label={t('Instance groups')}
       isRequired={props.isRequired}
       compareOptionValues={(originalIG: InstanceGroup, selectedIG: InstanceGroup) =>
         originalIG.id === selectedIG.id

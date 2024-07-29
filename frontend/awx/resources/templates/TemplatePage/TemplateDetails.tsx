@@ -282,7 +282,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         </LabelGroup>
       </PageDetail>
       <PageDetailCodeEditor
-        label={t('Extra vars')}
+        label={t('Extra variables')}
         value={template.extra_vars}
         helpText={t(
           'Pass extra command line variables to the playbook. This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
