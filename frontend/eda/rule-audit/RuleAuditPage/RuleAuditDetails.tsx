@@ -44,7 +44,7 @@ export function RuleAuditDetails() {
       <PageDetail label={t('Created')}>
         {ruleAudit?.created_at ? formatDateString(ruleAudit?.created_at) : ''}
       </PageDetail>
-      <PageDetail label={t('Fired date')}>
+      <PageDetail label={t('Last fired date')}>
         {ruleAudit?.fired_at ? formatDateString(ruleAudit?.fired_at) : ''}
       </PageDetail>
     </PageDetails>
