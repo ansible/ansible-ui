@@ -37,7 +37,6 @@ export function PageSettingsDetails() {
     <PageLayout>
       <PageHeader
         title={t('User Preferences')}
-        titleHelp={t('Per user preferences.')}
         headerActions={<PageActions actions={actions} position={DropdownPosition.right} />}
       />
       <PageDetails>

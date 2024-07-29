@@ -67,14 +67,14 @@ export function Projects() {
     <PageLayout>
       <PageHeader
         title={t('Projects')}
-        titleHelpTitle={t('Project')}
+        titleHelpTitle={t('Projects')}
         titleHelp={t(
-          `A Project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
+          `A project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
           { product }
         )}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/projects.html`}
         description={t(
-          `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
+          `A project is a logical collection of Ansible playbooks, represented in {{product}}.`,
           { product }
         )}
         headerActions={<ActivityStreamIcon type={'project'} />}

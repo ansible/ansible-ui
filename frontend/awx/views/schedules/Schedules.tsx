@@ -14,7 +14,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
     <PageLayout>
       <PageHeader
         title={t('Schedules')}
-        titleHelpTitle={t('Schedule')}
+        titleHelpTitle={t('Schedules')}
         titleHelp={t(
           'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
         )}

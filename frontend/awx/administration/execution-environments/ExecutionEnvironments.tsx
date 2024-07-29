@@ -17,9 +17,12 @@ export function ExecutionEnvironments() {
           'An execution environment allows you to have a customized image to run jobs.'
         )}
         titleHelpTitle={t('Execution Environments')}
-        titleHelp={t(
-          'Execution environments are container images that make it possible to incorporate system-level dependencies and collection-based content. Each execution environment allows you to have a customized image to run jobs, and each of them contain only what you need when running the job, nothing more.'
-        )}
+        titleHelp={[
+          t('An execution environment allows you to have a customized image to run jobs.'),
+          t(
+            'Execution environments are container images that make it possible to incorporate system-level dependencies and collection-based content. Each execution environment allows you to have a customized image to run jobs, and each of them contain only what you need when running the job, nothing more.'
+          ),
+        ]}
         titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/execution_environments.html`}
         headerActions={<ActivityStreamIcon type={'execution_environment'} />}
       />
