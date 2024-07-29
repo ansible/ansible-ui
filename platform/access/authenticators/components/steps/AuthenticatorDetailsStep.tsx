@@ -110,7 +110,7 @@ export function AuthenticatorDetailsStep(props: {
               labelHelpTitle={field.ui_field_label || field.name}
               labelHelp={field.help_text}
               isRequired={field.required}
-              placeholder={`Enter ${field.ui_field_label || field.name}`}
+              placeholder={t(`Enter ${field.ui_field_label || field.name}`)}
             />
           )
         )}
@@ -202,6 +202,7 @@ export async function validateDetailsStep(
   const url = isEditMode
     ? gatewayAPI`/authenticators/${authenticator.id.toString()}/?validate=True`
     : gatewayAPI`/authenticators/?validate=True`;
+
   try {
     await request(url, {
       name: formData.name,

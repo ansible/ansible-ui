@@ -22,7 +22,7 @@ import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
 
 export interface Configuration {
-  [key: string]: string | string[] | { [k: string]: string };
+  [key: string]: boolean | string | string[] | { [k: string]: string };
 }
 
 interface MapBase {
@@ -134,6 +134,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     mapping: {},
     order: {},
   };
+
   if (authenticator) {
     const plugin = plugins.authenticators.find((plugin) => plugin.type === authenticator.type);
     initialValues.type = {
@@ -148,13 +149,20 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     };
 
     const configuration: Configuration = {};
+
     plugin?.configuration_schema.forEach((field) => {
       let val = authenticator.configuration[field.name];
+
       if (field.type === 'URLListField' && Array.isArray(val)) {
         val = val.join(',');
+      } else if (field.type === 'BooleanField') {
+        val = Boolean(val);
+      } else if (typeof val !== 'string') {
+        val = JSON.stringify(val);
       }
-      configuration[field.name] = typeof val === 'string' ? val : JSON.stringify(val);
+      configuration[field.name] = val;
     });
+
     initialValues.details.configuration = configuration;
 
     initialValues.mapping = {
@@ -195,18 +203,17 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
         defaultValue={initialValues}
         onSubmit={props.handleSubmit}
         errorAdapter={authenticatorErrorAdapter}
-        // disableGrid
       />
     </PageLayout>
   );
 }
 
 export function formatConfiguration(values: Configuration, plugin: AuthenticatorPlugin) {
-  const formatted: { [k: string]: string | object | [] } = {};
-  plugin.configuration_schema.map((definition) => {
+  const formatted: { [k: string]: boolean | string | object | [] } = {};
+  plugin.configuration_schema.forEach((definition) => {
     const key = definition.name;
     const value = values[key] as string;
-    if (!values[key]) {
+    if (!values[key] && definition.type !== 'BooleanField') {
       return;
     }
     switch (definition.type) {
@@ -220,6 +227,9 @@ export function formatConfiguration(values: Configuration, plugin: Authenticator
       case 'LDAPSearchField':
       case 'UserAttrMap':
         formatted[key] = JSON.parse(value) as object | [];
+        return;
+      case 'BooleanField':
+        formatted[key] = Boolean(value);
         return;
       case 'CharField':
       case 'URLField':
