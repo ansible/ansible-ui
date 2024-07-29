@@ -79,10 +79,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
     setValue('node_type', nodeType, { shouldTouch: true });
 
-    if (isDirty) {
-      setValue('resource', null);
-    }
-
     if (isTouched && !isDirty && isApprovalType) {
       reset(undefined, {
         keepDefaultValues: true,
@@ -91,6 +87,10 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       setStepData({ nodeTypeStep: currentFormValues });
     }
   }, [nodeType, getFieldState, setValue, reset, allSteps, setWizardData, setStepData, getValues]);
+
+  useEffect(() => {
+    setValue('resource', null);
+  }, [nodeType, setValue]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
