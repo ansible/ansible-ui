@@ -158,7 +158,7 @@ describe('Workflow Visualizer', () => {
         });
     });
 
-    it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
+    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
@@ -209,10 +209,12 @@ describe('Workflow Visualizer', () => {
                   cy.getBy(`g[data-id="${results.id}"]`)
                     .getBy('[data-cy="successful-icon"]')
                     .should('be.visible');
-                  cy.getBy(`g[data-id="${results.id}"]`).within(() => {
-                    cy.contains(jobTemplate.name).click({ force: true });
-                  });
-                  cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
+                  cy.getBy('g[data-id]')
+                    .contains(project.name)
+                    .within(() => {
+                      cy.contains(project.name).click({ force: true });
+                    });
+                  cy.getByDataCy(`${project.name}`).should('be.visible');
                   cy.getByDataCy('Output').should('be.visible');
                   cy.contains('button', 'Workflow Job 1/1')
                     .click()
@@ -224,7 +226,7 @@ describe('Workflow Visualizer', () => {
                   cy.contains('button', 'Workflow Job 1/1')
                     .click()
                     .then(() => {
-                      cy.contains(`${jobTemplate.name}`).click();
+                      cy.contains(`${project.name}`).click();
                     });
                 });
             });
