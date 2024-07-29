@@ -5,7 +5,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-describe.skip('Collections List', () => {
+describe('Collections List', () => {
   let namespace: HubNamespace;
   let repository: Repository;
   let collectionName: string;
@@ -39,7 +39,7 @@ describe.skip('Collections List', () => {
       // Sign collection
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
-      cy.clickTableRowKebabAction(collectionName, 'sign-collection', false);
+      actionClick(collectionName, 'sign-collection');
       cy.get('#confirm').click();
       cy.clickButton(/^Sign collections$/);
       cy.contains(/^Success$/);
@@ -56,16 +56,14 @@ describe.skip('Collections List', () => {
       cy.approveCollection(collectionName, namespace.name, result.version as string);
       cy.navigateTo('hub', Collections.url);
       cy.get('[data-cy="table-view"]').click();
-      cy.filterTableBySingleText(collectionName);
-      cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="sign-collection"]').click();
+      actionClick(collectionName, 'sign-collection');
       cy.get('#confirm').click();
       cy.clickButton(/^Sign collections$/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
       cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
       cy.get('[data-cy="actions-column-cell"]').click();
-      cy.get('[data-cy="delete-entire-collection-from-system"]').click({ force: true });
+      cy.get('[data-cy="delete-entire-collection-from-system"] button').click({ force: true });
       cy.get('#confirm').click();
       cy.clickButton(/^Delete collections/);
       cy.contains(/^Success$/);
@@ -89,8 +87,7 @@ describe.skip('Collections List', () => {
         cy.verifyPageTitle(Collections.title);
         // Delete collection
         cy.getByDataCy('table-view').click();
-        cy.filterTableBySingleText(collectionName, true);
-        cy.clickTableRowKebabAction(collectionName, 'delete-entire-collection-from-system', false);
+        actionClick(collectionName, 'delete-entire-collection-from-system');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete collections/);
         cy.contains(/^Success$/);
@@ -104,7 +101,7 @@ describe.skip('Collections List', () => {
     );
   });
 
-  it.skip('can upload and then delete a new version to an existing collection', () => {
+  it('can upload and then delete a new version to an existing collection', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
@@ -123,13 +120,14 @@ describe.skip('Collections List', () => {
           action: 'drag-drop',
         });
         // Upload page
-        cy.verifyPageTitle('Upload Collection');
+
         cy.get('#radio-non-pipeline').click();
         cy.filterTableBySingleText(repository.name, true);
         cy.getTableRowByText(repository.name, false).within(() => {
           cy.getByDataCy('checkbox-column-cell').click();
         });
         cy.get('[data-cy="Submit"]').click();
+
         // Collections Page
         cy.verifyPageTitle(Collections.title);
         cy.getByDataCy('table-view').click();
@@ -160,8 +158,7 @@ describe.skip('Collections List', () => {
     );
     // Delete collection from system
     cy.getByDataCy('table-view').click();
-    cy.filterTableBySingleText(collectionName, true);
-    cy.clickTableRowKebabAction(collectionName, 'delete-entire-collection-from-system', false);
+    actionClick(collectionName, 'delete-entire-collection-from-system');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
@@ -183,8 +180,7 @@ describe.skip('Collections List', () => {
     );
     // Delete collection from repository
     cy.getByDataCy('table-view').click();
-    cy.filterTableBySingleText(collectionName, true);
-    cy.clickTableRowKebabAction(collectionName, 'delete-entire-collection-from-repository', false);
+    actionClick(collectionName, 'delete-entire-collection-from-repository');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete collections/);
     cy.contains(/^Success$/);
@@ -204,8 +200,7 @@ describe.skip('Collections List', () => {
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
     );
     cy.getByDataCy('table-view').click();
-    cy.filterTableBySingleText(collectionName, true);
-    cy.clickTableRowKebabAction(collectionName, 'deprecate-collection', false);
+    actionClick(collectionName, 'deprecate-collection');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton('Deprecate collections');
@@ -223,3 +218,9 @@ describe.skip('Collections List', () => {
     cy.deleteCollection(collectionName, namespace.name, repository);
   });
 });
+
+function actionClick(item: string, action: string) {
+  cy.filterTableBySingleText(item);
+  cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
+  cy.get(`[data-cy="${action}"] button`).click();
+}
