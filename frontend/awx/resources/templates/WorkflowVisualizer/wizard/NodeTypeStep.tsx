@@ -311,7 +311,7 @@ function SystemJobInputs() {
           <PageFormTextInput<WizardFormValues>
             name="node_days_to_keep"
             label={t('Days of data to be retained')}
-            placeholder={t('Enter number of days')}
+            placeholder={t('Enter number of days.')}
             type="number"
             isRequired
             min={0}
