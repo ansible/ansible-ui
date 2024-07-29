@@ -8,8 +8,14 @@ import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common
 export function useUserTokensColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn(options);
+  const createdColumn = useCreatedColumn({
+    userDetailsPageId: PlatformRoute.UserDetails,
+    ...options,
+  });
+  const modifiedColumn = useModifiedColumn({
+    userDetailsPageId: PlatformRoute.UserDetails,
+    ...options,
+  });
 
   return useMemo<ITableColumn<Token>[]>(
     () => [

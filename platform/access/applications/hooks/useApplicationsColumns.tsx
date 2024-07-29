@@ -27,8 +27,15 @@ export function useApplicationsColumns(options?: {
   });
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(PlatformRoute.OrganizationDetails, options);
-  const createdColumn = useCreatedColumn(options);
-  const modifiedColumn = useModifiedColumn({ ...options, disableSort: true });
+  const createdColumn = useCreatedColumn({
+    userDetailsPageId: PlatformRoute.UserDetails,
+    ...options,
+  });
+  const modifiedColumn = useModifiedColumn({
+    ...options,
+    disableSort: true,
+    userDetailsPageId: PlatformRoute.UserDetails,
+  });
   const tableColumns = useMemo<ITableColumn<Application>[]>(
     () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
     [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]
