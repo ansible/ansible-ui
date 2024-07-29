@@ -22,7 +22,7 @@ export interface Authenticator {
   create_objects: boolean;
   remove_users: boolean;
   configuration: {
-    [key: string]: string | string[] | { [k: string]: string };
+    [key: string]: boolean | string | string[] | { [k: string]: string };
   };
   type: AuthenticatorTypeEnum;
   order: number;

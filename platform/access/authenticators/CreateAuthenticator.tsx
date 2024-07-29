@@ -33,6 +33,7 @@ export function CreateAuthenticator() {
     if (!plugins || !plugin) {
       return;
     }
+
     const request = postRequest(gatewayAPI`/authenticators/`, {
       name,
       type,
