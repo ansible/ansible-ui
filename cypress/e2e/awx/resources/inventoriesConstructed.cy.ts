@@ -62,26 +62,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.singleSelectBy('[data-cy="organization"]', organization.name);
     // this can be simplified if we include data-cy to the search button of instance groups
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
-
-    //get inventories select
-    cy.get('form')
-      .contains('button', /^Select inventories$/)
-      .click();
-    cy.get('form')
-      .document()
-      .its('body')
-      .find('.pf-v5-c-menu__content')
-      .should('have.length', 1)
-      .within(() => {
-        cy.getByDataCy('search-input').within(() => {
-          cy.get('input').clear().type(inventory.name);
-        });
-        cy.contains('.pf-v5-c-menu__item-text', inventory.name)
-          .parent()
-          .within(() => {
-            cy.get('input').click();
-          });
-      });
+    cy.multiSelectByDataCy('inventories', [inventory.name]);
 
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
