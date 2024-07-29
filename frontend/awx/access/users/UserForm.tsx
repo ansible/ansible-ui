@@ -56,10 +56,10 @@ export function CreateUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create User')}
+        title={t('Create user')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
-          { label: t('Create User') },
+          { label: t('Create user') },
         ]}
       />
       <AwxPageForm
@@ -130,10 +130,14 @@ export function EditUser() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit User')}
+        title={user?.username ? t('Edit {{userName}}', { userName: user?.username }) : t('User')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
-          { label: t('Edit User') },
+          {
+            label: user?.username
+              ? t('Edit {{userName}}', { userName: user?.username })
+              : t('User'),
+          },
         ]}
       />
       <AwxPageForm<IUserInput>

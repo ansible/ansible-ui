@@ -67,18 +67,18 @@ describe('Users List Actions', () => {
   it('edits a user from the details page', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRowLink('username', user.username);
-    cy.verifyPageTitle(user.username);
+    cy.verifyPageTitle(`Edit ${user.username}`);
     cy.clickButton(/^Edit user$/);
-    cy.verifyPageTitle('Edit User');
+    cy.verifyPageTitle(`Edit ${user.username}`);
     cy.get('[data-cy="username"]').type(user.username + 'a');
     cy.clickButton(/^Save user$/);
-    cy.verifyPageTitle(`${user.username}a`);
+    cy.verifyPageTitle(`Edit ${user.username}`);
   });
 
   it('navigates to the edit form from the users list row item', () => {
     cy.navigateTo('awx', 'users');
     cy.clickTableRowPinnedAction(user.username, 'edit-user');
-    cy.verifyPageTitle('Edit User');
+    cy.verifyPageTitle(`Edit ${user.username}`);
   });
 });
 
