@@ -124,7 +124,7 @@ export function UploadCollectionByFile() {
           onChange={(_event, val) => {
             setOnlyStaging(val);
           }}
-          label={t`Staging Repos`}
+          label={t`Staging repos`}
           id="radio-staging"
         ></Radio>
         <Radio
