@@ -93,3 +93,6 @@ Cypress.Commands.add('getCurrentUser', () => {
     cy.getAwxUserByAnsibleId(currentUser.summary_fields.resource.ansible_id)
   );
 });
+
+Cypress.Commands.add('addEERolesToUsersInOrganization', (_organizationName: string) => {});
+Cypress.Commands.add('addEERolesToTeamsInOrganization', (_organizationName?: string) => {});
