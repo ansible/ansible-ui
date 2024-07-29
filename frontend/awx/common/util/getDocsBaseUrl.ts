@@ -63,7 +63,6 @@ const upstreamPaths: DocPathDictionary = {
   managePlaybooksSC: 'userguide/projects.html#manage-playbooks-using-source-control',
   projects: 'userguide/projects.html',
   templates: 'userguide/job_templates.html',
-  // workflowTemplates: 'userguide/automation_controller_user_guide/controller-workflow-job-templates',
   workflowVisualizer: 'userguide/workflow_templates.html#ug-wf-editor',
   workflowVisBuild: 'userguide/workflow_templates.html#converge-node',
   jobs: 'userguide/jobs.html',
@@ -88,7 +87,7 @@ const downstreamPaths: DocPathDictionary = {
   jobTemplateSurveys:
     'automation_controller_user_guide/controller-job-templates#controller-surveys-in-job-templates',
   index: 'automation_controller_user_guide/index',
-  hosts: 'automation_controller_user_guide/controller-hosts',
+  hosts: 'automation_controller_user_guide/assembly-controller-hosts',
   inventories: 'automation_controller_user_guide/controller-inventories',
   constructedInventories:
     'automation_controller_user_guide/controller-inventories#ref-controller-constructed-inventories',
@@ -96,7 +95,6 @@ const downstreamPaths: DocPathDictionary = {
     'automation_controller_user_guide/controller-projects#ref-projects-manage-playbooks-with-source-control',
   projects: 'automation_controller_user_guide/controller-projects',
   templates: 'automation_controller_user_guide/controller-job-templates',
-  // workflowTemplates: 'automation_controller_user_guide/controller-workflow-job-templates',
   workflowVisualizer:
     'automation_controller_user_guide/controller-workflow-job-templates#controller-workflow-visualizer',
   workflowVisBuild:
