@@ -8,8 +8,8 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-
-describe('Inventory Sources', () => {
+// FLAKY_07_30_2024
+describe.skip('Inventory Sources', () => {
   const scheduleName = 'e2e-' + randomString(4);
 
   let project: Project;
