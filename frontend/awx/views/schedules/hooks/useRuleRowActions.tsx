@@ -18,7 +18,10 @@ export function useRuleRowActions(
   return useMemo<IPageAction<RuleListItemType>[]>(() => {
     if (!setIsOpen) return [];
     const isExceptionStep = wizard.activeStep && wizard.activeStep.id === 'exceptions';
+
     const existingRules = context.getValues('rules') as RuleListItemType[];
+    const existingExceptions = context.getValues('exceptions') as RuleListItemType[];
+
     const deleteRule = (rule: RuleListItemType) => {
       const filteredRules = rules.filter((item) => item.id !== rule.id);
 
@@ -46,8 +49,13 @@ export function useRuleRowActions(
           setIsOpen(r.id);
           const rule = rules.find((item) => item.id === r.id);
           if (rule === undefined || !rule.rule) return;
-
-          context.reset({ ...rule.rule.options, id: rule.id, rules: existingRules || [] });
+          const ruleData = {
+            ...rule.rule.options,
+            id: rule.id,
+            rules: existingRules || [],
+            exceptions: existingExceptions || [],
+          };
+          context.reset(ruleData);
         },
       },
       { type: PageActionType.Seperator },

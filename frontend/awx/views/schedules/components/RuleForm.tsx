@@ -45,7 +45,6 @@ export function RuleForm(props: {
   } = useFormContext();
   const { activeStep, wizardData } = usePageWizard();
   const ruleId = typeof props.isOpen === 'number' && props.isOpen;
-
   const {
     timezone = 'America/New_York',
     startDateTime: { date, time },
@@ -57,12 +56,15 @@ export function RuleForm(props: {
 
   useEffect(() => {
     if (ruleId) {
-      const rules = getValues('rules') as RuleListItemType[];
+      const rules = isRulesStep
+        ? (getValues('rules') as RuleListItemType[])
+        : (getValues('exceptions') as RuleListItemType[]);
       const ruleOptions = rules[rules.findIndex((r) => r.id === ruleId)].rule.options;
       const { until } = ruleOptions;
 
       if (until === null) return;
       const [date, time] = dateToInputDateTime(until?.toISOString() || '');
+
       reset(
         {
           ...ruleOptions,
@@ -70,8 +72,10 @@ export function RuleForm(props: {
             date,
             time,
           },
-          rules,
+          rules: isRulesStep ? rules : [],
+          exceptions: !isRulesStep ? rules : [],
         },
+
         { keepDefaultValues: true }
       );
     }
