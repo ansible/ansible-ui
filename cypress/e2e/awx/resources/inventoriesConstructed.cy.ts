@@ -55,6 +55,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     const verbosityValue = generateRandom(0, 2);
 
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.clickButton(/^Create inventory$/);
     cy.clickButton(/^Create constructed inventory$/);
     cy.getByDataCy('name').type(constInvName);
@@ -94,6 +95,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.intercept('PATCH', awxAPI`/constructed_inventories/*`).as('saveInv');
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInv');
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.intercept({
       method: 'GET',
       pathname: awxAPI`/inventories/`,
@@ -134,6 +136,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     //Run a sync and assert failure of the job
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.filterTableBySingleSelect('name', newInventory.name);
     cy.clickTableRowLink('name', newInventory.name, { disableFilter: true });
 
@@ -213,6 +216,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     //Assert the original order of the input inventories
     //Assert the UI change to the order of input inventories
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.filterTableByMultiSelect('name', [constructedInv.name]);
     cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
     cy.contains('a', constructedInv.name).click();
@@ -248,6 +252,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
         cy.getByDataCy('input-inventories');
 
         cy.navigateTo('awx', 'inventories');
+        cy.verifyPageTitle('Inventories');
         cy.filterTableByMultiSelect('name', [constructedInv.name]);
         cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
         cy.contains('a', constructedInv.name).click();
