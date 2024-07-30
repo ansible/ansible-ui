@@ -219,11 +219,13 @@ describe('Users - Teams and Roles Tab Tests', () => {
       cy.clickTab('Teams', true);
       cy.get('[data-cy="add-team(s)"]').click();
       cy.getModal().within(() => {
-        cy.selectTableRowByCheckbox('name', platformTeam.name);
+        cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
+        cy.selectTableRowByCheckbox('name', platformTeam.name, { disableFilter: true });
         cy.getBy('#submit').click();
       });
       cy.getModal().should('not.exist');
-      cy.selectTableRowByCheckbox('name', platformTeam.name);
+      cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
+      cy.selectTableRowByCheckbox('name', platformTeam.name, { disableFilter: true });
       cy.clickToolbarKebabAction('remove-selected-teams');
       cy.getModal().within(() => {
         cy.get('#confirm').click();

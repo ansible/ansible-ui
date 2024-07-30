@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import { usePlatformOrganizationsFilter } from '../../organizations/hooks/usePlatformOrganizationsFilter';
 
 export function useUsernameToolbarFilter() {
   const { t } = useTranslation();
@@ -64,22 +63,14 @@ export function useUsersFilters() {
   const firstnameByToolbarFilter = useFirstNameToolbarFilter();
   const lastnameToolbarFilter = useLastNameToolbarFilter();
   const emailToolbarFilter = useEmailToolbarFilter();
-  const organizationsFilter = usePlatformOrganizationsFilter('organizations');
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
       usernameToolbarFilter,
       firstnameByToolbarFilter,
       lastnameToolbarFilter,
       emailToolbarFilter,
-      organizationsFilter,
     ],
-    [
-      usernameToolbarFilter,
-      firstnameByToolbarFilter,
-      lastnameToolbarFilter,
-      emailToolbarFilter,
-      organizationsFilter,
-    ]
+    [usernameToolbarFilter, firstnameByToolbarFilter, lastnameToolbarFilter, emailToolbarFilter]
   );
   return toolbarFilters;
 }
