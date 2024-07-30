@@ -13,7 +13,7 @@ export type HubUser = {
   password?: string;
 };
 
-type HubUserGroup = {
+export type HubUserGroup = {
   id: number;
   name: string;
   object_roles?: string[];
