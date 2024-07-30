@@ -53,6 +53,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
   it('can edit a team with a user from the list view and delete it from the ui', function () {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.associateUsersWithPlatformTeam(platformTeam, [createdPlatformUser]).then(() => {
+        cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
         cy.getTableRowByText(platformTeam.name).within(() => {
           cy.get('#edit-team').click();
         });
@@ -72,11 +73,14 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
           'deleteTeam'
         );
+        cy.filterTableByTextFilter('name', `${platformTeam.name} edited from list page`, {
+          disableFilterSelection: true,
+        });
         cy.clickTableRowAction(
           'name',
           `${platformTeam.name} edited from list page`,
           'delete-team',
-          { disableFilter: false, inKebab: true }
+          { disableFilter: true, inKebab: true }
         );
         cy.clickModalConfirmCheckbox();
         cy.getModal().within(() => {
@@ -178,7 +182,8 @@ describe('Platform Teams - Tabs Tests', function () {
       cy.createPlatformUser().then((user2) => {
         cy.associateUsersWithPlatformOrganization(platformOrganization, [user1, user2]).then(() => {
           cy.associateUsersWithPlatformTeam(platformTeam, [user1, user2]).then(() => {
-            cy.clickTableRowLink('name', platformTeam.name);
+            cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
+            cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
             cy.clickTab('Users', true);
             cy.getByDataCy('add-user(s)').click();
             cy.getModal().within(() => {
@@ -210,7 +215,8 @@ describe('Platform Teams - Tabs Tests', function () {
       cy.createPlatformUser().then((user2) => {
         cy.associateUsersWithPlatformOrganization(platformOrganization, [user1, user2]).then(() => {
           cy.associateUsersWithPlatformTeam(platformTeam, [user1, user2]).then(() => {
-            cy.clickTableRowLink('name', platformTeam.name);
+            cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
+            cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
             cy.clickTab('Administrators', true);
             cy.getByDataCy('add-administrator(s)').click();
             cy.getModal().within(() => {
