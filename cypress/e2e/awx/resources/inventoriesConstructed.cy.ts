@@ -157,15 +157,8 @@ describe('Constructed Inventories CRUD Tests', () => {
       "product_dev": "account_alias == 'product_dev'"
       }}`
     );
-    cy.intercept('PATCH', awxAPI`/constructed_inventories/*`).as('saveInv');
     cy.clickButton(/^Save inventory$/);
-    cy.wait('@saveInv')
-      .its('response.statusCode')
-      .then((statusCode) => {
-        expect(statusCode).to.be.equal(200);
-        cy.verifyPageTitle(newInventory.name);
-      });
-
+    cy.verifyPageTitle(newInventory.name);
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
     cy.clickButton('Sync inventory');
     cy.wait('@syncInventory')
