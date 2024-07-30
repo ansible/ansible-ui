@@ -47,11 +47,6 @@ describe.skip('Inventory Sources', () => {
     cy.clickTab(/^Sources$/, true);
   }
 
-  function goToSourceDetails(inventoryName: string) {
-    goToSourceList(inventoryName);
-    cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
-  }
-
   describe('Inventory Source List', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       const credentialName = 'e2e-' + randomString(4);
@@ -252,7 +247,9 @@ describe.skip('Inventory Sources', () => {
         unified_job_template: inventorySource.id,
         rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
       }).then((schedule1: Schedule) => {
-        goToSourceDetails(inventory.name);
+        // goToSourceDetails(inventory.name);
+        goToSourceList(inventory.name);
+        cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
         cy.clickTab('Schedules', true);
         cy.clickTableRowAction('name', scheduleName, 'delete-schedule', {
           inKebab: true,
@@ -286,7 +283,8 @@ describe.skip('Inventory Sources', () => {
     });
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Start', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
@@ -304,7 +302,8 @@ describe.skip('Inventory Sources', () => {
     });
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Success', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
@@ -322,7 +321,8 @@ describe.skip('Inventory Sources', () => {
     });
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
