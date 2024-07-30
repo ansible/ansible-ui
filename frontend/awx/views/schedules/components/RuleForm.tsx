@@ -73,7 +73,7 @@ export function RuleForm(props: {
             time,
           },
           rules: (getValues('rules') as RuleListItemType[]) || [],
-          exceptions: (getValues('rules') as RuleListItemType[]) || [],
+          exceptions: (getValues('exceptions') as RuleListItemType[]) || [],
         },
 
         { keepDefaultValues: true }
