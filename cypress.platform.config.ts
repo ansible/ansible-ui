@@ -24,7 +24,6 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/eda/Users/*.cy.ts',
   'cypress/e2e/awx/resources/inventoriesConstructed.cy.ts',
   'cypress/e2e/awx/administration/wfApprovalsList.cy.ts',
-  'cypress/e2e/awx/resources/executionEnvironmentsAccess.cy.ts', // TODO: The role assignment assertions in the platform will fail due to the bug AAP-25268 (currently in progress)
   'cypress/e2e/awx/resources/inventoryHost/inventoryHostSmart.cy.ts',
 ];
 baseConfig.e2e!.baseUrl = 'https://localhost:4100';
