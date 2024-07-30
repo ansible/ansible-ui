@@ -160,7 +160,9 @@ describe('Constructed Inventories CRUD Tests', () => {
       "product_dev": "account_alias == 'product_dev'"
       }}`
     );
+
     cy.clickButton(/^Save inventory$/);
+
     cy.verifyPageTitle(newInventory.name);
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
     cy.clickButton('Sync inventory');
