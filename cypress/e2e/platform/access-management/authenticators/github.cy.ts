@@ -1,7 +1,7 @@
 import { GithubAuthenticator } from '../../../../../platform/interfaces/GithubAuthenticator';
 import { randomE2Ename } from '../../../../support/utils';
 
-describe.skip('GitHub Authentication form - create, edit, update and delete', () => {
+describe('GitHub Authentication form - create, edit, update and delete', () => {
   it('creates a GitHub authenticator', () => {
     const name = randomE2Ename();
 
