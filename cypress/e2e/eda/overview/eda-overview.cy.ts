@@ -66,7 +66,7 @@ describe('EDA Overview', () => {
               );
               cy.clickButton('Create Decision Environment');
             });
-          cy.verifyPageTitle('Create Decision Environment');
+          cy.verifyPageTitle('Create decision environment');
         } else if (results.length >= 1) {
           cy.get('#decision-environments')
             .scrollIntoView()
