@@ -93,6 +93,55 @@ Cypress.Commands.add('getCurrentUser', () => {
     cy.getAwxUserByAnsibleId(currentUser.summary_fields.resource.ansible_id)
   );
 });
-
-Cypress.Commands.add('addEERolesToUsersInOrganization', (_organizationName: string) => {});
-Cypress.Commands.add('addEERolesToTeamsInOrganization', (_organizationName?: string) => {});
+Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: string) => {
+  cy.navigateTo('platform', 'organizations');
+  cy.verifyPageTitle('Organizations');
+  cy.filterTableByTextFilter('name', organizationName, { disableFilterSelection: true });
+  cy.clickTableRowLink('name', organizationName, { disableFilter: true });
+  cy.clickTab(/^Users$/, true);
+  cy.getByDataCy('manage-roles').click();
+  cy.clickButton(/^Manage roles/);
+  cy.getWizard().within(() => {
+    cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+    cy.filterTableByTextFilter('name', 'Organization ExecutionEnvironment Admin', {
+      disableFilterSelection: true,
+    });
+    cy.selectTableRowByCheckbox('name', 'Organization ExecutionEnvironment Admin', {
+      disableFilter: true,
+    });
+    cy.clickButton(/^Next/);
+    cy.getByDataCy('select-all').click();
+    cy.clickButton(/^Next/);
+    cy.contains('h1', 'Review').should('be.visible');
+    cy.clickButton(/^Finish/);
+  });
+  cy.getModal().within(() => {
+    cy.clickButton(/^Close$/);
+  });
+});
+Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: string) => {
+  cy.navigateTo('platform', 'organizations');
+  cy.verifyPageTitle('Organizations');
+  cy.filterTableByTextFilter('name', organizationName, { disableFilterSelection: true });
+  cy.clickTableRowLink('name', organizationName, { disableFilter: true });
+  cy.clickTab(/^Teams$/, true);
+  cy.getByDataCy('manage-roles').click();
+  cy.clickButton(/^Manage roles/);
+  cy.getWizard().within(() => {
+    cy.contains('h1', 'Select Automation Execution roles').should('be.visible');
+    cy.filterTableByTextFilter('name', 'Organization ExecutionEnvironment Admin', {
+      disableFilterSelection: true,
+    });
+    cy.selectTableRowByCheckbox('name', 'Organization ExecutionEnvironment Admin', {
+      disableFilter: true,
+    });
+    cy.clickButton(/^Next/);
+    cy.getByDataCy('select-all').click();
+    cy.clickButton(/^Next/);
+    cy.contains('h1', 'Review').should('be.visible');
+    cy.clickButton(/^Finish/);
+  });
+  cy.getModal().within(() => {
+    cy.clickButton(/^Close$/);
+  });
+});
