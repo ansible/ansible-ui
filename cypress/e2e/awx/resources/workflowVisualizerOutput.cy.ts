@@ -102,7 +102,7 @@ describe('Workflow Visualizer', () => {
       });
     });
 
-    it.skip('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
+    it('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySingleSelect('name', `${jobTemplate?.name}`);
@@ -110,13 +110,19 @@ describe('Workflow Visualizer', () => {
         inKebab: false,
         disableFilter: true,
       });
-      cy.verifyPageTitle('Edit Job Template');
+      cy.verifyPageTitle(`Edit ${jobTemplate?.name}`);
       cy.getByDataCy('ask_variables_on_launch').click();
       cy.getByDataCy('Submit').click();
+      cy.url().should('contain', '/details');
       cy.verifyPageTitle(`${jobTemplate?.name}`);
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
-      cy.filterTableBySingleSelect('name', `${workflowJobTemplate?.name}`);
+      cy.get('[data-cy="app-description"]').should(
+        'contain',
+        'A job template is a definition and set of parameters for running an Ansible job.'
+      );
+      cy.url().should('contain', '/templates');
+      cy.singleSelectByDataCy('filter-input', `${workflowJobTemplate?.name}`, false);
       cy.clickTableRowAction('name', `${workflowJobTemplate?.name}`, 'view-workflow-visualizer', {
         inKebab: false,
         disableFilter: true,
@@ -128,8 +134,8 @@ describe('Workflow Visualizer', () => {
       });
       cy.getBy('li[data-cy="edit-node"]').click();
       cy.contains('Edit step').should('be.visible');
+      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate?.name}`);
       cy.getByDataCy('Submit').click();
-      cy.getByDataCy('wizard-nav-item-promptStep').click();
       cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
       cy.getBy('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
