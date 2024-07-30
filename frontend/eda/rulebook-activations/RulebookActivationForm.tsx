@@ -113,6 +113,7 @@ export function CreateRulebookActivation() {
           restart_policy: RestartPolicyEnum.OnFailure,
           log_level: LogLevelEnum.Error,
           is_enabled: true,
+          swap_single_source: false,
         }}
       >
         <RulebookActivationInputs />
@@ -234,21 +235,6 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
-      <PageFormMultiSelect<IEdaRulebookActivationInputs>
-        name="webhooks"
-        label={t('Event stream(s)')}
-        options={
-          webhooks?.results
-            ? webhooks.results.map((item) => ({
-                label: item?.name || '',
-                value: `${item.id}`,
-              }))
-            : []
-        }
-        placeholder={t('Select event stream(s)')}
-        footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create event stream</Link>}
-      />
-
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         credentialKinds={['vault,cloud']}
@@ -322,6 +308,32 @@ export function RulebookActivationInputs() {
         labelHelp={t('Optional service name.')}
         labelHelpTitle={t('Service name')}
       />
+      <PageFormSection>
+        <PageFormMultiSelect<IEdaRulebookActivationInputs>
+          name="webhooks"
+          label={t('Event stream(s)')}
+          options={
+            webhooks?.results
+              ? webhooks.results.map((item) => ({
+                  label: item?.name || '',
+                  value: `${item.id}`,
+                }))
+              : []
+          }
+          placeholder={t('Select event stream(s)')}
+          footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create event stream</Link>}
+        />
+        <PageFormSwitch<IEdaRulebookActivationInputs>
+          id="swap_single_source"
+          name="swap_single_source"
+          label={t('Swap single source?')}
+          labelHelp={t(
+            'Event streams can be used to swap out one or more sources in your rulebook, the name of the source and the event stream have to match.'
+          )}
+          labelHelpTitle={t('Swap single source')}
+        />
+      </PageFormSection>
+
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
         name="is_enabled"
@@ -352,4 +364,5 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   project_id: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
+  swap_single_source: boolean;
 };
