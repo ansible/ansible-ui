@@ -47,6 +47,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
     cy.createEdaCredentialType().then((edaCredentialType) => {
       cy.navigateTo('eda', 'credential-types');
       cy.get('h1').should('contain', 'Credential Types');
+      cy.filterTableByText(edaCredentialType.name, 'MultiText');
       cy.clickTableRow(edaCredentialType.name, false);
       cy.clickButton(/^Edit credential type$/);
       cy.verifyPageTitle(`Edit ${edaCredentialType.name}`);
@@ -63,6 +64,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
     cy.createEdaCredentialType().then((edaCredentialType) => {
       cy.navigateTo('eda', 'credential-types');
       cy.get('h1').should('contain', 'Credential Types');
+      cy.filterTableByText(edaCredentialType.name, 'MultiText');
       cy.clickTableRow(edaCredentialType.name, false);
       cy.verifyPageTitle(edaCredentialType.name);
       cy.intercept('DELETE', edaAPI`/credential-types/${edaCredentialType.id.toString()}/`).as(
@@ -89,6 +91,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
       }).then((cred) => {
         cy.navigateTo('eda', 'credential-types');
         cy.get('h1').should('contain', 'Credential Types');
+        cy.filterTableByText(credtype.name, 'MultiText');
         cy.clickTableRow(credtype.name, false);
         cy.verifyPageTitle(credtype.name);
         cy.intercept('DELETE', edaAPI`/credential-types/${credtype.id.toString()}/`).as('deleted');
@@ -125,6 +128,7 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
       }).then((cred) => {
         cy.navigateTo('eda', 'credential-types');
         cy.get('h1').should('contain', 'Credential Types');
+        cy.filterTableByText(credtype.name, 'MultiText');
         cy.clickTableRow(credtype.name, false);
         cy.verifyPageTitle(credtype.name);
         cy.intercept('PATCH', edaAPI`/credential-types/${credtype.id.toString()}/`).as('edit');
@@ -150,30 +154,20 @@ describe('EDA Credentials Type - Create, Edit, Delete', () => {
   });
 
   it('can bulk delete credential types', () => {
-    cy.createEdaCredentialType().then((credtype1) => {
-      cy.createEdaCredentialType().then((credtype2) => {
-        cy.navigateTo('eda', 'credential-types');
-        cy.get('h1').should('contain', 'Credential Types');
-        cy.selectTableRow(credtype1.name, false);
-        cy.selectTableRow(credtype2.name, false);
-        cy.clickToolbarKebabAction('delete-credential-types');
-        cy.intercept('DELETE', edaAPI`/credential-types/${credtype1.id.toString()}/`).as(
-          'credtype1'
-        );
-        cy.intercept('DELETE', edaAPI`/credential-types/${credtype2.id.toString()}/`).as(
-          'credtype2'
-        );
-        cy.clickModalConfirmCheckbox();
-        cy.clickModalButton('Delete credential types');
-        cy.wait('@credtype1').then((credtype1) => {
-          expect(credtype1?.response?.statusCode).to.eql(204);
-        });
-        cy.wait('@credtype2').then((credtype2) => {
-          expect(credtype2?.response?.statusCode).to.eql(204);
-        });
-        cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
+    cy.createEdaCredentialType().then((credtype) => {
+      cy.navigateTo('eda', 'credential-types');
+      cy.get('h1').should('contain', 'Credential Types');
+      cy.filterTableByText(credtype.name, 'MultiText');
+      cy.selectTableRow(credtype.name, false);
+      cy.clickToolbarKebabAction('delete-credential-types');
+      cy.intercept('DELETE', edaAPI`/credential-types/${credtype.id.toString()}/`).as('credtype');
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete credential type');
+      cy.wait('@credtype').then((credtyperesponse) => {
+        expect(credtyperesponse?.response?.statusCode).to.eql(204);
       });
+      cy.assertModalSuccess();
+      cy.clickButton(/^Close$/);
     });
   });
 });

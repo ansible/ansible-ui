@@ -12,6 +12,7 @@ import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { useCredentialTypeCredentialsFilters } from './hooks/useCredentialTypeCredentialsFilters';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
@@ -19,9 +20,11 @@ export function CredentialTypes() {
   const pageNavigate = usePageNavigate();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/credential-types/`);
   const canCreateCredentialTypes = Boolean(data && data.actions && data.actions['POST']);
+  const toolbarFilters = useCredentialTypeCredentialsFilters();
 
   const view = useEdaView<EdaCredentialType>({
     url: edaAPI`/credential-types/`,
+    toolbarFilters,
     tableColumns,
   });
 
@@ -43,6 +46,7 @@ export function CredentialTypes() {
         id="Eda-credential-types"
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
+        toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading credential types')}
         emptyStateTitle={
