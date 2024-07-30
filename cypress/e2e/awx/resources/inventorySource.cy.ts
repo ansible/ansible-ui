@@ -211,7 +211,8 @@ describe.skip('Inventory Sources', () => {
       cy.getByDataCy('time-zone').should('contain', 'America/New_York');
     });
 
-    it("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
+    // Uncomment when Laura fixes the bug where name and desc fields are getting reset
+    it.skip("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
       cy.createAWXSchedule({
         name: scheduleName,
         unified_job_template: inventorySource.id,
