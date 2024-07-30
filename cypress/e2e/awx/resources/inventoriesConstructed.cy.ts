@@ -151,7 +151,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.getByDataCy('toggle-json').click();
     //Assert the change to the strict setting
     //Add bad variables
-    cy.get('[data-cy="source-vars"]').type(
+    cy.getByDataCy('source-vars').type(
       `{{}    
       "plugin": "constructed",
       "strict": true,
