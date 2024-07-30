@@ -4,7 +4,6 @@ import { tag } from '../../support/tag';
 import { randomE2Ename } from '../../support/utils';
 import { Approvals, Collections, MyImports } from './constants';
 
-tag(['flaky'], () => {
   describe('Approvals', () => {
     let repository: Repository;
     let namespace: HubNamespace;
@@ -36,10 +35,9 @@ tag(['flaky'], () => {
       cy.contains('button', 'Clear all filters').click();
     });
 
-    it('should be able to view import logs', () => {
+    it.only('should be able to view import logs', () => {
       // View Import Logs
-      cy.filterTableBySingleText(collectionName, true);
-      cy.clickTableRowKebabAction(collectionName, 'view-import-logs', false);
+      actionClick(collectionName, 'View import logs');
       cy.verifyPageTitle(MyImports.title);
       cy.url().should('include', MyImports.url);
       cy.url().should('include', namespace.name);
@@ -101,4 +99,10 @@ tag(['flaky'], () => {
 
     it.skip('can upload a signature to a collection', () => {});
   });
-});
+
+  function actionClick(item: string, action: string) {
+    cy.filterTableBySingleText(item);
+    cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
+    cy.contains(`a`, action).click();
+  }
+
