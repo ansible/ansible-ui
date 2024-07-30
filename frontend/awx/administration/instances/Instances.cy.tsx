@@ -29,7 +29,7 @@ describe('Instances list', () => {
     cy.verifyPageTitle('Instances');
     cy.get('[data-cy="app-description"]').should(
       'contain',
-      'Ansible node instances dedicated for a particular purpose indicated by node type.'
+      'Ansible node instances are dedicated for a particular purpose indicated by node type.'
     );
     cy.get('[data-cy="actions-dropdown"]').click();
     cy.get('[data-cy="add-instance"]').should('be.visible');
@@ -49,7 +49,7 @@ describe('Instances list', () => {
     cy.verifyPageTitle('Instances');
     cy.get('[data-cy="app-description"]').should(
       'contain',
-      'Ansible node instances dedicated for a particular purpose indicated by node type.'
+      'Ansible node instances are dedicated for a particular purpose indicated by node type.'
     );
     cy.get('[data-cy="add-instance"]').should('not.exist');
     cy.get('[data-cy="actions-dropdown"]').click();
