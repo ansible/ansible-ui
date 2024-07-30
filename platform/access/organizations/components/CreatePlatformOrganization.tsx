@@ -43,8 +43,8 @@ export function CreatePlatformOrganization() {
         if (awxService) {
           const controllerOrganization = await pollAwxItemsResponseItem<ControllerOrganization>(
             awxAPI`/organizations/?resource__ansible_id=${createdOrganization.summary_fields.resource.ansible_id}`,
-            1000,
-            10
+            10,
+            1000
           );
           for (const ig of values.instanceGroups || []) {
             await associateInstanceGroupsRequest(
