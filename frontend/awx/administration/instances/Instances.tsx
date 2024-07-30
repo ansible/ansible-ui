@@ -21,10 +21,10 @@ export function Instances() {
         title={t('Instances')}
         titleHelpTitle={t('Instances')}
         titleHelp={t(
-          'Ansible node instances are dedicated for a particular purpose indicated by node type.'
+          'Ansible node instances dedicated for a particular purpose indicated by node type.'
         )}
         description={t(
-          'Ansible node instances are dedicated for a particular purpose indicated by node type.'
+          'Ansible node instances dedicated for a particular purpose indicated by node type.'
         )}
         headerActions={<ActivityStreamIcon type={'instance'} />}
       />
