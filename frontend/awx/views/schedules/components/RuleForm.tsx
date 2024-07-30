@@ -72,14 +72,14 @@ export function RuleForm(props: {
             date,
             time,
           },
-          rules: isRulesStep ? rules : [],
-          exceptions: !isRulesStep ? rules : [],
+          rules: (getValues('rules') as RuleListItemType[]) || [],
+          exceptions: (getValues('rules') as RuleListItemType[]) || [],
         },
 
         { keepDefaultValues: true }
       );
     }
-  }, [getValues, reset, props.isOpen, timezone, ruleId]);
+  }, [getValues, reset, props.isOpen, timezone, ruleId, isRulesStep]);
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
     delete values.id;
