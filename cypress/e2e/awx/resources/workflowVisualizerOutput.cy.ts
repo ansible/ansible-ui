@@ -173,7 +173,9 @@ describe('Workflow Visualizer', () => {
       cy.wait('@launchWJT-WithNodes')
         .its('response.body')
         .then((job: Job) => {
-          cy.intercept('GET', awxAPI`/workflow_jobs/${job.id.toString()}/`).as('firstJob');
+          cy.intercept('GET', awxAPI`/workflow_jobs/${job.id.toString()}/workflow_nodes/*`).as(
+            'firstJob'
+          );
           cy.url().should('contain', `/jobs/workflow/${job.id}/output`);
           cy.wait('@firstJob');
           cy.contains(project.name).click({ force: true });
