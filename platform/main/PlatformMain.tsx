@@ -17,6 +17,8 @@ import '../../frontend/common/i18n';
 import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
 import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
+import { useGet } from '../../frontend/common/crud/useGet';
+import { gatewayAPI } from '../api/gateway-api-utils';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import {
   GatewayServicesProvider,
@@ -60,16 +62,29 @@ export default function PlatformMain() {
 }
 
 export function PlatformMainInternal() {
+  const platformInfo = useGet<{ version: string }>(
+    gatewayAPI`/ping/`,
+    {},
+    {
+      refreshInterval: 0,
+    }
+  );
+  let platformVersion = platformInfo.data?.version;
+  if (!platformVersion || platformVersion === 'development') {
+    platformVersion = '2.5';
+  }
+
   const hasAwx = useHasAwxService();
   const hasHub = useHasHubService();
   const hasEda = useHasEdaService();
+
   return (
     <QuickStartProvider>
       <AwxActiveUserProvider disabled={!hasAwx}>
         <EdaActiveUserProvider disabled={!hasEda}>
           <HubActiveUserProvider disabled={!hasHub}>
             <WebSocketProvider>
-              <AwxConfigProvider disabled={!hasAwx}>
+              <AwxConfigProvider disabled={!hasAwx} platformVersion={platformVersion}>
                 <HubContextProvider disabled={!hasHub}>
                   <PlatformSubscription>
                     <PlatformApp />
