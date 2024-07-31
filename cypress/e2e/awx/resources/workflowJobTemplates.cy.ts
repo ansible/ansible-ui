@@ -737,7 +737,6 @@ describe('Workflow Job Templates Tests', () => {
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
