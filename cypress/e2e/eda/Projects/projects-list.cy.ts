@@ -4,8 +4,7 @@
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 //Tests a user's ability to perform necessary actions on the Projects list in the EDA UI.
-// FLAKY_07_30_2024
-describe.skip('EDA Projects List', () => {
+describe('EDA Projects List', () => {
   it('renders the EDA projects page', () => {
     cy.navigateTo('eda', 'projects');
     cy.verifyPageTitle('Projects');
@@ -36,6 +35,7 @@ describe.skip('EDA Projects List', () => {
       cy.createEdaProject().then((testProject) => {
         cy.navigateTo('eda', 'projects');
         cy.selectTableRow(edaProject.name);
+        cy.clickButton(/^Clear all filters$/);
         cy.selectTableRow(testProject.name);
         cy.clickToolbarKebabAction('delete-projects');
         cy.intercept('DELETE', edaAPI`/projects/${edaProject.id.toString()}/`).as('edaProject');
