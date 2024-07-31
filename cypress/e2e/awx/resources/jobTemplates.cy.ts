@@ -686,4 +686,106 @@ describe('Job Templates Tests', function () {
       toggleNotificationType('failure');
     });
   });
+  describe.skip('Job Template Form:Validation', () => {
+    it('Cannot create a job template with more than 1 machine credential', function () {
+      let machineCredential1: Credential;
+      let machineCredential2: Credential;
+      /**
+       * This test is meant to prevent regression.  This particular error comes from the api as a generic error and
+       * we need it to be a field error.  This test ensures that this error is placed on the credential field
+       * instead of a generic form error.
+       */
+      cy.createAWXCredential({
+        name: 'E2E' + randomE2Ename(),
+        kind: 'machine',
+        organization: awxOrganization.id,
+        credential_type: 1,
+      }).then((cred) => {
+        machineCredential2 = cred;
+        cy.createAWXCredential({
+          name: 'E2E' + randomE2Ename(),
+          kind: 'machine',
+          organization: awxOrganization.id,
+          credential_type: 1,
+        }).then((cred) => {
+          machineCredential1 = cred;
+
+          cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
+          const jtName = 'E2E-POLJT ' + randomString(4);
+          cy.navigateTo('awx', 'templates');
+          cy.getBy('[data-cy="create-template"]').click();
+          cy.clickLink(/^Create job template$/);
+          cy.getBy('[data-cy="name"]').type(jtName);
+          cy.selectPromptOnLaunch('inventory');
+          cy.selectDropdownOptionByResourceName('project', `${awxProject.name}`);
+          cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+          cy.multiSelectByDataCy('credential', [machineCredential1.name, machineCredential2.name]);
+          cy.getBy('[data-cy="Submit"]').click();
+          cy.get('[data-cy="credential-form-group"]').within(() => {
+            cy.get('span.pf-v5-c-helper-text__item-text').should(
+              'have.text',
+              'Cannot assign multiple credentials of the same type. Duplicated credential types are: Machine'
+            );
+          });
+        });
+        cy.deleteAwxCredential(machineCredential1, { failOnStatusCode: false });
+        cy.deleteAwxCredential(machineCredential2, { failOnStatusCode: false });
+      });
+    });
+
+    it('Cannot create a job template with more than credential per vault_id', function () {
+      let vaultCredential1: Credential;
+      let vaultCredential2: Credential;
+      /**
+       * This test is meant to prevent regression.  This particular error comes from the api as a generic error and
+       * we need it to be a field error.  This test ensures that this error is placed on the credential field
+       * instead of a generic form error.
+       */
+
+      cy.createAWXCredential({
+        name: 'E2E' + randomE2Ename(),
+        kind: 'vault',
+        organization: awxOrganization.id,
+        credential_type: 3,
+        inputs: {
+          vault_id: 1,
+          vault_password: 'rd',
+        },
+      }).then((cred) => {
+        vaultCredential1 = cred;
+        cy.createAWXCredential({
+          name: 'E2E' + randomE2Ename(),
+          kind: 'vault',
+          organization: awxOrganization.id,
+          credential_type: 3,
+          inputs: {
+            vault_id: 1,
+            vault_password: 'rd',
+          },
+        }).then((credential) => {
+          vaultCredential2 = credential;
+
+          cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
+          const jtName = 'E2E-POLJT ' + randomString(4);
+          cy.navigateTo('awx', 'templates');
+          cy.getBy('[data-cy="create-template"]').click();
+          cy.clickLink(/^Create job template$/);
+          cy.getBy('[data-cy="name"]').type(jtName);
+          cy.selectPromptOnLaunch('inventory');
+          cy.selectDropdownOptionByResourceName('project', `${awxProject.name}`);
+          cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
+          cy.multiSelectByDataCy('credential', [vaultCredential1.name, vaultCredential2.name]);
+          cy.getBy('[data-cy="Submit"]').click();
+          cy.get('[data-cy="credential-form-group"]').within(() => {
+            cy.get('span.pf-v5-c-helper-text__item-text').should(
+              'have.text',
+              'Cannot assign multiple vault credentials of the same vault id.'
+            );
+          });
+        });
+        cy.deleteAwxCredential(vaultCredential1);
+        cy.deleteAwxCredential(vaultCredential2);
+      });
+    });
+  });
 });
