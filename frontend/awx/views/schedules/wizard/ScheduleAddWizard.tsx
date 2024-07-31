@@ -65,7 +65,7 @@ export function ScheduleAddWizard(props: {
     const ruleset = getRuleSet(rules, exceptions);
 
     const data: StandardizedFormData = {
-      rrule: ruleset.toString(),
+      rrule: ruleset.toString().split('\n').join(' '),
       ...rest,
     };
     try {
@@ -164,7 +164,7 @@ export function ScheduleAddWizard(props: {
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {
-            rrule: ruleset.toString(),
+            rrule: ruleset.toString().split('\n').join(' '),
           }
         );
         if (!local.length && !utc.length) {

@@ -14,7 +14,7 @@ describe('Schedules - Create and Delete', () => {
     let project: Project;
     let inventory: Inventory;
 
-    beforeEach(() => {
+    before(() => {
       cy.createAwxOrganization().then((o) => {
         organization = o;
         cy.createAwxProject(organization).then((proj) => {
@@ -22,7 +22,7 @@ describe('Schedules - Create and Delete', () => {
           cy.createAwxInventory(organization).then((i) => {
             inventory = i;
             cy.createAwxJobTemplate({
-              name: 'E2E Schedules Create ' + randomString(4),
+              name: 'E2E JT Schedules Create ' + randomString(4),
               organization: organization.id,
               project: project.id,
               inventory: inventory.id,
@@ -34,14 +34,14 @@ describe('Schedules - Create and Delete', () => {
       });
     });
 
-    afterEach(() => {
+    after(() => {
       cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       cy.deleteAwxProject(project, { failOnStatusCode: false });
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can create a simple schedule or resource type Job template, navigate to schedule details, then delete the schedule from the details page', () => {
+    it('can create a simple schedule of resource type Job template, navigate to schedule details, then delete the schedule from the details page', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       const scheduleName = 'E2E Simple Schedule' + randomString(4);
@@ -53,7 +53,6 @@ describe('Schedules - Create and Delete', () => {
       cy.clickButton(/^Next$/);
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.getByDataCy('interval').clear().type('100');
-      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
@@ -68,7 +67,70 @@ describe('Schedules - Create and Delete', () => {
       cy.getBy('[data-cy="delete-schedule"]').click();
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete schedule');
-      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    });
+
+    it('can create a simple schedule of ending type COUNT', () => {
+      cy.navigateTo('awx', 'schedules');
+      cy.verifyPageTitle('Schedules');
+      const scheduleName = 'E2E Schedule COUNT' + randomString(4);
+      cy.getBy('[data-cy="create-schedule"]').click();
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getByDataCy('name').type(`${scheduleName}`);
+      cy.singleSelectByDataCy('timezone', 'Zulu');
+      cy.singleSelectByDataCy('endtype', 'Count');
+      cy.getByDataCy('count-form-group').type('17');
+      cy.clickButton(/^Next$/);
+      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+      cy.getByDataCy('interval').clear().type('100');
+      cy.getByDataCy('add-rule-button').click();
+      cy.getByDataCy('rrule-column-cell').then(($text) => {
+        cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU;COUNT=17');
+      });
+
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.get('tr[data-cy="row-id-1"]').should('be.visible');
+      cy.clickButton(/^Finish$/);
+      cy.verifyPageTitle(`${scheduleName}`);
+      cy.get('button[data-cy="actions-dropdown"]').click();
+      cy.getBy('[data-cy="delete-schedule"]').click();
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete schedule');
+    });
+
+    it('can create a simple schedule of ending type UNTIL', () => {
+      const d = new Date();
+      const date = new Date(d.setDate(d.getDate() + 1)).toISOString().split('T')[0];
+      cy.navigateTo('awx', 'schedules');
+      cy.verifyPageTitle('Schedules');
+      const scheduleName = 'E2E Schedule UNTIL' + randomString(4);
+      cy.getBy('[data-cy="create-schedule"]').click();
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getByDataCy('name').type(`${scheduleName}`);
+      cy.singleSelectByDataCy('timezone', 'Zulu');
+      cy.singleSelectByDataCy('endtype', 'Until');
+      cy.get(`[data-cy="until-form-group"] [aria-label="Date picker"]`).type(date);
+      cy.clickButton(/^Next$/);
+      cy.selectDropdownOptionByResourceName('freq', 'Minutely');
+      cy.getByDataCy('interval').clear().type('100');
+      cy.getByDataCy('add-rule-button').click();
+      cy.getByDataCy('rrule-column-cell').then(($text) => {
+        cy.wrap($text).should(
+          'contains.text',
+          `RRULE:FREQ=MINUTELY;INTERVAL=100;WKST=SU;UNTIL=${date.replaceAll('-', '')}T000000`
+        );
+      });
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.get('tr[data-cy="row-id-1"]').should('be.visible');
+      cy.clickButton(/^Finish$/);
+      cy.verifyPageTitle(`${scheduleName}`);
+      cy.get('button[data-cy="actions-dropdown"]').click();
+      cy.getBy('[data-cy="delete-schedule"]').click();
+      cy.clickModalConfirmCheckbox();
+      cy.clickModalButton('Delete schedule');
     });
 
     it("can't create a schedule with missing resources", () => {
@@ -122,7 +184,6 @@ describe('Schedules - Create and Delete', () => {
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
@@ -162,7 +223,6 @@ describe('Schedules - Create and Delete', () => {
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
@@ -191,10 +251,6 @@ describe('Schedules - Create and Delete', () => {
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete schedule');
     });
-  });
-
-  describe.skip('Schedules - Create schedule of resource type Workflow job template', () => {
-    //These tests live in the workflowJobTemplates.cy.ts spec file
   });
 
   describe('Schedules - Create schedule of resource type Inventory source', () => {
@@ -238,7 +294,6 @@ describe('Schedules - Create and Delete', () => {
       cy.clickButton(/^Next$/);
       cy.getByDataCy('interval').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
@@ -353,7 +408,6 @@ describe('Schedules - Create and Delete', () => {
       cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Rules');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.getByDataCy('interval').clear().type('100');
-      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
@@ -376,7 +430,6 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('create-exception').click();
       cy.getByDataCy('interval').clear().type('200');
       cy.selectDropdownOptionByResourceName('freq', 'Yearly');
-      cy.getByDataCy('count-form-group').type('27');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
@@ -411,8 +464,8 @@ describe('Schedules - Create and Delete', () => {
         .its('response.body')
         .then((response: Schedule) => {
           expect(response.rrule).contains('DTSTART;TZID=America/Mexico_City');
-          expect(response.rrule).contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU;COUNT=17');
-          expect(response.rrule).contains('EXRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU;COUNT=27');
+          expect(response.rrule).contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
+          expect(response.rrule).contains('EXRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU');
           expect(response.skip_tags).contains('test_skip_tag');
           expect(response.enabled).to.be.true;
         });
@@ -428,8 +481,8 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('job-tags').should('have.text', 'test_job_tag');
       cy.getByDataCy('skip-tags').should('have.text', 'test_skip_tag');
       cy.getByDataCy('rruleset').contains('DTSTART;TZID=America/Mexico_City');
-      cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU;COUNT=17');
-      cy.getByDataCy('rruleset').contains('EXRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU;COUNT=27');
+      cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
+      cy.getByDataCy('rruleset').contains('EXRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU');
       cy.getByDataCy('code-block-value').should('have.text', `test: ${surveyAnswer}`);
       cy.get('[data-ouia-component-id="simple-table"]')
         .first()
@@ -516,31 +569,36 @@ describe('Schedules - Edit', () => {
   let organization: Organization;
   let jobTemplate: JobTemplate;
 
-  beforeEach(() => {
-    const name = 'E2E Edit Schedule ' + randomString(4);
+  before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
       cy.createAwxProject(organization).then((proj) => {
         project = proj;
-        cy.createAWXSchedule({
-          name,
-          unified_job_template: project.id,
-          rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
-        }).then((sched: Schedule) => {
-          schedule = sched;
-        });
       });
     });
+  });
 
+  beforeEach(() => {
+    const name = 'E2E Edit Schedule ' + randomString(4);
+    cy.createAWXSchedule({
+      name,
+      unified_job_template: project.id,
+      rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
+    }).then((sched: Schedule) => {
+      schedule = sched;
+    });
     cy.navigateTo('awx', 'schedules');
     cy.verifyPageTitle('Schedules');
   });
 
-  afterEach(() => {
-    cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
+  after(() => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     jobTemplate?.id && cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+  });
+
+  afterEach(() => {
+    cy.deleteAWXSchedule(schedule, { failOnStatusCode: false });
   });
 
   it('can edit a simple schedule from details page', () => {

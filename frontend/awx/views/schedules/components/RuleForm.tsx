@@ -90,7 +90,7 @@ export function RuleForm(props: {
       const { time: untilTime, date: untilDate } = until;
 
       if (untilDate && untilTime) {
-        const utcDate = DateTime.fromISO(`${date}`, { zone: timezone })
+        const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone })
           .set(get24Hour(untilTime))
           .toUTC();
         const { year, month, day, hour, minute } = utcDate;
@@ -101,7 +101,7 @@ export function RuleForm(props: {
           // We use the date given, and the current time based on the timezone given
           // in the first step, or default to America/New_York.
 
-          const utcDate = DateTime.fromISO(`${date}`, { zone: timezone }).toUTC();
+          const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone }).toUTC();
           const { year, day, month, hour, minute } = utcDate;
           rule.options.until = datetime(year, month, day, hour, minute);
         }

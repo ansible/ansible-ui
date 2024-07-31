@@ -59,7 +59,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
     const ruleset = getRuleSet(rules, exceptions);
 
     const data: StandardizedFormData = {
-      rrule: ruleset.toString(),
+      rrule: ruleset.toString().split('\n').join(' '),
       ...rest,
     };
 
@@ -158,7 +158,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
         const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
           awxAPI`/schedules/preview/`,
           {
-            rrule: ruleset.toString(),
+            rrule: ruleset.toString().split('\n').join(' '),
           }
         );
         if (!local.length && !utc.length) {
