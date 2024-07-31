@@ -7,6 +7,7 @@ import { IPageAction } from '../../../../../framework';
 import { useFormContext } from 'react-hook-form';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { RULES_DEFAULT_VALUES } from '../wizard/constants';
+import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
@@ -15,10 +16,13 @@ export function useRuleRowActions(
   const { t } = useTranslation();
   const context = useFormContext();
   const wizard = usePageWizard();
+
   return useMemo<IPageAction<RuleListItemType>[]>(() => {
     if (!setIsOpen) return [];
     const isExceptionStep = wizard.activeStep && wizard.activeStep.id === 'exceptions';
     const existingRules = context.getValues('rules') as RuleListItemType[];
+    const existingExceptions = context.getValues('exceptions') as RuleListItemType[];
+
     const deleteRule = (rule: RuleListItemType) => {
       const filteredRules = rules.filter((item) => item.id !== rule.id);
 
@@ -45,9 +49,31 @@ export function useRuleRowActions(
         onClick: (r) => {
           setIsOpen(r.id);
           const rule = rules.find((item) => item.id === r.id);
+          let untilDateTime!: string[];
           if (rule === undefined || !rule.rule) return;
+          if (rule?.rule?.options?.until !== null) {
+            untilDateTime = dateToInputDateTime(
+              rule?.rule?.options?.until?.toISOString() ?? '',
+              rule?.rule?.options?.tzid
+            );
+          }
 
-          context.reset({ ...rule.rule.options, id: rule.id, rules: existingRules || [] });
+          const ruleData = {
+            ...rule.rule.options,
+            endType: rule.rule.options.count
+              ? 'count'
+              : rule.rule.options.until
+                ? 'until'
+                : 'never',
+            id: rule.id,
+            rules: existingRules || [],
+            exceptions: existingExceptions || [],
+            until:
+              rule?.rule?.options?.until !== null
+                ? { date: untilDateTime[0], time: untilDateTime[1] }
+                : null,
+          };
+          context.reset(ruleData);
         },
       },
       { type: PageActionType.Seperator },

@@ -33,7 +33,7 @@ export type FormGroupDateTimePickerProps = Omit<
   };
 
 export function FormGroupDateTimePicker(props: FormGroupDateTimePickerProps) {
-  const { dateValue, timeValue, datePlaceHolder, timePlaceHolder, onDateChange, onTimeChange } =
+  const { dateValue, timeValue, datePlaceHolder, timePlaceHolder, onDateChange, onTimeChange, id } =
     props;
   const handleDateChange = (
     inputDate: FormEvent<HTMLInputElement>,
@@ -46,7 +46,7 @@ export function FormGroupDateTimePicker(props: FormGroupDateTimePickerProps) {
     }
   };
   return (
-    <PageFormGroup {...props}>
+    <PageFormGroup {...props} fieldId={id}>
       <InputGroup>
         <InputGroupItem>
           <DatePicker
