@@ -7,6 +7,7 @@ import { IPageAction } from '../../../../../framework';
 import { useFormContext } from 'react-hook-form';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { RULES_DEFAULT_VALUES } from '../wizard/constants';
+import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
@@ -15,6 +16,7 @@ export function useRuleRowActions(
   const { t } = useTranslation();
   const context = useFormContext();
   const wizard = usePageWizard();
+
   return useMemo<IPageAction<RuleListItemType>[]>(() => {
     if (!setIsOpen) return [];
     const isExceptionStep = wizard.activeStep && wizard.activeStep.id === 'exceptions';
@@ -46,8 +48,20 @@ export function useRuleRowActions(
           setIsOpen(r.id);
           const rule = rules.find((item) => item.id === r.id);
           if (rule === undefined || !rule.rule) return;
-
-          context.reset({ ...rule.rule.options, id: rule.id, rules: existingRules || [] });
+          const [untilDate, untilTime]: string[] = dateToInputDateTime(
+            rule?.rule?.options?.until?.toISOString() ?? ''
+          );
+          context.reset({
+            ...rule.rule.options,
+            endType: rule.rule.options.count
+              ? 'count'
+              : rule.rule.options.until
+                ? 'until'
+                : 'never',
+            id: rule.id,
+            rules: existingRules || [],
+            until: { date: untilDate, time: untilTime },
+          });
         },
       },
       { type: PageActionType.Seperator },

@@ -72,17 +72,17 @@ describe('Schedules - Create and Delete', () => {
     it('can create a simple schedule of ending type COUNT', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
-      const scheduleName = 'E2E Schedule COUNT' + randomString(4);
+      const scheduleName = 'E2E Schedule COUNT ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
-      cy.singleSelectByDataCy('endtype', 'Count');
-      cy.getByDataCy('count-form-group').type('17');
       cy.clickButton(/^Next$/);
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.getByDataCy('interval').clear().type('100');
+      cy.singleSelectByDataCy('endtype', 'Count');
+      cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU;COUNT=17');
@@ -104,17 +104,17 @@ describe('Schedules - Create and Delete', () => {
       const date = new Date(d.setDate(d.getDate() + 1)).toISOString().split('T')[0];
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
-      const scheduleName = 'E2E Schedule UNTIL' + randomString(4);
+      const scheduleName = 'E2E Schedule UNTIL ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
-      cy.singleSelectByDataCy('endtype', 'Until');
-      cy.get(`[data-cy="until-form-group"] [aria-label="Date picker"]`).type(date);
       cy.clickButton(/^Next$/);
       cy.selectDropdownOptionByResourceName('freq', 'Minutely');
       cy.getByDataCy('interval').clear().type('100');
+      cy.singleSelectByDataCy('endtype', 'Until');
+      cy.get(`[data-cy="until-form-group"] [aria-label="Date picker"]`).type(date);
       cy.getByDataCy('add-rule-button').click();
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should(
@@ -640,7 +640,9 @@ describe('Schedules - Edit', () => {
     cy.verifyPageTitle(schedule.name);
   });
 
-  it('can edit a schedule to add rules', () => {
+  it('can edit a schedule to add rules with COUNT and UNTIL', () => {
+    const d = new Date();
+    const date = new Date(d.setDate(d.getDate() + 1)).toISOString().split('T')[0];
     cy.filterTableBySingleSelect('name', schedule.name);
     cy.getByDataCy('edit-schedule').click();
     cy.getByDataCy('wizard-nav').within(() => {
@@ -653,15 +655,30 @@ describe('Schedules - Edit', () => {
     cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Add rule$/);
+    cy.singleSelectByDataCy('endtype', 'Count');
+    cy.getByDataCy('count-form-group').type('77');
     cy.clickButton(/^Save rule$/);
+    cy.clickButton(/^Add rule$/);
+    cy.selectDropdownOptionByResourceName('freq', 'Minutely');
+    cy.singleSelectByDataCy('endtype', 'Until');
+    cy.get(`[data-cy="until-form-group"] [aria-label="Date picker"]`).type(date);
+    cy.clickButton(/^Save rule$/);
+
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.getByDataCy('row-id-1').should('exist');
-    cy.getByDataCy('row-id-1').contains('FREQ=WEEKLY');
+    cy.getByDataCy('row-id-2').should('exist');
+    cy.getByDataCy('row-id-3').should('exist');
+    cy.getByDataCy('row-id-1').contains('FREQ=WEEKLY;INTERVAL=1;WKST=MO;');
+    cy.getByDataCy('row-id-2').contains('FREQ=YEARLY;INTERVAL=1;WKST=SU;COUNT=77;');
+    cy.get('[data-cy="row-id-3"] > [data-cy="rrule-column-cell"]').should(
+      'contains.text',
+      `RRULE:FREQ=MINUTELY;INTERVAL=1;WKST=SU;UNTIL=${date.replaceAll('-', '')}T`
+    );
     cy.get('[data-ouia-component-id="simple-table"]').within(() => {
       cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
       cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
-      cy.get('tbody tr').should('have.length', 2);
+      cy.get('tbody tr').should('have.length', 3);
     });
     cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
     cy.clickButton(/^Finish$/);

@@ -27,6 +27,7 @@ export function PageFormDateTimePicker<
       control={control}
       shouldUnregister
       render={({ field }) => {
+        console.log('field:', field);
         return (
           <FormGroupDateTimePicker
             {...props}

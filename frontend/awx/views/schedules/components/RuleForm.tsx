@@ -64,26 +64,27 @@ export function RuleForm(
     if (ruleId) {
       const rules = getValues('rules') as RuleListItemType[];
       const ruleOptions = rules[rules.findIndex((r) => r.id === ruleId)].rule.options;
-      const { until } = ruleOptions;
+      // const { until } = ruleOptions;
 
-      if (until === null) return;
-      const [date, time] = dateToInputDateTime(until?.toISOString() || '');
-      reset(
-        {
-          ...ruleOptions,
-          until: {
-            date,
-            time,
-          },
-          rules,
-        },
-        { keepDefaultValues: true }
-      );
+      // if (until === null) return;
+      // const [date, time] = dateToInputDateTime(until?.toISOString() || '');
+      // reset(
+      //   {
+      //     ...ruleOptions,
+      //     until: {
+      //       date,
+      //       time,
+      //     },
+      //     rules,
+      //   },
+      //   { keepDefaultValues: true }
+      // );
     }
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
     delete values.endType;
+    delete values.id;
     const { rules = [], exceptions = [], until = null, ...rest } = values;
     const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
@@ -374,6 +375,7 @@ export function RuleForm(
             min={0}
             max={999}
             type="number"
+            isRequired
           />
         )}
 
