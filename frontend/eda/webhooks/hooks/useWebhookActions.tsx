@@ -43,7 +43,7 @@ export function useWebhookActions(view: IEdaView<EdaWebhook>) {
         });
       view.unselectItemsAndRefresh([webhook]);
     },
-    [view, alertToaster, t]
+    [t, patchRequest, view, alertToaster]
   );
   return useMemo<IPageAction<EdaWebhook>[]>(
     () => [
@@ -85,6 +85,6 @@ export function useWebhookActions(view: IEdaView<EdaWebhook>) {
         isDanger: true,
       },
     ],
-    [deleteWebhooks, pageNavigate, t]
+    [deleteWebhooks, pageNavigate, t, toggleWebhookMode]
   );
 }
