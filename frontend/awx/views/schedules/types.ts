@@ -42,6 +42,7 @@ export interface RuleFields {
   count: null;
   rules: RuleListItemType[] | [];
   exceptions: RuleListItemType[] | [];
+  endType: string | undefined;
 }
 export interface ScheduleFormWizard {
   resourceInventory?: number;

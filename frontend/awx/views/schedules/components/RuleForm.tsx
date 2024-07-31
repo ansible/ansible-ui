@@ -1,7 +1,7 @@
 import { ActionGroup, Button, Chip, ChipGroup } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
 import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
 import {
@@ -24,17 +24,21 @@ import { useGet24HourTime } from '../hooks/useGet24HourTime';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+
 export function pad(num: number) {
   if (typeof num === 'string') {
     return num;
   }
   return num < 10 ? `0${num}` : num;
 }
-export function RuleForm(props: {
-  title: string;
-  isOpen: boolean | number;
-  setIsOpen: (isOpen: boolean) => void;
-}) {
+export function RuleForm(
+  props: Readonly<{
+    title: string;
+    isOpen: boolean | number;
+    setIsOpen: (isOpen: boolean) => void;
+  }>
+) {
   const { t } = useTranslation();
   const get24Hour = useGet24HourTime();
   const {
@@ -45,6 +49,7 @@ export function RuleForm(props: {
   } = useFormContext();
   const { activeStep, wizardData } = usePageWizard();
   const ruleId = typeof props.isOpen === 'number' && props.isOpen;
+  const endType = useWatch({ name: 'endType' }) as string;
 
   const {
     timezone = 'America/New_York',
@@ -78,7 +83,7 @@ export function RuleForm(props: {
   }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
-    delete values.id;
+    delete values.endType;
     const { rules = [], exceptions = [], until = null, ...rest } = values;
     const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
@@ -347,24 +352,40 @@ export function RuleForm(props: {
           label={t('Occurrences')}
           disableSortOptions
         />
+        <PageFormSingleSelect
+          disableSortOptions
+          name="endType"
+          label={t('Schedule ending type')}
+          placeholder={t('Method used to stop schedule')}
+          options={[
+            { value: 'never', label: t('Never'), description: t('Never ending schedule') },
+            { value: 'count', label: t('Count'), description: t('Stop after a number of runs') },
+            { value: 'until', label: t('Until'), description: t('Stop on a specific date') },
+          ]}
+          isRequired
+        />
+        {endType === 'count' && (
+          <PageFormTextInput<RuleFields>
+            labelHelpTitle={t('Count')}
+            label={t('Count')}
+            name={`count`}
+            placeholder="5"
+            labelHelp={t('The number of time this rule should be used.')}
+            min={0}
+            max={999}
+            type="number"
+          />
+        )}
 
-        <PageFormTextInput<RuleFields>
-          labelHelpTitle={t('Count')}
-          label={t('Count')}
-          name={`count`}
-          placeholder="5"
-          labelHelp={t('The number of time this rule should be used.')}
-          min={0}
-          max={999}
-          type="number"
-        />
-        <PageFormDateTimePicker<RuleFields>
-          name={`until`}
-          timePlaceHolder="HH:MM AM/PM"
-          label={t('Until')}
-          labelHelpTitle={t('Until')}
-          labelHelp={t('Use this rule until the specified date/time')}
-        />
+        {endType === 'until' && (
+          <PageFormDateTimePicker<RuleFields>
+            name={`until`}
+            timePlaceHolder="HH:MM AM/PM"
+            label={t('Until')}
+            labelHelpTitle={t('Until')}
+            labelHelp={t('Use this rule until the specified date/time')}
+          />
+        )}
       </PageFormSection>
 
       <ActionGroup className="pf-v5-u-pt-xl">
