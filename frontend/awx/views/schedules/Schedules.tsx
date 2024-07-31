@@ -18,7 +18,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
         titleHelp={t(
           'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/scheduling.html`}
+        titleDocLink={getDocsBaseUrl(config, 'schedules')}
         description={t(
           'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
         )}

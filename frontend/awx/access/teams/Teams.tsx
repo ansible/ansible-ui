@@ -45,7 +45,7 @@ export function Teams() {
             'For instance, permissions may be granted to a whole Team rather than each user on the Team.'
           ),
         ]}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/teams.html`}
+        titleDocLink={getDocsBaseUrl(config, 'teams')}
         description={t(
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}

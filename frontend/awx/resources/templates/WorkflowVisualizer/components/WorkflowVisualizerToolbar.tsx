@@ -251,7 +251,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
             <DropdownItem
               icon={<ExternalLinkAltIcon />}
               data-cy="workflow-documentation"
-              to={`${getDocsBaseUrl(config)}/html/userguide/workflow_templates.html#ug-wf-editor`}
+              to={getDocsBaseUrl(config, 'workflowVisualizer')}
               target="_blank"
             >
               {t('Documentation')}

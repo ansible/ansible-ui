@@ -49,7 +49,7 @@ export function CredentialTypes() {
         titleHelp={t(
           'Define custom credential types to support authentication with other systems during automation.'
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/credential_types.html`}
+        titleDocLink={getDocsBaseUrl(config, 'credentialTypes')}
         headerActions={<ActivityStreamIcon type={'credential_type'} />}
       />
       <PageTable<CredentialType>

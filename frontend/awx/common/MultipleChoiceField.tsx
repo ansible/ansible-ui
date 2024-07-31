@@ -46,7 +46,7 @@ export function MultipleChoiceField(props: IProps) {
 
   const { type } = props;
 
-  const docsURL = `${getDocsBaseUrl(config)}/html/userguide/job_templates.html#surveys`;
+  const docsURL = getDocsBaseUrl(config, 'jobTemplateSurveys');
 
   const emptyChoiceMsg = t('Choice option cannot be empty.');
   const duplicateChoiceMsg = t('Choice option already exists.');
