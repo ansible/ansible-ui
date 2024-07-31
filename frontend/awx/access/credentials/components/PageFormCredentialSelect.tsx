@@ -8,6 +8,7 @@ import { useCredentialsColumns } from '../hooks/useCredentialsColumns';
 import { useCredentialsFilters } from '../hooks/useCredentialsFilters';
 import { QueryParams } from '../../../common/useAwxView';
 import { PageFormMultiSelectAwxResource } from '../../../common/PageFormMultiSelectAwxResource';
+import { useCredentialsValidate } from '../hooks/useCredentialsValidate';
 
 export function PageFormCredentialSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -34,6 +35,7 @@ export function PageFormCredentialSelect<
 
   const credentialColumns = useCredentialsColumns({ disableLinks: true });
   const credentialFilters = useCredentialsFilters();
+  const validateCredentials = useCredentialsValidate();
 
   return props.isMultiple ? (
     <PageFormMultiSelectAwxResource<Credential>
@@ -54,6 +56,10 @@ export function PageFormCredentialSelect<
       compareOptionValues={(currentCredential: Credential, selectCredential: Credential) =>
         currentCredential.id === selectCredential.id
       }
+      validate={validateCredentials}
+      formatLabel={(credential: Credential) => {
+        return `${credential.name} | ${credential.summary_fields.credential_type.name}`;
+      }}
     />
   ) : (
     <PageFormSingleSelectAwxResource<Credential, TFieldValues, TFieldName>
