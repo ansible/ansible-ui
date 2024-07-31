@@ -1,7 +1,7 @@
-import { Spinner } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
-import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Spinner } from '@patternfly/react-core';
+import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { ITableColumn, IToolbarFilter, QueryParams, usePageDialog } from '../../../framework';
 import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
@@ -24,16 +24,15 @@ export function PageFormSingleSelectEdaResource<
   isRequired?: boolean;
   isDisabled?: string;
   url: string;
+  queryParams?: QueryParams;
+  queryPlaceholder: string;
+  queryErrorText: string;
   toolbarFilters?: IToolbarFilter[];
   tableColumns: ITableColumn<Resource>[];
   defaultSelection?: Value[];
   placeholder: string;
-  queryPlaceholder: string;
-  queryErrorText: string;
   helperText?: string;
-  additionalControls?: React.ReactNode;
   labelHelp?: string;
-  queryParams?: QueryParams;
 }) {
   const id = useID(props);
 
@@ -41,43 +40,43 @@ export function PageFormSingleSelectEdaResource<
     async (options) => {
       try {
         const baseUrl = props.url.split('?')[0];
-        const queryString = props.url.split('?')[1];
-        const urlSearchParams = new URLSearchParams(queryString);
-        urlSearchParams.delete('page_size');
-        urlSearchParams.set('page_size', '10');
-        urlSearchParams.delete('order_by');
-        urlSearchParams.set('order_by', 'name');
+        const queryParams = props.url.split('?')[1];
+        const urlSearchParameters = new URLSearchParams(queryParams);
+        urlSearchParameters.delete('page_size');
+        urlSearchParameters.set('page_size', '10');
+        urlSearchParameters.delete('order_by');
+        urlSearchParameters.set('order_by', 'name');
         if (props.queryParams) {
           for (const [key, value] of Object.entries(props.queryParams)) {
             if (Array.isArray(value)) {
-              for (const subVal of value) {
-                urlSearchParams.set(key, subVal);
+              for (const subValue of value) {
+                urlSearchParameters.set(key, subValue);
               }
             } else {
-              urlSearchParams.set(key, value);
+              urlSearchParameters.set(key, value);
             }
           }
         }
-        if (options.search) urlSearchParams.set('name__icontains', options.search);
+        if (options.search) urlSearchParameters.set('name__icontains', options.search);
         const response = await requestGet<EdaItemsResponse<Resource>>(
-          baseUrl + '?' + decodeURIComponent(urlSearchParams.toString()),
+          baseUrl + '?' + decodeURIComponent(urlSearchParameters.toString()),
           options.signal
         );
         return {
           remaining: response.count - response.results.length,
           options:
             response.results?.map((resource) => ({
-              label: resource.name,
               value: resource.id as PathValue<FormData, Name>,
               description: resource.description,
+              label: resource.name,
             })) ?? [],
           next: response.count,
         };
       } catch (error) {
         return {
+          next: 0,
           remaining: 0,
           options: [],
-          next: 0,
         };
       }
     },
@@ -102,13 +101,13 @@ export function PageFormSingleSelectEdaResource<
       );
     },
     [
-      props.label,
+      props.url,
+      props.queryParams,
       props.tableColumns,
       props.toolbarFilters,
-      props.url,
+      props.label,
       setDialog,
       value,
-      props.queryParams,
     ]
   );
 
@@ -122,21 +121,20 @@ export function PageFormSingleSelectEdaResource<
       id={id}
       name={props.name}
       label={props.label}
+      isDisabled={props.isDisabled}
+      isRequired={props.isRequired}
       queryOptions={queryOptions}
       placeholder={props.placeholder}
       queryPlaceholder={props.queryPlaceholder}
       queryErrorText={props.queryErrorText}
-      isRequired={props.isRequired}
-      isDisabled={props.isDisabled}
-      helperText={props.helperText}
       labelHelp={props.labelHelp}
+      helperText={props.helperText}
       onBrowse={() =>
         openSelectDialog((resource) =>
           setValue(props.name, resource.id as PathValue<FormData, Name>)
         )
       }
       queryLabel={queryLabel}
-      additionalControls={props.additionalControls}
     />
   );
 }
@@ -154,7 +152,7 @@ function SelectResource<
 }) {
   const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
 
-  const queryParams = useMemo(() => {
+  const queryParameters = useMemo(() => {
     const query: QueryParams = {};
     urlSearchParams.forEach((value, key) => (query[key] = value));
     return query;
@@ -162,11 +160,11 @@ function SelectResource<
 
   const view = useEdaView<Resource>({
     url: props.url.split('?')[0],
+    queryParams: props.queryParams ?? queryParameters,
     toolbarFilters: props.toolbarFilters,
     tableColumns: props.tableColumns,
-    disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
-    queryParams: props.queryParams ?? queryParams,
+    disableQueryString: true,
   });
   return (
     <SingleSelectDialog<Resource>
