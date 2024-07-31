@@ -2,6 +2,7 @@ export interface Config {
   time_zone: string;
   license_info: ILicenseInfo;
   version: string;
+  platformVersion?: string;
   eula: string;
   analytics_status: string;
   analytics_collectors: {

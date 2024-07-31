@@ -404,11 +404,7 @@ function ConvergenceInput() {
       labelHelp={
         <>
           {t('Preconditions for running this node when there are multiple parents')}{' '}
-          <a
-            href={`${getDocsBaseUrl(config)}/html/userguide/workflow_templates.html#converge-node`}
-          >
-            {t('documentation.')}
-          </a>
+          <a href={getDocsBaseUrl(config, 'workflowVisBuild')}>{t('documentation.')}</a>
         </>
       }
       options={[

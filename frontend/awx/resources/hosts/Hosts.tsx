@@ -49,7 +49,7 @@ export function Hosts() {
             'Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.'
           ),
         ]}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/hosts.html`}
+        titleDocLink={getDocsBaseUrl(config, 'hosts')}
         headerActions={<ActivityStreamIcon type={'host'} />}
       />
       <PageTable<AwxHost>

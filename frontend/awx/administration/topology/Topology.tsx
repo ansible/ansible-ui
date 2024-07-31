@@ -30,7 +30,7 @@ export function Topology() {
         titleHelp={t(
           'View node type, node health, and specific details about each node in your mesh topology.'
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/administration/topology_viewer.html`}
+        titleDocLink={getDocsBaseUrl(config, 'topology')}
       />
       {isUnauthorized ? (
         <EmptyStateUnauthorized title={t('You do not have permission to perform this action.')} />

@@ -109,7 +109,7 @@ export function RulesList(props: {
           title={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelpTitle={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelp={t('Create as many schedule rules as you need.')}
-          titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/scheduling.html`}
+          titleDocLink={getDocsBaseUrl(config, 'schedules')}
           description={description}
           headerActions={
             <>
