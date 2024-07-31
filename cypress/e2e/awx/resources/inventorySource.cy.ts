@@ -190,7 +190,7 @@ describe.skip('Inventory Sources', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-      cy.getByDataCy('name').clear().type('new schedule');
+      cy.getByDataCy('name').clear().type('new schedule', { timeout: 300 });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
