@@ -102,7 +102,7 @@ describe('Workflow Visualizer', () => {
       });
     });
 
-    it.skip('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
+    it('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySingleSelect('name', `${jobTemplate?.name}`);
@@ -110,13 +110,19 @@ describe('Workflow Visualizer', () => {
         inKebab: false,
         disableFilter: true,
       });
-      cy.verifyPageTitle('Edit Job Template');
+      cy.verifyPageTitle(`Edit ${jobTemplate?.name}`);
       cy.getByDataCy('ask_variables_on_launch').click();
       cy.getByDataCy('Submit').click();
+      cy.url().should('contain', '/details');
       cy.verifyPageTitle(`${jobTemplate?.name}`);
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
-      cy.filterTableBySingleSelect('name', `${workflowJobTemplate?.name}`);
+      cy.get('[data-cy="app-description"]').should(
+        'contain',
+        'A job template is a definition and set of parameters for running an Ansible job.'
+      );
+      cy.url().should('contain', '/templates');
+      cy.singleSelectByDataCy('filter-input', `${workflowJobTemplate?.name}`, false);
       cy.clickTableRowAction('name', `${workflowJobTemplate?.name}`, 'view-workflow-visualizer', {
         inKebab: false,
         disableFilter: true,
@@ -128,8 +134,8 @@ describe('Workflow Visualizer', () => {
       });
       cy.getBy('li[data-cy="edit-node"]').click();
       cy.contains('Edit step').should('be.visible');
+      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate?.name}`);
       cy.getByDataCy('Submit').click();
-      cy.getByDataCy('wizard-nav-item-promptStep').click();
       cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();
       cy.getBy('.scrollable-inner').scrollIntoView({ offset: { top: 150, left: 0 } });
@@ -158,7 +164,7 @@ describe('Workflow Visualizer', () => {
         });
     });
 
-    it.skip('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
+    it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
       cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
@@ -173,7 +179,9 @@ describe('Workflow Visualizer', () => {
       cy.wait('@launchWJT-WithNodes')
         .its('response.body')
         .then((job: Job) => {
-          cy.intercept('GET', awxAPI`/workflow_jobs/${job.id.toString()}/`).as('firstJob');
+          cy.intercept('GET', awxAPI`/workflow_jobs/${job.id.toString()}/workflow_nodes/*`).as(
+            'firstJob'
+          );
           cy.url().should('contain', `/jobs/workflow/${job.id}/output`);
           cy.wait('@firstJob');
           cy.contains(project.name).click({ force: true });
@@ -209,10 +217,12 @@ describe('Workflow Visualizer', () => {
                   cy.getBy(`g[data-id="${results.id}"]`)
                     .getBy('[data-cy="successful-icon"]')
                     .should('be.visible');
-                  cy.getBy(`g[data-id="${results.id}"]`).within(() => {
-                    cy.contains(jobTemplate.name).click({ force: true });
-                  });
-                  cy.getByDataCy(`${jobTemplate.name}`).should('be.visible');
+                  cy.getBy('g[data-id]')
+                    .contains(project.name)
+                    .within(() => {
+                      cy.contains(project.name).click({ force: true });
+                    });
+                  cy.getByDataCy(`${project.name}`).should('be.visible');
                   cy.getByDataCy('Output').should('be.visible');
                   cy.contains('button', 'Workflow Job 1/1')
                     .click()
@@ -224,7 +234,7 @@ describe('Workflow Visualizer', () => {
                   cy.contains('button', 'Workflow Job 1/1')
                     .click()
                     .then(() => {
-                      cy.contains(`${jobTemplate.name}`).click();
+                      cy.contains(`${project.name}`).click();
                     });
                 });
             });
