@@ -61,9 +61,7 @@ export function GitSubForm() {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`${getDocsBaseUrl(
-            config
-          )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
+          href={getDocsBaseUrl(config, 'managePlaybooksSC')}
         >
           {t`Documentation.`}
         </a>

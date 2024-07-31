@@ -161,7 +161,7 @@ export function Organizations() {
           `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
           { product }
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/organizations.html`}
+        titleDocLink={getDocsBaseUrl(config, 'organizations')}
         description={t(
           `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
           { product }
