@@ -1,6 +1,5 @@
 import { ActionGroup, Button, Chip, ChipGroup } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
-import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RRule, datetime } from 'rrule';
@@ -9,7 +8,7 @@ import {
   useGetMonthOptions,
   useGetWeekdayOptions,
 } from '../hooks/ruleHelpers';
-import { RuleFields, RuleListItemType, RuleType, ScheduleFormWizard } from '../types';
+import { RuleFields, RuleType, ScheduleFormWizard } from '../types';
 import {
   DAYS_OF_MONTH,
   DAYS_OF_YEAR,
@@ -19,7 +18,6 @@ import {
 } from '../wizard/constants';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
 import { useGet24HourTime } from '../hooks/useGet24HourTime';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
@@ -60,27 +58,6 @@ export function RuleForm(
   const frequencyOptions = useGetFrequencyOptions();
   const monthOptions = useGetMonthOptions();
 
-  useEffect(() => {
-    if (ruleId) {
-      const rules = getValues('rules') as RuleListItemType[];
-      const ruleOptions = rules[rules.findIndex((r) => r.id === ruleId)].rule.options;
-      // const { until } = ruleOptions;
-
-      // if (until === null) return;
-      // const [date, time] = dateToInputDateTime(until?.toISOString() || '');
-      // reset(
-      //   {
-      //     ...ruleOptions,
-      //     until: {
-      //       date,
-      //       time,
-      //     },
-      //     rules,
-      //   },
-      //   { keepDefaultValues: true }
-      // );
-    }
-  }, [getValues, reset, props.isOpen, timezone, ruleId]);
   const handleAddItem = () => {
     const values = getValues() as RuleFields;
     delete values.endType;
@@ -96,9 +73,7 @@ export function RuleForm(
       const { time: untilTime, date: untilDate } = until;
 
       if (untilDate && untilTime) {
-        const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone })
-          .set(get24Hour(untilTime))
-          .toUTC();
+        const utcDate = DateTime.fromISO(`${untilDate}`).set(get24Hour(untilTime)).toUTC();
         const { year, month, day, hour, minute } = utcDate;
         rule.options.until = datetime(year, month, day, hour, minute);
       } else {
@@ -107,7 +82,7 @@ export function RuleForm(
           // We use the date given, and the current time based on the timezone given
           // in the first step, or default to America/New_York.
 
-          const utcDate = DateTime.fromISO(`${untilDate}`, { zone: timezone }).toUTC();
+          const utcDate = DateTime.fromISO(`${untilDate}`).toUTC();
           const { year, day, month, hour, minute } = utcDate;
           rule.options.until = datetime(year, month, day, hour, minute);
         }

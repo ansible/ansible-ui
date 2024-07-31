@@ -21,6 +21,8 @@ export function useRuleRowActions(
     if (!setIsOpen) return [];
     const isExceptionStep = wizard.activeStep && wizard.activeStep.id === 'exceptions';
     const existingRules = context.getValues('rules') as RuleListItemType[];
+    const existingExceptions = context.getValues('exceptions') as RuleListItemType[];
+
     const deleteRule = (rule: RuleListItemType) => {
       const filteredRules = rules.filter((item) => item.id !== rule.id);
 
@@ -47,11 +49,16 @@ export function useRuleRowActions(
         onClick: (r) => {
           setIsOpen(r.id);
           const rule = rules.find((item) => item.id === r.id);
+          let untilDateTime!: string[];
           if (rule === undefined || !rule.rule) return;
-          const [untilDate, untilTime]: string[] = dateToInputDateTime(
-            rule?.rule?.options?.until?.toISOString() ?? ''
-          );
-          context.reset({
+          if (rule?.rule?.options?.until !== null) {
+            untilDateTime = dateToInputDateTime(
+              rule?.rule?.options?.until?.toISOString() ?? '',
+              rule?.rule?.options?.tzid
+            );
+          }
+
+          const ruleData = {
             ...rule.rule.options,
             endType: rule.rule.options.count
               ? 'count'
@@ -60,8 +67,13 @@ export function useRuleRowActions(
                 : 'never',
             id: rule.id,
             rules: existingRules || [],
-            until: { date: untilDate, time: untilTime },
-          });
+            exceptions: existingExceptions || [],
+            until:
+              rule?.rule?.options?.until !== null
+                ? { date: untilDateTime[0], time: untilDateTime[1] }
+                : null,
+          };
+          context.reset(ruleData);
         },
       },
       { type: PageActionType.Seperator },
