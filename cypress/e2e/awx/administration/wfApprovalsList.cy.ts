@@ -333,7 +333,7 @@ describe('Workflow Approvals Tests', () => {
     });
   });
 
-  /* 
+  /*
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function editWorkflowJobTemplate() {
@@ -356,7 +356,7 @@ describe('Workflow Approvals Tests', () => {
       });
   }
 
-  /* 
+  /*
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function workflowApprovalBulkAction(selectorDataCy: 'approve' | 'deny') {
@@ -423,7 +423,7 @@ describe('Workflow Approvals Tests', () => {
       });
   }
 
-  /* 
+  /*
   Used in the Workflow Approvals - Bulk Approve, Bulk Deny, Bulk Delete tests (below)
   **/
   function deleteApprovalFromListToolbar() {
@@ -442,7 +442,8 @@ describe('Workflow Approvals Tests', () => {
   describe('Workflow Approvals - User Access', () => {
     let workflowApproval: WorkflowApproval;
 
-    it('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
+    // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
+    it.skip('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-USER APPROVE-' + randomString(4),
       }).then((wfjt) => {
