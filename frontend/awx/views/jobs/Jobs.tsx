@@ -65,7 +65,7 @@ export function Jobs() {
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/jobs.html`}
+        titleDocLink={getDocsBaseUrl(config, 'jobs')}
         description={t(
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }

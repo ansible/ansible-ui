@@ -32,7 +32,7 @@ export function ExecutionEnvironmentDetail(props: {
 }) {
   const config = useAwxConfig();
   const { t } = useTranslation();
-  const docsLink = `${getDocsBaseUrl(config)}/html/upgrade-migration-guide/upgrade_to_ees.html`;
+  const docsLink = getDocsBaseUrl(config, 'eeMigration');
   const label = props.isDefaultEnvironment
     ? t('Default Execution Environment')
     : t('Execution Environment');

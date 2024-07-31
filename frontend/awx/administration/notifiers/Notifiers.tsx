@@ -63,7 +63,7 @@ export function Notifiers() {
         description={t('Configure custom notifications to be sent based on predefined events.')}
         titleHelpTitle={t('Notifiers')}
         titleHelp={t('Configure custom notifications to be sent based on predefined events.')}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/notifications.html`}
+        titleDocLink={getDocsBaseUrl(config, 'notifiers')}
         headerActions={<ActivityStreamIcon type={'notification_template'} />}
       />
       <PageTable

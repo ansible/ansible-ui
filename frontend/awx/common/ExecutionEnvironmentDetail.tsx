@@ -40,7 +40,7 @@ function ExecutionEnvironmentDetail(props: {
   } = props;
   const { t } = useTranslation();
   const config = useAwxConfig();
-  const docsLink = `${getDocsBaseUrl(config)}/html/upgrade-migration-guide/upgrade_to_ees.html`;
+  const docsLink = getDocsBaseUrl(config, 'eeMigration');
   const label = isDefaultEnvironment
     ? t('Default execution environment')
     : t('Execution environment');

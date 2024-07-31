@@ -32,7 +32,7 @@ export function ActivityStreams() {
           `An activity stream shows all changes for a particular object. For each change, the activity stream shows the time of the event, the user that initiated the event, and the action.`,
           { product }
         )}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/main_menu.html#activity-stream`}
+        titleDocLink={getDocsBaseUrl(config, 'activityStream')}
         description={t(
           `An activity stream shows all changes for a particular object. For each change, the activity stream shows the time of the event, the user that initiated the event, and the action.`,
           { product }

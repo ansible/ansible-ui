@@ -32,7 +32,7 @@ export function ConstructedInventoryHint() {
       title={t`How to use constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
-          href={`${getDocsBaseUrl(config)}/html/userguide/inventories.html#constructed-inventories`}
+          href={getDocsBaseUrl(config, 'constructedInventories')}
           component="a"
           target="_blank"
           rel="noopener noreferrer"
