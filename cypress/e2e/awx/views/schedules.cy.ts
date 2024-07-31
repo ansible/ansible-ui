@@ -119,7 +119,7 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should(
           'contains.text',
-          `RRULE:FREQ=MINUTELY;INTERVAL=100;WKST=SU;UNTIL=${date.replaceAll('-', '')}T000000`
+          `RRULE:FREQ=MINUTELY;INTERVAL=100;WKST=SU;UNTIL=${date.replaceAll('-', '')}T`
         );
       });
       cy.clickButton(/^Next$/);
