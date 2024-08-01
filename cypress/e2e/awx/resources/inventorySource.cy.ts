@@ -8,8 +8,8 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-// FLAKY_07_30_2024
-describe.skip('Inventory Sources', () => {
+
+describe('Inventory Sources', () => {
   const scheduleName = 'e2e-' + randomString(4);
 
   let project: Project;
@@ -206,8 +206,7 @@ describe.skip('Inventory Sources', () => {
       cy.getByDataCy('time-zone').should('contain', 'America/New_York');
     });
 
-    // Uncomment when Laura fixes the bug where name and desc fields are getting reset
-    it.skip("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
+    it("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
       cy.createAWXSchedule({
         name: scheduleName,
         unified_job_template: inventorySource.id,
@@ -247,7 +246,6 @@ describe.skip('Inventory Sources', () => {
         unified_job_template: inventorySource.id,
         rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
       }).then((schedule1: Schedule) => {
-        // goToSourceDetails(inventory.name);
         goToSourceList(inventory.name);
         cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
         cy.clickTab('Schedules', true);
