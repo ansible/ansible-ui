@@ -135,6 +135,7 @@ function ProjectCreateInputs() {
         <PageFormGroup label={t('Options')}>
           <PageFormCheckbox<EdaProjectCreate>
             label={t`Verify SSL`}
+            labelHelpTitle={t('Verify SSL')}
             labelHelp={t(
               'Enabling this option verifies the SSL with HTTPS when the project is imported.'
             )}
