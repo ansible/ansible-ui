@@ -1,4 +1,4 @@
-# Cypress Testing
+# Cypress Testing using CI
 
 Cypress is being used for both end-to-end tests and component tests.
 
