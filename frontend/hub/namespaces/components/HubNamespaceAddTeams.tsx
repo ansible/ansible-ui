@@ -126,7 +126,7 @@ export function HubNamespaceAddTeams() {
           postRequest(hubAPI`/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'hub.namespace',
+            content_type: 'galaxy.namespace',
             object_id: namespace?.id,
           }),
         onComplete: () => {
@@ -164,7 +164,7 @@ export function HubNamespaceAddTeams() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.id } });
+          pageNavigate(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.name } });
         }}
       />
     </PageLayout>
