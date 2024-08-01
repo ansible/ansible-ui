@@ -52,6 +52,7 @@ export interface AuthenticatorMap {
   order: number;
   organization: string;
   role: string;
+  team?: string;
   revoke: boolean;
   triggers: AuthenticatorMapTriggers;
   map_type: AuthenticatorMapType;
