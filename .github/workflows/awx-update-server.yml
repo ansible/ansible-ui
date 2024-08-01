@@ -33,29 +33,22 @@ jobs:
             echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
           fi
 
-  awx-login:
-    name: AWX Login
+  awx-e2e:
+    name: AWX E2E
     needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - id: login
-        env:
-          AWX_USERNAME: e2e
-        run: |
-          if curl -k -f "${{ needs.setup.outputs.AWX_SERVER }}/api/v2/users/" \
-              --user "$AWX_USERNAME:${{ secrets.AWX_PASSWORD }}" \
-              -o /dev/null; then
-              echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
-          else
-              echo "UPDATE_SERVER=false" >> "$GITHUB_OUTPUT"
-              exit 1
-          fi
+    uses: ./.github/workflows/awx-e2e.yml
+    with:
+      AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
+    secrets:
+      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+      AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
+      AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
 
   awx-update-server:
     name: AWX Update Server
     if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
-      - awx-login
+      - awx-e2e
       - setup
     runs-on: ubuntu-latest
     steps:
