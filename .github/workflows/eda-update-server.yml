@@ -33,29 +33,22 @@ jobs:
             echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
           fi
 
-  eda-login:
-    name: EDA Login
+  eda-e2e:
+    name: EDA E2E
     needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - id: login
-        env:
-          EDA_USERNAME: e2e
-        run: |
-          if curl -k -f "${{ needs.setup.outputs.EDA_SERVER }}/api/eda/v1/users/" \
-              --user "$EDA_USERNAME:${{ secrets.EDA_PASSWORD }}" \
-              -o /dev/null; then
-              echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
-          else
-              echo "UPDATE_SERVER=false" >> "$GITHUB_OUTPUT"
-              exit 1
-          fi
+    uses: ./.github/workflows/eda-e2e.yml
+    with:
+      EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
+    secrets:
+      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
 
   eda-update-server:
     name: EDA Update Server
     if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
-      - eda-login
+      - eda-e2e
       - setup
     runs-on: ubuntu-latest
     steps:
