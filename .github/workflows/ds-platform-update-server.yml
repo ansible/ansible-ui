@@ -34,29 +34,22 @@ jobs:
             echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
           fi
 
-  platform-login:
-    name: Platform Login
+  platform-e2e:
+    name: Platform E2E
     needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - id: login
-        env:
-          PLATFORM_USERNAME: e2e
-        run: |
-          if curl -k -f "${{ needs.setup.outputs.PLATFORM_SERVER }}/api/gateway/v1/users/" \
-              --user "$PLATFORM_USERNAME:${{ secrets.PLATFORM_PASSWORD }}" \
-              -o /dev/null; then
-              echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
-          else
-              echo "UPDATE_SERVER=false" >> "$GITHUB_OUTPUT"
-              exit 1
-          fi
+    uses: ./.github/workflows/ds-platform-e2e.yml
+    with:
+      PLATFORM_SERVER: ${{ needs.setup.outputs.PLATFORM_SERVER }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
 
   platform-update-server:
     name: Platform Update Server
     if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
-      - platform-login
+      - platform-e2e
       - setup
     runs-on: ubuntu-latest
     steps:
