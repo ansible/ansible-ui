@@ -127,7 +127,7 @@ export function HubNamespaceAddUsers() {
           postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
             user: user.id,
             role_definition: role.id,
-            content_type: 'eda.project',
+            content_type: 'galaxy.namespace',
             object_id: namespace?.id,
           }),
         onComplete: () => {
@@ -165,7 +165,7 @@ export function HubNamespaceAddUsers() {
         onSubmit={onSubmit}
         disableGrid
         onCancel={() => {
-          pageNavigate(HubRoute.NamespaceUserAccess, { params: { id: namespace?.id } });
+          pageNavigate(HubRoute.NamespaceUserAccess, { params: { id: namespace?.name } });
         }}
       />
     </PageLayout>
