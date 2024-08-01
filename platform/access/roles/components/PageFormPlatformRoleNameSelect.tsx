@@ -6,7 +6,6 @@ import {
   PageAsyncSelectOptionsFn,
   PageAsyncSelectQueryResult,
 } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { PageAsyncSelectQueryOptions } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { requestGet } from '../../../../frontend/common/crud/Data';
@@ -32,7 +31,7 @@ export function PageFormPlatformRoleNameSelect<
       queryOptions={queryOptions as PageAsyncSelectOptionsFn<PathValue<TFieldValues, TFieldName>>}
       queryPlaceholder={t('Loading role...')}
       queryErrorText={t('Error loading roles')}
-      queryLabel={(id: number) => <AsyncQueryLabel id={id} url={gatewayAPI`/role_definitions/`} />}
+      queryLabel={(name: string) => name}
       isRequired={props.isRequired}
     />
   );

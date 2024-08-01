@@ -3,7 +3,6 @@ import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
 import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
@@ -41,7 +40,7 @@ export function PageFormPlatformOrganizationNameSelect<
       queryOptions={queryOptions as PageAsyncSelectOptionsFn<PathValue<TFieldValues, TFieldName>>}
       queryPlaceholder={t('Loading organizations...')}
       queryErrorText={t('Error loading organizations')}
-      queryLabel={(id: number) => <AsyncQueryLabel id={id} url={gatewayAPI`/organizations/`} />}
+      queryLabel={(name: string) => name}
       isRequired={props.isRequired}
       writeInOption={writeInOption}
     />
