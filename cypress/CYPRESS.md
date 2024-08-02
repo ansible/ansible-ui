@@ -28,7 +28,6 @@ End-to-End tests for our project are located in the `cypress/e2e` directory. The
 
    - Each test should be independent and capable of running on its own without relying on the state created by previous tests.
    - Ideally, tests should not rely on a previously created resource, and whenever possible, the test should create the resources it needs.
-     - There are several tests using `Global Organization` and `Global Project` that are created as part of the `login` process. This should be avoided whenever possible, as it was identified as a possible source of flakiness in the tests.
      - Create the resources in the test itself or in a `before` block, and clean them up in an `after` block.
    - If certain resources were created during deployment, those should not be deleted as part of the test runs.
    - Avoid tests that require execution in a specific order.
