@@ -278,8 +278,8 @@ describe('Namespaces Tabbed View Tests - CRUD actions', () => {
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
-        cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.selectTableRowByCheckbox('username', hubTeam.name, { disableFilter: true });
+        cy.contains('h1', 'Select teams(s)').should('be.visible');
+        cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
 
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
@@ -297,7 +297,7 @@ describe('Namespaces Tabbed View Tests - CRUD actions', () => {
         });
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
-        cy.verifyReviewStepWizardDetails('users', [hubTeam.name], '1');
+        cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
           [
@@ -320,11 +320,11 @@ describe('Namespaces Tabbed View Tests - CRUD actions', () => {
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(namespace.name);
-      cy.selectTableRowByCheckbox('username', hubTeam.name, {
+      cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
       removeRoleFromListRow('galaxy.collection_namespace_owner', 'team');
-      cy.selectTableRowByCheckbox('username', hubTeam.name, {
+      cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
       removeRoleFromListRow('galaxy.collection_publisher', 'team');
