@@ -74,7 +74,9 @@ Cypress.Commands.add('awxLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: awxAPI`/me` });
+        cy.request({ method: 'GET', url: awxAPI`/me` })
+          .its('status')
+          .should('eq', 200);
       },
       cacheAcrossSpecs: true,
     }
@@ -100,6 +102,7 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
       cy.wait(1000);
       cy.get('#pf-login-username-id').type(username, { force: true, delay: 100 });
       cy.get('#pf-login-password-id').type(password, { force: true, delay: 100 });
+      cy.getCookie('auth_token').should('exist');
       cy.contains('button', 'Log in').click();
       cy.get('[data-cy="nav-toggle"]').should('exist');
     },
