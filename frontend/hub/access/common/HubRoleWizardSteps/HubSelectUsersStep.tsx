@@ -23,8 +23,6 @@ export function HubSelectUsersStep(props: { descriptionForUsersSelection?: strin
       {
         header: t('Username'),
         cell: (user: HubUser) => <TextCell text={user.username} />,
-        card: 'name',
-        list: 'name',
         sort: 'username',
         maxWidth: 200,
       },

@@ -123,7 +123,7 @@ export function HubNamespaceAddTeams() {
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ team, role }) =>
-          postRequest(hubAPI`/role_team_assignments/`, {
+          postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
             content_type: 'galaxy.namespace',
