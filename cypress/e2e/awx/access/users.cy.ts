@@ -16,6 +16,7 @@ describe('Users List Actions', () => {
 
   after(() => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+    cy.awxLogout();
   });
 
   describe('Users List Actions', () => {
