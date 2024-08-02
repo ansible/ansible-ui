@@ -7,29 +7,159 @@ import { GatewayServicesContext } from '../../../main/GatewayServices';
 import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 const mockExecutionEnvironment = {
-  id: 1,
-  name: 'execution environment 1',
+  id: 3,
+  type: 'execution_environment',
+  url: '/api/controller/v2/execution_environments/3/',
+  related: {
+    activity_stream: '/api/controller/v2/execution_environments/3/activity_stream/',
+    unified_job_templates: '/api/controller/v2/execution_environments/3/unified_job_templates/',
+    copy: '/api/controller/v2/execution_environments/3/copy/',
+  },
+  summary_fields: {
+    user_capabilities: {
+      edit: true,
+      delete: false,
+      copy: true,
+    },
+  },
+  created: '2024-08-01T05:16:26.427687Z',
+  modified: '2024-08-01T05:16:26.434865Z',
+  name: 'Execution Environment 1',
+  description: '',
+  organization: null,
+  image: 'brew.registry.redhat.io/rh-osbs/ansible-automation-platform-25-ee-supported-rhel8',
+  managed: true,
+  credential: null,
+  pull: '',
 };
 
 const mockGalaxyCredentials = [
   {
     id: 1,
-    name: 'galaxy credential 1',
-  },
-  {
-    id: 2,
-    name: 'galaxy credential 2',
+    type: 'credential',
+    url: '/api/controller/v2/credentials/2/',
+    related: {
+      created_by: '/api/controller/v2/users/1/',
+      modified_by: '/api/controller/v2/users/1/',
+      activity_stream: '/api/controller/v2/credentials/2/activity_stream/',
+      access_list: '/api/controller/v2/credentials/2/access_list/',
+      object_roles: '/api/controller/v2/credentials/2/object_roles/',
+      owner_users: '/api/controller/v2/credentials/2/owner_users/',
+      owner_teams: '/api/controller/v2/credentials/2/owner_teams/',
+      copy: '/api/controller/v2/credentials/2/copy/',
+      input_sources: '/api/controller/v2/credentials/2/input_sources/',
+      credential_type: '/api/controller/v2/credential_types/19/',
+    },
+    summary_fields: {
+      credential_type: {
+        id: 19,
+        name: 'Ansible Galaxy/Automation Hub API Token',
+        description: '',
+      },
+      created_by: {
+        id: 1,
+        username: 'admin',
+        first_name: '',
+        last_name: '',
+      },
+      modified_by: {
+        id: 1,
+        username: 'admin',
+        first_name: '',
+        last_name: '',
+      },
+      object_roles: {
+        admin_role: {
+          description: 'Can manage all aspects of the credential',
+          name: 'Admin',
+          id: 29,
+        },
+        use_role: {
+          description: 'Can use the credential in a job template',
+          name: 'Use',
+          id: 30,
+        },
+        read_role: {
+          description: 'May view settings for the credential',
+          name: 'Read',
+          id: 31,
+        },
+      },
+      user_capabilities: {
+        edit: false,
+        delete: false,
+        copy: true,
+        use: true,
+      },
+      owners: [],
+    },
+    created: '2024-08-01T05:16:46.876532Z',
+    modified: '2024-08-01T05:16:46.876540Z',
+    name: 'Credential 1',
+    description: '',
+    organization: null,
+    credential_type: 19,
+    managed: true,
+    inputs: {
+      url: 'https://galaxy.ansible.com/',
+    },
+    kind: 'galaxy_api_token',
+    cloud: false,
+    kubernetes: false,
   },
 ];
 
 const mockInstanceGroups = [
   {
     id: 1,
-    name: 'instance group 1',
-  },
-  {
-    id: 2,
-    name: 'instance group 2',
+    type: 'instance_group',
+    url: '/api/controller/v2/instance_groups/2/',
+    related: {
+      jobs: '/api/controller/v2/instance_groups/2/jobs/',
+      instances: '/api/controller/v2/instance_groups/2/instances/',
+      access_list: '/api/controller/v2/instance_groups/2/access_list/',
+      object_roles: '/api/controller/v2/instance_groups/2/object_roles/',
+    },
+    name: 'Instance Group 1',
+    created: '2024-08-01T05:16:36.353639Z',
+    modified: '2024-08-01T05:16:36.402985Z',
+    capacity: 297,
+    consumed_capacity: 0,
+    percent_capacity_remaining: 100.0,
+    jobs_running: 0,
+    max_concurrent_jobs: 0,
+    max_forks: 0,
+    jobs_total: 0,
+    instances: 1,
+    is_container_group: false,
+    credential: null,
+    policy_instance_percentage: 0,
+    policy_instance_minimum: 0,
+    policy_instance_list: ['dev-aap.gcp.testing.ansible.com'],
+    pod_spec_override: '',
+    summary_fields: {
+      object_roles: {
+        admin_role: {
+          description: 'Can manage all aspects of the instance group',
+          name: 'Admin',
+          id: 6,
+        },
+        use_role: {
+          description: 'Can use the instance group in a job template',
+          name: 'Use',
+          id: 7,
+        },
+        read_role: {
+          description: 'May view settings for the instance group',
+          name: 'Read',
+          id: 8,
+        },
+      },
+      user_capabilities: {
+        edit: true,
+        delete: false,
+      },
+    },
   },
 ];
 
