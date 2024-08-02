@@ -13,6 +13,7 @@ describe('EDA decision environment- Create, Edit, Delete', () => {
     cy.verifyPageTitle('Decision Environments');
     cy.clickButton(/^Create decision environment$/);
     cy.get('[data-cy="name"]').type(de_name);
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.get('[data-cy="image-url"]').type('quay.io/ansible/ansible-rulebook:main');
     cy.clickButton(/^Create decision environment$/);
     cy.verifyPageTitle(de_name);
