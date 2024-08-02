@@ -7,7 +7,7 @@ export function useHubUserFilters() {
   return useMemo<IToolbarFilter[]>(
     () => [
       {
-        key: 'name',
+        key: 'username',
         label: t('Username'),
         type: ToolbarFilterType.MultiText,
         query: 'username__contains',
