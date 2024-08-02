@@ -11,6 +11,7 @@ interface StringOption {
   read_only: boolean;
   label: string;
   help_text: string;
+  default: string;
 }
 
 interface IntegerOption {
@@ -19,6 +20,7 @@ interface IntegerOption {
   read_only: boolean;
   label: string;
   help_text: string;
+  default: number;
 }
 
 interface BooleanOption {
@@ -27,6 +29,7 @@ interface BooleanOption {
   read_only: boolean;
   label: string;
   help_text: string;
+  default: boolean;
 }
 
 interface UrlOption {
@@ -35,6 +38,7 @@ interface UrlOption {
   read_only: false;
   label: string;
   help_text: string;
+  default: string;
 }
 
 interface FieldOption {

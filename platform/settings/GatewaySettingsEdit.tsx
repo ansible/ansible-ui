@@ -1,29 +1,34 @@
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
+import { Button } from '@patternfly/react-core';
 import {
   PageForm,
   PageFormTextInput,
   PageHeader,
   PageLayout,
   usePageNavigate,
+  PageFormSelect,
 } from '../../framework';
 import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormSingleSelect } from '../../framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
 import { requestPut } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
+import { useRevertAllGatewaySettingsModal } from './useRevertAllGatewaySettingsModal';
 
 export function GatewaySettingsEdit(props: { categoryId?: string }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const openRevertAllSettingsModal = useRevertAllGatewaySettingsModal();
+
   const { settings, options, refresh } = useOutletContext<{
     options: Record<string, GatewaySettingsOption>;
     settings: Record<string, unknown>;
     refresh: () => Promise<void>;
   }>();
+
   const categories = useGatewaySettingsCategories(options);
   const category = categories.find((category) => category.id === props.categoryId);
   if (!category) {
@@ -59,6 +64,19 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
         }}
         onCancel={() => pageNavigate(PlatformRoute.GatewaySettings)}
         defaultValue={settings}
+        additionalActions={
+          <Button
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              openRevertAllSettingsModal({
+                onComplete: () => pageNavigate(PlatformRoute.GatewaySettings),
+              });
+            }}
+          >
+            {t('Revert all to default')}
+          </Button>
+        }
       >
         {category.sections.map((section) => (
           <PageFormSection title={section.title} key={section.title}>
@@ -85,6 +103,9 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       isRequired={option.required}
                       isReadOnly={option.read_only}
                       // helperText={key}
+                      defaultValue={option.default}
+                      enableUndo
+                      enableReset
                     />
                   );
                 case 'integer':
@@ -98,15 +119,18 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       isRequired={option.required}
                       isReadOnly={option.read_only}
                       // helperText={key}
+                      defaultValue={option.default}
+                      enableUndo
+                      enableReset
                     />
                   );
                 case 'boolean':
                   return (
-                    <PageFormSingleSelect
+                    <PageFormSelect
                       key={key}
                       name={key}
                       label={option.label}
-                      placeholder={t('Disabled')}
+                      placeholderText={t('Disabled')}
                       labelHelp={option.help_text}
                       isRequired={option.required}
                       isReadOnly={option.read_only}
@@ -115,6 +139,9 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                         { label: t('Disabled'), value: false },
                       ]}
                       // helperText={key}
+                      defaultValue={option.default}
+                      enableReset
+                      enableUndo
                     />
                   );
                 case 'url':
@@ -128,6 +155,9 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       isRequired={option.required}
                       isReadOnly={option.read_only}
                       // helperText={key}
+                      defaultValue={option.default}
+                      enableUndo
+                      enableReset
                     />
                   );
                 case 'field':
