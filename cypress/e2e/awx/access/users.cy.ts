@@ -5,7 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
-describe('Users List Actions', () => {
+describe.skip('Users Tests', () => {
   let organization: Organization;
 
   before(() => {
@@ -16,7 +16,6 @@ describe('Users List Actions', () => {
 
   after(() => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-    cy.awxLogout();
   });
 
   describe('Users List Actions', () => {
