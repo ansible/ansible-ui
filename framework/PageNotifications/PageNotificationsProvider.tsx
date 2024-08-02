@@ -28,7 +28,7 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface IPageNotifications {
@@ -156,7 +156,6 @@ function PageNotificationGroup(props: { group: IPageNotificationGroup }) {
 function PageNotification(props: { notification: IPageNotification }) {
   const notificationVariant =
     props.notification.variant === 'info' ? undefined : props.notification.variant;
-  const navigate = useNavigate();
   const { setNotificationsDrawerOpen } = usePageNotifications();
   const timestamp = props.notification.timestamp
     ? new Date(props.notification.timestamp)
@@ -168,17 +167,21 @@ function PageNotification(props: { notification: IPageNotification }) {
     <NotificationDrawerListItem
       variant={props.notification.variant}
       onClick={() => {
-        navigate(props.notification.to);
         setNotificationsDrawerOpen(false);
       }}
     >
-      <NotificationDrawerListItemHeader
-        title={props.notification.title}
-        variant={notificationVariant}
-      />
-      <NotificationDrawerListItemBody timestamp={timestampString}>
-        {props.notification.description}
-      </NotificationDrawerListItemBody>
+      <Link
+        to={props.notification.to}
+        target={props.notification.openInNewWindow ? '_blank' : undefined}
+      >
+        <NotificationDrawerListItemHeader
+          title={props.notification.title}
+          variant={notificationVariant}
+        />
+        <NotificationDrawerListItemBody timestamp={timestampString}>
+          {props.notification.description}
+        </NotificationDrawerListItemBody>
+      </Link>
     </NotificationDrawerListItem>
   );
 }

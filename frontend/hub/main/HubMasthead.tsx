@@ -114,6 +114,7 @@ export function useHubNotifications() {
 
             // go to full experience approvals
             to: '/ui/approval-dashboard/',
+            openInNewWindow: true,
           })) ?? [],
       };
       return { ...groups };
