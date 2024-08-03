@@ -177,7 +177,7 @@ describe('Teams: Add and Remove users', () => {
 
     // Remove users
     cy.filterTableBySingleSelect('name', team.name);
-    cy.clickTableRowAction('name', team.name, 'remove-users', {
+    cy.clickTableRowAction('name', team.name, 'remove-users-from-teams', {
       inKebab: true,
       disableFilter: true,
     });
@@ -292,7 +292,7 @@ describe('Teams: Bulk delete', () => {
     cy.filterTableByMultiSelect('name', arrayOfElementText);
     cy.get('tbody tr').should('have.length', 5);
     cy.getByDataCy('select-all').click();
-    cy.clickToolbarKebabAction('delete-selected-teams');
+    cy.clickToolbarKebabAction('delete-teams');
 
     cy.get('#confirm').click();
     cy.intercept('DELETE', awxAPI`/teams/*/`).as('deleted');

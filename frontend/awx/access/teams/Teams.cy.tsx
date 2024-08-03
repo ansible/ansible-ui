@@ -58,7 +58,7 @@ describe('Teams.cy.ts', () => {
       cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.get('[type="checkbox"][id="select-all"]').check();
-      cy.clickToolbarKebabAction('delete-selected-teams');
+      cy.clickToolbarKebabAction('delete-teams');
       cy.contains(
         '1 of the selected teams cannot be deleted due to insufficient permissions.'
       ).should('be.visible');

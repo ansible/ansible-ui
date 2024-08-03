@@ -84,7 +84,7 @@ describe('TeamAccess', () => {
       // Remove users
       cy.selectTableRow('admin', false); //  User cannot be removed as they are a system administrator
       cy.selectTableRow('user-2', false);
-      cy.clickToolbarKebabAction('remove-users');
+      cy.clickToolbarKebabAction('remove-users-from-teams');
       // Confirmation modal is displayed with a warning
       cy.get('.pf-v5-c-modal-box').within(() => {
         cy.hasAlert(
