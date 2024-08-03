@@ -107,6 +107,13 @@ export function useAwxView<T extends { id: number }>(options: {
                 .split('+')
                 .join(',')}&or__object2__in=${values[0].split('+').join(',')}`;
             }
+            // add Activity Stream id filtering, like host__id=2
+            for (const keyId in filterState) {
+              if (/.+__id/.test(keyId)) {
+                const valId: string = filterState[keyId];
+                queryString += `&${keyId}=${valId}`;
+              }
+            }
           } else if (toolbarFilter.query === 'search') {
             queryString += values.map((value) => `${toolbarFilter.query}=${value}`).join('&');
           } else {

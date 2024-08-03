@@ -25,10 +25,12 @@ import { useTemplateActions } from '../hooks/useTemplateActions';
 
 export function WorkflowJobTemplatePage() {
   const { t } = useTranslation();
-  const activityStream = useViewActivityStream(
-    'job_template+workflow_job_template+workflow_job_template_node'
-  );
   const params = useParams<{ id: string }>();
+  let activityStreamType: string = 'job_template+workflow_job_template+workflow_job_template_node';
+  if (/^\d+$/.test(params.id)) {
+    activityStreamType = 'workflow_job_template';
+  }
+  const activityStream = useViewActivityStream(activityStreamType);
   const { activeAwxUser } = useAwxActiveUser();
   const {
     error: templateError,
