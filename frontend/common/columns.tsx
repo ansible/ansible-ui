@@ -125,7 +125,7 @@ export function useLastRanColumn(options?: {
   const { t } = useTranslation();
   const column: ITableColumn<{ last_job_run: string | null }> = useMemo(
     () => ({
-      header: t('Last Ran'),
+      header: t('Last ran'),
       cell: (item) => {
         if (!item.last_job_run) return <></>;
         return <DateTimeCell value={item.last_job_run} />;

@@ -17,7 +17,7 @@ export function useManagedAwxDashboard() {
   );
   const resources: Resource[] = useMemo(
     () => [
-      { id: 'counts', name: t('Resource Counts') },
+      { id: 'counts', name: t('Resource counts') },
       { id: 'recent_job_activity', name: t('Recent job activity') },
       { id: 'recent_jobs', name: t('Recent jobs') },
       { id: 'recent_projects', name: t('Recent projects') },
