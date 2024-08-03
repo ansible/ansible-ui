@@ -128,7 +128,7 @@ export function JobDetails() {
       <PageDetail label={t('Module arguments')} isEmpty={!job.module_args}>
         {job.module_args}
       </PageDetail>
-      <PageDetail isEmpty={!job.summary_fields?.created_by?.username} label={t('Created by')}>
+      <PageDetail isEmpty={!job.summary_fields?.created_by?.username} label={t('Created')}>
         <DateTimeCell
           value={job.created}
           author={job.summary_fields.created_by?.username}
@@ -149,9 +149,9 @@ export function JobDetails() {
         }
       />
       <PageDetailCodeEditor
-        label={t`Extra Variables`}
+        label={t`Extra variables`}
         helpText={t(
-          'Extra Variables used on this job.  This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
+          'Extra variables used on this job.  This is the -e or --extra-vars command line parameter for ansible-playbook. Provide key/value pairs using either YAML or JSON. Refer to the documentation for example syntax.'
         )}
         showCopyToClipboard
         data-cy="inventory-source-detail-variables"

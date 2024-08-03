@@ -77,7 +77,7 @@ export function useCreatedByToolbarFilter() {
   return useMemo<IToolbarFilter>(
     () => ({
       key: 'created-by',
-      label: t('Created by'),
+      label: t('Created'),
       type: ToolbarFilterType.MultiText,
       query: 'created_by__username__icontains',
       comparison: 'contains',
