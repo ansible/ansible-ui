@@ -56,7 +56,7 @@ describe('AWX OAuth Applications CRUD actions List page', () => {
         cy.verifyPageTitle('OAuth Applications');
         cy.filterTableByMultiSelect('name', [oauthApplicationName]);
         cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
-        cy.verifyPageTitle('Edit Application');
+        cy.verifyPageTitle(`Edit ${oauthApplicationName}`);
         cy.getByDataCy('description').clear().type(`${authGrantType} with ${appClientType} edited`);
         cy.getByDataCy('Submit').click();
         cy.verifyPageTitle(oauthApplicationName);
