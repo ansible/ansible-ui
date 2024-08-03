@@ -43,7 +43,7 @@ export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }
         {instanceGroup.is_container_group ? t('Container Group') : t('Instance Group')}
       </PageDetail>
       <PageDetail
-        label={t('Policy Instance Minimum')}
+        label={t('Policy instance minimum')}
         helpText={t(
           'Minimum number of instances that will be automatically assigned to this group when new instances come online.'
         )}
@@ -76,7 +76,7 @@ export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }
       >
         {instanceGroup.max_forks}
       </PageDetail>
-      <PageDetail label={t('Used Capacity')} isEmpty={instanceGroup.is_container_group}>
+      <PageDetail label={t('Used capacity')} isEmpty={instanceGroup.is_container_group}>
         {instanceGroup.capacity ? (
           `${Math.round(100 - instanceGroup.percent_capacity_remaining)}%`
         ) : (
