@@ -64,7 +64,6 @@ jobs:
   checks:
     name: ESLint - Prettier - TSC
     runs-on: ubuntu-latest
-    # timeout-minutes: 10
     needs: packages
     steps:
       - uses: actions/checkout@v4

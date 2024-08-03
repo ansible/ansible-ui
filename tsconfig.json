@@ -37,6 +37,7 @@
     "*.config.ts",
     "cypress.d.ts",
     "webpack/environment.d.ts",
-    "i18next-parser.config.cjs"
+    "i18next-parser.config.cjs",
+    "playwright"
   ]
 }

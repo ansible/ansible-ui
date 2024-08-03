@@ -11,3 +11,4 @@
 /cypress/.nyc_output
 /cypress/coverage
 .eslintcache
+/test-results
