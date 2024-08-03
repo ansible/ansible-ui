@@ -19,6 +19,7 @@ import {
 } from '../../../../common/utils/RBAChelpers';
 import { postRequest } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export type RunningNotificationsType = { [key: string]: string };
 
@@ -43,6 +44,7 @@ export function useNotifiersRowActions(params: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t(`Edit notifier`),
         onClick: (notification) =>
           pageNavigate(AwxRoute.EditNotificationTemplate, {
@@ -89,7 +91,7 @@ export function useNotifiersRowActions(params: {
         onClick: (notification: NotificationTemplate) => copyNotifier(notification),
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
-        isPinned: true,
+        isPinned: false,
         isHidden: () => type === 'detail',
       },
       { type: PageActionType.Seperator },
