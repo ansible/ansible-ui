@@ -6,6 +6,7 @@ interface IProps {
   'data-cy'?: string;
   href: string;
   variant?: 'default' | 'download' | 'menu' | 'nav';
+  openInNewWindow: boolean;
 }
 
 const getIconStyle = (variant: string): CSSProperties => {
@@ -31,6 +32,7 @@ export const ExternalLink = ({
   'data-cy': dataCy,
   href,
   variant = 'default',
+  openInNewWindow = true,
 }: IProps) => {
   const iconStyle = useMemo(() => getIconStyle(variant), [variant]);
   const className = useMemo(() => classNames[variant] || classNames.default, [variant]);
@@ -39,16 +41,23 @@ export const ExternalLink = ({
   if (!href || !children) {
     return null;
   }
-
-  return (
-    <a
-      className={className}
-      data-cy={dataCy}
-      href={href}
-      rel="nofollow noopener noreferrer"
-      target="_blank"
-    >
-      {children} <ExternalLinkAltIcon style={iconStyle} />
-    </a>
-  );
+  if (openInNewWindow) {
+    return (
+      <a
+        className={className}
+        data-cy={dataCy}
+        href={href}
+        rel="nofollow noopener noreferrer"
+        target="_blank"
+      >
+        {children} <ExternalLinkAltIcon style={iconStyle} />
+      </a>
+    );
+  } else {
+    return (
+      <a className={className} data-cy={dataCy} href={href} rel="nofollow noopener noreferrer">
+        {children}
+      </a>
+    );
+  }
 };

@@ -28,7 +28,7 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 import styled from 'styled-components';
 
 interface IPageNotifications {
@@ -49,6 +49,7 @@ export interface IPageNotification {
   timestamp?: string;
   variant?: 'success' | 'danger' | 'warning' | 'info';
   to: string;
+  openInNewWindow?: boolean;
 }
 
 export const PageNotificationsContext = createContext<IPageNotifications>({
@@ -156,7 +157,6 @@ function PageNotificationGroup(props: { group: IPageNotificationGroup }) {
 function PageNotification(props: { notification: IPageNotification }) {
   const notificationVariant =
     props.notification.variant === 'info' ? undefined : props.notification.variant;
-  const navigate = useNavigate();
   const { setNotificationsDrawerOpen } = usePageNotifications();
   const timestamp = props.notification.timestamp
     ? new Date(props.notification.timestamp)
@@ -168,17 +168,21 @@ function PageNotification(props: { notification: IPageNotification }) {
     <NotificationDrawerListItem
       variant={props.notification.variant}
       onClick={() => {
-        navigate(props.notification.to);
         setNotificationsDrawerOpen(false);
       }}
     >
-      <NotificationDrawerListItemHeader
-        title={props.notification.title}
-        variant={notificationVariant}
-      />
-      <NotificationDrawerListItemBody timestamp={timestampString}>
-        {props.notification.description}
-      </NotificationDrawerListItemBody>
+      <ExternalLink
+        href={props.notification.to}
+        openInNewWindow={props.notification.openInNewWindow}
+      >
+        <NotificationDrawerListItemHeader
+          title={props.notification.title}
+          variant={notificationVariant}
+        />
+        <NotificationDrawerListItemBody timestamp={timestampString}>
+          {props.notification.description}
+        </NotificationDrawerListItemBody>
+      </ExternalLink>
     </NotificationDrawerListItem>
   );
 }

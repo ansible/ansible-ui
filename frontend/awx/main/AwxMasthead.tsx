@@ -137,6 +137,7 @@ export function useAwxNotifications() {
             to: getPageUrl(AwxRoute.WorkflowApprovalDetails, {
               params: { id: workflow_approval.id },
             }),
+            openInNewWindow: false,
           })) ?? [],
       };
       return { ...groups };
