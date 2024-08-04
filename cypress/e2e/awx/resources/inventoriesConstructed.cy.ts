@@ -151,7 +151,8 @@ describe('Constructed Inventories CRUD Tests', () => {
       "groups": {
       "is_shutdown": "state | default('running') == 'shutdown'",
       "product_dev": "account_alias == 'product_dev'"
-      }}`
+      }}`,
+      { delay: 200 }
     );
     cy.clickButton(/^Save inventory$/);
     cy.verifyPageTitle(newInventory.name);
