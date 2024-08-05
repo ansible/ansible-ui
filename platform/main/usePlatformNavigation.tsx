@@ -1,7 +1,6 @@
-import { Banner } from '@patternfly/react-core';
 import { useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   PageNavigationItem,
   findNavigationItemById,
@@ -13,7 +12,6 @@ import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { useAwxNavigation } from '../../frontend/awx/main/useAwxNavigation';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
 import { useEdaNavigation } from '../../frontend/eda/main/useEdaNavigation';
-import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 import { HubRoute } from '../../frontend/hub/main/HubRoutes';
 import { useHubNavigation } from '../../frontend/hub/main/useHubNavigation';
 import { Lightspeed } from '../lightspeed/Lightspeed';
@@ -38,51 +36,6 @@ import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { PageSettingsForm } from '../../framework/PageSettings/PageSettingsForm';
 import { PageSettingsDetails } from '../../framework/PageSettings/PageSettingsDetails';
-
-const mapHubRoute = (url: string) => {
-  const matches: Record<string, string> = {
-    '/content/namespaces': '/ui/namespaces/',
-    '/content/collections': '/ui/collections/',
-    '/content/execution-environments': '/ui/containers/',
-    '/content/administration/signature-keys': '/ui/signature-keys/',
-    '/content/administration/repositories': '/ui/ansible/repositories/',
-    '/content/administration/remote-registries': '/ui/registries/',
-    '/content/administration/tasks': '/ui/tasks/',
-    '/content/administration/approvals': '/ui/approval-dashboard/',
-    '/content/administration/remotes': '/ui/ansible/remotes/',
-  };
-
-  if (matches[url]) {
-    return matches[url];
-  }
-
-  const candidate = Object.keys(matches).find((prefix) => url.startsWith(prefix));
-  if (candidate && matches[candidate]) {
-    return matches[candidate];
-  }
-
-  return '/ui/';
-};
-
-const HubBanner = (_props: unknown) => {
-  const { pathname } = useLocation();
-  return (
-    <>
-      <Banner variant="blue" style={{ textAlign: 'center' }}>
-        <Trans>
-          This experience in in tech preview and may not function as expected. Please use the the{' '}
-          <ExternalLink href={mapHubRoute(pathname)}>
-            full experience of Automation Hub
-          </ExternalLink>{' '}
-          for production.
-        </Trans>
-      </Banner>
-      <div style={{ height: 'calc(100% - 29px)' }}>
-        <Outlet />
-      </div>
-    </>
-  );
-};
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -189,22 +142,7 @@ export function usePlatformNavigation() {
       subtitle: t('Automation Hub'),
       hidden: !hubService,
       path: 'content',
-      children: [
-        {
-          id: '/ui/',
-          label: t('Full experience'),
-          href: '/ui/',
-          path: '',
-          children: [],
-        },
-        {
-          id: '/content/',
-          label: t('Tech Preview'),
-          path: '',
-          children: hubNav,
-          element: <HubBanner />,
-        },
-      ],
+      children: hubNav,
     });
 
     const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
