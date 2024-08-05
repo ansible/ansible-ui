@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import {
-  DrawerActions,
-  DrawerCloseButton,
   DrawerHead,
   DrawerPanelBody,
   DrawerPanelContent,
@@ -18,7 +16,6 @@ import { HubRoute } from '../../../main/HubRoutes';
 import { usePageNavigate } from '../../../../../framework';
 
 export function CollectionDocumentationTabPanel(props: {
-  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
   setSearchText: Dispatch<SetStateAction<string>>;
   searchText: string;
   groups: {
@@ -27,7 +24,7 @@ export function CollectionDocumentationTabPanel(props: {
   }[];
   docs: { name: string; label: string }[];
 }) {
-  const { groups, setDrawerOpen, setSearchText, docs } = props;
+  const { groups, setSearchText, docs } = props;
   const [searchParams] = useSearchParams();
   const navigate = usePageNavigate();
   const params = useParams();
@@ -43,9 +40,6 @@ export function CollectionDocumentationTabPanel(props: {
           placeholder={t('Find content')}
           onChange={(event, value) => setSearchText(value)}
         />
-        <DrawerActions style={{ alignSelf: 'center' }}>
-          <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
-        </DrawerActions>
       </DrawerHead>
       <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
         <Nav theme="light">

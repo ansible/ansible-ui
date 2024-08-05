@@ -99,7 +99,6 @@ export function CollectionDocumentation() {
       .sort((l, r) => l.name.localeCompare(r.name));
   }, [data, searchText, t]);
 
-  const [isDrawerOpen, setDrawerOpen] = useState(true);
   const lg = useBreakpoint('lg');
 
   if (!data && !error) {
@@ -147,18 +146,15 @@ export function CollectionDocumentation() {
   }
 
   return (
-    <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
+    <Drawer isExpanded isInline={lg} position="left">
       <DrawerContent
         panelContent={
-          isDrawerOpen ? (
-            <CollectionDocumentationTabPanel
-              setDrawerOpen={setDrawerOpen}
-              groups={groups}
-              setSearchText={setSearchText}
-              searchText={searchText}
-              docs={docsFiles}
-            />
-          ) : undefined
+          <CollectionDocumentationTabPanel
+            groups={groups}
+            setSearchText={setSearchText}
+            searchText={searchText}
+            docs={docsFiles}
+          />
         }
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
