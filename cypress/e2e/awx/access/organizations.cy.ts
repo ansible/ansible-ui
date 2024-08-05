@@ -5,7 +5,8 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Organizations: Create', () => {
-  it('can create a basic organization, assert info on the details page, and delete it', () => {
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
+  it.skip('can create a basic organization, assert info on the details page, and delete it', () => {
     const organizationName = randomE2Ename();
     const orgDescription = 'orgDescription' + randomString(4);
     cy.navigateTo('awx', 'organizations');
