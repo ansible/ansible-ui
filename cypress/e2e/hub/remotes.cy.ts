@@ -64,7 +64,7 @@ describe('Remotes', () => {
     cy.contains('Remotes').click();
     cy.url().should('include', Remotes.url);
     cy.filterTableBySingleText(remoteName);
-    cy.clickTableRowAction('remote-name', remoteName, 'delete-remote', {
+    cy.clickTableRowAction('name', remoteName, 'delete-remote', {
       disableFilter: true,
       inKebab: true,
     });
@@ -97,7 +97,7 @@ describe('Remotes', () => {
     cy.wait('@remote').then(() => {
       cy.contains('Remotes').click();
       cy.filterTableBySingleText(remoteName);
-      cy.clickTableRowAction('remote-name', remoteName, 'delete-remote', {
+      cy.clickTableRowAction('name', remoteName, 'delete-remote', {
         disableFilter: true,
         inKebab: true,
       });
