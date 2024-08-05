@@ -50,7 +50,7 @@ export interface IPageNotification {
   timestamp?: string;
   variant?: 'success' | 'danger' | 'warning' | 'info';
   to: string;
-  openInNewWindow?: string;
+  openInNewWindow?: boolean;
 }
 
 export const PageNotificationsContext = createContext<IPageNotifications>({
@@ -155,6 +155,11 @@ function PageNotificationGroup(props: { group: IPageNotificationGroup }) {
   );
 }
 
+const StyledLink = styled(Link)`
+  color: inherit;
+  text-decoration: none;
+`;
+
 function PageNotification(props: { notification: IPageNotification }) {
   const notificationVariant =
     props.notification.variant === 'info' ? undefined : props.notification.variant;
@@ -172,7 +177,7 @@ function PageNotification(props: { notification: IPageNotification }) {
         setNotificationsDrawerOpen(false);
       }}
     >
-      <Link
+      <StyledLink
         to={props.notification.to}
         target={props.notification.openInNewWindow ? '_blank' : undefined}
       >
@@ -184,7 +189,7 @@ function PageNotification(props: { notification: IPageNotification }) {
           {props.notification.description}{' '}
           {props.notification.openInNewWindow ? <ExternalLinkAltIcon /> : null}
         </NotificationDrawerListItemBody>
-      </Link>
+      </StyledLink>
     </NotificationDrawerListItem>
   );
 }
