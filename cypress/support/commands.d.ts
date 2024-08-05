@@ -80,6 +80,8 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 
 declare global {
   namespace Cypress {
@@ -1506,6 +1508,8 @@ declare global {
       // ==============================================================================================================
 
       // HUB Request Commands
+      createHubTeam(): Cypress.Chainable<HubTeam>;
+      createHubUser(hubUser?: Partial<HubUser>): Cypress.Chainable<HubUser>;
       hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
       hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;
       hubPutRequest<T>(
