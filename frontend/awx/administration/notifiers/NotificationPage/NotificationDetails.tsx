@@ -48,7 +48,7 @@ export function NotificationDetails() {
               }
             />
           </PageDetail>
-          <PageDetail label={t('Last Modified')}>
+          <PageDetail label={t('Last modified')}>
             <DateTimeCell
               value={notificationTemplate.modified}
               author={notificationTemplate.summary_fields?.modified_by?.username}
@@ -69,7 +69,7 @@ export function NotificationDetails() {
               {notificationTemplate.summary_fields.organization.name}
             </Link>
           </PageDetail>
-          <PageDetail label={t('Notification Type')}>
+          <PageDetail label={t('Notification type')}>
             {notificationTemplate.notification_type}
           </PageDetail>
 
@@ -235,8 +235,8 @@ function returnCaption(notification_type: string | null, key: string) {
     if (key === 'username') return t('Username');
     if (key === 'password') return t('Password');
     if (key === 'host') return t('Host');
-    if (key === 'recipients') return t('Recipient List');
-    if (key === 'sender') return t('Sender Email');
+    if (key === 'recipients') return t('Recipient list');
+    if (key === 'sender') return t('Sender email');
     if (key === 'port') return t('Port');
     if (key === 'timeout') return t('Timeout');
     if (key === 'use_tls') return t('Use TLS');
