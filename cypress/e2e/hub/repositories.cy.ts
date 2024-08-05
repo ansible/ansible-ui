@@ -51,7 +51,7 @@ describe.skip('Repositories', () => {
     cy.deleteHubRemote(remote);
   });
 
-  it('should be able to create a repository', () => {
+  it.skip('should be able to create a repository', () => {
     const repositoryName = randomE2Ename();
     const repositoryDescription = 'Here goes description';
 
