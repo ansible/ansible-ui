@@ -80,7 +80,7 @@ import { RulebookActivationPage } from '../rulebook-activations/RulebookActivati
 import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
 import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationUserAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
-import { CreateWebhook, EditWebhook } from '../webhooks/WebhookForm';
+import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { Webhooks } from '../webhooks/Webhooks';
@@ -328,8 +328,9 @@ export function useEdaNavigation() {
     },
     {
       id: EdaRoute.Webhooks,
-      label: t('Event Streams'),
+      label: t('Webhooks'),
       path: 'webhooks',
+      hidden: true,
       children: [
         {
           id: EdaRoute.CreateWebhook,

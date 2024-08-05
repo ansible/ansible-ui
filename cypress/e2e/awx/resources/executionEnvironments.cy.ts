@@ -103,7 +103,7 @@ describe('Execution Environments', () => {
       cy.clickModalButton('Close');
     });
 
-    it.skip('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
+    it('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);

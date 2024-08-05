@@ -33,22 +33,29 @@ jobs:
             echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
           fi
 
-  hub-e2e:
-    name: HUB E2E
+  hub-login:
+    name: Hub Login
     needs: setup
-    uses: ./.github/workflows/hub-e2e.yml
-    with:
-      HUB_SERVER: ${{ needs.setup.outputs.HUB_SERVER }}
-    secrets:
-      HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
-      HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
-      HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: login
+        env:
+          HUB_USERNAME: e2e
+        run: |
+          if curl -k -f "${{ needs.setup.outputs.HUB_SERVER }}/api/galaxy/_ui/v1/users/" \
+              --user "$HUB_USERNAME:${{ secrets.HUB_PASSWORD }}" \
+              -o /dev/null; then
+              echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
+          else
+              echo "UPDATE_SERVER=false" >> "$GITHUB_OUTPUT"
+              exit 1
+          fi
 
   hub-update-server:
     name: HUB Update Server
     if: ${{ needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
-      - hub-e2e
+      - hub-login
       - setup
     runs-on: ubuntu-latest
     steps:

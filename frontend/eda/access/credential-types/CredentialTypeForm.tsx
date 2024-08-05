@@ -25,6 +25,7 @@ import { EdaPageForm } from '../../common/EdaPageForm';
 import { Alert, Button } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useCallback, useState } from 'react';
+import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialTypeDetails } from './CredentialTypePage/CredentialTypeDetails';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -187,6 +188,7 @@ function CredentialTypeInputs() {
         label={t('Description')}
         placeholder={t('Enter description')}
       />
+      <PageFormSelectOrganization<EdaCredentialTypeCreate> name="organization_id" />
       <PageFormSection singleColumn>
         <PageFormDataEditor
           name="inputs"

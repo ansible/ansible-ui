@@ -19,6 +19,5 @@ export interface EdaCredentialTypeField {
   type: string;
   help_text: string;
   ask_at_runtime?: boolean;
-  hidden?: boolean;
   default?: number | string | boolean;
 }

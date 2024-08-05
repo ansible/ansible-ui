@@ -24,21 +24,21 @@ export function Webhooks() {
   const rowActions = useWebhookActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Event Streams')} description={t('Event streams.')} />
+      <PageHeader title={t('Webhooks')} description={t('Webhooks .')} />
       <PageTable
         id="eda-webhooks-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
-        errorStateTitle={t('Error loading event streams')}
-        emptyStateTitle={t('There are currently no event streams created for your organization.')}
-        emptyStateDescription={t('Please create an event stream by using the button below.')}
+        errorStateTitle={t('Error loading webhooks')}
+        emptyStateTitle={t('There are currently no webhooks created for your organization.')}
+        emptyStateDescription={t('Please create a webhook by using the button below.')}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create event stream')}
+        emptyStateButtonText={t('Create webhook')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateWebhook)}
         {...view}
-        defaultSubtitle={t('Event stream')}
+        defaultSubtitle={t('Webhook')}
       />
     </PageLayout>
   );

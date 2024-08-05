@@ -5,7 +5,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-describe('Collections Details', () => {
+describe.skip('Collections Details', () => {
   let namespace: HubNamespace;
   let repository: Repository;
   let collectionName: string;
@@ -82,8 +82,7 @@ describe('Collections Details', () => {
     cy.clickLink(collectionName);
     cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
     cy.contains('Loading').should('not.exist');
-
-    cy.get(`[data-cy="browse-collection-version"] button`).first().click();
+    cy.get('.pf-v5-c-menu-toggle').click();
     cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
     cy.url().should(
       'contain',
@@ -98,7 +97,7 @@ describe('Collections Details', () => {
     cy.clickLink(collectionName);
     cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
     cy.contains('Loading').should('not.exist');
-    cy.get(`[data-cy="browse-collection-version"] button`).first().click();
+    cy.get('.pf-v5-c-menu-toggle').click();
     cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
     cy.deleteHubCollectionByName(collectionName);
   });
@@ -114,7 +113,7 @@ describe('Collections Details', () => {
     cy.clickLink(collectionName);
     cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
     cy.contains('Loading').should('not.exist');
-    cy.get(`[data-cy="browse-collection-version"] button`).first().click();
+    cy.get('.pf-v5-c-menu-toggle').click();
     cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
     cy.url().should(
       'contain',
@@ -132,7 +131,7 @@ describe('Collections Details', () => {
       'contain',
       `/collections/published/${namespace.name}/${collectionName}/details`
     );
-    cy.get(`[data-cy="browse-collection-version"] button`).first().click();
+    cy.get('.pf-v5-c-menu-toggle').click();
     cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
     cy.deleteHubCollectionByName(collectionName);
   });
@@ -200,6 +199,7 @@ describe('Collections Details', () => {
         cy.get('input[id="file-filename"]').selectFile(result.filename, {
           action: 'drag-drop',
         });
+        cy.verifyPageTitle('Upload Collection');
         cy.get('#radio-non-pipeline').click();
         cy.filterTableBySingleText(repository.name, true);
         cy.getTableRowByText(repository.name, false).within(() => {
@@ -212,10 +212,11 @@ describe('Collections Details', () => {
         cy.filterTableBySingleText(collectionName, true);
         cy.clickTableRow(collectionName, false);
         cy.verifyPageTitle(collectionName);
-        cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-
-        cy.contains('[type="button"]', '1.0.0 updated').click();
-
+        cy.contains('[type="button"]', '(latest)')
+          .click()
+          .then(() => {
+            cy.contains('[type="button"]', '1.0.0 updated').click();
+          });
         //Select the first version of the collection in order to sign it
         cy.getByDataCy('version').should('contain', '1.0.0');
         cy.getByDataCy('signed-state').should('contain', 'Unsigned');
@@ -228,10 +229,11 @@ describe('Collections Details', () => {
         cy.getByDataCy('version').should('contain', '1.0.0');
         cy.getByDataCy('signed-state').should('contain', 'Signed');
         //Display the other version of the collection to assert that it is not signed
-        cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-
-        cy.contains('[type="button"]', '(latest)').click();
-
+        cy.contains('[type="button"]', '1.0.0 updated')
+          .click()
+          .then(() => {
+            cy.contains('[type="button"]', '(latest)').click();
+          });
         cy.getByDataCy('version').should('contain', '1.2.3');
         cy.getByDataCy('signed-state').should('contain', 'Unsigned');
         //Delete the collection

@@ -38,8 +38,6 @@ import { PageFormSelectOrganization } from '../access/organizations/components/P
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { Alert } from '@patternfly/react-core';
-import { EdaWebhook } from '../interfaces/EdaWebhook';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -113,7 +111,6 @@ export function CreateRulebookActivation() {
           restart_policy: RestartPolicyEnum.OnFailure,
           log_level: LogLevelEnum.Error,
           is_enabled: true,
-          swap_single_source: false,
         }}
       >
         <RulebookActivationInputs />
@@ -157,7 +154,6 @@ export function RulebookActivationInputs() {
   const { data: tokens } = useGet<EdaResult<AwxToken>>(
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
-  const { data: webhooks } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -235,7 +231,7 @@ export function RulebookActivationInputs() {
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
       />
-      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
+      <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
         name="credential_refs"
         credentialKinds={['vault,cloud']}
         labelHelp={t(`Select the credentials for this rulebook activation.`)}
@@ -308,32 +304,6 @@ export function RulebookActivationInputs() {
         labelHelp={t('Optional service name.')}
         labelHelpTitle={t('Service name')}
       />
-      <PageFormSection>
-        <PageFormMultiSelect<IEdaRulebookActivationInputs>
-          name="webhooks"
-          label={t('Event stream(s)')}
-          options={
-            webhooks?.results
-              ? webhooks.results.map((item) => ({
-                  label: item?.name || '',
-                  value: `${item.id}`,
-                }))
-              : []
-          }
-          placeholder={t('Select event stream(s)')}
-          footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create event stream</Link>}
-        />
-        <PageFormSwitch<IEdaRulebookActivationInputs>
-          id="swap_single_source"
-          name="swap_single_source"
-          label={t('Swap single source?')}
-          labelHelp={t(
-            'Event streams can be used to swap out one or more sources in your rulebook, the name of the source and the event stream have to match.'
-          )}
-          labelHelpTitle={t('Swap single source')}
-        />
-      </PageFormSection>
-
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
         name="is_enabled"
@@ -360,9 +330,7 @@ export function RulebookActivationInputs() {
 type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
-  webhooks?: string[];
   project_id: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
-  swap_single_source: boolean;
 };

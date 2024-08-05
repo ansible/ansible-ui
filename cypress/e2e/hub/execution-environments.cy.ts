@@ -71,7 +71,7 @@ describe('Execution Environments', () => {
           cy.filterTableBySingleText(eeName);
           cy.get('tbody').find('tr').should('have.length', 1);
           cy.get('tbody').within(() => {
-            cy.getByDataCy('name-column-cell').should('contain', eeName);
+            cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
             cy.get('[data-cy="actions-dropdown"]').click();
           });
           cy.get(`[data-cy="delete-execution-environment"]`).click();
