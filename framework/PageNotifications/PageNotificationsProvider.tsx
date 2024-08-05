@@ -30,6 +30,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 
 interface IPageNotifications {
   notificationsDrawerOpen: boolean;
@@ -49,6 +50,7 @@ export interface IPageNotification {
   timestamp?: string;
   variant?: 'success' | 'danger' | 'warning' | 'info';
   to: string;
+  openInNewWindow?: string;
 }
 
 export const PageNotificationsContext = createContext<IPageNotifications>({
@@ -179,7 +181,8 @@ function PageNotification(props: { notification: IPageNotification }) {
           variant={notificationVariant}
         />
         <NotificationDrawerListItemBody timestamp={timestampString}>
-          {props.notification.description}
+          {props.notification.description}{' '}
+          {props.notification.openInNewWindow ? <ExternalLinkAltIcon /> : null}
         </NotificationDrawerListItemBody>
       </Link>
     </NotificationDrawerListItem>
