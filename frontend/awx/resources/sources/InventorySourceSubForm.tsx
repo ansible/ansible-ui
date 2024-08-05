@@ -101,21 +101,21 @@ export function InventorySourceSubForm() {
             labelHelp={t(
               'Regular expression where only matching host names will be imported. The filter is applied as a post-processing step after any inventory plugin filters are applied.'
             )}
-            label={t('Host Filter')}
+            label={t('Host filter')}
           />
           <PageFormTextInput<InventorySourceForm>
             name="enabled_var"
             labelHelp={t(
               "Retrieve the enabled state from the given dict of host variables. The enabled variable may be specified using dot notation, e.g: 'foo.bar'"
             )}
-            label={t('Enabled Variable')}
+            label={t('Enabled variable')}
           />
           <PageFormTextInput<InventorySourceForm>
             name="enabled_value"
             labelHelp={t(
               'This field is ignored unless an Enabled Variable is set. If the enabled variable matches this value, the host will be enabled on import.'
             )}
-            label={t('Enabled Value')}
+            label={t('Enabled value')}
           />
           <PageFormSection title={t('Update options')}>
             <PageFormCheckbox<InventorySourceForm>
@@ -133,7 +133,7 @@ export function InventorySourceSubForm() {
               name="overwrite_vars"
             />
             <PageFormCheckbox<InventorySourceForm>
-              label={t('Update on Launch')}
+              label={t('Update on launch')}
               labelHelp={t(
                 'Each time a job runs using this inventory, refresh the inventory from the selected source before executing job tasks.'
               )}
@@ -151,7 +151,7 @@ export function InventorySourceSubForm() {
             ) : null}
           </PageFormSection>
           <PageFormSection singleColumn>
-            <PageFormDataEditor name="source_vars" label={t('Source Variables')} format="yaml" />
+            <PageFormDataEditor name="source_vars" label={t('Source variables')} format="yaml" />
           </PageFormSection>
         </PageFormSection>
       </PageFormHidden>
