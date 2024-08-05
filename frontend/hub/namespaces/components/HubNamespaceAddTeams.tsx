@@ -155,7 +155,7 @@ export function HubNamespaceAddTeams() {
             label: t('Team Access'),
             to: getPageUrl(HubRoute.NamespaceTeamAccess, { params: { id: namespace?.id } }),
           },
-          { label: t('Add roles') },
+          { label: t('Add roles 2') },
         ]}
       />
       <PageWizard<WizardFormValues>

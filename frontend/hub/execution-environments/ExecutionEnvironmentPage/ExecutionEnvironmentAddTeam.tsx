@@ -42,7 +42,7 @@ export function ExecutionEnvironmentAddTeams() {
   const teamProgressDialog = useHubBulkActionDialog<TeamRolePair>();
 
   const { data, error, refresh } = useGet<HubItemsResponse<ExecutionEnvironment>>(
-    hubAPI`v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
+    hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
   let executionEnvironment: ExecutionEnvironment | undefined = undefined;
