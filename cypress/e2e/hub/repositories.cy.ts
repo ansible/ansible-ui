@@ -1,11 +1,11 @@
 import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
-import { pulpAPI } from '../../support/formatApiPathForHub';
+//import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 
-describe.skip('Repositories', () => {
+describe('Repositories', () => {
   const collectionName = randomE2Ename();
   let namespace: HubNamespace;
   let remote: HubRemote;
@@ -16,7 +16,8 @@ describe.skip('Repositories', () => {
     // as it is not necessary to create a new namespace and upload collection for each test
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
-      cy.galaxykit(`collection upload ${namespace.name} ${collectionName}`);
+      //cy.galaxykit(`collection upload ${namespace.name} ${collectionName}`);
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     });
   });
 
@@ -51,7 +52,12 @@ describe.skip('Repositories', () => {
     cy.deleteHubRemote(remote);
   });
 
-  it('should be able to create a repository', () => {
+  function navigateToRepositories() {
+    cy.navigateTo('hub', Repositories.url);
+    cy.verifyPageTitle('Repositories');
+  }
+
+  it('should be able to create edit and delete a repository', () => {
     const repositoryName = randomE2Ename();
     const repositoryDescription = 'Here goes description';
 
@@ -60,57 +66,41 @@ describe.skip('Repositories', () => {
     cy.verifyPageTitle('Create repository');
     cy.getByDataCy('name').type(repositoryName);
     cy.getByDataCy('description').type(repositoryDescription);
-    cy.intercept({
-      method: 'POST',
-      url: pulpAPI`/repositories/ansible/ansible/`,
-    }).as('createRepository');
+
     cy.getByDataCy('Submit').click();
-    cy.wait('@createRepository').then((result) => {
-      const createdRepository = result.response!.body as Repository;
+    cy.verifyPageTitle(`${repositoryName}`);
+    cy.hasDetail(/^Description$/, 'Here goes description');
 
-      // Repository Details
-      cy.verifyPageTitle(repositoryName);
-      cy.hasDetail('Name', repositoryName);
-      cy.hasDetail('Description', repositoryDescription);
+    navigateToRepositories();
 
-      // Cleanup
-      cy.deleteHubRepository(createdRepository);
-    });
-  });
-
-  it.skip('should be able to delete a repository', () => {
-    cy.createHubRepository().then((repositoryToDelete) => {
-      cy.clickTableRowLink('name', repositoryToDelete.name);
-
-      // Repository Details
-      cy.verifyPageTitle(repositoryToDelete.name);
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="delete-repository"]').click();
-      cy.get('#confirm').click();
-      cy.get('button').contains('Delete repositories').click();
-
-      // Repositories Page
-      cy.verifyPageTitle('Repositories');
-      cy.filterTableByTextFilter('name', repositoryToDelete.name);
-      cy.get('.pf-v5-c-empty-state').should('be.visible');
-      cy.get('.pf-v5-c-empty-state').contains('No results found');
-    });
-  });
-
-  it.skip('should be able to edit a repository', () => {
-    const repositoryDescription = 'Here goes description';
-
-    cy.clickTableRowAction('name', repository.name, 'edit-repository', { inKebab: true });
-
-    // Edit repository
-    cy.verifyPageTitle(`Edit ${repository.name}`);
-    cy.getByDataCy('description').clear().type(repositoryDescription);
+    // Edit Repository
+    const editDescripiption = 'repositoryDescription edited';
+    cy.clickTableRowAction('name', repositoryName, 'edit-repository', { inKebab: false });
+    cy.verifyPageTitle(`Edit ${repositoryName}`);
+    cy.getByDataCy('description').clear().type(editDescripiption);
     cy.getByDataCy('Submit').click();
 
+    // Check Repository Details
+    cy.verifyPageTitle(repositoryName);
+    cy.hasDetail('Name', repositoryName);
+    cy.hasDetail('Description', editDescripiption);
+
+    navigateToRepositories();
+
+    // Delete Rpository
+    cy.clickTableRowLink('name', repositoryName);
     // Repository Details
-    cy.verifyPageTitle(repository.name);
-    cy.hasDetail('Name', repository.name);
-    cy.hasDetail('Description', repositoryDescription);
+    cy.verifyPageTitle(repositoryName);
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('[data-cy="delete-repository"]').click();
+    cy.get('#confirm').click();
+    cy.get('button').contains('Delete repositories').click();
+
+    // Repositories Page
+    cy.verifyPageTitle('Repositories');
+    cy.filterTableByTextFilter('name', repositoryName);
+    cy.get('.pf-v5-c-empty-state').should('be.visible');
+    cy.get('.pf-v5-c-empty-state').contains('No results found');
   });
 
   it.skip('should copy CLI to clipboard', () => {
@@ -125,7 +115,7 @@ describe.skip('Repositories', () => {
     });
   });
 
-  it.skip('should sync repository', () => {
+  it('should sync repository', () => {
     cy.clickTableRowAction('name', repository.name, 'sync-repository', { inKebab: true });
 
     // Sync modal
