@@ -34,7 +34,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
       </PageFormHidden>
       <PageFormCheckbox<Project>
         id="option-scm-update-on-launch"
-        label={t('Update Revision on Launch')}
+        label={t('Update revision on launch')}
         labelHelp={t(
           'Each time a job runs using this project, update the revision of the project prior to starting the job.'
         )}
@@ -43,9 +43,9 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
       {!props.hideAllowOverride && (
         <PageFormCheckbox<Project>
           id="option-allow-override"
-          label={t('Allow Branch Override')}
+          label={t('Allow branch override')}
           labelHelp={t(
-            'Allow changing the Source Control branch or revision in a job template that uses this project.'
+            'Allow changing the source control branch or revision in a job template that uses this project.'
           )}
           name="allow_override"
         />
