@@ -55,7 +55,7 @@ export function CreateInstanceGroup() {
         ]}
       />
       <AwxPageForm
-        submitText={t('Create Instance Group')}
+        submitText={t('Create instance group')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}

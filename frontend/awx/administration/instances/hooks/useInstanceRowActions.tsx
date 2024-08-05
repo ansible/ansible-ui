@@ -56,8 +56,8 @@ export function useToggleInstanceRowAction(onComplete: (instances: Instance[]) =
       isPinned: true,
       onToggle: (instance, enabled) => handleToggleInstance(instance, enabled),
       isSwitchOn: (instance) => instance.enabled,
-      label: t('Enabled'),
-      labelOff: t('Disabled'),
+      label: t('Instance enabled'),
+      labelOff: t('Instance disabled'),
       showPinnedLabel: false,
       isHidden: (instance) => instance.node_type === 'hop',
       isDisabled: (_instance) =>

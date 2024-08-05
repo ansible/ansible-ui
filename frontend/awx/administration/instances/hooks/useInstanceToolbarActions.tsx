@@ -123,7 +123,7 @@ export function useAddInstanceToolbarAction() {
       variant: ButtonVariant.primary,
       isPinned: true,
       icon: PlusCircleIcon,
-      label: t('Add instance'),
+      label: t('Create instance'),
       onClick: () => pageNavigate(AwxRoute.AddInstance),
       isDisabled: canAddAndEditInstances
         ? undefined

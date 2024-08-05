@@ -21,7 +21,7 @@ tag(['upstream'], () => {
       const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
       // Navigate to the create instance page
       cy.getByDataCy('add-instance').click();
-      cy.getByDataCy('page-title').should('contain', 'Add instance');
+      cy.getByDataCy('page-title').should('contain', 'Create instance');
       // Create a new instance
       cy.getByDataCy('hostname').type(instanceHostname);
       cy.getByDataCy('listener-port').type('9999');
@@ -60,7 +60,7 @@ tag(['upstream'], () => {
       cy.getByDataCy('enabled').check();
       cy.getByDataCy('managed_by_policy').check();
       cy.getByDataCy('peers_from_control_nodes').check();
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save instance$/);
       cy.wait('@editedInstance')
         .its('response.body')
         .then((body: Instance) => {
@@ -119,7 +119,7 @@ tag(['upstream'], () => {
       cy.getByDataCy('edit-instance').click();
       cy.getByDataCy('enabled').uncheck();
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save instance$/);
       cy.wait('@editedInstance')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(200);

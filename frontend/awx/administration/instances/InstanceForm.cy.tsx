@@ -5,7 +5,7 @@ describe('Add instance Form', () => {
   it('should validate required fields on save', () => {
     cy.mount(<AddInstance />);
     cy.get('[data-cy="listener-port"]').type('0');
-    cy.clickButton(/^Save$/);
+    cy.clickButton(/^Save instance group$/);
     cy.contains('Host name is required.').should('be.visible');
   });
 
@@ -16,7 +16,7 @@ describe('Add instance Form', () => {
       body: { hostname: ['whitespaces in hostnames are illegal'] },
     }).as('postInstance');
     cy.get('[data-cy="hostname"]').type('illegal hostname test');
-    cy.clickButton(/^Save$/);
+    cy.clickButton(/^Save instance group$/);
     cy.wait('@postInstance');
     cy.contains('whitespaces in hostnames are illegal').should('be.visible');
   });
@@ -34,7 +34,7 @@ describe('Add instance Form', () => {
       },
     }).as('addInstance');
     cy.get('[data-cy="hostname"]').type('AddInstanceMock');
-    cy.clickButton(/^Save$/);
+    cy.clickButton(/^Save instance group$/);
     cy.wait('@addInstance')
       .its('request.body')
       .then((instance: Instance) => {
@@ -81,7 +81,7 @@ describe('Add instance Form', () => {
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
 
-    cy.clickButton(/^Save$/);
+    cy.clickButton(/^Save instance group$/);
     cy.wait('@addInstanceWithPeers')
       .its('request.body')
       .then((instance: Instance) => {
