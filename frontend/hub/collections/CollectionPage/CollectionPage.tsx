@@ -235,6 +235,7 @@ export function CollectionPage() {
         params={{
           name: collection?.collection_version?.name || '',
           namespace: collection?.collection_version?.namespace || '',
+          content_name: '',
           version: collection?.collection_version?.version || '',
           repository: collection?.repository?.name || '',
         }}

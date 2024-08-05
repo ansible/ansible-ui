@@ -25,8 +25,9 @@ export function CollectionDocumentationTabPanel(props: {
     name: string;
     contents: IContents[];
   }[];
+  docs: { name: string; label: string }[];
 }) {
-  const { groups, setDrawerOpen, setSearchText } = props;
+  const { groups, setDrawerOpen, setSearchText, docs } = props;
   const [searchParams] = useSearchParams();
   const navigate = usePageNavigate();
   const params = useParams();
@@ -49,20 +50,30 @@ export function CollectionDocumentationTabPanel(props: {
       <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
         <Nav theme="light">
           <NavList>
-            <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
-              {t('Readme').startsWith(props.searchText) && (
-                <NavItem
-                  key="readme"
-                  onClick={() => {
-                    navigate(HubRoute.CollectionDocumentation, {
-                      query,
-                      params: { repository, namespace, name },
-                    });
-                  }}
-                >
-                  {t('Readme')}
-                </NavItem>
-              )}
+            <NavExpandable
+              key="documentation"
+              title={t('Documentation ({{docs}})', { docs: docs.length })}
+              isExpanded
+            >
+              {docs.length > 0 &&
+                docs.map(({ name: docName, label }) => (
+                  <NavItem
+                    key={docName}
+                    onClick={() =>
+                      navigate(HubRoute.CollectionDocumentation, {
+                        query,
+                        params: {
+                          repository,
+                          namespace,
+                          content_name: docName === 'readme' ? '' : docName,
+                          name,
+                        },
+                      })
+                    }
+                  >
+                    {label}
+                  </NavItem>
+                ))}
             </NavExpandable>
             {groups.map((group) => (
               <NavExpandable
