@@ -1,5 +1,5 @@
 import { hubAPI } from '../../common/api/formatPath';
-import { HubNamespaceTeamAccess } from './HubNamespaceTeamAcess';
+import { HubNamespaceTeamAccess } from './HubNamespaceTeamAccess';
 
 describe('HubNamespaceTeamAccess', () => {
   beforeEach(() => {
