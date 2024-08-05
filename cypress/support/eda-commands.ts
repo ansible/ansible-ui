@@ -600,6 +600,7 @@ Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
 Cypress.Commands.add('createEdaDecisionEnvironment', () => {
   cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
     name: 'E2E Decision Environment ' + randomString(4),
+    organization_id: 1,
     image_url: 'quay.io/ansible/ansible-rulebook:main',
   }).then((edaDE) => {
     Cypress.log({
