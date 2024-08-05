@@ -33,7 +33,7 @@ export function TeamAccess(props: {
       service={service}
       tableColumnFunctions={{
         name: {
-          function: (teamAccess: TeamAssignment) => teamAccess.summary_fields.team.name,
+          function: (teamAccess: TeamAssignment) => teamAccess?.summary_fields?.team?.name,
           sort: 'team__name',
           label: t('Team name'),
         },
