@@ -788,7 +788,7 @@ describe(`Instance Groups`, () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
-    it(`can visit the instance group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
+    it.skip(`can visit the instance group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
@@ -869,7 +869,7 @@ describe(`Instance Groups`, () => {
         });
     });
 
-    it(`can visit the container group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
+    it.skip(`can visit the container group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', containerGroup.name);

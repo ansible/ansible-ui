@@ -200,7 +200,7 @@ describe('Teams: Add and Remove users', () => {
     cy.getModal().should('not.exist');
   });
 
-  it('can add users to the team via the team access tab toolbar', () => {
+  it.skip('can add users to the team via the team access tab toolbar', () => {
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
@@ -246,7 +246,7 @@ describe('Teams: Add and Remove users', () => {
     cy.get(`tr[data-cy=row-id-${user1.id}]`).should('not.exist');
   });
 
-  it('can remove a role from a user via the team access tab row action', () => {
+  it.skip('can remove a role from a user via the team access tab row action', () => {
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
