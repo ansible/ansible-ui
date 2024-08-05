@@ -6,7 +6,6 @@ describe('CredentialTypeForm.cy.ts', () => {
     name: 'Sample Credential Type',
     description: 'This is a sample credential',
     id: 1,
-    organization_id: 1,
     inputs: {
       fields: [
         {
@@ -21,15 +20,6 @@ describe('CredentialTypeForm.cy.ts', () => {
   };
 
   describe('Create Credential Type', () => {
-    beforeEach(() => {
-      cy.intercept(
-        { method: 'GET', url: edaAPI`/organizations/*` },
-        {
-          fixture: 'edaOrganizations.json',
-        }
-      );
-    });
-
     it('should validate required fields on save', () => {
       cy.mount(<CreateCredentialType />);
       cy.clickButton(/^Create credential type$/);
@@ -64,12 +54,6 @@ describe('CredentialTypeForm.cy.ts', () => {
         { method: 'GET', url: edaAPI`/credential-types/*` },
         { statusCode: 200, body: credentialType }
       );
-      cy.intercept(
-        { method: 'GET', url: edaAPI`/organizations/*` },
-        {
-          fixture: 'edaOrganizations.json',
-        }
-      );
     });
 
     it('should preload the form with current values', () => {
@@ -86,12 +70,6 @@ describe('CredentialTypeForm.cy.ts', () => {
         statusCode: 201,
         body: credentialType,
       }).as('editCredentialType');
-      cy.intercept(
-        { method: 'GET', url: edaAPI`/organizations/1*` },
-        {
-          fixture: 'edaOrganization.json',
-        }
-      );
       cy.mount(<EditCredentialType />);
       cy.get('[data-cy="name"]').should('have.value', 'Sample Credential Type');
       cy.get('[data-cy="name"]').clear();
