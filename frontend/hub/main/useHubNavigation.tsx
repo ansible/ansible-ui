@@ -47,7 +47,7 @@ import {
   CreateExecutionEnvironment,
   EditExecutionEnvironment,
 } from '../execution-environments/ExecutionEnvironmentForm';
-import { ExecutionEnvironmentAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAccess';
+import { ExecutionEnvironmentTeamAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentTeamAccess';
 import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
 import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
@@ -254,9 +254,9 @@ export function useHubNavigation() {
               element: <ExecutionEnvironmentImages />,
             },
             {
-              id: HubRoute.ExecutionEnvironmentAccess,
-              path: 'access',
-              element: <ExecutionEnvironmentAccess />,
+              id: HubRoute.ExecutionEnvironmentTeamAccess,
+              path: 'team-access',
+              element: <ExecutionEnvironmentTeamAccess />,
             },
             {
               path: '',

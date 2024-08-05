@@ -107,7 +107,7 @@ export function ExecutionEnvironmentPage() {
           },
           {
             label: t('Access'),
-            page: HubRoute.ExecutionEnvironmentAccess,
+            page: HubRoute.ExecutionEnvironmentTeamAccess,
             dataCy: 'execution-environment-access-tab',
           },
         ]}
