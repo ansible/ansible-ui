@@ -28,7 +28,7 @@ export function UserAccess(props: {
       service={service}
       tableColumnFunctions={{
         name: {
-          function: (userAccess: UserAssignment) => userAccess.summary_fields.user.username,
+          function: (userAccess: UserAssignment) => userAccess?.summary_fields?.user?.username,
           sort: 'user__username',
           label: t('Username'),
         },
@@ -37,13 +37,13 @@ export function UserAccess(props: {
         {
           header: t('First name'),
           type: 'text',
-          value: (item: UserAssignment) => item.summary_fields.user.first_name,
+          value: (item: UserAssignment) => item?.summary_fields?.user?.first_name,
           sort: 'first_name',
         },
         {
           header: t('Last name'),
           type: 'text',
-          value: (item: UserAssignment) => item.summary_fields.user.last_name,
+          value: (item: UserAssignment) => item?.summary_fields?.user?.last_name,
           sort: 'last_name',
         },
       ]}
