@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { SetRequired } from 'type-fest';
 import { randomLowercaseString, randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -17,6 +16,9 @@ import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { SetRequired } from 'type-fest';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -617,5 +619,34 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
         cy.deleteHubCollection(collection);
       }
     }
+  });
+});
+
+Cypress.Commands.add('createHubUser', (hubUser?: Partial<HubUser>) => {
+  cy.requestPost<HubUser, Partial<HubUser> & { username?: string; password?: string }>(
+    hubAPI`/_ui/v1/users/`,
+    {
+      username: `hub-user${randomString(4)}`,
+      password: `${randomString(10)}`,
+      ...hubUser,
+    }
+  ).then((hubUser) => {
+    Cypress.log({
+      displayName: 'HUB USER CREATION :',
+      message: [`Created 👉  ${hubUser.username}`],
+    });
+    return hubUser;
+  });
+});
+
+Cypress.Commands.add('createHubTeam', () => {
+  cy.requestPost<HubTeam>(hubAPI`/_ui/v1/groups/`, {
+    name: `hub-team${randomString(4)}`,
+  }).then((hubTeam) => {
+    Cypress.log({
+      displayName: 'HUB USER CREATION :',
+      message: [`Created 👉  ${hubTeam.name}`],
+    });
+    return hubTeam;
   });
 });
