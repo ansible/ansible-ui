@@ -92,6 +92,10 @@ export function RepositoryPage() {
               label: t('Versions'),
               page: HubRoute.RepositoryVersions,
             },
+            {
+              label: t('Distributions'),
+              page: HubRoute.RepositoryDistributions,
+            },
           ]}
           params={{ id: params.id, repo_id: repo_id }}
           componentParams={{ id: params.id, repo_id: repo_id, repository: repository }}
