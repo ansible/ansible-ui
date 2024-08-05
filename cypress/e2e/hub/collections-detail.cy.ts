@@ -139,12 +139,10 @@ describe('Collections Details', () => {
   });
 
   it('can deprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name).then((result) => {
-      cy.approveCollection(collectionName, namespace.name, result.version as string);
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       cy.visit(
-        `/collections/published/${namespace.name}/${collectionName}/details?version=${
-          result.version as string
-        }`
+        `/collections/published/${namespace.name}/${collectionName}/details?version=${'1.0.0'}`
       );
       cy.selectDetailsPageKebabAction('deprecate-collection');
       cy.clickButton('Close');
@@ -158,18 +156,16 @@ describe('Collections Details', () => {
     });
   });
 
-  it.skip('can copy a version to repository', () => {
-    //skipping this test because the Copy to Repository option is disabled for admin user
+  it('can copy a version to repository', () => {
+    cy.collectionCopyVersionToRepositories(collectionName);
   });
 
   it('can sign a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name).then((result) => {
-      cy.approveCollection(collectionName, namespace.name, result.version as string);
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       // Sign collection
       cy.visit(
-        `/collections/published/${namespace.name}/${collectionName}/details?version=${
-          result.version as string
-        }`
+        `/collections/published/${namespace.name}/${collectionName}/details?version=${'1.0.0'}`
       );
       cy.selectDetailsPageKebabAction('sign-collection');
       cy.clickButton(/^Close$/);
@@ -241,6 +237,4 @@ describe('Collections Details', () => {
       });
     });
   });
-
-  it.skip('can access the Install tab and download a tarball', () => {});
 });

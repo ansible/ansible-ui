@@ -291,8 +291,13 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
-    cy.galaxykit(`collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`);
-    cy.waitForAllTasks();
+    cy.galaxykit(
+      `collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`
+    ).then((result) => {
+      cy.waitForAllTasks().then(() => {
+        return result;
+      });
+    });
   }
 );
 
