@@ -60,8 +60,11 @@ export function AuthenticatorDetailsStep(props: {
   const dataFields: PluginConfiguration[] = [];
 
   const type = authenticatorPlugin?.type || '';
-  if (!props.authenticator && (type.includes('github') || type.includes('azuread'))) {
-    // Omit Github/Azuread callback URL field on create
+  if (
+    !props.authenticator &&
+    (type.includes('github') || type.includes('azuread') || type.includes('google_oauth2'))
+  ) {
+    // Omit Github, Azuread, Google callback URL field on create
     // This allows the API to automatically generate one
     schema = schema.filter((s) => s.name !== 'CALLBACK_URL');
   }
