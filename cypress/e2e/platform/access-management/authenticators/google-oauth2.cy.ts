@@ -16,7 +16,6 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
       cy.get('[data-cy="name"]').type(googleAuthenticator);
       cy.get('[data-cy="configuration-input-KEY"]').type(googleData.oauth2Key);
       cy.get('[data-cy="configuration-input-SECRET"]').type(googleData.oauth2Secret);
-      cy.get('[data-cy="configuration-input-CALLBACK_URL"]').type(googleData.callbackUrl);
       cy.get('[data-cy="configuration-input-ACCESS_TOKEN_URL"]').type(googleData.accessTokenUrl);
       cy.selectResourceFromSpecificDropDown(
         'configuration-input-ACCESS_TOKEN_METHOD-form-group',
