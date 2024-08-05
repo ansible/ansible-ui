@@ -13,7 +13,7 @@ export function testNotification(
   cy.createAwxOrganization({ name: orgName }).then(() => {
     cy.navigateTo('awx', 'notification-templates');
     cy.get(`[data-cy="add-notifier"]`).click();
-    cy.verifyPageTitle('Add notifier');
+    cy.verifyPageTitle('Create notifier');
 
     fillBasicData(notificationName, type);
     fillNotificationType(type);
