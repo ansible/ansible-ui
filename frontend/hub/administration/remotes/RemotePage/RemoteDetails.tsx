@@ -1,6 +1,6 @@
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CopyCell, PageDetail, PageDetails } from '../../../../../framework';
+import { CopyCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet } from '../../../../common/crud/useGet';
@@ -10,6 +10,7 @@ import { PulpItemsResponse } from '../../../common/useHubView';
 import { Repository } from '../../repositories/Repository';
 import { HubRemote } from '../Remotes';
 import { useOutletContext } from 'react-router-dom';
+import { HubRoute } from '../../../main/HubRoutes';
 
 function useErrorHandlerAndLoading<T>(
   data: T | undefined,
@@ -29,6 +30,7 @@ function useErrorHandlerAndLoading<T>(
 
 export function RemoteDetails() {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const { remote } = useOutletContext<{
     remote: HubRemote;
   }>();
@@ -62,11 +64,9 @@ export function RemoteDetails() {
         <PageDetail label={t('URL')}>
           <CopyCell text={remote?.url} />
         </PageDetail>
-        {remote?.proxy_url ? (
-          <PageDetail label={t('Proxy URL')}>
-            <CopyCell text={remote?.proxy_url} />
-          </PageDetail>
-        ) : null}
+        <PageDetail label={t('Proxy URL')}>
+          {remote?.proxy_url ? <CopyCell text={remote?.proxy_url} /> : t('None')}
+        </PageDetail>
         <PageDetail label={t('TLS validation')}>
           {remote?.tls_validation ? t('Enabled') : t('Disabled')}
         </PageDetail>
@@ -94,7 +94,13 @@ export function RemoteDetails() {
               })}
             >
               {repositories.results.map((repository) => (
-                <Label key={repository.name}>{repository.name}</Label>
+                <Label
+                  color={'blue'}
+                  href={getPageUrl(HubRoute.RepositoryPage, { params: { id: repository.name } })}
+                  key={repository.name}
+                >
+                  {repository.name}
+                </Label>
               ))}
             </LabelGroup>
           ) : (
