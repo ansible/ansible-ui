@@ -259,6 +259,11 @@ export function useHubNavigation() {
               element: <ExecutionEnvironmentTeamAccess />,
             },
             {
+              id: HubRoute.ExecutionEnvironmentUserAccess,
+              path: 'user-access',
+              element: <ExecutionEnvironmentTeamAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" replace />,
             },
