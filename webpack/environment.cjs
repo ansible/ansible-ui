@@ -25,7 +25,7 @@ const HUB_SERVER =
 const HUB_USERNAME = process.env.HUB_USERNAME || process.env.CYPRESS_HUB_USERNAME || 'admin';
 const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWORD || 'password';
 const HUB_API_PREFIX =
-  process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/automation-hub';
+  process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/galaxy';
 
 const ROUTE_PREFIX = process.env.ROUTE_PREFIX || '/';
 
