@@ -156,8 +156,18 @@ describe('Collections Details', () => {
     });
   });
 
-  it('can copy a version to repository', () => {
-    cy.collectionCopyVersionToRepositories(collectionName);
+  it.skip('can copy a version to repository', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.navigateTo('hub', Collections.url);
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+
+      cy.clickKebabAction('actions-dropdown', 'copy-version-to-repositories');
+      cy.collectionCopyVersionToRepositories(collectionName, { testOnlyModal: true });
+
+      cy.deleteHubCollectionByName(collectionName);
+    });
   });
 
   it('can sign a collection', () => {

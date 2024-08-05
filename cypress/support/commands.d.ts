@@ -1629,7 +1629,10 @@ declare global {
         namespace: string,
         version: string
       ): Cypress.Chainable<void>;
-      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(
+        collection: string,
+        params?: { testOnlyModal?: boolean }
+      ): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;

@@ -107,7 +107,6 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
     if (count === 0) {
       throw new Error('Max loops reached while waiting for the tasks.');
     }
-    cy.wait(1000);
     cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
       (response) => {
         const tasks = response.results;
@@ -115,6 +114,7 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
         if (tasks.length === 0) {
           return;
         } else {
+          cy.wait(1000);
           waitForAllTasks(count - 1);
         }
       }
@@ -309,34 +309,39 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string) => {
-  cy.navigateTo('hub', 'collections');
-  cy.filterTableByText(collection);
+Cypress.Commands.add(
+  'collectionCopyVersionToRepositories',
+  (collection: string, params?: { testOnlyModal?: boolean }) => {
+    if (!params?.testOnlyModal) {
+      cy.navigateTo('hub', 'collections');
+      cy.filterTableByText(collection);
 
-  cy.get('[data-cy="data-list-name"]').should('have.text', collection);
-  cy.get('[data-cy="data-list-action"]').within(() => {
-    cy.get('[data-cy="actions-dropdown"]')
-      .first()
-      .click()
-      .then(() => {
-        cy.get('[data-cy="copy-version-to-repositories"]').click();
+      cy.get('[data-cy="data-list-name"]').should('have.text', collection);
+      cy.get('[data-cy="data-list-action"]').within(() => {
+        cy.get('[data-cy="actions-dropdown"]')
+          .first()
+          .click()
+          .then(() => {
+            cy.get('[data-cy="copy-version-to-repositories"]').click();
+          });
       });
-  });
+    }
 
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.clickButton(/^Clear all filters$/);
+      cy.get('header').contains('Select repositories');
+      cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
+      cy.filterTableByText('community');
+      cy.get('[data-cy="data-list-check"]').click();
+      cy.get('button').contains('Select').click();
+    });
+
+    cy.navigateTo('hub', 'approvals');
     cy.clickButton(/^Clear all filters$/);
-    cy.get('header').contains('Select repositories');
-    cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
-    cy.filterTableByText('community');
-    cy.get('[data-cy="data-list-check"]').click();
-    cy.get('button').contains('Select').click();
-  });
-
-  cy.navigateTo('hub', 'approvals');
-  cy.clickButton(/^Clear all filters$/);
-  cy.filterBySingleSelection(/^Repository$/, 'community');
-  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
-});
+    cy.filterBySingleSelection(/^Repository$/, 'community');
+    cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+  }
+);
 
 // HUB Execution Environment Commands
 export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<

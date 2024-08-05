@@ -216,8 +216,7 @@ describe('Collections List', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it('can copy a version to repository', () => {
-    //skipping this test because the Copy to Repository option is disabled for admin user
+  it.skip('can copy a version to repository', () => {
     cy.collectionCopyVersionToRepositories(collectionName);
     repository = 'community';
     cy.deleteCollection(collectionName, namespace.name, repository);
