@@ -69,7 +69,8 @@ describe('Inventories Tests', () => {
           cy.verifyPageTitle('Inventories');
         });
 
-        it('can edit an inventory from the list view and assert info on details page', () => {
+        //Skipping due to https://issues.redhat.com/browse/AAP-28597
+        it.skip('can edit an inventory from the list view and assert info on details page', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
@@ -129,7 +130,8 @@ describe('Inventories Tests', () => {
           cy.clickButton(/^Clear all filters$/);
         });
 
-        it('can delete an inventory from the inventory list toolbar', () => {
+        //Skipping due to https://issues.redhat.com/browse/AAP-28597
+        it.skip('can delete an inventory from the inventory list toolbar', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.selectTableRowByCheckbox('name', inventory.name, { disableFilter: true });
