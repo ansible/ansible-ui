@@ -87,6 +87,7 @@ describe('EDA Credentials Use in Resources', () => {
     cy.verifyPageTitle('Decision Environments');
     cy.clickButton(/^Create decision environment$/);
     cy.get('[data-cy="name"]').type(de_name);
+    cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
     cy.get('[data-cy="image-url"]').type('quay.io/abakshirht/galaxy-ng-locust:ansible2.13');
     cy.clickButton(/^Create decision environment$/);
     cy.verifyPageTitle(de_name);
