@@ -56,6 +56,7 @@ export enum HubRoute {
   CreateRemoteRegistry = 'hub-create-remote-registry',
   EditRemoteRegistry = 'hub-edit-remote-registry',
   RemoteRegistryPage = 'hub-remote-registry-page',
+  RemoteRegistryDetails = 'hub-remote-registry-details',
 
   Tasks = 'hub-tasks',
   TaskPage = 'hub-task-page',

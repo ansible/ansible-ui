@@ -11,7 +11,8 @@ import { Roles } from '../access/roles/Roles';
 import { Token } from '../access/token/Token';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
-import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryDetails';
+import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
+import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
 import {
   CreateRemoteRegistry,
   EditRemoteRegistry,
@@ -371,9 +372,20 @@ export function useHubNavigation() {
               element: <EditRemoteRegistry />,
             },
             {
-              path: 'details/:id/*',
+              path: ':id',
               id: HubRoute.RemoteRegistryPage,
-              element: <RemoteRegistryDetails />,
+              element: <RemoteRegistryPage />,
+              children: [
+                {
+                  id: HubRoute.RemoteRegistryDetails,
+                  path: 'details',
+                  element: <RemoteRegistryDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" replace />,
+                },
+              ],
             },
           ],
         },
