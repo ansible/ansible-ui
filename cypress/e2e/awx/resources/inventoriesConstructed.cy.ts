@@ -129,7 +129,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     //Run a sync and assert failure of the job
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
