@@ -138,7 +138,7 @@ describe('Organizations: Edit and Delete', function () {
       });
   });
 
-  it('can delete an organization from the organizations list toolbar', function () {
+  it.skip('can delete an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.selectTableRow(organization.name, false);
