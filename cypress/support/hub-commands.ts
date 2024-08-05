@@ -185,7 +185,7 @@ Cypress.Commands.add(
         }
       });
     };
-    // test runs 1
+    // test runs 2
     if (tags?.length) {
       cy.galaxykit(
         '-i collection upload',
