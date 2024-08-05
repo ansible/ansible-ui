@@ -6,6 +6,7 @@ const sortKeys = {
   '/v1/imports/': 'order_by',
   '/v1/roles/': 'order_by',
   '/_ui/v1/': 'sort',
+  '/_ui/v2/': 'order_by',
   '/v3/plugin/ansible/search/collection-versions/': 'order_by',
 };
 
@@ -14,6 +15,7 @@ const pageKeys = {
   '/v1/namespaces/': 'page',
   '/v1/roles/': 'page',
   '/_ui/v1/': 'offset',
+  '/_ui/v2/': 'page',
 };
 
 export function url2keys(url: string): { sortKey: string; pageKey: string } {
