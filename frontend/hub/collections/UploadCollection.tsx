@@ -44,9 +44,6 @@ export interface Repository {
 
 export interface Distribution {
   base_path: string;
-  name: string;
-  pulp_created: string;
-  client_url: string;
 }
 
 export function UploadCollection() {
@@ -127,7 +124,7 @@ export function UploadCollectionByFile() {
           onChange={(_event, val) => {
             setOnlyStaging(val);
           }}
-          label={t`Staging repos`}
+          label={t`Staging Repos`}
           id="radio-staging"
         ></Radio>
         <Radio

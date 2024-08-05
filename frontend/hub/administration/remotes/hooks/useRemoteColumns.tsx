@@ -16,7 +16,7 @@ export function useRemoteColumns() {
   const tableColumns = useMemo<ITableColumn<HubRemote>[]>(
     () => [
       {
-        header: t('Name'),
+        header: t('Remote name'),
         cell: (remote) => (
           <TextCell
             text={remote.name}

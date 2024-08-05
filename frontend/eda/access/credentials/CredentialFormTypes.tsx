@@ -35,13 +35,11 @@ export function CredentialFormInputs(props: { credentialType: EdaCredentialType 
   const fields = props?.credentialType?.inputs?.fields as EdaCredentialTypeField[];
   return fields?.map((field) => {
     return (
-      !field?.hidden && (
-        <CredentialFormInput
-          key={field.label}
-          field={field as FieldType}
-          required={props.credentialType?.inputs?.required as string[]}
-        />
-      )
+      <CredentialFormInput
+        key={field.label}
+        field={field as FieldType}
+        required={props.credentialType?.inputs?.required as string[]}
+      />
     );
   });
 }

@@ -118,7 +118,7 @@ describe('Inventories Tests', () => {
           //Assert the presence of the original and the copy by performing a search on the list of inventories
         });
 
-        it.skip('can copy an inventory on the list view and assert that the copy has been successful', () => {
+        it('can copy an inventory on the list view and assert that the copy has been successful', () => {
           //Refactor this test to match the updated test case and improve the assertions
           cy.navigateTo('awx', 'inventories'); //Add assertion to verify the user is on the inventories list view
           cy.filterTableBySingleSelect('name', inventory.name);

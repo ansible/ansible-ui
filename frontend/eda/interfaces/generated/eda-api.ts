@@ -196,7 +196,6 @@ export interface ActivationRead {
   awx_token_id: number | null;
   eda_credentials?: EdaCredential[] | null;
   event_streams?: EventStreamOut[] | null;
-  webhooks?: EventStreamOut[] | null;
   /**
    * * `debug` - debug
    * * `info` - info

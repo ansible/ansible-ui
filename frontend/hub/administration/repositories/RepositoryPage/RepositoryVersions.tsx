@@ -75,7 +75,7 @@ export function useRepositoryVersionColumns(latest_href?: string) {
         sort: 'number',
       },
       {
-        header: t('Created'),
+        header: t('Created date'),
         type: 'datetime',
         value: (repository: RepositoryVersion) => repository.pulp_created,
         sort: 'pulp_created',

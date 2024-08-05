@@ -1,16 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnTableOption,
-  CopyCell,
-  ITableColumn,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../framework';
+import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
-import { Tooltip } from '@patternfly/react-core';
 
 export function useWebhookColumns() {
   const { t } = useTranslation();
@@ -31,46 +23,14 @@ export function useWebhookColumns() {
         list: 'name',
       },
       {
-        header: t('Events received'),
-        type: 'count',
-        value: (webhook) => webhook?.events_received ?? 0,
-      },
-      {
-        header: t('Last event received'),
+        header: t('Created'),
         type: 'datetime',
-        value: (webhook) => webhook?.last_event_received_at,
-      },
-      {
-        header: t('Mode'),
-        cell: (webhook) => (
-          <Tooltip
-            content={
-              webhook.test_mode
-                ? t('Test Mode - events are not forwarded to Activation')
-                : t('Connected - events are forwarded to Activation')
-            }
-          >
-            <TextCell
-              text={t('')}
-              icon={webhook.test_mode ? <DisconnectedIcon /> : <ConnectedIcon />}
-              iconColor={webhook.test_mode ? 'yellow' : 'green'}
-            />
-          </Tooltip>
-        ),
-        card: 'name',
-        list: 'name',
+        value: (instance) => instance.created_at,
       },
       {
         header: t('URL'),
-        cell: (webhook) => <CopyCell text={webhook?.url ? webhook.url : ''} />,
-        table: ColumnTableOption.expanded,
-        card: 'hidden',
-        list: 'secondary',
-      },
-      {
-        header: t('Created'),
-        type: 'datetime',
-        value: (webhook) => webhook.created_at,
+        type: 'description',
+        value: (webhook) => webhook.url,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
@@ -78,7 +38,7 @@ export function useWebhookColumns() {
       {
         header: t('Last modified'),
         type: 'datetime',
-        value: (webhook) => webhook.modified_at,
+        value: (instance) => instance.modified_at,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',

@@ -19,7 +19,6 @@ type ReviewData = {
   resources?: { id: number; name: string; username?: never }[];
   edaRoles?: { id: number; name: string; description?: string; username?: never }[];
   awxRoles?: { id: number; name: string; description?: string; username?: never }[];
-  hubRoles?: { id: number; name: string; description?: string; username?: never }[];
   teams?: { id: number; name: string; username?: never }[];
   users?: { id: number; name?: never; username: string }[];
 };
@@ -32,7 +31,6 @@ interface ReviewExpandableListProps<
   fieldName: string;
   edaRolesLabel?: string;
   awxRolesLabel?: string;
-  hubRolesLabel?: string;
 }
 
 const StyledBadge = styled(Badge)`
@@ -45,14 +43,12 @@ const StyledDivider = styled(Divider)`
 export function RoleAssignmentsReviewStep(props: {
   edaRolesLabel?: string;
   awxRolesLabel?: string;
-  hubRolesLabel?: string;
   selectedUser?: { id: number; name?: never; username: string };
   selectedTeam?: { id: number; name: string; username?: never };
 }) {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
-  const { resourceType, resources, users, teams, edaRoles, awxRoles, hubRoles } =
-    wizardData as ReviewData;
+  const { resourceType, resources, users, teams, edaRoles, awxRoles } = wizardData as ReviewData;
   const getDisplayName = useMapContentTypeToDisplayName();
 
   return (
@@ -126,9 +122,6 @@ export function RoleAssignmentsReviewStep(props: {
       {awxRoles && awxRoles.length ? (
         <ReviewExpandableList selectedItems={awxRoles} fieldName="awxRoles" {...props} />
       ) : null}
-      {hubRoles && hubRoles.length ? (
-        <ReviewExpandableList selectedItems={hubRoles} fieldName="hubRoles" {...props} />
-      ) : null}
     </>
   );
 }
@@ -138,7 +131,7 @@ function ReviewExpandableList<
     | { id: number; name: string; description?: string; username?: never }
     | { id: number; name?: never; username: string },
 >(props: ReviewExpandableListProps<K>) {
-  const { label, selectedItems, fieldName, edaRolesLabel, awxRolesLabel, hubRolesLabel } = props;
+  const { label, selectedItems, fieldName, edaRolesLabel, awxRolesLabel } = props;
   const [isExpanded, setIsExpanded] = useState(true);
   const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -159,12 +152,10 @@ function ReviewExpandableList<
         return edaRolesLabel || t('Roles');
       case 'awxRoles':
         return awxRolesLabel || t('Roles');
-      case 'hubRoles':
-        return hubRolesLabel || t('Roles');
       default:
         return '';
     }
-  }, [awxRolesLabel, edaRolesLabel, hubRolesLabel, fieldName, label, t]);
+  }, [awxRolesLabel, edaRolesLabel, fieldName, label, t]);
 
   const tableColumns: ITableColumn<K>[] = useMemo(() => {
     switch (fieldName) {
@@ -181,7 +172,6 @@ function ReviewExpandableList<
         ];
       case 'awxRoles':
       case 'edaRoles':
-      case 'hubRoles':
         return [
           {
             header: t('Name'),

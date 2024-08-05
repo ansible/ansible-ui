@@ -100,15 +100,6 @@ export function RulebookActivationDetails() {
             </LabelGroup>
           </PageDetail>
         )}
-        {rulebookActivation.webhooks && rulebookActivation.webhooks.length > 0 && (
-          <PageDetail label={t('Event stream(s)')}>
-            <LabelGroup>
-              {rulebookActivation.webhooks.map((webhook) => (
-                <Label key={webhook?.id}>{webhook?.name}</Label>
-              ))}
-            </LabelGroup>
-          </PageDetail>
-        )}
         {rulebookActivation.eda_credentials && rulebookActivation.eda_credentials.length > 0 && (
           <PageDetail
             label={t('Credential(s)')}

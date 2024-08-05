@@ -17,15 +17,15 @@ export function PageFormWebhookSelect<
       name={props.name}
       id="webhook-select"
       data-cy={'webhooks-select'}
-      placeholder={t('Add event streams')}
-      labelHelpTitle={t('Event Streams')}
+      placeholder={t('Add webhooks')}
+      labelHelpTitle={t('Webhooks')}
       labelHelp={props.labelHelp}
-      label={t('Event stream')}
-      selectTitle={t('Select an event stream')}
+      label={t('Webhook')}
+      selectTitle={t('Select a webhook')}
       selectOpen={selectWebhook}
       validate={(webhooks: EdaWebhook[]) => {
         if (props.isRequired && webhooks.length === 0) {
-          return t('Event stream is required.');
+          return t('Webhook is required.');
         }
         return undefined;
       }}
