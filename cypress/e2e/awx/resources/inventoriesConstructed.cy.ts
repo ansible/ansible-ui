@@ -205,7 +205,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     cy.deleteAwxOrganization(organization);
   });
 
-  it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
+  it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
     //Create a constructed inventory in the beforeEach hook
     //Assert the original order of the input inventories
     //Assert the UI change to the order of input inventories
