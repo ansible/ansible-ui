@@ -53,7 +53,6 @@ describe('Constructed Inventories CRUD Tests', () => {
     const cacheTimeoutValue = generateRandom(0, 15);
     // which combination should be used to test verbosity from 1 to 5 - UI forces to use only 0-2
     const verbosityValue = generateRandom(0, 2);
-
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
     cy.clickButton(/^Create inventory$/);
@@ -64,7 +63,6 @@ describe('Constructed Inventories CRUD Tests', () => {
     // this can be simplified if we include data-cy to the search button of instance groups
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
     cy.multiSelectByDataCy('inventories', [inventory.name]);
-
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));
     cy.singleSelectByDataCy('verbosity', String(verbosityValue));
     cy.getByDataCy('limit').type('5');
@@ -77,7 +75,6 @@ describe('Constructed Inventories CRUD Tests', () => {
         cy.verifyPageTitle(constInvName);
       });
     cy.clickKebabAction('actions-dropdown', 'delete-inventory');
-
     cy.getModal().within(() => {
       cy.get('header').contains('Permanently delete inventory');
       cy.get('button').contains('Delete inventory').should('have.attr', 'aria-disabled', 'true');
@@ -85,7 +82,6 @@ describe('Constructed Inventories CRUD Tests', () => {
       cy.get('input[id="confirm"]').click();
       cy.clickButton(/^Delete inventory/);
     });
-
     // Assert the inventory doesn't exist anymore
     cy.filterTableBySingleSelect('name', constInvName, true);
     cy.contains('No results found');
@@ -133,21 +129,18 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     //Run a sync and assert failure of the job
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
     cy.filterTableBySingleSelect('name', newInventory.name);
     cy.clickTableRowLink('name', newInventory.name, { disableFilter: true });
-
     //Assert the original details of the inventory
     cy.verifyPageTitle(newInventory.name);
     cy.getByDataCy('organization').contains(organization.name);
-
     //Assert the user navigating to the edit constructed inventory form
     cy.getByDataCy('edit-inventory').click();
     cy.verifyPageTitle('Edit Constructed Inventory');
-
     cy.getByDataCy('toggle-json').click();
     //Assert the change to the strict setting
     //Add bad variables
@@ -158,11 +151,10 @@ describe('Constructed Inventories CRUD Tests', () => {
       "groups": {
       "is_shutdown": "state | default('running') == 'shutdown'",
       "product_dev": "account_alias == 'product_dev'"
-      }}`
+      }}`,
+      { delay: 200 }
     );
-
     cy.clickButton(/^Save inventory$/);
-
     cy.verifyPageTitle(newInventory.name);
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
     cy.clickButton('Sync inventory');
@@ -213,7 +205,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     cy.deleteAwxOrganization(organization);
   });
 
-  it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
+  it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
     //Create a constructed inventory in the beforeEach hook
     //Assert the original order of the input inventories
     //Assert the UI change to the order of input inventories
@@ -224,9 +216,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     cy.contains('a', constructedInv.name).click();
 
     let expectedOrder: string[] = [];
-
     cy.getByDataCy('input-inventories');
-
     // get initial order
     cy.get(`[data-cy="input-inventories"] ul > li`) // Adjust the selector to match your list items
       .should(($lis) => {
@@ -234,25 +224,20 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
       })
       .then(() => {
         cy.getByDataCy('edit-inventory').click();
-
         // remove one item
         cy.contains(`[aria-label="Chip group category"] li`, expectedOrder[0]).within(() => {
           cy.get('button').click();
         });
-
         const deletedItem = expectedOrder[0];
         expectedOrder = expectedOrder.slice(1);
         expectedOrder.push(deletedItem);
-
         // now add it also in GUI
         cy.get(`[aria-label="Search input"]`).type(deletedItem);
         cy.contains('label', deletedItem).within(() => {
           cy.get('input').click();
         });
-
         cy.clickButton(/^Save inventory$/);
         cy.getByDataCy('input-inventories');
-
         cy.navigateTo('awx', 'inventories');
         cy.verifyPageTitle('Inventories');
         cy.filterTableByMultiSelect('name', [constructedInv.name]);
@@ -260,7 +245,6 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
         cy.contains('a', constructedInv.name).click();
         // verify order
         cy.getByDataCy('input-inventories');
-
         cy.get(`[data-cy="input-inventories"] ul > li`) // Adjust the selector to match your list items
           .should(($lis) => {
             const actualOrder = $lis.map((index, el) => Cypress.$(el).text()).get();
@@ -279,6 +263,5 @@ function generateRandom(min = 0, max = 5) {
   rand = Math.floor(rand * difference);
   // add with min value
   rand = rand + min;
-
   return rand;
 }

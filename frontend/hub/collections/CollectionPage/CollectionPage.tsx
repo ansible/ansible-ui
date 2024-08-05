@@ -166,7 +166,10 @@ export function CollectionPage() {
         }
         description={t('Repository: ') + collection?.repository?.name}
         footer={
-          <div style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}>
+          <div
+            data-cy="browse-collection-version"
+            style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}
+          >
             {t('Version')}
             <PageAsyncSingleSelect<string>
               queryOptions={queryOptions}

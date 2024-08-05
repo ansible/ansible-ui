@@ -46,7 +46,7 @@ export function RepositoryVersionDetails() {
   return (
     <PageDetails>
       <PageDetail label={t('Version number')}>{allInfo.number}</PageDetail>
-      <PageDetail label={t('Created date')}>
+      <PageDetail label={t('Created')}>
         <DateTimeCell value={allInfo.pulp_created} />
       </PageDetail>
       <PageDetail label={t('Number of content added')}>{numberAdded}</PageDetail>
