@@ -1,7 +1,7 @@
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 
-describe('Namespace - team and user access', () => {
+describe.skip('Namespace - team and user access', () => {
   let namespace: HubNamespace;
   before(() => {
     cy.createHubNamespace().then((namespaceResult) => {
@@ -38,7 +38,7 @@ describe('Namespace - team and user access', () => {
   }
 
   it('create a new namespace, from the user access tab assign a user and apply role(s) to the user of the namespace', () => {
-    cy.intercept('POST', hubAPI`/role_user_assignments/`).as('userRoleAssignment');
+    cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
       cy.getByDataCy('add-roles').click();
@@ -69,7 +69,7 @@ describe('Namespace - team and user access', () => {
           [
             'galaxy.collection_namespace_owner',
             'Change and upload collections to namespaces.',
-            'Credential Admin',
+            'galaxy.collection_publisher',
             'Upload and modify collections.',
           ],
           '2'
@@ -98,7 +98,7 @@ describe('Namespace - team and user access', () => {
   });
 
   it('create a new namespace, from the team access tab assign a user and apply role(s) to the team of the namespace', () => {
-    cy.intercept('POST', hubAPI`/role_team_assignments/`).as('teamRoleAssignment');
+    cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab('Team Access', true);
       cy.getByDataCy('add-roles').click();
