@@ -94,7 +94,7 @@ export function CollectionImportLog() {
               <PageDetail label={t('Status')}>
                 <StatusCell status={collectionImport?.state} />
               </PageDetail>
-              <PageDetail label={t('Approval Status')}>
+              <PageDetail label={t('Approval status')}>
                 <StatusCell status={approvalStatus} />
               </PageDetail>
               <PageDetail label={t('Version')}>{collectionImport?.version}</PageDetail>
