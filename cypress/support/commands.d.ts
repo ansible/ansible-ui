@@ -1521,6 +1521,7 @@ declare global {
         options: HubDeleteRequestOptions
       ): Cypress.Chainable<Response<T> | Response<Task>>;
       waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
+      waitForAllTasks(): Cypress.Chainable<void>;
 
       // HUB Execution Environment Commands
       queryHubExecutionEnvironments(

@@ -17,6 +17,7 @@ describe('Collections Details', () => {
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
       cy.galaxykit(`distribution create ${repository.name}`);
+      cy.waitForAllTasks();
     });
   });
 
@@ -184,6 +185,7 @@ describe('Collections Details', () => {
       cy.galaxykit(
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
       );
+      cy.waitForAllTasks();
       cy.galaxykit(
         `collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`
       ).then((result: { filename: string }) => {

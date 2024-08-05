@@ -17,6 +17,7 @@ describe('Collections List', () => {
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
       cy.galaxykit(`distribution create ${repository.name}`);
+      cy.waitForAllTasks();
     });
   });
 
@@ -34,8 +35,8 @@ describe('Collections List', () => {
   });
 
   it('can sign a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name).then((result) => {
-      cy.approveCollection(collectionName, namespace.name, result.version as string);
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       // Sign collection
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
@@ -52,8 +53,8 @@ describe('Collections List', () => {
   });
 
   it('can sign and approve a collection version', () => {
-    cy.uploadCollection(collectionName, namespace.name, '3.0.0').then((result) => {
-      cy.approveCollection(collectionName, namespace.name, result.version as string);
+    cy.uploadCollection(collectionName, namespace.name, '3.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '3.0.0');
       cy.navigateTo('hub', Collections.url);
       cy.get('[data-cy="table-view"]').click();
       actionClick(collectionName, 'sign-collection');
@@ -106,6 +107,7 @@ describe('Collections List', () => {
     cy.galaxykit(
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
     );
+    cy.waitForAllTasks();
     cy.galaxykit(`collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`).then(
       (result: { filename: string }) => {
         cy.getByDataCy('table-view').click();
@@ -156,6 +158,7 @@ describe('Collections List', () => {
     cy.galaxykit(
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
     );
+    cy.waitForAllTasks();
     // Delete collection from system
     cy.getByDataCy('table-view').click();
     actionClick(collectionName, 'delete-entire-collection-from-system');
@@ -178,6 +181,7 @@ describe('Collections List', () => {
     cy.galaxykit(
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
     );
+    cy.waitForAllTasks();
     // Delete collection from repository
     cy.getByDataCy('table-view').click();
     actionClick(collectionName, 'delete-entire-collection-from-repository');
@@ -199,6 +203,7 @@ describe('Collections List', () => {
     cy.galaxykit(
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
     );
+    cy.waitForAllTasks();
     cy.getByDataCy('table-view').click();
     actionClick(collectionName, 'deprecate-collection');
     cy.getModal().within(() => {
@@ -211,7 +216,7 @@ describe('Collections List', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it.skip('can copy a version to repository', () => {
+  it('can copy a version to repository', () => {
     //skipping this test because the Copy to Repository option is disabled for admin user
     cy.collectionCopyVersionToRepositories(collectionName);
     repository = 'community';

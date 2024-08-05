@@ -102,6 +102,28 @@ Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {
   });
 });
 
+Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
+  function waitForAllTasks(count: number) {
+    if (count === 0) {
+      throw new Error('Max loops reached while waiting for the tasks.');
+    }
+    cy.wait(1000);
+    cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
+      (response) => {
+        const tasks = response.results;
+        cy.log(`Tasks count: ${tasks.length}`);
+        if (tasks.length === 0) {
+          return;
+        } else {
+          waitForAllTasks(count - 1);
+        }
+      }
+    );
+  }
+
+  waitForAllTasks(100);
+});
+
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
@@ -171,8 +193,10 @@ Cypress.Commands.add(
         collectionName,
         `--tags ${tags.join(' ')}`
       );
+      cy.waitForAllTasks();
     } else {
       cy.galaxykit('-i collection upload', namespaceName, collectionName);
+      cy.waitForAllTasks();
     }
 
     waitTillPublished(10);
@@ -268,6 +292,7 @@ Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
     cy.galaxykit(`collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`);
+    cy.waitForAllTasks();
   }
 );
 
@@ -275,6 +300,7 @@ Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
     cy.galaxykit(`collection move ${namespace} ${collection} ${version} staging published`);
+    cy.waitForAllTasks();
   }
 );
 
