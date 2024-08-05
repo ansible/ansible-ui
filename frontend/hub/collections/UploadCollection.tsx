@@ -44,6 +44,9 @@ export interface Repository {
 
 export interface Distribution {
   base_path: string;
+  name: string;
+  pulp_created: string;
+  client_url: string;
 }
 
 export function UploadCollection() {
