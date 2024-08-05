@@ -68,6 +68,10 @@ import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
 import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
+import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
+import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAcess';
+import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
+import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTeams';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -114,10 +118,30 @@ export function useHubNavigation() {
               element: <HubNamespaceCLI />,
             },
             {
+              id: HubRoute.NamespaceTeamAccess,
+              path: 'team-access',
+              element: <HubNamespaceTeamAccess />,
+            },
+            {
+              id: HubRoute.NamespaceUserAccess,
+              path: 'user-access',
+              element: <HubNamespaceUserAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" replace />,
             },
           ],
+        },
+        {
+          id: HubRoute.NamespaceAddUsers,
+          path: ':id/user-access/add',
+          element: <HubNamespaceAddUsers />,
+        },
+        {
+          id: HubRoute.NamespaceAddTeams,
+          path: ':id/team-access/add',
+          element: <HubNamespaceAddTeams />,
         },
         {
           path: '',
