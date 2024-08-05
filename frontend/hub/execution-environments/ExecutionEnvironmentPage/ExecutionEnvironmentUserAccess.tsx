@@ -11,7 +11,7 @@ import { ExecutionEnvironment } from '../ExecutionEnvironment';
 export function ExecutionEnvironmentUserAccess() {
   const params = useParams<{ id: string }>();
   const { data, error, refresh } = useGet<HubItemsResponse<ExecutionEnvironment>>(
-    hubAPI`/_ui/v1/execution-environments/?limit=1&name=${params.id}`
+    hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
   let executionEnvironment: ExecutionEnvironment | undefined = undefined;

@@ -24,6 +24,7 @@ import { RepositoryForm } from '../administration/repositories/RepositoryForm';
 import { RepositoryAccess } from '../administration/repositories/RepositoryPage/RepositoryAccess';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
+import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
 import { RepositoryVersions } from '../administration/repositories/RepositoryPage/RepositoryVersions';
 import { RepositoryVersionCollections } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionCollections';
@@ -47,13 +48,14 @@ import {
   CreateExecutionEnvironment,
   EditExecutionEnvironment,
 } from '../execution-environments/ExecutionEnvironmentForm';
-import { ExecutionEnvironmentTeamAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentTeamAccess';
 import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
 import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
 import { ExecutionEnvironmentImagePage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImagePage';
 import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
 import { ExecutionEnvironmentPage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentPage';
+import { ExecutionEnvironmentTeamAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentTeamAccess';
+import { ExecutionEnvironmentUserAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentUserAccess';
 import { ExecutionEnvironments } from '../execution-environments/ExecutionEnvironments';
 import { MyImports } from '../my-imports/MyImports';
 import { CreateHubNamespace, EditHubNamespace } from '../namespaces/HubNamespaceForm';
@@ -61,14 +63,13 @@ import { HubNamespaceCLI } from '../namespaces/HubNamespacePage/HubNamespaceCLI'
 import { HubNamespaceCollections } from '../namespaces/HubNamespacePage/HubNamespaceCollections';
 import { HubNamespaceDetails } from '../namespaces/HubNamespacePage/HubNamespaceDetails';
 import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePage';
+import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAccess';
+import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
 import { Namespaces } from '../namespaces/HubNamespaces';
+import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTeams';
+import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
-import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
-import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
-import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAcess';
-import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
-import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTeams';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -261,7 +262,7 @@ export function useHubNavigation() {
             {
               id: HubRoute.ExecutionEnvironmentUserAccess,
               path: 'user-access',
-              element: <ExecutionEnvironmentTeamAccess />,
+              element: <ExecutionEnvironmentUserAccess />,
             },
             {
               path: '',

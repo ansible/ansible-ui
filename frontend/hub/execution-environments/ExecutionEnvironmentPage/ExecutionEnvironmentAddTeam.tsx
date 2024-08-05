@@ -12,16 +12,16 @@ import {
 import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '../../../common/crud/Data';
 import { useGet } from '../../../common/crud/useGet';
-import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
-import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
-import { hubAPI } from '../../common/api/formatPath';
-import { HubError } from '../../common/HubError';
-import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
-import { HubItemsResponse } from '../../common/useHubView';
-import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
 import { HubUserGroup } from '../../interfaces/expanded/HubUser';
+import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
+import { hubAPI } from '../../common/api/formatPath';
+import { HubItemsResponse } from '../../common/useHubView';
+import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
+import { HubError } from '../../common/HubError';
+import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
 import { HubRoute } from '../../main/HubRoutes';
+import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
+import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 
 interface WizardFormValues {
@@ -42,7 +42,7 @@ export function ExecutionEnvironmentAddTeams() {
   const teamProgressDialog = useHubBulkActionDialog<TeamRolePair>();
 
   const { data, error, refresh } = useGet<HubItemsResponse<ExecutionEnvironment>>(
-    hubAPI`/_ui/v1/execution-environment/?limit=1&name=${params.id}`
+    hubAPI`v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
   let executionEnvironment: ExecutionEnvironment | undefined = undefined;

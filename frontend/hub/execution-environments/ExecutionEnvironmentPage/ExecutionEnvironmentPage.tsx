@@ -106,9 +106,14 @@ export function ExecutionEnvironmentPage() {
             dataCy: 'execution-environment-images-tab',
           },
           {
-            label: t('Access'),
+            label: t('Team Access'),
             page: HubRoute.ExecutionEnvironmentTeamAccess,
             dataCy: 'execution-environment-access-tab',
+          },
+          {
+            label: t('User Access'),
+            page: HubRoute.ExecutionEnvironmentUserAccess,
+            dataCy: 'execution-environment-user-access-tab',
           },
         ]}
         params={{ id: ee.name }}
