@@ -401,6 +401,7 @@ describe('Job Templates Tests', function () {
           .then((webhook_key: string) => {
             let webhookKey: string = webhook_key;
 
+            cy.get('[data-cy="webhook_credential"]').scrollIntoView();
             cy.getByDataCy('webhook_credential').should('have.text', ghCred.name);
             cy.getByDataCy('webhook-service-form-group').contains('GitHub');
             cy.getByDataCy('webhook-key').should('have.value', webhookKey);
