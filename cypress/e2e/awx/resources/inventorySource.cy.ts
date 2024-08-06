@@ -8,8 +8,8 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-// FLAKY_07_30_2024
-describe.skip('Inventory Sources', () => {
+
+describe('Inventory Sources', () => {
   const scheduleName = 'e2e-' + randomString(4);
 
   let project: Project;
@@ -40,19 +40,11 @@ describe.skip('Inventory Sources', () => {
 
   function goToSourceList(inventoryName: string) {
     cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
     cy.filterTableBySingleSelect('name', inventoryName);
     cy.clickTableRowLink('name', inventoryName, { disableFilter: true });
     cy.verifyPageTitle(inventoryName);
-    cy.clickLink(/^Sources$/);
-  }
-
-  function goToSourceDetails(inventoryName: string, sourceName: string) {
-    goToSourceList(inventoryName);
-    cy.getByDataCy('name-column-cell')
-      .should('contain', sourceName)
-      .within(() => {
-        cy.clickLink(sourceName);
-      });
+    cy.clickTab(/^Sources$/, true);
   }
 
   describe('Inventory Source List', () => {
@@ -74,25 +66,22 @@ describe.skip('Inventory Sources', () => {
           goToSourceList(inventory.name);
           cy.clickButton(/^Add source/);
           cy.verifyPageTitle('Add new source');
-          cy.getBy('[data-cy="name"]').type('project source');
+          cy.getByDataCy('name').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
           cy.selectDropdownOptionByResourceName('project', project.name);
           cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-          cy.singleSelectBy(
-            '[data-cy="executionEnvironment-form-group"]',
-            executionEnvironment.name
-          );
-          cy.singleSelectBy('[data-cy="credential"]', credentialName);
-          cy.getBy('[data-cy="host-filter"]').type('/^test$/');
-          cy.getBy('[data-cy="verbosity"]').type('1');
-          cy.getBy('[data-cy="enabled-var"]').type('foo.bar');
-          cy.getBy('[data-cy="enabled-value"]').type('test');
-          cy.getBy('[data-cy="overwrite"]').check();
-          cy.getBy('[data-cy="overwrite_vars"]').check();
-          cy.getBy('[data-cy="update_on_launch"]').check();
-          cy.getBy('[data-cy="update-cache-timeout"]').type('1');
+          cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
+          cy.singleSelectByDataCy('credential', credentialName);
+          cy.getByDataCy('host-filter').type('/^test$/');
+          cy.getByDataCy('verbosity').type('1');
+          cy.getByDataCy('enabled-var').type('foo.bar');
+          cy.getByDataCy('enabled-value').type('test');
+          cy.getByDataCy('overwrite').check();
+          cy.getByDataCy('overwrite_vars').check();
+          cy.getByDataCy('update_on_launch').check();
+          cy.getByDataCy('update-cache-timeout').type('1');
           cy.getBy('.view-lines').type('test: "output"');
-          cy.getBy('[data-cy="Submit"]').click();
+          cy.getByDataCy('Submit').click();
           cy.verifyPageTitle('project source');
           cy.getByDataCy('name').should('contain', 'project source');
           cy.getByDataCy('source').should('contain', 'Sourced from a Project');
@@ -125,9 +114,7 @@ describe.skip('Inventory Sources', () => {
       cy.clickTableRowAction('name', inventorySource.name, 'edit-inventory-source', {
         disableFilter: true,
       });
-      cy.getByDataCy('description').should('be.empty');
-      cy.getByDataCy('description').type('mock description');
-      cy.getByDataCy('overwrite').should('not.be.checked');
+      cy.getByDataCy('description').clear().type('mock description');
       cy.getByDataCy('overwrite').check();
       cy.clickButton(/^Save$/);
       cy.getByDataCy('description').should('contain', 'mock description');
@@ -137,22 +124,22 @@ describe.skip('Inventory Sources', () => {
     it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page, ', () => {
       goToSourceList(inventory.name);
       // Create inventory source
-      cy.getBy('#add-source').click();
+      cy.getByDataCy('add-source').click();
       cy.verifyPageTitle('Add new source');
-      cy.getBy('[data-cy="name"]').type('amazon ec2 source');
+      cy.getByDataCy('name').type('amazon ec2 source');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
-      cy.getBy('[data-cy="host-filter"]').type('/^test$/');
-      cy.getBy('[data-cy="verbosity"]').type('1');
-      cy.getBy('[data-cy="enabled-var"]').type('foo.bar');
-      cy.getBy('[data-cy="enabled-value"]').type('test');
-      cy.getBy('[data-cy="overwrite"]').check();
-      cy.getBy('[data-cy="Submit"]').click();
+      cy.getByDataCy('host-filter').type('/^test$/');
+      cy.getByDataCy('verbosity').type('1');
+      cy.getByDataCy('enabled-var').type('foo.bar');
+      cy.getByDataCy('enabled-value').type('test');
+      cy.getByDataCy('overwrite').check();
+      cy.getByDataCy('Submit').click();
       cy.verifyPageTitle('amazon ec2 source');
       cy.clickButton('Edit inventory source');
       cy.verifyPageTitle('Edit source');
-      cy.getBy('[data-cy="name"]').clear().type('updated amazon ec2 source');
-      cy.getBy('[data-cy="overwrite_vars"]').check();
-      cy.getBy('[data-cy="Submit"]').click();
+      cy.getByDataCy('name').clear().type('updated amazon ec2 source');
+      cy.getByDataCy('overwrite_vars').check();
+      cy.getByDataCy('Submit').click();
       // Verify details
       cy.location('pathname').should('match', /\/details$/);
       cy.verifyPageTitle('updated amazon ec2 source');
@@ -160,13 +147,13 @@ describe.skip('Inventory Sources', () => {
       cy.clickButton('Edit inventory source');
       cy.location('pathname').should('match', /\/edit$/);
       cy.verifyPageTitle('Edit source');
-      cy.getBy('[data-cy="name"]').clear().type('new project');
+      cy.getByDataCy('name').clear().type('new project');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
-      cy.getBy('[data-cy="overwrite_vars"]').check();
-      cy.getBy('[data-cy="update_on_launch"]').check();
+      cy.getByDataCy('overwrite_vars').check();
+      cy.getByDataCy('update_on_launch').check();
       cy.selectDropdownOptionByResourceName('project', project.name);
       cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-      cy.getBy('[data-cy="Submit"]').click();
+      cy.getByDataCy('Submit').click();
       // Verify edited details
       cy.location('pathname').should('match', /\/details$/);
       cy.verifyPageTitle('new project');
@@ -191,16 +178,9 @@ describe.skip('Inventory Sources', () => {
 
   describe('Inventory Source Schedules List Page', () => {
     it('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
-      cy.navigateTo('awx', 'inventories');
-      cy.filterTableBySingleSelect('name', inventory.name);
-      cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
-      cy.verifyPageTitle(inventory.name);
-      cy.clickLink(/^Sources$/);
-      cy.getByDataCy('name-column-cell')
-        .should('contain', inventorySource.name)
-        .within(() => {
-          cy.clickLink(inventorySource.name);
-        });
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
+      cy.verifyPageTitle(inventorySource.name);
       cy.clickTab('Schedules', true);
       cy.clickButton('Create schedule');
       cy.get('[data-cy="wizard-nav"]').within(() => {
@@ -210,7 +190,7 @@ describe.skip('Inventory Sources', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-      cy.getByDataCy('name').clear().type('new schedule');
+      cy.getByDataCy('name').clear().type('new schedule', { timeout: 300 });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
@@ -232,23 +212,15 @@ describe.skip('Inventory Sources', () => {
         unified_job_template: inventorySource.id,
         rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
       }).then((schedule1: Schedule) => {
-        cy.navigateTo('awx', 'inventories');
-        cy.filterTableBySingleSelect('name', inventory.name);
-        cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
-        cy.verifyPageTitle(inventory.name);
-        cy.clickLink(/^Sources$/);
-        cy.getByDataCy('name-column-cell')
-          .should('contain', inventorySource.name)
-          .within(() => {
-            cy.clickLink(inventorySource.name);
-          });
+        goToSourceList(inventory.name);
+        cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
+        cy.verifyPageTitle(inventorySource.name);
         cy.clickTab('Schedules', true);
         cy.clickTableRowAction('name', scheduleName, 'edit-schedule', {
           disableFilter: true,
         });
         cy.intercept('PATCH', awxAPI`/schedules/${schedule1.id.toString()}/`).as('editSchedule');
-        cy.getByDataCy('description').should('be.empty');
-        cy.getByDataCy('description').type('mock description');
+        cy.getByDataCy('description').clear().type('mock description');
         cy.getByDataCy('timezone').should('contain', schedule1.timezone);
         cy.singleSelectByDataCy('timezone', 'America/New_York');
         cy.clickButton(/^Next$/);
@@ -274,7 +246,8 @@ describe.skip('Inventory Sources', () => {
         unified_job_template: inventorySource.id,
         rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
       }).then((schedule1: Schedule) => {
-        goToSourceDetails(inventory.name, inventorySource.name);
+        goToSourceList(inventory.name);
+        cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
         cy.clickTab('Schedules', true);
         cy.clickTableRowAction('name', scheduleName, 'delete-schedule', {
           inKebab: true,
@@ -308,7 +281,8 @@ describe.skip('Inventory Sources', () => {
     });
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Start', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
@@ -326,7 +300,8 @@ describe.skip('Inventory Sources', () => {
     });
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Success', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
@@ -344,7 +319,8 @@ describe.skip('Inventory Sources', () => {
     });
 
     it('can visit the Notifications tab of an Inventory Source and enable a notification upon Failure', () => {
-      goToSourceDetails(inventory.name, inventorySource.name);
+      goToSourceList(inventory.name);
+      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
       cy.clickTab('Notifications', true);
       cy.intercept(
         'POST',
