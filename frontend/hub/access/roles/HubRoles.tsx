@@ -2,7 +2,6 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { hubAPI } from '../../common/api/formatPath';
-import { useHubContext } from '../../common/useHubContext';
 import { useHubView } from '../../common/useHubView';
 import { HubRoleExpandedRow } from './components/HubRoleExpandedRow';
 import { useRoleRowActions, useRoleToolbarActions } from './hooks/useRoleActions';
@@ -10,6 +9,7 @@ import { useRoleColumns } from './hooks/useRoleColumns';
 import { useRoleFilters } from './hooks/useRoleFilters';
 import { Alert } from '@patternfly/react-core';
 import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
+import { useHubActiveUser } from '../../common/useHubActiveUser';
 
 export function HubRoles() {
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ function roleKeyFn(role: HubRbacRole) {
 export function HubRolesTable() {
   const { t } = useTranslation();
   const tableColumns = useRoleColumns();
-  const { user } = useHubContext();
+  const { activeHubUser: user } = useHubActiveUser();
   const toolbarFilters = useRoleFilters();
 
   const view = useHubView<HubRbacRole>({

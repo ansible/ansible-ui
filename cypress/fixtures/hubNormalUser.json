@@ -1,0 +1,13 @@
+{
+  "id": 4,
+  "username": "dev",
+  "first_name": "",
+  "last_name": "",
+  "email": "",
+  "groups": [],
+  "date_joined": "2024-08-05T20:23:06.468451Z",
+  "is_superuser": false,
+  "auth_provider": ["django"],
+  "model_permissions": {},
+  "is_anonymous": false
+}
