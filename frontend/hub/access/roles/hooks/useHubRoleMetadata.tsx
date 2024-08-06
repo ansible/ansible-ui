@@ -52,7 +52,7 @@ export function useHubRoleMetadata(): HubRoleMetadata {
           },
         },
         'galaxy.collectionremote': {
-          displayName: t('Collection'),
+          displayName: t('Collection Remote'),
           permissions: {
             'galaxy.manage_roles_collectionremote': t('Manage roles for collection remote'),
             'galaxy.change_collectionremote': t('Change collection remote'),
