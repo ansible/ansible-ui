@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { DownloadIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,6 +11,7 @@ import {
 import { HubRoute } from '../../../main/HubRoutes';
 import { HubRemote } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
+import { downloadTextFile } from '../../../../../framework/utils/download-file';
 
 export function useRemoteActions(options: { onRemotesDeleted: (remotes: HubRemote[]) => void }) {
   const { onRemotesDeleted } = options;
@@ -27,6 +28,34 @@ export function useRemoteActions(options: { onRemotesDeleted: (remotes: HubRemot
         selection: PageActionSelection.Single,
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        isHidden: (remotes) => !remotes.requirements_file,
+        icon: DownloadIcon,
+        label: t('Download requirement file'),
+        onClick: (remotes) =>
+          downloadTextFile('requirement', remotes.requirements_file ?? '', 'yaml'),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        isHidden: (remotes) => !remotes.client_cert,
+        icon: DownloadIcon,
+        label: t('Download client certificate'),
+        onClick: (remotes) => downloadTextFile('client_cert', remotes.client_cert ?? ''),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        isHidden: (remotes) => !remotes.ca_cert,
+        icon: DownloadIcon,
+        label: t('Download CA certificate'),
+        onClick: (remotes) => downloadTextFile('ca_cert', remotes.ca_cert ?? ''),
       },
       {
         type: PageActionType.Seperator,
