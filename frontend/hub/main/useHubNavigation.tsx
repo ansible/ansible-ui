@@ -17,7 +17,9 @@ import {
   CreateRemoteRegistry,
   EditRemoteRegistry,
 } from '../administration/remote-registries/RemoteRegistryForm';
-import { RemoteDetails } from '../administration/remotes/RemoteDetails';
+import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
+import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
+import { RemoteAccess } from '../administration/remotes/RemotePage/RemoteAccess';
 import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
@@ -432,9 +434,25 @@ export function useHubNavigation() {
               element: <EditRemote />,
             },
             {
+              path: ':id/',
               id: HubRoute.RemotePage,
-              path: 'details/:id/*',
-              element: <RemoteDetails />,
+              element: <RemotePage />,
+              children: [
+                {
+                  path: 'details',
+                  id: HubRoute.RemoteDetails,
+                  element: <RemoteDetails />,
+                },
+                {
+                  path: 'access',
+                  id: HubRoute.RemoteAccess,
+                  element: <RemoteAccess />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" replace />,
+                },
+              ],
             },
             {
               path: '',
