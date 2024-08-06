@@ -94,6 +94,7 @@ describe.skip('Namespace - team and user access', () => {
         disableFilter: true,
       });
       removeRoleFromListRow('galaxy.collection_publisher', 'user');
+      cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
 
@@ -154,6 +155,7 @@ describe.skip('Namespace - team and user access', () => {
         disableFilter: true,
       });
       removeRoleFromListRow('galaxy.collection_publisher', 'team');
+      cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });
 });
