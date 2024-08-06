@@ -23,7 +23,7 @@ const mockRole: Role = {
   name: 'galaxy.mockRole',
   description: 'mock role description',
   permissions: ['galaxy.upload_to_namespace', 'galaxy.add_user'],
-  pulp_href: '/api/automation-hub/pulp/api/v3/roles/53759f26-ca33-4619-8fe7-8ebb2ca37996/',
+  pulp_href: '/api/galaxy/pulp/api/v3/roles/53759f26-ca33-4619-8fe7-8ebb2ca37996/',
   pulp_created: '2023-12-06T17:07:47.687445Z',
   locked: false,
 };

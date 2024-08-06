@@ -1,10 +1,10 @@
 {
   "count": 53,
-  "next": "http://localhost:5001/api/automation-hub/pulp/api/v3/tasks/?limit=10&offset=10&ordering=-pulp_created",
+  "next": "http://localhost:5001/api/galaxy/pulp/api/v3/tasks/?limit=10&offset=10&ordering=-pulp_created",
   "previous": null,
   "results": [
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c358a-a78c-713e-9b78-a5ea5b6a5fbd/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c358a-a78c-713e-9b78-a5ea5b6a5fbd/",
       "pulp_created": "2023-12-04T15:55:28.526297Z",
       "state": "completed",
       "name": "pulpcore.app.tasks.analytics.post_analytics",
@@ -13,7 +13,7 @@
       "started_at": "2023-12-04T15:55:28.580188Z",
       "finished_at": "2023-12-04T15:55:29.069852Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [],
       "task_group": null,
@@ -22,7 +22,7 @@
       "reserved_resources_record": []
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c3064-6abd-7873-947a-881bea87950a/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c3064-6abd-7873-947a-881bea87950a/",
       "pulp_created": "2023-12-03T15:55:36.511659Z",
       "state": "completed",
       "name": "pulpcore.app.tasks.analytics.post_analytics",
@@ -31,7 +31,7 @@
       "started_at": "2023-12-03T15:55:36.564786Z",
       "finished_at": "2023-12-03T15:55:37.016888Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [],
       "task_group": null,
@@ -40,7 +40,7 @@
       "reserved_resources_record": []
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2b3e-090c-794b-ad04-8625b99c7250/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2b3e-090c-794b-ad04-8625b99c7250/",
       "pulp_created": "2023-12-02T15:55:35.053653Z",
       "state": "completed",
       "name": "pulpcore.app.tasks.analytics.post_analytics",
@@ -49,7 +49,7 @@
       "started_at": "2023-12-02T15:55:35.106248Z",
       "finished_at": "2023-12-02T15:55:35.601120Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [],
       "task_group": null,
@@ -58,7 +58,7 @@
       "reserved_resources_record": []
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2617-8e50-72df-bf2a-1307c44a7bd5/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2617-8e50-72df-bf2a-1307c44a7bd5/",
       "pulp_created": "2023-12-01T15:55:27.185947Z",
       "state": "completed",
       "name": "pulpcore.app.tasks.analytics.post_analytics",
@@ -67,7 +67,7 @@
       "started_at": "2023-12-01T15:55:27.241158Z",
       "finished_at": "2023-12-01T15:55:27.722306Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [],
       "task_group": null,
@@ -76,7 +76,7 @@
       "reserved_resources_record": []
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c21f2-d56a-76c0-8510-534aa226e94a/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c21f2-d56a-76c0-8510-534aa226e94a/",
       "pulp_created": "2023-11-30T20:36:51.691672Z",
       "state": "completed",
       "name": "pulpcore.app.tasks.base.general_delete",
@@ -85,18 +85,18 @@
       "started_at": "2023-11-30T20:36:51.753298Z",
       "finished_at": "2023-11-30T20:36:51.813814Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
       "child_tasks": [],
       "task_group": null,
       "progress_reports": [],
       "created_resources": [],
       "reserved_resources_record": [
-        "/api/automation-hub/pulp/api/v3/remotes/ansible/collection/018c21f2-c65b-73b0-97cd-372b1a59e127/"
+        "/api/galaxy/pulp/api/v3/remotes/ansible/collection/018c21f2-c65b-73b0-97cd-372b1a59e127/"
       ]
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2181-8bde-77bf-a3df-260a7989bc75/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2181-8bde-77bf-a3df-260a7989bc75/",
       "pulp_created": "2023-11-30T18:33:07.296689Z",
       "state": "completed",
       "name": "pulp_ansible.app.tasks.copy.move_collection",
@@ -105,22 +105,22 @@
       "started_at": "2023-11-30T18:33:07.360473Z",
       "finished_at": "2023-11-30T18:33:07.805163Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
-      "parent_task": "/api/automation-hub/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "parent_task": "/api/galaxy/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/",
       "child_tasks": [],
       "task_group": null,
       "progress_reports": [],
       "created_resources": [
-        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/versions/1/",
-        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/versions/3/"
+        "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/versions/1/",
+        "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/versions/3/"
       ],
       "reserved_resources_record": [
-        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/",
-        "shared:/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
+        "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d94a-790c-bfd9-98376981182b/",
+        "shared:/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
       ]
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/",
       "pulp_created": "2023-11-30T18:33:06.321930Z",
       "state": "completed",
       "name": "galaxy_ng.app.tasks.promotion.auto_approve",
@@ -129,12 +129,10 @@
       "started_at": "2023-11-30T18:33:06.387468Z",
       "finished_at": "2023-11-30T18:33:07.302715Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
-      "parent_task": "/api/automation-hub/pulp/api/v3/tasks/018c2181-7aa3-770d-8a8d-a3e4f2b1bee5/",
-      "child_tasks": [
-        "/api/automation-hub/pulp/api/v3/tasks/018c2181-8bde-77bf-a3df-260a7989bc75/"
-      ],
-      "task_group": "/api/automation-hub/pulp/api/v3/task-groups/018c2181-7a9b-7fe2-8419-c65d6ba0641b/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "parent_task": "/api/galaxy/pulp/api/v3/tasks/018c2181-7aa3-770d-8a8d-a3e4f2b1bee5/",
+      "child_tasks": ["/api/galaxy/pulp/api/v3/tasks/018c2181-8bde-77bf-a3df-260a7989bc75/"],
+      "task_group": "/api/galaxy/pulp/api/v3/task-groups/018c2181-7a9b-7fe2-8419-c65d6ba0641b/",
       "progress_reports": [
         {
           "message": "Signing new CollectionVersions",
@@ -163,11 +161,11 @@
       ],
       "created_resources": [null, null],
       "reserved_resources_record": [
-        "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
+        "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/018bd8d7-d52e-70bd-90a9-812d90a2c027/"
       ]
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2181-7aa3-770d-8a8d-a3e4f2b1bee5/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2181-7aa3-770d-8a8d-a3e4f2b1bee5/",
       "pulp_created": "2023-11-30T18:33:02.886766Z",
       "state": "completed",
       "name": "galaxy_ng.app.tasks.publishing.import_and_auto_approve",
@@ -176,20 +174,18 @@
       "started_at": "2023-11-30T18:33:02.965666Z",
       "finished_at": "2023-11-30T18:33:06.330265Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
-      "child_tasks": [
-        "/api/automation-hub/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/"
-      ],
-      "task_group": "/api/automation-hub/pulp/api/v3/task-groups/018c2181-7a9b-7fe2-8419-c65d6ba0641b/",
+      "child_tasks": ["/api/galaxy/pulp/api/v3/tasks/018c2181-8811-7d7a-8b61-ef18130f0d0c/"],
+      "task_group": "/api/galaxy/pulp/api/v3/task-groups/018c2181-7a9b-7fe2-8419-c65d6ba0641b/",
       "progress_reports": [],
       "created_resources": [
-        "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/018c2181-8785-722a-a810-0c4ee0d7636b/"
+        "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/018c2181-8785-722a-a810-0c4ee0d7636b/"
       ],
       "reserved_resources_record": []
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2180-e4c1-77d0-b825-a2e95dcc56ee/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2180-e4c1-77d0-b825-a2e95dcc56ee/",
       "pulp_created": "2023-11-30T18:32:24.515798Z",
       "state": "completed",
       "name": "galaxy_ng.app.tasks.namespaces._add_namespace_metadata_to_repos",
@@ -198,8 +194,8 @@
       "started_at": "2023-11-30T18:32:24.611780Z",
       "finished_at": "2023-11-30T18:32:24.617303Z",
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
-      "parent_task": "/api/automation-hub/pulp/api/v3/tasks/018c2180-e3ca-73eb-a452-979ebbe03441/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "parent_task": "/api/galaxy/pulp/api/v3/tasks/018c2180-e3ca-73eb-a452-979ebbe03441/",
       "child_tasks": [],
       "task_group": null,
       "progress_reports": [],
@@ -207,7 +203,7 @@
       "reserved_resources_record": []
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/tasks/018c2180-e3ca-73eb-a452-979ebbe03441/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/tasks/018c2180-e3ca-73eb-a452-979ebbe03441/",
       "pulp_created": "2023-11-30T18:32:24.267335Z",
       "state": "running",
       "name": "galaxy_ng.app.tasks.namespaces._create_pulp_namespace",
@@ -216,11 +212,9 @@
       "started_at": "2023-11-30T18:32:24.381064Z",
       "finished_at": null,
       "error": null,
-      "worker": "/api/automation-hub/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
+      "worker": "/api/galaxy/pulp/api/v3/workers/018c1d26-ba64-731c-a839-1d8c10cbb98d/",
       "parent_task": null,
-      "child_tasks": [
-        "/api/automation-hub/pulp/api/v3/tasks/018c2180-e4c1-77d0-b825-a2e95dcc56ee/"
-      ],
+      "child_tasks": ["/api/galaxy/pulp/api/v3/tasks/018c2180-e4c1-77d0-b825-a2e95dcc56ee/"],
       "task_group": null,
       "progress_reports": [],
       "created_resources": [],
