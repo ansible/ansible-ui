@@ -309,39 +309,20 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add(
-  'collectionCopyVersionToRepositories',
-  (collection: string, params?: { testOnlyModal?: boolean }) => {
-    if (!params?.testOnlyModal) {
-      cy.navigateTo('hub', 'collections');
-      cy.filterTableByText(collection);
+Cypress.Commands.add('collectionCopyVersionToRepositories', () => {
+  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+    cy.get('header').contains('Select repositories');
+    cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
+    cy.filterTableBySingleText('community');
+    cy.get('[data-cy="data-list-check"]').click();
+    cy.get('button').contains('Select').click();
+  });
 
-      cy.get('[data-cy="data-list-name"]').should('have.text', collection);
-      cy.get('[data-cy="data-list-action"]').within(() => {
-        cy.get('[data-cy="actions-dropdown"]')
-          .first()
-          .click()
-          .then(() => {
-            cy.get('[data-cy="copy-version-to-repositories"]').click();
-          });
-      });
-    }
-
-    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-      cy.clickButton(/^Clear all filters$/);
-      cy.get('header').contains('Select repositories');
-      cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
-      cy.filterTableByText('community');
-      cy.get('[data-cy="data-list-check"]').click();
-      cy.get('button').contains('Select').click();
-    });
-
-    cy.navigateTo('hub', 'approvals');
-    cy.clickButton(/^Clear all filters$/);
-    cy.filterBySingleSelection(/^Repository$/, 'community');
-    cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
-  }
-);
+  cy.navigateTo('hub', 'approvals');
+  cy.clickButton(/^Clear all filters$/);
+  cy.filterBySingleSelection(/^Repository$/, 'community');
+  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+});
 
 // HUB Execution Environment Commands
 export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<

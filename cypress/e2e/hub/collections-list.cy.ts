@@ -217,9 +217,23 @@ describe('Collections List', () => {
   });
 
   it.skip('can copy a version to repository', () => {
+    cy.uploadCollection(collectionName, namespace.name);
+    cy.galaxykit(
+      `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+    );
+    cy.waitForAllTasks();
+
+    cy.navigateTo('hub', 'collections');
+    cy.filterTableBySingleText(collectionName);
+
+    cy.get('[data-cy="data-list-name"]').should('have.text', collectionName);
+    cy.get('[data-cy="data-list-action"]').within(() => {
+      cy.get('[data-cy="actions-dropdown"]').first().click();
+    });
+
+    cy.get('[data-cy="copy-version-to-repositories"] button').click();
+
     cy.collectionCopyVersionToRepositories(collectionName);
-    repository = 'community';
-    cy.deleteCollection(collectionName, namespace.name, repository);
   });
 });
 
