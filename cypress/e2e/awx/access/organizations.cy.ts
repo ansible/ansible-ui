@@ -5,7 +5,8 @@ import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Organizations: Create', () => {
-  it('can create a basic organization, assert info on the details page, and delete it', () => {
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
+  it.skip('can create a basic organization, assert info on the details page, and delete it', () => {
     const organizationName = randomE2Ename();
     const orgDescription = 'orgDescription' + randomString(4);
     cy.navigateTo('awx', 'organizations');
@@ -80,7 +81,6 @@ describe('Organizations: Edit and Delete', function () {
 
   it('can edit an organization from the details page', function () {
     const stringRandom = randomString(4);
-
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.get('[data-cy="name-column-cell"]').within(() => {
@@ -138,6 +138,7 @@ describe('Organizations: Edit and Delete', function () {
       });
   });
 
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
   it.skip('can delete an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
@@ -187,7 +188,6 @@ describe('Organizations: Users Tab', function () {
 describe('Organizations: Teams Tab', function () {
   let organization: Organization;
   let user: AwxUser;
-
   beforeEach(function () {
     const orgName = randomE2Ename();
     cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
@@ -203,47 +203,6 @@ describe('Organizations: Teams Tab', function () {
     cy.deleteAwxUser(user, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
+
   it.skip('can edit a team from the teams tab inside of an Org', () => {});
-});
-
-describe('Organizations: Execution Environments Tab', function () {
-  let organization: Organization;
-  let user: AwxUser;
-
-  beforeEach(function () {
-    const orgName = randomE2Ename();
-    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
-      organization = testOrganization;
-      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-        user = testUser;
-        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
-      });
-    });
-  });
-
-  afterEach(function () {
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-  });
-});
-
-describe('Organizations: Notifications Tab', function () {
-  let organization: Organization;
-  let user: AwxUser;
-
-  beforeEach(function () {
-    const orgName = randomE2Ename();
-    cy.createAwxOrganization({ name: orgName }).then((testOrganization) => {
-      organization = testOrganization;
-      cy.createAwxUser({ organization: organization.id }).then((testUser) => {
-        user = testUser;
-        cy.giveUserOrganizationAccess(organization.name, user.id, 'Read');
-      });
-    });
-  });
-
-  afterEach(function () {
-    cy.deleteAwxUser(user, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
-  });
 });
