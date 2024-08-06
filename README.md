@@ -44,7 +44,7 @@ UI projects for [Ansible](https://www.ansible.com).
 |            `HUB_SERVER` | The HUB server (protocol://host:port).              |
 |          `HUB_USERNAME` | The HUB server username. (only used by Cypress)     |
 |          `HUB_PASSWORD` | The HUB server password. (only used by Cypress)     |
-|        `HUB_API_PREFIX` | The HUB server API prefix. (`/api/automation-hub`)  |
+|        `HUB_API_PREFIX` | The HUB server API prefix. (`/api/galaxy`)          |
 | `HUB_GALAXYKIT_COMMAND` | The galaxykit command. (`galaxykit --ignore-certs`) |
 
 ```zsh
