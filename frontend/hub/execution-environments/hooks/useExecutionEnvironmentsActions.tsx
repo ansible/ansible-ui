@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CheckIcon, ExternalLinkAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +56,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
+        icon: CheckIcon,
         label: t('Sign execution environments'),
         onClick: signExecutionEnvironments,
         isDisabled:
