@@ -161,6 +161,11 @@ export function useHubNavigation() {
               element: <CollectionDocumentation />,
             },
             {
+              id: HubRoute.CollectionDocumentation,
+              path: 'documentation/:content_name',
+              element: <CollectionDocumentation />,
+            },
+            {
               id: HubRoute.CollectionDocumentationContent,
               path: 'documentation/:content_type/:content_name',
               element: <CollectionDocumentation />,
