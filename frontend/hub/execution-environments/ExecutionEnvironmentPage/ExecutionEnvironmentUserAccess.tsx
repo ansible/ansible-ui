@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { LoadingPage } from '../../../../framework';
-import { TeamAccess } from '../../../common/access/components/TeamAccess';
+import { UserAccess } from '../../../common/access/components/UserAccess';
 import { useGet } from '../../../common/crud/useGet';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
@@ -27,7 +27,7 @@ export function ExecutionEnvironmentUserAccess() {
   }
 
   return (
-    <TeamAccess
+    <UserAccess
       service="hub"
       id={executionEnvironment?.id?.toString() || ''}
       type={'execution-environment'}

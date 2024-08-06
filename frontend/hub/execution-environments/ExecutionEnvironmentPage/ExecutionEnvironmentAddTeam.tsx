@@ -143,7 +143,7 @@ export function ExecutionEnvironmentAddTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add teams')}
+        title={t('Add roles')}
         breadcrumbs={[
           { label: t('Execution environments'), to: getPageUrl(HubRoute.ExecutionEnvironments) },
           {
