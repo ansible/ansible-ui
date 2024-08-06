@@ -60,7 +60,7 @@ describe('Remotes', () => {
     cy.get('[data-cy="name"]').type(remoteName);
     cy.get('[data-cy="url"]').type(Remotes.remoteURL);
     cy.get('[data-cy="Submit"]').click();
-    cy.url().should('include', `remotes/details/${remoteName}`);
+    cy.url().should('include', `remotes/${remoteName}/details`);
     cy.contains('Remotes').click();
     cy.url().should('include', Remotes.url);
     cy.filterTableBySingleText(remoteName);
@@ -93,7 +93,7 @@ describe('Remotes', () => {
       url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
     }).as('remote');
     cy.get('[data-cy="Submit"]').click();
-    cy.url().should('include', `remotes/details/${remoteName}`);
+    cy.url().should('include', `remotes/${remoteName}/details`);
     cy.wait('@remote').then(() => {
       cy.contains('Remotes').click();
       cy.filterTableBySingleText(remoteName);
@@ -124,7 +124,7 @@ collections:
     cy.get('[data-cy="signed_only"]').check();
     cy.get('[data-cy="sync_dependencies"]').check();
     cy.get('[data-cy="Submit"]').click();
-    cy.url().should('include', `remotes/details/${remoteName}`);
+    cy.url().should('include', `remotes/${remoteName}/details`);
     cy.contains('Remotes').click();
     cy.filterTableBySingleText(remoteName);
     cy.get('[data-cy="actions-column-cell"]').click();
@@ -153,7 +153,7 @@ collections:
     cy.contains(remoteName).click();
     cy.get('[data-cy="yaml-requirements"]').should('be.visible');
     cy.get('[data-cy="code-block-value"]').should('contain', Remotes.communityGeneral);
-    cy.url().should('include', `remotes/details/${remoteName}`);
+    cy.url().should('include', `remotes/${remoteName}/details`);
     cy.get('[data-cy="name"]').should('contain', remoteName);
     cy.get('[data-cy="url"]').should('contain', Remotes.editRemoteURL);
     cy.get('[data-cy="proxy-url"]').should('contain', Remotes.proxyURL);
