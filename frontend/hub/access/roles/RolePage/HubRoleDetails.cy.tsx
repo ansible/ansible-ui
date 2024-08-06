@@ -1,53 +1,42 @@
-import { Role } from '../Role';
-import { pulpAPI } from '../../../common/api/formatPath';
-import mockUser from '../../../../../cypress/fixtures/hub_admin.json';
-import * as useHubContext from '../../../common/useHubContext';
+import mockHubBuiltInRole from '../../../../../cypress/fixtures/hubBuiltInRoleDefinition.json';
+import mockHubCustomRole from '../../../../../cypress/fixtures/hubCustomRoleDefinition.json';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { hubAPI } from '../../../common/api/formatPath';
 import { HubRoleDetails } from './HubRoleDetails';
 
-const mockRole: Role = {
-  name: 'galaxy.mockRole',
-  description: 'mock role description',
-  permissions: ['galaxy.upload_to_namespace', 'galaxy.add_user'],
-  pulp_href: '/api/galaxy/pulp/api/v3/roles/53759f26-ca33-4619-8fe7-8ebb2ca37996/',
-  pulp_created: '2023-12-06T17:07:47.687445Z',
-  locked: false,
-};
-
-const mockFeatureFlags = {
-  legacy_roles: false,
-  display_repositories: true,
-  execution_environments: true,
-  ai_deny_index: false,
-  collection_signing: true,
-  require_upload_signatures: false,
-  signatures_enabled: true,
-  can_upload_signatures: false,
-  can_create_signatures: true,
-  collection_auto_sign: true,
-  display_signatures: true,
-  container_signing: true,
-  _messages: [],
-};
-
-describe('Hub Role Details', () => {
-  it('Component renders and displays role', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-      featureFlags: mockFeatureFlags,
-    }));
-    cy.intercept(
-      { method: 'GET', url: pulpAPI`/roles/` + '*' },
-      {
-        count: 1,
-        results: [mockRole],
-      }
-    );
-    cy.mount(<HubRoleDetails />);
-    cy.get('#name').should('have.text', mockRole.name);
-    cy.get('#description').should('have.text', mockRole.description);
-    cy.get('[data-cy="created"]').should('have.text', formatDateString(mockRole.pulp_created));
-    cy.get('[data-cy="permissions"]').should('contain', 'Upload to namespace');
-    cy.get('[data-cy="permissions"]').should('contain', 'Add user');
+describe('HubRoleDetails', () => {
+  it('Component renders and displays team details for built in roles', () => {
+    cy.intercept(hubAPI`/_ui/v2/role_definitions/1/`, { fixture: 'hubBuiltInRoleDefinition.json' });
+    const path = '/roles/:id/details';
+    const initialEntries = ['/roles/1/details'];
+    const params = {
+      path,
+      initialEntries,
+    };
+    cy.mountHub(<HubRoleDetails />, params);
+    cy.get('[data-cy="name"]').should('have.text', mockHubBuiltInRole.name);
+    cy.get('[data-cy="description"]').should('have.text', mockHubBuiltInRole.description);
+    cy.get('[data-cy="created"]').should('contain', formatDateString(mockHubBuiltInRole.created));
+    cy.get('[data-cy="modified"]').should('contain', formatDateString(mockHubBuiltInRole.modified));
+    cy.get('[data-cy="galaxy.namespace"]').should('contain', 'Namespace');
+    cy.get('[data-cy="permissions"]').should('contain', 'View namespace');
+    cy.get('[data-cy="permissions"]').should('contain', 'Change namespace');
+    cy.get('[data-cy="permissions"]').should('contain', 'Delete namespace');
+  });
+  it('Component renders and displays team details for custom roles', () => {
+    cy.intercept(hubAPI`/_ui/v2/role_definitions/1/`, { fixture: 'hubCustomRoleDefinition.json' });
+    const path = '/roles/:id/details';
+    const initialEntries = ['/roles/1/details'];
+    const params = {
+      path,
+      initialEntries,
+    };
+    cy.mountHub(<HubRoleDetails />, params);
+    cy.get('[data-cy="name"]').should('have.text', mockHubCustomRole.name);
+    cy.get('[data-cy="description"]').should('have.text', mockHubCustomRole.description);
+    cy.get('[data-cy="created"]').should('contain', formatDateString(mockHubCustomRole.created));
+    cy.get('[data-cy="modified"]').should('contain', formatDateString(mockHubCustomRole.modified));
+    cy.get('[data-cy="galaxy.ansiblerepository"]').should('contain', 'Ansible Repository');
+    cy.get('[data-cy="permissions"]').should('contain', 'View Ansible repository');
   });
 });
