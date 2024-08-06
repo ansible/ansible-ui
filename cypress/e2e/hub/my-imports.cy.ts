@@ -55,8 +55,7 @@ describe('My imports', () => {
 
     cy.get(`[data-cy="row-id-${name}"]`).within(() => {
       cy.get('h4').contains(`${name} v${version}`);
-      cy.contains('Completed');
-      cy.contains('completed');
+      cy.get('div:contains("completed")');
     });
 
     cy.get('[data-cy="import-log-content"]').within(() => {
