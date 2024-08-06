@@ -146,11 +146,11 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
 
           // convert them
           fieldValue = fields[field];
-          if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
-            notification_configuration[field] = Number.parseInt(
-              notification_configuration[field],
-              10
-            );
+          if (fieldValue.type === 'int') {
+            const value = notification_configuration[field];
+            if (typeof value === 'string') {
+              notification_configuration[field] = Number.parseInt(value, 10);
+            }
           }
 
           if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
