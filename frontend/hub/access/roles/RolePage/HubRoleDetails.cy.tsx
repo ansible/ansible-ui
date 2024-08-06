@@ -1,9 +1,9 @@
 import { Role } from '../Role';
-import { RoleDetails } from './RoleDetails';
 import { pulpAPI } from '../../../common/api/formatPath';
 import mockUser from '../../../../../cypress/fixtures/hub_admin.json';
 import * as useHubContext from '../../../common/useHubContext';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { HubRoleDetails } from './HubRoleDetails';
 
 const mockRole: Role = {
   name: 'galaxy.mockRole',
@@ -43,7 +43,7 @@ describe('Hub Role Details', () => {
         results: [mockRole],
       }
     );
-    cy.mount(<RoleDetails />);
+    cy.mount(<HubRoleDetails />);
     cy.get('#name').should('have.text', mockRole.name);
     cy.get('#description').should('have.text', mockRole.description);
     cy.get('[data-cy="created"]').should('have.text', formatDateString(mockRole.pulp_created));

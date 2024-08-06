@@ -8,14 +8,15 @@ import {
   useGetPageUrl,
 } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
-import { Role } from '../Role';
-import { useLockedRolesWithDescription } from './useLockedRolesWithDescription';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { useManagedRolesWithDescription } from './useManagedRolesWithDescription';
 
 export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const lockedRolesWithDescription = useLockedRolesWithDescription();
   const getPageUrl = useGetPageUrl();
-  const tableColumns = useMemo<ITableColumn<Role>[]>(
+  const managedRolesWithDescription = useManagedRolesWithDescription();
+
+  return useMemo<ITableColumn<HubRbacRole>[]>(
     () => [
       {
         header: t('Name'),
@@ -24,7 +25,9 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
             to={
               options?.disableLinks
                 ? undefined
-                : getPageUrl(HubRoute.RoleDetails, { params: { id: role.name } })
+                : getPageUrl(HubRoute.RoleDetails, {
+                    params: { id: role.id },
+                  })
             }
             text={role.name}
           />
@@ -35,35 +38,30 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
       },
       {
         header: t('Description'),
-        cell: (role) => (
-          <span style={{ minWidth: 200, whiteSpace: 'normal' }}>
-            {lockedRolesWithDescription[role.name] ?? role.description}
-          </span>
-        ),
-        card: 'subtitle',
-        list: 'subtitle',
+        type: 'description',
+        value: (role) => managedRolesWithDescription[role.name] ?? role.description,
+        sort: options?.disableSort ? undefined : 'description',
+        card: 'description',
+        list: 'description',
       },
       {
         header: t('Created'),
-        cell: (item) => <DateTimeCell value={item.pulp_created} />,
-        sort: 'pulp_created',
+        cell: (role) => <DateTimeCell value={role.created} />,
+        sort: options?.disableSort ? undefined : 'created',
         defaultSortDirection: 'desc',
         modal: ColumnModalOption.hidden,
       },
       {
         header: t('Editable'),
         type: 'text',
-        value: (role) => (role.locked ? t('Built-in') : t('Editable')),
-        sort: 'locked',
+        value: (role) => (role.managed ? t('Built-in') : t('Editable')),
+        sort: options?.disableSort ? undefined : 'managed',
         defaultSortDirection: 'asc',
         card: 'subtitle',
         list: 'subtitle',
         modal: ColumnModalOption.hidden,
       },
     ],
-
-    [t, options?.disableSort, options?.disableLinks, getPageUrl, lockedRolesWithDescription]
+    [t, options?.disableSort, options?.disableLinks, getPageUrl]
   );
-
-  return tableColumns;
 }
