@@ -15,7 +15,6 @@ import { useGet } from '../../../common/crud/useGet';
 import { HubUserGroup } from '../../interfaces/expanded/HubUser';
 import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
 import { hubAPI } from '../../common/api/formatPath';
-import { HubItemsResponse } from '../../common/useHubView';
 import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
 import { HubError } from '../../common/HubError';
 import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
@@ -41,13 +40,13 @@ export function ExecutionEnvironmentAddTeams() {
   const pageNavigate = usePageNavigate();
   const teamProgressDialog = useHubBulkActionDialog<TeamRolePair>();
 
-  const { data, error, refresh } = useGet<HubItemsResponse<ExecutionEnvironment>>(
+  const { data, error, refresh } = useGet<Partial<ExecutionEnvironment>>(
     hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
-  let executionEnvironment: ExecutionEnvironment | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    executionEnvironment = data.data[0];
+  let executionEnvironment: Partial<ExecutionEnvironment> | undefined = undefined;
+  if (data && Object.keys(data).length > 0) {
+    executionEnvironment = data;
   }
 
   if (!data && !error) {
@@ -126,7 +125,7 @@ export function ExecutionEnvironmentAddTeams() {
           postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'galaxy.execution-environment',
+            content_type: 'galaxy.execution-environment', // Verify this one?
             object_id: executionEnvironment?.id,
           }),
         onComplete: () => {
@@ -150,13 +149,13 @@ export function ExecutionEnvironmentAddTeams() {
           {
             label: executionEnvironment?.name,
             to: getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
-              params: { id: executionEnvironment?.id },
+              params: { id: executionEnvironment?.name },
             }),
           },
           {
             label: t('Team Access'),
             to: getPageUrl(HubRoute.ExecutionEnvironmentTeamAccess, {
-              params: { id: executionEnvironment?.id },
+              params: { id: executionEnvironment?.name },
             }),
           },
           { label: t('Add roles') },

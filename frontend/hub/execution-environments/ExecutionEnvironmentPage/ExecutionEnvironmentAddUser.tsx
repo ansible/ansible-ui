@@ -18,7 +18,6 @@ import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
-import { HubItemsResponse } from '../../common/useHubView';
 import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
 import { HubUser } from '../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../main/HubRoutes';
@@ -39,13 +38,13 @@ export function ExecutionEnvironmentAddUsers() {
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
 
-  const { data, error, refresh } = useGet<HubItemsResponse<ExecutionEnvironment>>(
+  const { data, error, refresh } = useGet<Partial<ExecutionEnvironment>>(
     hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
-  let executionEnvironment: ExecutionEnvironment | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
-    executionEnvironment = data.data[0];
+  let executionEnvironment: Partial<ExecutionEnvironment> | undefined = undefined;
+  if (data && Object.keys(data).length > 0) {
+    executionEnvironment = data;
   }
 
   const userProgressDialog = useHubBulkActionDialog<UserRolePair>();
