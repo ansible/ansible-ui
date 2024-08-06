@@ -88,6 +88,7 @@ export function PlatformAuthenticatorDetails() {
         <PageDetails numberOfColumns="single">
           {objFields.map((field) => (
             <PageDetailCodeEditor
+              isArray={Array.isArray(field.value)}
               label={field.label}
               key={field.label}
               value={JSON.stringify(field.value, null, 2)}
