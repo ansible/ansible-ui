@@ -15,7 +15,7 @@ import { IPageAction } from '../../../../../framework';
 import { waitForTask } from '../../../common/api/hub-api-utils';
 import { postRequest } from '../../../../common/crud/Data';
 import { Repository } from '../Repository';
-import { PlusCircleIcon, RedoIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function RepositoryVersions() {
   const { t } = useTranslation();
@@ -137,7 +137,6 @@ function useVersionsActions(callback?: (items: RepositoryVersion[]) => void, lat
   const actions = useMemo<IPageAction<RepositoryVersion>[]>(
     () => [
       {
-        icon: RedoIcon,
         label: t('Revert to this version'),
         onClick: (item) => {
           revert([item]);
