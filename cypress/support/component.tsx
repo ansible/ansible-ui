@@ -44,8 +44,8 @@ import { edaAPI } from './formatApiPathForEDA';
 import './hub-commands';
 import './rest-commands';
 import { hubAPI } from './formatApiPathForHub';
-import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

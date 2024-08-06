@@ -7,15 +7,15 @@ import {
   PageActionType,
   useGetPageUrl,
 } from '../../../../../framework';
-import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useDeleteRoles } from './useDeleteRoles';
 import { ButtonVariant } from '@patternfly/react-core';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { useHubActiveUser } from '../../../common/useHubActiveUser';
 
 export function useRoleToolbarActions(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();
-  const { user } = useHubContext();
+  const { activeHubUser: user } = useHubActiveUser();
   const getPageUrl = useGetPageUrl();
   const deleteRoles = useDeleteRoles(onComplete);
 
@@ -51,7 +51,7 @@ export function useRoleToolbarActions(onComplete: (roles: HubRbacRole[]) => void
 
 export function useRoleRowActions(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();
-  const { user } = useHubContext();
+  const { activeHubUser: user } = useHubActiveUser();
   const deleteRoles = useDeleteRoles(onComplete);
   const getPageUrl = useGetPageUrl();
 
