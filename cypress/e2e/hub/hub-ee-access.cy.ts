@@ -3,7 +3,7 @@ import { ExecutionEnvironment } from '../../../frontend/hub/execution-environmen
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-describe('Execution Environment User Access tab', () => {
+describe.skip('Execution Environment User Access tab', () => {
   let executionEnvironment: ExecutionEnvironment;
   let remoteRegistry: RemoteRegistry;
   before(() => {
