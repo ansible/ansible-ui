@@ -1,7 +1,7 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { MyImports } from './constants';
 
-describe.skip('My imports', () => {
+describe('My imports', () => {
   const validCollection = {
     namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
     name: `testcollection_${randomString(4, undefined, { isLowercase: true })}`,
@@ -55,8 +55,7 @@ describe.skip('My imports', () => {
 
     cy.get(`[data-cy="row-id-${name}"]`).within(() => {
       cy.get('h4').contains(`${name} v${version}`);
-      cy.contains('Completed');
-      cy.contains('completed');
+      cy.get('div:contains("completed")');
     });
 
     cy.get('[data-cy="import-log-content"]').within(() => {
