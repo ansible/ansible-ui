@@ -126,8 +126,8 @@ export function ExecutionEnvironmentAddUsers() {
           postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
             user: user.id,
             role_definition: role.id,
-            content_type: 'containernamespace',
-            object_id: executionEnvironment?.id,
+            content_type: 'galaxy.containernamespace',
+            object_id: 1,
           }),
         onComplete: () => {
           resolve();

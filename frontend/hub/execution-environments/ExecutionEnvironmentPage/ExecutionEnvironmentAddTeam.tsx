@@ -125,7 +125,7 @@ export function ExecutionEnvironmentAddTeams() {
           postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
             team: team.id,
             role_definition: role.id,
-            content_type: 'containernamespace', // Verify this one?
+            content_type: 'galaxy.containernamespace', // Verify this one?
             object_id: executionEnvironment?.id,
           }),
         onComplete: () => {
