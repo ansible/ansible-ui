@@ -639,14 +639,22 @@ Cypress.Commands.add('createHubUser', (hubUser?: Partial<HubUser>) => {
   });
 });
 
+Cypress.Commands.add('deleteHubUser', (user: HubUser, options?: { failOnStatusCode?: boolean }) => {
+  cy.requestDelete(hubAPI`/_ui/v1/users/${user.id.toString()}/`, options);
+});
+
 Cypress.Commands.add('createHubTeam', () => {
   cy.requestPost<HubTeam>(hubAPI`/_ui/v1/groups/`, {
     name: `hub-team${randomString(4)}`,
   }).then((hubTeam) => {
     Cypress.log({
-      displayName: 'HUB USER CREATION :',
+      displayName: 'HUB TEAM CREATION :',
       message: [`Created 👉  ${hubTeam.name}`],
     });
     return hubTeam;
   });
+});
+
+Cypress.Commands.add('deleteHubTeam', (team: HubTeam, options?: { failOnStatusCode?: boolean }) => {
+  cy.requestDelete(hubAPI`/teams/${team.id.toString()}/`, options);
 });
