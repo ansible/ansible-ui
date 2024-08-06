@@ -15,6 +15,7 @@ import {
   useSignExecutionEnvironments,
   useSyncExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
+import { useController } from './useController';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
   const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironment = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
+  const useInController = useController();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -61,6 +63,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
             ? ''
             : t`You do not have rights to this operation`,
       },
+      useInController,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -81,6 +84,7 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
       syncExecutionEnvironments,
       signExecutionEnvironment,
       pageNavigate,
+      useInController,
     ]
   );
 }
