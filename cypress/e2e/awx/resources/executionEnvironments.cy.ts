@@ -54,7 +54,8 @@ describe('Execution Environments', () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
-    it('can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);
@@ -103,6 +104,7 @@ describe('Execution Environments', () => {
       cy.clickModalButton('Close');
     });
 
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it.skip('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
