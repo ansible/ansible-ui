@@ -103,7 +103,7 @@ describe('Repositories', () => {
     cy.get('.pf-v5-c-empty-state').contains('No results found');
   });
 
-  it.skip('should copy CLI to clipboard', () => {
+  it('should copy CLI to clipboard', () => {
     cy.clickTableRowLink('name', repository.name);
 
     // Repository Details
@@ -113,6 +113,7 @@ describe('Repositories', () => {
     cy.get('[data-cy="alert-toaster"]').within(() => {
       cy.get('button').click();
     });
+    navigateToRepositories();
   });
 
   it('should sync repository', () => {
@@ -131,13 +132,13 @@ describe('Repositories', () => {
     });
   });
 
-  it.skip('should be able to add and remove collection versions', () => {
+  it('should be able to add and remove collection versions', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
 
     // Collection versions tab
-    cy.clickTab('Collection versions', true);
+    cy.clickTab('Collection Versions', true);
 
     // Add collections
     cy.getByDataCy('add-collections').click();
@@ -170,15 +171,17 @@ describe('Repositories', () => {
 
     // Verify collections are removed
     cy.contains('tr', collectionName).should('not.exist');
+
+    navigateToRepositories();
   });
 
-  it.skip('should be able to revert repository version', () => {
+  it('should be able to revert repository version', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
 
     // Collection versions tab
-    cy.clickTab('Collection versions', true);
+    cy.clickTab('Collection Versions', true);
     cy.contains('No collection versions yet');
 
     // Add collections
@@ -195,7 +198,7 @@ describe('Repositories', () => {
     cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
 
     // Versions tab
-    cy.clickTab(/Versions/, true);
+    cy.clickTab(/^Versions$/, true);
 
     // Revert repository version
     cy.contains('Version number');
@@ -212,8 +215,10 @@ describe('Repositories', () => {
     });
 
     // Collection versions tab
-    cy.clickTab('Collection versions', true);
+    cy.clickTab('Collection Versions', true);
     // Verify collections are removed since we are reverting to repository version 0
     cy.contains('No collection versions yet');
+
+    navigateToRepositories();
   });
 });
