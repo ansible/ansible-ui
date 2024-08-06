@@ -1,7 +1,7 @@
 import mockUser from '../../../../cypress/fixtures/hub_admin.json';
 import { pulpAPI } from '../../common/api/formatPath';
 import * as useHubContext from '../../common/useHubContext';
-import { Roles } from './Roles';
+import { Roles } from './HubRoles';
 
 describe('Roles List', () => {
   beforeEach(() => {

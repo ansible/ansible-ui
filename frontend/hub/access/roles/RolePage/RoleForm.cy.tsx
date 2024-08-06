@@ -2,7 +2,7 @@ import mockUser from '../../../../../cypress/fixtures/hub_admin.json';
 import { pulpAPI } from '../../../common/api/formatPath';
 import * as useHubContext from '../../../common/useHubContext';
 import { Role } from '../Role';
-import { CreateRole, EditRole } from './RoleForm';
+import { CreateRole, EditRole } from './HubRoleForm';
 
 const mockFeatureFlags = {
   legacy_roles: false,

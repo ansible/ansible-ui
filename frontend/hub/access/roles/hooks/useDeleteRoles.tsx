@@ -2,17 +2,16 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ITableColumn, TextCell, compareStrings } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
-import { pulpAPI } from '../../../common/api/formatPath';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
+import { hubAPI } from '../../../common/api/formatPath';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useHubContext } from '../../../common/useHubContext';
-import { Role } from '../Role';
 import { useRoleColumns } from './useRoleColumns';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 
-export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
+export function useDeleteRoles(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRoleColumns({ disableLinks: true, disableSort: true });
-  const actionColumns = useMemo<ITableColumn<Role>[]>(
+  const actionColumns = useMemo<ITableColumn<HubRbacRole>[]>(
     () => [
       {
         header: t('Name'),
@@ -24,9 +23,9 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
     [t]
   );
   const { user } = useHubContext();
-  const bulkAction = useHubBulkConfirmation<Role>();
-  const cannotDeleteBuiltInRole = (role: Role) =>
-    role.locked ? t('Built-in roles cannot be deleted.') : '';
+  const bulkAction = useHubBulkConfirmation<HubRbacRole>();
+  const cannotDeleteBuiltInRole = (role: HubRbacRole) =>
+    role.managed ? t('Built-in roles cannot be deleted.') : '';
   const cannotDeleteRoleDueToPermissions = () =>
     user?.is_superuser
       ? ''
@@ -34,10 +33,10 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
           'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
         );
 
-  const deleteRoles = (roles: Role[]) => {
-    const undeletableBuiltInRoles: Role[] = roles.filter((role) => role.locked);
-    const editableRoles: Role[] = roles.filter((role) => !role.locked);
-    const undeletableRolesDueToPermissions: Role[] = editableRoles.filter(
+  const deleteRoles = (roles: HubRbacRole[]) => {
+    const undeletableBuiltInRoles: HubRbacRole[] = roles.filter((role) => role.managed);
+    const editableRoles: HubRbacRole[] = roles.filter((role) => !role.managed);
+    const undeletableRolesDueToPermissions: HubRbacRole[] = editableRoles.filter(
       cannotDeleteRoleDueToPermissions
     );
 
@@ -77,17 +76,17 @@ export function useDeleteRoles(onComplete: (roles: Role[]) => void) {
                 : []),
             ]
           : undefined,
-      isItemNonActionable: (role: Role) =>
+      isItemNonActionable: (role: HubRbacRole) =>
         cannotDeleteBuiltInRole(role)
           ? cannotDeleteBuiltInRole(role)
           : cannotDeleteRoleDueToPermissions(),
-      keyFn: (role) => role.pulp_href,
+      keyFn: (role) => role.id,
       isDanger: true,
       confirmationColumns,
       actionColumns,
       onComplete,
       actionFn: (role, signal) =>
-        requestDelete(pulpAPI`/roles/${parsePulpIDFromURL(role.pulp_href)}/`, signal),
+        requestDelete(hubAPI`/_ui/v2/role_definitions/${role.id.toString()}/`, signal),
     });
   };
   return deleteRoles;
