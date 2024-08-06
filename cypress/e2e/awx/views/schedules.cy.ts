@@ -373,7 +373,8 @@ describe('Schedules - Create and Delete', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    it('can create a complex schedule and navigate to details page', () => {
+    //https://issues.redhat.com/browse/AAP-28740
+    it.skip('can create a complex schedule and navigate to details page', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();

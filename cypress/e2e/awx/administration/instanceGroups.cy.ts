@@ -788,6 +788,7 @@ describe(`Instance Groups`, () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it.skip(`can visit the instance group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
@@ -869,6 +870,7 @@ describe(`Instance Groups`, () => {
         });
     });
 
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it.skip(`can visit the container group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');

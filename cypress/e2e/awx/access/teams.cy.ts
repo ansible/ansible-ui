@@ -78,7 +78,6 @@ describe('Teams: Edit and Delete', () => {
     cy.get('[data-cy="name"]')
       .clear()
       .type(team.name + '-edited');
-
     cy.intercept('PATCH', awxAPI`/teams/*/`).as('editTeam');
     cy.clickButton(/^Save team$/);
     cy.wait('@editTeam')
@@ -96,7 +95,6 @@ describe('Teams: Edit and Delete', () => {
     cy.get('[data-cy="name"]')
       .clear()
       .type(team.name + '-edited');
-
     cy.intercept('PATCH', awxAPI`/teams/*/`).as('editTeam');
     cy.clickButton(/^Save team$/);
     cy.wait('@editTeam')
@@ -174,32 +172,25 @@ describe('Teams: Add and Remove users', () => {
     cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-
-    // Remove users
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowAction('name', team.name, 'remove-users', {
       inKebab: true,
       disableFilter: true,
     });
-
-    // Select users
     cy.getModal().within(() => {
       cy.selectTableRowByCheckbox('username', user1.username);
       cy.get('#submit').click();
     });
-
-    // Confirm and remove users
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.get('#submit').click();
       cy.contains(/^Success$/).should('be.visible');
       cy.containsBy('button', /^Close$/).click();
     });
-
-    // Verify modal is closed
     cy.getModal().should('not.exist');
   });
 
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
   it.skip('can add users to the team via the team access tab toolbar', () => {
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
@@ -229,12 +220,10 @@ describe('Teams: Add and Remove users', () => {
     cy.requestPost<AwxUser>(awxAPI`/users/${user1.id.toString()}/roles/`, {
       id: team.summary_fields.object_roles.member_role.id,
     });
-
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
     cy.clickTab(/^Users$/, true);
-    // Remove users
     cy.getTableRow('username', `${user1.username}`).within(() => {
       cy.get('input[type="checkbox"]').click({ force: true });
     });
@@ -246,6 +235,7 @@ describe('Teams: Add and Remove users', () => {
     cy.get(`tr[data-cy=row-id-${user1.id}]`).should('not.exist');
   });
 
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
   it.skip('can remove a role from a user via the team access tab row action', () => {
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
@@ -293,7 +283,6 @@ describe('Teams: Bulk delete', () => {
     cy.get('tbody tr').should('have.length', 5);
     cy.getByDataCy('select-all').click();
     cy.clickToolbarKebabAction('delete-selected-teams');
-
     cy.get('#confirm').click();
     cy.intercept('DELETE', awxAPI`/teams/*/`).as('deleted');
     cy.clickButton(/^Delete team/);
