@@ -1,140 +1,159 @@
-import mockUser from '../../../../cypress/fixtures/hub_admin.json';
-import { pulpAPI } from '../../common/api/formatPath';
-import * as useHubContext from '../../common/useHubContext';
-import { Roles } from './HubRoles';
+/*
+Roles list test cases
+1. Roles list loads
+2. Filter by role name, content type, description, editable (managed)
+3. RBAC on role actions handled correctly
+4. Handle 500 error state
+*/
 
-describe('Roles List', () => {
+import { hubAPI } from '../../common/api/formatPath';
+import { PulpItemsResponse } from '../../common/useHubView';
+import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
+import { HubRoles } from './HubRoles';
+
+describe('HubRoles.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/roles/` + '*',
+        url: hubAPI`/_ui/v2/role_definitions/?*`,
       },
       {
-        fixture: 'hub_roles.json',
+        fixture: 'hubRoleDefinitions.json',
       }
-    );
+    ).as('rolesList');
   });
+
   it('Roles list renders', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
+    cy.mountHub(<HubRoles />);
     cy.verifyPageTitle('Roles');
-    cy.get('tbody').find('tr').should('have.length', 10);
-    cy.contains('Role type')
-      .siblings('ul.pf-v5-c-chip-group__list')
-      .should('contain', 'Galaxy-only roles');
+    cy.get('tbody').find('tr').should('have.length', 18);
   });
+
+  it('Roles list has filters for Name and Editable', () => {
+    cy.mountHub(<HubRoles />);
+    cy.verifyPageTitle('Roles');
+    cy.openToolbarFilterTypeSelect().within(() => {
+      cy.contains(/^Name$/).should('be.visible');
+      cy.contains(/^Editable$/).should('be.visible');
+    });
+  });
+
   it('Filter roles by name', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
-    cy.intercept(pulpAPI`/roles/?*name__icontains=foo*`).as('nameFilterRequest');
-    cy.filterTableByText('foo');
+    cy.mountHub(<HubRoles />);
+    cy.intercept(hubAPI`/_ui/v2/role_definitions/?name__icontains=admin*`).as('nameFilterRequest');
+    cy.filterTableByTypeAndText(/^Name$/, 'admin');
     cy.wait('@nameFilterRequest');
     cy.clickButton(/^Clear all filters$/);
   });
+
   it('Filter roles by editability', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
-    cy.intercept(pulpAPI`/roles/?*locked=false*`).as('editableFilterRequest');
-    cy.filterBySingleSelection('Editable', 'Editable');
-    cy.wait('@editableFilterRequest');
-    cy.clickButton(/^Clear all filters$/);
+    cy.mountHub(<HubRoles />);
+    cy.intercept(hubAPI`/_ui/v2/role_definitions/?managed=false*`).as('editabilityFilterRequest');
+    cy.filterTableBySingleSelect('editable', 'Editable');
+    cy.wait('@editabilityFilterRequest');
+    cy.clearAllFilters();
   });
-  it('Change filter to view all roles', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
-    cy.intercept(pulpAPI`/roles/?*name__startswith=&*`).as('allRolesFilterRequest');
-    cy.filterBySingleSelection('Role type', 'All roles');
-    cy.wait('@allRolesFilterRequest');
-    cy.clickButton(/^Clear all filters$/);
-  });
-  it('Create role button is disabled if the user is not a super user', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: {
-        ...mockUser,
-        is_superuser: false,
-      },
-    }));
-    cy.mount(<Roles />);
-    cy.get('a[data-cy="create-role"]').should('have.attr', 'aria-disabled', 'true');
-  });
-  it('Row actions (edit/delete role) are disabled for a built-in role', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
-    cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
-      cy.get('button.toggle-kebab').click();
+
+  it('Disables edit and delete row action for built-in roles', () => {
+    cy.fixture('hubRoleDefinitions').then((HubRoles: PulpItemsResponse<HubRbacRole>) => {
+      const role = HubRoles.results.find((role) => role.name === 'Namespace Admin');
+      cy.intercept(
+        { method: 'GET', url: hubAPI`/_ui/v2/role_definitions/?*` },
+        {
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            page: 1,
+            results: [role],
+          },
+        }
+      );
     });
-    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
-    cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
-      cy.get('[data-cy="actions-column-cell"]').within(() => {
-        cy.get(`[data-cy="edit-role"]`).should('have.attr', 'aria-disabled', 'true');
+    cy.mountHub(<HubRoles />);
+    cy.contains('td', 'Namespace Admin')
+      .parent()
+      .within(() => {
+        cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
-    });
-  });
-  it('Row actions for an editable role are disabled if the user is not a super user', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: {
-        ...mockUser,
-        is_superuser: false,
-      },
-    }));
-    cy.mount(<Roles />);
-    cy.contains('tr', 'galaxy.demorole').within(() => {
-      cy.get('[data-cy="actions-column-cell"]').within(() => {
-        cy.get(`[data-cy="edit-role"]`).should('have.attr', 'aria-disabled', 'true');
-      });
-    });
-    cy.contains('tr', 'galaxy.ansible_repository_owner').within(() => {
-      cy.get('button.toggle-kebab').click();
-    });
     cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
-  it('Row actions for an editable role are enabled if the user is a super user', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
-    cy.contains('tr', 'galaxy.demorole').within(() => {
-      cy.get('[data-cy="actions-column-cell"]').within(() => {
-        cy.get(`[data-cy="edit-role"]`).should('have.attr', 'aria-disabled', 'false');
+
+  it('Enables edit and delete row action for editable roles when user is superuser', () => {
+    cy.fixture('hubRoleDefinitions').then((HubRoles: PulpItemsResponse<HubRbacRole>) => {
+      const role = HubRoles.results.find((role) => role.name === 'galaxy.test_role');
+      cy.intercept(
+        { method: 'GET', url: hubAPI`/_ui/v2/role_definitions/?*` },
+        {
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            page: 1,
+            results: [role],
+          },
+        }
+      );
+    });
+    cy.mountHub(<HubRoles />, undefined, 'hubSuperUser.json');
+    cy.contains('td', 'galaxy.test_role')
+      .parent()
+      .within(() => {
+        cy.get('#edit-role').should('not.have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
       });
-    });
-    cy.contains('tr', 'galaxy.demorole').within(() => {
-      cy.get('button.toggle-kebab').click();
-    });
     cy.contains('#delete-role', /^Delete role$/).should('not.have.attr', 'aria-disabled', 'true');
   });
-  it('Create Role button is enabled if the user has permission to create roles', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
-    cy.mount(<Roles />);
-    cy.get('a[data-cy="create-role"]').should('have.attr', 'aria-disabled', 'false');
+
+  it('Disables edit and delete row action for editable roles when user is normal user', () => {
+    cy.fixture('hubRoleDefinitions').then((HubRoles: PulpItemsResponse<HubRbacRole>) => {
+      const role = HubRoles.results.find((role) => role.name === 'galaxy.test_role');
+      cy.intercept(
+        { method: 'GET', url: hubAPI`/_ui/v2/role_definitions/?*` },
+        {
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            page: 1,
+            results: [role],
+          },
+        }
+      );
+    });
+    cy.mountHub(<HubRoles />, undefined, 'hubNormalUser.json');
+    cy.contains('td', 'galaxy.test_role')
+      .parent()
+      .within(() => {
+        cy.get('#edit-role').should('have.attr', 'aria-disabled', 'true');
+        cy.getByDataCy('actions-dropdown').click();
+      });
+    cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
   });
+
+  it('Create Role button is enabled if the user has permission to create roles', () => {
+    cy.mountHub(<HubRoles />);
+    cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'false');
+  });
+
+  it('Create Role button is disabled if the user does not have permission to create roles', () => {
+    cy.mountHub(<HubRoles />, undefined, 'hubNormalUser.json');
+    cy.contains('a', /^Create role$/).should('have.attr', 'aria-disabled', 'true');
+  });
+
   it('Displays error if roles are not successfully loaded', () => {
-    cy.stub(useHubContext, 'useHubContext').callsFake(() => ({
-      user: mockUser,
-    }));
     cy.intercept(
       {
         method: 'GET',
-        url: pulpAPI`/roles/` + '*',
+        url: hubAPI`/_ui/v2/role_definitions/?*`,
       },
       {
         statusCode: 500,
       }
-    );
-    cy.mount(<Roles />);
+    ).as('projectsError');
+    cy.mountHub(<HubRoles />);
     cy.contains('Error loading roles');
   });
 });
