@@ -78,7 +78,12 @@ export function AuthenticatorReviewStep(props: {
         <PageDetails numberOfColumns="single">
           {objFields.map((field) =>
             field.value ? (
-              <PageDetailCodeEditor label={field.label} key={field.label} value={field.value} />
+              <PageDetailCodeEditor
+                isArray={Array.isArray(JSON.parse(field.value))}
+                label={field.label}
+                key={field.label}
+                value={field.value}
+              />
             ) : null
           )}
         </PageDetails>
