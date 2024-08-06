@@ -24,7 +24,7 @@ export function useRemoteRegistriesColumns(_options?: {
         cell: (remoteRegistry) => (
           <TextCell
             text={remoteRegistry.name}
-            to={getPageUrl(HubRoute.RemoteRegistryPage, { params: { id: remoteRegistry.name } })}
+            to={getPageUrl(HubRoute.RemoteRegistryDetails, { params: { id: remoteRegistry.name } })}
           />
         ),
         sort: 'name',

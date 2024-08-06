@@ -69,7 +69,7 @@ export function CreateRemoteRegistry() {
         url,
       }
     );
-    pageNavigate(HubRoute.RemoteRegistryPage, {
+    pageNavigate(HubRoute.RemoteRegistryDetails, {
       params: { id: createdRemoteRegistry?.name },
     });
   };
@@ -121,6 +121,7 @@ export function EditRemoteRegistry() {
   const { resetField } = useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const name = params.id;
   const { data, error, refresh } = useGet<HubItemsResponse<RemoteRegistryProps>>(
@@ -158,7 +159,9 @@ export function EditRemoteRegistry() {
       hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
       remoteRegistry
     );
-    navigate(-1);
+    pageNavigate(HubRoute.RemoteRegistryDetails, {
+      params: { id: name },
+    });
   };
 
   const handleOnClear = (name: string) => {
@@ -309,6 +312,7 @@ function MiscAdvancedRemoteInputs() {
         type="number"
         placeholder={t('Download concurrency')}
         labelHelp={t('Total number of simultaneous connections.')}
+        min={1}
       />
       <PageFormTextInput<RemoteRegistryProps>
         name="rate_limit"
