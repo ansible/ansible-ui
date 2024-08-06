@@ -5,7 +5,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 
-describe.skip('Users Tests', () => {
+describe('Users Tests', () => {
   let organization: Organization;
 
   before(() => {
@@ -34,7 +34,8 @@ describe.skip('Users Tests', () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
-    it('filters users by id', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('filters users by id', () => {
       cy.filterTableByMultiSelect('id', [user.id.toString()]);
       cy.get('tr').should('have.length.greaterThan', 0);
       if (user.id) {
@@ -43,7 +44,8 @@ describe.skip('Users Tests', () => {
       cy.clearAllFilters();
     });
 
-    it('creates and then deletes a basic user', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('creates and then deletes a basic user', () => {
       const userName = 'E2E_User_' + randomString(4);
       const password = randomString(12);
       cy.clickLink(/^Create user$/);
@@ -59,12 +61,14 @@ describe.skip('Users Tests', () => {
       cy.verifyPageTitle('Users');
     });
 
-    it('navigates to the edit form from the users list row item', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('navigates to the edit form from the users list row item', () => {
       cy.clickTableRowPinnedAction(user.username, 'edit-user');
       cy.verifyPageTitle('Edit User');
     });
 
-    it('edits a user from the details page', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('edits a user from the details page', () => {
       cy.clickTableRowLink('username', user.username);
       cy.verifyPageTitle(user.username);
       cy.url().should('contain', '/details');
@@ -88,7 +92,8 @@ describe.skip('Users Tests', () => {
       cy.verifyPageTitle('Users');
     });
 
-    it('deletes a user from the details page', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('deletes a user from the details page', () => {
       cy.clickTableRowLink('username', user.username);
       cy.verifyPageTitle(user.username);
       cy.clickPageAction('delete-user');
@@ -97,7 +102,8 @@ describe.skip('Users Tests', () => {
       cy.verifyPageTitle('Users');
     });
 
-    it('deletes a user from the users list row item', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('deletes a user from the users list row item', () => {
       cy.clickTableRowAction('username', user.username, 'delete-user', {
         inKebab: true,
       });
@@ -108,7 +114,8 @@ describe.skip('Users Tests', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    it('deletes a user from the users list toolbar', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('deletes a user from the users list toolbar', () => {
       cy.selectTableRow(user.username);
       cy.clickToolbarKebabAction('delete-selected-users');
       cy.get('#confirm').click();
