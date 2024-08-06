@@ -9,17 +9,17 @@ import {
 } from '../../../../../framework';
 import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
-import { Role } from '../Role';
 import { useDeleteRoles } from './useDeleteRoles';
 import { ButtonVariant } from '@patternfly/react-core';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 
-export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
+export function useRoleToolbarActions(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();
   const { user } = useHubContext();
   const getPageUrl = useGetPageUrl();
   const deleteRoles = useDeleteRoles(onComplete);
 
-  return useMemo<IPageAction<Role>[]>(
+  return useMemo<IPageAction<HubRbacRole>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -49,13 +49,13 @@ export function useRoleToolbarActions(onComplete: (roles: Role[]) => void) {
   );
 }
 
-export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
+export function useRoleRowActions(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();
   const { user } = useHubContext();
   const deleteRoles = useDeleteRoles(onComplete);
   const getPageUrl = useGetPageUrl();
 
-  return useMemo<IPageAction<Role>[]>(
+  return useMemo<IPageAction<HubRbacRole>[]>(
     () => [
       {
         type: PageActionType.Link,
@@ -65,7 +65,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         isPinned: true,
         label: t('Edit role'),
         isDisabled: (role) =>
-          role.locked
+          role.managed
             ? t('Built-in roles cannot be edited.')
             : user?.is_superuser
               ? undefined
@@ -74,7 +74,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
                 ),
         href: (role) => {
           return getPageUrl(HubRoute.EditRole, {
-            params: { id: role.name ?? '' },
+            params: { id: role.id ?? '' },
           });
         },
       },
@@ -85,7 +85,7 @@ export function useRoleRowActions(onComplete: (roles: Role[]) => void) {
         icon: TrashIcon,
         label: t('Delete role'),
         isDisabled: (role) =>
-          role.locked
+          role.managed
             ? t('Built-in roles cannot be deleted.')
             : user?.is_superuser
               ? undefined
