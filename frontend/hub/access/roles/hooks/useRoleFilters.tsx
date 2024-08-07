@@ -25,6 +25,17 @@ export function useRoleFilters() {
         ],
         placeholder: t('Filter by editability'),
       },
+      {
+        key: 'type',
+        label: t('Role type'),
+        type: ToolbarFilterType.SingleSelect,
+        query: 'name__startswith',
+        options: [
+          { label: t('Galaxy-only roles'), value: 'galaxy.' },
+          { label: t('All roles'), value: '' },
+        ],
+        placeholder: t('Filter by role type'),
+      },
     ];
     return filters;
   }, [t]);

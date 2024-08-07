@@ -47,6 +47,9 @@ export function HubRolesTable() {
     toolbarFilters,
     tableColumns,
     keyFn: roleKeyFn,
+    defaultFilters: {
+      type: ['galaxy.'],
+    },
   });
 
   const toolbarActions = useRoleToolbarActions(view.unselectItemsAndRefresh);

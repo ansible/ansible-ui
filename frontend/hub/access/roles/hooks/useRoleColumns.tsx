@@ -62,6 +62,6 @@ export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?:
         modal: ColumnModalOption.hidden,
       },
     ],
-    [t, options?.disableSort, options?.disableLinks, getPageUrl]
+    [t, options?.disableSort, options?.disableLinks, getPageUrl, managedRolesWithDescription]
   );
 }
