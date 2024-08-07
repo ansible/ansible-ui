@@ -14,7 +14,10 @@ describe('Job Page', () => {
   });
   it('Relaunch and cancel buttons are visible on a running job', () => {
     cy.mount(<JobHeader />, { path: ':job_type/:id', initialEntries: ['/workflow/1'] });
-    cy.get('[data-cy="relaunch-job"]').should('contain', 'Relaunch job');
+    cy.get('[data-cy="relaunch-job-with"]').should('exist');
+    cy.get('[data-cy="relaunch-job-with"]').click();
+    cy.get('[data-cy="job-type-run"]').should('exist');
+    cy.get('[data-cy="job-type-check"]').should('exist');
     cy.get('[data-cy="cancel-job"]').should('contain', 'Cancel job');
   });
   it('Delete button is disabled on a running job', () => {

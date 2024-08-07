@@ -17,6 +17,7 @@ export interface JobRelaunch {
   hosts?: 'all' | 'failed' | null;
   /** Credential passwords */
   credential_passwords?: string;
+  job_type?: 'run' | 'check' | null;
 }
 
 export interface InventorySourceUpdate {
