@@ -41,7 +41,9 @@ describe('HubRoles.cy.ts', () => {
 
   it('Filter roles by name', () => {
     cy.mountHub(<HubRoles />);
-    cy.intercept(hubAPI`/_ui/v2/role_definitions/?name__icontains=admin*`).as('nameFilterRequest');
+    cy.intercept(
+      hubAPI`/_ui/v2/role_definitions/?name__startswith=galaxy.&name__icontains=admin*`
+    ).as('nameFilterRequest');
     cy.filterTableByTypeAndText(/^Name$/, 'admin');
     cy.wait('@nameFilterRequest');
     cy.clickButton(/^Clear all filters$/);
@@ -49,7 +51,9 @@ describe('HubRoles.cy.ts', () => {
 
   it('Filter roles by editability', () => {
     cy.mountHub(<HubRoles />);
-    cy.intercept(hubAPI`/_ui/v2/role_definitions/?managed=false*`).as('editabilityFilterRequest');
+    cy.intercept(hubAPI`/_ui/v2/role_definitions/?name__startswith=galaxy.&managed=false*`).as(
+      'editabilityFilterRequest'
+    );
     cy.filterTableBySingleSelect('editable', 'Editable');
     cy.wait('@editabilityFilterRequest');
     cy.clearAllFilters();
