@@ -182,3 +182,12 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add('checkCellTextByColumnName', (term: string, expectedValue: string) => {
+  cy.contains('dt', term)
+    .next('dd')
+    .invoke('text')
+    .then((text) => {
+      expect(text.trim()).to.equal(expectedValue);
+    });
+});
