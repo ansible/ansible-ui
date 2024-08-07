@@ -178,7 +178,8 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      it('Float survey type', () => {
+      //https://issues.redhat.com/browse/AAP-28876
+      it.skip('Float survey type', () => {
         const question = {
           question_name: 'Float answer',
           question_description: 'Float description.',
