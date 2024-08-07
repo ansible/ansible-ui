@@ -33,6 +33,10 @@ export function ExecutionEnvironments() {
         description={t(
           'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
         )}
+        titleHelpTitle={t('Execution Environments')}
+        titleHelp={t(
+          'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
+        )}
       />
       <PageTable<ExecutionEnvironment>
         id="hub-execution-environments-table"
