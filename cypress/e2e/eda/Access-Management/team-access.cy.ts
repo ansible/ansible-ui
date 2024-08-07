@@ -17,7 +17,7 @@ type ResourceObject =
   | EdaCredential
   | EdaCredentialType;
 
-user_team_access_tab_resources.forEach((resource) => {
+user_team_access_tab_resources?.forEach((resource) => {
   describe.skip(`Team Access Tab for ${resource.name} - Add team`, () => {
     let edaTeam: EdaTeam;
     let resource_object: ResourceObject;
@@ -61,7 +61,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaTeam(edaTeam);
     });
 
-    it('can add teams via team access tab', () => {
+    it.skip('can add teams via team access tab', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
