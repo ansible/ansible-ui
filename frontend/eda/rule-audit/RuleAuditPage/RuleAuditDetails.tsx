@@ -22,7 +22,7 @@ export function RuleAuditDetails() {
       </PageDetail>
       <PageDetail
         label={t('Rulebook activation')}
-        helpText={t`Rulebook activations are rulebooks that have been activated to run.`}
+        helpText={t`Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.`}
       >
         {ruleAudit && ruleAudit.activation_instance?.id ? (
           <Link

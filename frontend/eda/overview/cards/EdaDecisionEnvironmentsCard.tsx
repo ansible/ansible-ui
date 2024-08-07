@@ -32,7 +32,7 @@ export function EdaDecisionEnvironmentsCard() {
       height="md"
       linkText={t('View all Decision Environments')}
       to={getPageUrl(EdaRoute.DecisionEnvironments)}
-      helpTitle={t('Decision environments')}
+      helpTitle={t('Decision Environments')}
       help={t('Decision environments are a container image to run Ansible rulebooks.')}
     >
       <PageTable

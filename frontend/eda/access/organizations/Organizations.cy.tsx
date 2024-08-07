@@ -64,7 +64,7 @@ describe('Organizations.cy.ts', () => {
     cy.get('h1').should('contain', 'Organizations');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains(
-      /^An Organization is a logical collection of Users, Teams and Projects and is the highest level in the EDA object hierarchy.$/
+      /^An organization is a logical collection of users, teams and projects and is the highest level in the EDA object hierarchy.$/
     ).should('be.visible');
     cy.contains('Organization');
     cy.contains('Name');

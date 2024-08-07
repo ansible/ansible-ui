@@ -79,7 +79,7 @@ describe('RuleAudit.cy.ts', () => {
     cy.get('h1').should('contain', 'Rule Audit');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains(
-      /^Rule audit allows auditing of rules which have been triggered by incoming events.$/
+      /^Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.$/
     ).should('be.visible');
     cy.get('[data-cy="name-column-header"]').should('contain', 'Name');
     cy.get('[data-cy="status-column-header"]').should('contain', 'Status');

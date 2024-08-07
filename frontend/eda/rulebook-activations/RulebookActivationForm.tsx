@@ -216,7 +216,7 @@ export function RulebookActivationInputs() {
             : []
         }
         footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>{t('Create project')}</Link>}
-        labelHelp={t('Projects are a logical collection of rulebooks.')}
+        labelHelp={t('A project is a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
       <PageFormAsyncSelect<IEdaRulebookActivationInputs>
