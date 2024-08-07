@@ -75,7 +75,10 @@ export enum HubRoute {
   EditRemote = 'hub-edit-remote',
   RemotePage = 'hub-remote-page',
   RemoteDetails = 'hub-remote-details',
-  RemoteAccess = 'hub-remote-access',
+  RemoteAddTeams = 'hub-remote-add-teams',
+  RemoteAddUsers = 'hub-remote-add-users',
+  RemoteTeamAccess = 'hub-remote-add-team-access',
+  RemoteUserAccess = 'hub-remote-user-access',
 
   // Access
   Access = 'hub-access',
