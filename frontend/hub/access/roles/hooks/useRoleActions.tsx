@@ -70,7 +70,7 @@ export function useRoleRowActions(onComplete: (roles: HubRbacRole[]) => void) {
             : user?.is_superuser
               ? undefined
               : t(
-                  'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
+                  'You do not have permission to edit this role. Please contact your system administrator if there is an issue with your access.'
                 ),
         href: (role) => {
           return getPageUrl(HubRoute.EditRole, {

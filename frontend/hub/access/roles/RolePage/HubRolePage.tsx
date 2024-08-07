@@ -54,7 +54,7 @@ export function HubRolePage(props: {
             : user?.is_superuser
               ? undefined
               : t(
-                  'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
+                  'You do not have permission to edit this role. Please contact your system administrator if there is an issue with your access.'
                 ),
         onClick: (role: HubRbacRole) =>
           pageNavigate(HubRoute.EditRole, { params: { id: role.id } }),
