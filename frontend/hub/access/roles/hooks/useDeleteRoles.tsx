@@ -30,7 +30,7 @@ export function useDeleteRoles(onComplete: (roles: HubRbacRole[]) => void) {
     user?.is_superuser
       ? ''
       : t(
-          'You do not have permission to edit this role. Please contact your organization administrator if there is an issue with your access.'
+          'You do not have permission to delete this role. Please contact your system administrator if there is an issue with your access.'
         );
 
   const deleteRoles = (roles: HubRbacRole[]) => {
