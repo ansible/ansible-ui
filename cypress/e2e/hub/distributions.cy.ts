@@ -14,6 +14,7 @@ describe('Collections Tabs: Distributions', () => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
     });
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
@@ -23,7 +24,6 @@ describe('Collections Tabs: Distributions', () => {
     });
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
