@@ -177,6 +177,7 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source Schedules List Page', () => {
+    //https://issues.redhat.com/browse/AAP-28875
     it.skip('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
       goToSourceList(inventory.name);
       cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
