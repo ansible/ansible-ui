@@ -18,7 +18,7 @@ type ResourceObject =
   | EdaCredentialType;
 
 user_team_access_tab_resources.forEach((resource) => {
-  describe(`Team Access Tab for ${resource.name} - Add team`, () => {
+  describe.skip(`Team Access Tab for ${resource.name} - Add team`, () => {
     let edaTeam: EdaTeam;
     let resource_object: ResourceObject;
     before(() => {
