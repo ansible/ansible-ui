@@ -1,11 +1,11 @@
-name: AWX Nightly
+name: EDA E2E Run
 
 on:
   workflow_dispatch:
     inputs:
-      AWX_SERVER:
+      EDA_SERVER:
         type: string
-        description: 'AWX Server'
+        description: 'EDA Server'
   schedule:
     - cron: '0 8 * * *'
 
@@ -14,35 +14,34 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      AWX_SERVER: ${{ steps.step1.outputs.AWX_SERVER }}
+      EDA_SERVER: ${{ steps.step1.outputs.EDA_SERVER }}
     steps:
       - id: step1
         run: |
           CURRENTDATE=$(date +'%Y%m%d')
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER || 'https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
+            echo "EDA_SERVER=${{ github.event.inputs.EDA_SERVER || 'https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
           else 
-            echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "EDA_SERVER=https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
           fi
 
-  awx-e2e:
-    name: AWX E2E
+  eda-e2e:
+    name: EDA E2E
     needs: setup
-    uses: ./.github/workflows/awx-e2e.yml
+    uses: ./.github/workflows/eda-e2e.yml
     with:
-      AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
-      TAGS: nightly
+      EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
     secrets:
-      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-      AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
-      AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
+      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
 
   slack-success-notification:
     name: Slack Success Notification
     if: success()
     needs:
       - setup
-      - awx-e2e
+      - eda-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -61,7 +60,7 @@ jobs:
                           "text":
                             {
                               "type": "mrkdwn",
-                              "text": "*AWX E2E Nightly Success* - ${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.AWX_SERVER }}|Server>"
+                              "text": "*EDA E2E Run Success* - ${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.EDA_SERVER }}|Server>"
                             }
                         }
                       ]
@@ -77,7 +76,7 @@ jobs:
     if: failure()
     needs:
       - setup
-      - awx-e2e
+      - eda-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -94,7 +93,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*AWX E2E Nightly Failed* - ${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.AWX_SERVER }}|Server> - <!here>"
+                          "text": "*EDA E2E Run Failed* - ${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <!here>"
                         }
                       }
                     ]

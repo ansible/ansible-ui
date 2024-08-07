@@ -1,11 +1,11 @@
-name: EDA Nightly
+name: HUB E2E Run
 
 on:
   workflow_dispatch:
     inputs:
-      EDA_SERVER:
+      HUB_SERVER:
         type: string
-        description: 'EDA Server'
+        description: 'HUB Server'
   schedule:
     - cron: '0 8 * * *'
 
@@ -14,35 +14,34 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      EDA_SERVER: ${{ steps.step1.outputs.EDA_SERVER }}
+      HUB_SERVER: ${{ steps.step1.outputs.HUB_SERVER }}
     steps:
       - id: step1
         run: |
           CURRENTDATE=$(date +'%Y%m%d')
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
-            echo "EDA_SERVER=${{ github.event.inputs.EDA_SERVER || 'https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
+            echo "HUB_SERVER=${{ github.event.inputs.HUB_SERVER || 'https://hub.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
           else 
-            echo "EDA_SERVER=https://eda.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
+            echo "HUB_SERVER=https://galaxy.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
           fi
 
-  eda-e2e:
-    name: EDA E2E
+  hub-e2e:
+    name: HUB E2E
     needs: setup
-    uses: ./.github/workflows/eda-e2e.yml
+    uses: ./.github/workflows/hub-e2e.yml
     with:
-      EDA_SERVER: ${{ needs.setup.outputs.EDA_SERVER }}
-      TAGS: nightly
+      HUB_SERVER: ${{ needs.setup.outputs.HUB_SERVER }}
     secrets:
-      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
-      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
+      HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+      HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
+      HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
 
   slack-success-notification:
     name: Slack Success Notification
     if: success()
     needs:
       - setup
-      - eda-e2e
+      - hub-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -61,7 +60,7 @@ jobs:
                           "text":
                             {
                               "type": "mrkdwn",
-                              "text": "*EDA E2E Nightly Success* - ${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.EDA_SERVER }}|Server>"
+                              "text": "*HUB E2E Run Success* - ${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.HUB_SERVER }}|Server>"
                             }
                         }
                       ]
@@ -77,7 +76,7 @@ jobs:
     if: failure()
     needs:
       - setup
-      - eda-e2e
+      - hub-e2e
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
@@ -94,7 +93,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*EDA E2E Nightly Failed* - ${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.EDA_SERVER }}|Server> - <!here>"
+                          "text": "*HUB E2E Run Failed* - ${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.HUB_SERVER }}|Server> - <!here>"
                         }
                       }
                     ]
