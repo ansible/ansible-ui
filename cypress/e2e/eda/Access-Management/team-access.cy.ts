@@ -22,7 +22,7 @@ describe.skip('Team Access Tab', () => {
     describe(`Team Access Tab for ${resource.name} - Add team`, () => {
       let edaTeam: EdaTeam;
       let resource_object: ResourceObject;
-      before(() => {
+      beforeEach(() => {
         // If the resource is a RBA, create all dependency resources, else just the one resource
         if (resource.name === 'rulebook-activations') {
           let edaProject: EdaProject;
@@ -57,7 +57,7 @@ describe.skip('Team Access Tab', () => {
         });
       });
 
-      after(() => {
+      afterEach(() => {
         resource.deletion(resource_object);
         cy.deleteEdaTeam(edaTeam);
       });
