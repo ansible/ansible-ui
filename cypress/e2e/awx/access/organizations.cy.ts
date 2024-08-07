@@ -60,7 +60,8 @@ describe('Organizations: Edit and Delete', function () {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('can edit an organization from the list view', function () {
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
+  it.skip('can edit an organization from the list view', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
@@ -79,7 +80,8 @@ describe('Organizations: Edit and Delete', function () {
     cy.verifyPageTitle(`${organization.name}`);
   });
 
-  it('can edit an organization from the details page', function () {
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
+  it.skip('can edit an organization from the details page', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
@@ -100,7 +102,8 @@ describe('Organizations: Edit and Delete', function () {
     cy.verifyPageTitle(`${organization.name}`);
   });
 
-  it('can delete an organization from the details page', function () {
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
+  it.skip('can delete an organization from the details page', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.get('[data-cy="name-column-cell"]').within(() => {
@@ -119,7 +122,8 @@ describe('Organizations: Edit and Delete', function () {
       });
   });
 
-  it('can delete an organization from the organizations list row item', function () {
+  //Skipping due to https://issues.redhat.com/browse/AAP-28597
+  it.skip('can delete an organization from the organizations list row item', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.getByDataCy('actions-column-cell').within(() => {
