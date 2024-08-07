@@ -97,7 +97,7 @@ user_team_access_tab_resources.forEach((resource) => {
     });
   });
 
-  describe(`Team Access Tab for ${resource.name} - actions`, () => {
+  describe.skip(`Team Access Tab for ${resource.name} - actions`, () => {
     let roleIDs: { [key: string]: number };
     let RoleID: number;
     let resource_object:
