@@ -74,6 +74,7 @@ import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTe
 import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
