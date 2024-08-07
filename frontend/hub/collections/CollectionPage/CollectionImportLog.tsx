@@ -2,20 +2,14 @@ import { Alert, CodeBlock, PageSection, Stack, StackItem } from '@patternfly/rea
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
-import styled from 'styled-components';
-import {
-  LoadingPage,
-  PFColorE,
-  PageDetail,
-  PageDetails,
-  Scrollable,
-  getPatternflyColor,
-} from '../../../../framework';
+import { LoadingPage, PFColorE, PageDetail, PageDetails, Scrollable } from '../../../../framework';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';
+import { getLogMessageColor } from '../../common/utils/getLogMessageColor';
+import { NavigationArrow } from '../../common/ImportLogNavigationArrow';
 import { CollectionImport, CollectionVersionSearch } from '../Collection';
 
 export function CollectionImportLog() {
@@ -138,7 +132,7 @@ export function CollectionImportLog() {
                   <div
                     key={index}
                     style={{
-                      color: getColor(message.level),
+                      color: getLogMessageColor(message.level),
                     }}
                   >
                     {message.message}
@@ -157,68 +151,5 @@ export function CollectionImportLog() {
         </PageSection>
       </div>
     </Scrollable>
-  );
-}
-
-function getColor(messageLevel: string) {
-  const res = getPatternflyColor(
-    messageLevel === 'WARNING'
-      ? PFColorE.Warning
-      : messageLevel === 'ERROR'
-        ? PFColorE.Danger
-        : PFColorE.Disabled
-  );
-
-  if (messageLevel === 'INFO') {
-    return 'white';
-  }
-  return res;
-}
-
-const arrowStyle = `
-  color: white;
-  &:hover {
-    cursor: pointer;
-  }
-  position: absolute;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  font-size: 120%;
-`;
-
-const StyledArrowDown = styled.div`
-  ${arrowStyle}
-  right: 0; /* Aligns the icon to the right */
-  top: 0; /* Aligns the icon to the top */
-`;
-
-const StyledArrowUp = styled.div`
-  ${arrowStyle}
-  right: 0;
-  bottom: 0;
-`;
-
-function NavigationArrow(props: { direction: 'up' | 'down'; onClick: () => void }) {
-  const className = `fa fa-arrow-circle-${props.direction} clickable`;
-
-  const Component = props.direction === 'up' ? StyledArrowUp : StyledArrowDown;
-
-  return (
-    <Component>
-      <span
-        role="button"
-        onClick={() => {
-          props.onClick();
-        }}
-        onKeyDown={(event) => {
-          // Trigger click on Enter key
-          if (event.key === 'Enter') {
-            props.onClick();
-          }
-        }}
-        tabIndex={props.direction === 'up' ? 0 : 1} // Make the element focusable
-        className={className}
-      />
-    </Component>
   );
 }

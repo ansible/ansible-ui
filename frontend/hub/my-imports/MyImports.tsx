@@ -5,21 +5,13 @@ import {
   DrawerHead,
   DrawerPanelBody,
   DrawerPanelContent,
-  Flex,
-  FlexItem,
   PageSection,
   Title,
 } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
-import {
-  IFilterState,
-  PageHeader,
-  PageLayout,
-  Scrollable,
-  useGetPageUrl,
-} from '../../../framework';
+import { IFilterState, PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
 import { useGet } from '../../common/crud/useGet';
 import { CollectionImport, CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
@@ -40,7 +32,7 @@ export function MyImports() {
   const pageQP = Number(searchParams.get('page')) || 1;
   const perPageQP = Number(searchParams.get('perPage')) || 10;
 
-  const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
+  const [isDrawerExpanded, setIsDrawerExpanded] = useState(true);
   const [selectedImport, setSelectedImport] = useState('');
   const [collectionFilter, setCollectionFilter] = useState<IFilterState>({
     name: nameQP ? [nameQP] : undefined,
@@ -175,16 +167,12 @@ export function MyImports() {
         )}
       </DrawerHead>
       <DrawerPanelBody>
-        <Flex spaceItems={{ default: 'spaceItemsLg' }} direction={{ default: 'column' }}>
-          <FlexItem>
-            <ImportLog
-              isLoading={importLogLoading}
-              error={importLogError}
-              collectionImport={collectionImportResp}
-              collection={collection}
-            />
-          </FlexItem>
-        </Flex>
+        <ImportLog
+          isLoading={importLogLoading}
+          error={importLogError}
+          collectionImport={collectionImportResp}
+          collection={collection}
+        />
       </DrawerPanelBody>
     </DrawerPanelContent>
   );
@@ -192,37 +180,35 @@ export function MyImports() {
   return (
     <PageLayout>
       <PageHeader title={t('My imports')} description={t('Imported collections')} />
-      <Scrollable>
-        <PageSection variant="light">
-          <Drawer isExpanded={isDrawerExpanded} isStatic>
-            <DrawerContent panelContent={panelContent}>
-              <DrawerContentBody>
-                <ImportList
-                  isLoading={collectionImportsLoading}
-                  error={collectionImportsError}
-                  collectionImports={collectionImports}
-                  selectedImport={selectedImport}
-                  setSelectedImport={setSelectedImport}
-                  setSelectedNamespace={setNamespaceQP}
-                  queryParams={{
-                    status: statusQP,
-                    name: nameQP,
-                    namespace: namespaceQP,
-                    perPage: perPageQP,
-                    page: pageQP,
-                  }}
-                  setPage={setPage}
-                  setPerPage={setPerPage}
-                  itemCount={collectionImportsCount}
-                  setDrawerExpanded={() => setIsDrawerExpanded(true)}
-                  collectionFilter={collectionFilter}
-                  setCollectionFilter={setCollectionFilter}
-                />
-              </DrawerContentBody>
-            </DrawerContent>
-          </Drawer>
-        </PageSection>
-      </Scrollable>
+      <PageSection variant="light" hasOverflowScroll hasShadowTop={false} hasShadowBottom={false}>
+        <Drawer isExpanded={isDrawerExpanded} isInline>
+          <DrawerContent panelContent={panelContent}>
+            <DrawerContentBody>
+              <ImportList
+                isLoading={collectionImportsLoading}
+                error={collectionImportsError}
+                collectionImports={collectionImports}
+                selectedImport={selectedImport}
+                setSelectedImport={setSelectedImport}
+                setSelectedNamespace={setNamespaceQP}
+                queryParams={{
+                  status: statusQP,
+                  name: nameQP,
+                  namespace: namespaceQP,
+                  perPage: perPageQP,
+                  page: pageQP,
+                }}
+                setPage={setPage}
+                setPerPage={setPerPage}
+                itemCount={collectionImportsCount}
+                setDrawerExpanded={() => setIsDrawerExpanded(true)}
+                collectionFilter={collectionFilter}
+                setCollectionFilter={setCollectionFilter}
+              />
+            </DrawerContentBody>
+          </DrawerContent>
+        </Drawer>
+      </PageSection>
     </PageLayout>
   );
 }
