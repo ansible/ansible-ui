@@ -142,7 +142,11 @@ describe('Namespaces', () => {
 
   it('user can view import logs', () => {
     cy.createHubNamespace().then((namespace) => {
-      cy.visit(`${Namespaces.url}/${namespace.name}`);
+      cy.navigateTo('hub', Namespaces.url);
+      cy.verifyPageTitle('Namespaces');
+      cy.filterTableBySingleText(namespace.name);
+      cy.get('a').contains(namespace.name).click();
+      cy.verifyPageTitle(namespace.name);
 
       cy.clickPageAction('imports');
       cy.url().should('include', MyImports.url);

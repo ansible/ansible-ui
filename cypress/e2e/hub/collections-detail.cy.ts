@@ -5,6 +5,20 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
+function visitCollection(
+  collection: string,
+  namespace: string,
+  _version: string = '1.0.0',
+  _repository: string = 'published'
+) {
+  cy.navigateTo('hub', Collections.url);
+  cy.verifyPageTitle(Collections.title);
+  cy.getByDataCy('table-view').click();
+  cy.filterTableBySingleText(collection);
+  cy.clickLink(collection);
+  cy.verifyPageTitle(`${namespace}.${collection}`);
+}
+
 describe('Collections Details', () => {
   let namespace: HubNamespace;
   let repository: Repository;
@@ -141,9 +155,7 @@ describe('Collections Details', () => {
   it('can deprecate a collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
-      cy.visit(
-        `/collections/published/${namespace.name}/${collectionName}/details?version=${'1.0.0'}`
-      );
+      visitCollection(collectionName, namespace.name, '1.0.0');
       cy.selectDetailsPageKebabAction('deprecate-collection');
       cy.clickButton('Close');
       cy.navigateTo('hub', Collections.url);
@@ -174,9 +186,7 @@ describe('Collections Details', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
       // Sign collection
-      cy.visit(
-        `/collections/published/${namespace.name}/${collectionName}/details?version=${'1.0.0'}`
-      );
+      visitCollection(collectionName, namespace.name, '1.0.0');
       cy.selectDetailsPageKebabAction('sign-collection');
       cy.clickButton(/^Close$/);
       cy.getModal().should('not.exist');
@@ -196,9 +206,7 @@ describe('Collections Details', () => {
         `collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`
       ).then((result: { filename: string }) => {
         //Visit the details screen of the newly uploaded collection
-        cy.visit(
-          `/collections/${repository.name}/${namespace.name}/${collectionName}/details?version=1.0.0`
-        );
+        visitCollection(collectionName, namespace.name, '1.0.0', repository.name);
         //Assert baseline version nuumber
         cy.getByDataCy('version').should('contain', '1.0.0');
         cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
