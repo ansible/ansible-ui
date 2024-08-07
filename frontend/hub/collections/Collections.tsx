@@ -39,7 +39,7 @@ export function Collections() {
         description={t(
           'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
         )}
-        titleHelpTitle={t('Collection')}
+        titleHelpTitle={t('Collections')}
         titleHelp={t(
           'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
         )}
