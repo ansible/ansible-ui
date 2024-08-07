@@ -25,7 +25,16 @@ export function Tasks() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Task Management')} />
+      <PageHeader
+        title={t('Task Management')}
+        description={t(
+          'Task management facilitates organizing, scheduling, and monitoring automation tasks for efficient workflow management.'
+        )}
+        titleHelpTitle={t('Task Management')}
+        titleHelp={t(
+          'Task management facilitates organizing, scheduling, and monitoring automation tasks for efficient workflow management.'
+        )}
+      />
       <PageTable<Task>
         id="hub-tasks-table"
         toolbarFilters={toolbarFilters}
