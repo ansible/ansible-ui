@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon, ImportIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon, ImportIcon, KeyIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,18 +11,30 @@ import {
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
+import { useWindowLocation } from '../../../../framework/components/useWindowLocation';
+import { useSignAllCollections } from '../../collections/hooks/useSignAllCollections';
+import { useHubContext } from '../../common/useHubContext';
 
 export function useHubNamespaceActions(options?: {
   onHubNamespacesDeleted: (namespaces: HubNamespace[]) => void;
+  onHubNamespacesSignAllCollections?: (namespaces: HubNamespace) => void;
+  isDetailsPageAction?: boolean;
 }) {
   if (!options) {
-    options = { onHubNamespacesDeleted: () => {} };
+    options = { onHubNamespacesDeleted: () => {}, onHubNamespacesSignAllCollections: () => {} };
   }
   const { t } = useTranslation();
+  const { settings, featureFlags } = useHubContext();
+  const signing_service = settings.GALAXY_COLLECTION_SIGNING_SERVICE;
+  const can_upload_signatures = featureFlags.can_upload_signatures;
   const pageNavigate = usePageNavigate();
   const deleteHubNamespaces = useDeleteHubNamespaces(options.onHubNamespacesDeleted);
+  const { location } = useWindowLocation();
+  const signCollection = useSignAllCollections();
 
   return useMemo(() => {
+    const canSignAllCollections = () =>
+      !can_upload_signatures && location?.search.includes('repository');
     const actions: IPageAction<HubNamespace>[] = [
       {
         type: PageActionType.Button,
@@ -45,6 +57,22 @@ export function useHubNamespaceActions(options?: {
           pageNavigate(HubRoute.MyImports, { query: { namespace: namespace.name } }),
       },
       {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
+        icon: KeyIcon,
+        label: t(`Sign all collections`),
+        onClick: (namespace) =>
+          signCollection({
+            onComplete: options.onHubNamespacesSignAllCollections,
+            namespace: namespace,
+            signing_service: signing_service ?? '',
+          }),
+        isDisabled: () => (canSignAllCollections() ? '' : t('Select a repository filter')),
+        isHidden: () => !options.isDetailsPageAction,
+      },
+
+      {
         type: PageActionType.Seperator,
       },
       {
@@ -57,5 +85,15 @@ export function useHubNamespaceActions(options?: {
       },
     ];
     return actions;
-  }, [deleteHubNamespaces, pageNavigate, t]);
+  }, [
+    t,
+    can_upload_signatures,
+    location?.search,
+    pageNavigate,
+    signCollection,
+    options.onHubNamespacesSignAllCollections,
+    options.isDetailsPageAction,
+    signing_service,
+    deleteHubNamespaces,
+  ]);
 }
