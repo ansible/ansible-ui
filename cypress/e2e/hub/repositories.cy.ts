@@ -70,21 +70,39 @@ describe('Repositories', () => {
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle(`${repositoryName}`);
     cy.hasDetail(/^Description$/, 'Here goes description');
+    cy.hasDetail(/^Labels$/, 'None'); //pipelines
+    cy.hasDetail(/^Remote$/, 'None');
+    cy.hasDetail(/^Retained version count$/, '1');
 
     navigateToRepositories();
 
-    // Edit Repository
+    //* Edit Repository *//
     const editDescripiption = 'repositoryDescription edited';
+    const RetainedNumber = '10';
     cy.clickTableRowAction('name', repositoryName, 'edit-repository', { inKebab: false });
     cy.verifyPageTitle(`Edit ${repositoryName}`);
+    // Edit description
     cy.getByDataCy('description').clear().type(editDescripiption);
+    // Edit Retained version count
+    cy.getByDataCy('retain-repo-versions-form-group').clear().type(RetainedNumber);
+    // Edit Pipeline\Lables
+    cy.getByDataCy('pipeline-form-group').click().getByDataCy('approved').click();
+    // Edit Remote
+    cy.getByDataCy('remote-form-group').click();
+    cy.getByDataCy('browse-button').click();
+    cy.getByDataCy('text-input').clear().type(remote.name);
+    cy.get(`[data-cy="row-0"] [data-cy="checkbox-column-cell"]`).click();
+    cy.clickModalButton('Confirm');
+
     cy.getByDataCy('Submit').click();
 
     // Check Repository Details
     cy.verifyPageTitle(repositoryName);
     cy.hasDetail('Name', repositoryName);
     cy.hasDetail('Description', editDescripiption);
-
+    cy.hasDetail('Retained version count', RetainedNumber);
+    cy.hasDetail('Labels', 'approved');
+    cy.hasDetail('Remote', remote.name);
     navigateToRepositories();
 
     // Delete Rpository
