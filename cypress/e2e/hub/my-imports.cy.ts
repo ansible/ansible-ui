@@ -20,6 +20,7 @@ describe('My imports', () => {
 
     cy.createNamespace(invalidCollection.namespace);
     cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
+    cy.waitForAllTasks();
   });
 
   after(() => {
