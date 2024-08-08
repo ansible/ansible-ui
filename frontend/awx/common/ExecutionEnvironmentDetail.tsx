@@ -8,7 +8,7 @@ import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../main/AwxRoutes';
 import { useAwxConfig } from './useAwxConfig';
-import { getDocsBaseUrl } from './util/getDocsBaseUrl';
+import { useGetDocsUrl } from './util/useGetDocsUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-v5-global--warning-color--100);
@@ -40,7 +40,7 @@ function ExecutionEnvironmentDetail(props: {
   } = props;
   const { t } = useTranslation();
   const config = useAwxConfig();
-  const docsLink = getDocsBaseUrl(config, 'eeMigration');
+  const docsLink = useGetDocsUrl(config, 'eeMigration');
   const label = isDefaultEnvironment
     ? t('Default execution environment')
     : t('Execution environment');

@@ -1,4 +1,5 @@
 import { Config } from '../../interfaces/Config';
+import { useDocsVersion } from '../useDocsVersion';
 
 export interface DocPathDictionary {
   credentialTypes: string;
@@ -28,11 +29,11 @@ export interface DocPathDictionary {
   schedules: string;
 }
 
-export function getDocsBaseUrl(
+export function useGetDocsUrl(
   config: Config | null | undefined,
   doc: keyof DocPathDictionary
 ): string {
-  const version = config?.platformVersion || '2.5';
+  const { version } = useDocsVersion() || { version: '2.5' };
   const licenseType = config?.license_info?.license_type;
   if (licenseType && licenseType !== 'open') {
     return `https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/${version}/html/${downstreamPaths[doc]}`;

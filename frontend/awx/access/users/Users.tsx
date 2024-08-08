@@ -24,7 +24,7 @@ import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -210,7 +210,7 @@ export function Users() {
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }
         )}
-        titleDocLink={getDocsBaseUrl(config, 'users')}
+        titleDocLink={useGetDocsUrl(config, 'users')}
         description={t(
           `A user is someone who has access to {{product}} with associated permissions and credentials.`,
           { product }

@@ -5,7 +5,7 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -49,7 +49,7 @@ export function CredentialTypes() {
         titleHelp={t(
           'Define custom credential types to support authentication with other systems during automation.'
         )}
-        titleDocLink={getDocsBaseUrl(config, 'credentialTypes')}
+        titleDocLink={useGetDocsUrl(config, 'credentialTypes')}
         headerActions={<ActivityStreamIcon type={'credential_type'} />}
       />
       <PageTable<CredentialType>

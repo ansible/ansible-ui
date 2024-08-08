@@ -30,7 +30,7 @@ import {
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
@@ -161,7 +161,7 @@ export function Organizations() {
           `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
           { product }
         )}
-        titleDocLink={getDocsBaseUrl(config, 'organizations')}
+        titleDocLink={useGetDocsUrl(config, 'organizations')}
         description={t(
           `An Organization is a logical collection of Users, Teams, Projects, and Inventories, and is the highest level in the {{product}} object hierarchy.`,
           { product }

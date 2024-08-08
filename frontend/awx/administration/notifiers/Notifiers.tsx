@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useNotifiersFilters } from './hooks/useNotifiersFilters';
@@ -63,7 +63,7 @@ export function Notifiers() {
         description={t('Configure custom notifications to be sent based on predefined events.')}
         titleHelpTitle={t('Notifiers')}
         titleHelp={t('Configure custom notifications to be sent based on predefined events.')}
-        titleDocLink={getDocsBaseUrl(config, 'notifiers')}
+        titleDocLink={useGetDocsUrl(config, 'notifiers')}
         headerActions={<ActivityStreamIcon type={'notification_template'} />}
       />
       <PageTable
