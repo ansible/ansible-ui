@@ -3,8 +3,8 @@ import { hubAPI } from '../../support/formatApiPathForHub';
 import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
 
-describe('Automation Content: Roles', () => {
-  describe('Automation Content: : Create and Delete Roles from Details View', () => {
+describe('Hub Roles', () => {
+  describe('Hub Roles : Create and Delete Roles from Details View', () => {
     const roleTypes = [
       {
         role: 'galaxy.namespace',
@@ -54,7 +54,7 @@ describe('Automation Content: Roles', () => {
     });
   });
 
-  describe('Automation Content: Edit Role and its Permissions', () => {
+  describe('Hub Roles : Edit Role and its Permissions', () => {
     let editableRole: HubRbacRole;
     const role = {
       roleName: 'galaxy.' + `${randomString(5)}`,
@@ -124,7 +124,7 @@ describe('Automation Content: Roles', () => {
     });
   });
 
-  describe('Automation Content: Create and Delete Roles from List View', () => {
+  describe('Hub Roles : Create and Delete Roles from List View', () => {
     let editableRole: HubRbacRole;
     const role = {
       roleName: 'galaxy.' + `${randomString(5)}`,
@@ -171,7 +171,7 @@ describe('Automation Content: Roles', () => {
     });
   });
 
-  describe('Automation Content: Create and Bulk Delete Roles from Toolbar View', () => {
+  describe('Hub Roles: Create and Bulk Delete Roles from Toolbar View', () => {
     let editableRole1: HubRbacRole;
     let editableRole2: HubRbacRole;
 
