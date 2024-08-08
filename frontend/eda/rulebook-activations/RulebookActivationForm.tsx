@@ -124,7 +124,6 @@ export function CreateRulebookActivation() {
 
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   const restartPolicyHelpBlock = (
     <>
       <p>
@@ -215,7 +214,6 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>{t('Create project')}</Link>}
         labelHelp={t('Projects are a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
@@ -253,11 +251,6 @@ export function RulebookActivationInputs() {
             : []
         }
         isRequired
-        footer={
-          <Link to={getPageUrl(EdaRoute.CreateDecisionEnvironment)}>
-            Create decision environment
-          </Link>
-        }
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
@@ -272,9 +265,6 @@ export function RulebookActivationInputs() {
                 value: item.id,
               }))
             : []
-        }
-        footer={
-          <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>Create controller token</Link>
         }
         labelHelpTitle={t('Controller tokens')}
         labelHelp={[
@@ -321,7 +311,6 @@ export function RulebookActivationInputs() {
               : []
           }
           placeholder={t('Select event stream(s)')}
-          footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create event stream</Link>}
         />
         <PageFormSwitch<IEdaRulebookActivationInputs>
           id="swap_single_source"
