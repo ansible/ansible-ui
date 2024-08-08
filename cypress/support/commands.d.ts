@@ -82,6 +82,8 @@ import {
 } from './hub-commands';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
 
 declare global {
   namespace Cypress {
@@ -1660,6 +1662,29 @@ declare global {
         repository: string
       ): Cypress.Chainable<void>;
 
+      getHubRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<HubItemsResponse<HubRbacRole>>;
+      getHubRoleDetail(roleID: string): Chainable<HubRole>;
+      createHubRoleAPI({
+        roleName,
+        description,
+        content_type,
+        permissions,
+      }: {
+        roleName: string;
+        description: string;
+        content_type: ContentTypeEnum;
+        permissions: string[];
+      }): Cypress.Chainable<HubRbacRole>;
+      // createHubRoleAPI(
+      //   roleName: string,
+      //   description: string,
+      //   content_type,
+      //   permissions: string[]
+      // ): Cypress.Chainable<HubRbacRole>;
+      deleteHubRoleAPI(hubRoleDefinition: HubRbacRole): Chainable<void>;
       // ==============================================================================================================
       // END OF COMMANDS
       // ==============================================================================================================
