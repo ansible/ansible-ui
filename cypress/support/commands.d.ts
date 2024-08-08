@@ -1528,6 +1528,7 @@ declare global {
         options: HubDeleteRequestOptions
       ): Cypress.Chainable<Response<T> | Response<Task>>;
       waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
+      waitForAllTasks(): Cypress.Chainable<void>;
 
       // HUB Execution Environment Commands
       queryHubExecutionEnvironments(
@@ -1635,7 +1636,7 @@ declare global {
         namespace: string,
         version: string
       ): Cypress.Chainable<void>;
-      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;
