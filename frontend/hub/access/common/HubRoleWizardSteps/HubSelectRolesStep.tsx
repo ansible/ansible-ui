@@ -60,7 +60,7 @@ export function HubSelectRolesStep(props: {
       url: hubAPI`/_ui/v2/role_definitions/`,
       toolbarFilters,
       tableColumns,
-      queryParams: { content_type__model: contentType },
+      queryParams: { content_type__model: contentType, name__startswith: 'galaxy.' },
     },
     'hubRoles'
   );
