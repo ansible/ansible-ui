@@ -309,7 +309,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('collectionCopyVersionToRepositories', () => {
+Cypress.Commands.add('collectionCopyVersionToRepositories', (collectionName: string) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.get('header').contains('Select repositories');
     cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
@@ -320,8 +320,10 @@ Cypress.Commands.add('collectionCopyVersionToRepositories', () => {
 
   cy.navigateTo('hub', 'approvals');
   cy.clickButton(/^Clear all filters$/);
-  cy.filterBySingleSelection(/^Repository$/, 'community');
-  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+
+  cy.filterTableBySingleText(collectionName);
+  cy.get('[aria-label="Simple table"] tr').should('have.length', 3);
+  cy.contains('No results found').should('not.exist');
 });
 
 // HUB Execution Environment Commands
