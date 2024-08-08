@@ -6,7 +6,12 @@ function visitImports(namespace: string) {
   cy.verifyPageTitle('Namespaces');
   cy.getByDataCy('table-view').click();
   cy.filterTableBySingleText(namespace);
-  cy.clickTableRowKebabAction(namespace, 'imports', false);
+  // dropdown is not within row: cy.clickTableRowKebabAction(namespace, 'imports', false);
+  cy.getTableRowByText(namespace, false).within(() => {
+    cy.get('[data-cy*="actions-dropdown"]').click();
+  });
+  cy.getByDataCy('imports').click();
+
   cy.verifyPageTitle('My Imports');
 }
 
