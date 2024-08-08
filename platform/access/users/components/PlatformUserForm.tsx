@@ -1,9 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useFormContext } from 'react-hook-form';
+import { Tooltip } from '@patternfly/react-core';
 import {
   LoadingPage,
   PageForm,
+  PageFormCheckbox,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -13,8 +16,9 @@ import {
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { postRequest } from '../../../../frontend/common/crud/Data';
 import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
@@ -31,16 +35,11 @@ import { useDeleteRequest } from '../../../../frontend/common/crud/useDeleteRequ
 import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
-const UserType = {
-  SystemAdministrator: 'System administrator',
-  NormalUser: 'Normal user',
-  PlatformAuditor: 'Platform auditor',
-};
-
 type IUserInput = PlatformUser & {
-  userType: string;
   confirmPassword: string;
   organizations: number[];
+  platformAdmin: boolean;
+  platformAuditor: boolean;
 };
 
 export function CreatePlatformUser() {
@@ -59,14 +58,14 @@ export function CreatePlatformUser() {
     setError,
     setFieldError
   ) => {
-    const { userType, confirmPassword, organizations, ...user } = userInput;
-    user.is_superuser = userType === UserType.SystemAdministrator;
+    const { confirmPassword, organizations, platformAdmin, platformAuditor, ...user } = userInput;
+    user.is_superuser = platformAdmin;
     if (confirmPassword !== user.password) {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
     }
     const createdUser = await postUserRequest(gatewayV1API`/users/`, user);
-    if (userType === UserType.PlatformAuditor) {
+    if (platformAuditor) {
       await postRequest(gatewayV1API`/role_user_assignments/`, {
         user: createdUser.id,
         role_definition: platformAuditorRoleData?.results?.[0]?.id,
@@ -104,7 +103,8 @@ export function CreatePlatformUser() {
   };
   const getPageUrl = useGetPageUrl();
   const defaultValue: Partial<IUserInput> = {
-    userType: UserType.NormalUser,
+    platformAdmin: false,
+    platformAuditor: false,
   };
 
   if (isLoadingPlatformAuditorRole) {
@@ -197,15 +197,15 @@ export function EditPlatformUser() {
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
-      const { userType, confirmPassword, organizations, ...user } = userInput;
-      user.is_superuser = userType === UserType.SystemAdministrator;
-      if (userType === UserType.PlatformAuditor && !user.is_platform_auditor) {
+      const { confirmPassword, organizations, platformAdmin, platformAuditor, ...user } = userInput;
+      user.is_superuser = platformAdmin;
+      if (platformAuditor && !user.is_platform_auditor) {
         await postRequest(gatewayV1API`/role_user_assignments/`, {
           user: user.id,
           role_definition: platformAuditorRoleData?.results?.[0]?.id,
           object_id: null,
         });
-      } else if (user.is_platform_auditor && userType !== UserType.PlatformAuditor) {
+      } else if (!platformAuditor && user.is_platform_auditor) {
         // Get the platform auditor role assignment
         const platformAuditorRoleAssignment = await getRequest(
           gatewayV1API`/role_user_assignments/`,
@@ -225,7 +225,7 @@ export function EditPlatformUser() {
           return false;
         }
       }
-      user.is_platform_auditor = userType === UserType.PlatformAuditor;
+      user.is_platform_auditor = platformAuditor;
       const { addedOrganizationIds, removedOrganizationIds } =
         getAddedAndRemovedOrganizationIds(organizations);
       for (const addedOrganizationId of addedOrganizationIds) {
@@ -278,7 +278,7 @@ export function EditPlatformUser() {
           });
         }
       }
-      user.is_platform_auditor = userType === UserType.PlatformAuditor;
+      user.is_platform_auditor = platformAuditor;
       await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
       navigate(-1);
     },
@@ -303,11 +303,8 @@ export function EditPlatformUser() {
   const { password, ...defaultUserValue } = user;
   const defaultValue: Partial<IUserInput> = {
     ...defaultUserValue,
-    userType: user.is_superuser
-      ? UserType.SystemAdministrator
-      : user.is_platform_auditor
-        ? UserType.PlatformAuditor
-        : UserType.NormalUser,
+    platformAdmin: Boolean(user.is_superuser),
+    platformAuditor: Boolean(user.is_platform_auditor),
     organizations: orgIds || [],
   };
 
@@ -338,6 +335,8 @@ export function EditPlatformUser() {
 
 function PlatformUserInputs(props: { isCreate?: boolean }) {
   const { t } = useTranslation();
+  const { setValue } = useFormContext<IUserInput>();
+
   return (
     <>
       <PageFormSection>
@@ -347,34 +346,6 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
           placeholder={t('Enter username')}
           isRequired
         />
-        <PageFormSingleSelect<IUserInput>
-          name="userType"
-          label={t('User type')}
-          placeholder={t('Select user type')}
-          options={[
-            {
-              label: t('System administrator'),
-              description: t('Has full access to the system and can manage other users.'),
-              value: UserType.SystemAdministrator,
-            },
-            {
-              label: t('Platform auditor'),
-              description: t('Has view permissions to all objects.'),
-              value: UserType.PlatformAuditor,
-            },
-            {
-              label: t('Normal user'),
-              description: t(
-                'Has access limited to the resources for which they have been granted the appropriate roles.'
-              ),
-              value: UserType.NormalUser,
-            },
-          ]}
-          isRequired
-        />
-      </PageFormSection>
-
-      <PageFormSection>
         <PageFormTextInput<PlatformUser>
           name="password"
           label={t('Password')}
@@ -389,23 +360,60 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
           type="password"
           isRequired={props.isCreate}
         />
+        <PageFormTextInput<PlatformUser>
+          name="first_name"
+          label={t('First name')}
+          placeholder={t('Enter first name')}
+        />
+        <PageFormTextInput<PlatformUser>
+          name="last_name"
+          label={t('Last name')}
+          placeholder={t('Enter last name')}
+        />
+        <PageFormTextInput<PlatformUser>
+          name="email"
+          label={t('Email')}
+          placeholder={t('Enter email')}
+        />
       </PageFormSection>
 
-      <PageFormTextInput<PlatformUser>
-        name="first_name"
-        label={t('First name')}
-        placeholder={t('Enter first name')}
-      />
-      <PageFormTextInput<PlatformUser>
-        name="last_name"
-        label={t('Last name')}
-        placeholder={t('Enter last name')}
-      />
-      <PageFormTextInput<PlatformUser>
-        name="email"
-        label={t('Email')}
-        placeholder={t('Enter email')}
-      />
+      <PageFormSection singleColumn>
+        <PageFormGroup
+          fieldId="test"
+          label={t('User type')}
+          labelHelpTitle={t`User type`}
+          labelHelp={t`Selecting a user type determines the level of access within Ansible Automation Platform. An Administrator has full access to services and can manage other users. An Auditor has view-only permissions on all objects.`}
+        >
+          <PageFormCheckbox
+            label={t`Ansible Automation Platform Administrator`}
+            name="platformAdmin"
+          />
+          <PageFormWatch watch="platformAdmin">
+            {(platformAdmin) => {
+              if (platformAdmin === true) {
+                setValue(`platformAuditor`, false);
+              }
+              const checkbox = (
+                <PageFormCheckbox
+                  label={t`Ansible Automation Platform Auditor`}
+                  name="platformAuditor"
+                  isDisabled={platformAdmin === true}
+                />
+              );
+              return platformAdmin ? (
+                <Tooltip
+                  content={t`The Platform Auditor option is disabled when Platform Administrator is selected, as Platform Administrator includes all Platform Auditor permissions.`}
+                  position="top-start"
+                >
+                  {checkbox}
+                </Tooltip>
+              ) : (
+                checkbox
+              );
+            }}
+          </PageFormWatch>
+        </PageFormGroup>
+      </PageFormSection>
 
       <PageFormSection singleColumn>
         <PageFormPlatformOrganizationsSelect name="organizations" />
