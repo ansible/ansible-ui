@@ -5,10 +5,10 @@ import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 export function useRoleFilters() {
   const { t } = useTranslation();
 
-  const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
+  const toolbarFilters = useMemo(() => {
+    const filters: IToolbarFilter[] = [
       {
-        key: 'name__contains',
+        key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.MultiText,
         query: 'name__icontains',
@@ -18,7 +18,7 @@ export function useRoleFilters() {
         key: 'editable',
         label: t('Editable'),
         type: ToolbarFilterType.SingleSelect,
-        query: 'locked',
+        query: 'managed',
         options: [
           { label: t('Editable'), value: 'false' },
           { label: t('Built-in'), value: 'true' },
@@ -36,8 +36,9 @@ export function useRoleFilters() {
         ],
         placeholder: t('Filter by role type'),
       },
-    ],
-    [t]
-  );
+    ];
+    return filters;
+  }, [t]);
+
   return toolbarFilters;
 }
