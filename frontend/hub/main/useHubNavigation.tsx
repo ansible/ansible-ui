@@ -10,16 +10,19 @@ import { HubRoles } from '../access/roles/HubRoles';
 import { Token } from '../access/token/Token';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
-import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
-import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
 import {
   CreateRemoteRegistry,
   EditRemoteRegistry,
 } from '../administration/remote-registries/RemoteRegistryForm';
-import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
-import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
-import { RemoteAccess } from '../administration/remotes/RemotePage/RemoteAccess';
+import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
+import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
 import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
+import { RemoteAddTeams } from '../administration/remotes/RemotePage/RemoteAddTeam';
+import { RemoteAddUsers } from '../administration/remotes/RemotePage/RemoteAddUser';
+import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
+import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
+import { RemoteTeamAccess } from '../administration/remotes/RemotePage/RemoteTeamAccess';
+import { RemoteUserAccess } from '../administration/remotes/RemotePage/RemoteUserAccess';
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryForm } from '../administration/repositories/RepositoryForm';
@@ -491,15 +494,30 @@ export function useHubNavigation() {
                   element: <RemoteDetails />,
                 },
                 {
-                  path: 'access',
-                  id: HubRoute.RemoteAccess,
-                  element: <RemoteAccess />,
+                  path: 'user-access',
+                  id: HubRoute.RemoteUserAccess,
+                  element: <RemoteUserAccess />,
+                },
+                {
+                  path: 'team-access',
+                  id: HubRoute.RemoteTeamAccess,
+                  element: <RemoteTeamAccess />,
                 },
                 {
                   path: '',
                   element: <Navigate to="details" replace />,
                 },
               ],
+            },
+            {
+              id: HubRoute.RemoteAddUsers,
+              path: ':id/user-access/add',
+              element: <RemoteAddUsers />,
+            },
+            {
+              id: HubRoute.RemoteAddTeams,
+              path: ':id/team-access/add',
+              element: <RemoteAddTeams />,
             },
             {
               path: '',
