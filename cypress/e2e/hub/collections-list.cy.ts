@@ -216,7 +216,7 @@ describe('Collections List', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it.skip('can copy a version to repository', () => {
+  it('can copy a version to repository', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
       `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
