@@ -127,7 +127,7 @@ export function ExecutionEnvironmentAddUsers() {
             user: user.id,
             role_definition: role.id,
             content_type: 'galaxy.containernamespace',
-            object_id: 1,
+            object_id: executionEnvironment?.id,
           }),
         onComplete: () => {
           resolve();
