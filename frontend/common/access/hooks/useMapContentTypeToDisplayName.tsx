@@ -37,6 +37,13 @@ export function useMapContentTypeToDisplayName() {
           : t('notification template'),
         instancegroup: options?.isTitleCase ? t('Instance Group') : t('instance group'),
         inventory: options?.isTitleCase ? t('Inventory') : t('inventory'),
+        namespace: options?.isTitleCase ? t('Namespace') : t('namespace'),
+        collectionremote: options?.isTitleCase ? t('Remote') : t('remote'),
+        containernamespace: options?.isTitleCase
+          ? t('Execution Environment')
+          : t('execution environment'),
+        ansiblerepository: options?.isTitleCase ? t('Repository') : t('repository'),
+        system: options?.isTitleCase ? t('System') : t('system'),
       };
       const shortType = contentType?.split('.').pop() || contentType;
 
