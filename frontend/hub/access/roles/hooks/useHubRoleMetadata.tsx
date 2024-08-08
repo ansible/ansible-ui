@@ -95,8 +95,8 @@ export function useHubRoleMetadata(): HubRoleMetadata {
           displayName: t('Task'),
           permissions: {
             'galaxy.change_task': t('Change task'),
-            'galaxy.view_task': t('Delete task'),
-            'galaxy.delete_task': t('View task'),
+            'galaxy.view_task': t('View task'),
+            'galaxy.delete_task': t('Delete task'),
           },
         },
         'galaxy.synclist': {
