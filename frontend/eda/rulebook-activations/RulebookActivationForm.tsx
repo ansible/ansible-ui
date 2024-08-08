@@ -184,8 +184,7 @@ export function RulebookActivationInputs() {
 
   useEffect(() => {
     setSourceMappings(undefined);
-    setValue('source_mappings', jsyaml.dump(sourceMappings));
-  }, [setValue, rulebook, sourceMappings, setSourceMappings]);
+  }, [rulebook, setSourceMappings]);
 
   return (
     <>
