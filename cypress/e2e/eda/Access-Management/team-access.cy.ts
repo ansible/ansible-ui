@@ -1,6 +1,5 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
@@ -99,8 +98,7 @@ user_team_access_tab_resources.forEach((resource) => {
       | EdaProject
       | EdaDecisionEnvironment
       | EdaRulebookActivation
-      | EdaCredential
-      | EdaCredentialType;
+      | EdaCredential;
     let edaTeam1: EdaTeam;
     let edaTeam2: EdaTeam;
     let edaTeam3: EdaTeam;
