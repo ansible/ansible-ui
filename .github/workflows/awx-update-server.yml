@@ -88,7 +88,7 @@ jobs:
 
   slack-failure-notification:
     name: Slack Failure Notification
-    if: failure()
+    if: ${{ failure() && needs.setup.outputs.UPDATE_SERVER == 'true' }}
     needs:
       - awx-update-server
       - setup
