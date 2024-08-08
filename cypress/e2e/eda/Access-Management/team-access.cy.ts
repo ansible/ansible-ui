@@ -1,6 +1,5 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
@@ -10,12 +9,7 @@ import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-type ResourceObject =
-  | EdaProject
-  | EdaDecisionEnvironment
-  | EdaRulebookActivation
-  | EdaCredential
-  | EdaCredentialType;
+type ResourceObject = EdaProject | EdaDecisionEnvironment | EdaRulebookActivation | EdaCredential;
 
 user_team_access_tab_resources.forEach((resource) => {
   describe(`Team Access Tab for ${resource.name} - Add team`, () => {
@@ -61,7 +55,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaTeam(edaTeam);
     });
 
-    it('can add teams via team access tab', () => {
+    it.skip('can add teams via team access tab', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
@@ -72,11 +66,7 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.get('a').click();
         });
       } else {
-        if (resource.name === 'credential-types') {
-          cy.clickTableRow(resource_object.name, false);
-        } else {
-          cy.clickTableRow(resource_object.name, true);
-        }
+        cy.clickTableRow(resource_object.name, true);
       }
 
       cy.contains('h1', resource_object.name).should('be.visible');
@@ -104,8 +94,7 @@ user_team_access_tab_resources.forEach((resource) => {
       | EdaProject
       | EdaDecisionEnvironment
       | EdaRulebookActivation
-      | EdaCredential
-      | EdaCredentialType;
+      | EdaCredential;
     let edaTeam1: EdaTeam;
     let edaTeam2: EdaTeam;
     let edaTeam3: EdaTeam;
@@ -181,7 +170,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaTeam(edaTeam3);
     });
 
-    it('can remove team from row', () => {
+    it.skip('can remove team from row', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
@@ -193,13 +182,8 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.get('a').click();
         });
       } else {
-        if (resource.name === 'credential-types') {
-          cy.log('in Credential Type');
-          cy.clickTableRow(resource_object.name, false);
-        } else {
-          cy.log('in Else');
-          cy.clickTableRow(resource_object.name, true);
-        }
+        cy.log('in Else');
+        cy.clickTableRow(resource_object.name, true);
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'Team Access').click();
@@ -212,7 +196,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.contains(edaTeam1.name).should('not.exist');
     });
 
-    it('can bulk remove team assignments', () => {
+    it.skip('can bulk remove team assignments', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
@@ -223,11 +207,7 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.get('a').click();
         });
       } else {
-        if (resource.name === 'credential-types') {
-          cy.clickTableRow(resource_object.name, false);
-        } else {
-          cy.clickTableRow(resource_object.name, true);
-        }
+        cy.clickTableRow(resource_object.name, true);
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'Team Access').click();

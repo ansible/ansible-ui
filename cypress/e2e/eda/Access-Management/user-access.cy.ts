@@ -1,6 +1,5 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
@@ -17,8 +16,7 @@ user_team_access_tab_resources.forEach((resource) => {
       | EdaProject
       | EdaDecisionEnvironment
       | EdaRulebookActivation
-      | EdaCredential
-      | EdaCredentialType;
+      | EdaCredential;
     before(() => {
       // If the resource is a RBA, create all dependency resources, else just the one resource
       if (resource.name === 'rulebook-activations') {
@@ -70,11 +68,7 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.get('a').click();
         });
       } else {
-        if (resource.name === 'credential-types') {
-          cy.clickTableRow(resource_object.name, false);
-        } else {
-          cy.clickTableRow(resource_object.name, true);
-        }
+        cy.clickTableRow(resource_object.name, true);
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'User Access').click();
@@ -102,8 +96,7 @@ user_team_access_tab_resources.forEach((resource) => {
       | EdaProject
       | EdaDecisionEnvironment
       | EdaRulebookActivation
-      | EdaCredential
-      | EdaCredentialType;
+      | EdaCredential;
     let edaUser1: EdaUser;
     let edaUser2: EdaUser;
     let edaUser3: EdaUser;
@@ -191,11 +184,7 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.get('a').click();
         });
       } else {
-        if (resource.name === 'credential-types') {
-          cy.clickTableRow(resource_object.name, false);
-        } else {
-          cy.clickTableRow(resource_object.name, true);
-        }
+        cy.clickTableRow(resource_object.name, true);
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'User Access').click();
@@ -219,11 +208,7 @@ user_team_access_tab_resources.forEach((resource) => {
           cy.get('a').click();
         });
       } else {
-        if (resource.name === 'credential-types') {
-          cy.clickTableRow(resource_object.name, false);
-        } else {
-          cy.clickTableRow(resource_object.name, true);
-        }
+        cy.clickTableRow(resource_object.name, true);
       }
       cy.contains('h1', resource_object.name).should('be.visible');
       cy.contains('li', 'User Access').click();
