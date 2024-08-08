@@ -19,6 +19,7 @@ describe('Repositories', () => {
       //cy.galaxykit(`collection upload ${namespace.name} ${collectionName}`);
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     });
+    cy.waitForAllTasks();
   });
 
   after(() => {

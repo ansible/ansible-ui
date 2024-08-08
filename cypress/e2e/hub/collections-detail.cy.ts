@@ -17,6 +17,7 @@ describe('Collections Details', () => {
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
       cy.galaxykit(`distribution create ${repository.name}`);
+      cy.waitForAllTasks();
     });
   });
 
@@ -138,12 +139,10 @@ describe('Collections Details', () => {
   });
 
   it('can deprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name).then((result) => {
-      cy.approveCollection(collectionName, namespace.name, result.version as string);
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       cy.visit(
-        `/collections/published/${namespace.name}/${collectionName}/details?version=${
-          result.version as string
-        }`
+        `/collections/published/${namespace.name}/${collectionName}/details?version=${'1.0.0'}`
       );
       cy.selectDetailsPageKebabAction('deprecate-collection');
       cy.clickButton('Close');
@@ -158,17 +157,25 @@ describe('Collections Details', () => {
   });
 
   it.skip('can copy a version to repository', () => {
-    //skipping this test because the Copy to Repository option is disabled for admin user
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.navigateTo('hub', Collections.url);
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+
+      cy.clickKebabAction('actions-dropdown', 'copy-version-to-repositories');
+      cy.collectionCopyVersionToRepositories(collectionName);
+
+      cy.deleteHubCollectionByName(collectionName);
+    });
   });
 
   it('can sign a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name).then((result) => {
-      cy.approveCollection(collectionName, namespace.name, result.version as string);
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       // Sign collection
       cy.visit(
-        `/collections/published/${namespace.name}/${collectionName}/details?version=${
-          result.version as string
-        }`
+        `/collections/published/${namespace.name}/${collectionName}/details?version=${'1.0.0'}`
       );
       cy.selectDetailsPageKebabAction('sign-collection');
       cy.clickButton(/^Close$/);
@@ -184,6 +191,7 @@ describe('Collections Details', () => {
       cy.galaxykit(
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
       );
+      cy.waitForAllTasks();
       cy.galaxykit(
         `collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`
       ).then((result: { filename: string }) => {
@@ -239,6 +247,4 @@ describe('Collections Details', () => {
       });
     });
   });
-
-  it.skip('can access the Install tab and download a tarball', () => {});
 });
