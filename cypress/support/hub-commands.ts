@@ -325,6 +325,7 @@ Cypress.Commands.add(
       body: {
         name: randomE2Ename(),
         upstream_name: 'library/alpine',
+        include_tags: ['latest'],
         ...options?.executionEnvironment,
       },
     });
@@ -349,7 +350,12 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'syncRemoteExecutionEnvironment',
   (executionEnvironment: HubExecutionEnvironment) => {
-    cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.filterTableBySingleText(executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
+
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('sync-execution-environment').click();
 
