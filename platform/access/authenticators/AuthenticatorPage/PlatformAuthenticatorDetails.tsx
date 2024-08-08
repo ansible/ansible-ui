@@ -75,7 +75,7 @@ export function PlatformAuthenticatorDetails() {
 
   return (
     <Scrollable>
-      <PageDetails>
+      <PageDetails disableScroll>
         <PageDetail label={t('Name')}>{authenticator.name}</PageDetail>
         <PageDetail label={t('Type')}>{type}</PageDetail>
         {fields.map((field) => (
@@ -85,7 +85,7 @@ export function PlatformAuthenticatorDetails() {
         ))}
       </PageDetails>
       {objFields.length ? (
-        <PageDetails numberOfColumns="single">
+        <PageDetails numberOfColumns="single" disableScroll>
           {objFields.map((field) => (
             <PageDetailCodeEditor
               isEmpty={!Object.keys(field.value).length && !field.value.length}
@@ -103,7 +103,7 @@ export function PlatformAuthenticatorDetails() {
             <Divider />
             <SubHeading component={TextVariants.h3}>{t('Mapping')}</SubHeading>
           </Section>
-          <PageDetails numberOfColumns="single">
+          <PageDetails numberOfColumns="single" disableScroll>
             {maps.map((map) => (
               <PageDetail label={map.name} key={map.name}>
                 {map.ui_summary || t('{{mapType}} map', { mapType: map.map_type })}
