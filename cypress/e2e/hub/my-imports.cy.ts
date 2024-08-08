@@ -4,6 +4,7 @@ import { MyImports, Namespaces } from './constants';
 function visitImports(namespace: string) {
   cy.navigateTo('hub', Namespaces.url);
   cy.verifyPageTitle('Namespaces');
+  cy.getByDataCy('table-view').click();
   cy.filterTableBySingleText(namespace);
   cy.clickTableRowKebabAction(namespace, 'imports', false);
   cy.verifyPageTitle('My Imports');
