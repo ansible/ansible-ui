@@ -12,7 +12,7 @@ function visitImports(namespace: string) {
   });
   cy.getByDataCy('imports').click();
 
-  cy.verifyPageTitle('My Imports');
+  cy.verifyPageTitle('My imports');
 }
 
 describe('My imports', () => {
