@@ -34,7 +34,11 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const postRequest = usePostRequest<Partial<HubRbacRole>, HubRbacRole>();
 
   const onSubmit: PageFormSubmitHandler<HubRbacRole> = async (Role) => {
-    const newRole = await postRequest(hubAPI`/_ui/v2/role_definitions/`, Role);
+    const createdRole = {
+      ...Role,
+      content_type: Role.content_type === ContentTypeEnum.System ? null : Role.content_type,
+    };
+    const newRole = await postRequest(hubAPI`/_ui/v2/role_definitions/`, createdRole);
     pageNavigate(HubRoute.RolePage, { params: { id: newRole.id } });
   };
   const onCancel = () => navigate(-1);

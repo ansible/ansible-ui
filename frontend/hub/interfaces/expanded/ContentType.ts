@@ -7,5 +7,6 @@ export enum ContentTypeEnum {
   Task = 'galaxy.task',
   CollectionRemote = 'galaxy.collectionremote',
   Repository = 'galaxy.ansiblerepository',
+  System = 'null',
   Team = 'shared.team',
 }
