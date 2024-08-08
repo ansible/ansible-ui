@@ -17,7 +17,7 @@ import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../common/util/useGetDocsUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
 
@@ -50,7 +50,7 @@ export function AwxMasthead() {
               id="documentation"
               icon={<ExternalLinkAltIcon />}
               component="a"
-              href={getDocsBaseUrl(config, 'index')}
+              href={useGetDocsUrl(config, 'index')}
               target="_blank"
               data-cy="masthead-documentation"
             >

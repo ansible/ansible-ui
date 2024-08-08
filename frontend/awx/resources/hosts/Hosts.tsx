@@ -5,7 +5,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useHostsFilters } from './hooks/useHostsFilters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
 import { useHostsColumns } from './hooks/useHostsColumns';
@@ -49,7 +49,7 @@ export function Hosts() {
             'Ansible works against multiple managed nodes or “hosts” in your infrastructure at the same time, using a list or group of lists known as inventory. Once your inventory is defined, you use patterns to select the hosts or groups you want Ansible to run against.'
           ),
         ]}
-        titleDocLink={getDocsBaseUrl(config, 'hosts')}
+        titleDocLink={useGetDocsUrl(config, 'hosts')}
         headerActions={<ActivityStreamIcon type={'host'} />}
       />
       <PageTable<AwxHost>

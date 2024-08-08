@@ -20,7 +20,7 @@ import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import styled from 'styled-components';
 import { useEffect } from 'react';
-import { getDocsBaseUrl } from './util/getDocsBaseUrl';
+import { useGetDocsUrl } from './util/useGetDocsUrl';
 import { useAwxConfig } from './useAwxConfig';
 
 const DividerWithSpace = styled(Divider)`
@@ -46,7 +46,7 @@ export function MultipleChoiceField(props: IProps) {
 
   const { type } = props;
 
-  const docsURL = getDocsBaseUrl(config, 'jobTemplateSurveys');
+  const docsURL = useGetDocsUrl(config, 'jobTemplateSurveys');
 
   const emptyChoiceMsg = t('Choice option cannot be empty.');
   const duplicateChoiceMsg = t('Choice option already exists.');

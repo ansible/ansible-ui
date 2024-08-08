@@ -8,6 +8,7 @@ import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';
 import { WebSocketProvider } from '../common/useAwxWebSocket';
+import { DocsVersionProvider } from '../common/useDocsVersion';
 
 type AwxAuthOptions = {
   [key: string]: {
@@ -50,8 +51,10 @@ export function AwxLogin(props: { children: React.ReactNode }) {
   }
 
   return (
-    <WebSocketProvider>
-      <AwxConfigProvider>{props.children}</AwxConfigProvider>
-    </WebSocketProvider>
+    <DocsVersionProvider version={undefined}>
+      <WebSocketProvider>
+        <AwxConfigProvider>{props.children}</AwxConfigProvider>
+      </WebSocketProvider>
+    </DocsVersionProvider>
   );
 }
