@@ -8,7 +8,14 @@ export interface HubRbacRole {
     user_assignments: string;
   };
   summary_fields: {
-    [key: string]: Record<string, string>[] | undefined;
+    created_by?: {
+      id: number;
+      username: string;
+    };
+    modified_by?: {
+      id: number;
+      username: string;
+    };
   };
   permissions: string[];
   content_type: ContentTypeEnum | null;

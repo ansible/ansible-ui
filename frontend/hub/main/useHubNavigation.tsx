@@ -4,10 +4,9 @@ import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
-import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
-import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
-import { RolePage } from '../access/roles/RolePage/RolePage';
-import { Roles } from '../access/roles/Roles';
+import { HubRoleDetails } from '../access/roles/RolePage/HubRoleDetails';
+import { CreateRole, EditRole } from '../access/roles/RolePage/HubRoleForm';
+import { HubRoles } from '../access/roles/HubRoles';
 import { Token } from '../access/token/Token';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
@@ -75,6 +74,7 @@ import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTe
 import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -550,12 +550,12 @@ export function useHubNavigation() {
             {
               id: HubRoute.RolePage,
               path: ':id/',
-              element: <RolePage />,
+              element: <HubRolePage />,
               children: [
                 {
                   id: HubRoute.RoleDetails,
                   path: 'details',
-                  element: <RoleDetails />,
+                  element: <HubRoleDetails />,
                 },
                 {
                   path: '',
@@ -565,7 +565,7 @@ export function useHubNavigation() {
             },
             {
               path: '',
-              element: <Roles />,
+              element: <HubRoles />,
             },
           ],
         },

@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "url": "",
+  "related": {},
+  "summary_fields": {},
+  "permissions": ["galaxy.view_namespace", "galaxy.change_namespace", "galaxy.delete_namespace"],
+  "content_type": "galaxy.namespace",
+  "modified": "2024-08-05T20:19:43.878761Z",
+  "created": "2024-08-05T20:19:43.878727Z",
+  "name": "Namespace Admin",
+  "description": "Namespace Administrator",
+  "managed": true,
+  "modified_by": null,
+  "created_by": null
+}
