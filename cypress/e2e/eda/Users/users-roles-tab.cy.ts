@@ -1,6 +1,5 @@
 //Tests a user's ability to give permissions to a user from the roles tab.
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
@@ -18,8 +17,7 @@ user_team_access_tab_resources.forEach((resource) => {
       | EdaProject
       | EdaDecisionEnvironment
       | EdaRulebookActivation
-      | EdaCredential
-      | EdaCredentialType;
+      | EdaCredential;
     before(() => {
       // If the resource is a RBA, create all dependency resources, else just the one resource
       if (resource.name === 'rulebook-activations') {
