@@ -10,12 +10,7 @@ import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-type ResourceObject =
-  | EdaProject
-  | EdaDecisionEnvironment
-  | EdaRulebookActivation
-  | EdaCredential
-  | EdaCredentialType;
+type ResourceObject = EdaProject | EdaDecisionEnvironment | EdaRulebookActivation | EdaCredential;
 
 user_team_access_tab_resources.forEach((resource) => {
   describe(`Team Access Tab for ${resource.name} - Add team`, () => {
