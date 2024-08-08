@@ -44,6 +44,7 @@ export function useMapContentTypeToDisplayName() {
           : t('execution environment'),
         ansiblerepository: options?.isTitleCase ? t('Repository') : t('repository'),
         system: options?.isTitleCase ? t('System') : t('system'),
+        null: options?.isTitleCase ? t('System') : t('system'),
       };
       const shortType = contentType?.split('.').pop() || contentType;
 

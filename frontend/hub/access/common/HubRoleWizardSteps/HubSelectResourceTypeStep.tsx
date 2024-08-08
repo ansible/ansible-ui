@@ -15,7 +15,7 @@ export function HubSelectResourceTypeStep() {
         { value: 'galaxy.collectionremote', label: t('Collection Remote') },
         { value: 'galaxy.containernamespace', label: t('Execution Environment') },
         { value: 'galaxy.namespace', label: t('Namespace') },
-        // { value: 'galaxy.namespace', label: t('Namespace') },
+        { value: 'system', label: t('System') },
       ]}
       onChange={(option?: string) => {
         // Reset wizard/step data if the resource type selection was changed

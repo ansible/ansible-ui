@@ -51,16 +51,27 @@ export function HubSelectResourcesStep() {
     [t]
   );
   const toolbarFilters = useMemo<IToolbarFilter[]>(
-    () => [
-      {
-        key: 'name',
-        label: t('Name'),
-        type: ToolbarFilterType.MultiText,
-        query: 'name__contains',
-        comparison: 'contains',
-      },
-    ],
-    [t]
+    () =>
+      resourceType === 'galaxy.namespace'
+        ? [
+            {
+              key: 'keywords',
+              label: t('Name'),
+              type: ToolbarFilterType.SingleText,
+              query: 'keywords',
+              comparison: 'contains',
+            },
+          ]
+        : [
+            {
+              key: 'name',
+              label: t('Name'),
+              type: ToolbarFilterType.MultiText,
+              query: 'name__contains',
+              comparison: 'contains',
+            },
+          ],
+    [resourceType, t]
   );
 
   const view = useHubMultiSelectListView<HubResourceType>(

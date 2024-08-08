@@ -6,6 +6,7 @@ import {
 } from '../../common/HubRoleWizardSteps/HubSelectResourcesStep';
 import { useParams } from 'react-router-dom';
 import {
+  ITableColumn,
   LoadingPage,
   PageHeader,
   PageLayout,
@@ -36,7 +37,7 @@ interface WizardFormValues {
 }
 
 interface ResourceRolePair {
-  resource: HubResourceType;
+  resource?: HubResourceType;
   role: HubRbacRole;
 }
 
@@ -69,6 +70,10 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
           throw new Error(t('Select at least one resource.'));
         }
       },
+      hidden: (wizardData) => {
+        const { resourceType } = wizardData as WizardFormValues;
+        return resourceType === 'system';
+      },
     },
     {
       id: 'roles',
@@ -87,29 +92,43 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
   const onSubmit = (data: WizardFormValues) => {
     const { resources, hubRoles, resourceType } = data;
     const items: ResourceRolePair[] = [];
-    for (const resource of resources) {
-      for (const role of hubRoles) {
-        items.push({ resource, role });
+    for (const role of hubRoles) {
+      if (!resources?.length) {
+        items.push({ role });
+      } else {
+        for (const resource of resources) {
+          items.push({ resource, role });
+        }
       }
     }
+    const actionColumns: ITableColumn<ResourceRolePair>[] =
+      resourceType === 'system'
+        ? [{ header: t('Role'), cell: ({ role }) => role.name }]
+        : [
+            {
+              header: t('Resource name'),
+              cell: ({ resource }) => resource?.name,
+            },
+            { header: t('Role'), cell: ({ role }) => role.name },
+          ];
+
     return new Promise<void>((resolve) => {
       progressDialog({
         title: t('Add roles'),
         keyFn: ({ resource, role }) =>
-          `${(resource as ResourceTypeWithID).id ?? parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)}_${role.id}`,
+          `${(resource as ResourceTypeWithID)?.id ?? parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)}_${role.id}`,
         items,
-        actionColumns: [
-          { header: t('Resource name'), cell: ({ resource }) => resource.name },
-          { header: t('Role'), cell: ({ role }) => role.name },
-        ],
+        actionColumns,
         actionFn: ({ resource, role }) =>
           postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
             user: user.id,
             role_definition: role.id,
-            content_type: resourceType,
+            content_type: resourceType === 'system' ? null : resourceType,
             object_id:
-              (resource as ResourceTypeWithID).id ??
-              parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href),
+              resourceType !== 'system'
+                ? (resource as ResourceTypeWithID).id ??
+                  parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)
+                : undefined,
           }),
         onComplete: () => {
           resolve();
