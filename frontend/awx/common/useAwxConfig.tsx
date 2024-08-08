@@ -18,11 +18,7 @@ export function useAwxConfigState() {
   return useContext(AwxConfigContext);
 }
 
-export function AwxConfigProvider(props: {
-  children: ReactNode;
-  disabled?: boolean;
-  platformVersion?: string;
-}) {
+export function AwxConfigProvider(props: { children: ReactNode; disabled?: boolean }) {
   return props?.disabled ? (
     <AwxConfigContext.Provider
       value={{
@@ -34,28 +30,19 @@ export function AwxConfigProvider(props: {
       {props.children}
     </AwxConfigContext.Provider>
   ) : (
-    <AwxConfigProviderInternal platformVersion={props.platformVersion}>
-      {props?.children}
-    </AwxConfigProviderInternal>
+    <AwxConfigProviderInternal>{props?.children}</AwxConfigProviderInternal>
   );
 }
 
-export function AwxConfigProviderInternal(props: {
-  children?: ReactNode;
-  platformVersion?: string;
-}) {
-  const { platformVersion } = props;
+export function AwxConfigProviderInternal(props: { children?: ReactNode }) {
   const response = useSWR<Config>(awxAPI`/config/`, requestGet);
   const value = useMemo(
     () => ({
-      awxConfig: {
-        ...(response.data as Config),
-        platformVersion,
-      },
+      awxConfig: response.data,
       awxConfigError: response.error as Error,
       refreshAwxConfig: () => response.mutate(undefined),
     }),
-    [response, platformVersion]
+    [response]
   );
   return <AwxConfigContext.Provider value={value}>{props.children}</AwxConfigContext.Provider>;
 }
