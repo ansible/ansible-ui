@@ -1,7 +1,7 @@
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 
-describe.skip('Namespace - team and user access', () => {
+describe('Namespace - team and user access', () => {
   let namespace: HubNamespace;
   before(() => {
     cy.createHubNamespace().then((namespaceResult) => {
