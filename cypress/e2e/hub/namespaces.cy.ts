@@ -157,9 +157,10 @@ describe('Namespaces', () => {
   it('user can bulk dekete namespaces', () => {
     cy.createHubNamespace().then((namespace1) => {
       cy.createHubNamespace().then((namespace2) => {
+        cy.waitForAllTasks();
         cy.navigateTo('hub', 'namespaces');
         cy.verifyPageTitle('Namespaces');
-        cy.setTablePageSize('50');
+        cy.setTablePageSize('10');
         cy.setTableView('table');
         cy.selectTableRow(namespace1.name, false);
         cy.selectTableRow(namespace2.name, false);
