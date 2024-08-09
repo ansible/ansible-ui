@@ -31,6 +31,7 @@ import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformSubscription } from './PlatformSubscription';
 import { GatewayUIAuthProvider } from './GatewayUIAuth';
+import { DocsVersionProvider } from '../../frontend/awx/common/useDocsVersion';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {
@@ -83,15 +84,17 @@ export function PlatformMainInternal() {
       <AwxActiveUserProvider disabled={!hasAwx}>
         <EdaActiveUserProvider disabled={!hasEda}>
           <HubActiveUserProvider disabled={!hasHub}>
-            <WebSocketProvider>
-              <AwxConfigProvider disabled={!hasAwx} platformVersion={platformVersion}>
-                <HubContextProvider disabled={!hasHub}>
-                  <PlatformSubscription>
-                    <PlatformApp />
-                  </PlatformSubscription>
-                </HubContextProvider>
-              </AwxConfigProvider>
-            </WebSocketProvider>
+            <DocsVersionProvider version={platformVersion}>
+              <WebSocketProvider>
+                <AwxConfigProvider disabled={!hasAwx}>
+                  <HubContextProvider disabled={!hasHub}>
+                    <PlatformSubscription>
+                      <PlatformApp />
+                    </PlatformSubscription>
+                  </HubContextProvider>
+                </AwxConfigProvider>
+              </WebSocketProvider>
+            </DocsVersionProvider>
           </HubActiveUserProvider>
         </EdaActiveUserProvider>
       </AwxActiveUserProvider>
