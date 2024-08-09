@@ -11,7 +11,7 @@ describe('HubRoleForm', () => {
       cy.contains('Name is required.').should('be.visible');
       cy.contains('Content type is required.').should('be.visible');
       cy.get('[data-cy="name"]').type('galaxy.test_custom_role');
-      cy.selectDropdownOptionByResourceName('content-type', 'Ansible Repository');
+      cy.selectDropdownOptionByResourceName('content-type', 'Repository');
       cy.clickButton(/^Create role$/);
       cy.contains('Permissions is required.').should('be.visible');
     });
@@ -23,7 +23,7 @@ describe('HubRoleForm', () => {
       cy.mountHub(<CreateRole />);
       cy.get('[data-cy="name"]').type('galaxy.test_custom_role');
       cy.get('[data-cy="description"]').type('View repository');
-      cy.selectDropdownOptionByResourceName('content-type', 'Ansible Repository');
+      cy.selectDropdownOptionByResourceName('content-type', 'Repository');
       cy.get('#permissions').click();
       cy.selectMultiSelectOption('#permissions-select', 'View Ansible repository');
       cy.clickButton(/^Create role$/);
@@ -40,7 +40,7 @@ describe('HubRoleForm', () => {
       cy.mountHub(<CreateRole />);
       cy.get('[data-cy="name"]').type('galaxy.test_custom_role');
       cy.get('[data-cy="description"]').type('View repository');
-      cy.selectDropdownOptionByResourceName('content-type', 'Ansible Repository');
+      cy.selectDropdownOptionByResourceName('content-type', 'Repository');
       cy.get('#permissions').click();
       cy.selectMultiSelectOption('#permissions-select', 'View Ansible repository');
       cy.intercept(
@@ -71,7 +71,7 @@ describe('HubRoleForm', () => {
       cy.get('[data-cy="description"]').should('have.value', mockHubCustomRole.description);
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited Description');
-      cy.get('[data-cy="content-type-form-group"]').contains('Ansible Repository');
+      cy.get('[data-cy="content-type-form-group"]').contains('Repository');
       cy.get('[data-cy="content-type-form-group"]')
         .should('be.visible')
         .within(() => {

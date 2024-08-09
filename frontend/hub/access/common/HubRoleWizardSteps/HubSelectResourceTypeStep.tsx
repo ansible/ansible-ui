@@ -11,8 +11,8 @@ export function HubSelectResourceTypeStep() {
       label={t('Resource type')}
       name="resourceType"
       options={[
-        { value: 'galaxy.ansiblerepository', label: t('Ansible Repository') },
-        { value: 'galaxy.collectionremote', label: t('Collection Remote') },
+        { value: 'galaxy.ansiblerepository', label: t('Repository') },
+        { value: 'galaxy.collectionremote', label: t('Remote') },
         { value: 'galaxy.containernamespace', label: t('Execution Environment') },
         { value: 'galaxy.namespace', label: t('Namespace') },
         { value: 'system', label: t('System') },
