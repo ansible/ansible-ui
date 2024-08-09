@@ -18,6 +18,7 @@ import {
   FormSelectOption,
 } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
+import { HubError } from '../../common/HubError';
 
 export interface SignAllCollectionsModalProps {
   namespace: HubNamespace;
@@ -30,6 +31,8 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
   const { location } = useWindowLocation();
   const [_, setDialog] = usePageDialog();
   const { namespace, onComplete, signing_service } = props;
+  const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const repoName =
     location?.search.includes('repository') &&
@@ -40,6 +43,8 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
     onComplete?.(namespace);
+    setError('');
+    setIsLoading(false);
   }, [namespace, onComplete, setDialog]);
 
   return (
@@ -53,9 +58,24 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
           key="sign-all"
           data-cy="modal-sign-button"
           variant="primary"
+          isLoading={isLoading}
           onClick={() => {
-            void signCollectionVersion(namespace, signing_service, repoName?.toString() ?? '', t);
-            onCloseClicked();
+            void (async () => {
+              try {
+                setIsLoading(true);
+                setError('');
+                await signCollectionVersion(
+                  namespace,
+                  signing_service,
+                  repoName?.toString() ?? '',
+                  t
+                );
+                onCloseClicked();
+              } catch (error: unknown) {
+                setError(t`Error occured in signing collection versions.`);
+                setIsLoading(false);
+              }
+            })();
           }}
         >
           {t`Sign all`}
@@ -91,6 +111,7 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
             </FormSelect>
           </FormGroup>
         </GridItem>
+        {error && <HubError error={{ name: '', message: error }} />}
       </Grid>
     </Modal>
   );
