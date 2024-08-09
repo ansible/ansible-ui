@@ -7,7 +7,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
@@ -65,7 +65,7 @@ export function Jobs() {
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }
         )}
-        titleDocLink={getDocsBaseUrl(config, 'jobs')}
+        titleDocLink={useGetDocsUrl(config, 'jobs')}
         description={t(
           `A job is an instance of {{product}} launching an Ansible playbook against an inventory of hosts.`,
           { product }

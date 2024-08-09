@@ -18,7 +18,7 @@ import {
 import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 
 export function ConstructedInventoryHint() {
   const config = useAwxConfig();
@@ -32,7 +32,7 @@ export function ConstructedInventoryHint() {
       title={t`How to use constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
-          href={getDocsBaseUrl(config, 'constructedInventories')}
+          href={useGetDocsUrl(config, 'constructedInventories')}
           component="a"
           target="_blank"
           rel="noopener noreferrer"

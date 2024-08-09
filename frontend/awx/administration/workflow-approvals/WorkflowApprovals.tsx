@@ -6,7 +6,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { WorkflowApproval } from '../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalToolbarActions } from './hooks/useWorkflowApprovalToolbarActions';
 import { useWorkflowApprovalsColumns } from './hooks/useWorkflowApprovalsColumns';
@@ -59,7 +59,7 @@ export function WorkflowApprovals() {
           `A workflow approval represents a pause in a workflow where approval is needed before the workflow continues executing.`,
           { product }
         )}
-        titleDocLink={getDocsBaseUrl(config, 'workflows')}
+        titleDocLink={useGetDocsUrl(config, 'workflows')}
         description={t(
           `A workflow approval represents a pause in a workflow where approval is needed before the workflow continues executing.`,
           { product }

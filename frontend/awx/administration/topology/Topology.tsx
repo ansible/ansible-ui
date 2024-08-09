@@ -3,7 +3,7 @@ import { PageHeader, PageLayout } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { TopologyViewLayer } from './Visualizer';
 import { EmptyStateUnauthorized } from '../../../../framework/components/EmptyStateUnauthorized';
@@ -30,7 +30,7 @@ export function Topology() {
         titleHelp={t(
           'View node type, node health, and specific details about each node in your mesh topology.'
         )}
-        titleDocLink={getDocsBaseUrl(config, 'topology')}
+        titleDocLink={useGetDocsUrl(config, 'topology')}
       />
       {isUnauthorized ? (
         <EmptyStateUnauthorized title={t('You do not have permission to perform this action.')} />
