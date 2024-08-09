@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
 import { hubAPI } from '../../common/api/formatPath';
@@ -119,17 +119,15 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
 
 export function useSignAllCollections() {
   const [_, setDialog] = usePageDialog();
-  const [props, setProps] = useState<SignAllCollectionsModalProps>();
 
-  useEffect(() => {
-    if (props) {
+  const openDialog = useCallback(
+    (props: SignAllCollectionsModalProps) => {
       setDialog(<SignAllCollectionsModal {...props} />);
-    } else {
-      setDialog(undefined);
-    }
-  }, [props, setDialog]);
+    },
+    [setDialog]
+  );
 
-  return setProps;
+  return openDialog;
 }
 
 async function signCollectionVersion(
