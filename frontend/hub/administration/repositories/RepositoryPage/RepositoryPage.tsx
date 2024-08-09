@@ -81,10 +81,6 @@ export function RepositoryPage() {
               page: HubRoute.RepositoryDetails,
             },
             {
-              label: t('Access'),
-              page: HubRoute.RepositoryAccess,
-            },
-            {
               label: t('Collection Versions'),
               page: HubRoute.RepositoryCollectionVersion,
             },
@@ -95,6 +91,14 @@ export function RepositoryPage() {
             {
               label: t('Distributions'),
               page: HubRoute.RepositoryDistributions,
+            },
+            {
+              label: t('Team Access'),
+              page: HubRoute.RepositoryTeamAccess,
+            },
+            {
+              label: t('User Access'),
+              page: HubRoute.RepositoryUserAccess,
             },
           ]}
           params={{ id: params.id, repo_id: repo_id }}
