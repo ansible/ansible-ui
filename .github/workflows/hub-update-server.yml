@@ -75,7 +75,7 @@ jobs:
                           "text":
                             {
                               "type": "mrkdwn",
-                              "text": "*Galaxy E2E Server Updated*\n${{ github.repository }} - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.HUB_SERVER }}|Server>"
+                              "text": "*Ansible-UI Galaxy E2E Server Updated* - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ needs.setup.outputs.HUB_SERVER }}|Server>"
                             }
                         }
                       ]
@@ -108,7 +108,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Galaxy E2E Server Update Failed*\n${{ github.repository }} - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.HUB_SERVER }}|Server> - <!here>"
+                          "text": "*Ansible-UI Galaxy E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.HUB_SERVER }}|Server>"
                         }
                       }
                     ]
