@@ -39,7 +39,7 @@ export function RepositoryVersionPage() {
         />
         <PageRoutedTabs
           backTab={{
-            label: t('Back to Repository version'),
+            label: t('Back to Versions'),
             page: HubRoute.RepositoryVersions,
             persistentFilterKey: '',
           }}
