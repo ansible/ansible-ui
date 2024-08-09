@@ -72,7 +72,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
       },
       hidden: (wizardData) => {
         const { resourceType } = wizardData as WizardFormValues;
-        return resourceType === 'system';
+        return !resourceType || resourceType === 'system';
       },
     },
     {

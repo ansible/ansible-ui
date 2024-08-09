@@ -1,0 +1,151 @@
+{
+  "count": 4,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 30,
+      "url": "",
+      "related": {},
+      "summary_fields": {
+        "created_by": {
+          "id": 4,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 33,
+          "name": "galaxy.collection_publisher",
+          "description": "Upload and modify collections.",
+          "managed": false
+        },
+        "user": {
+          "id": 7,
+          "username": "usr2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": 1,
+          "name": "test"
+        }
+      },
+      "created": "2024-08-09T17:46:37.103800Z",
+      "created_by": 4,
+      "content_type": "galaxy.namespace",
+      "object_id": "1",
+      "object_ansible_id": null,
+      "role_definition": 33,
+      "user": 7,
+      "user_ansible_id": null
+    },
+    {
+      "id": 31,
+      "url": "",
+      "related": {},
+      "summary_fields": {
+        "created_by": {
+          "id": 4,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 35,
+          "name": "galaxy.collection_remote_owner",
+          "description": "Manage collection remotes.",
+          "managed": false
+        },
+        "user": {
+          "id": 7,
+          "username": "usr2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": "0191372d-bec0-7085-b610-e41c6a4296a7",
+          "name": "community"
+        }
+      },
+      "created": "2024-08-09T17:46:48.224083Z",
+      "created_by": 4,
+      "content_type": "galaxy.collectionremote",
+      "object_id": "0191372d-bec0-7085-b610-e41c6a4296a7",
+      "object_ansible_id": null,
+      "role_definition": 35,
+      "user": 7,
+      "user_ansible_id": null
+    },
+    {
+      "id": 32,
+      "url": "",
+      "related": {},
+      "summary_fields": {
+        "created_by": {
+          "id": 4,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 32,
+          "name": "galaxy.collection_admin",
+          "description": "Create, delete and change collection namespaces. Upload and delete collections. Sync collections from remotes. Approve and reject collections.",
+          "managed": false
+        },
+        "user": {
+          "id": 7,
+          "username": "usr2",
+          "first_name": "",
+          "last_name": ""
+        }
+      },
+      "created": "2024-08-09T17:46:57.265769Z",
+      "created_by": 4,
+      "content_type": null,
+      "object_id": null,
+      "object_ansible_id": null,
+      "role_definition": 32,
+      "user": 7,
+      "user_ansible_id": null
+    },
+    {
+      "id": 33,
+      "url": "",
+      "related": {},
+      "summary_fields": {
+        "created_by": {
+          "id": 4,
+          "username": "dev",
+          "first_name": "",
+          "last_name": ""
+        },
+        "role_definition": {
+          "id": 84,
+          "name": "galaxy.repo_custom_role",
+          "description": "VN",
+          "managed": false
+        },
+        "user": {
+          "id": 7,
+          "username": "usr2",
+          "first_name": "",
+          "last_name": ""
+        },
+        "content_object": {
+          "id": "0191372d-bea9-7a3a-b323-274fcaf0e1f0",
+          "name": "published"
+        }
+      },
+      "created": "2024-08-09T17:47:17.750254Z",
+      "created_by": 4,
+      "content_type": "galaxy.ansiblerepository",
+      "object_id": "0191372d-bea9-7a3a-b323-274fcaf0e1f0",
+      "object_ansible_id": null,
+      "role_definition": 84,
+      "user": 7,
+      "user_ansible_id": null
+    }
+  ]
+}
