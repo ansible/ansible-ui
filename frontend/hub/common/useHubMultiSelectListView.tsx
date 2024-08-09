@@ -4,7 +4,6 @@ import { QueryParams } from './api/hub-api-utils';
 import { usePageWizard } from '../../../framework/PageWizard/PageWizardProvider';
 import { useHubView } from './useHubView';
 import { useEffect } from 'react';
-import { getItemKey } from '../../common/crud/Data';
 
 /**
  * Hook for defining the view for a multi-select list in the context of a wizard. The selections made in the list
@@ -13,7 +12,10 @@ import { getItemKey } from '../../common/crud/Data';
  * @param fieldName Specific field in the wizard that represents the selected items from the list
  * @returns The view that can be used to pass to the PageMultiSelectList component within a wizard
  */
-export function useHubMultiSelectListView<T extends { id: string | number }>(
+type ResourceTypeWithID = { id: number | string };
+type ResourceTypeWithPulpHref = { pulp_href: string };
+
+export function useHubMultiSelectListView<T extends ResourceTypeWithID | ResourceTypeWithPulpHref>(
   viewOptions: {
     url: string;
     viewPage?: number;
@@ -24,6 +26,7 @@ export function useHubMultiSelectListView<T extends { id: string | number }>(
     disableQueryString?: boolean;
     defaultSort?: string | undefined;
     defaultSortDirection?: 'asc' | 'desc' | undefined;
+    keyFn?: (item: T) => string | number;
   },
   fieldName: string
 ) {
@@ -32,7 +35,12 @@ export function useHubMultiSelectListView<T extends { id: string | number }>(
 
   const view = useHubView<T>({
     ...viewOptions,
-    keyFn: getItemKey,
+    keyFn: (item) => {
+      if ((item as ResourceTypeWithID).id) {
+        return (item as ResourceTypeWithID).id;
+      }
+      return (item as ResourceTypeWithPulpHref).pulp_href;
+    },
     defaultSelection: ((wizardData as { [key: string]: [] })[fieldName] ||
       stepData[fieldName] ||
       []) as T[],

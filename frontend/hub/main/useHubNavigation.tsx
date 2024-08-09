@@ -81,6 +81,8 @@ import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
 import { RepositoryUserAccess } from '../administration/repositories/RepositoryPage/RepositoryUserAccess';
 import { RepositoryAddTeams } from '../administration/repositories/RepositoryPage/RepositoryAddTeam';
 import { RepositoryAddUsers } from '../administration/repositories/RepositoryPage/RepositoryAddUser';
+import { HubUserRoles } from '../access/users/UserPage/HubUserRoles';
+import { HubAddUserRoles } from '../access/users/components/HubAddUserRoles';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -566,7 +568,29 @@ export function useHubNavigation() {
           id: HubRoute.Users,
           label: t('Users'),
           path: 'users',
-          element: <PageNotImplemented />,
+          children: [
+            {
+              id: HubRoute.UserPage,
+              path: ':id',
+              children: [
+                {
+                  id: HubRoute.UserDetails,
+                  path: 'details',
+                  element: <PageNotImplemented />,
+                },
+                {
+                  id: HubRoute.UserRoles,
+                  path: 'roles',
+                  element: <HubUserRoles />,
+                },
+              ],
+            },
+            {
+              id: HubRoute.UserAddRoles,
+              path: ':id/roles/add-roles',
+              element: <HubAddUserRoles />,
+            },
+          ],
         },
         {
           id: HubRoute.Roles,

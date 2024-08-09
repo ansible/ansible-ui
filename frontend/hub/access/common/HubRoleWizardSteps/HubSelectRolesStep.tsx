@@ -31,7 +31,12 @@ export function HubSelectRolesStep(props: {
     switch (resourceType as string) {
       case 'galaxy.namespace':
         return t('Select roles to apply to all of your selected namespaces.');
-      // TODO more resource types to be added later
+      case 'galaxy.ansiblerepository':
+        return t('Select roles to apply to all of your selected repositories.');
+      case 'galaxy.collectionremote':
+        return t('Select roles to apply to all of your selected remotes.');
+      case 'galaxy.containernamespace':
+        return t('Select roles to apply to all of your selected execution environments.');
       default:
         return t('Select roles to apply to all of your selected resources.');
     }
@@ -60,7 +65,11 @@ export function HubSelectRolesStep(props: {
       url: hubAPI`/_ui/v2/role_definitions/`,
       toolbarFilters,
       tableColumns,
-      queryParams: { content_type__model: contentType, name__startswith: 'galaxy.' },
+      queryParams: {
+        ...(contentType !== 'system' && { content_type__model: contentType }),
+        ...(contentType === 'system' && { content_type__isnull: 'true' }),
+        name__startswith: 'galaxy.',
+      },
     },
     'hubRoles'
   );
@@ -71,7 +80,9 @@ export function HubSelectRolesStep(props: {
       tableColumns={tableColumns}
       toolbarFilters={toolbarFilters}
       fieldNameForPreviousStep={fieldNameForPreviousStep}
-      descriptionForRoleSelection={descriptionForRoleSelection}
+      descriptionForRoleSelection={
+        resourceType !== 'system' ? descriptionForRoleSelection : undefined
+      }
       title={title}
     />
   );

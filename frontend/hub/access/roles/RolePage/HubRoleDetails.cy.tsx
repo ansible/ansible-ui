@@ -36,7 +36,7 @@ describe('HubRoleDetails', () => {
     cy.get('[data-cy="description"]').should('have.text', mockHubCustomRole.description);
     cy.get('[data-cy="created"]').should('contain', formatDateString(mockHubCustomRole.created));
     cy.get('[data-cy="modified"]').should('contain', formatDateString(mockHubCustomRole.modified));
-    cy.get('[data-cy="galaxy.ansiblerepository"]').should('contain', 'Ansible Repository');
+    cy.get('[data-cy="galaxy.ansiblerepository"]').should('contain', 'Repository');
     cy.get('[data-cy="permissions"]').should('contain', 'View Ansible repository');
   });
 });
