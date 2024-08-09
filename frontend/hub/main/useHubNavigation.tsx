@@ -26,7 +26,7 @@ import { RemoteUserAccess } from '../administration/remotes/RemotePage/RemoteUse
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryForm } from '../administration/repositories/RepositoryForm';
-import { RepositoryAccess } from '../administration/repositories/RepositoryPage/RepositoryAccess';
+import { RepositoryTeamAccess } from '../administration/repositories/RepositoryPage/RepositoryTeamAccess';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
 import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
@@ -78,6 +78,9 @@ import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUs
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
 import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
+import { RepositoryUserAccess } from '../administration/repositories/RepositoryPage/RepositoryUserAccess';
+import { RepositoryAddTeams } from '../administration/repositories/RepositoryPage/RepositoryAddTeam';
+import { RepositoryAddUsers } from '../administration/repositories/RepositoryPage/RepositoryAddUser';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -356,9 +359,14 @@ export function useHubNavigation() {
                   element: <RepositoryDetails />,
                 },
                 {
-                  path: 'access',
-                  id: HubRoute.RepositoryAccess,
-                  element: <RepositoryAccess />,
+                  path: 'team-access',
+                  id: HubRoute.RepositoryTeamAccess,
+                  element: <RepositoryTeamAccess />,
+                },
+                {
+                  path: 'user-access',
+                  id: HubRoute.RepositoryUserAccess,
+                  element: <RepositoryUserAccess />,
                 },
                 {
                   path: 'collection-version',
@@ -380,6 +388,16 @@ export function useHubNavigation() {
                   element: <Navigate to="details" replace />,
                 },
               ],
+            },
+            {
+              id: HubRoute.RepositoryAddTeams,
+              path: ':id/team-access/add',
+              element: <RepositoryAddTeams />,
+            },
+            {
+              id: HubRoute.RepositoryAddUsers,
+              path: ':id/users-access/add',
+              element: <RepositoryAddUsers />,
             },
             {
               path: ':id/versions-details/:version/',
