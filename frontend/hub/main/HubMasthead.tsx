@@ -19,9 +19,10 @@ import { useHubActiveUser } from '../common/useHubActiveUser';
 import { useHubContext } from '../common/useHubContext';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from './HubRoutes';
-
+import { useHubProductVersionInfo } from './useHubProductVersionInfo';
 export function HubMasthead() {
   const { t } = useTranslation();
+  const versionInfo = useHubProductVersionInfo();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   useHubNotifications();
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
@@ -56,7 +57,13 @@ export function HubMasthead() {
             <></>
             <DropdownItem
               id="about"
-              onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/galaxy-logo.svg' })}
+              onClick={() =>
+                openAnsibleAboutModal({
+                  brandImageSrc: '/assets/galaxy-logo-ansibull.png',
+                  versionInfo,
+                  userInfo: activeHubUser?.username,
+                })
+              }
               data-cy="masthead-about"
             >
               {t('About')}
@@ -84,20 +91,15 @@ export function HubMasthead() {
     </PageMasthead>
   );
 }
-
 export function useHubNotifications() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-
   const { hasPermission } = useHubContext();
-
   const canApprove = hasPermission('ansible.modify_ansible_repo_content');
-
   const { data: result } = useGet<HubItemsResponse<CollectionVersionSearch>>(
     canApprove ? hubAPI`/v3/plugin/ansible/search/collection-versions/` : undefined,
     { page_size: 100, repository_label: 'pipeline=staging' }
   );
-
   const { setNotificationGroups } = usePageNotifications();
   useEffect(() => {
     setNotificationGroups((groups) => {
@@ -109,7 +111,6 @@ export function useHubNotifications() {
             description: t('Namespace: ') + approval.collection_version?.namespace ?? '',
             // timestamp: approval.created,
             variant: 'info',
-
             // TODO to should goto the specific approval page instead of the approvals page
             to: getPageUrl(HubRoute.Approvals, { query: { status: 'pipeline=staging' } }),
           })) ?? [],
@@ -117,6 +118,5 @@ export function useHubNotifications() {
       return { ...groups };
     });
   }, [result, getPageUrl, setNotificationGroups, t]);
-
   return result?.data ?? 0;
 }
