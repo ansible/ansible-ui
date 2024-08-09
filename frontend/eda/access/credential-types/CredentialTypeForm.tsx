@@ -193,7 +193,7 @@ function CredentialTypeInputs() {
           label={t('Input configuration')}
           labelHelpTitle={t('Input configuration')}
           labelHelp={t(
-            `Enter inputs using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+            `Input schema which defines a set of ordered fields for that type, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
           )}
           isRequired
           format="object"
@@ -219,7 +219,7 @@ function CredentialTypeInputs() {
             label={t('Injector configuration')}
             labelHelpTitle={t('Injector configuration')}
             labelHelp={t(
-              `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+              `Environment variables or extra variables that specify the values a credential type can inject, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
             )}
             isRequired
             format="object"
