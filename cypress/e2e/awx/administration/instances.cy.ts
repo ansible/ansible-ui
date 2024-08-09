@@ -2,22 +2,45 @@ import * as path from 'path';
 import { randomString } from '../../../../framework/utils/random-string';
 import { Instance } from '../../../../frontend/awx/interfaces/Instance';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { tag } from '../../../support/tag';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
 
-tag(['upstream'], () => {
-  //An instance can only be created in an Openshift or Kubernetes build
+describe('Instances: All Tests', () => {
+  let isK8S = false;
+
+  before(() => {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      if (data?.IS_K8S) {
+        isK8S = true;
+      } else {
+        cy.log('Skip test not running on IS_K8S');
+      }
+    });
+  });
+
   describe('Instances: Add/Edit', () => {
     let instance: Instance;
 
     beforeEach(() => {
-      cy.createAwxInstance('E2EInstanceTestAddEdit' + randomString(5)).then((ins: Instance) => {
-        instance = ins;
-      });
-      cy.navigateTo('awx', 'instances');
-      cy.verifyPageTitle('Instances');
+      if (isK8S) {
+        cy.createAwxInstance('E2EInstanceTestAddEdit' + randomString(5)).then((ins: Instance) => {
+          instance = ins;
+        });
+        cy.navigateTo('awx', 'instances');
+        cy.verifyPageTitle('Instances');
+      }
+    });
+
+    afterEach(() => {
+      if (instance && isK8S) {
+        cy.removeAwxInstance(instance.id.toString());
+      }
     });
 
     it('can add a new instance and navigate to the details page', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
       // Navigate to the create instance page
       cy.getByDataCy('add-instance').click();
@@ -48,6 +71,10 @@ tag(['upstream'], () => {
     });
 
     it('can edit an instance from the instances list view and assert info on details page', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
@@ -84,6 +111,10 @@ tag(['upstream'], () => {
     });
 
     it('can visit the details page of an Instance and verify the bundle download feature', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.verifyPageTitle(instance.hostname);
@@ -109,6 +140,10 @@ tag(['upstream'], () => {
     });
 
     it('can uncheck the Enable Instance checkbox on the edit form, save form, and see the toggle is off', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.url().then((currentUrl) => {
@@ -140,14 +175,20 @@ tag(['upstream'], () => {
     }
 
     beforeEach(() => {
-      cy.createAwxInstance('E2EInstanceTestRemove' + randomString(5)).then((ins: Instance) => {
-        instance = ins;
-      });
-      cy.navigateTo('awx', 'instances');
-      cy.verifyPageTitle('Instances');
+      if (isK8S) {
+        cy.createAwxInstance('E2EInstanceTestRemove' + randomString(5)).then((ins: Instance) => {
+          instance = ins;
+        });
+        cy.navigateTo('awx', 'instances');
+        cy.verifyPageTitle('Instances');
+      }
     });
 
     it('can remove an instance from details page', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
@@ -171,6 +212,10 @@ tag(['upstream'], () => {
     });
 
     it('can remove an instance from instance list toolbar', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
@@ -195,6 +240,10 @@ tag(['upstream'], () => {
     });
 
     it('can bulk remove instances', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       const arrayOfElementText = [];
       for (let i = 0; i < 5; i++) {
         const instanceName = generateInstanceName();
@@ -229,18 +278,28 @@ tag(['upstream'], () => {
     let instance: Instance;
 
     beforeEach(() => {
-      cy.createAwxInstance('E2EInstanceRunHealthCheck' + randomString(5)).then((ins: Instance) => {
-        instance = ins;
-      });
-      cy.navigateTo('awx', 'instances');
-      cy.verifyPageTitle('Instances');
+      if (isK8S) {
+        cy.createAwxInstance('E2EInstanceRunHealthCheck' + randomString(5)).then(
+          (ins: Instance) => {
+            instance = ins;
+          }
+        );
+        cy.navigateTo('awx', 'instances');
+        cy.verifyPageTitle('Instances');
+      }
     });
 
     afterEach(() => {
-      cy.removeAwxInstance(instance.id.toString());
+      if (isK8S) {
+        cy.removeAwxInstance(instance.id.toString());
+      }
     });
 
     it('can run a health check on an Instance in the instance list toolbar and assert the expected results', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
@@ -271,6 +330,10 @@ tag(['upstream'], () => {
     });
 
     it('can run a health check on an Instance in the instance details page and assert the expected results', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.verifyPageTitle(instance.hostname);
@@ -291,6 +354,10 @@ tag(['upstream'], () => {
     });
 
     it('can run a health check on an Instance in the instance list from row action and assert the expected results', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowPinnedAction(instance.hostname, 'run-health-check', false);
@@ -311,24 +378,34 @@ tag(['upstream'], () => {
     let instanceToAssociate: Instance;
 
     beforeEach(() => {
-      cy.createAwxInstance('E2EInstanceTestPeers' + randomString(5), 8888).then((ins: Instance) => {
-        instance = ins;
-        cy.createAwxInstance('E2EInstanceTestToAssociate' + randomString(5), 9999).then(
+      if (isK8S) {
+        cy.createAwxInstance('E2EInstanceTestPeers' + randomString(5), 8888).then(
           (ins: Instance) => {
-            instanceToAssociate = ins;
+            instance = ins;
+            cy.createAwxInstance('E2EInstanceTestToAssociate' + randomString(5), 9999).then(
+              (ins: Instance) => {
+                instanceToAssociate = ins;
+              }
+            );
           }
         );
-      });
-      cy.navigateTo('awx', 'instances');
-      cy.verifyPageTitle('Instances');
+        cy.navigateTo('awx', 'instances');
+        cy.verifyPageTitle('Instances');
+      }
     });
 
     afterEach(() => {
-      cy.removeAwxInstance(instance?.id.toString());
-      cy.removeAwxInstance(instanceToAssociate?.id.toString());
+      if (isK8S) {
+        cy.removeAwxInstance(instance?.id.toString());
+        cy.removeAwxInstance(instanceToAssociate?.id.toString());
+      }
     });
 
     it('can associate peers to an instance, navigate to associated peer details page and then disassociate peer', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.intercept('PATCH', awxAPI`/instances/*`).as('associatePeer');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
@@ -396,18 +473,26 @@ tag(['upstream'], () => {
     let instance: Instance;
 
     beforeEach(() => {
-      cy.createAwxInstance('E2EInstanceTestLA' + randomString(5), 8888).then((ins: Instance) => {
-        instance = ins;
-      });
-      cy.navigateTo('awx', 'instances');
-      cy.verifyPageTitle('Instances');
+      if (isK8S) {
+        cy.createAwxInstance('E2EInstanceTestLA' + randomString(5), 8888).then((ins: Instance) => {
+          instance = ins;
+        });
+        cy.navigateTo('awx', 'instances');
+        cy.verifyPageTitle('Instances');
+      }
     });
 
     afterEach(() => {
-      cy.removeAwxInstance(instance?.id.toString());
+      if (isK8S) {
+        cy.removeAwxInstance(instance?.id.toString());
+      }
     });
 
     it('can navigate to the instance listener addresses tab and view the designated listener port', () => {
+      if (!isK8S) {
+        cy.log('Skip test not running on IS_K8S');
+        return;
+      }
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.getByDataCy('instances-listener-addresses-tab').click();
