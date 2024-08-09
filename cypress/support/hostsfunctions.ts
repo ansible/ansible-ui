@@ -109,7 +109,7 @@ function deleteHostDetailsView(invenotryName: string, host_type: string, hostNam
 function deleteAllInventoryHosts(inventory: Inventory) {
   navigateToBaseView('inventory_host', inventory.name);
   cy.getByDataCy('select-all').click();
-  cy.clickToolbarKebabAction('delete-selected-hosts');
+  cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
   cy.clickButton(/^Delete hosts$/);
@@ -243,7 +243,7 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
 
   cy.getByDataCy('select-all').click();
   cy.contains('2 selected');
-  cy.clickToolbarKebabAction('delete-selected-hosts');
+  cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
   cy.contains('button', 'Delete hosts').click();
