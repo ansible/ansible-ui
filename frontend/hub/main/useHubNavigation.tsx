@@ -4,10 +4,15 @@ import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
+import { HubRoles } from '../access/roles/HubRoles';
 import { HubRoleDetails } from '../access/roles/RolePage/HubRoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/HubRoleForm';
-import { HubRoles } from '../access/roles/HubRoles';
+import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
+import { HubTeamRoles } from '../access/teams/TeamPage/TeamUserRole';
+import { HubAddTeamRoles } from '../access/teams/components/HubAddTeamRoles';
 import { Token } from '../access/token/Token';
+import { HubUserRoles } from '../access/users/UserPage/HubUserRoles';
+import { HubAddUserRoles } from '../access/users/components/HubAddUserRoles';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
 import {
@@ -26,11 +31,14 @@ import { RemoteUserAccess } from '../administration/remotes/RemotePage/RemoteUse
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryForm } from '../administration/repositories/RepositoryForm';
-import { RepositoryTeamAccess } from '../administration/repositories/RepositoryPage/RepositoryTeamAccess';
+import { RepositoryAddTeams } from '../administration/repositories/RepositoryPage/RepositoryAddTeam';
+import { RepositoryAddUsers } from '../administration/repositories/RepositoryPage/RepositoryAddUser';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
 import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
+import { RepositoryTeamAccess } from '../administration/repositories/RepositoryPage/RepositoryTeamAccess';
+import { RepositoryUserAccess } from '../administration/repositories/RepositoryPage/RepositoryUserAccess';
 import { RepositoryVersions } from '../administration/repositories/RepositoryPage/RepositoryVersions';
 import { RepositoryVersionCollections } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionCollections';
 import { RepositoryVersionDetails } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionDetails';
@@ -77,12 +85,6 @@ import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTe
 import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
-import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
-import { RepositoryUserAccess } from '../administration/repositories/RepositoryPage/RepositoryUserAccess';
-import { RepositoryAddTeams } from '../administration/repositories/RepositoryPage/RepositoryAddTeam';
-import { RepositoryAddUsers } from '../administration/repositories/RepositoryPage/RepositoryAddUser';
-import { HubUserRoles } from '../access/users/UserPage/HubUserRoles';
-import { HubAddUserRoles } from '../access/users/components/HubAddUserRoles';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -562,7 +564,29 @@ export function useHubNavigation() {
           id: HubRoute.Teams,
           label: t('Teams'),
           path: 'teams',
-          element: <PageNotImplemented />,
+          children: [
+            {
+              id: HubRoute.TeamPage,
+              path: ':id',
+              children: [
+                {
+                  id: HubRoute.TeamDetails,
+                  path: 'details',
+                  element: <PageNotImplemented />,
+                },
+                {
+                  id: HubRoute.TeamRoles,
+                  path: 'roles',
+                  element: <HubTeamRoles />,
+                },
+              ],
+            },
+            {
+              id: HubRoute.TeamAddRoles,
+              path: ':id/roles/add-roles',
+              element: <HubAddTeamRoles />,
+            },
+          ],
         },
         {
           id: HubRoute.Users,

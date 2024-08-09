@@ -86,11 +86,19 @@ export enum HubRoute {
   // Access
   Access = 'hub-access',
   Organizations = 'hub-organizations',
+  // Teams
   Teams = 'hub-teams',
+  TeamPage = 'hub-team-page',
+  TeamRoles = 'hub-team-roles',
+  TeamAddRoles = 'hub-team-add-roles',
+  TeamDetails = 'hub-team-details',
+
+  // Users
   Users = 'hub-users',
   UserPage = 'hub-user-page',
   UserRoles = 'hub-user-roles',
   UserAddRoles = 'hub-user-add-roles',
+  UserDetails = 'hub-user-details',
 
   APIToken = 'hub-api-token',
   MyImports = 'hub-my-imports',
@@ -99,7 +107,6 @@ export enum HubRoute {
   RolePage = 'hub-role-page',
   RoleDetails = 'hub-role-details',
   EditRole = 'hub-edit-role',
-  UserDetails = 'hub-user-details',
 
   Settings = 'hub-settings',
   SettingsPreferences = 'hub-settings-preferences',
