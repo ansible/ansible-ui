@@ -3,7 +3,7 @@ import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
 import isDeepEqual from 'fast-deep-equal';
 import getValue from 'get-value';
-import jsyaml from 'js-yaml';
+import jsyaml, { YAMLException } from 'js-yaml';
 import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
   Controller,
@@ -166,13 +166,22 @@ export function PageFormDataEditor<
       shouldUnregister
       render={({ field: { value, name, onChange }, fieldState: { error } }) => {
         function handleChange(stringValue: string) {
-          switch (valueFormat) {
-            case 'object':
-              onChange(valueToObject(stringValue, isArray));
-              return;
-            default:
-              onChange(objectToString(valueToObject(stringValue, isArray), valueFormat));
-              break;
+          try {
+            const valueAsObject = valueToObject(stringValue, isArray);
+            switch (valueFormat) {
+              case 'object':
+                onChange(valueAsObject);
+                return;
+              default:
+                onChange(objectToString(valueAsObject, valueFormat));
+                break;
+            }
+
+            clearErrors(name);
+          } catch (err) {
+            if (err instanceof Error) {
+              setError(name, { message: err.message });
+            }
           }
         }
         return (
@@ -399,7 +408,10 @@ export function valueToObject(
     } catch {
       try {
         value = jsyaml.load(value as string) as object;
-      } catch {
+      } catch (err) {
+        if (err instanceof Error || err instanceof YAMLException) {
+          return new Error(err.message);
+        }
         return {};
       }
     }
