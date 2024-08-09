@@ -20,6 +20,15 @@ module.exports = function (env, argv) {
   config.plugins.unshift(new CopyPlugin({ patterns: [{ from: 'platform/assets', to: 'assets' }] }));
 
   config.devServer.proxy = {
+    '/o/': {
+      target: PLATFORM_SERVER,
+      secure: false,
+      bypass: (req) => {
+        req.headers.host = proxyUrl.host;
+        req.headers.origin = proxyUrl.origin;
+        req.headers.referer = proxyUrl.href;
+      },
+    },
     '/api': {
       target: PLATFORM_SERVER,
       secure: false,
