@@ -56,6 +56,8 @@ export function AnsibleLogin(props: {
   const location = useLocation();
 
   const { loginApiUrl } = props;
+  const queryParams = new URLSearchParams(location.search);
+  const nextPath = queryParams.get('next');
   const onSubmit = useCallback(async () => {
     try {
       const loginPageResponse = await fetch(loginApiUrl, {
@@ -100,7 +102,11 @@ export function AnsibleLogin(props: {
         }
       }
 
-      props.onSuccess?.();
+      if (nextPath) {
+        window.location.href = nextPath;
+      } else {
+        props.onSuccess?.();
+      }
     } catch (err) {
       if (err instanceof Error) {
         setHelperText(<ErrorSpanStyled>{err.message}</ErrorSpanStyled>);
@@ -110,7 +116,7 @@ export function AnsibleLogin(props: {
         );
       }
     }
-  }, [loginApiUrl, password, props, t, username]);
+  }, [loginApiUrl, password, props, t, username, nextPath]);
 
   const hasAuthFailedFlag = location.search.includes('auth_failed');
   useEffect(() => {
