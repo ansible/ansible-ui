@@ -46,7 +46,7 @@ export function PageWizardNavigation() {
             <li
               className="pf-v5-c-wizard__nav-item"
               data-cy={`wizard-nav-item-${step.id}`}
-              key={step.id}
+              key={index}
             >
               <button
                 className={className}
