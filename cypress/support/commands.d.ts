@@ -1602,7 +1602,13 @@ declare global {
       deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
-      createRemote(remoteName: string, url?: string): Cypress.Chainable<HubRemote>;
+      createRemote(
+        remoteName: string,
+        url?: string,
+        ca_cert?: string,
+        client_cert?: string,
+        requirements_file?: string
+      ): Cypress.Chainable<HubRemote>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(
         remoteRegistryName: string,

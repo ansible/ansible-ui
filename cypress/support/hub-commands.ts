@@ -241,12 +241,37 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
   });
 });
 
-Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
-  cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
-    name: remoteName,
-    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
-  });
-});
+Cypress.Commands.add(
+  'createRemote',
+  (
+    remoteName: string,
+    url?: string,
+    ca_cert?: string,
+    client_cert?: string,
+    requirements_file?: string
+  ) => {
+    const payload: {
+      name: string;
+      url: string;
+      ca_cert?: string;
+      client_cert?: string;
+      requirements_file?: string;
+    } = {
+      name: remoteName,
+      url: url ? url : 'https://console.redhat.com/api/automation-hub/',
+    };
+    if (ca_cert) {
+      payload.ca_cert = ca_cert;
+    }
+    if (client_cert) {
+      payload.client_cert = client_cert;
+    }
+    if (requirements_file) {
+      payload.requirements_file = requirements_file;
+    }
+    cy.requestPost(pulpAPI`/remotes/ansible/collection/`, payload);
+  }
+);
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {

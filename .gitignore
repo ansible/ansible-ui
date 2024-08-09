@@ -10,4 +10,5 @@
 .vscode
 /cypress/.nyc_output
 /cypress/coverage
+/cypress/downloads
 .eslintcache
