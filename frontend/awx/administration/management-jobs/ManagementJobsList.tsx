@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { useManagementJobFilters } from './hooks/useManagementJobFilters';
 import { useManagementJobColumns } from './hooks/useManagementJobColumns';
 import { useAwxView } from '../../common/useAwxView';
@@ -33,7 +33,7 @@ export function ManagementJobs() {
         titleHelp={t(
           'Management Jobs assist in the cleaning of old data including system tracking information, tokens, job histories, and activity streams.'
         )}
-        titleDocLink={getDocsBaseUrl(config, 'managementJobs')}
+        titleDocLink={useGetDocsUrl(config, 'managementJobs')}
       />
       <PageTable<SystemJobTemplate>
         id="awx-management-jobs"

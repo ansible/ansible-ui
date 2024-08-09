@@ -19,7 +19,7 @@ import { PageFormManagementJobsSelect } from '../../../../administration/managem
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
@@ -404,7 +404,7 @@ function ConvergenceInput() {
       labelHelp={
         <>
           {t('Preconditions for running this node when there are multiple parents')}{' '}
-          <a href={getDocsBaseUrl(config, 'workflowVisBuild')}>{t('documentation.')}</a>
+          <a href={useGetDocsUrl(config, 'workflowVisBuild')}>{t('documentation.')}</a>
         </>
       }
       options={[

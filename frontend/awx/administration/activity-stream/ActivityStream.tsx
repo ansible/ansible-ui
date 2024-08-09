@@ -3,7 +3,7 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { useActivityStreamColumns } from './hooks/useActivityStreamColumns';
 import { ActivityStream } from '../../interfaces/ActivityStream';
 import { useActivityStreamActions } from './hooks/useActivityStreamActions';
@@ -32,7 +32,7 @@ export function ActivityStreams() {
           `An activity stream shows all changes for a particular object. For each change, the activity stream shows the time of the event, the user that initiated the event, and the action.`,
           { product }
         )}
-        titleDocLink={getDocsBaseUrl(config, 'activityStream')}
+        titleDocLink={useGetDocsUrl(config, 'activityStream')}
         description={t(
           `An activity stream shows all changes for a particular object. For each change, the activity stream shows the time of the event, the user that initiated the event, and the action.`,
           { product }

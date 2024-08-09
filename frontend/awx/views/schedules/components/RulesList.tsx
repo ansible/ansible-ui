@@ -8,7 +8,7 @@ import {
   PageTable,
 } from '../../../../../framework';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { RuleListItemType } from '../types';
 import { PlusCircleIcon } from '@patternfly/react-icons';
@@ -112,6 +112,7 @@ export function RulesList(props: {
     : t(
         'Schedule rules are a component of an overall schedule.  A schedule rule is used to determine when a schedule will run.  A schedule can have multiple rules.'
       );
+  const docUrl = useGetDocsUrl(config, 'schedules');
   return (
     <div>
       {props.needsHeader ? (
@@ -119,7 +120,7 @@ export function RulesList(props: {
           title={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelpTitle={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelp={t('Create as many schedule rules as you need.')}
-          titleDocLink={getDocsBaseUrl(config, 'schedules')}
+          titleDocLink={docUrl}
           description={description}
           headerActions={
             <>

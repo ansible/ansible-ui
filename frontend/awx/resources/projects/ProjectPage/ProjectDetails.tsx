@@ -30,7 +30,7 @@ import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironment
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -108,7 +108,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href={getDocsBaseUrl(config, 'managePlaybooksSC')}
+        href={useGetDocsUrl(config, 'managePlaybooksSC')}
       >
         {t`Documentation.`}
       </a>
