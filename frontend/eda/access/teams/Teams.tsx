@@ -92,6 +92,10 @@ export function Teams() {
     <PageLayout>
       <PageHeader
         title={t('Teams')}
+        titleHelpTitle={t('Teams')}
+        titleHelp={t(
+          'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+        )}
         description={t(
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}

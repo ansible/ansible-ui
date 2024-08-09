@@ -14,6 +14,10 @@ export function EdaRoles() {
     <PageLayout>
       <PageHeader
         title={t('Roles')}
+        titleHelpTitle={t('Roles')}
+        titleHelp={t(
+          'A role represents a set of actions that a team or user may perform on a resource or set of resources.'
+        )}
         description={t(
           'A role represents a set of actions that a team or user may perform on a resource or set of resources.'
         )}

@@ -50,6 +50,10 @@ export function SignatureKeys() {
     <PageLayout>
       <PageHeader
         title={t('Signature Keys')}
+        titleHelpTitle={t('Signature Keys')}
+        titleHelp={t(
+          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
+        )}
         description={t(
           'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
         )}

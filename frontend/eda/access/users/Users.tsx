@@ -26,6 +26,10 @@ export function Users() {
     <PageLayout>
       <PageHeader
         title={t('Users')}
+        titleHelpTitle={t('Users')}
+        titleHelp={t(
+          'A user is someone who has access to EDA with associated permissions and credentials.'
+        )}
         description={t(
           'A user is someone who has access to EDA with associated permissions and credentials.'
         )}

@@ -30,6 +30,8 @@ export function Projects() {
     <PageLayout>
       <PageHeader
         title={t('Projects')}
+        titleHelpTitle={t('Projects')}
+        titleHelp={t('Projects are a logical collection of rulebooks.')}
         description={t('Projects are a logical collection of rulebooks.')}
       />
       <PageTable

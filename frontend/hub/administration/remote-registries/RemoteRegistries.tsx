@@ -32,6 +32,10 @@ export function RemoteRegistries() {
     <PageLayout>
       <PageHeader
         title={t('Remote Registries')}
+        titleHelpTitle={t('Remote Registries')}
+        titleHelp={t(
+          'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+        )}
         description={t(
           'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
         )}
