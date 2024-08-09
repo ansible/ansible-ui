@@ -27,12 +27,17 @@ export function HubNamespacePage() {
   );
 
   let namespace: HubNamespace | undefined = undefined;
-  if (data && data.data && data.data.length > 0) {
+  if (data && data.data.length > 0) {
     namespace = data.data[0];
   }
   const getPageUrl = useGetPageUrl();
   const pageActions = useHubNamespaceActions({
     onHubNamespacesDeleted: () => pageNavigate(HubRoute.Namespaces),
+    onHubNamespacesSignAllCollections: () =>
+      pageNavigate(HubRoute.NamespaceCollections, {
+        params: { id: namespace?.name ?? '' },
+      }),
+    isDetailsPageAction: true,
   });
 
   if (!data && !error) {

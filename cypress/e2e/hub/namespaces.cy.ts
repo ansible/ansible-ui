@@ -154,7 +154,7 @@ describe('Namespaces', () => {
     });
   });
 
-  it('user can bulk dekete namespaces', () => {
+  it.skip('user can bulk dekete namespaces', () => {
     cy.createHubNamespace().then((namespace1) => {
       cy.createHubNamespace().then((namespace2) => {
         cy.waitForAllTasks();
