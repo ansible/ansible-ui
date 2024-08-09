@@ -5,7 +5,7 @@ describe('EDA Roles List', () => {
     cy.navigateTo('eda', 'roles');
     cy.verifyPageTitle('Roles');
     cy.getEdaRoles().then((roles) => {
-      cy.setTablePageSize('20');
+      cy.setTablePageSize('50');
       cy.get('tbody').find('tr').should('have.length', roles.length);
       roles.forEach((role) => {
         cy.verifyPageTitle('Roles');
