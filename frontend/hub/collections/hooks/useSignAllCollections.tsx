@@ -89,7 +89,8 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
         <GridItem span={12}>
           <p>
             <Trans>
-              You are about to sign <strong>all versions</strong> under <strong>arista</strong>.
+              You are about to sign <strong>all versions</strong> under{' '}
+              <strong>{namespace.name}</strong>.
             </Trans>
           </p>
         </GridItem>
