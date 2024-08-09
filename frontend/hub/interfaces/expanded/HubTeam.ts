@@ -1,6 +1,16 @@
-import { Group } from '../generated/Group';
-
-export interface HubTeam extends Group {
+export type HubTeam = {
   id: number;
-  ulp_href: string;
-}
+  name: string;
+  group: {
+    id: number;
+    name: string;
+  };
+  organization: {
+    id: number;
+    name: string;
+  };
+  resource: {
+    resource_type: string;
+    ansible_id: string;
+  };
+};
