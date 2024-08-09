@@ -108,7 +108,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Ansible-UI Galaxy E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.HUB_SERVER }}|Server> - <!here>"
+                          "text": "*Ansible-UI Galaxy E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ needs.setup.outputs.HUB_SERVER }}|Server>"
                         }
                       }
                     ]
