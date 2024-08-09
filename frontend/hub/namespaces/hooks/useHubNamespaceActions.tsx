@@ -27,14 +27,17 @@ export function useHubNamespaceActions(options?: {
   const { settings, featureFlags } = useHubContext();
   const signing_service = settings.GALAXY_COLLECTION_SIGNING_SERVICE;
   const can_upload_signatures = featureFlags.can_upload_signatures;
+  const can_create_signatures = featureFlags.can_create_signatures;
   const pageNavigate = usePageNavigate();
   const deleteHubNamespaces = useDeleteHubNamespaces(options.onHubNamespacesDeleted);
   const { location } = useWindowLocation();
   const signCollection = useSignAllCollections();
 
   return useMemo(() => {
-    const canSignAllCollections = () =>
-      !can_upload_signatures && location?.search.includes('repository');
+    const isRepoSelected = () => location?.search.includes('repository');
+
+    const canSignAllCollections = () => can_create_signatures && !can_upload_signatures;
+
     const actions: IPageAction<HubNamespace>[] = [
       {
         type: PageActionType.Button,
@@ -68,8 +71,8 @@ export function useHubNamespaceActions(options?: {
             namespace: namespace,
             signing_service: signing_service ?? '',
           }),
-        isDisabled: () => (canSignAllCollections() ? '' : t('Select a repository filter')),
-        isHidden: () => !options.isDetailsPageAction,
+        isDisabled: () => (isRepoSelected() ? '' : t('Select a repository filter')),
+        isHidden: () => !(options.isDetailsPageAction && canSignAllCollections()),
       },
 
       {
@@ -88,6 +91,7 @@ export function useHubNamespaceActions(options?: {
   }, [
     t,
     can_upload_signatures,
+    can_create_signatures,
     location?.search,
     pageNavigate,
     signCollection,
