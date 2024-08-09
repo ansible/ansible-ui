@@ -8,7 +8,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -72,7 +72,7 @@ export function Projects() {
           `A Project is a logical collection of Ansible playbooks, represented in {{product}}. You can manage playbooks and playbook directories by either placing them manually under the Project Base Path on your {{product}} server, or by placing your playbooks into a source code management (SCM) system supported by {{product}}, including Git, Subversion, Mercurial, and Red Hat Insights.`,
           { product }
         )}
-        titleDocLink={getDocsBaseUrl(config, 'projects')}
+        titleDocLink={useGetDocsUrl(config, 'projects')}
         description={t(
           `A Project is a logical collection of Ansible playbooks, represented in {{product}}.`,
           { product }

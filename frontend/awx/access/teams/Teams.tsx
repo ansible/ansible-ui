@@ -6,7 +6,7 @@ import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Team } from '../../interfaces/Team';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -45,7 +45,7 @@ export function Teams() {
             'For instance, permissions may be granted to a whole Team rather than each user on the Team.'
           ),
         ]}
-        titleDocLink={getDocsBaseUrl(config, 'teams')}
+        titleDocLink={useGetDocsUrl(config, 'teams')}
         description={t(
           'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}

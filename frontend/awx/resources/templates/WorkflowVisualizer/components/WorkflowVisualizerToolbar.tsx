@@ -30,7 +30,7 @@ import { observer, useVisualizationController } from '@patternfly/react-topology
 import { usePageNavigate, usePageAlertToaster } from '../../../../../../framework';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
-import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import { useViewOptions } from '../ViewOptionsProvider';
 import { AddNodeButton } from './AddNodeButton';
@@ -251,7 +251,7 @@ export const WorkflowVisualizerToolbar = observer(() => {
             <DropdownItem
               icon={<ExternalLinkAltIcon />}
               data-cy="workflow-documentation"
-              to={getDocsBaseUrl(config, 'workflowVisualizer')}
+              to={useGetDocsUrl(config, 'workflowVisualizer')}
               target="_blank"
             >
               {t('Documentation')}

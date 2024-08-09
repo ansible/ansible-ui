@@ -47,7 +47,7 @@ export function HubMasthead() {
               id="documentation"
               icon={<ExternalLinkAltIcon />}
               component="a"
-              href={`${getDocsBaseUrl(config)}/html/userguide/index.html`}
+              href={`${useGetDocsUrl(config)}/html/userguide/index.html`}
               target="_blank"
               data-cy="masthead-documentation"
             >

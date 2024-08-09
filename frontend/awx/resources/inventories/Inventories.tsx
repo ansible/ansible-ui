@@ -8,7 +8,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { type Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
@@ -100,7 +100,7 @@ export function Inventories() {
         titleHelp={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}
-        titleDocLink={getDocsBaseUrl(config, 'inventories')}
+        titleDocLink={useGetDocsUrl(config, 'inventories')}
         description={t(
           'An inventory defines the hosts and groups of hosts upon which commands, modules, and tasks in a playbook operate.'
         )}

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { ApplicationsTable } from './ApplicationsTable';
 
@@ -18,7 +18,7 @@ export function Applications() {
         )}
         titleHelpTitle={t('Applications')}
         titleHelp={t('Create and configure token-based authentication for external applications.')}
-        titleDocLink={`${getDocsBaseUrl(config, 'applications')}/userguide/applications_auth.html`}
+        titleDocLink={`${useGetDocsUrl(config, 'applications')}/userguide/applications_auth.html`}
         headerActions={<ActivityStreamIcon type={'o_auth2_application'} />}
       />
       <ApplicationsTable />

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { SchedulesList } from './SchedulesList';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -18,7 +18,7 @@ export function Schedules(props: { sublistEndpoint?: string }) {
         titleHelp={t(
           'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
         )}
-        titleDocLink={getDocsBaseUrl(config, 'schedules')}
+        titleDocLink={useGetDocsUrl(config, 'schedules')}
         description={t(
           'Schedules are used to launch jobs on a regular basis. They can be used to launch jobs against machines, synchronize with inventory sources, and import project content from a version control system.'
         )}

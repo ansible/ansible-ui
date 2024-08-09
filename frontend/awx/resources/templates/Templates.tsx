@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { awxAPI } from '../../common/api/awx-utils';
 import { TemplatesList } from './TemplatesList';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
@@ -21,7 +21,7 @@ export function Templates() {
         titleHelp={t(
           'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
         )}
-        titleDocLink={getDocsBaseUrl(config, 'templates')}
+        titleDocLink={useGetDocsUrl(config, 'templates')}
         description={t(
           'A job template is a definition and set of parameters for running an Ansible job.'
         )}
