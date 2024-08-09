@@ -53,7 +53,7 @@ export function useHubRoleMetadata(): HubRoleMetadata {
           },
         },
         'galaxy.collectionremote': {
-          displayName: t('Collection Remote'),
+          displayName: t('Remote'),
           permissions: {
             'galaxy.manage_roles_collectionremote': t('Manage remote roles'),
             'galaxy.change_collectionremote': t('Change collection remote'),
@@ -62,7 +62,7 @@ export function useHubRoleMetadata(): HubRoleMetadata {
           },
         },
         'galaxy.ansiblerepository': {
-          displayName: t('Ansible Repository'),
+          displayName: t('Repository'),
           permissions: {
             'galaxy.rebuild_metadata_ansiblerepository': t('Rebuild Ansible repository metadata'),
             'galaxy.repair_ansiblerepository': t('Repair Ansible repository'),

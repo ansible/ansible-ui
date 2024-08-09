@@ -88,6 +88,10 @@ export enum HubRoute {
   Organizations = 'hub-organizations',
   Teams = 'hub-teams',
   Users = 'hub-users',
+  UserPage = 'hub-user-page',
+  UserRoles = 'hub-user-roles',
+  UserAddRoles = 'hub-user-add-roles',
+
   APIToken = 'hub-api-token',
   MyImports = 'hub-my-imports',
   Roles = 'hub-roles',

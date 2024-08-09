@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useGetPageUrl } from '../../../../framework';
 import { AwxRoute } from '../../../awx/main/AwxRoutes';
 import { EdaRoute } from '../../../eda/main/EdaRoutes';
+import { HubRoute } from '../../../hub/main/HubRoutes';
 
 export function useGetLinkToResourcePage() {
   const getPageUrl = useGetPageUrl();
@@ -44,6 +45,14 @@ export function useGetLinkToResourcePage() {
           params: { id: objectId },
         }),
         'awx.project': getPageUrl(AwxRoute.ProjectDetails, { params: { id: objectId } }),
+        'galaxy.namespace': getPageUrl(HubRoute.NamespaceDetails, { params: { id: objectId } }),
+        'galaxy.ansiblerepository': getPageUrl(HubRoute.RepositoryDetails, {
+          params: { id: objectId },
+        }),
+        'galaxy.containernamespace': getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
+          params: { id: objectId },
+        }),
+        'galaxy.collectionremote': getPageUrl(HubRoute.RemoteDetails, { params: { id: objectId } }),
       };
       return resourceToEndpointMapping[contentType] ?? undefined;
     },
