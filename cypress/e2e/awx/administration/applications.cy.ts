@@ -207,7 +207,7 @@ describe('AWX OAuth Application Creation and AWX token association with it', () 
       // verifies the oauth application has tokens associated with it by searching
       cy.selectTableRow(currentAwxUser.username);
     });
-    cy.clickToolbarKebabAction('delete-selected-tokens');
+    cy.clickToolbarKebabAction('delete-tokens');
     cy.clickModalConfirmCheckbox();
     cy.intercept('DELETE', awxAPI`/tokens/*/`).as('deleteAWXToken');
     cy.getModal().within(() => {

@@ -34,7 +34,7 @@ export function ApplicationTokens() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected tokens'),
+        label: t('Delete tokens'),
         onClick: deleteTokens,
         isDanger: true,
       },
