@@ -45,9 +45,9 @@ describe('My imports', () => {
     cy.deleteNamespace(invalidCollection.namespace);
   });
 
-  // no way to get there without a namespace without cy.visit, until the clear button works
+  // no way to get there without a namespace without cy.visit, until the clear button works, or until my imports is in nav
   it.skip('should render empty states', () => {
-    cy.visit(MyImports.url);
+    cy.navigateTo('hub', MyImports.url);
     cy.contains('No namespace selected.');
     cy.contains('No data');
     cy.get('#namespace-selector').contains('Select namespace');
@@ -57,7 +57,6 @@ describe('My imports', () => {
   it('should be able to inspect completed collection import', () => {
     const { name, namespace, version } = validCollection;
     visitImports(namespace);
-    cy.visit(`?namespace=${namespace}&name=${name}&version=${version}`);
 
     // test correctly set label params
     cy.get('#namespace-selector').contains(namespace);
@@ -82,7 +81,6 @@ describe('My imports', () => {
   it('should be able to inspect failed collection import', () => {
     const { name, namespace, version } = invalidCollection;
     visitImports(namespace);
-    cy.visit(`?namespace=${namespace}&name=${name}&version=${version}`);
 
     cy.get('#namespace-selector').contains(namespace);
     cy.get('.pf-v5-c-chip-group').contains(name);
