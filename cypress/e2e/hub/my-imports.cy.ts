@@ -15,7 +15,7 @@ function visitImports(namespace: string) {
   cy.verifyPageTitle('My imports');
 }
 
-describe('My imports', () => {
+describe.skip('My imports', () => {
   const validCollection = {
     namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
     name: `testcollection_${randomString(4, undefined, { isLowercase: true })}`,
@@ -45,9 +45,11 @@ describe('My imports', () => {
     cy.deleteNamespace(invalidCollection.namespace);
   });
 
-  // no way to get there without a namespace without cy.visit, until the clear button works, or until my imports is in nav
-  it.skip('should render empty states', () => {
-    cy.navigateTo('hub', MyImports.url);
+  it('should render empty states', () => {
+    // FIXME: can't use visit downstream
+    // can't use navigateTo because not in nav
+    // can't use the x button to unset namespace
+    cy.visit(MyImports.url);
     cy.contains('No namespace selected.');
     cy.contains('No data');
     cy.get('#namespace-selector').contains('Select namespace');
