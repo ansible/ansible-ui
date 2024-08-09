@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
@@ -245,11 +244,6 @@ export function useEdaNavigation() {
             {
               path: '',
               element: <Navigate to="details" />,
-            },
-            {
-              id: EdaRoute.ProjectUserAccess,
-              path: 'user-access',
-              element: <PageNotImplemented />,
             },
           ],
         },
