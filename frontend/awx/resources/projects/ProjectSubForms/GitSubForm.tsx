@@ -4,7 +4,7 @@ import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageForm
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
@@ -61,7 +61,7 @@ export function GitSubForm() {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={getDocsBaseUrl(config, 'managePlaybooksSC')}
+          href={useGetDocsUrl(config, 'managePlaybooksSC')}
         >
           {t`Documentation.`}
         </a>

@@ -6,7 +6,7 @@ import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfl
 import { SummaryFieldsExecutionEnvironment } from '../awx/interfaces/summary-fields/summary-fields';
 import { useAwxConfig } from '../awx/common/useAwxConfig';
 import { useTranslation } from 'react-i18next';
-import { getDocsBaseUrl } from '../awx/common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../awx/common/util/useGetDocsUrl';
 import { PageDetail } from '../../framework';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
@@ -32,7 +32,7 @@ export function ExecutionEnvironmentDetail(props: {
 }) {
   const config = useAwxConfig();
   const { t } = useTranslation();
-  const docsLink = getDocsBaseUrl(config, 'eeMigration');
+  const docsLink = useGetDocsUrl(config, 'eeMigration');
   const label = props.isDefaultEnvironment
     ? t('Default Execution Environment')
     : t('Execution Environment');
