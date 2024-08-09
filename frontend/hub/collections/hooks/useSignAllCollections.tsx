@@ -4,7 +4,6 @@ import { usePageDialog } from '../../../../framework';
 import { hubAPI } from '../../common/api/formatPath';
 import { getRepositoryBasePath, hubAPIPost } from '../../common/api/hub-api-utils';
 import { HubNamespace } from '../../namespaces/HubNamespace';
-import { useWindowLocation } from '../../../../framework/components/useWindowLocation';
 import {
   Modal,
   ModalVariant,
@@ -19,6 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import { HubError } from '../../common/HubError';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 
 export interface SignAllCollectionsModalProps {
   namespace: HubNamespace;
@@ -28,24 +28,22 @@ export interface SignAllCollectionsModalProps {
 
 export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalProps>) {
   const { t } = useTranslation();
-  const { location } = useWindowLocation();
+  const [params] = useURLSearchParams();
   const [_, setDialog] = usePageDialog();
   const { namespace, onComplete, signing_service } = props;
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const repoName =
-    location?.search.includes('repository') &&
-    location?.search
-      ?.split('&')
-      ?.filter((str) => str?.includes('repository'))[0]
-      ?.split('=')[1];
+  const repoName = params.get('repository');
+
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
     onComplete?.(namespace);
     setError('');
     setIsLoading(false);
   }, [namespace, onComplete, setDialog]);
+
+  const signing_service_name = 'ansible-default';
 
   return (
     <Modal
@@ -108,7 +106,7 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
         <GridItem span={12}>
           <FormGroup fieldId="service-selector" label={t`Signing service selector:`}>
             <FormSelect value="ansible-default" id="service-selector">
-              <FormSelectOption value="ansible-default" label={t('ansible-default')} />
+              <FormSelectOption value="ansible-default" label={signing_service_name} />
             </FormSelect>
           </FormGroup>
         </GridItem>

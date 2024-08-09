@@ -34,7 +34,7 @@ export function useHubNamespaceActions(options?: {
   const signCollection = useSignAllCollections();
 
   return useMemo(() => {
-    const isRepoSelected = () => location?.search.includes('repository');
+    const isRepoSelected = () => location?.search.includes('repository=');
 
     const canSignAllCollections = () => can_create_signatures && !can_upload_signatures;
 
