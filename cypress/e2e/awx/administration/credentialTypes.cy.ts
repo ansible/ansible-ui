@@ -106,7 +106,7 @@ describe('Credential Types', () => {
       cy.navigateTo('awx', 'credential-types');
       cy.filterTableByMultiSelect('name', [credType1.name]);
       cy.getByDataCy('edit-credential-type').click();
-      cy.verifyPageTitle('Edit Credential Type');
+      cy.verifyPageTitle(`Edit ${credType1.name}`);
       cy.url().should('contain', `/credential-types/${credType1.id}/edit`);
       cy.getBy('[class*="view-lines monaco-mouse-cursor-text"]')
         .eq(0)
@@ -137,7 +137,7 @@ describe('Credential Types', () => {
 
     it('can create a new credential type with no configs', () => {
       cy.createAndDeleteCustomAWXCredentialTypeUI(customCredentialTypeName);
-      cy.verifyPageTitle('Credential Types');
+      cy.verifyPageTitle('Create credential type');
     });
 
     it('creates a custom credential type with input and injector configurations in JSON format in the Monaco editor', () => {
@@ -198,7 +198,7 @@ describe('Credential Types', () => {
       const editedCredentialTypeName = (credType1.name ?? '') + ' edited';
       cy.filterTableByMultiSelect('name', [credType1.name]);
       cy.clickTableRowPinnedAction(credType1.name, 'edit-credential-type', false);
-      cy.verifyPageTitle('Edit Credential Type');
+      cy.verifyPageTitle(`Edit ${credType1.name}`);
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('edit')).to.be.true;
       });
@@ -244,7 +244,7 @@ describe('Credential Types', () => {
       cy.filterTableByMultiSelect('name', [credType1.name]);
       cy.clickTableRowLink('name', credType1.name, { disableFilter: true });
       cy.clickButton('Edit credential type');
-      cy.verifyPageTitle('Edit Credential Type');
+      cy.verifyPageTitle(`Edit ${credType1.name}`);
       cy.get('[data-cy="name"]').clear().type(editedCredentialTypeName);
       cy.get('[data-cy="description"]').clear().type('this is a new description after editing');
       cy.intercept('PATCH', awxAPI`/credential_types/${credType1.id.toString()}/`).as(

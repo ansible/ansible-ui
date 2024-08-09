@@ -49,7 +49,7 @@ describe('Credentials', () => {
       cy.get(`[data-cy="row-id-${credential.id}"]`).within(() => {
         cy.getByDataCy('edit-credential').click();
       });
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credential.name}`);
       cy.getByDataCy('name').clear().type(`${credential.name} - edited`);
       cy.clickButton(/^Save credential$/);
       cy.clearAllFilters();
@@ -172,7 +172,7 @@ describe('Credentials', () => {
         disableFilter: true,
       });
       cy.clickButton(/^Edit credential$/);
-      cy.verifyPageTitle('Edit Credential');
+      cy.verifyPageTitle(`Edit ${credential.name}`);
       cy.getByDataCy('name')
         .clear()
         .type(credential.name + '-edited');
@@ -414,7 +414,7 @@ describe('Credentials: Credential Types Tests', () => {
     cy.contains('Vault Password').should('be.visible');
     cy.getByDataCy('vault-password').contains('Encrypted');
     cy.getByDataCy('edit-credential').click();
-    cy.verifyPageTitle('Edit Credential');
+    cy.verifyPageTitle(`Edit ${credentialName}`);
     cy.get('[data-cy="vault-password"]').then(($pwd) => {
       cy.wrap($pwd).should('have.value', 'ENCRYPTED');
     });
@@ -462,7 +462,7 @@ describe('Credentials: Credential Types Tests', () => {
         cy.getByDataCy('label-description').contains('Description');
         cy.getByDataCy('description').contains('description');
         cy.getByDataCy('edit-credential').click();
-        cy.verifyPageTitle('Edit Credential');
+        cy.verifyPageTitle(`Edit ${credentialName}`);
         const ModifiedCredentialName = credentialName + ' - edited';
         cy.getByDataCy('name').type(ModifiedCredentialName);
         cy.get('input[data-cy="username"]').then(($username) => {
@@ -520,7 +520,7 @@ describe('Credentials: Credential Types Tests', () => {
     cy.contains('Password').should('be.visible');
     cy.getByDataCy('password').contains('Prompt on launch');
     cy.getByDataCy('edit-credential').click();
-    cy.verifyPageTitle('Edit Credential');
+    cy.verifyPageTitle(`Edit ${credentialName}`);
     cy.getByDataCy('ask_password').uncheck();
     cy.getByDataCy('password').type('password');
     cy.clickButton(/^Save credential$/);
