@@ -1355,50 +1355,6 @@ Cypress.Commands.add('cancelJob', (job: Job) => {
   cy.requestPost<Job>(`${job.url}cancel/`, {});
 });
 
-const GLOBAL_PROJECT_NAME = 'Global Project';
-const GLOBAL_PROJECT_DESCRIPTION = 'Global Read Only Project for E2E tests';
-const GLOBAL_PROJECT_SCM_URL = 'https://github.com/ansible/ansible-ui';
-const GLOBAL_ORG_NAME = 'Global Platform Level Organization';
-const GLOBAL_ORG_DESCRIPTION = 'DO NOT DELETE: Global Organization';
-
-/** Create a global organization if it doesn't exist. */
-Cypress.Commands.add('createGlobalOrganization', function () {
-  cy.requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations?name=${GLOBAL_ORG_NAME}`)
-    .its('results')
-    .then((orgResults: Organization[]) => {
-      if (orgResults.length === 0) {
-        cy.requestPost<AwxItemsResponse<Organization>, Partial<Organization>>(
-          awxAPI`/organizations/`,
-          { name: GLOBAL_ORG_NAME, description: GLOBAL_ORG_DESCRIPTION }
-        );
-        cy.wait(100).then(() => cy.createGlobalOrganization());
-      } else {
-        cy.wrap(orgResults[0]).as('globalAwxOrganization');
-      }
-    });
-});
-
-/** Create a global project if it doesn't exist. */
-Cypress.Commands.add('createGlobalProject', function () {
-  const globalAwxOrganization = this.globalAwxOrganization as Organization;
-  cy.requestGet<AwxItemsResponse<Project>>(awxAPI`/projects?name=${GLOBAL_PROJECT_NAME}`)
-    .its('results')
-    .then((projectResults: Project[]) => {
-      if (projectResults.length === 0) {
-        cy.requestPost<AwxItemsResponse<Project>, Partial<Project>>(awxAPI`/projects/`, {
-          name: GLOBAL_PROJECT_NAME,
-          description: GLOBAL_PROJECT_DESCRIPTION,
-          organization: globalAwxOrganization.id,
-          scm_type: 'git',
-          scm_url: GLOBAL_PROJECT_SCM_URL,
-        });
-        cy.wait(100).then(() => cy.createGlobalProject());
-      } else {
-        cy.wrap(projectResults[0]).as('globalProject');
-      }
-    });
-});
-
 Cypress.Commands.add(
   'createCustomAWXApplicationFromUI',
   (
