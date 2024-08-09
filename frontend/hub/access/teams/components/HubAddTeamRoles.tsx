@@ -18,7 +18,7 @@ import { hubAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkActionDialog } from '../../../common/useHubBulkActionDialog';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { HubUser } from '../../../interfaces/expanded/HubUser';
+import { HubTeam } from '../../../interfaces/expanded/HubTeam';
 import { HubRoute } from '../../../main/HubRoutes';
 import {
   HubResourceType,
@@ -41,18 +41,18 @@ interface ResourceRolePair {
   role: HubRbacRole;
 }
 
-export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string }) {
+export function HubAddTeamRoles(props: Readonly<{ id?: string; teamRolesRoute?: string }>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const progressDialog = useHubBulkActionDialog<ResourceRolePair>();
 
-  const { data: user, isLoading } = useGet<HubUser>(
-    hubAPI`/_ui/v2/users/${props.id || params.id || ''}/`
+  const { data: team, isLoading } = useGet<HubTeam>(
+    hubAPI`/_ui/v2/teams/${props.id || params.id || ''}/`
   );
 
-  if (isLoading || !user) return <LoadingPage />;
+  if (isLoading || !team) return <LoadingPage />;
 
   const steps: PageWizardStep[] = [
     {
@@ -72,7 +72,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
       },
       hidden: (wizardData) => {
         const { resourceType } = wizardData as WizardFormValues;
-        return resourceType === 'system';
+        return !resourceType || resourceType === 'system';
       },
     },
     {
@@ -120,8 +120,8 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
         items,
         actionColumns,
         actionFn: ({ resource, role }) =>
-          postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
-            user: user.id,
+          postRequest(hubAPI`/_ui/v2/role_team_assignments/`, {
+            team: team.id,
             role_definition: role.id,
             content_type: resourceType === 'system' ? null : resourceType,
             object_id:
@@ -134,7 +134,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
           resolve();
         },
         onClose: () => {
-          pageNavigate(props.userRolesRoute || HubRoute.UserRoles, {
+          pageNavigate(props.teamRolesRoute ?? HubRoute.TeamRoles, {
             params: { id: params.id },
           });
         },
@@ -147,14 +147,14 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
       <PageHeader
         title={t('Add roles')}
         breadcrumbs={[
-          { label: t('Users'), to: getPageUrl(HubRoute.Users) },
+          { label: t('Teams'), to: getPageUrl(HubRoute.Teams) },
           {
-            label: user?.username,
-            to: getPageUrl(HubRoute.UserDetails, { params: { id: user?.id } }),
+            label: team?.name,
+            to: getPageUrl(HubRoute.TeamDetails, { params: { id: team?.id } }),
           },
           {
             label: t('Roles'),
-            to: getPageUrl(HubRoute.UserRoles, { params: { id: user?.id } }),
+            to: getPageUrl(HubRoute.TeamRoles, { params: { id: team?.id } }),
           },
           { label: t('Add roles') },
         ]}
@@ -164,7 +164,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {
-          pageNavigate(props.userRolesRoute || HubRoute.UserRoles, { params: { id: params.id } });
+          pageNavigate(props.teamRolesRoute || HubRoute.TeamRoles, { params: { id: params.id } });
         }}
         disableGrid
       />
