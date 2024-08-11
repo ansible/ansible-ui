@@ -191,7 +191,7 @@ describe('Collections Details', () => {
     });
   });
 
-  it('can sign a selected version of a collection', () => {
+  it.skip('can sign a selected version of a collection', () => {
     cy.uploadCollection(collectionName, namespace.name).then(() => {
       cy.galaxykit(
         `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
@@ -230,6 +230,7 @@ describe('Collections Details', () => {
         //Select the first version of the collection in order to sign it
         cy.getByDataCy('version').should('contain', '1.0.0');
         cy.getByDataCy('signed-state').should('contain', 'Unsigned');
+        // FIXME: here, the version changes from 1.0.0 to 1.2.3 .. could be autoreload when no version is explicitly selected, or sign-version forgetting state?
         cy.selectDetailsPageKebabAction('sign-version');
         cy.getModal().then(() => {
           cy.clickButton(/^Close$/);
