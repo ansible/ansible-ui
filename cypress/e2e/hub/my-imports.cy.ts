@@ -30,10 +30,10 @@ describe.skip('My imports', () => {
 
   before(() => {
     cy.createNamespace(validCollection.namespace);
-    cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
+    cy.galaxykit('-i collection upload', validCollection.namespace, validCollection.name);
 
     cy.createNamespace(invalidCollection.namespace);
-    cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
+    cy.galaxykit('-i collection upload', invalidCollection.namespace, invalidCollection.name);
     cy.waitForAllTasks();
   });
 

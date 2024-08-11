@@ -259,11 +259,6 @@ Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
 });
 
-// Skipping until deeper debug
-// Cypress.Commands.add('deleteCollection', (collection: string, namespace: string, repository: string) => {
-//   cy.galaxykit(`collection delete ${namespace} ${collection}`);
-// });
-
 Cypress.Commands.add(
   'deleteCollection',
   (
@@ -291,20 +286,20 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
-    cy.galaxykit(
-      `collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`
-    ).then((result) => {
-      cy.waitForAllTasks().then(() => {
-        return result;
-      });
-    });
+    cy.galaxykit('collection upload', namespace, collection, version ? version : '1.0.0').then(
+      (result) => {
+        cy.waitForAllTasks().then(() => {
+          return result;
+        });
+      }
+    );
   }
 );
 
 Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
-    cy.galaxykit(`collection move ${namespace} ${collection} ${version} staging published`);
+    cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
     cy.waitForAllTasks();
   }
 );
