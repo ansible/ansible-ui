@@ -14,6 +14,7 @@ import {
   useGetPageUrl,
   usePageDialog,
   usePageNavigate,
+  PageFormCheckbox,
 } from '../../../framework';
 import { Button, Label, Tooltip } from '@patternfly/react-core';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
@@ -355,6 +356,17 @@ export function RulebookActivationInputs() {
           )}
           labelHelpTitle={t('Variables')}
         />
+      </PageFormSection>
+      <PageFormSection singleColumn>
+        <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox<IEdaRulebookActivationInputs>
+            label={t`Skip audit events`}
+            labelHelp={t(
+              'Skipping audit events will prevent you from seeing your events in the Rule Audit, its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
+            )}
+            name="skip_audit_events"
+          />
+        </PageFormGroup>
       </PageFormSection>
     </>
   );
