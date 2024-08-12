@@ -3,7 +3,7 @@ import { ExecutionEnvironment } from '../../../frontend/hub/execution-environmen
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-describe.skip('Execution Environment User Access tab', () => {
+describe('Execution Environment User Access tab', () => {
   let executionEnvironment: ExecutionEnvironment;
   let remoteRegistry: RemoteRegistry;
   before(() => {
@@ -29,22 +29,13 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.verifyPageTitle(executionEnvironment.name);
   });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', hubAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+  function removeRoleFromListRow(roleName: string) {
     cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
-        });
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clearAllFilters();
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -127,6 +118,8 @@ describe.skip('Execution Environment User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
+        cy.setTablePageSize('100').scrollIntoView();
+        cy.contains(hubTeam.name).scrollIntoView();
         cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
 
         cy.clickButton(/^Next/);

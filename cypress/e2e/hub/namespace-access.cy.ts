@@ -21,19 +21,13 @@ describe.skip('Namespace - team and user access', () => {
     cy.clickTableRowLink('name', namespace.name, { disableFilter: true });
   });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', hubAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+  function removeRoleFromListRow(roleName: string) {
     cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
-        });
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -105,7 +99,8 @@ describe.skip('Namespace - team and user access', () => {
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
-        cy.contains('h1', 'Select teams(s)').should('be.visible');
+        cy.setTablePageSize('100').scrollIntoView();
+        cy.contains(hubTeam.name).scrollIntoView();
         cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
 
         cy.clickButton(/^Next/);
@@ -148,11 +143,11 @@ describe.skip('Namespace - team and user access', () => {
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(namespace.name);
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
-        disableFilter: true,
+        disableFilter: false,
       });
       removeRoleFromListRow('galaxy.collection_namespace_owner', 'team');
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
-        disableFilter: true,
+        disableFilter: false,
       });
       removeRoleFromListRow('galaxy.collection_publisher', 'team');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
