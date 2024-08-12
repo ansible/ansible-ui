@@ -16,14 +16,7 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
 });
 
 Cypress.Commands.add('login', () => {
-  if (!Cypress.config().baseUrl?.includes('localhost')) {
-    cy.log('Platform server:', Cypress.config().baseUrl);
-    cy.platformLogin(); //downstream AAP build
-    return;
-  }
-
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
-
   switch (devBaseUrlPort) {
     case '4100': // Platform
       cy.platformLogin();
@@ -51,6 +44,10 @@ Cypress.Commands.add('login', () => {
           break;
         case 'EDA':
           cy.edaLogin();
+          break;
+        default:
+          cy.log('Platform server:', Cypress.config().baseUrl);
+          cy.platformLogin(); //downstream AAP build
           break;
       }
   }
