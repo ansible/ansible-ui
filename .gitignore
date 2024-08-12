@@ -12,3 +12,7 @@
 /cypress/coverage
 .eslintcache
 /test-results
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

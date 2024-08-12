@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test';
 import { clickButtonByLabel } from '../common/clickButton';
+import { clickLinkByLabel } from '../common/clickLink';
 import { createE2EName } from '../common/createE2EName';
 import { enterTextByLabel } from '../common/enterText';
 import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
@@ -20,7 +21,7 @@ export async function createAwxTeam(
   await navigateTo('Access Management', 'Teams', page);
 
   // Click the create team button
-  await clickButtonByLabel('Create team', page);
+  await clickLinkByLabel('Create team', page);
 
   // Verify we are on the create team page
   await expectPageTitleToContain('Create Team', page);

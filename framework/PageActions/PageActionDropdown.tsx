@@ -11,7 +11,7 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { CircleIcon, EllipsisVIcon, CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, CircleIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -172,7 +172,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
               id={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               className={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               isDisabled={!!isDisabled}
-              aria-label={isKebab ? 'kebab dropdown toggle' : 'dropdown toggle'}
+              aria-label={isKebab ? 'actions' : 'dropdown toggle'}
               variant={isSecondary ? 'secondary' : isPrimary ? 'primary' : 'plain'}
               onClick={() => setDropdownOpen(!dropdownOpen)}
               isExpanded={dropdownOpen}
