@@ -122,7 +122,7 @@ export function MyImports() {
 
   function setNamespaceQP(namespace: string | null) {
     setSearchParams((params) => {
-      params.set('namespace', namespace || '');
+      params.set('namespace', namespace ?? '');
       return params;
     });
   }
