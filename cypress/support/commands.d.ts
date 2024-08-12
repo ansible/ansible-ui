@@ -290,7 +290,7 @@ declare global {
       selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
       /** Checks the cell text value based on the column name. */
-      checkCellTextByColumnName(term: string, expectedValue: string): Chainable<void>;
+      checkCellValueByColumnName(term: string, expectedValue: string): Chainable<void>;
 
       // TODO REMOVE only needed in one test
       multiSelectShouldHaveSelectedOption(
