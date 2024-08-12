@@ -1552,6 +1552,12 @@ export enum ScmTypeEnum {
   Git = 'git',
 }
 
+export interface Source {
+  name: string;
+  source_info: string;
+  rulebook_hash: string;
+}
+
 /**
  * * `starting` - starting
  * * `running` - running
