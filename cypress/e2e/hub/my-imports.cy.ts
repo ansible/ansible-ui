@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { MyImports, Namespaces } from './constants';
+import { Namespaces } from './constants';
 
 function visitImports(namespace: string) {
   cy.navigateTo('hub', Namespaces.url);
@@ -46,10 +46,11 @@ describe('My imports', () => {
   });
 
   it('should render empty states', () => {
-    // FIXME: can't use visit downstream
-    // can't use navigateTo because not in nav
-    // can't use the x button to unset namespace
-    cy.visit(MyImports.url);
+    // Go to Imports and de-select namespace
+    const { namespace } = validCollection;
+    visitImports(namespace);
+    cy.getByDataCy('reset').click();
+    // Check Empty state when no namespace is selected
     cy.contains('No namespace selected.');
     cy.contains('No data');
     cy.get('#namespace-selector').contains('Select namespace');
