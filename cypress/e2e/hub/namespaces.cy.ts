@@ -5,6 +5,14 @@ import { MyImports, Namespaces } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
+function visitNamespace(name: string) {
+  cy.navigateTo('hub', Namespaces.url);
+  cy.verifyPageTitle('Namespaces');
+  cy.filterTableBySingleText(name);
+  cy.get('a').contains(name).click();
+  cy.verifyPageTitle(name);
+}
+
 describe('Namespaces', () => {
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
@@ -43,6 +51,7 @@ describe('Namespaces', () => {
     cy.clickButton(/^Delete namespaces$/);
   });
 });
+
 describe('Namespaces - use existing namespaces', () => {
   let namespace: HubNamespace;
   before(() => {
@@ -61,8 +70,7 @@ describe('Namespaces - use existing namespaces', () => {
   after(() => cy.deleteHubNamespace(namespace));
 
   it('should show namespace details tab', () => {
-    cy.visit(`${Namespaces.url}/${namespace.name}`);
-
+    visitNamespace(namespace.name);
     cy.getByDataCy('name').should('contain', namespace.name);
     cy.getByDataCy('description').should('contain', 'test description');
     cy.getByDataCy('company').should('contain', 'test company');
@@ -73,7 +81,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 
   it('should show collections tab', () => {
-    cy.visit(`${Namespaces.url}/${namespace.name}`);
+    visitNamespace(namespace.name);
     cy.url().should('include', `/namespaces/${namespace.name}/details`);
     cy.getByDataCy('collections-tab').should('contain', 'Collections');
     cy.getByDataCy('collections-tab').click();
@@ -88,8 +96,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 
   it('edit a namespace', () => {
-    cy.visit(`${Namespaces.url}/${namespace.name}`);
-
+    visitNamespace(namespace.name);
     cy.url().should('include', `/namespaces/${namespace.name}/details`);
     cy.getByDataCy('edit-namespace').click();
     cy.getByDataCy('company').clear().type('new company');
@@ -112,6 +119,7 @@ describe('Namespaces - use existing namespaces', () => {
     cy.contains(namespace.name).should('be.visible');
   });
 });
+
 describe('Namespaces - collections', () => {
   it('can sign a collection', () => {
     let namespace: HubNamespace;
@@ -156,6 +164,7 @@ describe('Namespaces - collections', () => {
     });
   });
 });
+
 describe('Namespaces - delete', () => {
   it('user can bulk delete namespaces', () => {
     cy.createHubNamespace().then((namespace1) => {
