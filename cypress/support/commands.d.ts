@@ -85,6 +85,7 @@ import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
 
+
 declare global {
   namespace Cypress {
     interface Chainable {
