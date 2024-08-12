@@ -15,7 +15,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/cert.key 
 # directories and files that are written to by processes in the image must be owned by the root group
 # and be read/writable by that group. Files to be executed must also have group execute permissions.
 #
-FROM --platform=${TARGETPLATFORM:-linux/amd64} nginx:alpine AS base
+FROM nginx:alpine AS base
 COPY --from=certificate /certs/cert.pem /certs/cert.pem
 COPY --from=certificate /certs/cert.pem /certs/CA.pem
 COPY --from=certificate /certs/cert.key /certs/cert.key
@@ -43,3 +43,9 @@ ENV EDA_WEBHOOK_SERVER=${EDA_WEBHOOK_SERVER:-http://example.com}
 ENV EDA_SERVER_UUID=${EDA_SERVER_UUID:-sample_uuid}
 COPY /nginx/eda.conf /etc/nginx/templates/default.conf.template
 COPY /build/eda /usr/share/nginx/html
+
+# ui-e2e
+FROM cypress/base AS ui-e2e
+WORKDIR /app
+COPY . .
+RUN npm ci

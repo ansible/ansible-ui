@@ -23,6 +23,7 @@ Cypress.Commands.add('login', () => {
   }
 
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+
   switch (devBaseUrlPort) {
     case '4100': // Platform
       cy.platformLogin();
@@ -38,6 +39,20 @@ Cypress.Commands.add('login', () => {
     case '4103':
       cy.edaLogin();
       break;
+    default:
+      switch (Cypress.env('PRODUCT')) {
+        case 'AWX':
+          cy.awxLogin();
+          cy.createGlobalOrganization();
+          cy.createGlobalProject();
+          break;
+        case 'HUB':
+          cy.hubLogin();
+          break;
+        case 'EDA':
+          cy.edaLogin();
+          break;
+      }
   }
 });
 
@@ -53,6 +68,18 @@ Cypress.Commands.add('logout', () => {
     case '4103':
       cy.edaLogout();
       break;
+    default:
+      switch (Cypress.env('PRODUCT')) {
+        case 'AWX':
+          cy.awxLogout();
+          break;
+        case 'HUB':
+          cy.hubLogout();
+          break;
+        case 'EDA':
+          cy.edaLogout();
+          break;
+      }
   }
 });
 
