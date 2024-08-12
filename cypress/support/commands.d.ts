@@ -1678,12 +1678,6 @@ declare global {
         content_type: ContentTypeEnum;
         permissions: string[];
       }): Cypress.Chainable<HubRbacRole>;
-      // createHubRoleAPI(
-      //   roleName: string,
-      //   description: string,
-      //   content_type,
-      //   permissions: string[]
-      // ): Cypress.Chainable<HubRbacRole>;
       deleteHubRoleAPI(hubRoleDefinition: HubRbacRole): Chainable<void>;
       // ==============================================================================================================
       // END OF COMMANDS
