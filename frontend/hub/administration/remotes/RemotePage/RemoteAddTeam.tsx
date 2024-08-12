@@ -115,7 +115,7 @@ export function RemoteAddTeams() {
     }
     return new Promise<void>((resolve) => {
       teamProgressDialog({
-        title: t('Add roles'),
+        title: t('Add Roles'),
         keyFn: ({ team, role }) => `${team.id}_${role.id}`,
         items,
         actionColumns: [
@@ -144,7 +144,7 @@ export function RemoteAddTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add teams')}
+        title={t('Add roles')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
           {
