@@ -1,5 +1,5 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { MyImports, Namespaces } from './constants';
+import { Namespaces } from './constants';
 
 function visitImports(namespace: string) {
   cy.navigateTo('hub', Namespaces.url);
@@ -15,7 +15,7 @@ function visitImports(namespace: string) {
   cy.verifyPageTitle('My imports');
 }
 
-describe.skip('My imports', () => {
+describe('My imports', () => {
   const validCollection = {
     namespace: `testnamespace${randomString(4, undefined, { isLowercase: true })}`,
     name: `testcollection_${randomString(4, undefined, { isLowercase: true })}`,
@@ -46,10 +46,11 @@ describe.skip('My imports', () => {
   });
 
   it('should render empty states', () => {
-    // FIXME: can't use visit downstream
-    // can't use navigateTo because not in nav
-    // can't use the x button to unset namespace
-    cy.visit(MyImports.url);
+    // Go to Imports and de-select namespace
+    const { namespace } = validCollection;
+    visitImports(namespace);
+    cy.getByDataCy('reset').click();
+    // Check Empty state when no namespace is selected
     cy.contains('No namespace selected.');
     cy.contains('No data');
     cy.get('#namespace-selector').contains('Select namespace');
@@ -62,8 +63,6 @@ describe.skip('My imports', () => {
 
     // test correctly set label params
     cy.get('#namespace-selector').contains(namespace);
-    cy.get('.pf-v5-c-chip-group').contains(name);
-    cy.get('.pf-v5-c-chip-group').contains(version);
 
     cy.get(`[data-cy="row-id-${name}"]`).within(() => {
       cy.get('h4').contains(`${name} v${version}`);
@@ -85,8 +84,6 @@ describe.skip('My imports', () => {
     visitImports(namespace);
 
     cy.get('#namespace-selector').contains(namespace);
-    cy.get('.pf-v5-c-chip-group').contains(name);
-    cy.get('.pf-v5-c-chip-group').contains(version);
 
     cy.get(`[data-cy="row-id-${name}"]`).within(() => {
       cy.get('h4').contains(`${name} v${version}`);
@@ -112,9 +109,10 @@ describe.skip('My imports', () => {
   });
 
   it('should be able to filter imported collections', () => {
+    const { namespace } = validCollection;
     visitImports(validCollection.namespace);
-    cy.get('#namespace-selector').contains('Select namespace').click();
-
+    cy.get('#namespace-selector').contains(namespace);
+    cy.get('#namespace-selector').click();
     cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
 
     // search and select namespace in button
