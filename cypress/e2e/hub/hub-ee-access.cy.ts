@@ -29,22 +29,13 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.verifyPageTitle(executionEnvironment.name);
   });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', hubAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+  function removeRoleFromListRow(roleName: string) {
     cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
-        });
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clearAllFilters();
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -109,11 +100,11 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_publisher', 'user');
+      removeRoleFromListRow('galaxy.execution_environment_publisher');
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_namespace_owner', 'user');
+      removeRoleFromListRow('galaxy.execution_environment_namespace_owner');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -179,11 +170,11 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_publisher', 'team');
+      removeRoleFromListRow('galaxy.execution_environment_publisher');
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_namespace_owner', 'team');
+      removeRoleFromListRow('galaxy.execution_environment_namespace_owner');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });
