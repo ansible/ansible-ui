@@ -1,7 +1,6 @@
 import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
-//import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 
@@ -16,7 +15,6 @@ describe('Repositories', () => {
     // as it is not necessary to create a new namespace and upload collection for each test
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
-      //cy.galaxykit(`collection upload ${namespace.name} ${collectionName}`);
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     });
     cy.waitForAllTasks();
