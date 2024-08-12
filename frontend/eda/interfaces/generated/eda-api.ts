@@ -34,7 +34,7 @@ export interface ActivationCreate {
   log_level?: LogLevelEnum;
   eda_credentials?: number[] | null;
   k8s_service_name?: string | null;
-  skip_audit_events: boolean;
+  skip_audit_events?: boolean | null;
 }
 
 /** Serializer for the Activation Instance model. */
