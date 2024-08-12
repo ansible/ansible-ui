@@ -75,8 +75,10 @@ export class ReusableTemplateSurveyTestSuite {
       cy.contains(question.question_name);
       cy.contains(question.default);
       cy.contains('text');
-      cy.getByDataCy('actions-dropdown').click();
-      cy.contains('Delete question').click();
+    });
+    cy.clickTableRowAction('name', question.question_name, 'delete-question', {
+      inKebab: true,
+      disableFilter: true,
     });
     cy.clickModalConfirmCheckbox();
     cy.intercept(

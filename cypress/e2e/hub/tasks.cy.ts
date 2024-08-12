@@ -19,7 +19,10 @@ describe('Tasks', () => {
       }).then((repository) => {
         cy.navigateTo('hub', Repositories.url);
         cy.filterTableBySingleText(repository.name);
-        cy.clickTableRowKebabAction(repository.name, 'sync-repository', false);
+        cy.clickTableRowAction('name', repository.name, 'sync-repository', {
+          disableFilter: true,
+          inKebab: true,
+        });
         cy.get('[data-cy="Submit"]').click();
         cy.hasAlert(`Sync started for repository "${repository.name}"`).should('be.visible');
         cy.navigateTo('hub', Tasks.url);

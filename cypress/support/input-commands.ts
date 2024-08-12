@@ -39,6 +39,7 @@ Cypress.Commands.add('multiSelectBy', (selector: string, values: string[]) => {
   cy.document()
     .its('body')
     .find('.pf-v5-c-menu__content')
+    .should('have.length', 1)
     .within(() => {
       // cy.selectLoadAll();
       for (const value of values) {

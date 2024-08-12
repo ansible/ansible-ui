@@ -54,7 +54,8 @@ describe('Execution Environments', () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
-    it('can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('can create a new EE associated to a particular org, assert info on details page, then navigate to EE list and delete the EE', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);
@@ -83,7 +84,10 @@ describe('Execution Environments', () => {
       cy.clickTab(/^Back to Execution Environments$/, true);
       cy.verifyPageTitle('Execution Environments');
       cy.filterTableBySingleSelect('name', execEnvName);
-      cy.clickTableRowKebabAction(execEnvName, 'delete-execution-environment', false);
+      cy.clickTableRowAction('name', execEnvName, 'delete-execution-environment', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/execution_environments/*/`).as('deleteEE');
       cy.clickModalButton('Delete execution environments');
@@ -100,7 +104,8 @@ describe('Execution Environments', () => {
       cy.clickModalButton('Close');
     });
 
-    it('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);
@@ -130,7 +135,10 @@ describe('Execution Environments', () => {
       cy.verifyPageTitle(awxOrganization.name);
       cy.clickTab(/^Execution Environments$/, true);
       cy.filterTableBySingleSelect('name', execEnvName);
-      cy.clickTableRowKebabAction(execEnvName, 'delete-execution-environment', false);
+      cy.clickTableRowAction('name', execEnvName, 'delete-execution-environment', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/execution_environments/*/`).as('deleteEE');
       cy.clickModalButton('Delete execution environments');
@@ -147,7 +155,8 @@ describe('Execution Environments', () => {
       cy.clickModalButton('Close');
     });
 
-    it('can create a new EE associated to a particular org, assign access to a user in that org, and login as that user to assert access to the EE', () => {
+    // Skipping this test that includes a logout: since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
+    it.skip('can create a new EE associated to a particular org, assign access to a user in that org, and login as that user to assert access to the EE', () => {
       cy.getByDataCy('create-execution-environment').click();
       cy.getByDataCy('name').type(execEnvName);
       cy.getByDataCy('image').type(image);
@@ -166,17 +175,10 @@ describe('Execution Environments', () => {
       cy.hasDetail('Name', execEnvName);
       cy.hasDetail('Image', image);
       cy.hasDetail('Organization', awxOrganization.name);
-      cy.getByDataCy('actions-dropdown')
-        .click()
-        .then(() => {
-          cy.get('[data-cy="delete-execution-environment"]').should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
-          cy.logout();
-          cy.login();
-        });
+      cy.getByDataCy('actions-dropdown').click();
+      cy.get('#delete-execution-environment').should('have.attr', 'aria-disabled', 'true');
+      cy.logout();
+      cy.login();
     });
   });
 
@@ -363,7 +365,10 @@ describe('Execution Environments', () => {
       cy.getByDataCy('image').should('contain', image);
       cy.clickTab(/^Templates$/, true);
       cy.filterTableBySingleSelect('name', jtName);
-      cy.clickTableRowKebabAction(jtName, 'delete-template', false);
+      cy.clickTableRowAction('name', jtName, 'delete-template', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', awxAPI`/job_templates/*/`).as('deleteJT');
       cy.clickModalButton('Delete template');

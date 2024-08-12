@@ -72,12 +72,12 @@ describe('Applications List', () => {
         .then(() => {
           cy.contains('tr', 'test').within(() => {
             cy.get('button.toggle-kebab').click();
-            cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete application$/).should(
-              'have.attr',
-              'aria-disabled',
-              'true'
-            );
           });
+          cy.contains('#delete-application', /^Delete application$/).should(
+            'have.attr',
+            'aria-disabled',
+            'true'
+          );
         });
     });
 
@@ -136,12 +136,12 @@ describe('Applications List', () => {
       cy.contains('tr', 'test').within(() => {
         // user_capabilities.delete: false
         cy.get('button.toggle-kebab').click();
-        cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete application$/).should(
-          'have.attr',
-          'aria-disabled',
-          'false'
-        );
       });
+      cy.contains('#delete-application', /^Delete application$/).should(
+        'not.have.attr',
+        'aria-disabled',
+        'true'
+      );
     });
 
     it('Edit application row action is enabled if the user has permission to edit application', () => {

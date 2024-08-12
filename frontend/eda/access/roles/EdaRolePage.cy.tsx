@@ -16,12 +16,8 @@ describe('EdaRolePage', () => {
       cy.contains('button', 'Edit role').should('have.attr', 'aria-disabled', 'true');
     });
     it('Delete button is visible and disabled', () => {
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete role').should(
-        'have.attr',
-        'aria-disabled',
-        'true'
-      );
+      cy.getByDataCy('actions-dropdown').click();
+      cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Displays tab for Details', () => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', 2);
@@ -46,12 +42,8 @@ describe('EdaRolePage', () => {
     });
     it('Delete button is visible and enabled for superuser', () => {
       cy.mountEda(<EdaRolePage />);
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete role').should(
-        'have.attr',
-        'aria-disabled',
-        'false'
-      );
+      cy.getByDataCy('actions-dropdown').click();
+      cy.contains('#delete-role', /^Delete role$/).should('not.have.attr', 'aria-disabled', 'true');
     });
     it('Edit button is visible and disabled when user is not superuser', () => {
       cy.mountEda(<EdaRolePage />, undefined, 'edaNormalUser.json');
@@ -59,12 +51,8 @@ describe('EdaRolePage', () => {
     });
     it('Delete button is visible and disabled when user is not superuser', () => {
       cy.mountEda(<EdaRolePage />, undefined, 'edaNormalUser.json');
-      cy.get('button[aria-label="Actions"]').click();
-      cy.contains('a.pf-v5-c-dropdown__menu-item', 'Delete role').should(
-        'have.attr',
-        'aria-disabled',
-        'true'
-      );
+      cy.getByDataCy('actions-dropdown').click();
+      cy.contains('#delete-role', /^Delete role$/).should('have.attr', 'aria-disabled', 'true');
     });
     it('Displays tab for Details', () => {
       cy.mountEda(<EdaRolePage />);

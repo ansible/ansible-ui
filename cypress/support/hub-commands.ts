@@ -102,10 +102,34 @@ Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {
   });
 });
 
+Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
+  function waitForAllTasks(count: number) {
+    if (count === 0) {
+      throw new Error('Max loops reached while waiting for the tasks.');
+    }
+    cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
+      (response) => {
+        const tasks = response.results;
+        cy.log(`Tasks count: ${tasks.length}`);
+        if (tasks.length === 0) {
+          return;
+        } else {
+          cy.wait(1000);
+          waitForAllTasks(count - 1);
+        }
+      }
+    );
+  }
+
+  waitForAllTasks(100);
+});
+
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
-  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
+  const platformServer = (Cypress.env('PLATFORM_SERVER') as string) || '';
+  const upstreamServer = Cypress.env('HUB_SERVER') as string;
+  const apiBase = (platformServer || upstreamServer) + apiPrefix;
   const options = { failOnNonZeroExit: false };
 
   operation = operation.trim();
@@ -113,7 +137,8 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
+  const gwRoot = platformServer ? `--gw_root_url '${platformServer}/'` : '';
+  const cmd = `${galaxykitCommand} -c -s '${apiBase}/' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${gwRoot} ${operation} ${escapeForShellCommand(
     args
   )}`;
 
@@ -171,8 +196,10 @@ Cypress.Commands.add(
         collectionName,
         `--tags ${tags.join(' ')}`
       );
+      cy.waitForAllTasks();
     } else {
       cy.galaxykit('-i collection upload', namespaceName, collectionName);
+      cy.waitForAllTasks();
     }
 
     waitTillPublished(10);
@@ -235,11 +262,6 @@ Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
 });
 
-// Skipping until deeper debug
-// Cypress.Commands.add('deleteCollection', (collection: string, namespace: string, repository: string) => {
-//   cy.galaxykit(`collection delete ${namespace} ${collection}`);
-// });
-
 Cypress.Commands.add(
   'deleteCollection',
   (
@@ -267,44 +289,39 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
-    cy.galaxykit(`collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`);
+    cy.galaxykit('collection upload', namespace, collection, version ? version : '1.0.0').then(
+      (result) => {
+        cy.waitForAllTasks().then(() => {
+          return result;
+        });
+      }
+    );
   }
 );
 
 Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
-    cy.galaxykit(`collection move ${namespace} ${collection} ${version} staging published`);
+    cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
+    cy.waitForAllTasks();
   }
 );
 
-Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string) => {
-  cy.navigateTo('hub', 'collections');
-  cy.filterTableByText(collection);
-
-  cy.get('[data-cy="data-list-name"]').should('have.text', collection);
-  cy.get('[data-cy="data-list-action"]').within(() => {
-    cy.get('[data-cy="actions-dropdown"]')
-      .first()
-      .click()
-      .then(() => {
-        cy.get('[data-cy="copy-version-to-repositories"]').click();
-      });
-  });
-
+Cypress.Commands.add('collectionCopyVersionToRepositories', (collectionName: string) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    cy.clickButton(/^Clear all filters$/);
     cy.get('header').contains('Select repositories');
     cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
-    cy.filterTableByText('community');
+    cy.filterTableBySingleText('community');
     cy.get('[data-cy="data-list-check"]').click();
     cy.get('button').contains('Select').click();
   });
 
   cy.navigateTo('hub', 'approvals');
   cy.clickButton(/^Clear all filters$/);
-  cy.filterBySingleSelection(/^Repository$/, 'community');
-  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+
+  cy.filterTableBySingleText(collectionName);
+  cy.get('[aria-label="Simple table"] tr').should('have.length', 3);
+  cy.contains('No results found').should('not.exist');
 });
 
 // HUB Execution Environment Commands
@@ -325,6 +342,7 @@ Cypress.Commands.add(
       body: {
         name: randomE2Ename(),
         upstream_name: 'library/alpine',
+        include_tags: ['latest'],
         ...options?.executionEnvironment,
       },
     });
@@ -349,7 +367,12 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'syncRemoteExecutionEnvironment',
   (executionEnvironment: HubExecutionEnvironment) => {
-    cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.filterTableBySingleText(executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
+
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('sync-execution-environment').click();
 

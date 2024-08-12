@@ -234,7 +234,10 @@ describe('Projects', () => {
 
     it('can delete a schedule from the schedules list row', () => {
       cy.filterTableBySingleSelect('name', schedule.name);
-      cy.clickTableRowKebabAction(schedule.name, 'delete-schedule', false);
+      cy.clickTableRowAction('name', schedule.name, 'delete-schedule', {
+        disableFilter: true,
+        inKebab: true,
+      });
       cy.getModal().then(() => {
         cy.get('#confirm').click();
         cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');
@@ -335,7 +338,7 @@ describe('Projects', () => {
         cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
         });
-        cy.clickTab('Job templates', true);
+        cy.clickTab('Job Templates', true);
         cy.url().should(
           'contain',
           `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`

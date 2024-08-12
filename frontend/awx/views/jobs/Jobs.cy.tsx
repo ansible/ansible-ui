@@ -52,7 +52,10 @@ describe('Jobs.cy.ts', () => {
         }).as('reqJobs');
         const job = jobs[0];
         cy.selectTableRow(job.name, false);
-        cy.clickTableRowKebabAction(job.name, 'delete-job', false);
+        cy.clickTableRowAction('name', job.name, 'delete-job', {
+          disableFilter: true,
+          inKebab: true,
+        });
         cy.contains('Permanently delete jobs').should('be.visible');
         cy.get('input[id="confirm"]').should('be.visible');
         cy.get('#confirm').click();
@@ -71,15 +74,11 @@ describe('Jobs.cy.ts', () => {
         const job = results[5]; // job with status "running"
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#delete-job', /^Delete job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
-  it('row action to delete job  is disabled if the user does not have permissions', () => {
+  it('row action to delete job is disabled if the user does not have permissions', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
       .its('results')
@@ -88,12 +87,8 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with summary_fields.user_capabilities.delete: false
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#delete-job', /^Delete job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
   it('bulk deletion confirmation contains message about selected jobs that cannot be deleted', () => {
@@ -119,12 +114,8 @@ describe('Jobs.cy.ts', () => {
         const job = results[4]; // job with status "successful"
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Cancel job$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#cancel-job', /^Cancel job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
   it('row action to cancel job  is disabled if the user does not have permissions', () => {
@@ -136,12 +127,8 @@ describe('Jobs.cy.ts', () => {
         const job = results[5]; // job with summary_fields.user_capabilities.start: false
         cy.contains('tr', job.id).within(() => {
           cy.get('button.toggle-kebab').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Cancel job$/).should(
-            'have.attr',
-            'aria-disabled',
-            'true'
-          );
         });
+        cy.contains('#cancel-job', /^Cancel job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
 

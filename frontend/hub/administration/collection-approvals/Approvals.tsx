@@ -27,7 +27,16 @@ export function Approvals() {
 
   return (
     <PageLayout>
-      <PageHeader title={t('Collection Approvals')} />
+      <PageHeader
+        title={t('Collection Approvals')}
+        description={t(
+          'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
+        )}
+        titleHelpTitle={t('Collection Approvals')}
+        titleHelp={t(
+          'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
+        )}
+      />
       <PageTable<CollectionVersionSearch>
         id="hub-collection-version-search-table"
         toolbarFilters={toolbarFilters}

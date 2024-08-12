@@ -2,7 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
-import { PageSettings } from '../../../framework/PageSettings/PageSettings';
+import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
 import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
 import { RolePage } from '../access/roles/RolePage/RolePage';
@@ -10,12 +11,15 @@ import { Roles } from '../access/roles/Roles';
 import { Token } from '../access/token/Token';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
-import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryDetails';
+import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
+import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
 import {
   CreateRemoteRegistry,
   EditRemoteRegistry,
 } from '../administration/remote-registries/RemoteRegistryForm';
-import { RemoteDetails } from '../administration/remotes/RemoteDetails';
+import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
+import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
+import { RemoteAccess } from '../administration/remotes/RemotePage/RemoteAccess';
 import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
@@ -63,6 +67,7 @@ import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePag
 import { Namespaces } from '../namespaces/HubNamespaces';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
+import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -153,6 +158,11 @@ export function useHubNavigation() {
             {
               id: HubRoute.CollectionDocumentation,
               path: 'documentation',
+              element: <CollectionDocumentation />,
+            },
+            {
+              id: HubRoute.CollectionDocumentation,
+              path: 'documentation/:content_name',
               element: <CollectionDocumentation />,
             },
             {
@@ -316,6 +326,11 @@ export function useHubNavigation() {
                   element: <RepositoryVersions />,
                 },
                 {
+                  path: 'distributions',
+                  id: HubRoute.RepositoryDistributions,
+                  element: <RepositoryDistributions />,
+                },
+                {
                   path: '',
                   element: <Navigate to="details" replace />,
                 },
@@ -364,9 +379,20 @@ export function useHubNavigation() {
               element: <EditRemoteRegistry />,
             },
             {
-              path: 'details/:id/*',
+              path: ':id',
               id: HubRoute.RemoteRegistryPage,
-              element: <RemoteRegistryDetails />,
+              element: <RemoteRegistryPage />,
+              children: [
+                {
+                  id: HubRoute.RemoteRegistryDetails,
+                  path: 'details',
+                  element: <RemoteRegistryDetails />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" replace />,
+                },
+              ],
             },
           ],
         },
@@ -413,9 +439,25 @@ export function useHubNavigation() {
               element: <EditRemote />,
             },
             {
+              path: ':id/',
               id: HubRoute.RemotePage,
-              path: 'details/:id/*',
-              element: <RemoteDetails />,
+              element: <RemotePage />,
+              children: [
+                {
+                  path: 'details',
+                  id: HubRoute.RemoteDetails,
+                  element: <RemoteDetails />,
+                },
+                {
+                  path: 'access',
+                  id: HubRoute.RemoteAccess,
+                  element: <RemoteAccess />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="details" replace />,
+                },
+              ],
             },
             {
               path: '',
@@ -509,7 +551,16 @@ export function useHubNavigation() {
           id: HubRoute.SettingsPreferences,
           label: t('User Preferences'),
           path: 'preferences',
-          element: <PageSettings />,
+          children: [
+            {
+              path: 'edit',
+              element: <PageSettingsForm />,
+            },
+            {
+              path: '',
+              element: <PageSettingsDetails />,
+            },
+          ],
         },
       ],
     },

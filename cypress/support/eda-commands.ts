@@ -142,8 +142,19 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
   });
   cy.requestGet<EdaResult<EdaProject>>(edaAPI`/projects/?name=${edaProject.name}`).then(
     (result) => {
-      if (Array.isArray(result?.results) && result.results.length === 1) {
-        const project = result.results[0];
+      let index = 0;
+      if (Array.isArray(result?.results)) {
+        if (result.results.length > 1) {
+          index = result.results.findIndex((project) => project.name === edaProject.name);
+        }
+        if (index < 0) {
+          Cypress.log({
+            displayName: 'No project with this name found.',
+            message: [`No project with this name found.`],
+          });
+          return;
+        }
+        const project = result.results[index];
         if (project.import_state === ImportStateEnum.Completed) {
           Cypress.log({
             displayName: 'PROJECT SYNC STATUS IS NOW : 👉 ',
@@ -173,7 +184,7 @@ Cypress.Commands.add('waitEdaProjectSync', (edaProject) => {
         }
       } else {
         Cypress.log({
-          displayName: 'Multiple projects are being returned by this query.',
+          displayName: 'No projects are being returned by this query.',
           message: [`Adjust query and try again.`],
         });
         return;
@@ -361,7 +372,7 @@ Cypress.Commands.add(
     if (queryParams) {
       const { content_type__model, managed } = queryParams;
       if (content_type__model) {
-        roleDefinitionsUrl += `?content_type__model=${content_type__model}`;
+        roleDefinitionsUrl += `?content_type__model=${content_type__model}&page_size=200`;
         roleDefinitionsUrl =
           managed !== undefined
             ? (roleDefinitionsUrl += `&managed=${managed}`)
@@ -369,9 +380,11 @@ Cypress.Commands.add(
       } else {
         roleDefinitionsUrl =
           managed !== undefined
-            ? (roleDefinitionsUrl += `?managed=${managed}`)
+            ? (roleDefinitionsUrl += `?managed=${managed}&page_size=200`)
             : roleDefinitionsUrl;
       }
+    } else {
+      roleDefinitionsUrl += `?page_size=200`;
     }
 
     cy.requestGet<EdaResult<EdaRbacRole>>(roleDefinitionsUrl).then((response) => {
@@ -589,6 +602,7 @@ Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
 Cypress.Commands.add('createEdaDecisionEnvironment', () => {
   cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
     name: 'E2E Decision Environment ' + randomString(4),
+    organization_id: 1,
     image_url: 'quay.io/ansible/ansible-rulebook:main',
   }).then((edaDE) => {
     Cypress.log({

@@ -4,6 +4,14 @@ import { ExecutionEnvironment } from '../../../frontend/hub/execution-environmen
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
+function visitEEDetail(name: string) {
+  cy.navigateTo('hub', ExecutionEnvironments.url);
+  cy.verifyPageTitle('Execution Environments');
+  cy.filterTableBySingleText(name);
+  cy.get('a').contains(name).click();
+  cy.verifyPageTitle(name);
+}
+
 describe('Execution Environments', () => {
   it('can render the execution environments page', () => {
     cy.navigateTo('hub', ExecutionEnvironments.url);
@@ -71,13 +79,10 @@ describe('Execution Environments', () => {
           cy.filterTableBySingleText(eeName);
           cy.get('tbody').find('tr').should('have.length', 1);
           cy.get('tbody').within(() => {
-            cy.getByDataCy('container-repository-name-column-cell').should('contain', eeName);
-            cy.get('[data-cy="actions-dropdown"]')
-              .click()
-              .then(() => {
-                cy.get(`[data-cy="delete-execution-environment"]`).click();
-              });
+            cy.getByDataCy('name-column-cell').should('contain', eeName);
+            cy.get('[data-cy="actions-dropdown"]').click();
           });
+          cy.get(`[data-cy="delete-execution-environment"]`).click();
           cy.get('[data-ouia-component-id="Permanently delete execution environments"]').within(
             () => {
               cy.get('[data-ouia-component-id="confirm"]').click();
@@ -119,11 +124,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should render the execution environment details page', () => {
-    // test navigating by sidebar menu
-    cy.navigateTo('hub', ExecutionEnvironments.url);
-    cy.filterTableBySingleText(executionEnvironment.name);
-    cy.get('a').contains(executionEnvironment.name).click();
-    cy.verifyPageTitle(executionEnvironment.name);
+    visitEEDetail(executionEnvironment.name);
     cy.contains('Unsigned');
 
     const tabs = ['Details', 'Activity', 'Images', 'Access'];
@@ -134,9 +135,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should render details page tab with instructions and empty readme', () => {
-    // test visiting by URL
-    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
-    cy.verifyPageTitle(executionEnvironment.name);
+    visitEEDetail(executionEnvironment.name);
     cy.get('[aria-selected="true"]').contains('Details');
     cy.contains('Instructions');
     cy.contains('Pull this image');
@@ -152,8 +151,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should add readme with markdown editor', () => {
-    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
-    cy.verifyPageTitle(executionEnvironment.name);
+    visitEEDetail(executionEnvironment.name);
     cy.containsBy('button', 'Add').click();
     cy.contains('README');
     cy.get('[data-cy="readme"]').within(() => {
@@ -173,7 +171,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should change readme after editing', () => {
-    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
+    visitEEDetail(executionEnvironment.name);
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
       cy.containsBy('button', 'Edit').click();
@@ -191,7 +189,7 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should not change readme after cancel edit', () => {
-    cy.visit(`/execution-environments/${executionEnvironment.name}/`);
+    visitEEDetail(executionEnvironment.name);
     cy.get('[data-cy="readme"]').within(() => {
       cy.containsBy('button', 'Edit').click();
       cy.getByDataCy('raw-markdown').clear().type('{enter}this should not be saved.');
@@ -205,7 +203,6 @@ describe('Execution Environment Details tab', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
-          include_tags: ['latest'],
           registry: remoteRegistry.id,
         },
       }).then((executionEnvironment) => {
@@ -224,7 +221,9 @@ describe('Execution Environment Activity tab', () => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: { registry: remoteRegistry.id },
       }).then((executionEnvironment) => {
-        cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/activity`);
+        visitEEDetail(executionEnvironment.name);
+        cy.getByDataCy('execution-environment-activity-tab').click();
+
         cy.contains('No activities yet');
         cy.contains('Activities will appear once you push something');
 
@@ -251,7 +250,10 @@ describe('Execution Environment Activity tab', () => {
           'GET',
           hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/_content/history/*`
         ).as('getActivity');
-        cy.visit(`${ExecutionEnvironments.url}/${eeName}/activity`);
+
+        visitEEDetail(executionEnvironment.name);
+        cy.getByDataCy('execution-environment-activity-tab').click();
+
         cy.contains('Change');
         cy.contains('Date');
         cy.contains(`${eeName} was added`);

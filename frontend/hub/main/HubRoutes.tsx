@@ -50,11 +50,13 @@ export enum HubRoute {
   RepositoryVersionPage = 'hub-repository-page-version-page',
   RepositoryVersionDetails = 'hub-repository-page-version-page-details',
   RepositoryVersionCollections = 'hub-repository-page-version-page-collections',
+  RepositoryDistributions = 'hub-repository-page-distributions',
 
   RemoteRegistries = 'hub-remote-registries',
   CreateRemoteRegistry = 'hub-create-remote-registry',
   EditRemoteRegistry = 'hub-edit-remote-registry',
   RemoteRegistryPage = 'hub-remote-registry-page',
+  RemoteRegistryDetails = 'hub-remote-registry-details',
 
   Tasks = 'hub-tasks',
   TaskPage = 'hub-task-page',
@@ -65,6 +67,8 @@ export enum HubRoute {
   CreateRemote = 'hub-create-remote',
   EditRemote = 'hub-edit-remote',
   RemotePage = 'hub-remote-page',
+  RemoteDetails = 'hub-remote-details',
+  RemoteAccess = 'hub-remote-access',
 
   // Access
   Access = 'hub-access',

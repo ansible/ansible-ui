@@ -80,7 +80,7 @@ export function JobStatusBar(props: { job: Job }) {
       <SplitItem isFilled>
         <HeaderTitle>
           <h1>{job.name}</h1>
-          <StatusLabel status={job.status} />
+          <StatusLabel status={job.status} dataCy="job-status-label" />
         </HeaderTitle>
       </SplitItem>
       <SplitItem>

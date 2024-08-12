@@ -52,7 +52,7 @@ describe(`Instance Groups`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.clickButton(/^Create group$/);
-      cy.clickLink(`Create instance group`);
+      cy.clickButton(`Create instance group`);
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="policy-instance-minimum"]').clear();
       cy.get('[data-cy="policy-instance-minimum"]').type('1');
@@ -100,7 +100,10 @@ describe(`Instance Groups`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
-      cy.clickTableRowKebabAction(instanceGroup.name, `edit-instance-group`, false);
+      cy.clickTableRowAction('name', instanceGroup.name, `edit-instance-group`, {
+        inKebab: false,
+        disableFilter: true,
+      });
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type(`${instanceGroup.name}- edited`);
       cy.get('[data-cy="policy-instance-minimum"]').clear();
@@ -237,7 +240,7 @@ describe(`Instance Groups`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.clickButton(/^Create group$/);
-      cy.clickLink(`Create container group`);
+      cy.clickButton(/^Create container group$/);
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
@@ -785,7 +788,8 @@ describe(`Instance Groups`, () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
-    it(`can visit the instance group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip(`can visit the instance group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', instanceGroup.name);
@@ -866,7 +870,8 @@ describe(`Instance Groups`, () => {
         });
     });
 
-    it(`can visit the container group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it.skip(`can visit the container group -> user access tab, add a user, view the user on the user list and then delete user`, () => {
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableBySingleSelect('name', containerGroup.name);
@@ -1008,7 +1013,10 @@ describe(`Instance Groups`, () => {
       cy.clickTab(/^Jobs$/, true);
       cy.filterTableBySingleSelect('name', job_template.name);
       cy.intercept('DELETE', awxAPI`/jobs/*/`).as('deleted');
-      cy.clickTableRowKebabAction(job_template.name, 'delete-job', false);
+      cy.clickTableRowAction('name', job_template.name, 'delete-job', {
+        inKebab: true,
+        disableFilter: true,
+      });
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete job');
       cy.assertModalSuccess();

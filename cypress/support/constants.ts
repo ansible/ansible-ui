@@ -2,7 +2,6 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 
 export enum SERVER_NAME {
   AWX_SERVER = 'AWX Ansible Server',
@@ -11,12 +10,7 @@ export enum SERVER_NAME {
   GALAXY_SERVER = 'Galaxy Server',
 }
 
-type ResourceObject =
-  | EdaProject
-  | EdaDecisionEnvironment
-  | EdaRulebookActivation
-  | EdaCredential
-  | EdaCredentialType;
+type ResourceObject = EdaProject | EdaDecisionEnvironment | EdaRulebookActivation | EdaCredential;
 
 export interface AccessTabResource {
   name: string;
@@ -60,13 +54,5 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     creation: () => cy.createEdaCredential() as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaCredential(resourceObject as EdaCredential),
     role: 'Eda Credential Admin',
-  },
-  {
-    name: 'credential-types',
-    roles_tab_name: 'Credential Type',
-    content_type: 'eda.credentialtype',
-    creation: () => cy.createEdaCredentialType() as Cypress.Chainable<ResourceObject>,
-    deletion: (resourceObject) => cy.deleteEdaCredentialType(resourceObject as EdaCredentialType),
-    role: 'Credential Type Admin',
   },
 ];

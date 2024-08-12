@@ -547,15 +547,10 @@ declare global {
 
       /**
        * Finds a list card containing text and clicks action specified by label.
-       * @param name
-       * @param label
-       * @param filter
+       * @param id
+       * @param dataCyLabel
        */
-      clickListCardKebabAction(
-        id: number,
-        name: string | RegExp,
-        dataCyLabel: string | RegExp
-      ): Chainable<void>;
+      clickListCardKebabAction(id: number, dataCyLabel: string): Chainable<void>;
 
       /** Finds a table row containing text and clicks action specified by label. */
       clickTableRowPinnedAction(
@@ -1215,6 +1210,9 @@ declare global {
         }
       ): Chainable<void>;
 
+      addEERolesToUsersInOrganization(organizationName: string): Chainable<void>;
+      addEERolesToTeamsInOrganization(organizationName: string): Chainable<void>;
+
       // ==============================================================================================================
       // EDA Commands
       // ==============================================================================================================
@@ -1523,6 +1521,7 @@ declare global {
         options: HubDeleteRequestOptions
       ): Cypress.Chainable<Response<T> | Response<Task>>;
       waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
+      waitForAllTasks(): Cypress.Chainable<void>;
 
       // HUB Execution Environment Commands
       queryHubExecutionEnvironments(
@@ -1630,7 +1629,7 @@ declare global {
         namespace: string,
         version: string
       ): Cypress.Chainable<void>;
-      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;

@@ -10,7 +10,8 @@ import {
   LoginMainHeader,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
@@ -52,8 +53,11 @@ export function AnsibleLogin(props: {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [helperText, setHelperText] = useState<ReactNode>('');
+  const location = useLocation();
 
   const { loginApiUrl } = props;
+  const queryParams = new URLSearchParams(location.search);
+  const nextPath = queryParams.get('next');
   const onSubmit = useCallback(async () => {
     try {
       const loginPageResponse = await fetch(loginApiUrl, {
@@ -98,7 +102,11 @@ export function AnsibleLogin(props: {
         }
       }
 
-      props.onSuccess?.();
+      if (nextPath) {
+        window.location.href = nextPath;
+      } else {
+        props.onSuccess?.();
+      }
     } catch (err) {
       if (err instanceof Error) {
         setHelperText(<ErrorSpanStyled>{err.message}</ErrorSpanStyled>);
@@ -108,7 +116,14 @@ export function AnsibleLogin(props: {
         );
       }
     }
-  }, [loginApiUrl, password, props, t, username]);
+  }, [loginApiUrl, password, props, t, username, nextPath]);
+
+  const hasAuthFailedFlag = location.search.includes('auth_failed');
+  useEffect(() => {
+    if (hasAuthFailedFlag) {
+      setHelperText(<ErrorSpanStyled>{t('Unable to complete social auth login')}</ErrorSpanStyled>);
+    }
+  }, [hasAuthFailedFlag, t]);
 
   // Need to use component version of PatternFly's LoginPage
   // because we need to be able to use a component for the brand image

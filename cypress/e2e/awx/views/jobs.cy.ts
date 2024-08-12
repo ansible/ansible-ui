@@ -79,10 +79,8 @@ describe('Jobs', () => {
     it('can render the toolbar and row actions', () => {
       cy.navigateTo('awx', 'jobs');
       cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
-      cy.get('.pf-v5-c-dropdown__menu').within(() => {
-        cy.contains(/^Delete jobs$/).should('exist');
-        cy.contains(/^Cancel jobs$/).should('exist');
-      });
+      cy.contains(/^Delete jobs$/).should('exist');
+      cy.contains(/^Cancel jobs$/).should('exist');
       cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
       const jobName = job.name ? job.name : '';
       cy.contains('td', jobName)
@@ -90,9 +88,9 @@ describe('Jobs', () => {
         .within(() => {
           // Relaunch job
           cy.get('#relaunch-job').should('exist');
-          cy.get('.pf-v5-c-dropdown__toggle').click();
-          cy.contains('.pf-v5-c-dropdown__menu-item', /^Delete job$/).should('exist');
+          cy.getByDataCy('actions-dropdown').click();
         });
+      cy.contains('#delete-job', /^Delete job$/).should('exist');
       cy.clearAllFilters();
     });
 

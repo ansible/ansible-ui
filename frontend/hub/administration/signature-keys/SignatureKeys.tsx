@@ -53,6 +53,10 @@ export function SignatureKeys() {
         description={t(
           'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
         )}
+        titleHelpTitle={t('Signature Keys')}
+        titleHelp={t(
+          'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
+        )}
       />
       <PageTable<SignatureKey>
         id="hub-signature-keys-table"
@@ -60,7 +64,10 @@ export function SignatureKeys() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading signature keys')}
-        emptyStateTitle={t('No signature keys yet')}
+        emptyStateTitle={t('No signature keys')}
+        emptyStateDescription={t(
+          'No signature keys have been created for your organization. If you require a key, contact your administrator.'
+        )}
         {...view}
       />
     </PageLayout>
