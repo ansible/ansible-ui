@@ -31,7 +31,7 @@ describe('Project Edit, Copy, Sync', () => {
       cy.get(`[data-cy="row-id-${project.id}"]`).within(() => {
         cy.get('[data-cy="edit-project"]').click();
       });
-      cy.verifyPageTitle('Edit Project');
+      cy.verifyPageTitle(`Edit ${project.name}`);
       cy.get('[data-cy="name"]').should('have.value', `${project.name}`);
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
@@ -52,7 +52,7 @@ describe('Project Edit, Copy, Sync', () => {
       cy.clickTableRowLink('name', project.name, { disableFilter: true });
       cy.verifyPageTitle(project.name);
       cy.clickButton(/^Edit project$/);
-      cy.verifyPageTitle('Edit Project');
+      cy.verifyPageTitle(`Edit ${project.name}`);
       cy.get('[data-cy="name"]').clear().type(`${project.name} - edited`);
       cy.intercept('PATCH', awxAPI`/projects/${project.id.toString()}/`).as('edited');
       cy.clickButton(/^Save project$/);
