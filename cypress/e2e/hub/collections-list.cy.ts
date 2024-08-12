@@ -16,7 +16,7 @@ describe('Collections List', () => {
     });
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
-      cy.galaxykit(`distribution create ${repository.name}`);
+      cy.galaxykit('distribution create', repository.name);
       cy.waitForAllTasks();
     });
   });
@@ -74,7 +74,7 @@ describe('Collections List', () => {
   });
 
   it('can upload and delete collection', () => {
-    cy.galaxykit(`collection upload ${namespace.name} ${collectionName} --skip-upload`).then(
+    cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName).then(
       (result) => {
         // Upload collection
         const filePath = result.filename as string;
@@ -105,10 +105,15 @@ describe('Collections List', () => {
   it('can upload and then delete a new version to an existing collection', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
-      `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      'collection move',
+      namespace.name,
+      collectionName,
+      '1.0.0',
+      'staging',
+      repository.name
     );
     cy.waitForAllTasks();
-    cy.galaxykit(`collection upload ${namespace.name} ${collectionName} 1.2.3 --skip-upload`).then(
+    cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
       (result: { filename: string }) => {
         cy.getByDataCy('table-view').click();
         cy.filterTableBySingleText(collectionName, true);
@@ -156,7 +161,12 @@ describe('Collections List', () => {
   it('can delete entire collection from system', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
-      `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      'collection move',
+      namespace.name,
+      collectionName,
+      '1.0.0',
+      'staging',
+      repository.name
     );
     cy.waitForAllTasks();
     // Delete collection from system
@@ -179,7 +189,12 @@ describe('Collections List', () => {
   it('can delete entire collection from repository', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
-      `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      'collection move',
+      namespace.name,
+      collectionName,
+      '1.0.0',
+      'staging',
+      repository.name
     );
     cy.waitForAllTasks();
     // Delete collection from repository
@@ -201,7 +216,12 @@ describe('Collections List', () => {
   it('can deprecate a collection', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
-      `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      'collection move',
+      namespace.name,
+      collectionName,
+      '1.0.0',
+      'staging',
+      repository.name
     );
     cy.waitForAllTasks();
     cy.getByDataCy('table-view').click();
@@ -219,7 +239,12 @@ describe('Collections List', () => {
   it('can copy a version to repository', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(
-      `collection move ${namespace.name} ${collectionName} 1.0.0 staging ${repository.name}`
+      'collection move',
+      namespace.name,
+      collectionName,
+      '1.0.0',
+      'staging',
+      repository.name
     );
     cy.waitForAllTasks();
 
