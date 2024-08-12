@@ -47,5 +47,6 @@ COPY /build/eda /usr/share/nginx/html
 # ui-e2e
 FROM cypress/base AS ui-e2e
 WORKDIR /app
-COPY . .
+COPY package.json package-lock.json ./
 RUN npm ci
+COPY . .
