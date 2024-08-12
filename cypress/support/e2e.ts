@@ -4,6 +4,7 @@ import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import './auth';
 import './awx-access-commands';
 import './awx-commands';
@@ -23,14 +24,63 @@ import './platform-commands';
 
 export const galaxykitUsername: string = `e2e_${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);
-export let galaxyE2EUserID: number;
+export let galaxyE2EUserID: string = '';
+
+function hubCleanup() {
+  const oneHourAgo = new Date();
+  oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
+  // cleanup old e2e repositories
+  cy.queryHubRepositories().then((response) => {
+    for (const repository of response.body.results) {
+      if (repository.name.startsWith('e2e_') || repository.name.startsWith('hub_e2e_')) {
+        if (new Date(repository.pulp_created ?? '') < oneHourAgo) {
+          cy.deleteHubRepository(repository);
+        }
+      }
+    }
+  });
+
+  // should cleanup old e2e roles
+  cy.queryHubRoles().then((response) => {
+    for (const role of response.body.results) {
+      if (role.name.startsWith('e2e_') || role.name.startsWith('hub_e2e_')) {
+        if (new Date(role.pulp_created ?? '') < oneHourAgo) {
+          cy.deleteHubRole(role);
+        }
+      }
+    }
+  });
+
+  // cleanup old e2e remotes
+  cy.queryHubRemotes().then((response) => {
+    for (const remote of response.body.results) {
+      if (remote.name.startsWith('e2e_') || remote.name.startsWith('hub_e2e_')) {
+        if (new Date(remote.pulp_created ?? '') < oneHourAgo) {
+          cy.deleteHubRemote(remote);
+        }
+      }
+    }
+  });
+}
 
 before(function () {
   cy.login();
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
+    // Platform E2E
+    case '4100': {
+      cy.requestPost<unknown>(gatewayV1API`/users/`, {
+        username: galaxykitUsername,
+        password: galaxykitPassword,
+      });
+
+      hubCleanup();
+      break;
+    }
+    // HUB E2E
     case '4102': {
-      cy.requestPost<{ id: number }, HubUser>(hubAPI`/_ui/v1/users/`, {
+      cy.requestPost<{ id: string }, HubUser>(hubAPI`/_ui/v1/users/`, {
         username: galaxykitUsername,
         first_name: '',
         last_name: '',
@@ -42,41 +92,7 @@ before(function () {
         galaxyE2EUserID = response.id;
       });
 
-      const oneHourAgo = new Date();
-      oneHourAgo.setHours(oneHourAgo.getHours() - 1);
-
-      // cleanup old e2e repositories
-      cy.queryHubRepositories().then((response) => {
-        for (const repository of response.body.results) {
-          if (repository.name.startsWith('e2e_') || repository.name.startsWith('hub_e2e_')) {
-            if (new Date(repository.pulp_created ?? '') < oneHourAgo) {
-              cy.deleteHubRepository(repository);
-            }
-          }
-        }
-      });
-
-      // should cleanup old e2e roles
-      cy.queryHubRoles().then((response) => {
-        for (const role of response.body.results) {
-          if (role.name.startsWith('e2e_') || role.name.startsWith('hub_e2e_')) {
-            if (new Date(role.pulp_created ?? '') < oneHourAgo) {
-              cy.deleteHubRole(role);
-            }
-          }
-        }
-      });
-
-      // cleanup old e2e remotes
-      cy.queryHubRemotes().then((response) => {
-        for (const remote of response.body.results) {
-          if (remote.name.startsWith('e2e_') || remote.name.startsWith('hub_e2e_')) {
-            if (new Date(remote.pulp_created ?? '') < oneHourAgo) {
-              cy.deleteHubRemote(remote);
-            }
-          }
-        }
-      });
+      hubCleanup();
       break;
     }
   }
@@ -85,11 +101,14 @@ before(function () {
 after(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
+    case '4100': // Platform E2E
+      cy.requestDelete(gatewayV1API`/users/${galaxykitUsername}/`, { failOnStatusCode: false });
+      break;
     case '4102': // HUB E2E
-      cy.requestGet<HubUser>(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`).then((user) => {
+      cy.requestGet<HubUser>(hubAPI`/_ui/v1/users/${galaxyE2EUserID}/`).then((user) => {
         user.is_superuser = false;
-        cy.requestPut(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`, user).then(() => {
-          cy.requestDelete(hubAPI`/_ui/v1/users/${galaxyE2EUserID.toString()}/`, {
+        cy.requestPut(hubAPI`/_ui/v1/users/${galaxyE2EUserID}/`, user).then(() => {
+          cy.requestDelete(hubAPI`/_ui/v1/users/${galaxyE2EUserID}/`, {
             failOnStatusCode: false,
           });
         });
