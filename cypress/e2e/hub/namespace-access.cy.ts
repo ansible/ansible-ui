@@ -83,11 +83,11 @@ describe.skip('Namespace - team and user access', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_namespace_owner', 'user');
+      removeRoleFromListRow('galaxy.collection_namespace_owner');
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_publisher', 'user');
+      removeRoleFromListRow('galaxy.collection_publisher');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -145,11 +145,11 @@ describe.skip('Namespace - team and user access', () => {
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_namespace_owner', 'team');
+      removeRoleFromListRow('galaxy.collection_namespace_owner');
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_publisher', 'team');
+      removeRoleFromListRow('galaxy.collection_publisher');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });

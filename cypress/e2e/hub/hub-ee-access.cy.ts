@@ -100,11 +100,11 @@ describe('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_publisher', 'user');
+      removeRoleFromListRow('galaxy.execution_environment_publisher');
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_namespace_owner', 'user');
+      removeRoleFromListRow('galaxy.execution_environment_namespace_owner');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -172,11 +172,11 @@ describe('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_publisher', 'team');
+      removeRoleFromListRow('galaxy.execution_environment_publisher');
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_namespace_owner', 'team');
+      removeRoleFromListRow('galaxy.execution_environment_namespace_owner');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });
