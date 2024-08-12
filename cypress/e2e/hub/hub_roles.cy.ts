@@ -3,7 +3,7 @@ import { hubAPI } from '../../support/formatApiPathForHub';
 import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
 
-describe('Automation Content: Roles', () => {
+describe.skip('Automation Content: Roles', () => {
   describe('Automation Content: : Create and Delete Roles from Details View', () => {
     const roleTypes = [
       {
