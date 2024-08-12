@@ -6,10 +6,7 @@
 /.vscode
 /Dockerfile
 /coverage
-/cypress
 /docs
-/framework
-/frontend
 /locales
 /node_modules
 /playbooks
@@ -17,4 +14,3 @@
 /rulebooks
 /scripts
 /stories
-/webpack
