@@ -123,12 +123,6 @@ export function MyImports() {
   function setNamespaceQP(namespace: string | null) {
     setSearchParams((params) => {
       params.set('namespace', namespace || '');
-      // If namespace is not set clean all filters
-      if (!namespace) {
-        params.set('name', '');
-        params.set('version', '');
-        params.set('status', '');
-      }
       return params;
     });
   }
