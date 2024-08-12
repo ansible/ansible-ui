@@ -121,11 +121,14 @@ export function MyImports() {
   const isMultipleCollections = collectionResp?.data?.length !== 1;
 
   function setNamespaceQP(namespace: string | null) {
-    if (namespace === null) {
-      return;
-    }
     setSearchParams((params) => {
-      params.set('namespace', namespace);
+      params.set('namespace', namespace || '');
+      // If namespace is not set clean all filters
+      if (!namespace) {
+        params.set('name', '');
+        params.set('version', '');
+        params.set('status', '');
+      }
       return params;
     });
   }
