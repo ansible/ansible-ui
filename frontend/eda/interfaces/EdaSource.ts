@@ -1,9 +1,5 @@
-//import { Source } from './generated/eda-api';
-export type EdaSource = {
-  name: string;
-  source_info: string;
-  rulebook_hash: string;
-};
+import { Source } from './generated/eda-api';
+export type EdaSource = Source;
 
 export type EdaSourceEventMapping = {
   source_name: string;
