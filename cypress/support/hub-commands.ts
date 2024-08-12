@@ -127,7 +127,9 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
-  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
+  const platformServer = (Cypress.env('PLATFORM_SERVER') as string) || '';
+  const upstreamServer = Cypress.env('HUB_SERVER') as string;
+  const apiBase = (platformServer || upstreamServer) + apiPrefix;
   const options = { failOnNonZeroExit: false };
 
   operation = operation.trim();
@@ -135,7 +137,8 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
+  const gwRoot = platformServer ? `--gw_root_url '${platformServer}/'` : '';
+  const cmd = `${galaxykitCommand} -c -s '${apiBase}/' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${gwRoot} ${operation} ${escapeForShellCommand(
     args
   )}`;
 
