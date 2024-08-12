@@ -7,6 +7,7 @@ baseConfig.e2e!.specPattern = [
   'cypress/e2e/platform/**/*.cy.ts',
   'cypress/e2e/awx/**/*.cy.ts',
   'cypress/e2e/eda/**/*.cy.ts',
+  'cypress/e2e/hub/**/*.cy.ts',
   'cypress/e2e/resource_cleanup_downstream/*.cy.ts',
 ];
 baseConfig.e2e!.excludeSpecPattern = [
@@ -25,6 +26,16 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/awx/resources/inventoriesConstructed.cy.ts',
   'cypress/e2e/awx/administration/wfApprovalsList.cy.ts',
   'cypress/e2e/awx/resources/inventoryHost/inventoryHostSmart.cy.ts',
+  'cypress/e2e/hub/api-tokens.cy.ts',
+  'cypress/e2e/hub/approvals.cy.ts',
+  'cypress/e2e/hub/collections-detail.cy.ts',
+  'cypress/e2e/hub/collections-list.cy.ts',
+  'cypress/e2e/hub/feature-flags.cy.ts',
+  'cypress/e2e/hub/hub-roles.cy.ts',
+  'cypress/e2e/hub/namespaces.cy.ts',
+  'cypress/e2e/hub/remotes.cy.ts',
+  'cypress/e2e/hub/repositories.cy.ts',
+  'cypress/e2e/hub/signature-keys.cy.ts',
 ];
 baseConfig.e2e!.baseUrl = 'https://localhost:4100';
 baseConfig.component!.specPattern = 'platform/**/*.cy.{js,jsx,ts,tsx}';
