@@ -52,6 +52,7 @@ export function SourceEventMapFields(props: {
       header={
         <FormFieldGroupHeader
           titleText={{ text: t('Mapping ') + `${index + 1}`, id: `Mapping ${index}` }}
+          data-cy={'mapping-header-' + `${index}`}
           actions={
             <Button
               id={`map-delete-${index}`}

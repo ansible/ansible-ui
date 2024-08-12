@@ -77,6 +77,7 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
           variant="link"
           icon={<PlusCircleIcon />}
           style={{ paddingLeft: 0 }}
+          data-cy={'add_event_stream'}
           onClick={addMapping}
         >
           {t('Add event stream')}
@@ -105,6 +106,7 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
       title={t('Event streams')}
       aria-label={t('Event streams')}
       ouiaId={t('Event streams')}
+      data-cy={t('event-streams')}
       description={
         <div style={{ fontSize: 'small' }}>
           {t(

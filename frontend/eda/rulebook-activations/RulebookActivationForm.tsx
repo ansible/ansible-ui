@@ -236,6 +236,7 @@ export function RulebookActivationInputs() {
         additionalControls={
           <Button
             variant="link"
+            data-cy={'manage_event_stream'}
             isDisabled={!rulebook}
             onClick={() =>
               setDialog(
