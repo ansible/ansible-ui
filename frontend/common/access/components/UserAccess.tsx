@@ -47,7 +47,7 @@ export function UserAccess(props: {
           sort: 'last_name',
         },
       ]}
-      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username' }}
+      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username__icontains' }}
       url={roleUserAssignmentsURL}
       content_type_model={type}
       accessListType={'user'}
