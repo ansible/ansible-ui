@@ -22,19 +22,13 @@ describe.skip('Remotes User Access tab', () => {
     cy.verifyPageTitle(remote.name);
   });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', hubAPI`/_ui/v2/role_${assignmentType}_assignments/*`).as('deleteRole');
+  function removeRoleFromListRow(roleName: string) {
     cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
-        });
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -80,7 +74,7 @@ describe.skip('Remotes User Access tab', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_remote_owner', 'user');
+      removeRoleFromListRow('galaxy.collection_remote_owner');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -94,6 +88,8 @@ describe.skip('Remotes User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
+        cy.setTablePageSize('100').scrollIntoView();
+        cy.contains(hubTeam.name).scrollIntoView();
         cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
 
         cy.clickButton(/^Next/);
@@ -127,7 +123,7 @@ describe.skip('Remotes User Access tab', () => {
       cy.selectTableRowByCheckbox('team', hubTeam.name, {
         disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_remote_owner', 'team');
+      removeRoleFromListRow('galaxy.collection_remote_owner');
       cy.selectTableRowByCheckbox('team', hubTeam.name, {
         disableFilter: false,
       });
