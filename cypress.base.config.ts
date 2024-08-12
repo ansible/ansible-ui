@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import pkg from 'webpack';
 import env from './webpack/environment.cjs';
 const { DefinePlugin } = pkg;
@@ -13,6 +14,15 @@ export const baseConfig: Cypress.ConfigOptions = {
   e2e: {
     testIsolation: false,
     setupNodeEvents(on, config) {
+      on('before:browser:launch', (browser, launchOptions) => {
+        if (browser?.isHeadless) {
+          launchOptions.args.push('--no-sandbox');
+          launchOptions.args.push('--disable-gl-drawing-for-tests');
+          launchOptions.args.push('--disable-gpu');
+        }
+        launchOptions.args.push('--js-flags=--max-old-space-size=3500');
+        return launchOptions;
+      });
       return config;
     },
     retries: { runMode: 2, openMode: 0 },
