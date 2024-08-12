@@ -43,6 +43,7 @@ describe('Execution Environment User Access tab', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
+      cy.url().should('include', '/user-access');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
@@ -113,6 +114,7 @@ describe('Execution Environment User Access tab', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab('Team Access', true);
+      cy.url().should('include', '/team-access');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
