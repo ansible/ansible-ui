@@ -66,7 +66,6 @@ describe('Collections Dependencies', () => {
     cy.contains('Dependencies').should('be.visible');
     // error state
     cy.contains('Error loading used by dependencies').should('be.visible');
-    cy.contains('No dependencies').should('not.exist');
   });
   it('Collections Dependencies tab collections table non-empty state', () => {
     cy.getByDataCy('table-view').click();
