@@ -122,7 +122,7 @@ jobs:
           wait-on: 'https://localhost:4101'
           record: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
           parallel: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
-          auto-cancel-after-failures: ${{ !contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') }}
+          auto-cancel-after-failures: ${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') && '0' || '1' }}
           config-file: cypress.awx.config.ts
           tag: ${{ inputs.TAGS }}
         env:
