@@ -107,6 +107,14 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+      - name: Determine Auto Cancel After Failures
+        id: determine-auto-cancel
+        run: |
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}" == "true" && "${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') }}" == "false" ]]; then
+            echo "cancel_value=1" >> $GITHUB_OUTPUT
+          else
+            echo "cancel_value=0" >> $GITHUB_OUTPUT
+          fi
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v6
@@ -116,7 +124,7 @@ jobs:
           wait-on: 'https://localhost:4101'
           record: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
           parallel: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
-          auto-cancel-after-failures: ${{ (contains(github.event.pull_request.labels.*.name, 'dashboard') && !contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel')) ? '1' : '0' }}
+          auto-cancel-after-failures: ${{ steps.determine-auto-cancel.outputs.cancel_value }}
           config-file: cypress.awx.config.ts
           tag: ${{ inputs.TAGS }}
         env:
