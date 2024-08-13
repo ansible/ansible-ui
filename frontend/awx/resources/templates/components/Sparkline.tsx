@@ -5,6 +5,8 @@ import { Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { StatusCell } from '../../../../common/Status';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 const Wrapper = styled.div`
   display: inline-flex;
@@ -20,6 +22,7 @@ export const Sparkline = ({ jobs }: { jobs: SummaryFieldRecentJob[] | undefined 
     workflow_job: 'workflow',
   };
   const { t } = useTranslation();
+  const getJobOutputUrl = useGetJobOutputUrl();
   const generateTooltip = (job: SummaryFieldRecentJob) => (
     <>
       <div>
@@ -36,16 +39,23 @@ export const Sparkline = ({ jobs }: { jobs: SummaryFieldRecentJob[] | undefined 
     </>
   );
 
-  const statusIcons = jobs?.map((job) => (
-    <Tooltip position="top" content={generateTooltip(job)} key={job.id}>
-      <Link
-        aria-label={t(`View job ${job.id}`)}
-        to={`/jobs/${JOB_TYPE_URL_SEGMENTS[job.type]}/${job.id}/output`}
-      >
-        <StatusCell status={job.status} hideLabel={true} />
-      </Link>
-    </Tooltip>
-  ));
+  const statusIcons = jobs?.map((job) => {
+    const jobOutputUrl = getJobOutputUrl(job as UnifiedJob);
+    return (
+      <Tooltip position="top" content={generateTooltip(job)} key={job.id}>
+        <Link
+          aria-label={t(`View job ${job.id}`)}
+          to={
+            jobOutputUrl
+              ? jobOutputUrl
+              : `/jobs/${JOB_TYPE_URL_SEGMENTS[job.type]}/${job.id}/output`
+          }
+        >
+          <StatusCell status={job.status} hideLabel={true} />
+        </Link>
+      </Tooltip>
+    );
+  });
 
   return <Wrapper>{statusIcons}</Wrapper>;
 };
