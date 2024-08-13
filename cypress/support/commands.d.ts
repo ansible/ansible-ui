@@ -1623,12 +1623,12 @@ declare global {
         collection: string,
         namespace: string,
         version?: string
-      ): Cypress.Chainable<void>;
+      ): Cypress.Chainable<string[]>;
       approveCollection(
         collection: string,
         namespace: string,
         version: string
-      ): Cypress.Chainable<void>;
+      ): Cypress.Chainable<string[]>;
       collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
