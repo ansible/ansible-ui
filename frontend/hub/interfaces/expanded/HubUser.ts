@@ -11,6 +11,10 @@ export type HubUser = {
   model_permissions?: HubUserPermissions;
   username: string;
   password?: string;
+  resource: {
+    ansible_id: string;
+    resource_type: string;
+  };
 };
 
 export type HubUserGroup = {
