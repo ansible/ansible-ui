@@ -72,6 +72,7 @@ jobs:
           path: awx-ui.tar
 
   generate-matrix:
+    name: Generate Test Matrix
     runs-on: ubuntu-latest
     outputs:
       directories: ${{ steps.set-matrix.outputs.directories }}
@@ -85,7 +86,7 @@ jobs:
           if [[ "${{ github.event.pull_request.labels.*.name }}" == *dashboard* ]]; then
             echo "matrix=[1,2,3,4]" >> $GITHUB_ENV
           else
-            directories=$(find a/b/c -maxdepth 1 -type d -not -path 'a/b/c' | sed 's|a/b/c/||' | jq -R . | jq -s .)
+            directories=$(find cypress/e2e/awx -maxdepth 1 -type d -not -path 'cypress/e2e/awx' | sed 's|cypress/e2e/awx/||' | jq -R . | jq -s .)
             echo "matrix=$directories" >> $GITHUB_ENV
           fi
 
