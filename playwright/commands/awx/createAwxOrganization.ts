@@ -6,9 +6,7 @@ import { enterTextByLabel } from '../common/enterText';
 import { expectPageTitleToContain } from '../common/expectPageTitleToContain';
 import { navigateTo } from '../common/navigateTo';
 
-/**
- * Create an AWX organization.
- */
+// Create an AWX organization
 export async function createAwxOrganization(
   page: Page,
   options: {
