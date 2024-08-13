@@ -13,6 +13,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignCollection } from './useSignCollection';
+import { useCanSignNamespace } from '../../common/utils/canSign';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
@@ -20,6 +21,8 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
   const signCollection = useSignCollection(false, callback);
+
+  const canSign = useCanSignNamespace();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -49,6 +52,8 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         onClick: (collections) => {
           signCollection(collections);
         },
+        isDisabled: () =>
+          !canSign ? t('You do not have the rights for this operation') : undefined,
       },
       { type: PageActionType.Seperator },
       {
@@ -74,6 +79,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDanger: true,
       },
     ],
-    [t, deleteCollections, pageNavigate, deprecateCollections, signCollection]
+    [t, pageNavigate, deprecateCollections, signCollection, canSign, deleteCollections]
   );
 }
