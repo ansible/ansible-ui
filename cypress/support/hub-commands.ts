@@ -16,9 +16,9 @@ import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 import { SetRequired } from 'type-fest';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -640,39 +640,62 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
   });
 });
 
-Cypress.Commands.add('createHubUser', (hubUser?: Partial<HubUser>) => {
-  cy.requestPost<HubUser, Partial<HubUser> & { username?: string; password?: string }>(
-    hubAPI`/_ui/v1/users/`,
-    {
-      username: `hub-user${randomString(4)}`,
-      password: `${randomString(10)}`,
-      ...hubUser,
+Cypress.Commands.add(
+  'getHubRoles',
+  (queryParams?: { content_type__model?: string; managed?: boolean }) => {
+    let roleDefinitionsUrl = hubAPI`/_ui/v2/role_definitions/?order_by=name`;
+    if (queryParams) {
+      const { content_type__model, managed } = queryParams;
+      roleDefinitionsUrl = content_type__model
+        ? (roleDefinitionsUrl += `&content_type__model=${content_type__model}`)
+        : roleDefinitionsUrl;
+      roleDefinitionsUrl =
+        managed !== undefined ? (roleDefinitionsUrl += `&managed=${managed}`) : roleDefinitionsUrl;
     }
-  ).then((hubUser) => {
-    Cypress.log({
-      displayName: 'HUB USER CREATION :',
-      message: [`Created 👉  ${hubUser.username}`],
+
+    cy.requestGet<HubItemsResponse<HubRbacRole>>(roleDefinitionsUrl).then((response) => {
+      return response;
     });
-    return hubUser;
-  });
+  }
+);
+
+Cypress.Commands.add('getHubRoleDetail', (roleID: string) => {
+  cy.requestGet<HubRbacRole>(hubAPI`/_ui/v2/role_definitions/${roleID}/`);
 });
 
-Cypress.Commands.add('deleteHubUser', (user: HubUser, options?: { failOnStatusCode?: boolean }) => {
-  cy.requestDelete(hubAPI`/_ui/v1/users/${user.id.toString()}/`, options);
-});
-
-Cypress.Commands.add('createHubTeam', () => {
-  cy.requestPost<HubTeam>(hubAPI`/_ui/v1/groups/`, {
-    name: `hub-team${randomString(4)}`,
-  }).then((hubTeam) => {
-    Cypress.log({
-      displayName: 'HUB TEAM CREATION :',
-      message: [`Created 👉  ${hubTeam.name}`],
+Cypress.Commands.add(
+  'createHubRoleAPI',
+  ({
+    roleName,
+    description,
+    content_type,
+    permissions,
+  }: {
+    roleName: string;
+    description: string;
+    content_type: ContentTypeEnum;
+    permissions: string[];
+  }) => {
+    cy.requestPost<HubRbacRole>(hubAPI`/_ui/v2/role_definitions/`, {
+      name: roleName,
+      description: description,
+      content_type: content_type,
+      permissions: permissions,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Hub Role :',
+      });
     });
-    return hubTeam;
-  });
-});
+  }
+);
 
-Cypress.Commands.add('deleteHubTeam', (team: HubTeam, options?: { failOnStatusCode?: boolean }) => {
-  cy.requestDelete(hubAPI`/teams/${team.id.toString()}/`, options);
+Cypress.Commands.add('deleteHubRoleAPI', (hubRoleDefinition: HubRbacRole) => {
+  cy.requestDelete(hubAPI`/_ui/v2/role_definitions/${hubRoleDefinition.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'HUB ROLE DELETION :',
+      message: [`Deleted 👉  ${hubRoleDefinition.name}`],
+    });
+  });
 });
