@@ -82,8 +82,12 @@ export function RemotePage() {
               page: HubRoute.RemoteDetails,
             },
             {
-              label: t('Access'),
-              page: HubRoute.RemoteAccess,
+              label: t('Team Access'),
+              page: HubRoute.RemoteTeamAccess,
+            },
+            {
+              label: t('User Access'),
+              page: HubRoute.RemoteUserAccess,
             },
           ]}
           params={{ id: params.id }}

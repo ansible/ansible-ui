@@ -4,30 +4,41 @@ import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
-import { RoleDetails } from '../access/roles/RolePage/RoleDetails';
-import { CreateRole, EditRole } from '../access/roles/RolePage/RoleForm';
-import { RolePage } from '../access/roles/RolePage/RolePage';
-import { Roles } from '../access/roles/Roles';
+import { HubRoles } from '../access/roles/HubRoles';
+import { HubRoleDetails } from '../access/roles/RolePage/HubRoleDetails';
+import { CreateRole, EditRole } from '../access/roles/RolePage/HubRoleForm';
+import { HubRolePage } from '../access/roles/RolePage/HubRolePage';
+import { HubTeamRoles } from '../access/teams/TeamPage/TeamUserRole';
+import { HubAddTeamRoles } from '../access/teams/components/HubAddTeamRoles';
 import { Token } from '../access/token/Token';
+import { HubUserRoles } from '../access/users/UserPage/HubUserRoles';
+import { HubAddUserRoles } from '../access/users/components/HubAddUserRoles';
 import { Approvals } from '../administration/collection-approvals/Approvals';
 import { RemoteRegistries } from '../administration/remote-registries/RemoteRegistries';
-import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
-import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
 import {
   CreateRemoteRegistry,
   EditRemoteRegistry,
 } from '../administration/remote-registries/RemoteRegistryForm';
-import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
-import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
-import { RemoteAccess } from '../administration/remotes/RemotePage/RemoteAccess';
+import { RemoteRegistryDetails } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryDetails';
+import { RemoteRegistryPage } from '../administration/remote-registries/RemoteRegistryPage/RemoteRegistryPage';
 import { CreateRemote, EditRemote } from '../administration/remotes/RemoteForm';
+import { RemoteAddTeams } from '../administration/remotes/RemotePage/RemoteAddTeam';
+import { RemoteAddUsers } from '../administration/remotes/RemotePage/RemoteAddUser';
+import { RemoteDetails } from '../administration/remotes/RemotePage/RemoteDetails';
+import { RemotePage } from '../administration/remotes/RemotePage/RemotePage';
+import { RemoteTeamAccess } from '../administration/remotes/RemotePage/RemoteTeamAccess';
+import { RemoteUserAccess } from '../administration/remotes/RemotePage/RemoteUserAccess';
 import { Remotes } from '../administration/remotes/Remotes';
 import { Repositories } from '../administration/repositories/Repositories';
 import { RepositoryForm } from '../administration/repositories/RepositoryForm';
-import { RepositoryAccess } from '../administration/repositories/RepositoryPage/RepositoryAccess';
+import { RepositoryAddTeams } from '../administration/repositories/RepositoryPage/RepositoryAddTeam';
+import { RepositoryAddUsers } from '../administration/repositories/RepositoryPage/RepositoryAddUser';
 import { RepositoryCollectionVersion } from '../administration/repositories/RepositoryPage/RepositoryCollectionVersion';
 import { RepositoryDetails } from '../administration/repositories/RepositoryPage/RepositoryDetails';
+import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 import { RepositoryPage } from '../administration/repositories/RepositoryPage/RepositoryPage';
+import { RepositoryTeamAccess } from '../administration/repositories/RepositoryPage/RepositoryTeamAccess';
+import { RepositoryUserAccess } from '../administration/repositories/RepositoryPage/RepositoryUserAccess';
 import { RepositoryVersions } from '../administration/repositories/RepositoryPage/RepositoryVersions';
 import { RepositoryVersionCollections } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionCollections';
 import { RepositoryVersionDetails } from '../administration/repositories/RepositoryVersionPage/RepositoryVersionDetails';
@@ -50,13 +61,16 @@ import {
   CreateExecutionEnvironment,
   EditExecutionEnvironment,
 } from '../execution-environments/ExecutionEnvironmentForm';
-import { ExecutionEnvironmentAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAccess';
 import { ExecutionEnvironmentActivity } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentActivity';
+import { ExecutionEnvironmentAddTeams } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAddTeam';
+import { ExecutionEnvironmentAddUsers } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentAddUser';
 import { ExecutionEnvironmentDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentDetails';
 import { ExecutionEnvironmentImageDetails } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImageDetails';
 import { ExecutionEnvironmentImagePage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImagePage';
 import { ExecutionEnvironmentImages } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImages';
 import { ExecutionEnvironmentPage } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentPage';
+import { ExecutionEnvironmentTeamAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentTeamAccess';
+import { ExecutionEnvironmentUserAccess } from '../execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentUserAccess';
 import { ExecutionEnvironments } from '../execution-environments/ExecutionEnvironments';
 import { MyImports } from '../my-imports/MyImports';
 import { CreateHubNamespace, EditHubNamespace } from '../namespaces/HubNamespaceForm';
@@ -64,10 +78,13 @@ import { HubNamespaceCLI } from '../namespaces/HubNamespacePage/HubNamespaceCLI'
 import { HubNamespaceCollections } from '../namespaces/HubNamespacePage/HubNamespaceCollections';
 import { HubNamespaceDetails } from '../namespaces/HubNamespacePage/HubNamespaceDetails';
 import { HubNamespacePage } from '../namespaces/HubNamespacePage/HubNamespacePage';
+import { HubNamespaceTeamAccess } from '../namespaces/HubNamespacePage/HubNamespaceTeamAccess';
+import { HubNamespaceUserAccess } from '../namespaces/HubNamespacePage/HubNamespaceUserAccess';
 import { Namespaces } from '../namespaces/HubNamespaces';
+import { HubNamespaceAddTeams } from '../namespaces/components/HubNamespaceAddTeams';
+import { HubNamespaceAddUsers } from '../namespaces/components/HubNamespaceAddUsers';
 import { HubOverview } from '../overview/HubOverview';
 import { HubRoute } from './HubRoutes';
-import { RepositoryDistributions } from '../administration/repositories/RepositoryPage/RepositoryDistributions';
 
 export function useHubNavigation() {
   const { t } = useTranslation();
@@ -114,10 +131,30 @@ export function useHubNavigation() {
               element: <HubNamespaceCLI />,
             },
             {
+              id: HubRoute.NamespaceTeamAccess,
+              path: 'team-access',
+              element: <HubNamespaceTeamAccess />,
+            },
+            {
+              id: HubRoute.NamespaceUserAccess,
+              path: 'user-access',
+              element: <HubNamespaceUserAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" replace />,
             },
           ],
+        },
+        {
+          id: HubRoute.NamespaceAddUsers,
+          path: ':id/user-access/add',
+          element: <HubNamespaceAddUsers />,
+        },
+        {
+          id: HubRoute.NamespaceAddTeams,
+          path: ':id/team-access/add',
+          element: <HubNamespaceAddTeams />,
         },
         {
           path: '',
@@ -238,15 +275,30 @@ export function useHubNavigation() {
               element: <ExecutionEnvironmentImages />,
             },
             {
-              id: HubRoute.ExecutionEnvironmentAccess,
-              path: 'access',
-              element: <ExecutionEnvironmentAccess />,
+              id: HubRoute.ExecutionEnvironmentTeamAccess,
+              path: 'team-access',
+              element: <ExecutionEnvironmentTeamAccess />,
+            },
+            {
+              id: HubRoute.ExecutionEnvironmentUserAccess,
+              path: 'user-access',
+              element: <ExecutionEnvironmentUserAccess />,
             },
             {
               path: '',
               element: <Navigate to="details" replace />,
             },
           ],
+        },
+        {
+          id: HubRoute.ExecutionEnvironmentAddTeams,
+          path: ':id/team-access/add',
+          element: <ExecutionEnvironmentAddTeams />,
+        },
+        {
+          id: HubRoute.ExecutionEnvironmentAddUsers,
+          path: ':id/user-access/add',
+          element: <ExecutionEnvironmentAddUsers />,
         },
         {
           id: HubRoute.ExecutionEnvironmentImagePage,
@@ -311,9 +363,14 @@ export function useHubNavigation() {
                   element: <RepositoryDetails />,
                 },
                 {
-                  path: 'access',
-                  id: HubRoute.RepositoryAccess,
-                  element: <RepositoryAccess />,
+                  path: 'team-access',
+                  id: HubRoute.RepositoryTeamAccess,
+                  element: <RepositoryTeamAccess />,
+                },
+                {
+                  path: 'user-access',
+                  id: HubRoute.RepositoryUserAccess,
+                  element: <RepositoryUserAccess />,
                 },
                 {
                   path: 'collection-version',
@@ -335,6 +392,16 @@ export function useHubNavigation() {
                   element: <Navigate to="details" replace />,
                 },
               ],
+            },
+            {
+              id: HubRoute.RepositoryAddTeams,
+              path: ':id/team-access/add',
+              element: <RepositoryAddTeams />,
+            },
+            {
+              id: HubRoute.RepositoryAddUsers,
+              path: ':id/users-access/add',
+              element: <RepositoryAddUsers />,
             },
             {
               path: ':id/versions-details/:version/',
@@ -449,15 +516,30 @@ export function useHubNavigation() {
                   element: <RemoteDetails />,
                 },
                 {
-                  path: 'access',
-                  id: HubRoute.RemoteAccess,
-                  element: <RemoteAccess />,
+                  path: 'user-access',
+                  id: HubRoute.RemoteUserAccess,
+                  element: <RemoteUserAccess />,
+                },
+                {
+                  path: 'team-access',
+                  id: HubRoute.RemoteTeamAccess,
+                  element: <RemoteTeamAccess />,
                 },
                 {
                   path: '',
                   element: <Navigate to="details" replace />,
                 },
               ],
+            },
+            {
+              id: HubRoute.RemoteAddUsers,
+              path: ':id/user-access/add',
+              element: <RemoteAddUsers />,
+            },
+            {
+              id: HubRoute.RemoteAddTeams,
+              path: ':id/team-access/add',
+              element: <RemoteAddTeams />,
             },
             {
               path: '',
@@ -482,13 +564,57 @@ export function useHubNavigation() {
           id: HubRoute.Teams,
           label: t('Teams'),
           path: 'teams',
-          element: <PageNotImplemented />,
+          children: [
+            {
+              id: HubRoute.TeamPage,
+              path: ':id',
+              children: [
+                {
+                  id: HubRoute.TeamDetails,
+                  path: 'details',
+                  element: <PageNotImplemented />,
+                },
+                {
+                  id: HubRoute.TeamRoles,
+                  path: 'roles',
+                  element: <HubTeamRoles />,
+                },
+              ],
+            },
+            {
+              id: HubRoute.TeamAddRoles,
+              path: ':id/roles/add-roles',
+              element: <HubAddTeamRoles />,
+            },
+          ],
         },
         {
           id: HubRoute.Users,
           label: t('Users'),
           path: 'users',
-          element: <PageNotImplemented />,
+          children: [
+            {
+              id: HubRoute.UserPage,
+              path: ':id',
+              children: [
+                {
+                  id: HubRoute.UserDetails,
+                  path: 'details',
+                  element: <PageNotImplemented />,
+                },
+                {
+                  id: HubRoute.UserRoles,
+                  path: 'roles',
+                  element: <HubUserRoles />,
+                },
+              ],
+            },
+            {
+              id: HubRoute.UserAddRoles,
+              path: ':id/roles/add-roles',
+              element: <HubAddUserRoles />,
+            },
+          ],
         },
         {
           id: HubRoute.Roles,
@@ -508,12 +634,12 @@ export function useHubNavigation() {
             {
               id: HubRoute.RolePage,
               path: ':id/',
-              element: <RolePage />,
+              element: <HubRolePage />,
               children: [
                 {
                   id: HubRoute.RoleDetails,
                   path: 'details',
-                  element: <RoleDetails />,
+                  element: <HubRoleDetails />,
                 },
                 {
                   path: '',
@@ -523,7 +649,7 @@ export function useHubNavigation() {
             },
             {
               path: '',
-              element: <Roles />,
+              element: <HubRoles />,
             },
           ],
         },
