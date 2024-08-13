@@ -33,9 +33,11 @@ jobs:
         if: ${{ !inputs.SKIP_JOB }}
         with:
           fetch-depth: 1
+
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
         run: npm version 0.0.0 --no-git-tag-version
+
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
@@ -45,18 +47,23 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+
       - name: NPM Build
         if: ${{ !inputs.SKIP_JOB }}
         run: npm run build:awx
+
       - name: Build Image
         if: ${{ !inputs.SKIP_JOB }}
         run: npm run docker:build:awx
+        
       - name: Save Image
         if: ${{ !inputs.SKIP_JOB }}
         run: docker save awx-ui > awx-ui.tar
+
       - name: Upload Image
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/upload-artifact@v4
@@ -64,37 +71,61 @@ jobs:
           name: awx-ui.tar
           path: awx-ui.tar
 
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      directories: ${{ steps.set-matrix.outputs.directories }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          if [[ "${{ github.event.pull_request.labels.*.name }}" == *dashboard* ]]; then
+            echo "matrix=[1,2,3,4]" >> $GITHUB_ENV
+          else
+            directories=$(find a/b/c -maxdepth 1 -type d -not -path 'a/b/c' | sed 's|a/b/c/||' | jq -R . | jq -s .)
+            echo "matrix=$directories" >> $GITHUB_ENV
+          fi
+
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
     # timeout-minutes: 20
-    needs: awx-ui-image
+    needs: [awx-ui-image, generate-matrix]
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson('["access","administration","cleanup","infrastructure","jobs","overview","projects","schedules","templates"]') }}
+        containers: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     steps:
+
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/download-artifact@v4
         with:
           name: awx-ui.tar
+
       - name: Load container image
         if: ${{ !inputs.SKIP_JOB }}
         run: docker load --input awx-ui.tar
+
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Setup node
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts
+
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
         run: npm version 0.0.0 --no-git-tag-version
+
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
@@ -104,9 +135,11 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+
       - name: Determine Auto Cancel After Failures
         id: determine-auto-cancel
         run: |
@@ -117,6 +150,7 @@ jobs:
             echo "cancel_value=0" >> $GITHUB_OUTPUT
             echo "tag_value=false" >> $GITHUB_OUTPUT
           fi
+
       - name: Cypress with Recording
         if: ${{ !inputs.SKIP_JOB && contains(github.event.pull_request.labels.*.name, 'dashboard') }}
         uses: cypress-io/github-action@v6
@@ -138,6 +172,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           TAGS: '!flaky'
+
       - name: Cypress without Recording
         if: ${{ !inputs.SKIP_JOB && !contains(github.event.pull_request.labels.*.name, 'dashboard') }}
         uses: cypress-io/github-action@v6
