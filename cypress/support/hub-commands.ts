@@ -286,26 +286,16 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
-    return cy
-      .galaxykit('collection upload', namespace, collection, version ? version : '1.0.0')
-      .then((result) => {
-        return cy.waitForAllTasks().then(() => {
-          return result;
-        });
-      });
+    cy.galaxykit('collection upload', namespace, collection, version ? version : '1.0.0');
+    cy.waitForAllTasks();
   }
 );
 
 Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
-    return cy
-      .galaxykit('collection move', namespace, collection, version, 'staging', 'published')
-      .then((result) => {
-        return cy.waitForAllTasks().then(() => {
-          return result;
-        });
-      });
+    cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
+    cy.waitForAllTasks();
   }
 );
 
