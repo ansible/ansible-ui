@@ -112,8 +112,10 @@ jobs:
         run: |
           if [[ "${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}" == "true" && "${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') }}" == "false" ]]; then
             echo "cancel_value=1" >> $GITHUB_OUTPUT
+            echo "tag_value=${{ inputs.TAGS }}" >> $GITHUB_OUTPUT
           else
-            echo "cancel_value=false" >> $GITHUB_OUTPUT
+            echo "cancel_value=0" >> $GITHUB_OUTPUT
+            echo "tag_value=false" >> $GITHUB_OUTPUT
           fi
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
@@ -126,7 +128,7 @@ jobs:
           parallel: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
           auto-cancel-after-failures: ${{ steps.determine-auto-cancel.outputs.cancel_value }}
           config-file: cypress.awx.config.ts
-          tag: ${{ inputs.TAGS }}
+          tag: ${{ steps.determine-auto-cancel.outputs.tag_value }}
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
