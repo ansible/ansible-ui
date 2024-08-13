@@ -1,11 +1,11 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { randomString } from '../../../../framework/utils/random-string';
+import { Credential } from '../../../../frontend/awx/interfaces/Credential';
+import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Execution Environments', () => {
   let credential: Credential;

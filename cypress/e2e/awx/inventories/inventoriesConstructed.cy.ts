@@ -1,8 +1,8 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { InstanceGroup } from '../../../../../frontend/awx/interfaces/InstanceGroup';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { randomString } from '../../../../framework/utils/random-string';
+import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Constructed Inventories CRUD Tests', () => {
   let organization: Organization;

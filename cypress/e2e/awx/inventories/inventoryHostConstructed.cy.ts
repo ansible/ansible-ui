@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { InventoryGroup } from '../../../../../frontend/awx/interfaces/InventoryGroup';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { InventoryGroup } from '../../../../frontend/awx/interfaces/InventoryGroup';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { checkHiddenButton, checkHiddenTab, launchHostJob } from '../../../support/hostsfunctions';
 import { runCommand } from './runCommandFunction';
-import { checkHiddenButton, checkHiddenTab } from '../../../../support/hostsfunctions';
-import { launchHostJob } from '../../../../support/hostsfunctions';
 
 describe('Inventory Host Tab Tests for contructed inventory', () => {
   let organization: Organization;

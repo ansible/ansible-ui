@@ -2,7 +2,7 @@ import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { ReusableTemplateSurveyTestSuite } from './sharedTemplateSurvey';
+import { ReusableTemplateSurveyTestSuite } from '../job-templates/sharedTemplateSurvey';
 
 describe('Job Templates Surveys', function () {
   let inventory: Inventory;

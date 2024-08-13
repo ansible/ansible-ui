@@ -1,19 +1,19 @@
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { launchHostJob } from '../../../../support/hostsfunctions';
-import { runCommand } from './runCommandFunction';
-import { randomString } from '../../../../../framework/utils/random-string';
+import { randomString } from '../../../../framework/utils/random-string';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 import {
   checkFactsInHost,
   checkHostGroup,
   createAndEditAndDeleteHost,
   createHost,
   createHostAndCancelJob,
+  launchHostJob,
   testHostBulkDelete,
-} from '../../../../support/hostsfunctions';
+} from '../../../support/hostsfunctions';
+import { runCommand } from './runCommandFunction';
 
 describe('Inventory Host Tab Tests for regular inventory', () => {
   let organization: Organization;

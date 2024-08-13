@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import {
-  checkHiddenButton,
-  checkHiddenTab,
-  launchHostJob,
-} from '../../../../support/hostsfunctions';
+import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { checkHiddenButton, checkHiddenTab, launchHostJob } from '../../../support/hostsfunctions';
 import { runCommand } from './runCommandFunction';
 
 describe('Inventory Host Tab Tests for smart inventory', () => {

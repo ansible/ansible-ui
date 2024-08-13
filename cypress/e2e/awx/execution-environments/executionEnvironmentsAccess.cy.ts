@@ -1,9 +1,9 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Team } from '../../../../../frontend/awx/interfaces/Team';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { randomString } from '../../../../framework/utils/random-string';
+import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Team } from '../../../../frontend/awx/interfaces/Team';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Execution Environments: User/Team access', () => {
   let organization: Organization;

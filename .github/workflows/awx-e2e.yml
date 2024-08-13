@@ -150,7 +150,7 @@ jobs:
           fi
 
       - name: Cypress with Recording
-        if: ${{ !inputs.SKIP_JOB && contains(github.event.pull_request.labels.*.name, 'dashboard') }}
+        if: ${{ !inputs.SKIP_JOB && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'dashboard')) }}
         uses: cypress-io/github-action@v6
         with:
           install: false
@@ -158,7 +158,7 @@ jobs:
           wait-on: 'https://localhost:4101'
           record: true
           parallel: true
-          auto-cancel-after-failures: ${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') && 'false' || '1' }}
+          # auto-cancel-after-failures: ${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') && 'false' || '1' }}
           config-file: cypress.awx.config.ts
           tag: ${{ inputs.TAGS }}
         env:
@@ -172,7 +172,7 @@ jobs:
           TAGS: '!flaky'
 
       - name: Cypress without Recording
-        if: ${{ !inputs.SKIP_JOB && !contains(github.event.pull_request.labels.*.name, 'dashboard') }}
+        if: ${{ !inputs.SKIP_JOB && github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dashboard') }}
         uses: cypress-io/github-action@v6
         with:
           install: false

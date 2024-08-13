@@ -1,4 +1,4 @@
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 export function runCommand(params: {
   selections: string;
