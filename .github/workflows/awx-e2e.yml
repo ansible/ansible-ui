@@ -75,7 +75,7 @@ jobs:
     name: Generate Test Matrix
     runs-on: ubuntu-latest
     outputs:
-      directories: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -90,8 +90,9 @@ jobs:
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    # timeout-minutes: 20
-    needs: [awx-ui-image, generate-matrix]
+    needs:
+      - awx-ui-image
+      - generate-matrix
     strategy:
       fail-fast: false
       matrix:
