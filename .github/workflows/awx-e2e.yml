@@ -75,17 +75,17 @@ jobs:
     name: Generate Test Matrix
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.set-matrix.outputs.MATRIX }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generate matrix
         id: set-matrix
         run: |
           matrix=$(find cypress/e2e/awx -maxdepth 1 -type d -not -path 'cypress/e2e/awx' | sed 's|cypress/e2e/awx/||' | jq -R . | jq -s -c .)
           echo "Matrix value: $matrix"
-          echo "matrix=$matrix" >> $GITHUB_ENV
+          echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
 
   awx-e2e:
     name: AWX E2E
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson(needs.generate-matrix.outputs.matrix) }}
+        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson(needs.generate-matrix.outputs.MATRIX) }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
