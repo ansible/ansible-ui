@@ -72,7 +72,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson('["access","administration","cleanup","overview","resources","views"]') }}
+        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson('["access","administration","cleanup","infrastructure","jobs","overview","projects","schedules","templates"]') }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
