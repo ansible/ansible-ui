@@ -118,7 +118,7 @@ jobs:
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/setup-node@v4
         with:
-          node-version: lts
+          node-version: 20
 
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
