@@ -72,9 +72,11 @@ describe('Collections Tabs: Distributions', () => {
       expect(data?.results).to.have.length(1);
       const distribution: Distribution = data.results[0];
       const { base_path, pulp_created, name, client_url } = distribution;
+      const createdDate = new Date(pulp_created);
+      const formattedDateTime = `${createdDate.toLocaleDateString()}, ${createdDate.toLocaleTimeString()}`;
       cy.checkValueByHeaderName('Name', name);
       cy.checkValueByHeaderName('Base path', base_path);
-      cy.checkValueByHeaderName('Created', pulp_created);
+      cy.checkValueByHeaderName('Created', formattedDateTime);
       cy.checkValueByHeaderName('CLI Configuration', client_url);
     });
   });
