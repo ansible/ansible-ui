@@ -10,8 +10,12 @@ describe('Collections Dependencies', () => {
   let collectionName: string;
 
   before(() => {
+    collectionName = randomE2Ename();
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      cy.waitForAllTasks();
     });
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
@@ -27,14 +31,11 @@ describe('Collections Dependencies', () => {
   });
 
   beforeEach(() => {
-    collectionName = randomE2Ename();
     cy.navigateTo('hub', Collections.url);
     cy.verifyPageTitle(Collections.title);
   });
 
   it('Collections Dependencies tab collections table empty state', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -47,8 +48,6 @@ describe('Collections Dependencies', () => {
     cy.contains('No dependencies').should('be.visible');
   });
   it('Collections Dependencies tab collections table error state', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -70,8 +69,6 @@ describe('Collections Dependencies', () => {
     cy.contains('No dependencies').should('not.exist');
   });
   it('Collections Dependencies tab collections table non-empty state', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -89,8 +86,6 @@ describe('Collections Dependencies', () => {
     });
   });
   it('Collections Dependencies tab dependencies list non-empty state', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
