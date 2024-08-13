@@ -72,7 +72,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson('[1]') }}
+        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson('["access","administration","cleanup","overview","resources","views"]') }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
@@ -146,6 +146,7 @@ jobs:
           start: npm run docker:run:awx
           wait-on: 'https://localhost:4101'
           config-file: cypress.awx.config.ts
+          config: spec=cypress/e2e/awx/${{ matrix.containers }}.spec.ts
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
