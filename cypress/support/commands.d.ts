@@ -1526,6 +1526,22 @@ declare global {
           failOnStatusCode?: boolean;
         }
       ): Cypress.Chainable<void>;
+      createHubTeam(): Cypress.Chainable<HubTeam>;
+      deleteHubTeam(
+        hubTeam: HubTeam,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+      createHubUser(hubUser?: HubUser): Cypress.Chainable<HubUser>;
+      deleteHubUser(
+        hubUser: HubUser,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
       hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
 
       hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;

@@ -38,16 +38,16 @@ export function UserAccess(props: {
           header: t('First name'),
           type: 'text',
           value: (item: UserAssignment) => item?.summary_fields?.user?.first_name,
-          sort: 'first_name',
+          sort: 'user__first_name',
         },
         {
           header: t('Last name'),
           type: 'text',
           value: (item: UserAssignment) => item?.summary_fields?.user?.last_name,
-          sort: 'last_name',
+          sort: 'user__last_name',
         },
       ]}
-      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username' }}
+      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username__icontains' }}
       url={roleUserAssignmentsURL}
       content_type_model={type}
       accessListType={'user'}
