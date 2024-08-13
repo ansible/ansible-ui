@@ -14,7 +14,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
-import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
 import { useCanSignNamespace } from '../../common/utils/canSign';
@@ -26,7 +26,7 @@ export function useCollectionActions(
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deprecateCollections = useDeprecateCollections(callback);
+  const deprecateOrUndeprecateCollections = useDeprecateOrUndeprecateCollections(callback);
   const deleteCollections = useDeleteCollections(callback, false, detail);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
     undefined,
@@ -86,9 +86,9 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: BanIcon,
-        label: t('Deprecate collection'),
+        label: t('Deprecate / Undeprecate collection'),
         onClick: (collection) => {
-          deprecateCollections([collection]);
+          deprecateOrUndeprecateCollections([collection]);
         },
       },
       {
@@ -151,13 +151,11 @@ export function useCollectionActions(
     ],
     [
       t,
-      signCollection,
-      canSign,
+      deprecateOrUndeprecateCollections,
       detail,
       can_upload_signatures,
       uploadSignature,
       signCollectionVersion,
-      deprecateCollections,
       copyToRepository,
       pageNavigate,
       deleteCollectionsVersions,

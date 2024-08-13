@@ -147,20 +147,53 @@ describe.skip('Collections Details', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it('can deprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
-      visitCollection(collectionName, namespace.name);
-      cy.selectDetailsPageKebabAction('deprecate-collection');
-      cy.clickButton('Close');
-      cy.navigateTo('hub', Collections.url);
-      cy.verifyPageTitle(Collections.title);
-      cy.getHubCollection(collectionName).then((deprecated) => {
-        //Assert that the object returned shows that is_deprecated is equal to true
-        expect(deprecated.is_deprecated).to.eql(true);
-      });
-      cy.deleteHubCollectionByName(collectionName);
+  it('can deprecate and undeprecate a collection', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+
+    cy.galaxykit(
+      'collection move',
+      namespace.name,
+      collectionName,
+      '1.0.0',
+      'staging',
+      'published'
+    );
+    cy.waitForAllTasks();
+
+    visitCollection(collectionName, namespace.name);
+    cy.selectDetailsPageKebabAction('deprecate-/-undeprecate-collection');
+    cy.clickButton('Close');
+    //cy.navigateTo('hub', Collections.url);
+    //cy.verifyPageTitle(Collections.title);
+    cy.getHubCollection(collectionName).then((deprecated) => {
+      //Assert that the object returned shows that is_deprecated is equal to true
+      expect(deprecated.is_deprecated).to.eql(true);
     });
+
+    // navigate to namespace - collections
+    /*cy.navigateTo('hub', Namespaces.url);
+      cy.filterTableBySingleText(namespace.name);
+      cy.contains('a', namespace.name).click();
+      cy.getByDataCy('collections-tab').click();
+
+      cy.contains(`[aria-label="Simple table"]`, collectionName);
+      
+      */
+    cy.contains('span', 'Deprecated');
+
+    //cy.contains('a', collectionName).click();
+
+    cy.selectDetailsPageKebabAction('deprecate-/-undeprecate-collection');
+    cy.clickButton('Close');
+    cy.navigateTo('hub', Collections.url);
+    cy.verifyPageTitle(Collections.title);
+    cy.getHubCollection(collectionName).then((deprecated) => {
+      //Assert that the object returned shows that is_deprecated is equal to false
+      expect(deprecated.is_deprecated).to.eql(false);
+    });
+    cy.contains('span', 'Deprecated').should('not.exist');
+
+    cy.deleteHubCollectionByName(collectionName);
   });
 
   it('can copy a version to repository', () => {
