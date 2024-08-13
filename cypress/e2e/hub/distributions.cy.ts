@@ -1,13 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
 import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { Distribution } from '../../../frontend/hub/collections/UploadCollection';
-import { HubItemsResponse } from '../../../frontend/hub/common/useHubView';
+import { PulpItemsResponse } from '../../../frontend/hub/common/useHubView';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
-import { Collections } from './constants';
+import { Collections, Repositories } from './constants';
 
 describe('Collections Tabs: Distributions', () => {
   let namespace: HubNamespace;
@@ -22,13 +20,14 @@ describe('Collections Tabs: Distributions', () => {
     cy.createHubRemote().then((remoteResult) => {
       remote = remoteResult;
       cy.createHubRepository({
-        repository: { remote: remote.pulp_href, retain_repo_versions: 2 },
+        repository: { remote: remote.pulp_href, retain_repo_versions: 1 },
       }).then((repositoryResult) => {
         repository = repositoryResult;
         cy.createHubRepositoryDistribution({
           distribution: { name: repository.name, repository: repository.pulp_href },
         });
       });
+      cy.log('repo', repository);
     });
   });
 
@@ -36,7 +35,7 @@ describe('Collections Tabs: Distributions', () => {
     cy.deleteHubRepositoryDistributionByName(repository.name);
     cy.deleteHubRepository(repository);
     cy.deleteHubRemote(remote);
-    cy.deleteCollectionsInNamespace(namespace);
+    cy.deleteCollectionsInNamespace(namespace.name);
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });
 
@@ -47,20 +46,31 @@ describe('Collections Tabs: Distributions', () => {
   });
 
   it('can inspect distribution information from collection detail page', () => {
-    //navigate to distributions tab
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
+    cy.navigateTo('hub', Repositories.url);
+    cy.verifyPageTitle('Repositories');
+    cy.clickTableRowLink('name', repository.name);
+    cy.verifyPageTitle(repository.name);
+    cy.clickTab('Collection Versions', true);
+    cy.getByDataCy('add-collections').click();
+    cy.getModal().within(() => {
+      cy.filterTableByTextFilter('namespace', namespace.name);
+      cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
+      cy.contains('button', 'Select').click();
+    });
+    cy.getModal().should('not.exist');
+    cy.setTableView('table');
+    cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
     cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
     cy.contains('Loading').should('not.exist');
     cy.clickLink(/^Distributions$/);
-    cy.requestGet<HubItemsResponse<Distribution>>(
+    cy.requestGet<PulpItemsResponse<Distribution>>(
       pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=name&offset=0&limit=10`
     ).then((data) => {
       expect(data?.results).to.have.length(1);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const distribution: Distribution = data.results[0];
       const { base_path, pulp_created, name, client_url } = distribution;
       cy.checkCellValueByColumnName('Name', name);
