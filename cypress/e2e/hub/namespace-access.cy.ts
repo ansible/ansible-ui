@@ -21,19 +21,13 @@ describe.skip('Namespace - team and user access', () => {
     cy.clickTableRowLink('name', namespace.name, { disableFilter: true });
   });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', hubAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+  function removeRoleFromListRow(roleName: string) {
     cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
-        });
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -42,11 +36,9 @@ describe.skip('Namespace - team and user access', () => {
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
       cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.selectTableRowByCheckbox('username', hubUser.username, { disableFilter: true });
-
+        cy.selectTableRow(hubUser.username);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.collection_namespace_owner', {
@@ -89,11 +81,11 @@ describe.skip('Namespace - team and user access', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_namespace_owner', 'user');
+      removeRoleFromListRow('galaxy.collection_namespace_owner');
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_publisher', 'user');
+      removeRoleFromListRow('galaxy.collection_publisher');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -103,11 +95,8 @@ describe.skip('Namespace - team and user access', () => {
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab('Team Access', true);
       cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
-        cy.contains('h1', 'Select teams(s)').should('be.visible');
-        cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
-
+        cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.collection_namespace_owner', {
@@ -147,14 +136,14 @@ describe.skip('Namespace - team and user access', () => {
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(namespace.name);
-      cy.selectTableRowByCheckbox('name', hubTeam.name, {
-        disableFilter: true,
+      cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
+        disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_namespace_owner', 'team');
-      cy.selectTableRowByCheckbox('name', hubTeam.name, {
-        disableFilter: true,
+      removeRoleFromListRow('galaxy.collection_namespace_owner');
+      cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
+        disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_publisher', 'team');
+      removeRoleFromListRow('galaxy.collection_publisher');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });

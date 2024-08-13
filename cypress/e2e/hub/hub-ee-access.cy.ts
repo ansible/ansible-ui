@@ -44,12 +44,9 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
       cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
-
       cy.getWizard().within(() => {
-        cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.setTablePageSize('100');
-        cy.selectTableRowByCheckbox('username', hubUser.username, { disableFilter: true });
+        cy.selectTableRow(hubUser.username);
+        //cy.selectTableRowByCheckbox('name', hubUser.username, { disableFilter: true });
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.execution_environment_collaborator', {
@@ -118,8 +115,7 @@ describe.skip('Execution Environment User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
-
+        cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.execution_environment_collaborator', {

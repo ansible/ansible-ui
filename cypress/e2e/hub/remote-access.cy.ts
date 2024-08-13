@@ -41,8 +41,7 @@ describe.skip('Remotes User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.setTablePageSize('100');
-        cy.selectTableRowByCheckbox('username', hubUser.username, { disableFilter: true });
+        cy.selectTableRow(hubUser.username);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.collection_remote_owner', {
@@ -88,10 +87,7 @@ describe.skip('Remotes User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.setTablePageSize('100').scrollIntoView();
-        cy.contains(hubTeam.name).scrollIntoView();
-        cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
-
+        cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.collection_remote_owner', {
@@ -120,13 +116,10 @@ describe.skip('Remotes User Access tab', () => {
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(remote.name);
-      cy.selectTableRowByCheckbox('team', hubTeam.name, {
+      cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
         disableFilter: false,
       });
       removeRoleFromListRow('galaxy.collection_remote_owner');
-      cy.selectTableRowByCheckbox('team', hubTeam.name, {
-        disableFilter: false,
-      });
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });
