@@ -117,18 +117,18 @@ jobs:
             echo "cancel_value=0" >> $GITHUB_OUTPUT
             echo "tag_value=false" >> $GITHUB_OUTPUT
           fi
-      - name: Cypress
-        if: ${{ !inputs.SKIP_JOB }}
+      - name: Cypress with Recording
+        if: ${{ !inputs.SKIP_JOB && contains(github.event.pull_request.labels.*.name, 'dashboard') }}
         uses: cypress-io/github-action@v6
         with:
           install: false
           start: npm run docker:run:awx
           wait-on: 'https://localhost:4101'
-          record: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
-          parallel: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
-          auto-cancel-after-failures: ${{ steps.determine-auto-cancel.outputs.cancel_value }}
+          record: true
+          parallel: true
+          auto-cancel-after-failures: ${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') && 'false' || '1' }}
           config-file: cypress.awx.config.ts
-          tag: ${{ steps.determine-auto-cancel.outputs.tag_value }}
+          tag: ${{ inputs.TAGS }}
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
@@ -138,3 +138,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           TAGS: '!flaky'
+      - name: Cypress without Recording
+        if: ${{ !inputs.SKIP_JOB && !contains(github.event.pull_request.labels.*.name, 'dashboard') }}
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          start: npm run docker:run:awx
+          wait-on: 'https://localhost:4101'
+          config-file: cypress.awx.config.ts
+        env:
+          AWX_SERVER: ${{ inputs.AWX_SERVER }}
+          AWX_USERNAME: e2e
+          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+          TAGS: '!flaky'
+  
