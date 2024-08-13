@@ -15,12 +15,14 @@ export const baseConfig: Cypress.ConfigOptions = {
     testIsolation: false,
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
-        if (browser?.isHeadless) {
-          launchOptions.args.push('--no-sandbox');
-          launchOptions.args.push('--disable-gl-drawing-for-tests');
-          launchOptions.args.push('--disable-gpu');
+        if (browser?.name === 'chrome') {
+          if (browser?.isHeadless) {
+            launchOptions.args.push('--no-sandbox');
+            launchOptions.args.push('--disable-gl-drawing-for-tests');
+            launchOptions.args.push('--disable-gpu');
+          }
+          launchOptions.args.push('--js-flags=--max-old-space-size=3500');
         }
-        launchOptions.args.push('--js-flags=--max-old-space-size=3500');
         return launchOptions;
       });
       return config;

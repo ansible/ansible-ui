@@ -1,3 +1,4 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,11 +8,10 @@ import {
   PageActionType,
   useGetPageUrl,
 } from '../../../../../framework';
+import { useHubActiveUser } from '../../../common/useHubActiveUser';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useDeleteRoles } from './useDeleteRoles';
-import { ButtonVariant } from '@patternfly/react-core';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { useHubActiveUser } from '../../../common/useHubActiveUser';
 
 export function useRoleToolbarActions(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();
