@@ -1,0 +1,15 @@
+{
+  "id": 21,
+  "url": "",
+  "related": {},
+  "summary_fields": {},
+  "permissions": ["galaxy.view_ansiblerepository"],
+  "content_type": "galaxy.ansiblerepository",
+  "modified": "2024-08-06T17:22:26.294509Z",
+  "created": "2024-08-06T17:22:06.956461Z",
+  "name": "galaxy.test_custom_role",
+  "description": "View repository",
+  "managed": false,
+  "modified_by": 4,
+  "created_by": 4
+}

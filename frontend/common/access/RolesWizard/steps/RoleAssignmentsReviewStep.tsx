@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { Badge, Divider, ExpandableSection, Title } from '@patternfly/react-core';
-import { getItemKey } from '../../../crud/Data';
 import {
   ITableColumn,
   PageDetails,
@@ -14,23 +13,41 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useMapContentTypeToDisplayName } from '../../hooks/useMapContentTypeToDisplayName';
 
+type ResourceTypeWithID = {
+  id: number | string;
+  name: string;
+  description?: string;
+  username?: never;
+};
+type ResourceTypeWithPulpHref = {
+  pulp_href: string;
+  name: string;
+  description?: string;
+  username?: never;
+};
+type Team = { id: number; name: string; username?: never };
+type User = { id: number; name?: never; username: string };
+type Role = { id: number; name: string; description?: string; username?: never };
+
 type ReviewData = {
   resourceType?: string;
-  resources?: { id: number; name: string; username?: never }[];
-  edaRoles?: { id: number; name: string; description?: string; username?: never }[];
-  awxRoles?: { id: number; name: string; description?: string; username?: never }[];
-  teams?: { id: number; name: string; username?: never }[];
-  users?: { id: number; name?: never; username: string }[];
+  resources?: (ResourceTypeWithID | ResourceTypeWithPulpHref)[];
+  edaRoles?: Role[];
+  awxRoles?: Role[];
+  hubRoles?: Role[];
+  teams?: Team[];
+  users?: User[];
 };
 
 interface ReviewExpandableListProps<
-  K extends { name: string; username?: never } | { name?: never; username: string },
+  K extends ResourceTypeWithID | ResourceTypeWithPulpHref | Team | User,
 > {
   selectedItems: K[];
   label?: string;
   fieldName: string;
   edaRolesLabel?: string;
   awxRolesLabel?: string;
+  hubRolesLabel?: string;
 }
 
 const StyledBadge = styled(Badge)`
@@ -43,12 +60,14 @@ const StyledDivider = styled(Divider)`
 export function RoleAssignmentsReviewStep(props: {
   edaRolesLabel?: string;
   awxRolesLabel?: string;
+  hubRolesLabel?: string;
   selectedUser?: { id: number; name?: never; username: string };
   selectedTeam?: { id: number; name: string; username?: never };
 }) {
   const { wizardData } = usePageWizard();
   const { t } = useTranslation();
-  const { resourceType, resources, users, teams, edaRoles, awxRoles } = wizardData as ReviewData;
+  const { resourceType, resources, users, teams, edaRoles, awxRoles, hubRoles } =
+    wizardData as ReviewData;
   const getDisplayName = useMapContentTypeToDisplayName();
 
   return (
@@ -122,16 +141,17 @@ export function RoleAssignmentsReviewStep(props: {
       {awxRoles && awxRoles.length ? (
         <ReviewExpandableList selectedItems={awxRoles} fieldName="awxRoles" {...props} />
       ) : null}
+      {hubRoles && hubRoles.length ? (
+        <ReviewExpandableList selectedItems={hubRoles} fieldName="hubRoles" {...props} />
+      ) : null}
     </>
   );
 }
 
 function ReviewExpandableList<
-  K extends
-    | { id: number; name: string; description?: string; username?: never }
-    | { id: number; name?: never; username: string },
+  K extends ResourceTypeWithID | ResourceTypeWithPulpHref | Team | User,
 >(props: ReviewExpandableListProps<K>) {
-  const { label, selectedItems, fieldName, edaRolesLabel, awxRolesLabel } = props;
+  const { label, selectedItems, fieldName, edaRolesLabel, awxRolesLabel, hubRolesLabel } = props;
   const [isExpanded, setIsExpanded] = useState(true);
   const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -152,10 +172,12 @@ function ReviewExpandableList<
         return edaRolesLabel || t('Roles');
       case 'awxRoles':
         return awxRolesLabel || t('Roles');
+      case 'hubRoles':
+        return hubRolesLabel || t('Roles');
       default:
         return '';
     }
-  }, [awxRolesLabel, edaRolesLabel, fieldName, label, t]);
+  }, [awxRolesLabel, edaRolesLabel, hubRolesLabel, fieldName, label, t]);
 
   const tableColumns: ITableColumn<K>[] = useMemo(() => {
     switch (fieldName) {
@@ -172,6 +194,7 @@ function ReviewExpandableList<
         ];
       case 'awxRoles':
       case 'edaRoles':
+      case 'hubRoles':
         return [
           {
             header: t('Name'),
@@ -210,7 +233,12 @@ function ReviewExpandableList<
   }, [fieldName, t]);
 
   const view = useInMemoryView<K>({
-    keyFn: getItemKey,
+    keyFn: (item) => {
+      if ((item as ResourceTypeWithPulpHref).pulp_href) {
+        return (item as ResourceTypeWithPulpHref).pulp_href;
+      }
+      return (item as ResourceTypeWithID | Team | Role | User).id;
+    },
     items: selectedItems,
     tableColumns,
   });

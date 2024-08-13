@@ -22,6 +22,7 @@ interface SelectRolesStepHeaderProps<
   labelForSelectedItemsFromPreviousStep?: string;
   descriptionForRoleSelection?: string;
   title?: string;
+  resourceType?: string;
 }
 
 const StyledTitle = styled(Title)`
@@ -87,6 +88,7 @@ export function SelectRolesStep<T extends object>(props: SelectRolesStepProps<T>
         labelForSelectedItemsFromPreviousStep={labelForSelectedItemsFromPreviousStep}
         descriptionForRoleSelection={descriptionForRoleSelection}
         title={title}
+        resourceType={resourceType ? (resourceType as string) : undefined}
       ></SelectRolesStepHeader>
       <PageMultiSelectList
         view={view}
@@ -110,27 +112,30 @@ function SelectRolesStepHeader<
     labelForSelectedItemsFromPreviousStep,
     descriptionForRoleSelection,
     title,
+    resourceType,
   } = props;
   const { t } = useTranslation();
   return (
     <>
       <StyledTitle headingLevel="h1">{title ?? t('Select roles to apply')}</StyledTitle>
-      <Split hasGutter>
-        <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-          {labelForSelectedItemsFromPreviousStep ?? t('Selected')}
-        </SplitItem>
-        {selectedItemsFromPreviousStep && selectedItemsFromPreviousStep.length > 0 && (
-          <LabelGroup>
-            {selectedItemsFromPreviousStep?.map((item, i) => {
-              return (
-                <Label key={i}>
-                  <TextCell text={item.name ? item.name : item.username} />
-                </Label>
-              );
-            })}
-          </LabelGroup>
-        )}
-      </Split>
+      {resourceType !== 'system' ? (
+        <Split hasGutter>
+          <SplitItem style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+            {labelForSelectedItemsFromPreviousStep ?? t('Selected')}
+          </SplitItem>
+          {selectedItemsFromPreviousStep && selectedItemsFromPreviousStep.length > 0 && (
+            <LabelGroup>
+              {selectedItemsFromPreviousStep?.map((item, i) => {
+                return (
+                  <Label key={i}>
+                    <TextCell text={item.name ? item.name : item.username} />
+                  </Label>
+                );
+              })}
+            </LabelGroup>
+          )}
+        </Split>
+      ) : null}
       {descriptionForRoleSelection && (
         <h2 style={{ marginTop: '1rem', marginBottom: '1rem' }}>{descriptionForRoleSelection}</h2>
       )}
