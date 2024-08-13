@@ -84,11 +84,8 @@ jobs:
         id: set-matrix
         run: |
           matrix=$(find cypress/e2e/awx -maxdepth 1 -type d -not -path 'cypress/e2e/awx' | sed 's|cypress/e2e/awx/||' | jq -R . | jq -s .)
+          echo "Matrix value: $matrix"
           echo "matrix=$matrix" >> $GITHUB_ENV
-
-      - name: Validate matrix
-        run: |
-          echo "Matrix: ${{ env.matrix }}"
 
   awx-e2e:
     name: AWX E2E
