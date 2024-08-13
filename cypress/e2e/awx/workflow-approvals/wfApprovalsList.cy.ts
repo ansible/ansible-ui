@@ -1,11 +1,11 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { WorkflowJob } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
+import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
 import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
