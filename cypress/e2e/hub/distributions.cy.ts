@@ -27,7 +27,6 @@ describe('Collections Tabs: Distributions', () => {
           distribution: { name: repository.name, repository: repository.pulp_href },
         });
       });
-      cy.log('repo', repository);
     });
   });
 
@@ -52,7 +51,7 @@ describe('Collections Tabs: Distributions', () => {
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
     cy.clickTab('Collection Versions', true);
-    cy.getByDataCy('add-collections').click();
+    cy.clickButton(/^Add collections$/);
     cy.getModal().within(() => {
       cy.filterTableByTextFilter('namespace', namespace.name);
       cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
@@ -71,6 +70,7 @@ describe('Collections Tabs: Distributions', () => {
       pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=name&offset=0&limit=10`
     ).then((data) => {
       expect(data?.results).to.have.length(1);
+      cy.setTableView('table');
       const distribution: Distribution = data.results[0];
       const { base_path, pulp_created, name, client_url } = distribution;
       cy.checkCellValueByColumnName('Name', name);
