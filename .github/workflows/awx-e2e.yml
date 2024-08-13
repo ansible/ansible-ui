@@ -72,7 +72,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3,4]
+        include:
+          - name: 'dashboard'
+            values: [1, 2, 3, 4]
+            condition: "contains(github.event.pull_request.labels.*.name, 'dashboard')"
+          - name: 'default'
+            values: [1]
+            condition: "!(contains(github.event.pull_request.labels.*.name, 'dashboard'))"
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
@@ -114,9 +120,9 @@ jobs:
           install: false
           start: npm run docker:run:awx
           wait-on: 'https://localhost:4101'
-          record: true
-          parallel: true
-          # auto-cancel-after-failures: 1
+          record: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
+          parallel: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}
+          auto-cancel-after-failures: ${{ !contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') }}
           config-file: cypress.awx.config.ts
           tag: ${{ inputs.TAGS }}
         env:
