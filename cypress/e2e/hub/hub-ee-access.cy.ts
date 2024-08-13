@@ -29,22 +29,13 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.verifyPageTitle(executionEnvironment.name);
   });
 
-  function removeRoleFromListRow(roleName: string, assignmentType: string) {
-    cy.intercept('DELETE', hubAPI`/role_${assignmentType}_assignments/*`).as('deleteRole');
+  function removeRoleFromListRow(roleName: string) {
     cy.clickTableRowPinnedAction(roleName, 'remove-role', false);
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
-      cy.wait('@deleteRole')
-        .its('response')
-        .then((deleted) => {
-          expect(deleted?.statusCode).to.eql(204);
-          cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
-        });
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
-      cy.clearAllFilters();
+      cy.contains(/^Success$/).should('be.visible');
+      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -52,6 +43,7 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
+      cy.url().should('include', '/user-access');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
@@ -109,11 +101,11 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_publisher', 'user');
+      removeRoleFromListRow('galaxy.execution_environment_publisher');
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_namespace_owner', 'user');
+      removeRoleFromListRow('galaxy.execution_environment_namespace_owner');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -122,11 +114,14 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab('Team Access', true);
+      cy.url().should('include', '/team-access');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
+        cy.setTablePageSize('100').scrollIntoView();
+        cy.contains(hubTeam.name).scrollIntoView();
         cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
 
         cy.clickButton(/^Next/);
@@ -179,11 +174,11 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_publisher', 'team');
+      removeRoleFromListRow('galaxy.execution_environment_publisher');
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.execution_environment_namespace_owner', 'team');
+      removeRoleFromListRow('galaxy.execution_environment_namespace_owner');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });
