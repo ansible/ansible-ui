@@ -13,12 +13,10 @@ import { EdaRoleDetails } from '../../frontend/eda/access/roles/EdaRoleDetails';
 import { EdaRolePage } from '../../frontend/eda/access/roles/EdaRolePage';
 import { CreateRole, EditRole } from '../../frontend/eda/access/roles/RoleForm';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
-import { RoleDetails } from '../../frontend/hub/access/roles/RolePage/RoleDetails';
 import {
   CreateRole as CreateRoleHub,
   EditRole as EditRoleHub,
-} from '../../frontend/hub/access/roles/RolePage/RoleForm';
-import { RolePage } from '../../frontend/hub/access/roles/RolePage/RolePage';
+} from '../../frontend/hub/access/roles/RolePage/HubRoleForm';
 import { HubRoute } from '../../frontend/hub/main/HubRoutes';
 import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
 import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
@@ -26,6 +24,8 @@ import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';
 import { PlatformRoles } from '../access/roles/PlatformRoles';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { useGatewayService } from '../main/GatewayServices';
+import { HubRoleDetails } from '../../frontend/hub/access/roles/RolePage/HubRoleDetails';
+import { HubRolePage } from '../../frontend/hub/access/roles/RolePage/HubRolePage';
 
 export function useGetPlatformRolesRoutes() {
   const { t } = useTranslation();
@@ -156,7 +156,7 @@ export function useGetPlatformRolesRoutes() {
             id: HubRoute.RolePage,
             path: ':id',
             element: (
-              <RolePage
+              <HubRolePage
                 breadcrumbLabelForPreviousPage={t('Automation Content Roles')}
                 backTabLabel={t('Back to Automation Content Roles')}
               />
@@ -165,7 +165,7 @@ export function useGetPlatformRolesRoutes() {
               {
                 id: HubRoute.RoleDetails,
                 path: 'details',
-                element: <RoleDetails />,
+                element: <HubRoleDetails />,
               },
               {
                 path: '',
