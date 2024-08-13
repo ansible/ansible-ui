@@ -1,24 +1,25 @@
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
+import { Remotes } from './constants';
+import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
 
-describe.skip('Namespace - team and user access', () => {
-  let namespace: HubNamespace;
+describe.skip('Remotes User Access tab', () => {
+  let remote: HubRemote;
   before(() => {
-    cy.createHubNamespace().then((namespaceResult) => {
-      namespace = namespaceResult;
+    cy.createHubRemote().then((createdRemote) => {
+      remote = createdRemote;
     });
   });
 
   after(() => {
-    cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
+    cy.deleteHubRemote(remote);
   });
 
   beforeEach(() => {
-    cy.navigateTo('hub', 'namespaces');
-    cy.verifyPageTitle('Namespaces');
-    cy.setTableView('table');
-    cy.filterTableByTextFilter('name', namespace.name, { disableFilterSelection: true });
-    cy.clickTableRowLink('name', namespace.name, { disableFilter: true });
+    cy.navigateTo('hub', 'remotes');
+    cy.verifyPageTitle(Remotes.title);
+    cy.filterTableBySingleText(remote.name);
+    cy.clickTableRowLink('name', remote.name, { disableFilter: true });
+    cy.verifyPageTitle(remote.name);
   });
 
   function removeRoleFromListRow(roleName: string) {
@@ -31,26 +32,22 @@ describe.skip('Namespace - team and user access', () => {
     });
   }
 
-  it('create a new namespace, from the user access tab assign a user and apply role(s) to the user of the namespace', () => {
+  it('create a new remote, from the user access tab assign a user and apply role(s) to the user of the remote', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
       cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
         cy.selectTableRow(hubUser.username);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
-        cy.filterTableByTextFilter('name', 'galaxy.collection_namespace_owner', {
+        cy.filterTableByTextFilter('name', 'galaxy.collection_remote_owner', {
           disableFilterSelection: true,
         });
-        cy.selectTableRowByCheckbox('name', 'galaxy.collection_namespace_owner', {
-          disableFilter: true,
-        });
-        cy.filterTableByTextFilter('name', 'galaxy.collection_publisher', {
-          disableFilterSelection: true,
-        });
-        cy.selectTableRowByCheckbox('name', 'galaxy.collection_publisher', {
+        cy.selectTableRowByCheckbox('name', 'galaxy.collection_remote_owner', {
           disableFilter: true,
         });
         cy.clickButton(/^Next/);
@@ -58,13 +55,8 @@ describe.skip('Namespace - team and user access', () => {
         cy.verifyReviewStepWizardDetails('users', [hubUser.username], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
-          [
-            'galaxy.collection_namespace_owner',
-            'Change and upload collections to namespaces.',
-            'galaxy.collection_publisher',
-            'Upload and modify collections.',
-          ],
-          '2'
+          ['galaxy.collection_remote_owner', 'Manage collection remotes.'],
+          '1'
         );
         cy.clickButton(/^Finish/);
         cy.wait('@userRoleAssignment')
@@ -77,38 +69,31 @@ describe.skip('Namespace - team and user access', () => {
         cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
-      cy.verifyPageTitle(namespace.name);
+      cy.verifyPageTitle(remote.name);
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_namespace_owner');
-      cy.selectTableRowByCheckbox('username', hubUser.username, {
-        disableFilter: true,
-      });
-      removeRoleFromListRow('galaxy.collection_publisher');
+      removeRoleFromListRow('galaxy.collection_remote_owner');
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
 
-  it('create a new namespace, from the team access tab assign a user and apply role(s) to the team of the namespace', () => {
+  it('create a new remote, from the team access tab assign a user and apply role(s) to the team of the remote', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab('Team Access', true);
       cy.getByDataCy('add-roles').click();
+      cy.verifyPageTitle('Add roles');
+
       cy.getWizard().within(() => {
+        cy.contains('h1', 'Select team(s)').should('be.visible');
         cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
-        cy.filterTableByTextFilter('name', 'galaxy.collection_namespace_owner', {
+        cy.filterTableByTextFilter('name', 'galaxy.collection_remote_owner', {
           disableFilterSelection: true,
         });
-        cy.selectTableRowByCheckbox('name', 'galaxy.collection_namespace_owner', {
-          disableFilter: true,
-        });
-        cy.filterTableByTextFilter('name', 'galaxy.collection_publisher', {
-          disableFilterSelection: true,
-        });
-        cy.selectTableRowByCheckbox('name', 'galaxy.collection_publisher', {
+        cy.selectTableRowByCheckbox('name', 'galaxy.collection_remote_owner', {
           disableFilter: true,
         });
         cy.clickButton(/^Next/);
@@ -116,13 +101,8 @@ describe.skip('Namespace - team and user access', () => {
         cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
-          [
-            'galaxy.collection_namespace_owner',
-            'Change and upload collections to namespaces.',
-            'galaxy.collection_publisher',
-            'Upload and modify collections.',
-          ],
-          '2'
+          ['galaxy.collection_remote_owner', 'Manage collection remotes.'],
+          '1'
         );
         cy.clickButton(/^Finish/);
         cy.wait('@teamRoleAssignment')
@@ -135,15 +115,11 @@ describe.skip('Namespace - team and user access', () => {
         cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
-      cy.verifyPageTitle(namespace.name);
+      cy.verifyPageTitle(remote.name);
       cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
         disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_namespace_owner');
-      cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
-        disableFilter: false,
-      });
-      removeRoleFromListRow('galaxy.collection_publisher');
+      removeRoleFromListRow('galaxy.collection_remote_owner');
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });

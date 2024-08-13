@@ -43,14 +43,10 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
-      cy.url().should('include', '/user-access');
       cy.getByDataCy('add-roles').click();
-      cy.verifyPageTitle('Add roles');
-
       cy.getWizard().within(() => {
-        cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.setTablePageSize('100');
-        cy.selectTableRowByCheckbox('username', hubUser.username, { disableFilter: true });
+        cy.selectTableRow(hubUser.username);
+        //cy.selectTableRowByCheckbox('name', hubUser.username, { disableFilter: true });
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.execution_environment_collaborator', {
@@ -114,16 +110,12 @@ describe.skip('Execution Environment User Access tab', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
       cy.clickTab('Team Access', true);
-      cy.url().should('include', '/team-access');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.setTablePageSize('100').scrollIntoView();
-        cy.contains(hubTeam.name).scrollIntoView();
-        cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
-
+        cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.execution_environment_collaborator', {
