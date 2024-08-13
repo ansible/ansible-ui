@@ -75,15 +75,23 @@ jobs:
     name: Generate Test Matrix
     runs-on: ubuntu-latest
     outputs:
-      directories: ${{ steps.set-matrix.outputs.directories }}
+      directories: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Get PR labels
+        id: get-labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const labels = github.event.pull_request.labels.map(label => label.name);
+            return labels.includes('dashboard');
+
       - name: Generate matrix
         id: set-matrix
         run: |
-          if [[ "${{ github.event.pull_request.labels.*.name }}" == *dashboard* ]]; then
+          if [ "${{ steps.get-labels.outputs.result }}" = "true" ]; then
             echo "matrix=[1,2,3,4]" >> $GITHUB_ENV
           else
             directories=$(find cypress/e2e/awx -maxdepth 1 -type d -not -path 'cypress/e2e/awx' | sed 's|cypress/e2e/awx/||' | jq -R . | jq -s .)
