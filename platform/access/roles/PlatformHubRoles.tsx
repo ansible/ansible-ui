@@ -1,6 +1,6 @@
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { HubRolesTable } from '../../../frontend/hub/access/roles/Roles';
+import { HubRolesTable } from '../../../frontend/hub/access/roles/HubRoles';
 
 export function PlatformHubRoles() {
   const { t } = useTranslation();
