@@ -80,6 +80,8 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 
 declare global {
   namespace Cypress {
@@ -1506,7 +1508,24 @@ declare global {
       // ==============================================================================================================
 
       // HUB Request Commands
+      createHubTeam(): Cypress.Chainable<HubTeam>;
+      deleteHubTeam(
+        hubTeam: HubTeam,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+      createHubUser(hubUser?: HubUser): Cypress.Chainable<HubUser>;
+      deleteHubUser(
+        hubUser: HubUser,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
       hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
+
       hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;
       hubPutRequest<T>(
         options: HubPutRequestOptions

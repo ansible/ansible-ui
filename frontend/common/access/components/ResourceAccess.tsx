@@ -10,6 +10,7 @@ import { awxAPI } from '../../../awx/common/api/awx-utils';
 import { Access } from './Access';
 import { useGetLinkToResourcePage } from '../hooks/useGetLinkToResourcePage';
 import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
+import { hubAPI } from '../../../hub/common/api/formatPath';
 
 interface ContentTypeOption {
   value: string;
@@ -29,11 +30,23 @@ export function ResourceAccess(props: {
   const { t } = useTranslation();
   const getDisplayName = useMapContentTypeToDisplayName();
   const roleDefinitionsURL =
-    service === 'awx' ? awxAPI`/role_definitions/` : edaAPI`/role_definitions/`;
+    service === 'awx'
+      ? awxAPI`/role_definitions/`
+      : service === 'eda'
+        ? edaAPI`/role_definitions/`
+        : hubAPI`/_ui/v2/role_definitions/`;
   const roleUserAssignmentsURL =
-    service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
+    service === 'awx'
+      ? awxAPI`/role_user_assignments/`
+      : service === 'eda'
+        ? edaAPI`/role_user_assignments/`
+        : hubAPI`/_ui/v2/role_user_assignments/`;
   const roleTeamAssignmentsURL =
-    service === 'awx' ? awxAPI`/role_team_assignments/` : edaAPI`/role_team_assignments/`;
+    service === 'awx'
+      ? awxAPI`/role_team_assignments/`
+      : service === 'eda'
+        ? edaAPI`/role_team_assignments/`
+        : hubAPI`/_ui/v2/role_team_assignments/`;
   const { data, isLoading } = useOptions<{
     actions: { POST: { content_type: { choices: ContentTypeOption[] } } };
   }>(roleDefinitionsURL);
@@ -79,7 +92,10 @@ export function ResourceAccess(props: {
           to: (assignment: TeamAssignment | UserAssignment) =>
             getLinkToResourcePage({
               contentType: assignment.content_type,
-              objectId: assignment.object_id,
+              objectId:
+                service === 'hub'
+                  ? assignment.summary_fields?.content_object?.name
+                  : assignment.object_id,
             }),
         },
       }}
