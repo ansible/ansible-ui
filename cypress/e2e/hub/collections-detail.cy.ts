@@ -163,25 +163,13 @@ describe.skip('Collections Details', () => {
     visitCollection(collectionName, namespace.name);
     cy.selectDetailsPageKebabAction('deprecate-/-undeprecate-collection');
     cy.clickButton('Close');
-    //cy.navigateTo('hub', Collections.url);
-    //cy.verifyPageTitle(Collections.title);
+
     cy.getHubCollection(collectionName).then((deprecated) => {
       //Assert that the object returned shows that is_deprecated is equal to true
       expect(deprecated.is_deprecated).to.eql(true);
     });
 
-    // navigate to namespace - collections
-    /*cy.navigateTo('hub', Namespaces.url);
-      cy.filterTableBySingleText(namespace.name);
-      cy.contains('a', namespace.name).click();
-      cy.getByDataCy('collections-tab').click();
-
-      cy.contains(`[aria-label="Simple table"]`, collectionName);
-      
-      */
     cy.contains('span', 'Deprecated');
-
-    //cy.contains('a', collectionName).click();
 
     cy.selectDetailsPageKebabAction('deprecate-/-undeprecate-collection');
     cy.clickButton('Close');
