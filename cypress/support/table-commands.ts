@@ -183,15 +183,11 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('checkCellValueByColumnName', (columnName: string, expectedValue: string) => {
-  cy.get('thead th').contains(columnName).should('exist'); // Ensure that the column exists
-  cy.get('tbody tr')
-    .first()
-    .within(() => {
-      cy.get(`td[data-label="${columnName}"]`)
-        .invoke('text')
-        .then((text) => {
-          expect(text.trim()).to.equal(expectedValue);
-        });
+Cypress.Commands.add('checkValueByHeaderName', (headerName, expectedValue) => {
+  cy.contains('dt', headerName)
+    .next('dd')
+    .invoke('text')
+    .then((text) => {
+      expect(text.trim()).to.equal(expectedValue);
     });
 });

@@ -70,13 +70,12 @@ describe('Collections Tabs: Distributions', () => {
       pulpAPI`/distributions/ansible/ansible/?repository=${repository.pulp_href}&ordering=name&offset=0&limit=10`
     ).then((data) => {
       expect(data?.results).to.have.length(1);
-      cy.setTableView('table');
       const distribution: Distribution = data.results[0];
       const { base_path, pulp_created, name, client_url } = distribution;
-      cy.checkCellValueByColumnName('Name', name);
-      cy.checkCellValueByColumnName('Base path', base_path);
-      cy.checkCellValueByColumnName('Created', pulp_created);
-      cy.checkCellValueByColumnName('CLI Configuration', client_url);
+      cy.checkValueByHeaderName('Name', name);
+      cy.checkValueByHeaderName('Base path', base_path);
+      cy.checkValueByHeaderName('Created', pulp_created);
+      cy.checkValueByHeaderName('CLI Configuration', client_url);
     });
   });
 });
