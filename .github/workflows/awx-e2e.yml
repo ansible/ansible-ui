@@ -146,7 +146,7 @@ jobs:
           start: npm run docker:run:awx
           wait-on: 'https://localhost:4101'
           config-file: cypress.awx.config.ts
-          spec: cypress/e2e/awx/${{ matrix.containers }}.spec.ts
+          spec: cypress/e2e/awx/${{ matrix.containers }}/**/*.spec.ts
         env:
           AWX_SERVER: ${{ inputs.AWX_SERVER }}
           AWX_USERNAME: e2e
