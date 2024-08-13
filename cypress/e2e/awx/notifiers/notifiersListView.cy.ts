@@ -1,6 +1,6 @@
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { randomE2Ename } from '../../../../support/utils';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomE2Ename } from '../../../support/utils';
 import { testNotification } from './notifiersSharedFunctions';
 
 describe('Notifications: List View', () => {

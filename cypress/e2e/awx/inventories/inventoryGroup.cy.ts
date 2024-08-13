@@ -5,7 +5,7 @@ import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/Execut
 import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { runCommand } from './runCommandFunction';
+import { runCommand } from '../inventory-host/runCommandFunction';
 
 describe('Inventory Groups', () => {
   let organization: Organization;

@@ -1,7 +1,7 @@
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { tag } from '../../../../support/tag';
-import { randomE2Ename } from '../../../../support/utils';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { tag } from '../../../support/tag';
+import { randomE2Ename } from '../../../support/utils';
 import { testDelete, testNotification } from './notifiersSharedFunctions';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
