@@ -71,13 +71,17 @@ describe('Collections Tabs: Distributions', () => {
     ).then((data) => {
       expect(data?.results).to.have.length(1);
       const distribution: Distribution = data.results[0];
-      const { base_path, pulp_created, name, client_url } = distribution;
+      const { base_path, pulp_created, name } = distribution;
       const createdDate = new Date(pulp_created);
       const formattedDateTime = `${createdDate.toLocaleDateString()}, ${createdDate.toLocaleTimeString()}`;
       cy.checkValueByHeaderName('Name', name);
       cy.checkValueByHeaderName('Base path', base_path);
       cy.checkValueByHeaderName('Created', formattedDateTime);
-      cy.checkValueByHeaderName('CLI Configuration', client_url);
+      cy.get('button[aria-label="Copy to clipboard"]').click();
+      cy.get('[data-cy="alert-toaster"]').should('be.visible');
+      cy.get('[data-cy="alert-toaster"]').within(() => {
+        cy.get('button').click();
+      });
     });
   });
 });
