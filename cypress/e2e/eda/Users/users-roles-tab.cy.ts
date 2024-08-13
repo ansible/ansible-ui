@@ -11,7 +11,7 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 user_team_access_tab_resources.forEach((resource) => {
   // fails due to filtering bug https://issues.redhat.com/browse/AAP-24181
-  describe.skip(`Assign Role to a User `, () => {
+  describe(`Assign Role to a User `, () => {
     let user: EdaUser;
     let resource_object:
       | EdaProject
@@ -58,7 +58,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaUser(user);
     });
 
-    it(`for ${resource.name} role type`, () => {
+    it.skip(`for ${resource.name} role type`, () => {
       cy.navigateTo('eda', 'users');
       cy.clickTableRow(user.username, true);
       cy.verifyPageTitle(user.username);
