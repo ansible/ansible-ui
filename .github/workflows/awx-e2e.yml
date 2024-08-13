@@ -113,7 +113,7 @@ jobs:
           if [[ "${{ contains(github.event.pull_request.labels.*.name, 'dashboard') }}" == "true" && "${{ contains(github.event.pull_request.labels.*.name, 'disable-auto-cancel') }}" == "false" ]]; then
             echo "cancel_value=1" >> $GITHUB_OUTPUT
           else
-            echo "cancel_value=0" >> $GITHUB_OUTPUT
+            echo "cancel_value=false" >> $GITHUB_OUTPUT
           fi
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
