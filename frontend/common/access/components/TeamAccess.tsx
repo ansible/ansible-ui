@@ -38,7 +38,7 @@ export function TeamAccess(props: {
           label: t('Team name'),
         },
       }}
-      toolbarNameColumnFiltersValues={{ label: t('Team name'), query: 'team__name' }}
+      toolbarNameColumnFiltersValues={{ label: t('Team name'), query: 'team__name__icontains' }}
       url={roleTeamAssignmentsURL}
       content_type_model={type}
       accessListType={'team'}

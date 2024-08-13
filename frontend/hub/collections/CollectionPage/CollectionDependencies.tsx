@@ -82,6 +82,9 @@ export function CollectionDependencies() {
             >{`${key} ${dependencies?.[key]}`}</Button>
           );
         })}
+        {Object.keys(collection?.collection_version?.dependencies).length === 0
+          ? t`(No dependencies)`
+          : ''}
         <br></br>
         <br></br>
         {t`This collection is being used by`}

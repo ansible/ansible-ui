@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useWatch } from 'react-hook-form';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -12,8 +12,11 @@ import {
   PageLayout,
   compareStrings,
   useGetPageUrl,
+  usePageDialog,
   usePageNavigate,
+  PageFormCheckbox,
 } from '../../../framework';
+import { Button, Label, Tooltip } from '@patternfly/react-core';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet, swrOptions } from '../../common/crud/Data';
@@ -37,8 +40,11 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { EdaWebhook } from '../interfaces/EdaWebhook';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { SourceEventStreamMappingModal } from './components/SourceEventStreamMapping';
+import { EdaSourceEventMapping } from '../interfaces/EdaSource';
+import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
+import jsyaml from 'js-yaml';
+import { LabelGroupWrapper } from '../../common/label-group-wrapper';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -94,7 +100,6 @@ export function CreateRulebookActivation() {
           restart_policy: RestartPolicyEnum.OnFailure,
           log_level: LogLevelEnum.Error,
           is_enabled: true,
-          swap_single_source: false,
         }}
       >
         <RulebookActivationInputs />
@@ -106,6 +111,8 @@ export function CreateRulebookActivation() {
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>([]);
+  const { register, setValue } = useFormContext();
   const restartPolicyHelpBlock = (
     <>
       <p>
@@ -138,8 +145,8 @@ export function RulebookActivationInputs() {
   const { data: tokens } = useGet<EdaResult<AwxToken>>(
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
-  const { data: webhooks } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
+  const [_, setDialog] = usePageDialog();
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
     { label: t('Always'), value: 'always' },
@@ -156,6 +163,10 @@ export function RulebookActivationInputs() {
     name: 'project_id',
   }) as number;
 
+  const rulebook = useWatch<IEdaRulebookActivationInputs>({
+    name: 'rulebook',
+  }) as EdaRulebook;
+
   const query = useCallback(async () => {
     const response = await requestGet<EdaResult<EdaRulebook>>(
       projectId !== undefined
@@ -167,6 +178,14 @@ export function RulebookActivationInputs() {
       values: response.results?.sort((l, r) => compareStrings(l.name, r.name)) ?? [],
     });
   }, [projectId]);
+
+  useEffect(() => {
+    setValue('source_mappings', jsyaml.dump(sourceMappings));
+  }, [setValue, sourceMappings]);
+
+  useEffect(() => {
+    setSourceMappings(undefined);
+  }, [rulebook, setSourceMappings]);
 
   return (
     <>
@@ -215,7 +234,37 @@ export function RulebookActivationInputs() {
         isRequired
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
+        additionalControls={
+          <Button
+            variant="link"
+            data-cy={'manage_event_stream'}
+            isDisabled={!rulebook}
+            onClick={() =>
+              setDialog(
+                <SourceEventStreamMappingModal
+                  rulebook={rulebook}
+                  mappings={sourceMappings}
+                  setSourceMappings={setSourceMappings}
+                />
+              )
+            }
+          >{`${t('Manage event streams')}`}</Button>
+        }
       />
+      {sourceMappings && sourceMappings.length > 0 && (
+        <PageFormGroup label={t('Event streams')}>
+          <LabelGroupWrapper>
+            {sourceMappings.map((map) => (
+              <>
+                <Tooltip content={<div>{map.source_name}</div>}>
+                  <Label>{map.webhook_name}</Label>
+                </Tooltip>
+              </>
+            ))}
+          </LabelGroupWrapper>
+        </PageFormGroup>
+      )}
+      <input type="hidden" {...register(`source_mappings`)} />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         credentialKinds={['vault,cloud']}
@@ -289,32 +338,6 @@ export function RulebookActivationInputs() {
         labelHelp={t('Optional service name.')}
         labelHelpTitle={t('Service name')}
       />
-      <PageFormSection>
-        <PageFormMultiSelect<IEdaRulebookActivationInputs>
-          name="webhooks"
-          label={t('Event stream(s)')}
-          options={
-            webhooks?.results
-              ? webhooks.results.map((item) => ({
-                  label: item?.name || '',
-                  value: `${item.id}`,
-                }))
-              : []
-          }
-          placeholder={t('Select event stream(s)')}
-          footer={<Link to={getPageUrl(EdaRoute.CreateWebhook)}>Create event stream</Link>}
-        />
-        <PageFormSwitch<IEdaRulebookActivationInputs>
-          id="swap_single_source"
-          name="swap_single_source"
-          label={t('Swap single source?')}
-          labelHelp={t(
-            'Event streams can be used to swap out one or more sources in your rulebook, the name of the source and the event stream have to match.'
-          )}
-          labelHelpTitle={t('Swap single source')}
-        />
-      </PageFormSection>
-
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
         name="is_enabled"
@@ -334,6 +357,17 @@ export function RulebookActivationInputs() {
           labelHelpTitle={t('Variables')}
         />
       </PageFormSection>
+      <PageFormSection singleColumn>
+        <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox<IEdaRulebookActivationInputs>
+            label={t`Skip audit events`}
+            labelHelp={t(
+              'Skipping audit events will prevent you from seeing your events in the Rule Audit, its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
+            )}
+            name="skip_audit_events"
+          />
+        </PageFormGroup>
+      </PageFormSection>
     </>
   );
 }
@@ -345,5 +379,5 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   project_id: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
-  swap_single_source: boolean;
+  source_mappings: EdaSourceEventMapping[];
 };

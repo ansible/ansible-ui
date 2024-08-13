@@ -1,4 +1,9 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
+import {
+  DescriptionListGroup,
+  DescriptionListTerm,
+  Label,
+  LabelGroup,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
@@ -20,6 +25,7 @@ import { LogLevelEnum, RestartPolicyEnum, StatusEnum } from '../../interfaces/ge
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { SelectVariant } from '@patternfly/react-core/deprecated';
+import { StandardPopover } from '../../../../framework/components/StandardPopover';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -190,6 +196,24 @@ export function RulebookActivationDetails() {
             )}
             text={rulebookActivation.extra_var}
           />
+        </PageDetails>
+      )}
+      {!!rulebookActivation?.skip_audit_events && (
+        <PageDetails numberOfColumns={'single'}>
+          <PageDetail label={t('Enabled option')}>
+            <DescriptionListGroup>
+              <DescriptionListTerm style={{ opacity: 0.6 }}>
+                {t('Skip audit events')}
+                <StandardPopover
+                  header={t('Skip audit events')}
+                  content={t(
+                    'Skipping audit events will prevent you from seeing your events in the Rule Audit, ' +
+                      'its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
+                  )}
+                />
+              </DescriptionListTerm>
+            </DescriptionListGroup>
+          </PageDetail>
         </PageDetails>
       )}
     </Scrollable>
