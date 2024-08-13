@@ -39,20 +39,23 @@ export const Sparkline = ({ jobs }: { jobs: SummaryFieldRecentJob[] | undefined 
     </>
   );
 
-  const statusIcons = jobs?.map((job) => (
-    <Tooltip position="top" content={generateTooltip(job)} key={job.id}>
-      <Link
-        aria-label={t(`View job ${job.id}`)}
-        to={
-          getJobOutputUrl(job as UnifiedJob)
-            ? getJobOutputUrl(job as UnifiedJob)
-            : `/jobs/${JOB_TYPE_URL_SEGMENTS[job.type]}/${job.id}/output`
-        }
-      >
-        <StatusCell status={job.status} hideLabel={true} />
-      </Link>
-    </Tooltip>
-  ));
+  const statusIcons = jobs?.map((job) => {
+    const jobOutputUrl = getJobOutputUrl(job as UnifiedJob);
+    return (
+      <Tooltip position="top" content={generateTooltip(job)} key={job.id}>
+        <Link
+          aria-label={t(`View job ${job.id}`)}
+          to={
+            jobOutputUrl
+              ? jobOutputUrl
+              : `/jobs/${JOB_TYPE_URL_SEGMENTS[job.type]}/${job.id}/output`
+          }
+        >
+          <StatusCell status={job.status} hideLabel={true} />
+        </Link>
+      </Tooltip>
+    );
+  });
 
   return <Wrapper>{statusIcons}</Wrapper>;
 };
