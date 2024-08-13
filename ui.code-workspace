@@ -1,0 +1,37 @@
+{
+  "folders": [
+    {
+      "name": "Ansible UI",
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/*.md": true,
+      "**/.DS_Store": true,
+      "**/.git": true,
+      "**/.gitignore": true,
+      "**/.hg": true,
+      "**/.svn": true,
+      "**/CVS": true,
+      "**/Thumbs.db": true,
+      "**/tsconfig.json": true,
+      "*.cjs": true,
+      "*.json": true,
+      "*.ts": true,
+      ".*": true,
+      ".github": true,
+      ".husky": true,
+      ".vscode": true,
+      "Dockerfile": true,
+      "docs": true,
+      "locales": true,
+      "nginx": true,
+      "node_modules": true,
+      "playbooks": true,
+      "rulebooks": true,
+      "ui.code-workspace": true,
+      "webpack": true,
+    },
+  },
+}
