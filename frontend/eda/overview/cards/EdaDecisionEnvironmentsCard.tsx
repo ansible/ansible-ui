@@ -46,7 +46,7 @@ export function EdaDecisionEnvironmentsCard() {
         emptyStateVariant={'light'}
         emptyStateTitle={t('There are currently no decision environments')}
         emptyStateDescription={t('Create a decision environment by clicking the button below.')}
-        emptyStateButtonText={t('Create Decision Environment')}
+        emptyStateButtonText={t('Create decision environment')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
         {...view}
         compact
