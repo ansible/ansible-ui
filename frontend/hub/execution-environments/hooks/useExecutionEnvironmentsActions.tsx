@@ -25,7 +25,6 @@ import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
-  const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const signExecutionEnvironments = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();

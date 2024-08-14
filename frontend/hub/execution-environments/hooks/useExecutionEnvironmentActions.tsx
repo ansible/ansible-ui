@@ -7,7 +7,6 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import {
@@ -20,7 +19,6 @@ import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
-  const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironment = useSignExecutionEnvironments(callback);
