@@ -87,7 +87,7 @@ describe('RuleAudit.cy.ts', () => {
       'contain',
       'Rulebook activation'
     );
-    cy.get('[data-cy="fired-date-column-header"]').should('contain', 'Fired date');
+    cy.get('[data-cy="fired-date-column-header"]').should('contain', 'Last fired date');
   });
 });
 
