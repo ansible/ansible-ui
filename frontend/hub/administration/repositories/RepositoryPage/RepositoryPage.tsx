@@ -8,7 +8,6 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { StatusCell } from '../../../../common/Status';
@@ -23,10 +22,7 @@ import { useRepositoryActions } from '../hooks/useRepositoryActions';
 
 export function RepositoryPage() {
   const params = useParams<{ id: string }>();
-  const pageNavigate = usePageNavigate();
-  const headerActions = useRepositoryActions({
-    onRepositoriesDeleted: () => pageNavigate(HubRoute.Repositories),
-  });
+  const headerActions = useRepositoryActions({ onRepositoriesDeleted: () => {} });
   const getPageUrl = useGetPageUrl();
   const { t } = useTranslation();
 
