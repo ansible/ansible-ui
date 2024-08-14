@@ -10,6 +10,7 @@ export function PlatformTeamRoles() {
   const { t } = useTranslation();
   const awxService = useGatewayService('controller');
   const edaService = useGatewayService('eda');
+  const hubService = useGatewayService('hub');
   const rolesTabs = useMemo(() => {
     return [
       ...(awxService
@@ -18,8 +19,11 @@ export function PlatformTeamRoles() {
       ...(edaService
         ? [{ label: t('Automation Decisions'), page: PlatformRoute.EdaTeamRoles as string }]
         : []),
+      ...(hubService
+        ? [{ label: t('Automation Content'), page: PlatformRoute.HubTeamRoles as string }]
+        : []),
     ];
-  }, [awxService, edaService, t]);
+  }, [awxService, edaService, hubService, t]);
   return (
     <>
       <PageRoutedTabs tabs={rolesTabs} isBox={false} params={{ id: params.id }} />

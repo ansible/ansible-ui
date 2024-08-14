@@ -4,35 +4,33 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LoadingPage } from '../../../../framework';
 import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
-import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { HubError } from '../../../../frontend/hub/common/HubError';
+import { HubTeam } from '../../../../frontend/hub/interfaces/expanded/HubTeam';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { useHubResource } from '../../../hooks/useHubResource';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 
 /**
  * Component that gets the gateway/platform ID of a team from the URL params,
  * looks this team up in the gateway API to get its ansible_id and uses the ansible_id to
- * look the team up in AWX. It then renders the child component passing the AWX team ID to it as a prop.
+ * look the team up in HUB. It then renders the child component passing the HUB team ID to it as a prop.
  */
-export function PlatformAwxTeamIdLookup(props: { children: ReactNode }) {
+export function PlatformHubTeamIdLookup(props: { children: ReactNode }) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
-  const awxResourceResponse = useGet<AwxItemsResponse<Team>>(
-    awxAPI`/teams/?resource__ansible_id=${team?.summary_fields?.resource?.ansible_id ?? ''}`
-  );
-  if (awxResourceResponse.isLoading) {
+  const { resource: hubTeam, isLoading, error } = useHubResource<HubTeam>('_ui/v2/teams', team);
+
+  if (isLoading) {
     return <LoadingPage />;
   }
 
-  if (awxResourceResponse.error) {
-    return <AwxError error={awxResourceResponse.error} />;
+  if (error) {
+    return <HubError error={error} />;
   }
 
-  if (!awxResourceResponse.data || awxResourceResponse.data?.results.length !== 1) {
+  if (!hubTeam) {
     return (
       <Page>
         <EmptyStateCustom title={t('Resource Not Found')} description="" />
@@ -42,7 +40,7 @@ export function PlatformAwxTeamIdLookup(props: { children: ReactNode }) {
   return (
     <>
       {cloneElement(props.children as ReactElement<{ id?: string }>, {
-        id: awxResourceResponse.data?.results[0]?.id?.toString(),
+        id: hubTeam?.id?.toString(),
       })}
     </>
   );
