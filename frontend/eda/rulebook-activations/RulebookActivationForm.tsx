@@ -248,7 +248,9 @@ export function RulebookActivationInputs() {
                 />
               )
             }
-          >{`${t('Manage event streams')}`}</Button>
+          >
+            {t('Manage event streams')}
+          </Button>
         }
       />
       {sourceMappings && sourceMappings.length > 0 && (
