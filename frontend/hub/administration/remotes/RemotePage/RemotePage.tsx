@@ -1,13 +1,7 @@
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  PageActions,
-  PageHeader,
-  PageLayout,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../../framework';
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
 import { LoadingPage } from '../../../../../framework/components/LoadingPage';
 import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
@@ -36,10 +30,9 @@ function useErrorHandlerAndLoading<T>(
 
 export function RemotePage() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const pageActions = useRemoteActions({
-    onRemotesDeleted: () => pageNavigate(HubRoute.Remotes),
+    onRemotesDeleted: () => {},
   });
   const params = useParams<{ id: string }>();
   const {
