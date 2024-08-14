@@ -124,8 +124,8 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
   const edaService = useHasEdaService();
   const manageRolesHandleClick = useCallback(
     async (user: PlatformUser) => {
-      const awxUser = await getAwxResource<AwxUser>('/users/', user);
-      const edaUser = await getEdaResource<EdaUser>('users/', user);
+      const awxUser = awxService ? await getAwxResource<AwxUser>('/users/', user) : null;
+      const edaUser = edaService ? await getEdaResource<EdaUser>('users/', user) : null;
       const orgListOptions = [
         ...(awxService && !errorRetrievingAwxOrg && awxOrganization?.id && (awxUser as AwxUser)?.id
           ? [
