@@ -144,7 +144,7 @@ export function RepositoryAddTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add teams')}
+        title={t('Add roles')}
         breadcrumbs={[
           { label: t('Repositories'), to: getPageUrl(HubRoute.Repositories) },
           {
