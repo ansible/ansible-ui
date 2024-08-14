@@ -151,7 +151,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         placeholder={t('Select credentials')}
         labelHelpTitle={t('Credentials')}
         labelHelp={t(
-          'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
+          'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch," the selected credential(s) become the defaults that can be updated at run time.'
         )}
         isMultiple
         queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
@@ -159,7 +159,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}
         labelHelp={t(
-          `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
+          `Optional labels that describe this job template, such as 'dev' or 'test.' Labels can be used to group and filter job templates and completed jobs.`
         )}
         name="labels"
         additionalControls={
@@ -199,7 +199,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         name="verbosity"
         type="number"
         labelHelpTitle={t('Verbosity')}
-        labelHelp={t('Control the level of output ansible will produce as the playbook executes.')}
+        labelHelp={t('Control the level of output Ansible will produce as the playbook executes.')}
         label={t('Verbosity')}
       />
       <PageFormTextInput<JobTemplateForm>
@@ -279,7 +279,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
             <PageFormCheckbox label={t('Prompt on launch')} name="ask_variables_on_launch" />
           }
           labelHelpTitle={t('Extra Variables')}
-          labelHelp={t(`Optional extra variables to be applied to job template`)}
+          labelHelp={t(`Optional extra variables to be applied to job template.`)}
           format="yaml"
           label={t('Extra Variables')}
           name="extra_vars"
