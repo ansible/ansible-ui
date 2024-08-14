@@ -74,9 +74,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
           deleteCollections(newCollections);
         },
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
     [t, deleteCollections, context, pageNavigate, deprecateCollections, signCollection]
