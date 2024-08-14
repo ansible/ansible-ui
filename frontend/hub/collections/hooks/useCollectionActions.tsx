@@ -95,9 +95,6 @@ export function useCollectionActions(
         onClick: (collection) => {
           copyToRepository(collection, 'copy');
         },
-        isDisabled: context.featureFlags.display_repositories
-          ? ''
-          : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -119,9 +116,6 @@ export function useCollectionActions(
           deleteCollectionsVersions([collection]);
         },
         isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -133,9 +127,6 @@ export function useCollectionActions(
           deleteCollectionsVersionsFromRepository([collection]);
         },
         isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -144,9 +135,6 @@ export function useCollectionActions(
         label: t('Delete entire collection from repository'),
         onClick: (collection) => deleteCollectionsFromRepository([collection]),
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -155,14 +143,10 @@ export function useCollectionActions(
         label: t('Delete entire collection from system'),
         onClick: (collection) => deleteCollections([collection]),
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
     ],
     [
       t,
-      context,
       pageNavigate,
       deleteCollections,
       deprecateCollections,
