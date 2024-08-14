@@ -89,8 +89,8 @@ describe('Workflow Job Templates Surveys', function () {
       cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
     });
 
-    describe('can create all 7 types of survey types, enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
-      it('Text survey type', () => {
+    describe('Survey Types', () => {
+      it('can create text survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Text answer',
           question_description: 'Text description.',
@@ -112,7 +112,7 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      it('Textarea survey type', () => {
+      it('can create text area survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Textarea answer',
           question_description: 'Textarea description.',
@@ -134,7 +134,7 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      it('Password survey type', () => {
+      it('can create password survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Password answer',
           question_description: 'Password description.',
@@ -156,7 +156,7 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      it('Integer survey type', () => {
+      it('can create integer survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Integer answer',
           question_description: 'Integer description.',
@@ -179,7 +179,7 @@ describe('Workflow Job Templates Surveys', function () {
       });
 
       //https://issues.redhat.com/browse/AAP-28876
-      it.skip('Float survey type', () => {
+      it.skip('can create float survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Float answer',
           question_description: 'Float description.',
@@ -201,7 +201,7 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      it('Multiple choice (single select) survey type', () => {
+      it('can create multiple choice single select survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Multiplechoice answer',
           question_description: 'multiplechoice description.',
@@ -227,7 +227,7 @@ describe('Workflow Job Templates Surveys', function () {
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 
-      it('Multiple Choice (multiple select) survey type', () => {
+      it('can create multiple choice multiple select survey type enable survey, launch WFJT, view default survey answer, complete launch, and assert survey answer on completed job', () => {
         const question = {
           question_name: 'Multiselect answer',
           question_description: 'Multiselect description.',
