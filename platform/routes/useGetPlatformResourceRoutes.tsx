@@ -1,16 +1,18 @@
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
+import { HubRoute } from '../../frontend/hub/main/HubRoutes';
+import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
+import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformAwxOrganization } from '../resource/PlatformAwxOrganization';
 import { PlatformAwxTeam } from '../resource/PlatformAwxTeam';
 import { PlatformAwxUser } from '../resource/PlatformAwxUser';
+import { PlatformEdaCreateControllerToken } from '../resource/PlatformEdaCreateControllerToken';
 import { PlatformEdaOrganization } from '../resource/PlatformEdaOrganization';
 import { PlatformEdaUser } from '../resource/PlatformEdaUser';
-import { PlatformResource } from '../resource/PlatformResource';
-import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
-import { PlatformEdaCreateControllerToken } from '../resource/PlatformEdaCreateControllerToken';
-import { HubRoute } from '../../frontend/hub/main/HubRoutes';
+import { PlatformHubTeam } from '../resource/PlatformHubTeam';
 import { PlatformHubUser } from '../resource/PlatformHubUser';
+import { PlatformResource } from '../resource/PlatformResource';
 
 /*
   Routes to handle links from various service pages org/user/teams pages,
@@ -175,6 +177,21 @@ export function useGetPlatformResourceRoutes() {
         id: HubRoute.UserRoles,
         path: 'users/:id/roles/hub',
         element: <PlatformHubUser route={PlatformRoute.HubUserRoles} />,
+      },
+      {
+        id: HubRoute.Teams,
+        path: 'hub/teams',
+        element: <PlatformTeamList />,
+      },
+      {
+        id: HubRoute.TeamDetails,
+        path: 'hub/team/:id',
+        element: <PlatformHubTeam />,
+      },
+      {
+        id: HubRoute.UserRoles,
+        path: 'teams/:id/roles/hub',
+        element: <PlatformHubTeam route={PlatformRoute.HubTeamRoles} />,
       },
     ],
   };

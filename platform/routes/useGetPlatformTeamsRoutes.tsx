@@ -16,6 +16,9 @@ import { AwxTeamRoles } from '../../frontend/awx/access/teams/TeamPage/AwxTeamRo
 import { Navigate } from 'react-router-dom';
 import { EdaAddTeamRoles } from '../../frontend/eda/access/teams/EdaAddTeamRoles';
 import { AwxAddTeamRoles } from '../../frontend/awx/access/teams/AwxAddTeamRoles';
+import { PlatformHubTeamIdLookup } from '../access/teams/components/PlatformHubTeamIdLookup';
+import { HubTeamRoles } from '../../frontend/hub/access/teams/TeamPage/TeamUserRole';
+import { HubAddTeamRoles } from '../../frontend/hub/access/teams/components/HubAddTeamRoles';
 
 export function useGetPlatformTeamsRoutes() {
   const { t } = useTranslation();
@@ -69,6 +72,15 @@ export function useGetPlatformTeamsRoutes() {
                   ),
                 },
                 {
+                  id: PlatformRoute.HubTeamRoles,
+                  path: 'hub',
+                  element: (
+                    <PlatformHubTeamIdLookup>
+                      <HubTeamRoles addRolesRoute={PlatformRoute.HubTeamAddRoles} />
+                    </PlatformHubTeamIdLookup>
+                  ),
+                },
+                {
                   path: '',
                   element: <Navigate to="controller" />,
                 },
@@ -102,6 +114,15 @@ export function useGetPlatformTeamsRoutes() {
             <PlatformEdaTeamIdLookup>
               <EdaAddTeamRoles teamRolesRoute={PlatformRoute.EdaTeamRoles} />
             </PlatformEdaTeamIdLookup>
+          ),
+        },
+        {
+          id: PlatformRoute.HubTeamAddRoles,
+          path: ':id/roles/hub/add-roles',
+          element: (
+            <PlatformHubTeamIdLookup>
+              <HubAddTeamRoles teamRolesRoute={PlatformRoute.HubTeamRoles} />
+            </PlatformHubTeamIdLookup>
           ),
         },
         {
