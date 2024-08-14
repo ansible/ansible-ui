@@ -54,7 +54,19 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
   const { data: events } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
   useEffect(() => {
-    setValue('mappings', options.mappings);
+    setValue(
+      'mappings',
+      options.mappings
+        ? options.mappings
+        : [
+            {
+              source_name: '',
+              webhook_id: '',
+              webhook_name: '',
+              rulebook_hash: '',
+            },
+          ]
+    );
   }, [setValue, options.mappings]);
 
   return (
