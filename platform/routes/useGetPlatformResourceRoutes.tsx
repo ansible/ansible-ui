@@ -9,6 +9,8 @@ import { PlatformEdaUser } from '../resource/PlatformEdaUser';
 import { PlatformResource } from '../resource/PlatformResource';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
 import { PlatformEdaCreateControllerToken } from '../resource/PlatformEdaCreateControllerToken';
+import { HubRoute } from '../../frontend/hub/main/HubRoutes';
+import { PlatformHubUser } from '../resource/PlatformHubUser';
 
 /*
   Routes to handle links from various service pages org/user/teams pages,
@@ -158,6 +160,21 @@ export function useGetPlatformResourceRoutes() {
         id: EdaRoute.CreateControllerToken,
         path: 'eda/users/tokens/create',
         element: <PlatformEdaCreateControllerToken />,
+      },
+      {
+        id: HubRoute.Users,
+        path: 'hub/users',
+        element: <PlatformUsersList />,
+      },
+      {
+        id: HubRoute.UserDetails,
+        path: 'hub/user/:id',
+        element: <PlatformHubUser />,
+      },
+      {
+        id: HubRoute.UserRoles,
+        path: 'users/:id/roles/hub',
+        element: <PlatformHubUser route={PlatformRoute.HubUserRoles} />,
       },
     ],
   };

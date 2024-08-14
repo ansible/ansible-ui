@@ -5,9 +5,9 @@ import { PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { PlatformResource } from '../interfaces/PlatformResource';
 
 export function useHubResource<T extends object>(url: string, platformResource?: PlatformResource) {
-  const { data, isLoading, error } = useGet<PulpItemsResponse<T>>(
-    hubAPI`/${url}?resource__ansible_id=${platformResource?.summary_fields?.resource?.ansible_id ?? ''}`
-  );
+  const { data, isLoading, error } = useGet<PulpItemsResponse<T>>(hubAPI`/${url}/`, {
+    resource__ansible_id: platformResource?.summary_fields?.resource?.ansible_id ?? '',
+  });
   const { results } = data ?? {};
 
   return {
