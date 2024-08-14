@@ -16,8 +16,6 @@ import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 import { SetRequired } from 'type-fest';
 import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
@@ -228,7 +226,9 @@ Cypress.Commands.add('createNamespace', (namespaceName: string) => {
 });
 
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
+  cy.waitForAllTasks();
   cy.galaxykit('-i namespace delete', namespaceName);
+  cy.waitForAllTasks();
 });
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
@@ -244,6 +244,7 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
         collection.collection_version?.version || '',
         collection.repository?.name || ''
       );
+      cy.waitForAllTasks();
     }
   });
 });
@@ -264,6 +265,7 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: 
 
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+  cy.waitForAllTasks();
 });
 
 Cypress.Commands.add(
@@ -287,6 +289,7 @@ Cypress.Commands.add(
       versionToDelete,
       repository
     );
+    cy.waitForAllTasks();
   }
 );
 
@@ -517,6 +520,7 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
 
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.waitForAllTasks();
   cy.hubDeleteRequest({
     ...options,
     url: hubAPI`/_ui/v1/namespaces/${options.name}/`,
@@ -634,49 +638,14 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
       const repeatedName = itemsResponse.data[0]?.collection_version?.name;
       if (collection?.collection_version?.name === repeatedName) {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
         break;
       } else {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
       }
     }
   });
-});
-
-Cypress.Commands.add('createHubUser', (hubUser?: Partial<HubUser>) => {
-  cy.requestPost<HubUser, Partial<HubUser> & { username?: string; password?: string }>(
-    hubAPI`/_ui/v1/users/`,
-    {
-      username: `hub-user${randomString(4)}`,
-      password: `${randomString(10)}`,
-      ...hubUser,
-    }
-  ).then((hubUser) => {
-    Cypress.log({
-      displayName: 'HUB USER CREATION :',
-      message: [`Created 👉  ${hubUser.username}`],
-    });
-    return hubUser;
-  });
-});
-
-Cypress.Commands.add('deleteHubUser', (user: HubUser, options?: { failOnStatusCode?: boolean }) => {
-  cy.requestDelete(hubAPI`/_ui/v1/users/${user.id.toString()}/`, options);
-});
-
-Cypress.Commands.add('createHubTeam', () => {
-  cy.requestPost<HubTeam>(hubAPI`/_ui/v1/groups/`, {
-    name: `hub-team${randomString(4)}`,
-  }).then((hubTeam) => {
-    Cypress.log({
-      displayName: 'HUB TEAM CREATION :',
-      message: [`Created 👉  ${hubTeam.name}`],
-    });
-    return hubTeam;
-  });
-});
-
-Cypress.Commands.add('deleteHubTeam', (team: HubTeam, options?: { failOnStatusCode?: boolean }) => {
-  cy.requestDelete(hubAPI`/teams/${team.id.toString()}/`, options);
 });
 
 Cypress.Commands.add(
