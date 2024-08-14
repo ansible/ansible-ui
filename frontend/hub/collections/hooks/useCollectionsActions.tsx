@@ -8,7 +8,6 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
@@ -20,7 +19,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
   const deprecateCollections = useDeprecateCollections(callback);
-  const context = useHubContext();
   const signCollection = useSignCollection(false, callback);
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
@@ -76,6 +74,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDanger: true,
       },
     ],
-    [t, deleteCollections, context, pageNavigate, deprecateCollections, signCollection]
+    [t, deleteCollections, pageNavigate, deprecateCollections, signCollection]
   );
 }

@@ -147,7 +147,6 @@ export function useCollectionActions(
     ],
     [
       t,
-      context,
       pageNavigate,
       deleteCollections,
       deprecateCollections,
