@@ -357,7 +357,5 @@ describe('Jobs', () => {
     });
   });
 
-  describe.skip('Workflow template: Output and Details Screen', () => {
-    //These tests live in the workflowJobTemplates.cy.ts spec file
-  });
+  //Workflow template: Output and Details Screen tests live in the workflowJobTemplates.cy.ts spec file
 });
