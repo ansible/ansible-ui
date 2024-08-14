@@ -112,7 +112,9 @@ export function CreateRulebookActivation() {
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>([]);
+  const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(
+    undefined
+  );
   const { register, setValue } = useFormContext();
   const restartPolicyHelpBlock = (
     <>
@@ -190,6 +192,14 @@ export function RulebookActivationInputs() {
     setSourceMappings(undefined);
   }, [rulebook, setSourceMappings]);
 
+  const removeMapping = (webhook_name: string) => {
+    if (sourceMappings) {
+      const map = sourceMappings.filter((ev) => ev.webhook_name !== webhook_name);
+      setSourceMappings(map);
+      if (sourceMappings.length === 0) setSourceMappings(undefined);
+    }
+  };
+
   return (
     <>
       <PageFormTextInput<IEdaRulebookActivationInputs>
@@ -256,13 +266,13 @@ export function RulebookActivationInputs() {
           </Button>
         }
       />
-      {sourceMappings && sourceMappings.length > 0 && (
-        <PageFormGroup label={t('Event streams')}>
+      {!!sourceMappings && sourceMappings.length > 0 && (
+        <PageFormGroup label={t('Event streams')} fieldId={'source_event_mappings'}>
           <LabelGroupWrapper>
             {sourceMappings.map((map) => (
               <>
                 <Tooltip content={<div>{map.source_name}</div>}>
-                  <Label>{map.webhook_name}</Label>
+                  <Label onClose={() => removeMapping(map.webhook_name)}>{map.webhook_name} </Label>
                 </Tooltip>
               </>
             ))}

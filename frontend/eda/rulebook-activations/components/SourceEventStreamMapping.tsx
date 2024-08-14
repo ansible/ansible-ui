@@ -56,7 +56,7 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
   useEffect(() => {
     setValue(
       'mappings',
-      options.mappings
+      !!options.mappings && options.mappings.length > 0
         ? options.mappings
         : [
             {
