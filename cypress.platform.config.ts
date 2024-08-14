@@ -36,6 +36,7 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/hub/remotes.cy.ts',
   'cypress/e2e/hub/repositories.cy.ts',
   'cypress/e2e/hub/signature-keys.cy.ts',
+  'cypress/e2e/hub/my-imports.cy.ts',
 ];
 baseConfig.e2e!.baseUrl = 'https://localhost:4100';
 baseConfig.component!.specPattern = 'platform/**/*.cy.{js,jsx,ts,tsx}';
