@@ -71,9 +71,6 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         label: t('Delete execution environments'),
         onClick: deleteExecutionEnvironments,
         isDanger: true,
-        isDisabled: context.hasPermission('container.delete_containerrepository')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
     [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, context, pageNavigate]

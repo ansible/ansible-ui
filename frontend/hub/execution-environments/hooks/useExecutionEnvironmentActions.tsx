@@ -47,11 +47,6 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         label: t('Sync execution environment'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         onClick: (ee) => syncExecutionEnvironments([ee]),
-        isDisabled:
-          context.hasPermission('container.change_containernamespace') &&
-          context.hasPermission('container.namespace_change_containerdistribution')
-            ? ''
-            : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -70,9 +65,6 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         label: t('Delete execution environment'),
         onClick: (ee) => deleteExecutionEnvironments([ee]),
         isDanger: true,
-        isDisabled: context.hasPermission('container.delete_containerrepository')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
     [

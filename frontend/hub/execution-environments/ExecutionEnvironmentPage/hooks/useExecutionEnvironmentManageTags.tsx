@@ -89,24 +89,32 @@ function ManageTagsModal(props: {
         // tag doesn't exist, we can continue
         setTagFormError('');
 
-        const addTagPost = await hubAPIPost(
-          hubAPI`/pulp/api/v3/repositories/container/container-push/${repoId ?? ''}/tag/`,
-          {
-            tag,
-            digest: image.digest,
-          }
-        );
+        try
+        {
 
-        if ((addTagPost as Task).state === 'completed') {
-          alert = {
-            variant: 'success',
-            title: t(`Tag {{tag}} successfully added.`, { tag }),
-          };
-        } else {
-          alert = {
-            variant: 'danger',
-            title: t(`Failed to add tag {{tag}}.`, { tag }),
-          };
+          const addTagPost = await hubAPIPost(
+            hubAPI`/pulp/api/v3/repositories/container/container-push/${repoId ?? ''}/tag/`,
+            {
+              tag,
+              digest: image.digest,
+            }
+          );
+
+          if ((addTagPost as Task).state === 'completed') {
+            alert = {
+              variant: 'success',
+              title: t(`Tag {{tag}} successfully added.`, { tag }),
+            };
+          } else {
+            alert = {
+              variant: 'danger',
+              title: t(`Failed to add tag {{tag}}.`, { tag }),
+            };
+          }
+        } catch (error) {
+          setTagFormError( (error as { details: string })?.details ||
+          t`Error while copying/approving collection to repositories`
+      );)
         }
 
         refresh();
