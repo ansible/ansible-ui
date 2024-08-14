@@ -191,7 +191,7 @@ describe('Teams: Add and Remove users', () => {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can add users to the team via the team access tab toolbar', () => {
+  it('can add users to the team via the team access tab toolbar', () => {
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);
@@ -236,7 +236,7 @@ describe('Teams: Add and Remove users', () => {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can remove a role from a user via the team access tab row action', () => {
+  it('can remove a role from a user via the team access tab row action', () => {
     cy.filterTableBySingleSelect('name', team.name);
     cy.clickTableRowLink('name', team.name, { disableFilter: true });
     cy.verifyPageTitle(team.name);

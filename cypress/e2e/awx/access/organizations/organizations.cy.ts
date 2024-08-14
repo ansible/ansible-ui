@@ -6,7 +6,7 @@ import { randomE2Ename } from '../../../../support/utils';
 
 describe('Organizations: Create', () => {
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can create a basic organization, assert info on the details page, and delete it', () => {
+  it('can create a basic organization, assert info on the details page, and delete it', () => {
     const organizationName = randomE2Ename();
     const orgDescription = 'orgDescription' + randomString(4);
     cy.navigateTo('awx', 'organizations');
@@ -61,7 +61,7 @@ describe('Organizations: Edit and Delete', function () {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can edit an organization from the list view', function () {
+  it('can edit an organization from the list view', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
@@ -81,7 +81,7 @@ describe('Organizations: Edit and Delete', function () {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can edit an organization from the details page', function () {
+  it('can edit an organization from the details page', function () {
     const stringRandom = randomString(4);
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
@@ -103,7 +103,7 @@ describe('Organizations: Edit and Delete', function () {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can delete an organization from the details page', function () {
+  it('can delete an organization from the details page', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.get('[data-cy="name-column-cell"]').within(() => {
@@ -123,7 +123,7 @@ describe('Organizations: Edit and Delete', function () {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can delete an organization from the organizations list row item', function () {
+  it('can delete an organization from the organizations list row item', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.getByDataCy('actions-column-cell').within(() => {
@@ -143,7 +143,7 @@ describe('Organizations: Edit and Delete', function () {
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can delete an organization from the organizations list toolbar', function () {
+  it('can delete an organization from the organizations list toolbar', function () {
     cy.navigateTo('awx', 'organizations');
     cy.filterTableByMultiSelect('name', [organization.name]);
     cy.selectTableRow(organization.name, false);

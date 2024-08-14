@@ -102,7 +102,8 @@ describe('Workflow Visualizer', () => {
       });
     });
 
-    it.skip('can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
+    //Skipping due to https://issues.redhat.com/browse/AAP-28597
+    it('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySingleSelect('name', `${jobTemplate?.name}`);

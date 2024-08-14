@@ -70,7 +70,7 @@ describe('Inventories Tests', () => {
         });
 
         //Skipping due to https://issues.redhat.com/browse/AAP-28597
-        it.skip('can edit an inventory from the list view and assert info on details page', () => {
+        it('can edit an inventory from the list view and assert info on details page', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.get(`[data-cy="row-id-${inventory.id}"]`).within(() => {
@@ -106,7 +106,7 @@ describe('Inventories Tests', () => {
         });
 
         //Skipping due to https://issues.redhat.com/browse/AAP-28597
-        it.skip('can copy an inventory on the list view and assert that the copy has been successful', () => {
+        it('can copy an inventory on the list view and assert that the copy has been successful', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.clickTableRowAction('name', inventory.name, 'copy-inventory', {
@@ -131,7 +131,7 @@ describe('Inventories Tests', () => {
         });
 
         //Skipping due to https://issues.redhat.com/browse/AAP-28597
-        it.skip('can delete an inventory from the inventory list toolbar', () => {
+        it('can delete an inventory from the inventory list toolbar', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.selectTableRowByCheckbox('name', inventory.name, { disableFilter: true });
