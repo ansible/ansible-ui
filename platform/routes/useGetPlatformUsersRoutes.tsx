@@ -29,6 +29,9 @@ import { AAPUserTokens } from '../access/users/components/PlatformAAPUserTokens'
 import { CreateAAPUserToken } from '../access/users/components/PlatformAAPUserTokenForm';
 import { PlatformAAPUserTokenDetails } from '../access/users/components/PlatformAAPUserTokenDetails';
 import { PlatformAAPUserTokenPage } from '../access/users/components/PlatformAAPUserTokenPage';
+import { PlatformHubUserIdLookup } from '../access/users/components/PlatformHubUserIdLookup';
+import { HubUserRoles } from '../../frontend/hub/access/users/UserPage/HubUserRoles';
+import { HubAddUserRoles } from '../../frontend/hub/access/users/components/HubAddUserRoles';
 
 export function useGetPlatformUsersRoutes() {
   const { t } = useTranslation();
@@ -86,6 +89,15 @@ export function useGetPlatformUsersRoutes() {
                     <PlatformEdaUserIdLookup>
                       <EdaUserRoles addRolesRoute={PlatformRoute.EdaUserAddRoles} />
                     </PlatformEdaUserIdLookup>
+                  ),
+                },
+                {
+                  id: PlatformRoute.HubUserRoles,
+                  path: 'hub',
+                  element: (
+                    <PlatformHubUserIdLookup>
+                      <HubUserRoles addRolesRoute={PlatformRoute.HubUserAddRoles} />
+                    </PlatformHubUserIdLookup>
                   ),
                 },
                 {
@@ -240,6 +252,15 @@ export function useGetPlatformUsersRoutes() {
             <PlatformEdaUserIdLookup>
               <EdaAddUserRoles userRolesRoute={PlatformRoute.EdaUserRoles} />
             </PlatformEdaUserIdLookup>
+          ),
+        },
+        {
+          id: PlatformRoute.HubUserAddRoles,
+          path: ':id/roles/hub/add-roles',
+          element: (
+            <PlatformHubUserIdLookup>
+              <HubAddUserRoles userRolesRoute={PlatformRoute.HubUserRoles} />
+            </PlatformHubUserIdLookup>
           ),
         },
         {
