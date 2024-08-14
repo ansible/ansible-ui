@@ -228,7 +228,9 @@ Cypress.Commands.add('createNamespace', (namespaceName: string) => {
 });
 
 Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
+  cy.waitForAllTasks();
   cy.galaxykit('-i namespace delete', namespaceName);
+  cy.waitForAllTasks();
 });
 
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
@@ -244,6 +246,7 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
         collection.collection_version?.version || '',
         collection.repository?.name || ''
       );
+      cy.waitForAllTasks();
     }
   });
 });
@@ -264,6 +267,7 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: 
 
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+  cy.waitForAllTasks();
 });
 
 Cypress.Commands.add(
@@ -287,6 +291,7 @@ Cypress.Commands.add(
       versionToDelete,
       repository
     );
+    cy.waitForAllTasks();
   }
 );
 
@@ -517,6 +522,7 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
 
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.waitForAllTasks();
   cy.hubDeleteRequest({
     ...options,
     url: hubAPI`/_ui/v1/namespaces/${options.name}/`,
@@ -634,9 +640,11 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
       const repeatedName = itemsResponse.data[0]?.collection_version?.name;
       if (collection?.collection_version?.name === repeatedName) {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
         break;
       } else {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
       }
     }
   });
