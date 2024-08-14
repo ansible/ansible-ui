@@ -64,7 +64,7 @@ export function CollectionDependencies() {
     <Scrollable>
       <PageSection variant="light">
         <Title headingLevel="h2">{t('Dependencies')}</Title>
-        {t`This collections requires the following collections for use`}
+        {t`This collection requires the following collections for use`}
         <br></br>
         <WarningMessage>
           {missingCollection && t`Collection was not found in the system`}
@@ -73,6 +73,7 @@ export function CollectionDependencies() {
         {Object.keys(collection.collection_version.dependencies).map((key) => {
           return (
             <Button
+              data="collection-dependency"
               key={key}
               isLoading={isLoading === key}
               variant="link"
@@ -145,7 +146,7 @@ function useCollectionColumns() {
                 name: collection.name,
                 namespace: collection.namespace,
                 repository:
-                  collection.repository_list.length > 0
+                  collection?.repository_list?.length > 0
                     ? collection.repository_list[0]
                     : 'published',
               },

@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "count": 1
+  },
+  "links": {
+    "first": "/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_highest=true&limit=10&name=scm&namespace=ansible&offset=0&repository_name=published",
+    "previous": null,
+    "next": null,
+    "last": "/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_highest=true&limit=10&name=scm&namespace=ansible&offset=0&repository_name=published"
+  },
+  "data": [
+    {
+      "repository": {
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/0191404b-befc-77b0-ac2b-87f03cb1a892/",
+        "pulp_created": "2024-08-11T07:16:31.613377Z",
+        "pulp_last_updated": "2024-08-13T00:55:18.107456Z",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/0191404b-befc-77b0-ac2b-87f03cb1a892/versions/",
+        "pulp_labels": {
+          "pipeline": "approved"
+        },
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/0191404b-befc-77b0-ac2b-87f03cb1a892/versions/224/",
+        "name": "published",
+        "description": "Certified content repository",
+        "retain_repo_versions": 1,
+        "remote": null
+      },
+      "collection_version": {
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/0191493b-1c1b-7ae3-84d6-327f1cd7354a/",
+        "namespace": "ansible",
+        "name": "scm",
+        "version": "2.0.0",
+        "requires_ansible": ">=2.14.0",
+        "pulp_created": "2024-08-13T00:54:56.285385Z",
+        "contents": [
+          {
+            "name": "git_retrieve",
+            "description": "Retrieve a repository from a distant location and make it available on the execution node",
+            "content_type": "module"
+          },
+          {
+            "name": "git_publish",
+            "description": "Publish changes from a repository available on the execution node to a distant location",
+            "content_type": "module"
+          },
+          {
+            "name": "git_retrieve",
+            "description": null,
+            "content_type": "action"
+          },
+          {
+            "name": "git_publish",
+            "description": null,
+            "content_type": "action"
+          }
+        ],
+        "dependencies": {
+          "ansible.utils": ">=3.0.0"
+        },
+        "description": "A collection of scm utilities",
+        "tags": [
+          {
+            "name": "application"
+          },
+          {
+            "name": "cloud"
+          },
+          {
+            "name": "database"
+          },
+          {
+            "name": "infrastructure"
+          },
+          {
+            "name": "linux"
+          },
+          {
+            "name": "monitoring"
+          },
+          {
+            "name": "networking"
+          },
+          {
+            "name": "security"
+          },
+          {
+            "name": "storage"
+          },
+          {
+            "name": "tools"
+          },
+          {
+            "name": "windows"
+          }
+        ]
+      },
+      "repository_version": "latest",
+      "namespace_metadata": {
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/019146fe-012c-735c-a5c6-2a48766ae6ca/",
+        "name": "ansible",
+        "company": "",
+        "description": "sdfsfdsfdf",
+        "avatar_url": null
+      },
+      "is_highest": true,
+      "is_deprecated": false,
+      "is_signed": true
+    }
+  ]
+}
