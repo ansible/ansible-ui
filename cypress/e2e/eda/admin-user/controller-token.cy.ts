@@ -18,7 +18,7 @@ describe('EDA Admin User', () => {
       cy.contains('h1', 'Users');
       cy.contains(
         '[data-cy="app-description"]',
-        'A user is someone who has access to EDA with associated permissions and credentials.'
+        'A user is someone who has access to Event Driven Automation with associated permissions and credentials.'
       );
       cy.contains('a', edaUser.username).click();
       cy.contains('li', 'Controller Tokens').click();

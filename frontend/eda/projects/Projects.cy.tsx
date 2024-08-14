@@ -62,7 +62,7 @@ describe('Projects.cy.ts', () => {
   it('Renders the correct projects columns', () => {
     cy.verifyPageTitle('Projects');
     cy.get('tbody').find('tr').should('have.length', 10);
-    cy.contains(/^Projects are a logical collection of rulebooks.$/).should('be.visible');
+    cy.contains(/^A project is a logical collection of rulebooks.$/).should('be.visible');
     cy.contains('th', 'Name');
     cy.contains('th', 'Status');
     cy.contains('th', 'Git hash');
