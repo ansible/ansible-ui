@@ -21,6 +21,7 @@ import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 import { AAPDocsURL } from '../../common/constants';
+import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const signExecutionEnvironments = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
+  const canSignEE = useCanSignEE();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -59,11 +61,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         icon: CheckIcon,
         label: t('Sign execution environments'),
         onClick: signExecutionEnvironments,
-        isDisabled:
-          context.hasPermission('container.change_containernamespace') &&
-          context.featureFlags.container_signing
-            ? ''
-            : t`You do not have rights to this operation`,
+        isDisabled: canSignEE ? '' : t`You do not have rights to this operation`,
       },
       { type: PageActionType.Seperator },
       {
@@ -78,7 +76,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
           : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, deleteExecutionEnvironments, signExecutionEnvironments, pageNavigate]
+    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, context, pageNavigate]
   );
 }
 
