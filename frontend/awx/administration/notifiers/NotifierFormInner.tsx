@@ -112,7 +112,8 @@ function EmailForm() {
       />
 
       <PageFormGroup
-        label={t('Email Options ')}
+        label={t('Email options ')}
+        labelHelpTitle={t('Email options')}
         labelHelp={
           <Trans>
             See Django{' '}
@@ -258,17 +259,17 @@ function GrafanaForm() {
 
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.dashboardId'}
-        label={t('ID of the dashboard (optional)')}
+        label={t('ID of the dashboard')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.panelId'}
-        label={t('ID of the panel (optional)')}
+        label={t('ID of the panel')}
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.annotation_tags'}
-        label={t('Tags for the annotation (optional)')}
+        label={t('Tags for the annotation')}
         labelHelp={getLabelHelp('grafana', 'annotation_tags', t)}
       />
 
@@ -512,7 +513,7 @@ export function getLabelHelp(
   }
 
   if (notification_type === 'grafana' && key === 'annotation_tags') {
-    return t('Use one Annotation Tag per line, without commas.');
+    return t('Use one annotation tag per line, without commas.');
   }
 
   if (notification_type === 'webhook' && key === 'headers') {
