@@ -20,6 +20,7 @@ import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { SignStatus } from './components/SignStatus';
 import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
+import { useCanSignEE } from '../../common/utils/canSign';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export function ExecutionEnvironmentPage() {
 
   const getPageUrl = useGetPageUrl();
   const pageActions = useExecutionEnvironmentPageActions({ refresh });
+  const canSignEE = useCanSignEE();
 
   if (error) {
     return <HubError error={error} handleRefresh={refresh} />;
@@ -58,9 +60,11 @@ export function ExecutionEnvironmentPage() {
         description={ee?.description}
         footer={
           <Stack hasGutter>
-            <div>
-              <SignStatus state={ee?.pulp?.repository?.sign_state} />
-            </div>
+            {canSignEE && (
+              <div>
+                <SignStatus state={ee?.pulp?.repository?.sign_state} />
+              </div>
+            )}
             {!!lastSyncTask?.state && (
               <Flex gap={{ default: 'gapSm' }}>
                 <FlexItem>
