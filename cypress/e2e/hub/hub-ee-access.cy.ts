@@ -135,6 +135,7 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.selectTableRowByCheckbox('name', hubTeam.name, {
         disableFilter: true,
       });
+      cy.contains(role.name).should('be.visible');
       removeRoleFromListRow(role.name);
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
