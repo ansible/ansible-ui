@@ -45,6 +45,7 @@ import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import jsyaml from 'js-yaml';
 import { LabelGroupWrapper } from '../../common/label-group-wrapper';
+import { EdaWebhook } from '../interfaces/EdaWebhook';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -146,6 +147,8 @@ export function RulebookActivationInputs() {
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
 
+  const { data: eventStreams } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/`);
+
   const [_, setDialog] = usePageDialog();
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -238,7 +241,7 @@ export function RulebookActivationInputs() {
           <Button
             variant="link"
             data-cy={'manage_event_stream'}
-            isDisabled={!rulebook}
+            isDisabled={!rulebook || !eventStreams || eventStreams.count < 1}
             onClick={() =>
               setDialog(
                 <SourceEventStreamMappingModal
