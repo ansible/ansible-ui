@@ -92,7 +92,7 @@ export function ManualSubForm(props: { localPath?: string }) {
           placeholderText={t('Choose a Playbook Directory')}
           labelHelpTitle={t('Playbook Directory')}
           labelHelp={t(
-            'Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks.'
+            'Select from the list of directories found in the project base path. Together the base path and the playbook directory provide the full path used to locate playbooks.'
           )}
         />
       </PageFormSection>
