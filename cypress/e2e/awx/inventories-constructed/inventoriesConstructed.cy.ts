@@ -139,14 +139,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.verifyPageTitle('Edit Constructed Inventory');
     cy.getByDataCy('toggle-json').click();
     cy.getByDataCy('source-vars').type(
-      `{{}    
-      "plugin": "constructed",
-      "strict": true,
-      "groups": {
-      "is_shutdown": "state | default('running') == 'shutdown'",
-      "product_dev": "account_alias == 'product_dev'"
-      }}`,
-      { delay: 200 }
+      `{"plugin": "constructed","strict": true,"groups": {"is_shutdown": "state | default('running') == 'shutdown'","product_dev": "account_alias == 'product_dev'"}}`,
+      { parseSpecialCharSequences: false }
     );
     cy.clickButton(/^Save inventory$/);
     cy.verifyPageTitle(newInventory.name);

@@ -88,18 +88,18 @@ describe('Organizations: Edit and Delete', function () {
     cy.get('[data-cy="name-column-cell"]').within(() => {
       cy.get('a').click();
     });
-    cy.verifyPageTitle(`Edit ${organization.name}`);
+    cy.verifyPageTitle(`${organization.name}`);
     cy.containsBy('button', /^Edit organization/).click();
     cy.verifyPageTitle(`Edit ${organization.name}`);
     cy.getByDataCy('name')
       .clear()
       .type('now-edited ' + `${stringRandom}`);
     cy.containsBy('button', /^Save organization/).click();
-    cy.verifyPageTitle(`Edit ${organization.name}`);
+    cy.verifyPageTitle(`${organization.name}`);
     cy.getByDataCy('edit-organization').click();
     cy.getByDataCy('name').clear().type(`${organization.name}`);
     cy.containsBy('button', /^Save organization/).click();
-    cy.verifyPageTitle(`Edit ${organization.name}`);
+    cy.verifyPageTitle(`${organization.name}`);
   });
 
   //Skipping due to https://issues.redhat.com/browse/AAP-28597
