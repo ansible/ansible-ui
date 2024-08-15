@@ -213,29 +213,6 @@ describe.skip('Collections List', () => {
     //these lines fail if there are no Collections present
   });
 
-  it('can deprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name);
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      repository.name
-    );
-    cy.waitForAllTasks();
-    cy.getByDataCy('table-view').click();
-    actionClick(collectionName, 'deprecate-collection');
-    cy.getModal().within(() => {
-      cy.get('#confirm').click();
-      cy.clickButton('Deprecate collections');
-      cy.clickButton('Close');
-    });
-    cy.getModal().should('not.exist');
-    cy.contains('h2', 'No results found').should('be.visible');
-    cy.deleteHubCollectionByName(collectionName);
-  });
-
   it('can copy a version to repository', () => {
     cy.uploadCollection(collectionName, namespace.name);
     cy.galaxykit(

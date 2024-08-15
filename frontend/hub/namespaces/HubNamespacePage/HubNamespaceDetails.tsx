@@ -17,13 +17,8 @@ export function HubNamespaceDetails() {
   const { id } = useParams<{ id: string }>();
   const { data: namespace, error, isLoading, refresh } = useNamespaceDetails(id as string);
 
-  if (isLoading || !namespace) {
-    return <LoadingPage />;
-  }
-
-  if (error) {
-    return <HubError error={error} handleRefresh={refresh} />;
-  }
+  if (error) return <HubError error={error} handleRefresh={refresh} />;
+  if (isLoading || !namespace) return <LoadingPage />;
 
   const keyValuePairs = namespace.links.map((link) => ({
     key: link.name,

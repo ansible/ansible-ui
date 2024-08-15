@@ -14,7 +14,7 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
-import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
 import { useCanSignNamespace } from '../../common/utils/canSign';
@@ -26,7 +26,7 @@ export function useCollectionActions(
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deprecateCollections = useDeprecateCollections(callback);
+  const deprecateOrUndeprecateCollections = useDeprecateOrUndeprecateCollections(callback);
   const deleteCollections = useDeleteCollections(callback, false, detail);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
     undefined,
@@ -86,9 +86,24 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: BanIcon,
-        label: t('Deprecate collection'),
+        label: t('Deprecate'),
         onClick: (collection) => {
-          deprecateCollections([collection]);
+          deprecateOrUndeprecateCollections([collection], 'deprecate');
+        },
+        isHidden: (collection) => {
+          return collection?.is_deprecated ? true : false;
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BanIcon,
+        label: t('Undeprecate'),
+        onClick: (collection) => {
+          deprecateOrUndeprecateCollections([collection], 'undeprecate');
+        },
+        isHidden: (collection) => {
+          return collection?.is_deprecated ? false : true;
         },
       },
       {
@@ -151,13 +166,13 @@ export function useCollectionActions(
     ],
     [
       t,
-      signCollection,
       canSign,
+      signCollection,
+      deprecateOrUndeprecateCollections,
       detail,
       can_upload_signatures,
       uploadSignature,
       signCollectionVersion,
-      deprecateCollections,
       copyToRepository,
       pageNavigate,
       deleteCollectionsVersions,

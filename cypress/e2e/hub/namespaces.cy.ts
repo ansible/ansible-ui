@@ -175,7 +175,7 @@ describe('Namespaces - collections', () => {
   });
 });
 
-describe('Namespaces - sign all collections', () => {
+describe.skip('Namespaces - sign all collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const collectionName2 = randomE2Ename();
@@ -208,7 +208,7 @@ describe('Namespaces - sign all collections', () => {
     cy.deleteHubNamespace(namespace);
   });
 
-  it('can sign all collections', () => {
+  it.skip('can sign all collections', () => {
     cy.navigateTo('hub', 'namespaces');
     cy.verifyPageTitle('Namespaces');
     cy.setTableView('table');

@@ -45,6 +45,7 @@ import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import jsyaml from 'js-yaml';
 import { LabelGroupWrapper } from '../../common/label-group-wrapper';
+import { EdaWebhook } from '../interfaces/EdaWebhook';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -111,7 +112,9 @@ export function CreateRulebookActivation() {
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>([]);
+  const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(
+    undefined
+  );
   const { register, setValue } = useFormContext();
   const restartPolicyHelpBlock = (
     <>
@@ -145,6 +148,8 @@ export function RulebookActivationInputs() {
   const { data: tokens } = useGet<EdaResult<AwxToken>>(
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
+
+  const { data: eventStreams } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/`);
 
   const [_, setDialog] = usePageDialog();
   const RESTART_OPTIONS = [
@@ -186,6 +191,14 @@ export function RulebookActivationInputs() {
   useEffect(() => {
     setSourceMappings(undefined);
   }, [rulebook, setSourceMappings]);
+
+  const removeMapping = (webhook_name: string) => {
+    if (sourceMappings) {
+      const map = sourceMappings.filter((ev) => ev.webhook_name !== webhook_name);
+      setSourceMappings(map);
+      if (sourceMappings.length === 0) setSourceMappings(undefined);
+    }
+  };
 
   return (
     <>
@@ -238,7 +251,7 @@ export function RulebookActivationInputs() {
           <Button
             variant="link"
             data-cy={'manage_event_stream'}
-            isDisabled={!rulebook}
+            isDisabled={!rulebook || !eventStreams || eventStreams.count < 1}
             onClick={() =>
               setDialog(
                 <SourceEventStreamMappingModal
@@ -248,16 +261,18 @@ export function RulebookActivationInputs() {
                 />
               )
             }
-          >{`${t('Manage event streams')}`}</Button>
+          >
+            {t('Manage event streams')}
+          </Button>
         }
       />
-      {sourceMappings && sourceMappings.length > 0 && (
-        <PageFormGroup label={t('Event streams')}>
+      {!!sourceMappings && sourceMappings.length > 0 && (
+        <PageFormGroup label={t('Event streams')} fieldId={'source_event_mappings'}>
           <LabelGroupWrapper>
             {sourceMappings.map((map) => (
               <>
                 <Tooltip content={<div>{map.source_name}</div>}>
-                  <Label>{map.webhook_name}</Label>
+                  <Label onClose={() => removeMapping(map.webhook_name)}>{map.webhook_name} </Label>
                 </Tooltip>
               </>
             ))}
