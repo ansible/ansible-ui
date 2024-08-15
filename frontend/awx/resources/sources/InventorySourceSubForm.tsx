@@ -91,7 +91,7 @@ export function InventorySourceSubForm() {
             defaultValue={'1'}
             labelHelpTitle={t('Limit')}
             labelHelp={t(
-              'Control the level of output ansible will produce as the playbook executes.'
+              'Control the level of output Ansible will produce as the playbook executes.'
             )}
             label={t('Verbosity')}
             isRequired
@@ -120,6 +120,7 @@ export function InventorySourceSubForm() {
           <PageFormSection title={t('Update options')}>
             <PageFormCheckbox<InventorySourceForm>
               label={t('Overwrite')}
+              labelHelpTitle={t('Overwrite')}
               labelHelp={t(
                 'If checked, any hosts and groups that were previously present on the external source but are now removed will be removed from the inventory. Hosts and groups that were not managed by the inventory source will be promoted to the next manually created group or if there is no manually created group to promote them into, they will be left in the "all" default group for the inventory. \nWhen not checked, local child hosts and groups not found on the external source will remain untouched by the inventory update process.'
               )}
@@ -127,6 +128,7 @@ export function InventorySourceSubForm() {
             />
             <PageFormCheckbox<InventorySourceForm>
               label={t('Overwrite variables')}
+              labelHelpTitle={t('Overwrite variables')}
               labelHelp={t(
                 'If checked, all variables for child groups and hosts will be removed and replaced by those found on the external source.\nWhen not checked, a merge will be performed, combining local variables with those found on the external source.'
               )}
@@ -134,6 +136,7 @@ export function InventorySourceSubForm() {
             />
             <PageFormCheckbox<InventorySourceForm>
               label={t('Update on Launch')}
+              labelHelpTitle={t('Update on launch')}
               labelHelp={t(
                 'Each time a job runs using this inventory, refresh the inventory from the selected source before executing job tasks.'
               )}
