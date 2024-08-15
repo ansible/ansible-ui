@@ -1,10 +1,29 @@
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Remotes } from './constants';
 import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
+import { randomString } from '../../../framework/utils/random-string';
+import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
+import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
-describe.skip('Remotes User Access tab', () => {
+describe('Remotes User Access tab', () => {
   let remote: HubRemote;
+  let role: HubRbacRole;
+  const customRole = {
+    roleName: 'galaxy.' + `${randomString(5)}`,
+    roleDescription: 'Manage collection remotes.',
+    contentType: ContentTypeEnum.CollectionRemote,
+    permission: 'galaxy.view_collectionremote',
+  };
+
   before(() => {
+    cy.createHubRoleAPI({
+      roleName: customRole.roleName,
+      description: customRole.roleDescription,
+      content_type: ContentTypeEnum.CollectionRemote,
+      permissions: [customRole.permission],
+    }).then((createdRole) => {
+      role = createdRole;
+    });
     cy.createHubRemote().then((createdRemote) => {
       remote = createdRemote;
     });
@@ -12,6 +31,7 @@ describe.skip('Remotes User Access tab', () => {
 
   after(() => {
     cy.deleteHubRemote(remote);
+    cy.deleteHubRoleAPI(role);
   });
 
   beforeEach(() => {
@@ -44,10 +64,10 @@ describe.skip('Remotes User Access tab', () => {
         cy.selectTableRow(hubUser.username);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
-        cy.filterTableByTextFilter('name', 'galaxy.collection_remote_owner', {
+        cy.filterTableByTextFilter('name', role.name, {
           disableFilterSelection: true,
         });
-        cy.selectTableRowByCheckbox('name', 'galaxy.collection_remote_owner', {
+        cy.selectTableRowByCheckbox('name', role.name, {
           disableFilter: true,
         });
         cy.clickButton(/^Next/);
@@ -55,7 +75,7 @@ describe.skip('Remotes User Access tab', () => {
         cy.verifyReviewStepWizardDetails('users', [hubUser.username], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
-          ['galaxy.collection_remote_owner', 'Manage collection remotes.'],
+          [role.name, 'Manage collection remotes.'],
           '1'
         );
         cy.clickButton(/^Finish/);
@@ -73,7 +93,7 @@ describe.skip('Remotes User Access tab', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
-      removeRoleFromListRow('galaxy.collection_remote_owner');
+      removeRoleFromListRow(role.name);
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
   });
@@ -90,10 +110,10 @@ describe.skip('Remotes User Access tab', () => {
         cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
-        cy.filterTableByTextFilter('name', 'galaxy.collection_remote_owner', {
+        cy.filterTableByTextFilter('name', role.name, {
           disableFilterSelection: true,
         });
-        cy.selectTableRowByCheckbox('name', 'galaxy.collection_remote_owner', {
+        cy.selectTableRowByCheckbox('name', role.name, {
           disableFilter: true,
         });
         cy.clickButton(/^Next/);
@@ -101,7 +121,7 @@ describe.skip('Remotes User Access tab', () => {
         cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
         cy.verifyReviewStepWizardDetails(
           'hubRoles',
-          ['galaxy.collection_remote_owner', 'Manage collection remotes.'],
+          [role.name, 'Manage collection remotes.'],
           '1'
         );
         cy.clickButton(/^Finish/);
@@ -119,7 +139,7 @@ describe.skip('Remotes User Access tab', () => {
       cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
         disableFilter: false,
       });
-      removeRoleFromListRow('galaxy.collection_remote_owner');
+      removeRoleFromListRow(role.name);
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
   });
