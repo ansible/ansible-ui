@@ -109,6 +109,7 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
     if (count === 0) {
       throw new Error('Max loops reached while waiting for the tasks.');
     }
+    cy.wait(1000);
     cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
       (response) => {
         const tasks = response.results;
@@ -116,7 +117,6 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
         if (tasks.length === 0) {
           return;
         } else {
-          cy.wait(1000);
           waitForAllTasks(count - 1);
         }
       }
