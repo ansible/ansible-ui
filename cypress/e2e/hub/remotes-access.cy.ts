@@ -73,11 +73,7 @@ describe('Remotes User Access tab', () => {
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
         cy.verifyReviewStepWizardDetails('users', [hubUser.username], '1');
-        cy.verifyReviewStepWizardDetails(
-          'hubRoles',
-          [role.name, 'Manage collection remotes.'],
-          '1'
-        );
+        cy.verifyReviewStepWizardDetails('hubRoles', [role.name, role.description], '1');
         cy.clickButton(/^Finish/);
         cy.wait('@userRoleAssignment')
           .its('response')
@@ -119,11 +115,7 @@ describe('Remotes User Access tab', () => {
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Review').should('be.visible');
         cy.verifyReviewStepWizardDetails('teams', [hubTeam.name], '1');
-        cy.verifyReviewStepWizardDetails(
-          'hubRoles',
-          [role.name, 'Manage collection remotes.'],
-          '1'
-        );
+        cy.verifyReviewStepWizardDetails('hubRoles', [role.name, role.description], '1');
         cy.clickButton(/^Finish/);
         cy.wait('@teamRoleAssignment')
           .its('response')
