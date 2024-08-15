@@ -1,5 +1,19 @@
 import { randomString } from '../../../framework/utils/random-string';
-import { MyImports } from './constants';
+import { Namespaces } from './constants';
+
+function visitImports(namespace: string) {
+  cy.navigateTo('hub', Namespaces.url);
+  cy.verifyPageTitle('Namespaces');
+  cy.getByDataCy('table-view').click();
+  cy.filterTableBySingleText(namespace);
+  // dropdown is not within row: cy.clickTableRowKebabAction(namespace, 'imports', false);
+  cy.getTableRowByText(namespace, false).within(() => {
+    cy.get('[data-cy*="actions-dropdown"]').click();
+  });
+  cy.getByDataCy('imports').click();
+
+  cy.verifyPageTitle('My imports');
+}
 
 describe.skip('My imports', () => {
   const validCollection = {
@@ -16,10 +30,11 @@ describe.skip('My imports', () => {
 
   before(() => {
     cy.createNamespace(validCollection.namespace);
-    cy.galaxykit(`-i collection upload ${validCollection.namespace} ${validCollection.name}`);
+    cy.galaxykit('-i collection upload', validCollection.namespace, validCollection.name);
 
     cy.createNamespace(invalidCollection.namespace);
-    cy.galaxykit(`-i collection upload ${invalidCollection.namespace} ${invalidCollection.name}`);
+    cy.galaxykit('-i collection upload', invalidCollection.namespace, invalidCollection.name);
+    cy.waitForAllTasks();
   });
 
   after(() => {
@@ -30,13 +45,12 @@ describe.skip('My imports', () => {
     cy.deleteNamespace(invalidCollection.namespace);
   });
 
-  it('it should render the My imports page', () => {
-    cy.visit(MyImports.url);
-    cy.verifyPageTitle(MyImports.title);
-  });
-
   it('should render empty states', () => {
-    cy.visit(MyImports.url);
+    // Go to Imports and de-select namespace
+    const { namespace } = validCollection;
+    visitImports(namespace);
+    cy.getByDataCy('reset').click();
+    // Check Empty state when no namespace is selected
     cy.contains('No namespace selected.');
     cy.contains('No data');
     cy.get('#namespace-selector').contains('Select namespace');
@@ -45,18 +59,14 @@ describe.skip('My imports', () => {
 
   it('should be able to inspect completed collection import', () => {
     const { name, namespace, version } = validCollection;
-
-    cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
+    visitImports(namespace);
 
     // test correctly set label params
     cy.get('#namespace-selector').contains(namespace);
-    cy.get('.pf-v5-c-chip-group').contains(name);
-    cy.get('.pf-v5-c-chip-group').contains(version);
 
     cy.get(`[data-cy="row-id-${name}"]`).within(() => {
       cy.get('h4').contains(`${name} v${version}`);
-      cy.contains('Completed');
-      cy.contains('completed');
+      cy.get('div:contains("completed")');
     });
 
     cy.get('[data-cy="import-log-content"]').within(() => {
@@ -71,12 +81,9 @@ describe.skip('My imports', () => {
 
   it('should be able to inspect failed collection import', () => {
     const { name, namespace, version } = invalidCollection;
-
-    cy.visit(`${MyImports.url}/?namespace=${namespace}&name=${name}&version=${version}`);
+    visitImports(namespace);
 
     cy.get('#namespace-selector').contains(namespace);
-    cy.get('.pf-v5-c-chip-group').contains(name);
-    cy.get('.pf-v5-c-chip-group').contains(version);
 
     cy.get(`[data-cy="row-id-${name}"]`).within(() => {
       cy.get('h4').contains(`${name} v${version}`);
@@ -102,9 +109,10 @@ describe.skip('My imports', () => {
   });
 
   it('should be able to filter imported collections', () => {
-    cy.visit(MyImports.url);
-    cy.get('#namespace-selector').contains('Select namespace').click();
-
+    const { namespace } = validCollection;
+    visitImports(validCollection.namespace);
+    cy.get('#namespace-selector').contains(namespace);
+    cy.get('#namespace-selector').click();
     cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
 
     // search and select namespace in button
@@ -125,7 +133,6 @@ describe.skip('My imports', () => {
 
     cy.url().should('include', validCollection.namespace);
     cy.url().should('include', validCollection.name);
-    cy.url().should('include', validCollection.namespace);
 
     cy.get(`[data-cy="row-id-${validCollection.name}"]`).within(() => {
       cy.get('h4').contains(`${validCollection.name} v${validCollection.version}`);
@@ -153,7 +160,6 @@ describe.skip('My imports', () => {
     cy.filterTableByTypeAndSingleText('Version', invalidCollection.version);
 
     cy.get('.pf-v5-c-chip-group').contains(invalidCollection.name);
-    cy.get('.pf-v5-c-chip-group').contains(invalidCollection.version);
     cy.get('.pf-v5-c-chip-group').contains(invalidCollection.version);
 
     cy.get(`[data-cy="row-id-${invalidCollection.name}"]`).within(() => {

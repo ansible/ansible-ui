@@ -92,7 +92,7 @@ describe('Execution Environments: User/Team access', () => {
   });
 
   // There's inconsistency with Users -> creating a team with an org doesn't show it under the org so skipping for time being
-  it.skip('Add a team role assignment from the Team Access tab', () => {
+  it.skip('can add a team role assignment from the Team Access tab', () => {
     cy.addEERolesToTeamsInOrganization(organization.name);
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');

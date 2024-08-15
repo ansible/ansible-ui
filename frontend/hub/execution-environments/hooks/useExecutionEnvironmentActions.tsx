@@ -7,7 +7,6 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import {
@@ -15,14 +14,17 @@ import {
   useSignExecutionEnvironments,
   useSyncExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
+import { useController } from './useController';
+import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
-  const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironment = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
+  const useInController = useController();
+  const canSignEE = useCanSignEE();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -43,11 +45,6 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         label: t('Sync execution environment'),
         isHidden: (ee: ExecutionEnvironment) => !ee.pulp?.repository?.remote,
         onClick: (ee) => syncExecutionEnvironments([ee]),
-        isDisabled:
-          context.hasPermission('container.change_containernamespace') &&
-          context.hasPermission('container.namespace_change_containerdistribution')
-            ? ''
-            : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -55,12 +52,9 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         icon: CheckIcon,
         label: t('Sign execution environment'),
         onClick: (ee) => signExecutionEnvironment([ee]),
-        isDisabled:
-          context.hasPermission('container.change_containernamespace') &&
-          context.featureFlags.container_signing
-            ? ''
-            : t`You do not have rights to this operation`,
+        isDisabled: canSignEE ? '' : t`You do not have rights to this operation`,
       },
+      useInController,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -69,18 +63,16 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         label: t('Delete execution environment'),
         onClick: (ee) => deleteExecutionEnvironments([ee]),
         isDanger: true,
-        isDisabled: context.hasPermission('container.delete_containerrepository')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
     [
       t,
-      context,
-      deleteExecutionEnvironments,
+      canSignEE,
+      useInController,
+      pageNavigate,
       syncExecutionEnvironments,
       signExecutionEnvironment,
-      pageNavigate,
+      deleteExecutionEnvironments,
     ]
   );
 }

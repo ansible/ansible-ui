@@ -146,7 +146,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         min={0}
         max={65353}
         labelHelp={t(
-          'Select the port that Receptor will listen on for incoming connections, e.g. 27199.'
+          'Select the port that receptor will listen on for incoming connections, e.g. 27199.'
         )}
       />
       <PageFormSelect<Instance>

@@ -12,6 +12,7 @@ import { useUserFilters } from './hooks/useUserFilters';
 
 export function Users() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('EDA');
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useUserFilters();
   const tableColumns = useUserColumns();
@@ -27,7 +28,13 @@ export function Users() {
       <PageHeader
         title={t('Users')}
         description={t(
-          'A user is someone who has access to EDA with associated permissions and credentials.'
+          'A user is someone who has access to {{product}} with associated permissions and credentials.',
+          { product }
+        )}
+        titleHelpTitle={t('Users')}
+        titleHelp={t(
+          'A user is someone who has access to {{product}} with associated permissions and credentials.',
+          { product }
         )}
       />
       <PageTable

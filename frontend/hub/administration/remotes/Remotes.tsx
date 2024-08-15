@@ -49,7 +49,16 @@ export function Remotes() {
   const pageNavigate = usePageNavigate();
   return (
     <PageLayout>
-      <PageHeader title={t('Remotes')} description={t('Remotes')} />
+      <PageHeader
+        title={t('Remotes')}
+        description={t(
+          'Remotes manage configurations for remote execution environments utilized in Ansible automation tasks.'
+        )}
+        titleHelpTitle={t('Remotes')}
+        titleHelp={t(
+          'Remotes manage configurations for remote execution environments utilized in Ansible automation tasks.'
+        )}
+      />
       <PageTable<HubRemote>
         id="hub-remotes-table"
         defaultSubtitle={t('Remote')}

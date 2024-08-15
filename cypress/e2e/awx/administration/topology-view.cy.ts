@@ -23,10 +23,9 @@ describe('Topology view', () => {
 
   beforeEach(() => {
     cy.intercept({ method: 'GET', url: awxAPI`/mesh_visualizer/` }).as('getMeshVisualizer');
-    cy.intercept(
-      { method: 'GET', url: awxAPI`/instances/*/instance_groups/` },
-      { fixture: 'instance_groups.json' }
-    ).as('getInstanceGroups');
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/*/instance_groups/` }).as(
+      'getInstanceGroups'
+    );
   });
 
   after(() => {
@@ -45,7 +44,7 @@ describe('Topology view', () => {
     cy.verifyPageTitle('Topology View');
   });
 
-  it.skip('navigate to instance group detail when instance group is clicked from sidebar', () => {
+  it('navigate to instance group detail when instance group is clicked from sidebar', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.wait('@getMeshVisualizer')
       .its('response.body')
@@ -110,7 +109,8 @@ describe('Topology view', () => {
   });
 
   tag(['upstream'], () => {
-    it('does not show Topology View in sidebar for non admins', function () {
+    // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
+    it.skip('does not show Topology View in sidebar for non admins', function () {
       cy.createAwxUser({ organization: organization.id }).then((awxUser) => {
         user = awxUser;
         cy.awxLoginTestUser(user.username, 'pw');

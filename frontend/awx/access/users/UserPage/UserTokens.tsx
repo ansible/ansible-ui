@@ -85,7 +85,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; create
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected tokens'),
+        label: t('Delete tokens'),
         isDanger: true,
         onClick: deleteTokens,
       },
@@ -101,6 +101,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; create
         icon: TrashIcon,
         label: t('Delete token'),
         isDanger: true,
+        isPinned: true,
         onClick: (token) => {
           deleteTokens([token]);
         },

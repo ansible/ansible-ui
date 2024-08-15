@@ -28,7 +28,7 @@ export function Namespaces() {
         description={t(
           'Namespaces group related content together, making it easier for users to find and differentiate collections of Ansible roles and other components.'
         )}
-        titleHelpTitle={t('Namespace')}
+        titleHelpTitle={t('Namespaces')}
         titleHelp={[
           t(
             'Namespaces group related content together, making it easier for users to find and differentiate collections of Ansible roles and other components.'

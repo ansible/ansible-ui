@@ -166,7 +166,10 @@ export function CollectionPage() {
         }
         description={t('Repository: ') + collection?.repository?.name}
         footer={
-          <div style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}>
+          <div
+            data-cy="browse-collection-version"
+            style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}
+          >
             {t('Version')}
             <PageAsyncSingleSelect<string>
               queryOptions={queryOptions}
@@ -221,17 +224,46 @@ export function CollectionPage() {
           persistentFilterKey: 'name', // TODO add correct filters
         }}
         tabs={[
-          { label: t('Details'), page: HubRoute.CollectionDetails },
-          { label: t('Install'), page: HubRoute.CollectionInstall },
-          { label: t('Documentation'), page: HubRoute.CollectionDocumentation },
-          { label: t('Contents'), page: HubRoute.CollectionContents },
-          { label: t('Import Log'), page: HubRoute.CollectionImportLog },
-          { label: t('Dependencies'), page: HubRoute.CollectionDependencies },
-          { label: t('Distributions'), page: HubRoute.CollectionDistributions },
+          {
+            label: t('Details'),
+            dataCy: 'collection-detail-tab',
+            page: HubRoute.CollectionDetails,
+          },
+          {
+            label: t('Install'),
+            dataCy: 'collection-install-tab',
+            page: HubRoute.CollectionInstall,
+          },
+          {
+            label: t('Documentation'),
+            dataCy: 'collection-documentation-tab',
+            page: HubRoute.CollectionDocumentation,
+          },
+          {
+            label: t('Contents'),
+            dataCy: 'collection-contents-tab',
+            page: HubRoute.CollectionContents,
+          },
+          {
+            label: t('Import Log'),
+            dataCy: 'collection-import-log-tab',
+            page: HubRoute.CollectionImportLog,
+          },
+          {
+            label: t('Dependencies'),
+            dataCy: 'collection-dependencies-tab',
+            page: HubRoute.CollectionDependencies,
+          },
+          {
+            label: t('Distributions'),
+            page: HubRoute.CollectionDistributions,
+            dataCy: 'collection-distribution-tab',
+          },
         ]}
         params={{
           name: collection?.collection_version?.name || '',
           namespace: collection?.collection_version?.namespace || '',
+          content_name: '',
           version: collection?.collection_version?.version || '',
           repository: collection?.repository?.name || '',
         }}

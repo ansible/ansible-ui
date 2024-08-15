@@ -1,10 +1,10 @@
 {
   "count": 18,
-  "next": "http://localhost:8002/api/automation-hub/pulp/api/v3/roles/?limit=10&name__startswith=galaxy.&offset=10&ordering=name",
+  "next": "http://localhost:8002/api/galaxy/pulp/api/v3/roles/?limit=10&name__startswith=galaxy.&offset=10&ordering=name",
   "previous": null,
   "results": [
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/aba4a87c-1447-47cb-9bd3-bf9f609f18fa/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/aba4a87c-1447-47cb-9bd3-bf9f609f18fa/",
       "pulp_created": "2023-10-11T16:00:44.179570Z",
       "name": "galaxy.ansible_repository_owner",
       "description": null,
@@ -21,7 +21,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/9915ca45-f055-4a96-aa70-0dfaf3f5930c/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/9915ca45-f055-4a96-aa70-0dfaf3f5930c/",
       "pulp_created": "2023-10-11T16:00:44.090955Z",
       "name": "galaxy.collection_admin",
       "description": null,
@@ -48,7 +48,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/bdb8c2f0-b793-4a2e-886b-e670c84729d0/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/bdb8c2f0-b793-4a2e-886b-e670c84729d0/",
       "pulp_created": "2023-10-11T16:00:44.134557Z",
       "name": "galaxy.collection_curator",
       "description": null,
@@ -70,7 +70,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/f185c939-6175-48cc-8902-c9c3b784bf0f/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/f185c939-6175-48cc-8902-c9c3b784bf0f/",
       "pulp_created": "2023-10-11T16:00:44.195992Z",
       "name": "galaxy.collection_namespace_owner",
       "description": null,
@@ -78,7 +78,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/f07946be-b33d-4464-85ea-9513bf8eae73/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/f07946be-b33d-4464-85ea-9513bf8eae73/",
       "pulp_created": "2023-10-11T16:00:44.105462Z",
       "name": "galaxy.collection_publisher",
       "description": null,
@@ -90,7 +90,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/65687b29-84fd-4954-93bc-c8f7a05a2551/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/65687b29-84fd-4954-93bc-c8f7a05a2551/",
       "pulp_created": "2023-10-11T16:00:44.155819Z",
       "name": "galaxy.collection_remote_owner",
       "description": null,
@@ -104,7 +104,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/19398b5e-d23e-484d-948c-483b16503844/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/19398b5e-d23e-484d-948c-483b16503844/",
       "pulp_created": "2023-10-11T16:00:44.053831Z",
       "name": "galaxy.content_admin",
       "description": null,
@@ -142,7 +142,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/75ed025c-1c13-469b-83bd-9b718063645f/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/75ed025c-1c13-469b-83bd-9b718063645f/",
       "pulp_created": "2023-11-28T19:36:03.557948Z",
       "name": "galaxy.demorole",
       "description": "Demo Role",
@@ -154,7 +154,7 @@
       "locked": false
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/6d45575d-c319-42bc-821b-a8a57fda9e79/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/6d45575d-c319-42bc-821b-a8a57fda9e79/",
       "pulp_created": "2023-10-11T16:00:44.228674Z",
       "name": "galaxy.execution_environment_admin",
       "description": null,
@@ -174,7 +174,7 @@
       "locked": true
     },
     {
-      "pulp_href": "/api/automation-hub/pulp/api/v3/roles/411a4573-3685-4989-93c3-0cf77d78da63/",
+      "pulp_href": "/api/galaxy/pulp/api/v3/roles/411a4573-3685-4989-93c3-0cf77d78da63/",
       "pulp_created": "2023-10-11T16:00:44.301041Z",
       "name": "galaxy.execution_environment_collaborator",
       "description": null,

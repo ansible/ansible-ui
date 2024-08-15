@@ -10,9 +10,9 @@ import React, { ReactNode, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { usePageSettings } from '..';
+import { objectToString, valueToObject } from '../PageForm/Inputs/PageFormDataEditor';
 import { DataEditorLanguages } from '../components/DataEditor';
 import { useClipboard } from '../hooks/useClipboard';
-import { objectToString, valueToObject } from '../PageForm/Inputs/PageFormDataEditor';
 import { PageDetail } from './PageDetail';
 
 export function PageDetailCodeEditor(props: {
@@ -23,6 +23,7 @@ export function PageDetailCodeEditor(props: {
   showCopyToClipboard?: boolean;
   isEmpty?: boolean;
   fullWidth?: boolean;
+  isArray?: boolean;
 }) {
   const {
     value,
@@ -31,6 +32,7 @@ export function PageDetailCodeEditor(props: {
     fullWidth = true,
     showCopyToClipboard = true,
     toggleLanguage = true,
+    isArray = false,
   } = props;
 
   const { id } = useParams();
@@ -49,10 +51,10 @@ export function PageDetailCodeEditor(props: {
 
   useLayoutEffect(() => {
     if (toggleLanguage) {
-      const translatedVal = objectToString(valueToObject(value), language);
+      const translatedVal = objectToString(valueToObject(value, isArray), language);
       setCodeEditorValue(translatedVal);
     }
-  }, [language, toggleLanguage, value]);
+  }, [language, toggleLanguage, value, isArray]);
 
   const actions =
     showCopyToClipboard || toggleLanguage ? (

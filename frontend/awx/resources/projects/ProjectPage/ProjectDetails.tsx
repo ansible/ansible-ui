@@ -30,7 +30,7 @@ import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironment
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -67,7 +67,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
   const brand: string = process.env.BRAND ?? 'AWX';
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const signatureValidationHelpText = t`Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.`;
-  const playbookDirectoryHelpText = t`Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks`;
+  const playbookDirectoryHelpText = t`Select from the list of directories found in the project base path. Together the base path and the playbook directory provide the full path used to locate playbooks.`;
   const cacheTimeoutHelpText = t`Time in seconds to consider a project
   to be current. During job runs and callbacks the task
   system will evaluate the timestamp of the latest project
@@ -108,9 +108,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href={`${getDocsBaseUrl(
-          config
-        )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
+        href={useGetDocsUrl(config, 'managePlaybooksSC')}
       >
         {t`Documentation.`}
       </a>

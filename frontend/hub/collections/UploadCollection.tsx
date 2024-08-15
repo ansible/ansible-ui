@@ -44,6 +44,9 @@ export interface Repository {
 
 export interface Distribution {
   base_path: string;
+  name: string;
+  pulp_created: string;
+  client_url: string;
 }
 
 export function UploadCollection() {
@@ -124,7 +127,7 @@ export function UploadCollectionByFile() {
           onChange={(_event, val) => {
             setOnlyStaging(val);
           }}
-          label={t`Staging Repos`}
+          label={t`Staging repos`}
           id="radio-staging"
         ></Radio>
         <Radio
@@ -206,7 +209,7 @@ export function UploadCollectionByFile() {
         throw new Error('');
       }
 
-      lastError = t(`Error occured during collection upload.`);
+      lastError = t(`Error occurred during collection upload.`);
 
       await hubPostRequestFile(
         hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,

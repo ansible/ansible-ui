@@ -141,7 +141,7 @@ jobs:
       - component
       - awx-e2e
       - eda-e2e
-      # - hub-e2e
+      - hub-e2e
     steps:
       - if: ${{ success() }}
         run: |
