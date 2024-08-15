@@ -157,7 +157,7 @@ describe('Collections List', () => {
 
   it('can deprecate a collection', () => {
     cy.getByDataCy('table-view').click();
-    actionClick(collectionName, 'deprecate-collection');
+    actionClick(collectionName, 'deprecate');
     cy.getModal().within(() => {
       cy.get('#confirm').click();
       cy.clickButton('Deprecate collections');
