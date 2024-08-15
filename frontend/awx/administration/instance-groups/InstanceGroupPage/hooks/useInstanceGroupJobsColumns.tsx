@@ -81,7 +81,7 @@ export function useInstanceGroupJobsColumns(options?: {
 
   const startTimeColumn = useMemo<ITableColumn<UnifiedJob>>(
     () => ({
-      header: t('Start Time'),
+      header: t('Started'),
       cell: (job: UnifiedJob) => {
         return <DateTimeCell value={job.started} />;
       },
@@ -92,7 +92,7 @@ export function useInstanceGroupJobsColumns(options?: {
 
   const finishTimeColumn = useMemo<ITableColumn<UnifiedJob>>(
     () => ({
-      header: t('Finish Time'),
+      header: t('Finished'),
       cell: (job: UnifiedJob) => {
         return <DateTimeCell value={job.finished} />;
       },
