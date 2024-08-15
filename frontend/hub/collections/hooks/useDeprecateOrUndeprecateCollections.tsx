@@ -9,7 +9,7 @@ import { PulpItemsResponse } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 
-export function useDeprecateCollections(
+export function useDeprecateOrUndeprecateCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
@@ -17,13 +17,23 @@ export function useDeprecateCollections(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
   return useCallback(
-    (collections: CollectionVersionSearch[]) => {
+    (collections: CollectionVersionSearch[], type: 'deprecate' | 'undeprecate') => {
       bulkAction({
-        title: t('Permanently deprecate collections', { count: collections.length }),
-        confirmText: t('Yes, I confirm that I want to deprecate these {{count}} collections.', {
-          count: collections.length,
-        }),
-        actionButtonText: t('Deprecate collections', { count: collections.length }),
+        title:
+          type === 'deprecate'
+            ? t('Permanently deprecate collections')
+            : t('Premanently undeprecate collections'),
+
+        confirmText:
+          type === 'deprecate'
+            ? t('Yes, I confirm that I want to deprecate these {{count}} collections.', {
+                count: collections.length,
+              })
+            : t('Yes, I confirm that I want to undeprecate these {{count}} collections.', {
+                count: collections.length,
+              }),
+        actionButtonText:
+          type === 'deprecate' ? t('Deprecate collections') : t('Undeprecate collections'),
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version?.name || '' + l.repository?.name + l.collection_version?.namespace,
@@ -35,14 +45,18 @@ export function useDeprecateCollections(
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (collection: CollectionVersionSearch) => deprecateCollection(collection),
+        actionFn: (collection: CollectionVersionSearch) =>
+          deprecateOrUndeprecateCollection(collection, type),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
 }
 
-async function deprecateCollection(collection: CollectionVersionSearch) {
+async function deprecateOrUndeprecateCollection(
+  collection: CollectionVersionSearch,
+  type: 'deprecate' | 'undeprecate'
+) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
     pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository?.pulp_href}`
   );
@@ -50,7 +64,7 @@ async function deprecateCollection(collection: CollectionVersionSearch) {
     hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
       collection.collection_version?.namespace || ''
     }/${collection.collection_version?.name || ''}/`,
-    { deprecated: true }
+    { deprecated: type === 'deprecate' ? true : false }
   );
 }
 

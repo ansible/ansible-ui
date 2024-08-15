@@ -11,7 +11,7 @@ import {
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
-import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useCanSignNamespace } from '../../common/utils/canSign';
 
@@ -19,7 +19,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
-  const deprecateCollections = useDeprecateCollections(callback);
+  const deprecateOrUndeprecateCollections = useDeprecateOrUndeprecateCollections(callback);
   const signCollection = useSignCollection(false, callback);
 
   const canSign = useCanSignNamespace();
@@ -41,7 +41,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         icon: BanIcon,
         label: t('Deprecate collections'),
         onClick: (collections) => {
-          deprecateCollections(collections);
+          deprecateOrUndeprecateCollections(collections, 'deprecate');
         },
       },
       {
@@ -79,6 +79,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         isDanger: true,
       },
     ],
-    [t, pageNavigate, deprecateCollections, signCollection, canSign, deleteCollections]
+    [t, pageNavigate, deprecateOrUndeprecateCollections, signCollection, canSign, deleteCollections]
   );
 }

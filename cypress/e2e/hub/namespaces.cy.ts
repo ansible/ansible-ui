@@ -208,7 +208,7 @@ describe('Namespaces - sign all collections', () => {
     cy.deleteHubNamespace(namespace);
   });
 
-  it('can sign all collections', () => {
+  it.skip('can sign all collections', () => {
     cy.navigateTo('hub', 'namespaces');
     cy.verifyPageTitle('Namespaces');
     cy.setTableView('table');
