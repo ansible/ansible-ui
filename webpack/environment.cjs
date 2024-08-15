@@ -24,10 +24,10 @@ const HUB_SERVER =
   process.env.HUB_SERVER || process.env.CYPRESS_HUB_SERVER || `${HUB_PROTOCOL}://${HUB_HOST}`;
 const HUB_USERNAME = process.env.HUB_USERNAME || process.env.CYPRESS_HUB_USERNAME || 'admin';
 const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWORD || 'password';
-const HUB_API_PREFIX =
-  process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/galaxy';
+const HUB_API_PREFIX = process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/galaxy';
 
 const ROUTE_PREFIX = process.env.ROUTE_PREFIX || '/';
+const PRODUCT = process.env.PRODUCT || '';
 
 module.exports = {
   AWX_API_PREFIX,
@@ -46,4 +46,5 @@ module.exports = {
   HUB_SERVER,
   HUB_USERNAME,
   ROUTE_PREFIX,
+  PRODUCT,
 };
