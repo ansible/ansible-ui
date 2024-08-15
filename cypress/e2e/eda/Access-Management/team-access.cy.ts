@@ -9,6 +9,7 @@ import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 type ResourceObject = EdaProject | EdaDecisionEnvironment | EdaRulebookActivation | EdaCredential;
 
@@ -51,11 +52,57 @@ cyLabel(['upstream'], () => {
           edaTeam = team;
         });
       });
+user_team_access_tab_resources.forEach((resource) => {
+  describe(`Team Access Tab for ${resource.name} - Add team`, () => {
+    let edaTeam: EdaTeam;
+    let resource_object: ResourceObject;
+    let edaProject: EdaProject;
+    let edaRuleBook: EdaRulebook;
+    let edaOrg: EdaOrganization;
 
-      after(() => {
-        resource.deletion(resource_object);
-        cy.deleteEdaTeam(edaTeam);
+    before(() => {
+      // If the resource is a RBA, create all dependency resources, else just the one resource
+      if (resource.name === 'rulebook-activations') {
+        cy.createEdaOrganization().then((organization) => {
+          edaOrg = organization;
+          cy.createEdaProject(organization?.id).then((project) => {
+            edaProject = project;
+            cy.waitEdaProjectSync(project);
+            cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+              edaRuleBook = edaRuleBooks[0];
+              cy.createEdaDecisionEnvironment(organization?.id).then((decisionEnvironment) => {
+                cy.createEdaRulebookActivation({
+                  rulebook_id: edaRuleBook.id,
+                  decision_environment_id: decisionEnvironment.id,
+                  k8s_service_name: 'sample',
+                  log_level: LogLevelEnum.Error,
+                }).then((edaRulebookActivation) => {
+                  resource_object = edaRulebookActivation;
+                });
+              });
+            });
+          });
+        });
+      } else if (resource.creation !== null) {
+        resource.creation(edaOrg?.id).then((resource_instance: ResourceObject) => {
+          resource_object = resource_instance;
+          if (resource.name === 'projects') {
+            cy.waitEdaProjectSync(resource_instance as EdaProject);
+          }
+        });
+      }
+      cy.createEdaTeam().then((team) => {
+        edaTeam = team;
       });
+    });
+
+    after(() => {
+      resource.deletion(resource_object);
+      cy.deleteEdaTeam(edaTeam);
+      if (edaOrg) {
+        cy.deleteEdaOrganization(edaOrg);
+      }
+    });
 
       it('can add teams via team access tab', () => {
         cy.navigateTo('eda', resource.name);
@@ -91,28 +138,33 @@ cyLabel(['upstream'], () => {
       });
     });
 
-    describe(`Team Access Tab for ${resource.name} - actions`, () => {
-      let roleIDs: { [key: string]: number };
-      let RoleID: number;
-      let resource_object:
-        | EdaProject
-        | EdaDecisionEnvironment
-        | EdaRulebookActivation
-        | EdaCredential;
-      let edaTeam1: EdaTeam;
-      let edaTeam2: EdaTeam;
-      let edaTeam3: EdaTeam;
-      before(() => {
-        // If the resource is a RBA, create all dependency resources, else just the one resource
-        if (resource.name === 'rulebook-activations') {
-          let edaProject: EdaProject;
-          let edaRuleBook: EdaRulebook;
-          cy.createEdaProject().then((project) => {
+  describe(`Team Access Tab for ${resource.name} - actions`, () => {
+    let roleIDs: { [key: string]: number };
+    let RoleID: number;
+    let resource_object:
+      | EdaProject
+      | EdaDecisionEnvironment
+      | EdaRulebookActivation
+      | EdaCredential;
+    let edaTeam1: EdaTeam;
+    let edaTeam2: EdaTeam;
+    let edaTeam3: EdaTeam;
+
+    let edaProject: EdaProject;
+    let edaRuleBook: EdaRulebook;
+    let edaOrganization: EdaOrganization;
+
+    before(() => {
+      // If the resource is a RBA, create all dependency resources, else just the one resource
+      if (resource.name === 'rulebook-activations') {
+        cy.createEdaOrganization().then((org) => {
+          edaOrganization = org;
+          cy.createEdaProject(edaOrganization?.id).then((project) => {
             edaProject = project;
             cy.waitEdaProjectSync(project);
             cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
               edaRuleBook = edaRuleBooks[0];
-              cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
+              cy.createEdaDecisionEnvironment(edaOrganization?.id).then((decisionEnvironment) => {
                 cy.createEdaRulebookActivation({
                   rulebook_id: edaRuleBook.id,
                   decision_environment_id: decisionEnvironment.id,
@@ -124,55 +176,59 @@ cyLabel(['upstream'], () => {
               });
             });
           });
-        } else if (resource.creation !== null) {
-          resource.creation().then((resource_instance) => {
-            resource_object = resource_instance;
-            if (resource.name === 'projects') {
-              cy.waitEdaProjectSync(resource_object as EdaProject);
-            }
-          });
-        }
-        cy.createEdaTeam().then((team1) => {
-          edaTeam1 = team1;
-          cy.createEdaTeam().then((team2) => {
-            edaTeam2 = team2;
-            cy.createEdaTeam().then((team3) => {
-              edaTeam3 = team3;
-              cy.getEdaRoles().then((rolesArray) => {
-                roleIDs = rolesArray.reduce((acc, role) => {
-                  const { name, id } = role;
-                  return { ...acc, [name]: id };
-                }, {});
-                RoleID = roleIDs[resource.role];
-                cy.createRoleTeamAssignments(
-                  resource_object.id.toString(),
-                  RoleID,
-                  team1.id,
-                  resource.content_type
-                );
-                cy.createRoleTeamAssignments(
-                  resource_object.id.toString(),
-                  RoleID,
-                  team2.id,
-                  resource.content_type
-                );
-                cy.createRoleTeamAssignments(
-                  resource_object.id.toString(),
-                  RoleID,
-                  team3.id,
-                  resource.content_type
-                );
-              });
+        });
+      } else if (resource.creation !== null) {
+        resource.creation(edaOrganization?.id).then((resource_instance) => {
+          resource_object = resource_instance;
+          if (resource.name === 'projects') {
+            cy.waitEdaProjectSync(resource_object as EdaProject);
+          }
+        });
+      }
+      cy.createEdaTeam().then((team1) => {
+        edaTeam1 = team1;
+        cy.createEdaTeam().then((team2) => {
+          edaTeam2 = team2;
+          cy.createEdaTeam().then((team3) => {
+            edaTeam3 = team3;
+            cy.getEdaRoles().then((rolesArray) => {
+              roleIDs = rolesArray.reduce((acc, role) => {
+                const { name, id } = role;
+                return { ...acc, [name]: id };
+              }, {});
+              RoleID = roleIDs[resource.role];
+              cy.createRoleTeamAssignments(
+                resource_object.id.toString(),
+                RoleID,
+                team1.id,
+                resource.content_type
+              );
+              cy.createRoleTeamAssignments(
+                resource_object.id.toString(),
+                RoleID,
+                team2.id,
+                resource.content_type
+              );
+              cy.createRoleTeamAssignments(
+                resource_object.id.toString(),
+                RoleID,
+                team3.id,
+                resource.content_type
+              );
             });
           });
         });
       });
-      after(() => {
-        resource.deletion(resource_object);
-        cy.deleteEdaTeam(edaTeam1);
-        cy.deleteEdaTeam(edaTeam2);
-        cy.deleteEdaTeam(edaTeam3);
-      });
+    });
+    after(() => {
+      resource.deletion(resource_object);
+      cy.deleteEdaTeam(edaTeam1);
+      cy.deleteEdaTeam(edaTeam2);
+      cy.deleteEdaTeam(edaTeam3);
+      if (edaOrganization) {
+        cy.deleteEdaOrganization(edaOrganization);
+      }
+    });
 
       it('can remove team from row', () => {
         cy.navigateTo('eda', resource.name);

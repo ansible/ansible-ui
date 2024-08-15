@@ -9,28 +9,32 @@ import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 cyLabel(['upstream'], () => {
-  user_team_access_tab_resources.forEach((resource) => {
-    // fails due to filtering bug https://issues.redhat.com/browse/AAP-24181
-    describe(`Assign Role to a Team `, () => {
-      let team: EdaTeam;
-      let resource_object:
-        | EdaProject
-        | EdaDecisionEnvironment
-        | EdaRulebookActivation
-        | EdaCredential;
-      before(() => {
-        // If the resource is a RBA, create all dependency resources, else just the one resource
-        if (resource.name === 'rulebook-activations') {
-          let edaProject: EdaProject;
-          let edaRuleBook: EdaRulebook;
-          cy.createEdaProject().then((project) => {
+user_team_access_tab_resources.forEach((resource) => {
+  // fails due to filtering bug https://issues.redhat.com/browse/AAP-24181
+  describe(`Assign Role to a Team `, () => {
+    let team: EdaTeam;
+    let resource_object:
+      | EdaProject
+      | EdaDecisionEnvironment
+      | EdaRulebookActivation
+      | EdaCredential;
+    let edaProject: EdaProject;
+    let edaRuleBook: EdaRulebook;
+    let edaOrg: EdaOrganization;
+
+    before(() => {
+      // If the resource is a RBA, create all dependency resources, else just the one resource
+      if (resource.name === 'rulebook-activations') {
+        cy.createEdaOrganization().then((organization) => {
+          edaOrg = organization;
+          cy.createEdaProject(edaOrg?.id).then((project) => {
             edaProject = project;
             cy.waitEdaProjectSync(project);
             cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
               edaRuleBook = edaRuleBooks[0];
-              cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
+              cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
                 cy.createEdaRulebookActivation({
                   rulebook_id: edaRuleBook.id,
                   decision_environment_id: decisionEnvironment.id,
@@ -42,52 +46,56 @@ cyLabel(['upstream'], () => {
               });
             });
           });
-        } else if (resource.creation !== null) {
-          resource.creation().then((resource_instance) => {
-            resource_object = resource_instance;
-            if (resource.name === 'projects') {
-              cy.waitEdaProjectSync(resource_instance as EdaProject);
-            }
-          });
-        }
-        cy.createEdaTeam().then((EdaTeam) => {
-          team = EdaTeam;
         });
+      } else if (resource.creation !== null) {
+        resource.creation(edaOrg?.id).then((resource_instance) => {
+          resource_object = resource_instance;
+          if (resource.name === 'projects') {
+            cy.waitEdaProjectSync(resource_instance as EdaProject);
+          }
+        });
+      }
+      cy.createEdaTeam().then((EdaTeam) => {
+        team = EdaTeam;
       });
+    });
 
-      after(() => {
-        resource.deletion(resource_object);
-        cy.deleteEdaTeam(team);
+    after(() => {
+      resource.deletion(resource_object);
+      cy.deleteEdaTeam(team);
+      if (edaOrg) {
+        cy.deleteEdaOrganization(edaOrg);
+      }
+    });
+
+    it(`for ${resource.name} role type`, () => {
+      cy.navigateTo('eda', 'teams');
+      cy.clickTableRow(team.name, true);
+      cy.verifyPageTitle(team.name);
+      cy.clickTab('Roles', true);
+      cy.getByDataCy('add-roles').click();
+      cy.getWizard().within(() => {
+        cy.selectDropdownOptionByResourceName('resourcetype', resource.roles_tab_name);
+        cy.clickButton(/^Next$/);
+        // temporary solution due to a bug in filtering
+        cy.get('[aria-label="Go to last page"]').click({ force: true });
+        cy.selectTableRow(resource_object.name, false);
+        cy.clickButton(/^Next$/);
+        cy.selectTableRow(resource.role, false);
+        cy.clickButton(/^Next$/);
+        cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
+        cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
+        cy.clickButton(/^Finish$/);
       });
-
-      it.skip(`for ${resource.name} role type`, () => {
-        cy.navigateTo('eda', 'teams');
-        cy.clickTableRow(team.name, true);
+      cy.assertModalSuccess();
+      cy.clickButton(/^Close$/);
+      cy.wait('@assignment').then((assignment) => {
+        expect(assignment?.response?.statusCode).to.eql(201);
         cy.verifyPageTitle(team.name);
-        cy.clickTab('Roles', true);
-        cy.getByDataCy('add-roles').click();
-        cy.getWizard().within(() => {
-          cy.selectDropdownOptionByResourceName('resourcetype', resource.roles_tab_name);
-          cy.clickButton(/^Next$/);
-          // temporary solution due to a bug in filtering
-          cy.get('[aria-label="Go to last page"]').click({ force: true });
-          cy.selectTableRow(resource_object.name, false);
-          cy.clickButton(/^Next$/);
-          cy.selectTableRow(resource.role, false);
-          cy.clickButton(/^Next$/);
-          cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
-          cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
-          cy.clickButton(/^Finish$/);
-        });
-        cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
-        cy.wait('@assignment').then((assignment) => {
-          expect(assignment?.response?.statusCode).to.eql(201);
-          cy.verifyPageTitle(team.name);
-        });
       });
     });
   });
+});
 
   describe(`Roles Tab for Teams - actions`, () => {
     let roleIDs: { [key: string]: number };

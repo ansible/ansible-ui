@@ -84,6 +84,7 @@ import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 
 declare global {
   namespace Cypress {
@@ -1252,7 +1253,14 @@ declare global {
        *
        * @returns {Chainable<EdaProject>}
        */
-      createEdaProject(): Chainable<EdaProject>;
+      createEdaProject(edaOrgID: number): Chainable<EdaProject>;
+
+      createEdaOrganization(): Chainable<EdaOrganization>;
+
+      /**Identify a particular EDA organization and make it available for use in testing. */
+      getEdaOrganizationByName(edaOrganizationName: string): Chainable<EdaOrganization>;
+
+      deleteEdaOrganization(edaOrganization: EdaOrganization): Chainable<void>;
 
       /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
       getEdaRulebooks(edaProject: EdaProject, rulebookName?: string): Chainable<EdaRulebook[]>;
@@ -1484,7 +1492,7 @@ declare global {
       /**
        * Creates a DE and returns the same.
        */
-      createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
+      createEdaDecisionEnvironment(edaOrgID: number): Chainable<EdaDecisionEnvironment>;
 
       /**
        * Retrieves a DE by name.
