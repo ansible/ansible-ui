@@ -86,9 +86,24 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: BanIcon,
-        label: t('Deprecate / Undeprecate collection'),
+        label: t('Deprecate'),
         onClick: (collection) => {
-          deprecateOrUndeprecateCollections([collection]);
+          deprecateOrUndeprecateCollections([collection], 'deprecate');
+        },
+        isHidden: (collection) => {
+          return collection?.is_deprecated ? true : false;
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BanIcon,
+        label: t('Undeprecate'),
+        onClick: (collection) => {
+          deprecateOrUndeprecateCollections([collection], 'undeprecate');
+        },
+        isHidden: (collection) => {
+          return collection?.is_deprecated ? false : true;
         },
       },
       {

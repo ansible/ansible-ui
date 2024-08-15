@@ -3,18 +3,7 @@
 import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
-import { Collections, Namespaces } from './constants';
-
-function deprecateOrUndeprecateCollection(collectionName: string) {
-  cy.getByDataCy('table-view').click();
-  actionClick(collectionName, 'deprecate-/-undeprecate-collection');
-  cy.getModal().within(() => {
-    cy.get('#confirm').click();
-    cy.clickButton('Deprecate / Undeprecate collections');
-    cy.clickButton('Close');
-  });
-  cy.getModal().should('not.exist');
-}
+import { Collections } from './constants';
 
 describe.skip('Collections List', () => {
   let namespace: HubNamespace;
@@ -222,41 +211,6 @@ describe.skip('Collections List', () => {
     });
     //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
     //these lines fail if there are no Collections present
-  });
-
-  it('can deprecate and undeprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name);
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      repository.name
-    );
-    cy.waitForAllTasks();
-
-    deprecateOrUndeprecateCollection(collectionName);
-    cy.contains('h2', 'No results found').should('be.visible');
-
-    // navigate to namespace - collections
-    cy.navigateTo('hub', Namespaces.url);
-    cy.filterTableBySingleText(namespace.name);
-    cy.contains('a', namespace.name).click();
-    cy.getByDataCy('collections-tab').click();
-
-    cy.contains(`[aria-label="Simple table"]`, collectionName);
-    cy.contains('span', 'Deprecated');
-    deprecateOrUndeprecateCollection(collectionName);
-    cy.contains('span', 'Deprecated').should('not.exist');
-    cy.contains(`[aria-label="Simple table"]`, collectionName);
-
-    cy.navigateTo('hub', Collections.url);
-    cy.getByDataCy('table-view').click();
-    cy.filterTableBySingleText(collectionName);
-    cy.contains(`[aria-label="Simple table"]`, collectionName);
-
-    cy.deleteHubCollectionByName(collectionName);
   });
 
   it('can copy a version to repository', () => {

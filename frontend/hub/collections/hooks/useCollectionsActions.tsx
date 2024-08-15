@@ -41,7 +41,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         icon: BanIcon,
         label: t('Deprecate collections'),
         onClick: (collections) => {
-          deprecateOrUndeprecateCollections(collections);
+          deprecateOrUndeprecateCollections(collections, 'deprecate');
         },
       },
       {

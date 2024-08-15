@@ -17,16 +17,23 @@ export function useDeprecateOrUndeprecateCollections(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
   return useCallback(
-    (collections: CollectionVersionSearch[]) => {
+    (collections: CollectionVersionSearch[], type: 'deprecate' | 'undeprecate') => {
       bulkAction({
-        title: t('Permanently deprecate / undeprecate collections', { count: collections.length }),
-        confirmText: t(
-          'Yes, I confirm that I want to deprecate / undeprecate these {{count}} collections.',
-          {
-            count: collections.length,
-          }
-        ),
-        actionButtonText: t('Deprecate / Undeprecate collections', { count: collections.length }),
+        title:
+          type === 'deprecate'
+            ? t('Permanently deprecate collections')
+            : t('Premanently undeprecate collections'),
+
+        confirmText:
+          type === 'deprecate'
+            ? t('Yes, I confirm that I want to deprecate these {{count}} collections.', {
+                count: collections.length,
+              })
+            : t('Yes, I confirm that I want to undeprecate these {{count}} collections.', {
+                count: collections.length,
+              }),
+        actionButtonText:
+          type === 'deprecate' ? t('Deprecate collections') : t('Undeprecate collections'),
         items: collections.sort((l, r) =>
           compareStrings(
             l.collection_version?.name || '' + l.repository?.name + l.collection_version?.namespace,
@@ -39,14 +46,17 @@ export function useDeprecateOrUndeprecateCollections(
         actionColumns,
         onComplete,
         actionFn: (collection: CollectionVersionSearch) =>
-          deprecateOrUndeprecateCollection(collection),
+          deprecateOrUndeprecateCollection(collection, type),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
   );
 }
 
-async function deprecateOrUndeprecateCollection(collection: CollectionVersionSearch) {
+async function deprecateOrUndeprecateCollection(
+  collection: CollectionVersionSearch,
+  type: 'deprecate' | 'undeprecate'
+) {
   const distro: PulpItemsResponse<Distribution> = await requestGet(
     pulpAPI`/distributions/ansible/ansible/?repository=${collection.repository?.pulp_href}`
   );
@@ -54,7 +64,7 @@ async function deprecateOrUndeprecateCollection(collection: CollectionVersionSea
     hubAPI`/v3/plugin/ansible/content/${distro.results[0].base_path}/collections/index/${
       collection.collection_version?.namespace || ''
     }/${collection.collection_version?.name || ''}/`,
-    { deprecated: collection.is_deprecated ? false : true }
+    { deprecated: type === 'deprecate' ? true : false }
   );
 }
 

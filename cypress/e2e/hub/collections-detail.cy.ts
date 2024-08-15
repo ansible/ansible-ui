@@ -147,43 +147,6 @@ describe.skip('Collections Details', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it('can deprecate and undeprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      'published'
-    );
-    cy.waitForAllTasks();
-
-    visitCollection(collectionName, namespace.name);
-    cy.selectDetailsPageKebabAction('deprecate-/-undeprecate-collection');
-    cy.clickButton('Close');
-
-    cy.getHubCollection(collectionName).then((deprecated) => {
-      //Assert that the object returned shows that is_deprecated is equal to true
-      expect(deprecated.is_deprecated).to.eql(true);
-    });
-
-    cy.contains('span', 'Deprecated');
-
-    cy.selectDetailsPageKebabAction('deprecate-/-undeprecate-collection');
-    cy.clickButton('Close');
-    cy.navigateTo('hub', Collections.url);
-    cy.verifyPageTitle(Collections.title);
-    cy.getHubCollection(collectionName).then((deprecated) => {
-      //Assert that the object returned shows that is_deprecated is equal to false
-      expect(deprecated.is_deprecated).to.eql(false);
-    });
-    cy.contains('span', 'Deprecated').should('not.exist');
-
-    cy.deleteHubCollectionByName(collectionName);
-  });
-
   it('can copy a version to repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
