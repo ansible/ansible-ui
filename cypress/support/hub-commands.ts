@@ -221,10 +221,6 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-Cypress.Commands.add('createNamespace', (namespaceName: string) => {
-  cy.galaxykit('namespace create', namespaceName);
-});
-
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
