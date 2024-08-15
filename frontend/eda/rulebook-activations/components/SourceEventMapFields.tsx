@@ -1,4 +1,4 @@
-import { Button, FormFieldGroupExpandable, FormFieldGroupHeader } from '@patternfly/react-core';
+import { Button, FormFieldGroup, FormFieldGroupHeader } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -7,7 +7,93 @@ import { EdaSource, EdaSourceEventMapping } from '../../interfaces/EdaSource';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 import { EdaWebhook } from '../../interfaces/EdaWebhook';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+
+export function FormSingleSelectEventStream(props: {
+  name: string;
+  eventOptions: EdaWebhook[] | undefined;
+  selectedEvent: number;
+}) {
+  const { name, eventOptions, selectedEvent } = props;
+  const { t } = useTranslation();
+  const { getValues } = useFormContext();
+
+  const getEventOptions = () => {
+    let events = eventOptions;
+    const mappingsNow = getValues('mappings') as EdaSourceEventMapping[];
+    if (eventOptions && mappingsNow && mappingsNow.length > 1) {
+      events = eventOptions.filter((ev) => {
+        return !mappingsNow.find((item) => {
+          return parseInt(item.webhook_id, 10) === selectedEvent
+            ? false
+            : item?.webhook_name === ev.name;
+        });
+      });
+    }
+    return events
+      ? events.map((item: { name: string; id: number }) => ({
+          label: item.name,
+          value: item.id,
+        }))
+      : [];
+  };
+
+  return (
+    <PageFormSingleSelect
+      name={name}
+      label={t('Event stream')}
+      placeholder={t('Select event stream')}
+      isRequired
+      labelHelp={t('Event streams to swap with the selected source.')}
+      labelHelpTitle={t('Event stream')}
+      options={getEventOptions()}
+    />
+  );
+}
+
+export function FormSingleSelectSource(props: {
+  name: string;
+  sourceOptions: EdaSource[] | undefined;
+  selectedSource: string;
+}) {
+  const { name, sourceOptions, selectedSource } = props;
+  const { t } = useTranslation();
+  const { getValues } = useFormContext();
+
+  const getSourceOptions = useCallback(() => {
+    const mappingsNow = getValues('mappings') as EdaSourceEventMapping[];
+    let sources = sourceOptions;
+    if (sourceOptions && mappingsNow && mappingsNow.length > 1) {
+      sources = sourceOptions.filter((src) => {
+        return !mappingsNow.find((item) => {
+          return item.source_name === selectedSource ? false : item?.source_name === src.name;
+        });
+      });
+    }
+    return sources
+      ? sources.map((item: { name: string }) => ({
+          label: item.name,
+          value: item.name,
+        }))
+      : [];
+  }, [getValues, selectedSource, sourceOptions]);
+
+  return (
+    <PageFormSingleSelect
+      name={name}
+      label={t('Rulebook source')}
+      placeholder={t('Select rulebook source')}
+      isRequired
+      labelHelp={t(
+        'A rulebook can contain multiple sources across multiple rulesets. You can map the same rulebook in ' +
+          'multiple activations to multiple event streams. While managing event streams, unnamed sources are assigned ' +
+          'temporary names (__SOURCE {n}) for identification purposes.'
+      )}
+      labelHelpTitle={t('Rulebook source')}
+      options={getSourceOptions()}
+    />
+  );
+}
 
 export function SourceEventMapFields(props: {
   index: number;
@@ -19,9 +105,9 @@ export function SourceEventMapFields(props: {
 }) {
   const { t } = useTranslation();
   const { index, sourceOptions, eventOptions, onDelete } = props;
-  const { register, setValue, getValues } = useFormContext();
+  const { register, setValue } = useFormContext();
   const selectedSource = useWatch({ name: `mappings.${index}.source_name` }) as string;
-  const mappings: EdaSourceEventMapping[] = getValues('mappings') as EdaSourceEventMapping[];
+  //const mappings: EdaSourceEventMapping[] = getValues('mappings') as EdaSourceEventMapping[];
 
   const setSourceInfo = useCallback(() => {
     let srcIndex = -1;
@@ -56,52 +142,8 @@ export function SourceEventMapFields(props: {
     setEventInfo();
   }, [setEventInfo]);
 
-  const getSourceOptions = useCallback(() => {
-    let sources = sourceOptions;
-    if (sourceOptions && mappings && mappings.length > 1) {
-      sources = sourceOptions.filter((src) => {
-        return !mappings.find((item) => {
-          return item.source_name === selectedSource ? false : item?.source_name === src.name;
-        });
-      });
-    }
-    return sources
-      ? sources.map((item: { name: string }) => ({
-          label: item.name,
-          value: item.name,
-        }))
-      : [];
-  }, [mappings, selectedSource, sourceOptions]);
-
-  const getEventOptions = useCallback(() => {
-    let events = eventOptions;
-
-    if (eventOptions && mappings && mappings.length > 1) {
-      events = eventOptions.filter((ev) => {
-        return !mappings.find((item) => {
-          return parseInt(item.webhook_id, 10) === selectedEvent
-            ? false
-            : item?.webhook_name === ev.name;
-        });
-      });
-    }
-
-    return events
-      ? events.map((item: { name: string; id: number }) => ({
-          label: item.name,
-          value: item.id,
-        }))
-      : [];
-  }, [eventOptions, mappings, selectedEvent]);
-
-  useEffect(() => {
-    getEventOptions();
-    getSourceOptions();
-  }, [getEventOptions, getSourceOptions, selectedSource, selectedEvent]);
-
   return (
-    <FormFieldGroupExpandable
-      isExpanded
+    <FormFieldGroup
       header={
         <FormFieldGroupHeader
           titleText={{ text: t('Mapping ') + `${index + 1}`, id: `Mapping ${index}` }}
@@ -118,23 +160,16 @@ export function SourceEventMapFields(props: {
         />
       }
     >
-      <PageFormSingleSelect
+      <FormSingleSelectSource
         name={`mappings.${index}.source_name`}
-        label={t('Source')}
-        placeholder={t('Select source')}
-        isRequired
-        labelHelp={t('Sources in the rulebook.')}
-        labelHelpTitle={t('Sources')}
-        options={getSourceOptions()}
+        sourceOptions={sourceOptions}
+        selectedSource={selectedSource}
       />
-      <PageFormSingleSelect
+
+      <FormSingleSelectEventStream
         name={`mappings.${index}.webhook_id`}
-        label={t('Event stream')}
-        placeholder={t('Select event stream')}
-        isRequired
-        labelHelp={t('Event stream to swap with the source.')}
-        labelHelpTitle={t('Event streams')}
-        options={getEventOptions()}
+        eventOptions={eventOptions}
+        selectedEvent={selectedEvent}
       />
       <PageFormTextArea
         name={`${index}.source_info`}
@@ -142,6 +177,6 @@ export function SourceEventMapFields(props: {
         isReadOnly
       />
       <input type="hidden" {...register(`mappings.${index}.rulebook_hash`)} />
-    </FormFieldGroupExpandable>
+    </FormFieldGroup>
   );
 }
