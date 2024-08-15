@@ -72,7 +72,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         isDanger: true,
       },
     ],
-    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, context, pageNavigate]
+    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, pageNavigate]
   );
 }
 
