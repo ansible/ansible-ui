@@ -63,7 +63,6 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
         onClick: (ee: ExecutionEnvironment) => syncExecutionEnvironments([ee]),
       },
-      useInController,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -72,6 +71,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         isDisabled: () => (canSignEE ? undefined : t('You do not have rights to this operation')),
         onClick: (ee) => signExecutionEnvironments([ee]),
       },
+      useInController,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
