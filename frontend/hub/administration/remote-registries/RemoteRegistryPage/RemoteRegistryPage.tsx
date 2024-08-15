@@ -7,7 +7,6 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { useGet } from '../../../../common/crud/useGet';
@@ -22,9 +21,8 @@ export function RemoteRegistryPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
-  const pageNavigate = usePageNavigate();
   const pageActions = useRemoteRegistryActions({
-    onRemoteRegistryDeleted: () => pageNavigate(HubRoute.RemoteRegistries),
+    onRemoteRegistryDeleted: () => {},
   });
 
   const {
