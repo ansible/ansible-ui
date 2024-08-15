@@ -123,6 +123,7 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
     );
   }
 
+  cy.wait(1000);
   waitForAllTasks(100);
 });
 
