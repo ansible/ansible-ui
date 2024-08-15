@@ -27,12 +27,12 @@ describe('AWX Overview', () => {
     cy.navigateTo('awx', 'overview');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
-    cy.contains('tr', 'Resource Counts').find('input').uncheck();
+    cy.contains('tr', 'Resource counts').find('input').uncheck();
     cy.clickModalButton('Apply');
     cy.contains('.pf-v5-c-title', 'Hosts').should('not.exist');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
-    cy.contains('tr', 'Resource Counts').find('input').check();
+    cy.contains('tr', 'Resource counts').find('input').check();
     cy.clickModalButton('Apply');
     cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
@@ -41,7 +41,7 @@ describe('AWX Overview', () => {
     cy.navigateTo('awx', 'overview');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
-    cy.contains('tr', 'Resource Counts').find('input').uncheck();
+    cy.contains('tr', 'Resource counts').find('input').uncheck();
     cy.clickModalButton('Cancel');
     cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
@@ -50,7 +50,7 @@ describe('AWX Overview', () => {
     cy.navigateTo('awx', 'overview');
     cy.clickButton('Manage view');
     cy.get('.pf-v5-c-modal-box__title-text').should('contain', 'Manage view');
-    cy.contains('tr', 'Resource Counts').find('input').uncheck();
+    cy.contains('tr', 'Resource counts').find('input').uncheck();
     cy.get('[aria-label="Close"]').click();
     cy.contains('.pf-v5-c-title', 'Hosts').should('be.visible');
   });
