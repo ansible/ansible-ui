@@ -41,8 +41,8 @@ describe.skip('My imports', () => {
     cy.deleteCollectionsInNamespace(validCollection.namespace);
     cy.deleteCollectionsInNamespace(invalidCollection.namespace);
 
-    cy.deleteNamespace(validCollection.namespace);
-    cy.deleteNamespace(invalidCollection.namespace);
+    cy.deleteHubNamespace({ name: validCollection.namespace });
+    cy.deleteHubNamespace({ name: invalidCollection.namespace });
   });
 
   it('should render empty states', () => {

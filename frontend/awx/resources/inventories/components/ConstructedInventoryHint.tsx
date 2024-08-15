@@ -167,7 +167,7 @@ groups:
           {limitToIntersectionLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source vars`} fieldId="intersection-example-source-vars">
+      <FormGroup label={t`Source variabless`} fieldId="intersection-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
@@ -249,7 +249,7 @@ function FilterOnNestedGroupExample() {
           {nestedGroupsInventoryLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source vars`} fieldId="nested-groups-example-source-vars">
+      <FormGroup label={t`Source variables`} fieldId="nested-groups-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
@@ -320,7 +320,7 @@ groups:
           {hostsByProcessorLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source vars`} fieldId="processor-example-source-vars">
+      <FormGroup label={t`Source variables`} fieldId="processor-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
