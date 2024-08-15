@@ -4,7 +4,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-describe.skip('Collections List', () => {
+describe('Collections List', () => {
   let namespace: HubNamespace;
   let collectionName: string;
 
