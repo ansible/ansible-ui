@@ -25,7 +25,6 @@ import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
-  const context = useHubContext();
   const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
   const signExecutionEnvironments = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
@@ -71,12 +70,9 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         label: t('Delete execution environments'),
         onClick: deleteExecutionEnvironments,
         isDanger: true,
-        isDisabled: context.hasPermission('container.delete_containerrepository')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
-    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, context, pageNavigate]
+    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, pageNavigate]
   );
 }
 
@@ -85,6 +81,7 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
   const confirmationColumns = useExecutionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<ExecutionEnvironment>();
+  const pageNavigate = usePageNavigate();
   return useCallback(
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
@@ -102,17 +99,14 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (ee, signal) => deleteExecutionEnvironment(ee, signal),
+        actionFn: (ee, signal) =>
+          hubAPIDelete(
+            hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
+            signal
+          ).then(() => pageNavigate(HubRoute.ExecutionEnvironments)),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
-  );
-}
-
-async function deleteExecutionEnvironment(ee: ExecutionEnvironment, signal: AbortSignal) {
-  return await hubAPIDelete(
-    hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
-    signal
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, pageNavigate]
   );
 }
 
