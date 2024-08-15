@@ -16,6 +16,7 @@ import {
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useHubContext } from '../../common/useHubContext';
+import { BanIcon } from '@patternfly/react-icons';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -30,16 +31,23 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         header: t('Name'),
         value: (collection) => collection.collection_version?.name,
         cell: (collection) => (
-          <TextCell
-            text={collection.collection_version?.name}
-            to={getPageUrl(HubRoute.CollectionPage, {
-              params: {
-                name: collection.collection_version?.name,
-                namespace: collection.collection_version?.namespace,
-                repository: collection.repository?.name,
-              },
-            })}
-          />
+          <>
+            <TextCell
+              text={collection.collection_version?.name}
+              to={getPageUrl(HubRoute.CollectionPage, {
+                params: {
+                  name: collection.collection_version?.name,
+                  namespace: collection.collection_version?.namespace,
+                  repository: collection.repository?.name,
+                },
+              })}
+            />
+            {collection.is_deprecated && (
+              <Label icon={<BanIcon />} color="red" variant="outline">
+                {t('Deprecated')}
+              </Label>
+            )}
+          </>
         ),
         card: 'name',
         list: 'name',
