@@ -78,3 +78,6 @@ Cypress.Commands.add('getCurrentUser', () => {
     return user[0];
   });
 });
+
+Cypress.Commands.add('addEERolesToUsersInOrganization', (_organizationName: string) => {});
+Cypress.Commands.add('addEERolesToTeamsInOrganization', (_organizationName?: string) => {});

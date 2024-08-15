@@ -146,11 +146,11 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
 
           // convert them
           fieldValue = fields[field];
-          if (fieldValue.type === 'int' && typeof notification_configuration[field] === 'string') {
-            notification_configuration[field] = Number.parseInt(
-              notification_configuration[field],
-              10
-            );
+          if (fieldValue.type === 'int') {
+            const value = notification_configuration[field];
+            if (typeof value === 'string') {
+              notification_configuration[field] = Number.parseInt(value, 10);
+            }
           }
 
           if (fieldValue.type === 'bool' && notification_configuration[field] === '') {
@@ -255,14 +255,14 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
                 {{ job_friendly_name }}, {{ url }}, {{ status }}.<br />
                 <br />
                 You may apply a number of possible variables in the message. For more information,
-                refer to the
+                refer to the{' '}
                 <a href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications">
                   Ansible Controller Documentation.
                 </a>
               </Trans>
             }
             name={'customize_messages'}
-            label={t('Customize messages...')}
+            label={t('Customize messages')}
           />
         </PageFormSection>
 

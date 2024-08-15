@@ -65,7 +65,7 @@ function DecisionEnvironmentInputs() {
         placeholder={t('Enter description')}
         maxLength={150}
       />
-      <PageFormSelectOrganization<EdaDecisionEnvironment> name="organization_id" />
+      <PageFormSelectOrganization<EdaDecisionEnvironment> isRequired name="organization_id" />
       <PageFormTextInput<EdaDecisionEnvironment>
         name="image_url"
         label={t('Image')}

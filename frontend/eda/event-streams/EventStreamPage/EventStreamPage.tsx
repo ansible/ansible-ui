@@ -136,7 +136,7 @@ export function EventStreamPage() {
       <PageHeader
         title={eventStream?.name}
         breadcrumbs={[
-          { label: t('Event streams'), to: getPageUrl(EdaRoute.EventStreams) },
+          { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
           { label: eventStream?.name },
         ]}
         headerActions={

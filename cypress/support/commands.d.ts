@@ -80,6 +80,10 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
 
 declare global {
   namespace Cypress {
@@ -1210,6 +1214,9 @@ declare global {
         }
       ): Chainable<void>;
 
+      addEERolesToUsersInOrganization(organizationName: string): Chainable<void>;
+      addEERolesToTeamsInOrganization(organizationName: string): Chainable<void>;
+
       // ==============================================================================================================
       // EDA Commands
       // ==============================================================================================================
@@ -1503,7 +1510,24 @@ declare global {
       // ==============================================================================================================
 
       // HUB Request Commands
+      createHubTeam(): Cypress.Chainable<HubTeam>;
+      deleteHubTeam(
+        hubTeam: HubTeam,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+      createHubUser(hubUser?: HubUser): Cypress.Chainable<HubUser>;
+      deleteHubUser(
+        hubUser: HubUser,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
       hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
+
       hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;
       hubPutRequest<T>(
         options: HubPutRequestOptions
@@ -1518,6 +1542,7 @@ declare global {
         options: HubDeleteRequestOptions
       ): Cypress.Chainable<Response<T> | Response<Task>>;
       waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
+      waitForAllTasks(): Cypress.Chainable<void>;
 
       // HUB Execution Environment Commands
       queryHubExecutionEnvironments(
@@ -1625,7 +1650,7 @@ declare global {
         namespace: string,
         version: string
       ): Cypress.Chainable<void>;
-      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;
@@ -1636,6 +1661,23 @@ declare global {
         namespaceName: string,
         repository: string
       ): Cypress.Chainable<void>;
+      getHubRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<HubItemsResponse<HubRbacRole>>;
+      getHubRoleDetail(roleID: string): Chainable<HubRole>;
+      createHubRoleAPI({
+        roleName,
+        description,
+        content_type,
+        permissions,
+      }: {
+        roleName: string;
+        description: string;
+        content_type: ContentTypeEnum;
+        permissions: string[];
+      }): Cypress.Chainable<HubRbacRole>;
+      deleteHubRoleAPI(hubRoleDefinition: HubRbacRole): Chainable<void>;
 
       // ==============================================================================================================
       // END OF COMMANDS

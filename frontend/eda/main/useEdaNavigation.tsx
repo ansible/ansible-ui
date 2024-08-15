@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNotImplemented } from '../../../framework';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
@@ -80,7 +79,7 @@ import { RulebookActivationPage } from '../rulebook-activations/RulebookActivati
 import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
 import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationUserAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
-import { CreateWebhook, EditWebhook } from '../webhooks/EditWebhook';
+import { CreateWebhook, EditWebhook } from '../webhooks/WebhookForm';
 import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
 import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
 import { Webhooks } from '../webhooks/Webhooks';
@@ -246,11 +245,6 @@ export function useEdaNavigation() {
               path: '',
               element: <Navigate to="details" />,
             },
-            {
-              id: EdaRoute.ProjectUserAccess,
-              path: 'user-access',
-              element: <PageNotImplemented />,
-            },
           ],
         },
         {
@@ -328,9 +322,8 @@ export function useEdaNavigation() {
     },
     {
       id: EdaRoute.Webhooks,
-      label: t('Webhooks'),
+      label: t('Event Streams'),
       path: 'webhooks',
-      hidden: true,
       children: [
         {
           id: EdaRoute.CreateWebhook,

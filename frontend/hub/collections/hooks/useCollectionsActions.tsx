@@ -8,20 +8,21 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useDeleteCollections } from './useDeleteCollections';
-import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
+import { useCanSignNamespace } from '../../common/utils/canSign';
 
 export function useCollectionsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteCollections = useDeleteCollections(callback);
-  const deprecateCollections = useDeprecateCollections(callback);
-  const context = useHubContext();
+  const deprecateOrUndeprecateCollections = useDeprecateOrUndeprecateCollections(callback);
   const signCollection = useSignCollection(false, callback);
+
+  const canSign = useCanSignNamespace();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -40,7 +41,7 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         icon: BanIcon,
         label: t('Deprecate collections'),
         onClick: (collections) => {
-          deprecateCollections(collections);
+          deprecateOrUndeprecateCollections(collections, 'deprecate');
         },
       },
       {
@@ -51,6 +52,8 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         onClick: (collections) => {
           signCollection(collections);
         },
+        isDisabled: () =>
+          !canSign ? t('You do not have the rights for this operation') : undefined,
       },
       { type: PageActionType.Seperator },
       {
@@ -74,11 +77,8 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
           deleteCollections(newCollections);
         },
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
-    [t, deleteCollections, context, pageNavigate, deprecateCollections, signCollection]
+    [t, pageNavigate, deprecateOrUndeprecateCollections, signCollection, canSign, deleteCollections]
   );
 }

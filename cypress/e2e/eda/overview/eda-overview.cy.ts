@@ -64,9 +64,9 @@ describe('EDA Overview', () => {
                 'div.pf-v5-c-empty-state__body',
                 'Create a decision environment by clicking the button below.'
               );
-              cy.clickButton('Create Decision Environment');
+              cy.clickButton('Create decision environment');
             });
-          cy.verifyPageTitle('Create Decision Environment');
+          cy.verifyPageTitle('Create decision environment');
         } else if (results.length >= 1) {
           cy.get('#decision-environments')
             .scrollIntoView()

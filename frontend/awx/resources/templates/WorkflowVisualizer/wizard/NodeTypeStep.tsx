@@ -19,7 +19,7 @@ import { PageFormManagementJobsSelect } from '../../../../administration/managem
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
@@ -79,10 +79,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
     setValue('node_type', nodeType, { shouldTouch: true });
 
-    if (isDirty) {
-      setValue('resource', null);
-    }
-
     if (isTouched && !isDirty && isApprovalType) {
       reset(undefined, {
         keepDefaultValues: true,
@@ -91,6 +87,10 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       setStepData({ nodeTypeStep: currentFormValues });
     }
   }, [nodeType, getFieldState, setValue, reset, allSteps, setWizardData, setStepData, getValues]);
+
+  useEffect(() => {
+    setValue('resource', null);
+  }, [nodeType, setValue]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
@@ -404,11 +404,7 @@ function ConvergenceInput() {
       labelHelp={
         <>
           {t('Preconditions for running this node when there are multiple parents')}{' '}
-          <a
-            href={`${getDocsBaseUrl(config)}/html/userguide/workflow_templates.html#converge-node`}
-          >
-            {t('documentation.')}
-          </a>
+          <a href={useGetDocsUrl(config, 'workflowVisBuild')}>{t('documentation.')}</a>
         </>
       }
       options={[

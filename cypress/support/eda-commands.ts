@@ -372,7 +372,7 @@ Cypress.Commands.add(
     if (queryParams) {
       const { content_type__model, managed } = queryParams;
       if (content_type__model) {
-        roleDefinitionsUrl += `?content_type__model=${content_type__model}`;
+        roleDefinitionsUrl += `?content_type__model=${content_type__model}&page_size=200`;
         roleDefinitionsUrl =
           managed !== undefined
             ? (roleDefinitionsUrl += `&managed=${managed}`)
@@ -380,9 +380,11 @@ Cypress.Commands.add(
       } else {
         roleDefinitionsUrl =
           managed !== undefined
-            ? (roleDefinitionsUrl += `?managed=${managed}`)
+            ? (roleDefinitionsUrl += `?managed=${managed}&page_size=200`)
             : roleDefinitionsUrl;
       }
+    } else {
+      roleDefinitionsUrl += `?page_size=200`;
     }
 
     cy.requestGet<EdaResult<EdaRbacRole>>(roleDefinitionsUrl).then((response) => {
@@ -600,6 +602,7 @@ Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
 Cypress.Commands.add('createEdaDecisionEnvironment', () => {
   cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
     name: 'E2E Decision Environment ' + randomString(4),
+    organization_id: 1,
     image_url: 'quay.io/ansible/ansible-rulebook:main',
   }).then((edaDE) => {
     Cypress.log({

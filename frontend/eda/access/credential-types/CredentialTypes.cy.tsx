@@ -83,7 +83,7 @@ describe('CredentialTypes.cy.ts', () => {
                   type: 'string',
                   label: 'Password or Token',
                   secret: true,
-                  help_text: 'A password or token used to authenticate with',
+                  help_text: 'A password or token used to authenticate with.',
                 },
                 {
                   id: 'verify_ssl',
