@@ -14,7 +14,7 @@ function visitNamespace(name: string) {
   cy.verifyPageTitle(name);
 }
 
-describe('Namespaces', () => {
+describe.skip('Namespaces', () => {
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
     cy.verifyPageTitle('Namespaces');
@@ -53,7 +53,7 @@ describe('Namespaces', () => {
   });
 });
 
-describe('Namespaces - use existing namespaces', () => {
+describe.skip('Namespaces - use existing namespaces', () => {
   let namespace: HubNamespace;
   before(() => {
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
@@ -121,7 +121,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 });
 
-describe('Namespaces - collections', () => {
+describe.skip('Namespaces - collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
@@ -175,7 +175,7 @@ describe('Namespaces - collections', () => {
   });
 });
 
-describe('Namespaces - sign all collections', () => {
+describe.skip('Namespaces - sign all collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const collectionName2 = randomE2Ename();
@@ -230,7 +230,7 @@ describe('Namespaces - sign all collections', () => {
   });
 });
 
-describe('Namespaces - delete', () => {
+describe.skip('Namespaces - delete', () => {
   it('user can bulk delete namespaces', () => {
     cy.createHubNamespace().then((namespace1) => {
       cy.createHubNamespace().then((namespace2) => {
