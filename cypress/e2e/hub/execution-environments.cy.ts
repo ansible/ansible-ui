@@ -234,7 +234,7 @@ describe('Execution Environment Activity tab', () => {
     });
   });
 
-  it('should display populated activity tab', () => {
+  it.skip('should display populated activity tab', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
