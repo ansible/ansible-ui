@@ -281,7 +281,7 @@ export function useModifiedColumn(options?: {
   > = useMemo(
     () => ({
       id: 'modified',
-      header: t('Modified'),
+      header: t('Last modified'),
       cell: (item) => {
         if (!item.modified && !item.modified_on) return <></>;
         return (
