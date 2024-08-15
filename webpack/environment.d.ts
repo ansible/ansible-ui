@@ -13,4 +13,5 @@ declare module 'config' {
   export const HUB_SERVER: string;
   export const HUB_USERNAME: string;
   export const ROUTE_PREFIX: string;
+  export const PRODUCT: string;
 }
