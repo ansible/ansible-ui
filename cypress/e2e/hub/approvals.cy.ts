@@ -3,7 +3,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Approvals, Collections, MyImports } from './constants';
 
-describe.skip('Approvals', () => {
+describe('Approvals', () => {
   let repository: Repository;
   let namespace: HubNamespace;
   let collectionName: string;
