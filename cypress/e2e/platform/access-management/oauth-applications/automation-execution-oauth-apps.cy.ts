@@ -255,7 +255,7 @@ describe('Automation Execution OAuth Application Creation and AWX token associat
       ).should('not.exist');
       cy.selectTableRow(currentAwxUser.username);
     });
-    cy.clickToolbarKebabAction('delete-selected-tokens');
+    cy.clickToolbarKebabAction('delete-tokens');
     cy.clickModalConfirmCheckbox();
     cy.intercept('DELETE', awxAPI`/tokens/*/`).as('deleteAAPToken');
     cy.getModal().within(() => {
