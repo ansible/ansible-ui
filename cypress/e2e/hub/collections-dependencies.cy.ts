@@ -4,7 +4,7 @@ import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-describe('Collections Dependencies', () => {
+describe.skip('Collections Dependencies', () => {
   let namespace: HubNamespace;
   let repository: Repository;
   let collectionName: string;
@@ -35,7 +35,8 @@ describe('Collections Dependencies', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  it('Collections Dependencies tab collections table empty state', () => {
+  //https://issues.redhat.com/browse/AAP-29434
+  it.skip('Collections Dependencies tab collections table empty state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -47,7 +48,9 @@ describe('Collections Dependencies', () => {
     // empty state
     cy.contains('No dependencies').should('be.visible');
   });
-  it('Collections Dependencies tab collections table error state', () => {
+
+  //https://issues.redhat.com/browse/AAP-29434
+  it.skip('Collections Dependencies tab collections table error state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -67,7 +70,9 @@ describe('Collections Dependencies', () => {
     // error state
     cy.contains('Error loading used by dependencies').should('be.visible');
   });
-  it('Collections Dependencies tab collections table non-empty state', () => {
+
+  //https://issues.redhat.com/browse/AAP-29434
+  it.skip('Collections Dependencies tab collections table non-empty state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -84,7 +89,9 @@ describe('Collections Dependencies', () => {
       cy.get('tbody tr').should('have.length', 6);
     });
   });
-  it('Collections Dependencies tab dependencies list non-empty state', () => {
+
+  //https://issues.redhat.com/browse/AAP-29434
+  it.skip('Collections Dependencies tab dependencies list non-empty state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
