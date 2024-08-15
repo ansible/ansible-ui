@@ -76,7 +76,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
 
   const startTimeColumn = useMemo<ITableColumn<UnifiedJob>>(
     () => ({
-      header: t('Start Time'),
+      header: t('Started'),
       cell: (job: UnifiedJob) => {
         return <DateTimeCell value={job.started} />;
       },
@@ -87,7 +87,7 @@ export function useHostsJobsColumns(options?: { disableSort?: boolean; disableLi
 
   const finishTimeColumn = useMemo<ITableColumn<UnifiedJob>>(
     () => ({
-      header: t('Finish Time'),
+      header: t('Finished'),
       cell: (job: UnifiedJob) => {
         return <DateTimeCell value={job.finished} />;
       },
