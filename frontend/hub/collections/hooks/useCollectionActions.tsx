@@ -151,6 +151,8 @@ export function useCollectionActions(
     ],
     [
       t,
+      canSign,
+      signCollection,
       deprecateOrUndeprecateCollections,
       detail,
       can_upload_signatures,
