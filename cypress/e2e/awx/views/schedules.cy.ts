@@ -177,7 +177,7 @@ describe('Schedules - Create and Delete', () => {
       cy.verifyPageTitle('Schedules');
       const scheduleName = 'E2E Simple Schedule Project' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
-      cy.selectDropdownOptionByResourceName('schedule_type', 'Project Sync');
+      cy.selectDropdownOptionByResourceName('schedule_type', 'Project sync');
       cy.selectDropdownOptionByResourceName('project', `${project.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
