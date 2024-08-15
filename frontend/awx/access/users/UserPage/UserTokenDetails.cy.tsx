@@ -41,7 +41,7 @@ describe('UserTokenDetails', () => {
       'have.text',
       formatDateString('2024-04-29T14:37:26.186275Z')
     );
-    cy.get('[data-cy="modified"]').should(
+    cy.get('[data-cy="last-modified"]').should(
       'have.text',
       formatDateString('2024-04-29T14:37:26.199763Z')
     );
@@ -73,7 +73,7 @@ describe('UserTokenDetails', () => {
       'have.text',
       formatDateString('2024-04-29T18:58:25.203965Z')
     );
-    cy.get('[data-cy="modified"]').should(
+    cy.get('[data-cy="last-modified"]').should(
       'have.text',
       formatDateString('2024-04-29T18:58:25.223488Z')
     );
