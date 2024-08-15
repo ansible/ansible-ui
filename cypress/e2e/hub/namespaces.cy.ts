@@ -121,7 +121,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 });
 
-describe.skip('Namespaces - collections', () => {
+describe('Namespaces - collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
@@ -175,7 +175,7 @@ describe.skip('Namespaces - collections', () => {
   });
 });
 
-describe.skip('Namespaces - sign all collections', () => {
+describe('Namespaces - sign all collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const collectionName2 = randomE2Ename();
