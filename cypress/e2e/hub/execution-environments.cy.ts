@@ -123,8 +123,7 @@ describe('Execution Environment Details tab', () => {
     cy.deleteHubRemoteRegistry(remoteRegistry);
   });
 
-  //https://issues.redhat.com/browse/AAP-29435
-  it.skip('should render the execution environment details page', () => {
+  it('should render the execution environment details page', () => {
     visitEEDetail(executionEnvironment.name);
     cy.contains('Unsigned');
 
