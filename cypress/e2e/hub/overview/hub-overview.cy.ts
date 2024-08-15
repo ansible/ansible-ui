@@ -25,7 +25,7 @@ describe('HUB Overview', () => {
   });
   after(() => {
     cy.deleteCollectionsInNamespace(namespaceName);
-    cy.deleteNamespace(namespaceName);
+    cy.deleteHubNamespace({ name: namespaceName });
   });
 
   it.skip('render the hub dashboard', () => {
