@@ -10,14 +10,12 @@ import {
 import { requestPatch } from '../../../../common/crud/Data';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
-import { useHubContext } from '../../../common/useHubContext';
 import { Task } from '../Task';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useTasksColumns } from './useTasksColumns';
 
 export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {
   const { t } = useTranslation();
-  const context = useHubContext();
   const stopTasks = useStopTasks(onComplete);
 
   return useMemo<IPageAction<Task>[]>(
@@ -29,12 +27,9 @@ export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {
         label: t('Stop tasks'),
         onClick: (tasks) => stopTasks(tasks),
         isDanger: true,
-        isDisabled: context.hasPermission('core.change_task')
-          ? ''
-          : t`You do not have rights to this operation`,
       },
     ],
-    [t, context, stopTasks]
+    [t, stopTasks]
   );
 }
 
