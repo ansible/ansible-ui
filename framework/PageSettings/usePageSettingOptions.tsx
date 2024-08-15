@@ -96,7 +96,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
     },
     {
       name: 'dataEditorFormat',
-      label: t('Preferred Data Format'),
+      label: t('Preferred data format'),
       helpText: t('The preferred data format for editing and displaying data.'),
       options: [
         { label: t('YAML'), value: 'yaml' },
