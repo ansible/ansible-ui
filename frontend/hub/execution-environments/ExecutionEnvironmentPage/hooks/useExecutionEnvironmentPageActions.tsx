@@ -16,6 +16,7 @@ import {
   useSignExecutionEnvironments,
 } from '../../hooks/useExecutionEnvironmentsActions';
 import { useController } from '../../hooks/useController';
+import { useCanSignEE } from '../../../common/utils/canSign';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     );
 
   const useInController = useController();
+  const canSignEE = useCanSignEE();
 
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
@@ -69,6 +71,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         selection: PageActionSelection.Single,
         icon: CheckIcon,
         label: t('Sign execution environment'),
+        isDisabled: () => (canSignEE ? undefined : t('You do not have rights to this operation')),
         onClick: (ee) => signExecutionEnvironments([ee]),
       },
       { type: PageActionType.Seperator },
@@ -83,11 +86,12 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     ];
     return actions;
   }, [
-    pageNavigate,
     t,
-    deleteExecutionEnvironments,
-    signExecutionEnvironments,
-    syncExecutionEnvironments,
     useInController,
+    pageNavigate,
+    syncExecutionEnvironments,
+    canSignEE,
+    signExecutionEnvironments,
+    deleteExecutionEnvironments,
   ]);
 }

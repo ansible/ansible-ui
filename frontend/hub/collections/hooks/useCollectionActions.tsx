@@ -17,6 +17,7 @@ import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRe
 import { useDeprecateCollections } from './useDeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
+import { useCanSignNamespace } from '../../common/utils/canSign';
 
 export function useCollectionActions(
   callback: (collections: CollectionVersionSearch[]) => void,
@@ -46,9 +47,11 @@ export function useCollectionActions(
   const signCollection = useSignCollection(false, callback);
   const uploadSignature = useUploadSignature();
 
-  const context = useHubContext();
+  const { featureFlags } = useHubContext();
 
-  const { can_upload_signatures } = context.featureFlags;
+  const { can_upload_signatures } = featureFlags;
+
+  const canSign = useCanSignNamespace();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -60,13 +63,14 @@ export function useCollectionActions(
         onClick: (collection) => {
           signCollection([collection]);
         },
+        isHidden: () => !canSign,
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: KeyIcon,
         label: t('Sign version'),
-        isHidden: () => (detail ? false : true),
+        isHidden: () => (detail && canSign ? false : true),
         onClick: (collection) => {
           if (can_upload_signatures) {
             // upload signature - it works only in insights, but we can leave it here for now
@@ -95,9 +99,6 @@ export function useCollectionActions(
         onClick: (collection) => {
           copyToRepository(collection, 'copy');
         },
-        isDisabled: context.featureFlags.display_repositories
-          ? ''
-          : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -119,9 +120,6 @@ export function useCollectionActions(
           deleteCollectionsVersions([collection]);
         },
         isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -133,9 +131,6 @@ export function useCollectionActions(
           deleteCollectionsVersionsFromRepository([collection]);
         },
         isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -144,9 +139,6 @@ export function useCollectionActions(
         label: t('Delete entire collection from repository'),
         onClick: (collection) => deleteCollectionsFromRepository([collection]),
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -155,26 +147,23 @@ export function useCollectionActions(
         label: t('Delete entire collection from system'),
         onClick: (collection) => deleteCollections([collection]),
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
     ],
     [
       t,
-      context,
-      pageNavigate,
-      deleteCollections,
-      deprecateCollections,
-      deleteCollectionsVersions,
-      detail,
-      deleteCollectionsVersionsFromRepository,
-      copyToRepository,
-      can_upload_signatures,
       signCollection,
-      signCollectionVersion,
+      canSign,
+      detail,
+      can_upload_signatures,
       uploadSignature,
+      signCollectionVersion,
+      deprecateCollections,
+      copyToRepository,
+      pageNavigate,
+      deleteCollectionsVersions,
+      deleteCollectionsVersionsFromRepository,
       deleteCollectionsFromRepository,
+      deleteCollections,
     ]
   );
 }

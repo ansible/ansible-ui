@@ -128,7 +128,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
 });
 
 //TODO: Skipping the test due to test failures with typing issue in the Schedule name field in the UI
-describe.skip('Management Jobs - Schedules Tab', () => {
+describe('Management Jobs - Schedules Tab', () => {
   const managementJobsList = [
     'Cleanup Activity Stream',
     'Cleanup Expired OAuth 2 Tokens',
@@ -144,7 +144,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
   ];
 
   managementJobsList.forEach((jobName, index) => {
-    it(`admin can see existing auto generated schedules of the management job: ${jobName}`, () => {
+    it.skip(`admin can see existing auto generated schedules of the management job: ${jobName}`, () => {
       cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'
       );
@@ -170,7 +170,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
   });
 
   managementJobsList.forEach((jobName) => {
-    it(`admin can perform crud actions and toggle the schedule of management job: ${jobName} from the details tab`, () => {
+    it.skip(`admin can perform crud actions and toggle the schedule of management job: ${jobName} from the details tab`, () => {
       const scheduleName = `${jobName} ${randomE2Ename()}`;
       cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'
@@ -256,7 +256,7 @@ describe.skip('Management Jobs - Schedules Tab', () => {
   });
 
   managementJobsList.forEach((jobName) => {
-    it(`admin can perform crud actions and toggle the schedule for management job: ${jobName} from the list row`, () => {
+    it.skip(`admin can perform crud actions and toggle the schedule for management job: ${jobName} from the list row`, () => {
       const scheduleName = `${jobName} ${randomE2Ename()}`;
       cy.intercept('GET', awxAPI`/system_job_templates/?order_by=name&page=1&page_size=10`).as(
         'getManagementJobsListPage'

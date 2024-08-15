@@ -11,7 +11,7 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 user_team_access_tab_resources.forEach((resource) => {
   // fails due to filtering bug https://issues.redhat.com/browse/AAP-24181
-  describe.skip(`Assign Role to a Team `, () => {
+  describe(`Assign Role to a Team `, () => {
     let team: EdaTeam;
     let resource_object:
       | EdaProject
@@ -58,7 +58,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaTeam(team);
     });
 
-    it(`for ${resource.name} role type`, () => {
+    it.skip(`for ${resource.name} role type`, () => {
       cy.navigateTo('eda', 'teams');
       cy.clickTableRow(team.name, true);
       cy.verifyPageTitle(team.name);
@@ -94,6 +94,7 @@ describe(`Roles Tab for Teams - actions`, () => {
   let cred1: EdaCredential;
   let cred2: EdaCredential;
   let cred3: EdaCredential;
+
   before(() => {
     cy.createEdaTeam().then((EdaTeam) => {
       team = EdaTeam;

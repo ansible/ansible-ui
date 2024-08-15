@@ -241,7 +241,7 @@ function ExecutionEnvironmentInputs(props: {
 
       <PageFormCredentialSelect<ExecutionEnvironment>
         name="credential"
-        label={t('Registry Credential')}
+        label={t('Registry credential')}
         labelHelp={t('Credential to authenticate with a protected container registry.')}
         placeholder={t('Select registry credential')}
         isDisabled={props?.executionEnv?.managed ? t('Disabled') : undefined}

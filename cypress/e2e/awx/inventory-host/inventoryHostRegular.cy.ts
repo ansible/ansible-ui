@@ -42,7 +42,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  it('can create, edit, assosiat and disassosiate groups at inventory -> hosts -> groups tab', () => {
+  it('can create, edit, associate, and disassociate groups at inventory -> hosts -> groups tab', () => {
     checkHostGroup('inventory_host', organization);
   });
 
@@ -63,9 +63,6 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   });
 
   it('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
-    //1) Use inventory and host
-    //2) create a job template that uses that inventory, launch the job template, wait for job to finish
-    //3) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
     cy.createAwxProject(organization).then((project) => {
       cy.createInventoryHost(organization, '').then((result) => {
         launchHostJob(result.inventory, result.host, organization.id, project.id, 'InventoryHost');

@@ -11,12 +11,14 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
       <PageFormCheckbox<Project>
         id="option-scm-clean"
         label={t('Clean')}
+        labelHelpTitle={t('Clean')}
         labelHelp={t('Remove any local modifications prior to performing an update.')}
         name="scm_clean"
       />
       <PageFormCheckbox<Project>
         id="option-scm-delete-on-update"
         label={t('Delete')}
+        labelHelpTitle={t('Delete')}
         labelHelp={t(
           'Delete the local repository in its entirety prior to performing an update. Depending on the size of the repository this may significantly increase the amount of time required to complete an update.'
         )}
@@ -26,6 +28,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         <PageFormCheckbox<Project>
           id="option-scm-track-submodules"
           label={t('Track submodules')}
+          labelHelpTitle={t('Track submodules')}
           labelHelp={t(
             'Submodules will track the latest commit on their master branch (or other branch specified in .gitmodules). If no, submodules will be kept at the revision specified by the main project. This is equivalent to specifying the --remote flag to git submodule update.'
           )}
@@ -35,6 +38,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
       <PageFormCheckbox<Project>
         id="option-scm-update-on-launch"
         label={t('Update Revision on Launch')}
+        labelHelpTitle={t('Update revision on launch')}
         labelHelp={t(
           'Each time a job runs using this project, update the revision of the project prior to starting the job.'
         )}
@@ -44,8 +48,9 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         <PageFormCheckbox<Project>
           id="option-allow-override"
           label={t('Allow Branch Override')}
+          labelHelpTitle={t('Allow branch override')}
           labelHelp={t(
-            'Allow changing the Source Control branch or revision in a job template that uses this project.'
+            'Allow changing the source control branch or revision in a job template that uses this project.'
           )}
           name="allow_override"
         />

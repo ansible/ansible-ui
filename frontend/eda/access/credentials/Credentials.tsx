@@ -14,6 +14,7 @@ import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsRespon
 
 export function Credentials() {
   const { t } = useTranslation();
+  const product: string = process.env.PRODUCT ?? t('EDA');
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
@@ -31,7 +32,13 @@ export function Credentials() {
       <PageHeader
         title={t('Credentials')}
         description={t(
-          'Credentials are utilized by EDA for authentication when launching rulebooks.'
+          'Credentials are utilized by {{product}} for authentication when launching rulebooks.',
+          { product }
+        )}
+        titleHelpTitle={t('Credentials')}
+        titleHelp={t(
+          'Credentials are utilized by {{product}} for authentication when launching rulebooks.',
+          { product }
         )}
       />
       <PageTable

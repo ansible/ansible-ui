@@ -123,7 +123,9 @@ export const RuleAuditChart = () => {
       width="xxl"
       height="sm"
       to={getPageUrl(EdaRoute.RuleAudits)}
-      help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
+      help={t(
+        'Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.'
+      )}
     >
       <CardBody>
         <PageDashboardChart

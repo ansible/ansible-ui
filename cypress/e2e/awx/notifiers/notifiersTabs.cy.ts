@@ -121,21 +121,10 @@ describe('Notifications', () => {
     });
   });
 
-  describe.skip('Notifications Tab for Management Jobs', () => {
-    //These tests live in the management-jobs.cy.ts spec file
-  });
-
-  describe.skip('Notifications Tab for Projects', () => {
-    //These tests live in the projects.cy.ts
-  });
-
-  describe.skip('Notifications Tab for Job Templates', () => {
-    //These tests live in the jobTemplates.cy.ts spec file
-  });
-
-  describe.skip('Notifications Tab for Workflow Job Templates', () => {
-    //These tests live in the workflowJobTemplates.cy.ts spec file
-  });
+  //Tests for Notifications Tab for Management Jobs live in the management-jobs.cy.ts spec file
+  //Tests for Notifications Tab for Projects live in the projects.cy.ts
+  //Tests for Notifications Tab for Job Templates live in the jobTemplates.cy.ts spec file
+  //Tests for Notifications Tab for Workflow Job Templates live in the workflowJobTemplates.cy.ts spec file
 
   function testToggle(
     type: string,

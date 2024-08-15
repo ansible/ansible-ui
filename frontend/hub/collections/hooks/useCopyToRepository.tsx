@@ -75,7 +75,8 @@ function CopyToRepositoryModal(props: {
       props.onClose();
     } catch (error) {
       setError(
-        operation === 'approve' ? t('Can not approve collection.') : t('Can not copy collection')
+        (error as { details: string })?.details ||
+          t`Error while copying/approving collection to repositories`
       );
       setIsLoading(false);
     }
