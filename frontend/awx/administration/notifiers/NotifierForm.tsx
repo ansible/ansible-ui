@@ -219,7 +219,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             name="notification_type"
             id="notification_type"
             label={t(`Type`)}
-            placeholder={t('Choose a Notification Type')}
+            placeholder={t('Choose a notification type')}
             isRequired={true}
             options={[
               { value: 'email', label: t('Email') },
