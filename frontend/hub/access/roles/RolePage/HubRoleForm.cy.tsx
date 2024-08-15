@@ -3,6 +3,8 @@ import mockHubCustomRole from '../../../../../cypress/fixtures/hubCustomRoleDefi
 import { CreateRole, EditRole } from './HubRoleForm';
 import { hubAPI } from '../../../common/api/formatPath';
 
+const mockHubSystemRole = { ...mockHubCustomRole, content_type: null };
+
 describe('HubRoleForm', () => {
   describe('Create Role', () => {
     it('Validates required fields', () => {
@@ -92,6 +94,20 @@ describe('HubRoleForm', () => {
             'galaxy.change_ansiblerepository',
           ]);
         });
+    });
+    it('Successfully loads data for system role', () => {
+      cy.intercept({ method: 'GET', url: hubAPI`/_ui/v2/role_definitions/1/` }, mockHubSystemRole);
+      const path = '/roles/:id/edit';
+      const initialEntries = ['/roles/1/edit'];
+      const params = {
+        path,
+        initialEntries,
+      };
+      cy.mount(<EditRole />, params);
+      cy.get('[data-cy="name"]').should('have.value', mockHubSystemRole.name);
+      cy.get('[data-cy="description"]').should('have.value', mockHubSystemRole.description);
+      cy.get('[data-cy="content-type-form-group"]').contains('System');
+      cy.multiSelectShouldHaveSelectedOption('#permissions', 'View Ansible repository');
     });
   });
 });
