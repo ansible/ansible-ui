@@ -38,7 +38,7 @@ describe('SourceEventStreamMapping.cy.ts', () => {
     );
   });
 
-  it('Renders the correct rulebook activations columns', () => {
+  it('Renders the Event stream mapping modal', () => {
     cy.mount(
       <SourceEventStreamMappingModal
         rulebook={{
@@ -74,5 +74,56 @@ describe('SourceEventStreamMapping.cy.ts', () => {
       'contain.text',
       'ansible.eda.sample1:\n  sample1: 10\n'
     );
+  });
+});
+
+describe('SourceEventStreamMapping.cy.ts with one source', () => {
+  beforeEach(() => {
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/rulebooks/1/sources/?page=1&page_size=200` },
+      {
+        count: 1,
+        next: null,
+        previous: null,
+        page_size: 10,
+        page: 1,
+        results: [
+          {
+            name: '__SOURCE_1',
+            source_info: 'ansible.eda.sample1:\n  sample1: 10\n',
+            rulebook_hash: 'hash_1',
+          },
+        ],
+      }
+    );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/webhooks/*` },
+      {
+        fixture: 'edaWebhooks.json',
+      }
+    );
+  });
+
+  it('The "Add event stream" button should not be present for only one source or only one event', () => {
+    cy.mount(
+      <SourceEventStreamMappingModal
+        rulebook={{
+          id: 1,
+          name: 'sample_rulebook.yml',
+          description: '',
+          rulesets:
+            '---\n- name: Test run job templates\n  hosts: all\n  sources:\n    - ansible.eda.range:\n        limit: 10\n  rules:\n    - name: "1 job template"\n      condition: event.i >= 0\n      action:\n        run_job_template:\n          name: Demo Job Template\n          organization: Default\n          job_args:\n            extra_vars:\n              hello: Fred\n          retries: 1\n          delay: 10\n',
+          project_id: 2,
+          organization_id: 1,
+          created_at: '2024-08-07T22:29:42.081976Z',
+          modified_at: '2024-08-07T22:29:42.081983Z',
+        }}
+        mappings={undefined}
+        setSourceMappings={() => undefined}
+      />
+    );
+    cy.get('[data-cy="rulebook"]').should('contain.text', 'sample_rulebook.yml');
+    cy.get('[data-cy="number-of-sources"]').should('contain.text', '1');
+    cy.get('[data-cy="add_event_stream"]').should('not.exist');
   });
 });
