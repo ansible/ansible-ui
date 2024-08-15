@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import {
-  DrawerActions,
-  DrawerCloseButton,
   DrawerHead,
   DrawerPanelBody,
   DrawerPanelContent,
@@ -18,15 +16,15 @@ import { HubRoute } from '../../../main/HubRoutes';
 import { usePageNavigate } from '../../../../../framework';
 
 export function CollectionDocumentationTabPanel(props: {
-  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
   setSearchText: Dispatch<SetStateAction<string>>;
   searchText: string;
   groups: {
     name: string;
     contents: IContents[];
   }[];
+  docs: { name: string; label: string }[];
 }) {
-  const { groups, setDrawerOpen, setSearchText } = props;
+  const { groups, setSearchText, docs } = props;
   const [searchParams] = useSearchParams();
   const navigate = usePageNavigate();
   const params = useParams();
@@ -42,27 +40,34 @@ export function CollectionDocumentationTabPanel(props: {
           placeholder={t('Find content')}
           onChange={(event, value) => setSearchText(value)}
         />
-        <DrawerActions style={{ alignSelf: 'center' }}>
-          <DrawerCloseButton onClick={() => setDrawerOpen(false)} />
-        </DrawerActions>
       </DrawerHead>
       <DrawerPanelBody style={{ borderTop: 'thin solid var(--pf-v5-global--BorderColor--100)' }}>
         <Nav theme="light">
           <NavList>
-            <NavExpandable key="documentation" title={t('Documentation')} isExpanded>
-              {t('Readme').startsWith(props.searchText) && (
-                <NavItem
-                  key="readme"
-                  onClick={() => {
-                    navigate(HubRoute.CollectionDocumentation, {
-                      query,
-                      params: { repository, namespace, name },
-                    });
-                  }}
-                >
-                  {t('Readme')}
-                </NavItem>
-              )}
+            <NavExpandable
+              key="documentation"
+              title={t('Documentation ({{docs}})', { docs: docs.length })}
+              isExpanded
+            >
+              {docs.length > 0 &&
+                docs.map(({ name: docName, label }) => (
+                  <NavItem
+                    key={docName}
+                    onClick={() =>
+                      navigate(HubRoute.CollectionDocumentation, {
+                        query,
+                        params: {
+                          repository,
+                          namespace,
+                          content_name: docName === 'readme' ? '' : docName,
+                          name,
+                        },
+                      })
+                    }
+                  >
+                    {label}
+                  </NavItem>
+                ))}
             </NavExpandable>
             {groups.map((group) => (
               <NavExpandable

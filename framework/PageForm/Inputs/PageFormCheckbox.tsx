@@ -79,7 +79,7 @@ export function PageFormCheckbox<
                           onClick: () => {
                             setValue(
                               name as FieldPath<TFieldValues>,
-                              !props.defaultValue as unknown as PathValue<
+                              props.defaultValue as unknown as PathValue<
                                 TFieldValues,
                                 FieldPath<TFieldValues>
                               >

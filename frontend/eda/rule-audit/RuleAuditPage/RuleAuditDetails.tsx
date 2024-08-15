@@ -22,7 +22,7 @@ export function RuleAuditDetails() {
       </PageDetail>
       <PageDetail
         label={t('Rulebook activation')}
-        helpText={t`Rulebook activations are rulebooks that have been activated to run.`}
+        helpText={t`Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.`}
       >
         {ruleAudit && ruleAudit.activation_instance?.id ? (
           <Link
@@ -44,7 +44,7 @@ export function RuleAuditDetails() {
       <PageDetail label={t('Created')}>
         {ruleAudit?.created_at ? formatDateString(ruleAudit?.created_at) : ''}
       </PageDetail>
-      <PageDetail label={t('Fired date')}>
+      <PageDetail label={t('Last fired date')}>
         {ruleAudit?.fired_at ? formatDateString(ruleAudit?.fired_at) : ''}
       </PageDetail>
     </PageDetails>

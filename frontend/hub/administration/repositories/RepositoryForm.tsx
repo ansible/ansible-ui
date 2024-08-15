@@ -103,8 +103,12 @@ export function RepositoryForm() {
       : postHubRequest<Repository>(pulpAPI`/repositories/ansible/ansible/`, payload);
 
     return promise
-      .catch(() => {
-        throw new Error(t('Repository not created.'));
+      .catch((error) => {
+        if ((error as { statusCode: number }).statusCode === 403) {
+          throw new Error((error as { body: { detail: string } }).body.detail);
+        } else {
+          throw new Error(t('Repository not created.'));
+        }
       })
       .then((result) => {
         const pulp_href = (result as { response: { pulp_href: string } })?.response?.pulp_href;

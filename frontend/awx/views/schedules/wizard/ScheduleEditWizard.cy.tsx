@@ -161,7 +161,6 @@ describe('ScheduleEditWizard', () => {
       });
       cy.get('[data-cy="interval-form-group"]').type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="count-form-group"]').type('17');
       cy.get('[data-cy="update-rule-button"]').click();
 
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
@@ -173,7 +172,6 @@ describe('ScheduleEditWizard', () => {
       });
       cy.get('[data-cy="interval"]').clear().type('1');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="count-form-group"]').type('17');
       cy.get('[data-cy="update-rule-button"]').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
@@ -197,7 +195,6 @@ describe('ScheduleEditWizard', () => {
       });
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.get('[data-cy="count-form-group"]').type('17');
       cy.get('[data-cy="update-rule-button"]').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(

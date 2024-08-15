@@ -1,13 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
-import {
-  BuilderImageIcon,
-  CheckIcon,
-  PencilAltIcon,
-  SyncAltIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
+import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { HubRoute } from '../../../main/HubRoutes';
 import {
   IPageAction,
@@ -21,6 +15,8 @@ import {
   useSyncExecutionEnvironments,
   useSignExecutionEnvironments,
 } from '../../hooks/useExecutionEnvironmentsActions';
+import { useController } from '../../hooks/useController';
+import { useCanSignEE } from '../../../common/utils/canSign';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
@@ -44,6 +40,9 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       ee.pulp?.repository?.remote?.last_sync_task?.state || ''
     );
 
+  const useInController = useController();
+  const canSignEE = useCanSignEE();
+
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
       {
@@ -66,18 +65,13 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
         onClick: (ee: ExecutionEnvironment) => syncExecutionEnvironments([ee]),
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: BuilderImageIcon,
-        label: t('Use in controller'),
-        onClick: () => {},
-      },
+      useInController,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CheckIcon,
         label: t('Sign execution environment'),
+        isDisabled: () => (canSignEE ? undefined : t('You do not have rights to this operation')),
         onClick: (ee) => signExecutionEnvironments([ee]),
       },
       { type: PageActionType.Seperator },
@@ -92,10 +86,12 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     ];
     return actions;
   }, [
-    pageNavigate,
     t,
-    deleteExecutionEnvironments,
-    signExecutionEnvironments,
+    useInController,
+    pageNavigate,
     syncExecutionEnvironments,
+    canSignEE,
+    signExecutionEnvironments,
+    deleteExecutionEnvironments,
   ]);
 }

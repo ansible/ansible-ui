@@ -15,6 +15,8 @@ import {
   useSignExecutionEnvironments,
   useSyncExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
+import { useController } from './useController';
+import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -23,6 +25,8 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
   const syncExecutionEnvironments = useSyncExecutionEnvironments(callback);
   const signExecutionEnvironment = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
+  const useInController = useController();
+  const canSignEE = useCanSignEE();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -55,12 +59,9 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
         icon: CheckIcon,
         label: t('Sign execution environment'),
         onClick: (ee) => signExecutionEnvironment([ee]),
-        isDisabled:
-          context.hasPermission('container.change_containernamespace') &&
-          context.featureFlags.container_signing
-            ? ''
-            : t`You do not have rights to this operation`,
+        isDisabled: canSignEE ? '' : t`You do not have rights to this operation`,
       },
+      useInController,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -77,10 +78,12 @@ export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnviron
     [
       t,
       context,
-      deleteExecutionEnvironments,
+      canSignEE,
+      useInController,
+      pageNavigate,
       syncExecutionEnvironments,
       signExecutionEnvironment,
-      pageNavigate,
+      deleteExecutionEnvironments,
     ]
   );
 }

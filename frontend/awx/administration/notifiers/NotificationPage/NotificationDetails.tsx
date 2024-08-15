@@ -265,9 +265,9 @@ function returnCaption(notification_type: string | null, key: string) {
   if (notification_type === 'grafana') {
     if (key === 'grafana_url') return t('Grafana URL');
     if (key === 'grafana_key') return t('Grafana API Key');
-    if (key === 'dashboardId') return t('ID of the dashboard (optional)');
-    if (key === 'panelId') return t('ID of the panel (optional)');
-    if (key === 'annotation_tags') return t('Tags for the annotation (optional)');
+    if (key === 'dashboardId') return t('ID of the dashboard');
+    if (key === 'panelId') return t('ID of the panel');
+    if (key === 'annotation_tags') return t('Tags for the annotation');
     if (key === 'grafana_no_verify_ssl') return t('Disable SSL verification');
   }
 
