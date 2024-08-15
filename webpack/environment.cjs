@@ -27,7 +27,7 @@ const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWOR
 const HUB_API_PREFIX = process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/galaxy';
 
 const ROUTE_PREFIX = process.env.ROUTE_PREFIX || '/';
-const PRODUCT = process.env.PRODUCT || '';
+const E2E_MODE = process.env.E2E_MODE || '';
 
 module.exports = {
   AWX_API_PREFIX,
@@ -46,5 +46,5 @@ module.exports = {
   HUB_SERVER,
   HUB_USERNAME,
   ROUTE_PREFIX,
-  PRODUCT,
+  E2E_MODE,
 };
