@@ -33,7 +33,7 @@ Cypress.Commands.add('login', () => {
       cy.edaLogin();
       break;
     default:
-      switch (Cypress.env('PRODUCT')) {
+      switch (Cypress.env('E2E_MODE')) {
         case 'AWX':
           cy.awxLogin();
           cy.createGlobalOrganization();
@@ -66,7 +66,7 @@ Cypress.Commands.add('logout', () => {
       cy.edaLogout();
       break;
     default:
-      switch (Cypress.env('PRODUCT')) {
+      switch (Cypress.env('E2E_MODE')) {
         case 'AWX':
           cy.awxLogout();
           break;
