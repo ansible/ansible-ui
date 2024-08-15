@@ -81,6 +81,7 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
   const confirmationColumns = useExecutionEnvironmentsColumns();
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<ExecutionEnvironment>();
+  const pageNavigate = usePageNavigate();
   return useCallback(
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
@@ -98,17 +99,14 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (ee, signal) => deleteExecutionEnvironment(ee, signal),
+        actionFn: (ee, signal) =>
+          hubAPIDelete(
+            hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
+            signal
+          ).then(() => pageNavigate(HubRoute.ExecutionEnvironments)),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t]
-  );
-}
-
-async function deleteExecutionEnvironment(ee: ExecutionEnvironment, signal: AbortSignal) {
-  return await hubAPIDelete(
-    hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
-    signal
+    [actionColumns, bulkAction, confirmationColumns, onComplete, t, pageNavigate]
   );
 }
 

@@ -21,9 +21,7 @@ import { useCanSignEE } from '../../../common/utils/canSign';
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {
-    pageNavigate(HubRoute.ExecutionEnvironments);
-  });
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {});
 
   const { refresh } = options;
 
