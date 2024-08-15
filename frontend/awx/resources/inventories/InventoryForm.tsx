@@ -310,13 +310,13 @@ export function useInventoryFormDetailLabels() {
 
   return {
     labels: t(
-      `Optional labels that describe this inventory, such as 'dev' or 'test'. Labels can be used to group and filter inventories and completed jobs.`
+      `Optional labels that describe this inventory, such as "dev" or "test". Labels can be used to group and filter inventories and completed jobs.`
     ),
     verbosity: t(
-      'The verbosity level for the related auto-created inventory source, special to constructed inventory'
+      'The verbosity level for the related auto-created inventory source, special to constructed inventory.'
     ),
     cache_timeout: t(
-      `The cache timeout for the related auto-created inventory source, special to constructed inventory`
+      `The cache timeout for the related auto-created inventory source, special to constructed inventory.`
     ),
     limit: t(
       `The limit to restrict the returned hosts for the related auto-created inventory source, special to constructed inventory.`
@@ -325,7 +325,7 @@ export function useInventoryFormDetailLabels() {
       `Prevent instance group fallback: If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on. Note: If this setting is enabled and you provided an empty list, the global instance groups will be applied.`
     ),
     input_inventories: t(
-      `Input Inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution`
+      `Input inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution.`
     ),
   };
 }
@@ -352,9 +352,14 @@ function InventoryInputs(props: { inventoryKind: string }) {
         <PageFormTextInput<InventoryCreate>
           name="host_filter"
           label={t('Smart host filter')}
-          labelHelp={t(
-            `Populate the hosts for this inventory by using a search filter. Example: name___icontains=RedHat. Note Smart Inventories have been deprecated in favor of Constructed Inventories. Refer to the Ansible Controller documentation for further syntax and examples.`
-          )}
+          labelHelp={[
+            t(
+              'Populate the hosts for this inventory by using a search filter. Example: name___icontains=RedHat.'
+            ),
+            t(
+              'Note: Smart inventories have been deprecated in favor of constructed inventories. Refer to the Ansible Controller documentation for further syntax and examples.'
+            ),
+          ]}
           placeholder={t('Enter smart host filter')}
           isRequired
         />
@@ -432,12 +437,11 @@ function InventoryInputs(props: { inventoryKind: string }) {
         />
       </PageFormSection>
       {inventoryKind === '' && (
-        <PageFormGroup
-          label={t('Options')}
-          labelHelp={inventoryFormDetailLables.prevent_instance_group_fallback}
-        >
+        <PageFormGroup label={t('Options')}>
           <PageFormCheckbox<InventoryCreate>
             label={t('Prevent instance group fallback')}
+            labelHelpTitle={t('Prevent instance group fallback')}
+            labelHelp={inventoryFormDetailLables.prevent_instance_group_fallback}
             name="prevent_instance_group_fallback"
           />
         </PageFormGroup>
