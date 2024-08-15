@@ -1620,7 +1620,6 @@ declare global {
       ): Cypress.Chainable<void>;
       uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
       createNamespace(namespaceName: string): Cypress.Chainable<void>;
-      deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createRemote(remoteName: string, url?: string): Cypress.Chainable<HubRemote>;
