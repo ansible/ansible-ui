@@ -1,5 +1,5 @@
-import { Button, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import React, { useEffect } from 'react';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   PageDetail,
@@ -17,6 +17,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { edaAPI } from '../../common/eda-utils';
+import { EdaWebhook } from '../../interfaces/EdaWebhook';
 
 export interface EventStreamMappingProps {
   rulebook: EdaRulebook;
@@ -26,7 +27,7 @@ export interface EventStreamMappingProps {
 
 export function SourceEventStreamMapping(options: EventStreamMappingProps) {
   const { t } = useTranslation();
-  const { control, setValue } = useFormContext();
+  const { setValue, getFieldState, control } = useFormContext();
 
   const {
     fields: mappings,
@@ -35,10 +36,9 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
   } = useFieldArray({
     control,
     name: 'mappings',
-    shouldUnregister: false,
   });
 
-  const addMapping = () => {
+  const addMapping = useCallback(() => {
     const map: EdaSourceEventMapping = {
       source_name: '',
       webhook_id: '',
@@ -46,13 +46,27 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
       rulebook_hash: '',
     };
     addMap(map);
-  };
+  }, [addMap]);
+
   const { data: sources } = useGet<EdaResult<EdaSource>>(
     edaAPI`/rulebooks/` + `${options?.rulebook?.id}/sources/?page=1&page_size=200`
   );
+  const { data: events } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
 
   useEffect(() => {
-    setValue('mappings', options.mappings);
+    setValue(
+      'mappings',
+      !!options.mappings && options.mappings.length > 0
+        ? options.mappings
+        : [
+            {
+              source_name: '',
+              webhook_id: '',
+              webhook_name: '',
+              rulebook_hash: '',
+            },
+          ]
+    );
   }, [setValue, options.mappings]);
 
   return (
@@ -62,27 +76,35 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
           <PageDetail label={t('Rulebook')}>{options?.rulebook?.name}</PageDetail>
           <PageDetail label={t('Number of sources')}>{sources?.count}</PageDetail>
         </PageDetails>
-        {mappings.map((map, i) => (
+        {mappings.map((mapping, i) => (
           <SourceEventMapFields
-            key={i}
+            key={mapping.id}
             index={i}
-            source_mappings={map as unknown as EdaSourceEventMapping}
+            source_mappings={mapping as unknown as EdaSourceEventMapping}
+            sourceOptions={sources?.results}
+            eventOptions={events?.results}
             onDelete={removeMap}
             rulebook={options?.rulebook}
           />
         ))}
       </PageFormSection>
-      <PageFormSection>
-        <Button
-          variant="link"
-          icon={<PlusCircleIcon />}
-          style={{ paddingLeft: 0 }}
-          data-cy={'add_event_stream'}
-          onClick={addMapping}
-        >
-          {t('Add event stream')}
-        </Button>
-      </PageFormSection>
+      {!(
+        mappings &&
+        (mappings.length >= (sources?.count ?? 0) || mappings.length >= (events?.count ?? 0))
+      ) && (
+        <PageFormSection>
+          <Button
+            variant="link"
+            icon={<PlusCircleIcon />}
+            style={{ paddingLeft: 0 }}
+            data-cy={'add_event_stream'}
+            onClick={() => addMapping()}
+            isDisabled={getFieldState('mappings').invalid}
+          >
+            {t('Add event stream')}
+          </Button>
+        </PageFormSection>
+      )}
     </>
   );
 }
@@ -96,8 +118,8 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
   const onClose = () => setDialog(undefined);
 
   const onSubmit: PageFormSubmitHandler<{ mappings: EdaSourceEventMapping[] }> = (values) => {
-    options.setSourceMappings(values.mappings);
     onClose();
+    options.setSourceMappings(values.mappings);
     return Promise.resolve();
   };
 
@@ -105,8 +127,8 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
     <Modal
       title={t('Event streams')}
       aria-label={t('Event streams')}
-      ouiaId={t('Event streams')}
-      data-cy={t('event-streams')}
+      ouiaId={'Event streams'}
+      data-cy={'event-streams'}
       description={
         <div style={{ fontSize: 'small' }}>
           {t(
@@ -122,11 +144,14 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
       onClose={onClose}
       hasNoBodyWrapper
     >
-      <ModalBoxBody style={{ padding: 0 }}>
-        <EdaPageForm onSubmit={onSubmit} submitText={t('Save')}>
-          <SourceEventStreamMapping {...options} />
-        </EdaPageForm>
-      </ModalBoxBody>
+      <EdaPageForm
+        onSubmit={onSubmit}
+        submitText={t('Save')}
+        cancelText={t('Cancel')}
+        onCancel={onClose}
+      >
+        <SourceEventStreamMapping {...options} />
+      </EdaPageForm>
     </Modal>
   );
 }
