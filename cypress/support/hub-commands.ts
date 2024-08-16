@@ -227,13 +227,7 @@ Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => 
   ).then((itemsResponse) => {
     cy.log(`count of collections in namespace: ${itemsResponse.data.length}`);
     for (const collection of itemsResponse.data) {
-      cy.galaxykit(
-        'collection delete',
-        collection.collection_version?.namespace || '',
-        collection.collection_version?.name || '',
-        collection.collection_version?.version || '',
-        collection.repository?.name || ''
-      );
+      cy.deleteHubCollection(collection);
       cy.waitForAllTasks();
     }
   });
@@ -525,6 +519,8 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
 
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.waitForAllTasks();
+  cy.deleteCollectionsInNamespace(options.name);
   cy.waitForAllTasks();
   cy.hubDeleteRequest({
     ...options,
