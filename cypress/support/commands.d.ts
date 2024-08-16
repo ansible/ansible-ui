@@ -1649,6 +1649,13 @@ declare global {
         namespace: string,
         version: string
       ): Cypress.Chainable<void>;
+      moveCollection(
+        collection: string,
+        namespace: string,
+        version: string,
+        sourceRepo: string,
+        targetRepo: string
+      ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 

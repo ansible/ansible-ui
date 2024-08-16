@@ -73,7 +73,7 @@ describe('Collections List', () => {
     });
   });
 
-  it('can upload and delete collection', () => {
+  it('can upload and delete collection from system', () => {
     cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName).then(
       (result) => {
         // Upload collection
@@ -104,15 +104,8 @@ describe('Collections List', () => {
 
   it('can upload and then delete a new version to an existing collection', () => {
     cy.uploadCollection(collectionName, namespace.name);
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      repository.name
-    );
-    cy.waitForAllTasks();
+    cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', repository.name);
+
     cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
       (result: { filename: string }) => {
         cy.getByDataCy('table-view').click();
@@ -158,74 +151,11 @@ describe('Collections List', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it('can delete entire collection from system', () => {
+  it('can copy a version to repository and then delete it from repository', () => {
     cy.uploadCollection(collectionName, namespace.name);
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      repository.name
-    );
-    cy.waitForAllTasks();
-    // Delete collection from system
-    cy.getByDataCy('table-view').click();
-    actionClick(collectionName, 'delete-entire-collection-from-system');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    // Verify collection has been deleted from system
+    cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', repository.name);
+
     cy.navigateTo('hub', Collections.url);
-    cy.getHubCollection(collectionName).then((deleted) => {
-      //Assert that the query returns an empty array, indicating no API results exist
-      expect(deleted.data).to.be.empty;
-    });
-    //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
-    //these lines fail if there are no Collections present
-  });
-
-  it('can delete entire collection from repository', () => {
-    cy.uploadCollection(collectionName, namespace.name);
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      repository.name
-    );
-    cy.waitForAllTasks();
-    // Delete collection from repository
-    cy.getByDataCy('table-view').click();
-    actionClick(collectionName, 'delete-entire-collection-from-repository');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete collections/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
-    //Verify collection has been deleted from repository
-    cy.getHubCollection(collectionName).then((deleted) => {
-      //Assert that the query returns an empty array, indicating no API results exist
-      expect(deleted.data).to.be.empty;
-    });
-    //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
-    //these lines fail if there are no Collections present
-  });
-
-  it('can copy a version to repository', () => {
-    cy.uploadCollection(collectionName, namespace.name);
-    cy.galaxykit(
-      'collection move',
-      namespace.name,
-      collectionName,
-      '1.0.0',
-      'staging',
-      repository.name
-    );
-    cy.waitForAllTasks();
-
-    cy.navigateTo('hub', 'collections');
     cy.filterTableBySingleText(collectionName);
 
     cy.get('[data-cy="data-list-name"]').should('have.text', collectionName);
@@ -236,6 +166,23 @@ describe('Collections List', () => {
     cy.get('[data-cy="copy-version-to-repositories"] button').click();
 
     cy.collectionCopyVersionToRepositories(collectionName);
+
+    // delete it from repositories
+
+    cy.navigateTo('hub', Collections.url);
+    cy.getByDataCy('table-view').click();
+    cy.filterTableBySingleText(collectionName);
+
+    cy.contains('tr', 'community').within(() => {
+      cy.getByDataCy('actions-dropdown').click();
+    });
+    cy.contains('button', 'Delete entire collection from repository').click();
+
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete collections/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.contains('tr', 'community').should('not.exist');
   });
 });
 
