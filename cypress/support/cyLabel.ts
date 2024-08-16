@@ -9,16 +9,25 @@
  */
 export function cyLabel(labels: string[], runTest: () => unknown) {
   const envLabel = Cypress.env('LABELS') as string;
-  if (typeof envLabel === 'string' && envLabel) {
-    const envLabels = envLabel.split(',').map((label) => label.trim());
-    const isFound = labels.some((label) => {
-      if (label.startsWith('!')) {
-        return !envLabels.includes(label.substring(1));
-      }
-      return envLabels.includes(label);
-    });
-    if (isFound) {
-      runTest();
+  if (!envLabel) {
+    runTest();
+    return;
+  }
+
+  const envLabels = envLabel.split(',').map((label) => label.trim());
+  const includeLabels = envLabels.filter((label) => !label.startsWith('!'));
+  const excludeLabels = envLabels
+    .filter((label) => label.startsWith('!'))
+    .map((label) => label.substring(1));
+
+  for (const label of labels) {
+    if (excludeLabels.includes(label)) {
+      return;
+    }
+    if (includeLabels.length > 0 && !includeLabels.includes(label)) {
+      return;
     }
   }
+
+  runTest();
 }
