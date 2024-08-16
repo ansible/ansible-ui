@@ -1,8 +1,8 @@
 //Tests a user's ability to perform certain actions on the Credentials list in the EDA UI.
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials List', () => {
     it('renders the Credentials list page', () => {
       cy.navigateTo('eda', 'credentials');

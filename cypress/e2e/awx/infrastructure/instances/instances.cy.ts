@@ -1,10 +1,10 @@
 import * as path from 'path';
 import { randomString } from '../../../../../framework/utils/random-string';
 import { Instance } from '../../../../../frontend/awx/interfaces/Instance';
+import { cyLabel } from '../../../../support/cyLabel';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { tag } from '../../../../support/tag';
 
-tag(['upstream'], () => {
+cyLabel(['upstream'], () => {
   //An instance can only be created in an Openshift or Kubernetes build
   describe('Instances: Add/Edit', () => {
     let instance: Instance;

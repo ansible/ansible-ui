@@ -158,7 +158,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-          TAGS: '!flaky'
+          LABELS: '!flaky'
 
       - name: Cypress without Recording
         if: ${{ !inputs.SKIP_JOB && github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dashboard') }}
@@ -176,5 +176,5 @@ jobs:
           AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-          TAGS: '!flaky'
+          LABELS: '!flaky'
   
