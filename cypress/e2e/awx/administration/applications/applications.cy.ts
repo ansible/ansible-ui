@@ -16,63 +16,61 @@ cyLabel(['upstream'], () => {
       cy.navigateTo('awx', 'applications');
     });
 
-    const authorizationGrantTypes = ['Authorization code', 'Password'];
-    const clientTypes = ['Confidential', 'Public'];
-    authorizationGrantTypes.forEach((grantType) => {
-      clientTypes.forEach((clientType) => {
-        it(`creates a new AWX OAuth application with grant type ${grantType} and client type ${clientType} and deletes from the details page`, () => {
-          const oauthApplicationName = `AWX OAuth Application ${randomString(2)}`;
-          const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
-          const appClientType = clientType.toLowerCase();
-          cy.getByDataCy('create-application').click();
-          cy.getByDataCy('name').type(oauthApplicationName);
-          cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
-          cy.singleSelectByDataCy('organization', `${awxOrganization.name}`);
-          cy.selectDropdownOptionByResourceName('authorization-grant-type', grantType);
-          cy.selectDropdownOptionByResourceName('client-type', clientType);
-          cy.getByDataCy('redirect-uris').type('https://redhat.com');
-          cy.getByDataCy('Submit').click();
-          cy.getModal().within(() => {
-            cy.contains('h1', 'Application information');
-            if (
-              (grantType === 'Authorization code' || grantType === 'Password') &&
-              clientType === 'Confidential'
-            ) {
-              cy.contains('dt', 'Client ID');
-              cy.contains('dt', 'Client Secret');
-            } else if (
-              (grantType === 'Authorization code' || grantType === 'Password') &&
-              clientType === 'Public'
-            ) {
-              cy.contains('dt', 'Client ID');
-            }
-            cy.contains('h1', 'Application information');
-            cy.contains('dd', oauthApplicationName);
-            cy.get('button[aria-label="Close"]').click();
-          });
-          cy.verifyPageTitle(oauthApplicationName);
-          cy.hasDetail('Name', oauthApplicationName);
-          cy.hasDetail('Description', `${authGrantType} with ${appClientType} description`);
-          //edit from list row and delete from details page
-          cy.navigateTo('awx', 'applications');
-          cy.verifyPageTitle('OAuth Applications');
-          cy.filterTableByMultiSelect('name', [oauthApplicationName]);
-          cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
-          cy.verifyPageTitle('Edit Application');
-          cy.getByDataCy('description')
-            .clear()
-            .type(`${authGrantType} with ${appClientType} edited`);
-          cy.getByDataCy('Submit').click();
-          cy.verifyPageTitle(oauthApplicationName);
+  const authorizationGrantTypes = ['Authorization code', 'Password'];
+  const clientTypes = ['Confidential', 'Public'];
+  authorizationGrantTypes.forEach((grantType) => {
+    clientTypes.forEach((clientType) => {
+      it(`creates a new AWX OAuth application with grant type ${grantType} and client type ${clientType} and deletes from the details page`, () => {
+        const oauthApplicationName = `AWX OAuth Application ${randomString(2)}`;
+        const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
+        const appClientType = clientType.toLowerCase();
+        cy.getByDataCy('create-application').click();
+        cy.getByDataCy('name').type(oauthApplicationName);
+        cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
+        cy.singleSelectByDataCy('organization', `${awxOrganization.name}`);
+        cy.selectDropdownOptionByResourceName('authorization-grant-type', grantType);
+        cy.selectDropdownOptionByResourceName('client-type', clientType);
+        cy.getByDataCy('redirect-uris').type('https://redhat.com');
+        cy.getByDataCy('Submit').click();
+        cy.getModal().within(() => {
+          cy.contains('h1', 'Application information');
+          if (
+            (grantType === 'Authorization code' || grantType === 'Password') &&
+            clientType === 'Confidential'
+          ) {
+            cy.contains('dt', 'Client ID');
+            cy.contains('dt', 'Client Secret');
+          } else if (
+            (grantType === 'Authorization code' || grantType === 'Password') &&
+            clientType === 'Public'
+          ) {
+            cy.contains('dt', 'Client ID');
+          }
+          cy.contains('h1', 'Application information');
+          cy.contains('dd', oauthApplicationName);
+          cy.get('button[aria-label="Close"]').click();
+        });
+        cy.verifyPageTitle(oauthApplicationName);
+        cy.hasDetail('Name', oauthApplicationName);
+        cy.hasDetail('Description', `${authGrantType} with ${appClientType} description`);
+        //edit from list row and delete from details page
+        cy.navigateTo('awx', 'applications');
+        cy.verifyPageTitle('OAuth Applications');
+        cy.filterTableByMultiSelect('name', [oauthApplicationName]);
+        cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
+        cy.verifyPageTitle(`Edit ${oauthApplicationName}`);
+        cy.getByDataCy('description').clear().type(`${authGrantType} with ${appClientType} edited`);
+        cy.getByDataCy('Submit').click();
+        cy.verifyPageTitle(oauthApplicationName);
+        cy.clickButton(/^Delete application/);
+        cy.getModal().within(() => {
+          cy.get('#confirm').click();
           cy.clickButton(/^Delete application/);
-          cy.getModal().within(() => {
-            cy.get('#confirm').click();
-            cy.clickButton(/^Delete application/);
-          });
         });
       });
     });
   });
+});
 
   describe('AWX OAuth Applications CRUD actions Details page', () => {
     let awxOrganization: Organization;
