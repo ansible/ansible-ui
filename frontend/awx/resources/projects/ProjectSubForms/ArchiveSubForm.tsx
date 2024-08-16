@@ -29,14 +29,14 @@ export function ArchiveSubForm() {
       <PageFormSection title={t('Type Details')}>
         <PageFormTextInput<Project>
           name="scm_url"
-          label={t('Source Control URL')}
-          labelHelpTitle={t('Source Control URL')}
+          label={t('Source control URL')}
+          labelHelpTitle={t('Source control URL')}
           labelHelp={archiveSourceControlUrlHelp}
           isRequired
         />
         <PageFormCredentialSelect<Project>
           name="credential"
-          label={t('Source Control Credential')}
+          label={t('Source control credential')}
           queryParams={{
             credential_type__namespace: 'scm',
           }}
