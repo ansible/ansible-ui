@@ -121,6 +121,9 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifiers />);
+      cy.getByDataCy('actions-column-cell').within(() => {
+        cy.getByDataCy('actions-dropdown').click();
+      });
       cy.get('[data-cy="copy-notifier"]').should('have.attr', 'aria-disabled', 'false');
     });
 
