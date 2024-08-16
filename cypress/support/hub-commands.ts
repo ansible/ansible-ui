@@ -303,6 +303,21 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'moveCollection',
+  (
+    collection: string,
+    namespace: string,
+    version: string,
+    sourceRepo: string,
+    targetRepo: string
+  ) => {
+    cy.waitForAllTasks();
+    cy.galaxykit('collection move', namespace, collection, version, sourceRepo, targetRepo);
+    cy.waitForAllTasks();
+  }
+);
+
 Cypress.Commands.add('collectionCopyVersionToRepositories', (collectionName: string) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
     cy.get('header').contains('Select repositories');
