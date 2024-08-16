@@ -123,7 +123,11 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
-            defaultValue={Role}
+            defaultValue={{
+              ...Role,
+              content_type:
+                Role?.content_type === null ? ContentTypeEnum.System : Role?.content_type,
+            }}
           >
             <HubRoleInputs disableContentType />
           </HubPageForm>

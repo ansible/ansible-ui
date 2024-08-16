@@ -20,7 +20,7 @@ export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) 
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
-      header: t('Id'),
+      header: t('ID'),
       cell: (team) => team.id,
       minWidth: 0,
       table: isHidden ? ColumnTableOption.hidden : undefined,
@@ -125,7 +125,7 @@ export function useLastRanColumn(options?: {
   const { t } = useTranslation();
   const column: ITableColumn<{ last_job_run: string | null }> = useMemo(
     () => ({
-      header: t('Last Ran'),
+      header: t('Last ran'),
       cell: (item) => {
         if (!item.last_job_run) return <></>;
         return <DateTimeCell value={item.last_job_run} />;
@@ -281,7 +281,7 @@ export function useModifiedColumn(options?: {
   > = useMemo(
     () => ({
       id: 'modified',
-      header: t('Modified'),
+      header: t('Last modified'),
       cell: (item) => {
         if (!item.modified && !item.modified_on) return <></>;
         return (

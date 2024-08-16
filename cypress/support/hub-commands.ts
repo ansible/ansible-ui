@@ -109,6 +109,7 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
     if (count === 0) {
       throw new Error('Max loops reached while waiting for the tasks.');
     }
+    cy.wait(1000);
     cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
       (response) => {
         const tasks = response.results;
@@ -116,7 +117,6 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
         if (tasks.length === 0) {
           return;
         } else {
-          cy.wait(1000);
           waitForAllTasks(count - 1);
         }
       }
@@ -221,29 +221,13 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-Cypress.Commands.add('createNamespace', (namespaceName: string) => {
-  cy.galaxykit('namespace create', namespaceName);
-});
-
-Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.waitForAllTasks();
-  cy.galaxykit('-i namespace delete', namespaceName);
-  cy.waitForAllTasks();
-});
-
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
   ).then((itemsResponse) => {
     cy.log(`count of collections in namespace: ${itemsResponse.data.length}`);
     for (const collection of itemsResponse.data) {
-      cy.galaxykit(
-        'collection delete',
-        collection.collection_version?.namespace || '',
-        collection.collection_version?.name || '',
-        collection.collection_version?.version || '',
-        collection.repository?.name || ''
-      );
+      cy.deleteHubCollection(collection);
       cy.waitForAllTasks();
     }
   });
@@ -305,6 +289,21 @@ Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
     cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
+    cy.waitForAllTasks();
+  }
+);
+
+Cypress.Commands.add(
+  'moveCollection',
+  (
+    collection: string,
+    namespace: string,
+    version: string,
+    sourceRepo: string,
+    targetRepo: string
+  ) => {
+    cy.waitForAllTasks();
+    cy.galaxykit('collection move', namespace, collection, version, sourceRepo, targetRepo);
     cy.waitForAllTasks();
   }
 );
@@ -520,6 +519,8 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
 
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.waitForAllTasks();
+  cy.deleteCollectionsInNamespace(options.name);
   cy.waitForAllTasks();
   cy.hubDeleteRequest({
     ...options,

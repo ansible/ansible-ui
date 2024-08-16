@@ -3,8 +3,6 @@ import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
 import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
-import { EdaCredentialTypeAddTeams } from '../access/credential-types/components/EdaCredentialTypeAddTeams';
-import { EdaCredentialTypeAddUsers } from '../access/credential-types/components/EdaCredentialTypeAddUsers';
 import {
   CreateCredentialType,
   EditCredentialType,
@@ -12,8 +10,6 @@ import {
 import { CredentialTypeCredentials } from '../access/credential-types/CredentialTypePage/CredentialTypeCredentials';
 import { CredentialTypeDetails } from '../access/credential-types/CredentialTypePage/CredentialTypeDetails';
 import { CredentialTypePage } from '../access/credential-types/CredentialTypePage/CredentialTypePage';
-import { CredentialTypeTeamAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeTeamAccess';
-import { CredentialTypeUserAccess } from '../access/credential-types/CredentialTypePage/CredentialTypeUserAccess';
 import { CredentialTypes } from '../access/credential-types/CredentialTypes';
 import { EdaCredentialAddTeams } from '../access/credentials/components/EdaCredentialAddTeams';
 import { EdaCredentialAddUsers } from '../access/credentials/components/EdaCredentialAddUsers';
@@ -623,30 +619,10 @@ export function useEdaNavigation() {
                   element: <CredentialTypeCredentials />,
                 },
                 {
-                  id: EdaRoute.CredentialTypeTeamAccess,
-                  path: 'team-access',
-                  element: <CredentialTypeTeamAccess />,
-                },
-                {
-                  id: EdaRoute.CredentialTypeUserAccess,
-                  path: 'user-access',
-                  element: <CredentialTypeUserAccess />,
-                },
-                {
                   path: '',
                   element: <Navigate to="details" />,
                 },
               ],
-            },
-            {
-              id: EdaRoute.CredentialTypeAddUsers,
-              path: ':id/user-access/add',
-              element: <EdaCredentialTypeAddUsers />,
-            },
-            {
-              id: EdaRoute.CredentialTypeAddTeams,
-              path: ':id/team-access/add',
-              element: <EdaCredentialTypeAddTeams />,
             },
             {
               path: '',

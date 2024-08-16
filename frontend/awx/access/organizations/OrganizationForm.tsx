@@ -177,7 +177,7 @@ function OrganizationInputs(props: { orgId?: number }) {
       />
       <PageFormSelectExecutionEnvironment<IOrganizationData>
         name="default_environment"
-        label={t('Default execution environment')}
+        label={t('Execution environment')}
         organizationId={orgId}
       />
       {/* TODO: galaxyCredentials */}

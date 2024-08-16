@@ -38,15 +38,6 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: BanIcon,
-        label: t('Deprecate collections'),
-        onClick: (collections) => {
-          deprecateOrUndeprecateCollections(collections, 'deprecate');
-        },
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Multiple,
         icon: KeyIcon,
         label: t('Sign collections'),
         onClick: (collections) => {
@@ -54,6 +45,15 @@ export function useCollectionsActions(callback: (collections: CollectionVersionS
         },
         isDisabled: () =>
           !canSign ? t('You do not have the rights for this operation') : undefined,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: BanIcon,
+        label: t('Deprecate collections'),
+        onClick: (collections) => {
+          deprecateOrUndeprecateCollections(collections, 'deprecate');
+        },
       },
       { type: PageActionType.Seperator },
       {

@@ -419,7 +419,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
       <PageFormSection singleColumn>
         <PageFormDataEditor<InventoryCreate>
           name={inventoryKind === 'constructed' ? 'source_vars' : 'variables'}
-          label={inventoryKind === 'constructed' ? t('Source vars') : t('Variables')}
+          label={inventoryKind === 'constructed' ? t('Source variables') : t('Variables')}
           format="yaml"
           isRequired={inventoryKind === 'constructed' ? true : false}
           labelHelp={<LabelHelp inventoryKind={inventoryKind} />}
@@ -567,7 +567,7 @@ function PageFormMultiSelectInventories() {
     <PageFormMultiSelectAwxResource<Inventory>
       name={'inventories'}
       id={'inventories'}
-      label={t('Input Inventories')}
+      label={t('Input inventories')}
       placeholder={t('Select inventories')}
       queryPlaceholder={t('Loading inventories...')}
       queryErrorText={t('Error loading inventories')}

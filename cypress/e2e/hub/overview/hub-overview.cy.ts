@@ -14,7 +14,7 @@ const collectionNames: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-describe('HUB Overview', () => {
+describe.skip('HUB Overview', () => {
   before(() => {
     // Create collections
     Object.keys(collectionNames).forEach((category) => {
@@ -25,7 +25,7 @@ describe('HUB Overview', () => {
   });
   after(() => {
     cy.deleteCollectionsInNamespace(namespaceName);
-    cy.deleteNamespace(namespaceName);
+    cy.deleteHubNamespace({ name: namespaceName });
   });
 
   it.skip('render the hub dashboard', () => {

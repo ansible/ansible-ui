@@ -1619,8 +1619,6 @@ declare global {
         }
       ): Cypress.Chainable<void>;
       uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
-      createNamespace(namespaceName: string): Cypress.Chainable<void>;
-      deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
       createRemote(remoteName: string, url?: string): Cypress.Chainable<HubRemote>;
@@ -1649,6 +1647,13 @@ declare global {
         collection: string,
         namespace: string,
         version: string
+      ): Cypress.Chainable<void>;
+      moveCollection(
+        collection: string,
+        namespace: string,
+        version: string,
+        sourceRepo: string,
+        targetRepo: string
       ): Cypress.Chainable<void>;
       collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;

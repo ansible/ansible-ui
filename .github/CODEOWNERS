@@ -8,6 +8,7 @@
 @marshmalien
 @kialam
 @MilanPospisil
+@himdel
 
 # Code owners for the cypress/support directory
-cypress/support/ @nixocio @jamestalton @akus062381 @vishsanghishetty @AlexSCorey @vidyanambiar @keithjgrant @lgalis @ZitaNemeckova @marshmalien @kialam
+cypress/support/ @nixocio @jamestalton @akus062381 @vishsanghishetty @AlexSCorey @vidyanambiar @keithjgrant @lgalis @ZitaNemeckova @marshmalien @kialam @MilanPospisil @himdel

@@ -281,7 +281,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           labelHelpTitle={t('Extra Variables')}
           labelHelp={t(`Optional extra variables to be applied to job template.`)}
           format="yaml"
-          label={t('Extra Variables')}
+          label={t('Extra variables')}
           name="extra_vars"
         />
       </PageFormSection>
