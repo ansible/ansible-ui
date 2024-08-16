@@ -342,7 +342,7 @@ Cypress.Commands.add(
       url: hubAPI`/_ui/v1/execution-environments/remotes/`,
       body: {
         name: randomE2Ename(),
-        upstream_name: 'library/alpine',
+        upstream_name: 'pulp/pulp-fixtures',
         include_tags: ['latest'],
         ...options?.executionEnvironment,
       },
@@ -406,7 +406,7 @@ Cypress.Commands.add('createHubRemoteRegistry', (options?: HubCreateRemoteRegist
     url: hubAPI`/_ui/v1/execution-environments/registries/`,
     body: {
       name: randomE2Ename(),
-      url: 'https://registry.hub.docker.com/',
+      url: 'https://quay.io/',
       ...options?.remoteRegistry,
     },
   });
