@@ -312,6 +312,7 @@ Cypress.Commands.add(
     sourceRepo: string,
     targetRepo: string
   ) => {
+    cy.waitForAllTasks();
     cy.galaxykit('collection move', namespace, collection, version, sourceRepo, targetRepo);
     cy.waitForAllTasks();
   }
