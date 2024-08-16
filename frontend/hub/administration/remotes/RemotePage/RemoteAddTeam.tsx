@@ -144,7 +144,7 @@ export function RemoteAddTeams() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Add teams')}
+        title={t('Add roles')}
         breadcrumbs={[
           { label: t('Remotes'), to: getPageUrl(HubRoute.Remotes) },
           {
