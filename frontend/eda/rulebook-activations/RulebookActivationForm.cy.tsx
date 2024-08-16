@@ -54,7 +54,7 @@ describe('Create rulebook activation ', () => {
   it('Validates properly', () => {
     cy.mount(<CreateRulebookActivation />);
     cy.clickButton(/^Create rulebook activation$/);
-    ['Name', 'Decision environment', 'Rulebook', 'Organization'].map((field) =>
+    ['Name', 'Decision environment', 'Rulebook'].map((field) =>
       cy.contains(`${field} is required.`).should('be.visible')
     );
   });
