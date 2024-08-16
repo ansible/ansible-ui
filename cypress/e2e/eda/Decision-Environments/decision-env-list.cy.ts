@@ -1,8 +1,8 @@
 //Tests a user's ability to perform certain actions on the Decision Environment list in the EDA UI.
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Decision Environment List', () => {
     it('can filter the Decision Environment list based on Name filter option', () => {
       cy.createEdaDecisionEnvironment().then((edaDE) => {

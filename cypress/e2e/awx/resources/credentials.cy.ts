@@ -6,8 +6,8 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { cyLabel } from '../../../support/cyLabel';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { tag } from '../../../support/tag';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Credentials', () => {
@@ -560,7 +560,7 @@ describe('Credentials: Credential Types Tests', () => {
   });
 });
 
-tag(['upstream'], () => {
+cyLabel(['upstream'], () => {
   describe('Credentials Tabbed View - Team and User Access', () => {
     let machineCredential: Credential;
     let createdAwxUser: AwxUser;

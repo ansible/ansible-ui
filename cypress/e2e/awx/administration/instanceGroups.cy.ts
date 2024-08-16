@@ -8,9 +8,9 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { cyLabel } from '../../../support/cyLabel';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
-import { tag } from '../../../support/tag';
 
 describe(`Instance Groups`, () => {
   let project: Project;
@@ -1031,7 +1031,7 @@ describe(`Instance Groups`, () => {
   });
 });
 
-tag(['upstream'], () => {
+cyLabel(['upstream'], () => {
   //An instance can only be created in an Openshift or Kubernetes build
   describe('Instance Groups: Instances Tab', () => {
     let instance: Instance;

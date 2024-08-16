@@ -1,4 +1,4 @@
-import { tag } from '../../support/tag';
+import { cyLabel } from '../../support/cyLabel';
 import { Repositories, Tasks } from './constants';
 
 describe('Tasks', () => {
@@ -37,7 +37,7 @@ describe('Tasks', () => {
     });
   });
 
-  tag(['flaky'], () => {
+  cyLabel(['flaky'], () => {
     it('should disable stop task button if task is not running/waiting', () => {
       cy.createHubRemote().then((remote) => {
         cy.createHubRepository({

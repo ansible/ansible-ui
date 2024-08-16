@@ -1,9 +1,9 @@
 //Tests a user's ability to create, edit, and delete an decision environment in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA decision environment- Create, Edit, Delete', () => {
     it('can render the decision environments list page', () => {
       cy.navigateTo('eda', 'decision-environments');

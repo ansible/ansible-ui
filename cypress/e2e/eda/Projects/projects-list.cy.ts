@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Projects List', () => {
     it('renders the EDA projects page', () => {
       cy.navigateTo('eda', 'projects');

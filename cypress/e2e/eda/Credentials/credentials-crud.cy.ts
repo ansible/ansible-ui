@@ -2,10 +2,10 @@
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials- Create, Edit, Delete', () => {
     it('can create a container registry credential, and assert the information showing on the details page', () => {
       const name = 'E2E Credential ' + randomString(4);

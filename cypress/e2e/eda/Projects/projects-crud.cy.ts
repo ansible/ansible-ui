@@ -3,10 +3,10 @@
 
 //Tests a user's ability to create, edit, and delete a Project in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Projects CRUD', () => {
     it('can create a Project, sync it, and assert the information showing on the details page', () => {
       const name = 'E2E Project ' + randomString(4);

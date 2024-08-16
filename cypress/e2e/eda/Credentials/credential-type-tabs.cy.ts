@@ -6,10 +6,10 @@ import {
   EdaCredentialCreate,
 } from '../../../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials Type - Tabs', () => {
     let cred: EdaCredential | EdaCredentialCreate;
     let credtype: EdaCredentialType;

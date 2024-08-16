@@ -1,6 +1,6 @@
-import { tag } from '../../../support/tag';
+import { cyLabel } from '../../../support/cyLabel';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Projects Syncing', () => {
     it('can sync a single project', () => {
       cy.createEdaProject().then((edaProject) => {
