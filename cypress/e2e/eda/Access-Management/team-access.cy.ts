@@ -55,7 +55,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaTeam(edaTeam);
     });
 
-    it.skip('can add teams via team access tab', () => {
+    it('can add teams via team access tab', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
@@ -170,7 +170,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.deleteEdaTeam(edaTeam3);
     });
 
-    it.skip('can remove team from row', () => {
+    it('can remove team from row', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
@@ -196,7 +196,7 @@ user_team_access_tab_resources.forEach((resource) => {
       cy.contains(edaTeam1.name).should('not.exist');
     });
 
-    it.skip('can bulk remove team assignments', () => {
+    it('can bulk remove team assignments', () => {
       cy.navigateTo('eda', resource.name);
       // filter resource by name not available for decision environment
       // or credential type
