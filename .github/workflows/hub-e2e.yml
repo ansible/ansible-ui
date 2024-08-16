@@ -91,7 +91,7 @@ jobs:
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
         run: npm version 0.0.0 --no-git-tag-version
