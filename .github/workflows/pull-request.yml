@@ -2,6 +2,7 @@ name: Pull Request
 
 on:
   pull_request:
+    types: [opened, synchronize, labeled, unlabeled]
 
 env:
   IS_GITHUB_ACTION: true
@@ -25,7 +26,7 @@ jobs:
           fetch-depth: 100
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -72,7 +73,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
