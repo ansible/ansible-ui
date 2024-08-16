@@ -33,9 +33,11 @@ jobs:
         if: ${{ !inputs.SKIP_JOB }}
         with:
           fetch-depth: 1
+
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
         run: npm version 0.0.0 --no-git-tag-version
+
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
@@ -45,18 +47,23 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+
       - name: NPM Build
         if: ${{ !inputs.SKIP_JOB }}
         run: npm run build:awx
+
       - name: Build Image
         if: ${{ !inputs.SKIP_JOB }}
         run: npm run docker:build:awx
+        
       - name: Save Image
         if: ${{ !inputs.SKIP_JOB }}
         run: docker save awx-ui > awx-ui.tar
+
       - name: Upload Image
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/upload-artifact@v4
@@ -64,37 +71,60 @@ jobs:
           name: awx-ui.tar
           path: awx-ui.tar
 
+  generate-matrix:
+    name: Generate Test Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.MATRIX }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          matrix=$(find cypress/e2e/awx -maxdepth 1 -type d -not -path 'cypress/e2e/awx' | sed 's|cypress/e2e/awx/||' | jq -R . | jq -s -c .)
+          echo "Matrix value: $matrix"
+          echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
+
   awx-e2e:
     name: AWX E2E
     runs-on: ubuntu-latest
-    # timeout-minutes: 20
-    needs: awx-ui-image
+    needs:
+      - awx-ui-image
+      - generate-matrix
     strategy:
+      # max-parallel: 8
       fail-fast: false
       matrix:
-        containers: [1,2,3,4]
+        containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson(needs.generate-matrix.outputs.MATRIX) }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/download-artifact@v4
         with:
           name: awx-ui.tar
+
       - name: Load container image
         if: ${{ !inputs.SKIP_JOB }}
         run: docker load --input awx-ui.tar
+
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Setup node
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
         run: npm version 0.0.0 --no-git-tag-version
+
       - name: Cache dependencies
         if: ${{ !inputs.SKIP_JOB }}
         id: cache
@@ -104,11 +134,13 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
-      - name: Cypress
-        if: ${{ !inputs.SKIP_JOB }}
+
+      - name: Cypress with Recording
+        if: ${{ !inputs.SKIP_JOB && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'dashboard')) }}
         uses: cypress-io/github-action@v6
         with:
           install: false
@@ -116,7 +148,6 @@ jobs:
           wait-on: 'https://localhost:4101'
           record: true
           parallel: true
-          # auto-cancel-after-failures: 1
           config-file: cypress.awx.config.ts
           tag: ${{ inputs.TAGS }}
         env:
@@ -128,3 +159,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           TAGS: '!flaky'
+
+      - name: Cypress without Recording
+        if: ${{ !inputs.SKIP_JOB && github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'dashboard') }}
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          start: npm run docker:run:awx
+          wait-on: 'https://localhost:4101'
+          config-file: cypress.awx.config.ts
+          spec: cypress/e2e/awx/${{ matrix.containers }}/**/*.cy.ts
+          tag: ${{ inputs.TAGS }}
+        env:
+          AWX_SERVER: ${{ inputs.AWX_SERVER }}
+          AWX_USERNAME: e2e
+          AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+          TAGS: '!flaky'
+  
