@@ -121,61 +121,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 });
 
-describe('Namespaces - collections', () => {
-  let namespace: HubNamespace;
-  const collectionName = randomE2Ename();
-  const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-
-  before(() => {
-    cy.createHubNamespace({
-      namespace: {
-        name: namespaceName,
-        description: 'test description',
-        company: 'test company',
-        links: [{ name: 'test link', url: 'https://test.com' }],
-      },
-    }).then((ns: HubNamespace) => {
-      namespace = ns;
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteHubCollectionByName(collectionName);
-    cy.deleteHubNamespace(namespace);
-  });
-
-  it('can sign a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0').then(() => {
-        cy.waitForAllTasks();
-        cy.navigateTo('hub', 'namespaces');
-        cy.verifyPageTitle('Namespaces');
-        cy.setTableView('table');
-        cy.filterTableBySingleText(namespace.name, true);
-        cy.clickTableRow(namespace.name, false);
-        cy.getByDataCy('collections-tab').click();
-        cy.setTableView('table');
-
-        // Sign collection
-        cy.filterTableBySingleText(collectionName, true);
-        cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
-        cy.get(`[data-cy="sign-collection"] button`).click();
-        cy.get('#confirm').click();
-        cy.clickButton(/^Sign collections$/);
-        cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
-        cy.getModal().should('not.exist');
-        cy.get('div[data-cy="manage-view"]').within(() => {
-          cy.clickKebabAction('actions-dropdown', 'imports');
-        });
-        cy.getByDataCy('status').should('contain', 'Completed');
-        cy.getByDataCy('approval-status').should('be.visible');
-      });
-    });
-  });
-});
-
-describe.skip('Namespaces - sign all collections', () => {
+describe('Namespaces - sign collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const collectionName2 = randomE2Ename();
@@ -208,7 +154,33 @@ describe.skip('Namespaces - sign all collections', () => {
     cy.deleteHubNamespace(namespace);
   });
 
-  it.skip('can sign all collections', () => {
+  it('can sign a collection', () => {
+    cy.waitForAllTasks();
+    cy.navigateTo('hub', 'namespaces');
+    cy.verifyPageTitle('Namespaces');
+    cy.setTableView('table');
+    cy.filterTableBySingleText(namespace.name, true);
+    cy.clickTableRow(namespace.name, false);
+    cy.getByDataCy('collections-tab').click();
+    cy.setTableView('table');
+
+    // Sign collection
+    cy.filterTableBySingleText(collectionName, true);
+    cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
+    cy.get(`[data-cy="sign-collection"] button`).click();
+    cy.get('#confirm').click();
+    cy.clickButton(/^Sign collections$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.getModal().should('not.exist');
+    cy.get('div[data-cy="manage-view"]').within(() => {
+      cy.clickKebabAction('actions-dropdown', 'imports');
+    });
+    cy.getByDataCy('status').should('contain', 'Completed');
+    cy.getByDataCy('approval-status').should('be.visible');
+  });
+
+  it('can sign all collections', () => {
     cy.navigateTo('hub', 'namespaces');
     cy.verifyPageTitle('Namespaces');
     cy.setTableView('table');
