@@ -1,6 +1,6 @@
-import { tag } from '../../../support/tag';
+import { cyLabel } from '../../../support/cyLabel';
 
-tag(['aaas-unsupported'], () => {
+cyLabel(['aaas-unsupported'], () => {
   describe('Overview - Quick Starts', () => {
     beforeEach(() => {
       cy.verifyPageTitle('Welcome to the Ansible Automation Platform');

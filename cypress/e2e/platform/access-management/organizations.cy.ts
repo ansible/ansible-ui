@@ -2,7 +2,7 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { tag } from '../../../support/tag';
+import { cyLabel } from '../../../support/cyLabel';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
@@ -144,7 +144,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
   });
 
   // Organizations Users tab -  add roles to Users
-  tag(['aaas-unsupported'], function () {
+  cyLabel(['aaas-unsupported'], function () {
     it('can add a user and apply the roles to the users of an organization via the users tab', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.createPlatformUser().then((createdUser2) => {
@@ -217,7 +217,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
   });
 
   //Organizations Users tab - users row item modal check
-  tag(['aaas-unsupported'], function () {
+  cyLabel(['aaas-unsupported'], function () {
     it('verifies the modal displayed when no organization roles are added to a user', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
@@ -288,7 +288,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
   });
 
   //Organizations teams tab - add roles to team
-  tag(['aaas-unsupported'], function () {
+  cyLabel(['aaas-unsupported'], function () {
     it("can add a team and apply and remove the roles from an organization's team via the teams tab", function () {
       const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
       cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
@@ -394,7 +394,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
     });
   });
 
-  tag(['aaas-unsupported'], function () {
+  cyLabel(['aaas-unsupported'], function () {
     //Organizations teams tab - teams row item modal check
     it('verifies the modal displayed when organization roles are not added to the team', function () {
       const globalOrg = this.globalPlatformOrganization as PlatformOrganization;

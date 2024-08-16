@@ -1,7 +1,8 @@
 //Tests a user's ability to perform certain actions on the Navigation toolbar in the EDA UI.
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], () => {
+import { cyLabel } from '../../../support/cyLabel';
+
+cyLabel(['aaas-unsupported'], () => {
   describe('EDA Navigation Bar Functionality', () => {
     it('can visit the dashboard page and assert the data there', () => {
       cy.get('[data-cy="platform-overview"]').contains('Overview');

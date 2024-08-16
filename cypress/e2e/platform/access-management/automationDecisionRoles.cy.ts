@@ -1,10 +1,10 @@
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { randomString } from '../../../../framework/utils/random-string';
+import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
 import { RoleDefinition } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { tag } from '../../../support/tag';
+import { cyLabel } from '../../../support/cyLabel';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('Automation Decisions: Roles', () => {
     describe('Automation Decisions: Verify Role Permissions', () => {
       it(`can verify that a managed Automation Decisions role displays the proper permissions`, () => {

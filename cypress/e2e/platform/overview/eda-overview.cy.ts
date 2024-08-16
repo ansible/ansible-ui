@@ -1,10 +1,10 @@
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaRuleAudit } from '../../../../frontend/eda/interfaces/EdaRuleAudit';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], () => {
+cyLabel(['aaas-unsupported'], () => {
   describe('Overview - EDA Cards', () => {
     it('verify the titles, subtitles and info icons on cards', () => {
       cy.navigateTo('platform', 'overview');

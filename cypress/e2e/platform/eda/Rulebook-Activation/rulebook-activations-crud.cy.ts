@@ -9,10 +9,10 @@ import {
   ActivationRead,
   LogLevelEnum,
 } from '../../../../../frontend/eda/interfaces/generated/eda-api';
+import { cyLabel } from '../../../../support/cyLabel';
 import { edaAPI } from '../../../../support/formatApiPathForEDA';
-import { tag } from '../../../../support/tag';
 
-tag(['aaas-unsupported'], () => {
+cyLabel(['aaas-unsupported'], () => {
   describe('EDA rulebook activations - Create', () => {
     let edaProject: EdaProject;
     let edaDecisionEnvironment: EdaDecisionEnvironment;
