@@ -31,7 +31,7 @@ export function ProjectDetails({ project }: { project: Project }) {
       <PageDetail label={t('Source control URL')}>{project.scm_url}</PageDetail>
       <PageDetail label={t('Source control branch')}>{project.scm_branch}</PageDetail>
       <PageDetail label={t('Source control refspec')}>{project.scm_refspec}</PageDetail>
-      <PageDetail label={t('Cache Timeout')}>
+      <PageDetail label={t('Cache timeout')}>
         {`${project.scm_update_cache_timeout} seconds`}
       </PageDetail>
       <PageDetail label={t('Project Base Path')}>{config?.project_base_dir}</PageDetail>
