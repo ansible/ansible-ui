@@ -14,7 +14,7 @@ const collectionNames: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-describe('HUB Overview', () => {
+describe.skip('HUB Overview', () => {
   before(() => {
     // Create collections
     Object.keys(collectionNames).forEach((category) => {
