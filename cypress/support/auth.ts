@@ -46,8 +46,11 @@ Cypress.Commands.add('login', () => {
           cy.edaLogin();
           break;
         default:
-          cy.log('Platform server:', Cypress.config().baseUrl);
-          cy.platformLogin(); //downstream AAP build
+          if (!Cypress.config().baseUrl?.includes('localhost')) {
+            cy.log('Platform server:', Cypress.config().baseUrl);
+            cy.platformLogin(); //downstream AAP build
+            return;
+          }
           break;
       }
   }
