@@ -623,7 +623,7 @@ function testPagerDutyForm() {
 // Grafana Form Test
 function testGrafanaForm() {
   cy.contains(`[data-cy="grafana-url"]`, 'https://grafana.com');
-  cy.contains(`[data-cy="id-of-the-dashboard"]`, 'dashboard_id');
+  cy.contains(`[data-cy*="id-of-the-dashboard"]`, 'dashboard_id');
   cy.contains(`[data-cy="id-of-the-panel"]`, 'panel_id');
   cy.contains(`[data-cy="tags-for-the-annotation"]`, 'tag1');
   cy.contains(`[data-cy='disable-ssl-verification']`, 'true');
@@ -804,7 +804,7 @@ function testPagerDutyFormEdited() {
 // Grafana Form Test Edited
 function testGrafanaFormEdited() {
   cy.contains(`[data-cy="grafana-url"]`, 'https://new.grafana.com');
-  cy.contains(`[data-cy="id-of-the-dashboard"]`, 'new_dashboard_id');
+  cy.contains(`[data-cy*="id-of-the-dashboard"]`, 'new_dashboard_id');
   cy.contains(`[data-cy="id-of-the-panel"]`, 'new_panel_id');
   cy.contains(`[data-cy="tags-for-the-annotation"]`, 'new_tag1');
   cy.contains(`[data-cy='disable-ssl-verification']`, 'true');
