@@ -16,26 +16,21 @@ export function PageFormCredentialSelect<
 >(props: {
   name: TFieldName;
   additionalControls?: ReactElement;
-  credentialIdPath?: string;
-  credentialPath?: string;
-  credentialType?: number;
   id?: string;
   isDisabled?: string;
   isMultiple?: boolean;
   isRequired?: boolean;
   label?: string;
   labelHelp?: string;
-  labelHelpTitle?: string;
   placeholder?: string;
-  selectTitle?: string;
-  sourceType?: string;
   queryParams?: QueryParams;
+  allowDuplicateCredentialTypes?: boolean;
 }) {
   const { t } = useTranslation();
 
   const credentialColumns = useCredentialsColumns({ disableLinks: true });
   const credentialFilters = useCredentialsFilters();
-  const validateCredentials = useCredentialsValidate();
+  const validateCredentials = useCredentialsValidate(!!props?.allowDuplicateCredentialTypes);
 
   return props.isMultiple ? (
     <PageFormMultiSelectAwxResource<Credential>

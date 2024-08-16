@@ -5,7 +5,7 @@ import { Credential } from '../../../interfaces/Credential';
 import { requestGet } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 
-export function useCredentialsValidate() {
+export function useCredentialsValidate(allowDuplicateCredentialTypes = false) {
   const { t } = useTranslation();
   return useCallback(
     async (selectedCredentials: PromptFormValues['credentials']) => {
@@ -41,7 +41,7 @@ export function useCredentialsValidate() {
         ),
       ];
 
-      if (duplicateCredentialTypes.length > 0) {
+      if (duplicateCredentialTypes.length > 0 && !allowDuplicateCredentialTypes) {
         return t(
           `Cannot assign multiple credentials of the same type. Duplicated credential types are: ${duplicateCredentialTypes.join(', ')}`
         );
@@ -50,6 +50,6 @@ export function useCredentialsValidate() {
         return t(`Cannot assign multiple vault credentials of the same vault id.`);
       }
     },
-    [t]
+    [t, allowDuplicateCredentialTypes]
   );
 }
