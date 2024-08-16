@@ -86,7 +86,7 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: BanIcon,
-        label: t('Deprecate'),
+        label: t('Deprecate collection'),
         onClick: (collection) => {
           deprecateOrUndeprecateCollections([collection], 'deprecate');
         },
@@ -98,7 +98,7 @@ export function useCollectionActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: BanIcon,
-        label: t('Undeprecate'),
+        label: t('Undeprecate collection'),
         onClick: (collection) => {
           deprecateOrUndeprecateCollections([collection], 'undeprecate');
         },
