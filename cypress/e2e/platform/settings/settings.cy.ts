@@ -1,7 +1,7 @@
 import { ILicenseInfo } from '../../../../frontend/awx/interfaces/Config';
-import { tag } from '../../../support/tag';
+import { cyLabel } from '../../../support/cyLabel';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('Settings', () => {
     it('checks license compliance status', () => {
       cy.intercept('GET', '/api/controller/v2/config').as('getConfig');

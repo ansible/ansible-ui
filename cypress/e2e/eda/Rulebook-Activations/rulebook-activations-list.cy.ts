@@ -4,10 +4,10 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA rulebook activations- Create, Edit, Delete', () => {
     let edaProject: EdaProject;
     let edaDecisionEnvironment: EdaDecisionEnvironment;

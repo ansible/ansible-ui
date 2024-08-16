@@ -4,8 +4,8 @@ import { MeshVisualizer } from '../../../../../frontend/awx/interfaces/MeshVisua
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
 import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { cyLabel } from '../../../../support/cyLabel';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { tag } from '../../../../support/tag';
 
 describe('Topology view', () => {
   let user: AwxUser;
@@ -108,7 +108,7 @@ describe('Topology view', () => {
     });
   });
 
-  tag(['upstream'], () => {
+  cyLabel(['upstream'], () => {
     // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
     it.skip('does not show Topology View in sidebar for non admins', function () {
       cy.createAwxUser({ organization: organization.id }).then((awxUser) => {

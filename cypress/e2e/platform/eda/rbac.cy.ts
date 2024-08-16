@@ -1,14 +1,14 @@
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
-import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { randomString } from '../../../../framework/utils/random-string';
-import { tag } from '../../../support/tag';
+import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
+import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
+import { cyLabel } from '../../../support/cyLabel';
 
-tag(['aaas-unsupported'], () => {
+cyLabel(['aaas-unsupported'], () => {
   describe('Users - Permissions', () => {
     let edaProject: EdaProject;
     let edaRuleBook: EdaRulebook;

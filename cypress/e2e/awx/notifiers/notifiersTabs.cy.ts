@@ -1,6 +1,6 @@
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { cyLabel } from '../../../support/cyLabel';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { tag } from '../../../support/tag';
 import { randomE2Ename } from '../../../support/utils';
 import { testDelete, testNotification } from './notifiersSharedFunctions';
 
@@ -68,7 +68,7 @@ describe('Notifications', () => {
     });
   });
 
-  tag(['upstream'], () => {
+  cyLabel(['upstream'], () => {
     describe('Notifications Tab for Organizations', () => {
       const orgName = randomE2Ename();
 
