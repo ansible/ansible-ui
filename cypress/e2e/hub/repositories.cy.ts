@@ -4,7 +4,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 
-describe.skip('Repositories', () => {
+describe('Repositories', () => {
   const collectionName = randomE2Ename();
   let namespace: HubNamespace;
   let remote: HubRemote;

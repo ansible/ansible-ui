@@ -14,7 +14,7 @@ function visitCollection(collection: string, namespace: string) {
   cy.verifyPageTitle(`${namespace}.${collection}`);
 }
 
-describe.skip('Collections Details', () => {
+describe('Collections Details', () => {
   let namespace: HubNamespace;
   let repository: Repository;
   let collectionName: string;
