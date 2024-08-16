@@ -88,7 +88,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         placeholder={t('Enter description ')}
         maxLength={150}
       />
-      <PageFormSelectOrganization<EdaCredentialCreate> name="organization_id" />
+      <PageFormSelectOrganization<EdaCredentialCreate> name="organization_id" isRequired />
       <PageFormSelect<EdaCredentialCreate>
         name="credential_type_id"
         data-cy="credential-type-form-field"

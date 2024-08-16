@@ -215,7 +215,7 @@ export function RulebookActivationInputs() {
         id={'description'}
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" />
+      <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" isRequired />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="project_id"
         label={t('Project')}
