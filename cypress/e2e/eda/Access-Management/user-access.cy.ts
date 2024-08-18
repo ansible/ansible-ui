@@ -12,61 +12,62 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['upstream'], () => {
-user_team_access_tab_resources.forEach((resource) => {
-  describe(`User Access Tab for ${resource.name} - Add User`, () => {
-    let edaUser: EdaUser;
-    let resource_object:
-      | EdaProject
-      | EdaDecisionEnvironment
-      | EdaRulebookActivation
-      | EdaCredential;
+  user_team_access_tab_resources.forEach((resource) => {
+    describe(`User Access Tab for ${resource.name} - Add User`, () => {
+      let edaUser: EdaUser;
+      let resource_object:
+        | EdaProject
+        | EdaDecisionEnvironment
+        | EdaRulebookActivation
+        | EdaCredential;
 
-    let edaProject: EdaProject;
-    let edaRuleBook: EdaRulebook;
-    let edaOrg: EdaOrganization;
+      let edaProject: EdaProject;
+      let edaRuleBook: EdaRulebook;
+      let edaOrg: EdaOrganization;
 
-    before(() => {
-      // If the resource is a RBA, create all dependency resources, else just the one resource
-      if (resource.name === 'rulebook-activations') {
-        cy.createEdaOrganization().then((organization) => {
-          edaOrg = organization;
-          cy.createEdaProject(edaOrg?.id).then((project) => {
-            edaProject = project;
-            cy.waitEdaProjectSync(project);
-            cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
-              edaRuleBook = edaRuleBooks[0];
-              cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
-                cy.createEdaRulebookActivation({
-                  rulebook_id: edaRuleBook.id,
-                  decision_environment_id: decisionEnvironment.id,
-                  k8s_service_name: 'sample',
-                  log_level: LogLevelEnum.Error,
-                }).then((edaRulebookActivation) => {
-                  resource_object = edaRulebookActivation;
+      before(() => {
+        // If the resource is a RBA, create all dependency resources, else just the one resource
+        if (resource.name === 'rulebook-activations') {
+          cy.createEdaOrganization().then((organization) => {
+            edaOrg = organization;
+            cy.createEdaProject(edaOrg?.id).then((project) => {
+              edaProject = project;
+              cy.waitEdaProjectSync(project);
+              cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+                edaRuleBook = edaRuleBooks[0];
+                cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+                  cy.createEdaRulebookActivation({
+                    rulebook_id: edaRuleBook.id,
+                    decision_environment_id: decisionEnvironment.id,
+                    k8s_service_name: 'sample',
+                    log_level: LogLevelEnum.Error,
+                  }).then((edaRulebookActivation) => {
+                    resource_object = edaRulebookActivation;
+                  });
                 });
               });
             });
           });
+        } else if (resource.creation !== null) {
+          resource.creation(edaOrg?.id).then((resource_instance) => {
+            resource_object = resource_instance;
+            if (resource.name === 'projects') {
+              cy.waitEdaProjectSync(resource_instance as EdaProject);
+            }
+          });
+        }
+        cy.createEdaUser().then((user) => {
+          edaUser = user;
         });
-      } else if (resource.creation !== null) {
-        resource.creation(edaOrg?.id).then((resource_instance) => {
-          resource_object = resource_instance;
-          if (resource.name === 'projects') {
-            cy.waitEdaProjectSync(resource_instance as EdaProject);
-          }
-        });
-      }
-      cy.createEdaUser().then((user) => {
-        edaUser = user;
       });
-    });
 
-    after(() => {
-      resource.deletion(resource_object);
-      cy.deleteEdaUser(edaUser);
-      if (edaOrg) {
-        cy.deleteEdaOrganization(edaOrg);
-      }
+      after(() => {
+        resource.deletion(resource_object);
+        cy.deleteEdaUser(edaUser);
+        if (edaOrg) {
+          cy.deleteEdaOrganization(edaOrg);
+        }
+      });
 
       it('can add users via user access tab', () => {
         cy.navigateTo('eda', resource.name);
@@ -102,97 +103,97 @@ user_team_access_tab_resources.forEach((resource) => {
       });
     });
 
-  describe(`User Access Tab for ${resource.name} - actions`, () => {
-    let roleIDs: { [key: string]: number };
-    let RoleID: number;
-    let resource_object:
-      | EdaProject
-      | EdaDecisionEnvironment
-      | EdaRulebookActivation
-      | EdaCredential;
-    let edaUser1: EdaUser;
-    let edaUser2: EdaUser;
-    let edaUser3: EdaUser;
-    let edaProject: EdaProject;
-    let edaRuleBook: EdaRulebook;
-    let edaOrg: EdaOrganization;
+    describe(`User Access Tab for ${resource.name} - actions`, () => {
+      let roleIDs: { [key: string]: number };
+      let RoleID: number;
+      let resource_object:
+        | EdaProject
+        | EdaDecisionEnvironment
+        | EdaRulebookActivation
+        | EdaCredential;
+      let edaUser1: EdaUser;
+      let edaUser2: EdaUser;
+      let edaUser3: EdaUser;
+      let edaProject: EdaProject;
+      let edaRuleBook: EdaRulebook;
+      let edaOrg: EdaOrganization;
 
-    before(() => {
-      // If the resource is a RBA, create all dependency resources, else just the one resource
-      if (resource.name === 'rulebook-activations') {
-        cy.createEdaOrganization().then((organization) => {
-          edaOrg = organization;
-          cy.createEdaProject(edaOrg?.id).then((project) => {
-            edaProject = project;
-            cy.waitEdaProjectSync(project);
-            cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
-              edaRuleBook = edaRuleBooks[0];
-              cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
-                cy.createEdaRulebookActivation({
-                  rulebook_id: edaRuleBook.id,
-                  decision_environment_id: decisionEnvironment.id,
-                  k8s_service_name: 'sample',
-                  log_level: LogLevelEnum.Error,
-                }).then((edaRulebookActivation) => {
-                  resource_object = edaRulebookActivation;
+      before(() => {
+        // If the resource is a RBA, create all dependency resources, else just the one resource
+        if (resource.name === 'rulebook-activations') {
+          cy.createEdaOrganization().then((organization) => {
+            edaOrg = organization;
+            cy.createEdaProject(edaOrg?.id).then((project) => {
+              edaProject = project;
+              cy.waitEdaProjectSync(project);
+              cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+                edaRuleBook = edaRuleBooks[0];
+                cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+                  cy.createEdaRulebookActivation({
+                    rulebook_id: edaRuleBook.id,
+                    decision_environment_id: decisionEnvironment.id,
+                    k8s_service_name: 'sample',
+                    log_level: LogLevelEnum.Error,
+                  }).then((edaRulebookActivation) => {
+                    resource_object = edaRulebookActivation;
+                  });
                 });
               });
             });
           });
-        });
-      } else if (resource.creation !== null) {
-        resource.creation(edaOrg?.id).then((resource_instance) => {
-          resource_object = resource_instance;
-          if (resource.name === 'projects') {
-            cy.waitEdaProjectSync(resource_object as EdaProject);
-          }
-        });
-      }
-      cy.createEdaUser().then((user1) => {
-        edaUser1 = user1;
-        cy.createEdaUser().then((user2) => {
-          edaUser2 = user2;
-          cy.createEdaUser().then((user3) => {
-            edaUser3 = user3;
-            cy.getEdaRoles().then((rolesArray) => {
-              roleIDs = rolesArray.reduce((acc, role) => {
-                const { name, id } = role;
-                return { ...acc, [name]: id };
-              }, {});
-              RoleID = roleIDs[resource.role];
-              cy.createRoleUserAssignments(
-                resource_object.id.toString(),
-                RoleID,
-                user1.id,
-                resource.content_type
-              );
-              cy.createRoleUserAssignments(
-                resource_object.id.toString(),
-                RoleID,
-                user2.id,
-                resource.content_type
-              );
-              cy.createRoleUserAssignments(
-                resource_object.id.toString(),
-                RoleID,
-                user3.id,
-                resource.content_type
-              );
+        } else if (resource.creation !== null) {
+          resource.creation(edaOrg?.id).then((resource_instance) => {
+            resource_object = resource_instance;
+            if (resource.name === 'projects') {
+              cy.waitEdaProjectSync(resource_object as EdaProject);
+            }
+          });
+        }
+        cy.createEdaUser().then((user1) => {
+          edaUser1 = user1;
+          cy.createEdaUser().then((user2) => {
+            edaUser2 = user2;
+            cy.createEdaUser().then((user3) => {
+              edaUser3 = user3;
+              cy.getEdaRoles().then((rolesArray) => {
+                roleIDs = rolesArray.reduce((acc, role) => {
+                  const { name, id } = role;
+                  return { ...acc, [name]: id };
+                }, {});
+                RoleID = roleIDs[resource.role];
+                cy.createRoleUserAssignments(
+                  resource_object.id.toString(),
+                  RoleID,
+                  user1.id,
+                  resource.content_type
+                );
+                cy.createRoleUserAssignments(
+                  resource_object.id.toString(),
+                  RoleID,
+                  user2.id,
+                  resource.content_type
+                );
+                cy.createRoleUserAssignments(
+                  resource_object.id.toString(),
+                  RoleID,
+                  user3.id,
+                  resource.content_type
+                );
+              });
             });
           });
         });
       });
-    });
 
-    after(() => {
-      resource.deletion(resource_object);
-      cy.deleteEdaUser(edaUser1);
-      cy.deleteEdaUser(edaUser2);
-      cy.deleteEdaUser(edaUser3);
-      if (edaOrg) {
-        cy.deleteEdaOrganization(edaOrg);
-      }
-    });
+      after(() => {
+        resource.deletion(resource_object);
+        cy.deleteEdaUser(edaUser1);
+        cy.deleteEdaUser(edaUser2);
+        cy.deleteEdaUser(edaUser3);
+        if (edaOrg) {
+          cy.deleteEdaOrganization(edaOrg);
+        }
+      });
 
       it('can remove user from row', () => {
         cy.navigateTo('eda', resource.name);
