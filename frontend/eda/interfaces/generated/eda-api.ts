@@ -132,7 +132,6 @@ export interface ActivationList {
   modified_at: string;
   status_message?: string | null;
   awx_token_id: number | null;
-  event_streams?: EventStreamOut[] | null;
   /**
    * * `debug` - debug
    * * `info` - info
@@ -196,7 +195,6 @@ export interface ActivationRead {
   status_message?: string | null;
   awx_token_id: number | null;
   eda_credentials?: EdaCredential[] | null;
-  event_streams?: EventStreamOut[] | null;
   webhooks?: EventStreamOut[] | null;
   /**
    * * `debug` - debug
