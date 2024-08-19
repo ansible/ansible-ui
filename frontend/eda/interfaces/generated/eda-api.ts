@@ -510,7 +510,7 @@ export interface EventStreamOut {
   test_mode?: boolean;
   /** The additional http headers which will be added to the event data. The headers are comma delimited */
   additional_data_headers?: string;
-  organization: number;
+  organization: OrganizationRef;
   /** Serializer for EdaCredential reference. */
   eda_credential: EdaCredentialRef;
   /** The type of the event stream based on credential type */

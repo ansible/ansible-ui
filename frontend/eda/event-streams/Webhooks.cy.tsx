@@ -4,18 +4,18 @@ import { Webhooks } from './Webhooks';
 describe('Webhooks.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: edaAPI`/webhooks/?page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/event-streams/?page=1&page_size=10` },
       {
         fixture: 'edaWebhooks.json',
       }
     );
 
     cy.intercept(
-      { method: 'GET', url: edaAPI`/webhooks/?page=2&page_size=10` },
+      { method: 'GET', url: edaAPI`/event-streams/?page=2&page_size=10` },
       {
         count: 15,
         next: null,
-        previous: '/api/eda/v1/webhooks/?page=1&page_size=10',
+        previous: '/api/eda/v1/event-streams/?page=1&page_size=10',
         page_size: 10,
         page: 2,
         results: [
@@ -216,7 +216,7 @@ describe('Webhooks.cy.ts', () => {
   it('Can delete an event stream not in use', () => {
     cy.mount(<Webhooks />);
     cy.intercept(
-      { method: 'DELETE', url: edaAPI`/webhooks/2/` },
+      { method: 'DELETE', url: edaAPI`/event-streams/2/` },
       {
         statusCode: 204,
       }
@@ -247,7 +247,7 @@ describe('Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: edaAPI`/webhooks/*`,
+        url: edaAPI`/event-streams/*`,
       },
       {
         fixture: 'emptyList.json',

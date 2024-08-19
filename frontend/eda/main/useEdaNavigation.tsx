@@ -75,10 +75,10 @@ import { RulebookActivationPage } from '../rulebook-activations/RulebookActivati
 import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
 import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationUserAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
-import { CreateWebhook, EditWebhook } from '../webhooks/WebhookForm';
-import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
-import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
-import { Webhooks } from '../webhooks/Webhooks';
+import { CreateWebhook, EditWebhook } from '../event-streams/WebhookForm';
+import { WebhookDetails } from '../event-streams/WebhookPage/WebhookDetails';
+import { WebhookPage } from '../event-streams/WebhookPage/WebhookPage';
+import { Webhooks } from '../event-streams/Webhooks';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 

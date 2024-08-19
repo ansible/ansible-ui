@@ -7,7 +7,7 @@ import {
   TextCell,
   useGetPageUrl,
 } from '../../../../framework';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
@@ -15,7 +15,7 @@ import { Tooltip } from '@patternfly/react-core';
 export function useWebhookColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  return useMemo<ITableColumn<EdaWebhook>[]>(
+  return useMemo<ITableColumn<EdaEventStream>[]>(
     () => [
       {
         header: t('Name'),

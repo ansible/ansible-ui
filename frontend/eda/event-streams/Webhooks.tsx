@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
-import { EdaWebhook } from '../interfaces/EdaWebhook';
+import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { EdaRoute } from '../main/EdaRoutes';
 import { useWebhookActions } from './hooks/useWebhookActions';
 import { useWebhookColumns } from './hooks/useWebhookColumns';
@@ -15,8 +15,8 @@ export function Webhooks() {
   const pageNavigate = usePageNavigate();
   const toolbarFilters = useWebhookFilters();
   const tableColumns = useWebhookColumns();
-  const view = useEdaView<EdaWebhook>({
-    url: edaAPI`/webhooks/`,
+  const view = useEdaView<EdaEventStream>({
+    url: edaAPI`/event-streams/`,
     toolbarFilters,
     tableColumns,
   });
@@ -24,7 +24,13 @@ export function Webhooks() {
   const rowActions = useWebhookActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Event Streams')} description={t('Event streams.')} />
+      <PageHeader
+        title={t('Event Streams')}
+        description={t(
+          'Event streams represent server side webhooks which ease the routing issues related to running webhooks ' +
+            'individually in a container or a pod. Sources can be swapped in a rulebook with a matching event stream.'
+        )}
+      />
       <PageTable
         id="eda-webhooks-table"
         tableColumns={tableColumns}

@@ -3,7 +3,7 @@ export type EdaSource = Source;
 
 export type EdaSourceEventMapping = {
   source_name: string;
-  webhook_id: string;
-  webhook_name: string;
+  event_stream_id: string;
+  event_stream_name: string;
   rulebook_hash: string;
 };

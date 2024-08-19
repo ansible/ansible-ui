@@ -12,7 +12,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
@@ -23,43 +23,45 @@ export function WebhookDetails() {
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
 
-  const { data: webhook } = useGet<EdaWebhook>(edaAPI`/webhooks/${params.id ?? ''}/`);
-  if (!webhook) {
+  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
+  if (!eventStream) {
     return <LoadingPage />;
   }
   return (
     <Scrollable>
       <PageDetails disableScroll={true}>
-        <PageDetail label={t('Name')}>{webhook?.name || ''}</PageDetail>
-        <PageDetail label={t('Event stream type')}>{webhook?.webhook_type || ''}</PageDetail>
+        <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
+        <PageDetail label={t('Event stream type')}>
+          {eventStream?.event_stream_type || ''}
+        </PageDetail>
         <PageDetail label={t('Organization')}>
-          {webhook && webhook.organization ? (
+          {eventStream && eventStream.organization ? (
             <Link
               to={getPageUrl(EdaRoute.OrganizationPage, {
-                params: { id: webhook?.organization?.id },
+                params: { id: `${eventStream?.organization?.id}` },
               })}
             >
-              {webhook?.organization?.name}
+              {eventStream?.organization?.name}
             </Link>
           ) : (
-            webhook?.organization?.name || ''
+            eventStream?.organization?.name || ''
           )}
         </PageDetail>
         <PageDetail label={t('Credential')}>
-          {webhook && webhook.eda_credential ? (
+          {eventStream && eventStream.eda_credential ? (
             <Link
               to={getPageUrl(EdaRoute.CredentialPage, {
-                params: { id: webhook?.eda_credential?.id },
+                params: { id: eventStream?.eda_credential?.id },
               })}
             >
-              {webhook?.eda_credential?.name}
+              {eventStream?.eda_credential?.name}
             </Link>
           ) : (
-            webhook?.eda_credential?.name || ''
+            eventStream?.eda_credential?.name || ''
           )}
         </PageDetail>
         <PageDetail label={t('Url')}>
-          <CopyCell text={webhook?.url || ''} />
+          <CopyCell text={eventStream?.url || ''} />
         </PageDetail>
         <PageDetail
           label={t('Include headers')}
@@ -67,17 +69,19 @@ export function WebhookDetails() {
             'A comma separated HTTP header keys that you want to include in the event payload.'
           )}
         >
-          {webhook?.additional_data_headers || ''}
+          {eventStream?.additional_data_headers || ''}
         </PageDetail>
-        <PageDetail label={t('Events received')}>{webhook?.events_received}</PageDetail>
+        <PageDetail label={t('Events received')}>{eventStream?.events_received}</PageDetail>
         <PageDetail label={t('Last event received')}>
-          {webhook?.last_event_received_at ? formatDateString(webhook.last_event_received_at) : ''}
+          {eventStream?.last_event_received_at
+            ? formatDateString(eventStream.last_event_received_at)
+            : ''}
         </PageDetail>
         <PageDetail label={t('Created')}>
-          {webhook?.created_at ? formatDateString(webhook.created_at) : ''}
+          {eventStream?.created_at ? formatDateString(eventStream.created_at) : ''}
         </PageDetail>
-        <LastModifiedPageDetail value={webhook?.modified_at ? webhook.modified_at : ''} />
-        {!!webhook?.test_mode && (
+        <LastModifiedPageDetail value={eventStream?.modified_at ? eventStream.modified_at : ''} />
+        {!!eventStream?.test_mode && (
           <PageDetail label={t('Mode')}>
             <DescriptionListGroup>
               <DescriptionListTerm style={{ opacity: 0.6 }}>
@@ -96,14 +100,16 @@ export function WebhookDetails() {
           label={t('Test content type')}
           helpText={t('The HTTP Body that was sent from the Sender.')}
         >
-          {webhook?.test_content_type || ''}
+          {eventStream?.test_content_type || ''}
         </PageDetail>
-        <PageDetail label={t('Test error message')}>{webhook?.test_error_message || ''}</PageDetail>
+        <PageDetail label={t('Test error message')}>
+          {eventStream?.test_error_message || ''}
+        </PageDetail>
       </PageDetails>
       <PageDetails numberOfColumns={'single'} disableScroll={true}>
-        {webhook?.test_headers && (
+        {eventStream?.test_headers && (
           <PageDetailCodeEditor
-            value={webhook?.test_headers}
+            value={eventStream?.test_headers}
             showCopyToClipboard={true}
             label={t('Test headers')}
             toggleLanguage={false}
@@ -114,9 +120,9 @@ export function WebhookDetails() {
         )}
       </PageDetails>
       <PageDetails numberOfColumns={'single'} disableScroll={true}>
-        {webhook?.test_content && (
+        {eventStream?.test_content && (
           <PageDetailCodeEditor
-            value={webhook?.test_content}
+            value={eventStream?.test_content}
             showCopyToClipboard={true}
             toggleLanguage={false}
             label={t('Test content')}

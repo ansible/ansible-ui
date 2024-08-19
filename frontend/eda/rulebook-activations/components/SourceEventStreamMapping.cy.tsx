@@ -31,9 +31,9 @@ describe('SourceEventStreamMapping.cy.ts', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/webhooks/*` },
+      { method: 'GET', url: edaAPI`/event-streams/*` },
       {
-        fixture: 'edaWebhooks.json',
+        fixture: 'edaevent_streams.json',
       }
     );
   });
@@ -97,7 +97,7 @@ describe('SourceEventStreamMapping.cy.ts with one source', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: edaAPI`/webhooks/*` },
+      { method: 'GET', url: edaAPI`/event-streams/*` },
       {
         fixture: 'edaWebhooks.json',
       }

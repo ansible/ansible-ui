@@ -1,7 +1,7 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormMultiInput } from '../../../../framework/PageForm/Inputs/PageFormMultiInput';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useSelectWebhooks } from '../hooks/useSelectWebhooks';
 
 export function PageFormWebhookSelect<
@@ -12,7 +12,7 @@ export function PageFormWebhookSelect<
   const selectWebhook = useSelectWebhooks();
 
   return (
-    <PageFormMultiInput<EdaWebhook>
+    <PageFormMultiInput<EdaEventStream>
       {...props}
       name={props.name}
       id="webhook-select"
@@ -23,7 +23,7 @@ export function PageFormWebhookSelect<
       label={t('Event stream')}
       selectTitle={t('Select an event stream')}
       selectOpen={selectWebhook}
-      validate={(webhooks: EdaWebhook[]) => {
+      validate={(webhooks: EdaEventStream[]) => {
         if (props.isRequired && webhooks.length === 0) {
           return t('Event stream is required.');
         }

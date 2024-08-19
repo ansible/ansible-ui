@@ -34,7 +34,7 @@ export function PageFormSelectWebhookType<
       isDisabled={props.isDisabled}
       helperText={props.helperText}
       url={edaAPI`/credential-types/`}
-      queryParams={{ namespace: 'webhook' }}
+      queryParams={{ namespace: 'event_stream' }}
       tableColumns={webhookTypeColumns}
       toolbarFilters={webhookTypeFilters}
     />

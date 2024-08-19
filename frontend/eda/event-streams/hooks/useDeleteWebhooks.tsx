@@ -5,18 +5,18 @@ import { useNameColumn } from '../../../common/columns';
 import { requestDelete } from '../../../common/crud/Data';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useWebhookColumns } from './useWebhookColumns';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 
-export function useDeleteWebhooks(onComplete?: (webhooks: EdaWebhook[]) => void) {
+export function useDeleteWebhooks(onComplete?: (webhooks: EdaEventStream[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useWebhookColumns();
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  const bulkAction = useEdaBulkConfirmation<EdaWebhook>();
+  const bulkAction = useEdaBulkConfirmation<EdaEventStream>();
   return useCallback(
-    (webhooks: EdaWebhook[]) => {
+    (webhooks: EdaEventStream[]) => {
       bulkAction({
         title: t('Permanently delete event streams', { count: webhooks.length }),
         confirmText: t('Yes, I confirm that I want to delete these {{count}} event streams.', {
@@ -29,8 +29,8 @@ export function useDeleteWebhooks(onComplete?: (webhooks: EdaWebhook[]) => void)
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (webhook: EdaWebhook, signal) => {
-          const url = edaAPI`/webhooks/` + `${webhook.id.toString()}/`;
+        actionFn: (webhook: EdaEventStream, signal) => {
+          const url = edaAPI`/event-streams/` + `${webhook.id.toString()}/`;
           return requestDelete(url, signal);
         },
       });

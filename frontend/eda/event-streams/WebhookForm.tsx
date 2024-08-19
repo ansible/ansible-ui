@@ -19,7 +19,7 @@ import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaResult } from '../interfaces/EdaResult';
-import { EdaWebhook, EdaWebhookCreate } from '../interfaces/EdaWebhook';
+import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
 import { EdaRoute } from '../main/EdaRoutes';
 import { PageFormSelectWebhookType } from './components/PageFormWebhookTypeSelect';
 import { PageFormSelectWebhookCredential } from './components/PageFormWebhookCredentialSelect';
@@ -31,7 +31,7 @@ import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden
 // eslint-disable-next-line react/prop-types
 function WebhookInputs() {
   const { t } = useTranslation();
-  const typeId = useWatch<IEdaWebhookCreate>({
+  const typeId = useWatch<IEdaEventStreamCreate>({
     name: 'type_id',
   }) as number;
   const { setValue } = useFormContext();
@@ -45,14 +45,14 @@ function WebhookInputs() {
   useEffect(() => {
     const resetCredential = () => {
       setValue('eda_credential_id', undefined);
-      setValue('webhook_type', webhookType?.kind);
+      setValue('event_stream_type', webhookType?.kind);
     };
     resetCredential();
   }, [typeId, setValue, webhookType?.kind]);
 
   return (
     <>
-      <PageFormTextInput<IEdaWebhookCreate>
+      <PageFormTextInput<IEdaEventStreamCreate>
         name="name"
         data-cy="name-form-field"
         label={t('Name')}
@@ -64,29 +64,29 @@ function WebhookInputs() {
         )}
         maxLength={150}
       />
-      <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" isRequired />
-      <PageFormSelectWebhookType<IEdaWebhookCreate> name="type_id" isRequired />
+      <PageFormSelectOrganization<IEdaEventStreamCreate> name="organization_id" isRequired />
+      <PageFormSelectWebhookType<IEdaEventStreamCreate> name="type_id" isRequired />
       <PageFormHidden watch={'type'} hidden={() => true}>
-        <PageFormTextInput<IEdaWebhookCreate>
+        <PageFormTextInput<IEdaEventStreamCreate>
           name="kind"
           data-cy="name-form-field"
           label={t('Kind')}
         />
       </PageFormHidden>
       <PageFormHidden watch={'type_id'} hidden={() => true}>
-        <PageFormTextInput<IEdaWebhookCreate>
-          name="webhook_type"
+        <PageFormTextInput<IEdaEventStreamCreate>
+          name="event_stream_type"
           data-cy="type-form-field"
           isRequired
           label={t('Event stream type')}
         />
       </PageFormHidden>
-      <PageFormSelectWebhookCredential<IEdaWebhookCreate>
+      <PageFormSelectWebhookCredential<IEdaEventStreamCreate>
         isRequired
         name="eda_credential_id"
         type={webhookType?.kind || ''}
       />
-      <PageFormTextInput<IEdaWebhookCreate>
+      <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
         label={t('Include headers')}
@@ -96,7 +96,7 @@ function WebhookInputs() {
           'A comma separated HTTP header keys that you want to include in the event payload.'
         )}
       />
-      <PageFormCheckbox<IEdaWebhookCreate>
+      <PageFormCheckbox<IEdaEventStreamCreate>
         label={t`Test mode`}
         labelHelp={t('Test mode.')}
         name="test_mode"
@@ -107,12 +107,12 @@ function WebhookInputs() {
 
 function WebhookEditInputs() {
   const { t } = useTranslation();
-  const webhookType = useWatch<IEdaWebhookCreate>({
-    name: 'webhook_type',
+  const webhookType = useWatch<IEdaEventStreamCreate>({
+    name: 'event_stream_type',
   }) as string;
   return (
     <>
-      <PageFormTextInput<IEdaWebhookCreate>
+      <PageFormTextInput<IEdaEventStreamCreate>
         name="name"
         data-cy="name-form-field"
         label={t('Name')}
@@ -120,19 +120,19 @@ function WebhookEditInputs() {
         isRequired
         maxLength={150}
       />
-      <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" isRequired />
-      <PageFormTextInput<IEdaWebhookCreate>
-        name="webhook_type"
+      <PageFormSelectOrganization<IEdaEventStreamCreate> name="organization_id" isRequired />
+      <PageFormTextInput<IEdaEventStreamCreate>
+        name="event_stream_type"
         data-cy="type-form-field"
         isReadOnly
         label={t('Event stream type')}
       />
-      <PageFormSelectWebhookCredential<IEdaWebhookCreate>
+      <PageFormSelectWebhookCredential<IEdaEventStreamCreate>
         name="eda_credential_id"
         isRequired
         type={webhookType}
       />
-      <PageFormTextInput<IEdaWebhookCreate>
+      <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
         label={t('Include headers')}
@@ -142,7 +142,7 @@ function WebhookEditInputs() {
           'A comma separated HTTP header keys that you want to include in the event payload.'
         )}
       />
-      <PageFormCheckbox<IEdaWebhookCreate>
+      <PageFormCheckbox<IEdaEventStreamCreate>
         label={t`Test mode`}
         labelHelp={t('Test mode.')}
         name="test_mode"
@@ -157,7 +157,7 @@ export function CreateWebhook() {
   const pageNavigate = usePageNavigate();
 
   const { cache } = useSWRConfig();
-  const postRequest = usePostRequest<EdaWebhookCreate, EdaWebhook>();
+  const postRequest = usePostRequest<EdaEventStreamCreate, EdaEventStream>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
     requestGet,
@@ -168,8 +168,8 @@ export function CreateWebhook() {
       ? organizations.results[0]
       : undefined;
 
-  const onSubmit: PageFormSubmitHandler<EdaWebhookCreate> = async (webhook) => {
-    const newWebhook = await postRequest(edaAPI`/webhooks/`, webhook);
+  const onSubmit: PageFormSubmitHandler<EdaEventStreamCreate> = async (webhook) => {
+    const newWebhook = await postRequest(edaAPI`/event-streams/`, webhook);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.WebhookPage, { params: { id: newWebhook?.id } });
   };
@@ -203,13 +203,13 @@ export function EditWebhook() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: webhook } = useGet<EdaWebhook>(edaAPI`/webhooks/${id.toString()}/`);
+  const { data: webhook } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
-  const patchRequest = usePatchRequest<IEdaWebhookCreate, EdaWebhook>();
+  const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
 
-  const onSubmit: PageFormSubmitHandler<IEdaWebhookCreate> = async (webhook) => {
-    await patchRequest(edaAPI`/webhooks/${id.toString()}/`, webhook);
+  const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (webhook) => {
+    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, webhook);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
@@ -244,7 +244,7 @@ export function EditWebhook() {
           onCancel={onCancel}
           defaultValue={{
             ...webhook,
-            organization_id: webhook?.organization?.id,
+            organization_id: webhook.organization,
             eda_credential_id: webhook?.eda_credential?.id,
           }}
         >
@@ -255,7 +255,7 @@ export function EditWebhook() {
   }
 }
 
-type IEdaWebhookCreate = EdaWebhookCreate & {
+type IEdaEventStreamCreate = EdaEventStreamCreate & {
   type_id: number;
   kind: string;
 };

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../eda/common/eda-utils';
 import { useWebhookFilters } from './useWebhookFilters';
 import { useWebhookColumns } from './useWebhookColumns';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { MultiSelectDialog, usePageDialog } from '../../../../framework';
 
@@ -11,9 +11,9 @@ export function useSelectWebhooks(webhookType?: number, title?: string) {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const openSelectWebhooks = useCallback(
-    (onSelect: (webhooks: EdaWebhook[]) => void) => {
+    (onSelect: (webhooks: EdaEventStream[]) => void) => {
       setDialog(
-        <SelectEdaWebhooks
+        <SelectEdaEventStreams
           title={t(title ? title : 'Select event stream')}
           onSelect={onSelect}
           webhookType={webhookType}
@@ -25,16 +25,16 @@ export function useSelectWebhooks(webhookType?: number, title?: string) {
   return openSelectWebhooks;
 }
 
-function SelectEdaWebhooks(props: {
+function SelectEdaEventStreams(props: {
   title: string;
-  onSelect: (webhooks: EdaWebhook[]) => void;
-  defaultEdaWebhook?: EdaWebhook;
+  onSelect: (webhooks: EdaEventStream[]) => void;
+  defaultEdaEventStream?: EdaEventStream;
   webhookType?: number;
 }) {
   const toolbarFilters = useWebhookFilters();
   const tableColumns = useWebhookColumns();
-  const view = useEdaView<EdaWebhook>({
-    url: edaAPI`/webhooks/`,
+  const view = useEdaView<EdaEventStream>({
+    url: edaAPI`/event-streams/`,
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,
@@ -45,7 +45,7 @@ function SelectEdaWebhooks(props: {
     }),
   });
   return (
-    <MultiSelectDialog<EdaWebhook>
+    <MultiSelectDialog<EdaEventStream>
       {...props}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}

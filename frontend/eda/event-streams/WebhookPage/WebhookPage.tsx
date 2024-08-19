@@ -17,7 +17,7 @@ import {
 import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteWebhooks } from '../hooks/useDeleteWebhooks';
 
@@ -25,7 +25,7 @@ export function WebhookPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: webhook } = useGet<EdaWebhook>(edaAPI`/webhooks/${params.id ?? ''}/`);
+  const { data: webhook } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
 
   const deleteWebhooks = useDeleteWebhooks((deleted) => {
     if (deleted.length > 0) {
@@ -33,7 +33,7 @@ export function WebhookPage() {
     }
   });
 
-  const itemActions = useMemo<IPageAction<EdaWebhook>[]>(
+  const itemActions = useMemo<IPageAction<EdaEventStream>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -42,7 +42,7 @@ export function WebhookPage() {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit event stream'),
-        onClick: (webhook: EdaWebhook) =>
+        onClick: (webhook: EdaEventStream) =>
           pageNavigate(EdaRoute.EditWebhook, { params: { id: webhook.id } }),
       },
       {
@@ -53,7 +53,7 @@ export function WebhookPage() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
-        onClick: (webhook: EdaWebhook) => deleteWebhooks([webhook]),
+        onClick: (webhook: EdaEventStream) => deleteWebhooks([webhook]),
         isDanger: true,
       },
     ],
@@ -71,7 +71,7 @@ export function WebhookPage() {
           { label: webhook?.name },
         ]}
         headerActions={
-          <PageActions<EdaWebhook>
+          <PageActions<EdaEventStream>
             actions={itemActions}
             position={DropdownPosition.right}
             selectedItem={webhook}

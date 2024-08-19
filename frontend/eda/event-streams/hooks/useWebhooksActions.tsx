@@ -9,15 +9,15 @@ import {
   usePageNavigate,
 } from '../../../../framework';
 import { IEdaView } from '../../common/useEventDrivenView';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteWebhooks } from './useDeleteWebhooks';
 
-export function useWebhooksActions(view: IEdaView<EdaWebhook>) {
+export function useWebhooksActions(view: IEdaView<EdaEventStream>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteWebhooks = useDeleteWebhooks(view.unselectItemsAndRefresh);
-  return useMemo<IPageAction<EdaWebhook>[]>(
+  return useMemo<IPageAction<EdaEventStream>[]>(
     () => [
       {
         type: PageActionType.Button,
@@ -33,7 +33,7 @@ export function useWebhooksActions(view: IEdaView<EdaWebhook>) {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected event streams'),
-        onClick: (webhooks: EdaWebhook[]) => deleteWebhooks(webhooks),
+        onClick: (webhooks: EdaEventStream[]) => deleteWebhooks(webhooks),
         isDanger: true,
       },
     ],
