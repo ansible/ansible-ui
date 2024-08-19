@@ -24,15 +24,26 @@ export function cyLabel(labels: string[], runTest: () => unknown) {
   cy.log('Include LABELS: ', includeLabels);
   cy.log('Exclude LABELS: ', excludeLabels);
 
-  // Test labels
+  // Test to see if the test should be skipped based on exluded labels
   for (const label of labels) {
     // If the label is excluded, skip the test
     if (excludeLabels.includes(label)) {
       return;
     }
+  }
 
-    // If there are include labels, skip the test if it is not included
-    if (includeLabels.length > 0 && !includeLabels.includes(label)) {
+  // Test to see if the test should be skipped based on included labels
+  // If there are no include labels, all tests are included unless they are excluded
+  if (includeLabels.length > 0) {
+    let include = false;
+    for (const label of labels) {
+      if (includeLabels.includes(label)) {
+        include = true;
+        break;
+      }
+    }
+
+    if (!include) {
       return;
     }
   }
