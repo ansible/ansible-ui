@@ -60,3 +60,14 @@ jobs:
       - run: git diff --quiet HEAD~1 HEAD -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
       - run: git diff --quiet HEAD~1 HEAD -- cypress/e2e/support
       - run: git diff --quiet HEAD~1 HEAD -- frontend framework
+
+  success:
+    name: Success
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    needs: 
+      - platform-checks
+      - platform-component
+      - platform-e2e
+    steps:
+      - run: echo Success
