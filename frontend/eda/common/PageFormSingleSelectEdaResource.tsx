@@ -43,7 +43,7 @@ export function PageFormSingleSelectEdaResource<
         const queryParams = props.url.split('?')[1];
         const urlSearchParameters = new URLSearchParams(queryParams);
         urlSearchParameters.delete('page_size');
-        urlSearchParameters.set('page_size', '10');
+        urlSearchParameters.set('page_size', options?.next ? `${options.next}` : '10');
         urlSearchParameters.delete('order_by');
         urlSearchParameters.set('order_by', 'name');
         if (props.queryParams) {
@@ -57,7 +57,7 @@ export function PageFormSingleSelectEdaResource<
             }
           }
         }
-        if (options.search) urlSearchParameters.set('name__icontains', options.search);
+        if (options.search) urlSearchParameters.set('name', options.search);
         const response = await requestGet<EdaItemsResponse<Resource>>(
           baseUrl + '?' + decodeURIComponent(urlSearchParameters.toString()),
           options.signal
