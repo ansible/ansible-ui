@@ -6,23 +6,34 @@ import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials Use in Resources', () => {
     let edaProject: EdaProject;
     let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaRuleBook: EdaRulebook;
+    let edaOrg: EdaOrganization;
+
     before(() => {
-      cy.createEdaProject().then((project) => {
-        edaProject = project;
-        cy.waitEdaProjectSync(project);
-        cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
-          edaRuleBook = edaRuleBooks[0];
-          cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-            edaDecisionEnvironment = decisionEnvironment;
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+        cy.createEdaProject(edaOrg?.id).then((project) => {
+          edaProject = project;
+          cy.waitEdaProjectSync(project);
+          cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+            edaRuleBook = edaRuleBooks[0];
+            cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+              edaDecisionEnvironment = decisionEnvironment;
+            });
           });
         });
       });
+    });
+
+    after(() => {
+      cy.deleteEdaProject(edaProject);
+      cy.deleteEdaOrganization(edaOrg);
     });
 
     it('can create RBA without credentials', () => {

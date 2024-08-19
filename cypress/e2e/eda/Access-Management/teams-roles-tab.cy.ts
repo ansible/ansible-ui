@@ -9,6 +9,7 @@ import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['upstream'], () => {
   user_team_access_tab_resources.forEach((resource) => {
@@ -20,30 +21,35 @@ cyLabel(['upstream'], () => {
         | EdaDecisionEnvironment
         | EdaRulebookActivation
         | EdaCredential;
+      let edaProject: EdaProject;
+      let edaRuleBook: EdaRulebook;
+      let edaOrg: EdaOrganization;
+
       before(() => {
         // If the resource is a RBA, create all dependency resources, else just the one resource
         if (resource.name === 'rulebook-activations') {
-          let edaProject: EdaProject;
-          let edaRuleBook: EdaRulebook;
-          cy.createEdaProject().then((project) => {
-            edaProject = project;
-            cy.waitEdaProjectSync(project);
-            cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
-              edaRuleBook = edaRuleBooks[0];
-              cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-                cy.createEdaRulebookActivation({
-                  rulebook_id: edaRuleBook.id,
-                  decision_environment_id: decisionEnvironment.id,
-                  k8s_service_name: 'sample',
-                  log_level: LogLevelEnum.Error,
-                }).then((edaRulebookActivation) => {
-                  resource_object = edaRulebookActivation;
+          cy.createEdaOrganization().then((organization) => {
+            edaOrg = organization;
+            cy.createEdaProject(edaOrg?.id).then((project) => {
+              edaProject = project;
+              cy.waitEdaProjectSync(project);
+              cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+                edaRuleBook = edaRuleBooks[0];
+                cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+                  cy.createEdaRulebookActivation({
+                    rulebook_id: edaRuleBook.id,
+                    decision_environment_id: decisionEnvironment.id,
+                    k8s_service_name: 'sample',
+                    log_level: LogLevelEnum.Error,
+                  }).then((edaRulebookActivation) => {
+                    resource_object = edaRulebookActivation;
+                  });
                 });
               });
             });
           });
         } else if (resource.creation !== null) {
-          resource.creation().then((resource_instance) => {
+          resource.creation(edaOrg?.id).then((resource_instance) => {
             resource_object = resource_instance;
             if (resource.name === 'projects') {
               cy.waitEdaProjectSync(resource_instance as EdaProject);
@@ -58,9 +64,12 @@ cyLabel(['upstream'], () => {
       after(() => {
         resource.deletion(resource_object);
         cy.deleteEdaTeam(team);
+        if (edaOrg) {
+          cy.deleteEdaOrganization(edaOrg);
+        }
       });
 
-      it.skip(`for ${resource.name} role type`, () => {
+      it(`for ${resource.name} role type`, () => {
         cy.navigateTo('eda', 'teams');
         cy.clickTableRow(team.name, true);
         cy.verifyPageTitle(team.name);
