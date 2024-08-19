@@ -60,7 +60,8 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT" 
           else
             echo "changed=true" >> "$GITHUB_OUTPUT" 
-          fi        
+          fi
+      - uses: ahmadnassri/action-workflow-queue@v1
 
   checks:
     name: ESLint - Prettier - TSC
