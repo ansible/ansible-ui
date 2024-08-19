@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
+  usePageAlertToaster,
 } from '../../../../framework';
 import {
   PageAsyncSelectQueryOptions,
@@ -34,10 +35,12 @@ import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionS
 
 export function CollectionPage() {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { name, namespace, repository } = useParams();
   const context = useHubContext();
   const [collection, setCollection] = useState<null | Partial<CollectionVersionSearch>>(null);
+  const [versionsCount, setVersionsCount] = useState<undefined | number>(undefined);
+  const getPageUrl = useGetPageUrl();
 
   const { display_signatures } = context.featureFlags;
 
@@ -47,15 +50,54 @@ export function CollectionPage() {
     repository: repository || '',
   });
 
+  const getRequest = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
+
   const singleSelectorBrowser = singleSelectBrowseAdapter<CollectionVersionSearch>(
     singleSelector.openBrowse,
     (item) => {
       return item?.collection_version?.version || '';
     },
-    (name) => {
-      return { collection_version: { version: name } };
+    async (name) => {
+      const collectionRequest = await getRequest(
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&version=${name}`
+      );
+      return collectionRequest.data;
     }
   );
+
+  useEffect(() => {
+    async function getCollectionData() {
+      const version = searchParams.get('version');
+      let queryFilter;
+      if (version) {
+        queryFilter = '&version=' + version;
+      } else if (collection) {
+        queryFilter = '&version=' + collection?.collection_version?.version;
+      } else {
+        queryFilter = '&is_highest=true';
+      }
+
+      const collectionRequest = await getRequest(
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
+          queryFilter
+      );
+
+      const collectionData: null | CollectionVersionSearch =
+        collectionRequest?.data && collectionRequest?.data?.length > 0
+          ? collectionRequest.data[0]
+          : null;
+
+      // only set collection when collection has updated this avoids infinite loop
+      if (
+        !collection ||
+        collection?.collection_version?.version !== collectionData?.collection_version?.version
+      ) {
+        setCollection(collectionData);
+      }
+    }
+
+    void getCollectionData();
+  }, [collection, getRequest, name, namespace, repository, searchParams]);
 
   let queryFilter;
   const version = searchParams.get('version');
@@ -72,38 +114,57 @@ export function CollectionPage() {
 
   const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
 
-  const getRequest = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
-  useEffect(() => {
-    async function getCollectionData() {
-      const version = searchParams.get('version');
-      let queryFilter;
-      if (version) {
-        queryFilter = '&version=' + version;
-      } else if (collection) {
-        queryFilter = '&version=' + collection?.collection_version?.version;
-      } else {
-        queryFilter = '&is_highest=true';
-      }
-      const collectionRequest = await getRequest(
-        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
-          queryFilter
-      );
-
-      const collectionData: null | CollectionVersionSearch =
-        collectionRequest?.data && collectionRequest?.data?.length > 0
-          ? collectionRequest.data[0]
-          : null;
-
-      if (
-        !collection ||
-        collection?.collection_version?.version !== collectionData?.collection_version?.version
-      ) {
-        setCollection(collectionData);
-      }
+  function setVersionParams(collection: Partial<CollectionVersionSearch> | null) {
+    if (!collection) {
+      return;
     }
 
-    void getCollectionData();
-  }, [collection, getRequest, name, namespace, repository, searchParams, collectionRequest]);
+    setTimeout(() => {
+      setSearchParams((params) => {
+        params.set('version', collection?.collection_version?.version ?? '');
+        return params;
+      });
+    }, 0);
+  }
+
+  const { data: versions } = useGet<HubItemsResponse<CollectionVersionSearch>>(
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}`,
+    undefined,
+    { refreshInterval: 1000 }
+  );
+
+  const alertToaster = usePageAlertToaster();
+
+  useEffect(() => {
+    if (!versionsCount && versions?.meta.count) {
+      setVersionsCount(versions?.meta.count);
+    } else if (versions?.meta.count && versionsCount && versions?.meta.count > versionsCount) {
+      setVersionsCount(versions?.meta.count);
+      alertToaster.addAlert({
+        variant: 'success',
+        title: (
+          <span>
+            {t(`A new version of this collection has been uploaded. Please `)}
+            <Button style={{ padding: 0 }} variant="link" onClick={() => window.location.reload()}>
+              {t(`refresh`)}
+            </Button>
+            {t(` the page to see the latest version.`)}
+          </span>
+        ),
+        timeout: false,
+      });
+    }
+  }, [
+    alertToaster,
+    collection?.collection_version?.name,
+    collection?.collection_version?.namespace,
+    collection?.repository?.name,
+    collectionRequest,
+    getPageUrl,
+    t,
+    versions,
+    versionsCount,
+  ]);
 
   // load collection versions
   const queryOptions = useCallback(
@@ -148,8 +209,6 @@ export function CollectionPage() {
     [name, namespace, repository, t, display_signatures]
   );
 
-  const getPageUrl = useGetPageUrl();
-
   if (collectionRequest.error) {
     return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
   }
@@ -193,6 +252,7 @@ export function CollectionPage() {
               queryOptions={queryOptions}
               onSelect={(value) => {
                 setCollection(value);
+                setVersionParams(value);
               }}
               placeholder={t('Select version')}
               value={collection}
@@ -205,6 +265,9 @@ export function CollectionPage() {
                         context.setOpen(false);
                         singleSelectorBrowser?.((selection) => {
                           setCollection({
+                            collection_version: { version: selection },
+                          } as Partial<CollectionVersionSearch>);
+                          setVersionParams({
                             collection_version: { version: selection },
                           } as Partial<CollectionVersionSearch>);
                         }, collection.collection_version?.version);
