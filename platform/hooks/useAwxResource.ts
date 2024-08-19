@@ -5,7 +5,7 @@ import { PlatformResource } from '../interfaces/PlatformResource';
 import { requestGet } from '../../frontend/common/crud/Data';
 
 export function useAwxResource<T extends object>(url: string, platformResource?: PlatformResource) {
-  const { data, isLoading, error } = useGet<AwxItemsResponse<T>>(
+  const { data, isLoading, error, refresh } = useGet<AwxItemsResponse<T>>(
     awxAPI`/${url}?resource__ansible_id=${platformResource?.summary_fields?.resource?.ansible_id ?? ''}`
   );
   const { results } = data ?? {};
@@ -14,6 +14,7 @@ export function useAwxResource<T extends object>(url: string, platformResource?:
     resource: results && results.length ? results[0] : undefined,
     isLoading,
     error,
+    refresh,
   };
 }
 

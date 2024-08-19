@@ -5,7 +5,7 @@ import { EdaItemsResponse } from '../../frontend/eda/common/EdaItemsResponse';
 import { PlatformResource } from '../interfaces/PlatformResource';
 
 export function useEdaResource<T extends object>(url: string, platformResource?: PlatformResource) {
-  const { data, isLoading, error } = useGet<EdaItemsResponse<T>>(
+  const { data, isLoading, error, refresh } = useGet<EdaItemsResponse<T>>(
     edaAPI`/${url}?resource__ansible_id=${platformResource?.summary_fields?.resource?.ansible_id ?? ''}`
   );
   const { results } = data ?? {};
@@ -14,6 +14,7 @@ export function useEdaResource<T extends object>(url: string, platformResource?:
     resource: results && results.length ? results[0] : undefined,
     isLoading,
     error,
+    refresh,
   };
 }
 

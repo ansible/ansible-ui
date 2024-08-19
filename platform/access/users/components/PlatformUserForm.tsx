@@ -1,10 +1,12 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useFormContext } from 'react-hook-form';
-import { Tooltip } from '@patternfly/react-core';
+import { Controller, useFormContext } from 'react-hook-form';
+import { Checkbox, Tooltip } from '@patternfly/react-core';
+import styled from 'styled-components';
 import {
   LoadingPage,
+  PFColorE,
   PageForm,
   PageFormCheckbox,
   PageFormSubmitHandler,
@@ -12,6 +14,7 @@ import {
   PageHeader,
   PageLayout,
   PageNotFound,
+  getPatternflyColor,
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
@@ -20,26 +23,39 @@ import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGro
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
+import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
 import { postRequest } from '../../../../frontend/common/crud/Data';
 import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
+import { useDeleteRequest } from '../../../../frontend/common/crud/useDeleteRequest';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
+import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
-import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { useDeleteRequest } from '../../../../frontend/common/crud/useDeleteRequest';
-import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import {
+  useHasAwxService,
+  useHasEdaService,
+  useHasHubService,
+} from '../../../main/GatewayServices';
+import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
+import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
+import { useGetPlatformAndServiceUsers } from '../hooks/useGetPlatformAndServiceUsers';
 
-type IUserInput = PlatformUser & {
+const ServiceAdminCheckbox = styled(PageFormCheckbox)`
+  margin-bottom: 8px;
+`;
+
+export type IUserInput = PlatformUser & {
   confirmPassword: string;
   organizations: number[];
   platformAdmin: boolean;
   platformAuditor: boolean;
+  awxAdmin: boolean;
+  hubAdmin: boolean;
+  edaAdmin: boolean;
 };
 
 export function CreatePlatformUser() {
@@ -136,69 +152,40 @@ export function CreatePlatformUser() {
 export function EditPlatformUser() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const alertToaster = usePageAlertToaster();
+  const userId = Number(params.id);
+
+  const { awxUser, edaUser, hubUser, platformUser, isLoading, error, updateServiceUserSuperuser } =
+    useGetPlatformAndServiceUsers(userId);
+  const { orgIds, getAddedAndRemovedOrganizationIds } = useGetOrganizationsForUser(userId);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
   >(gatewayV1API`/role_definitions/`, {
     name: 'Platform Auditor',
   });
-  const id = Number(params.id);
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useGet<PlatformUser>(gatewayV1API`/users/${id.toString()}/`);
-  const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayV1API`/users/${user?.id?.toString() ?? ''}/organizations/`
-  );
+
   const patchUser = usePatchRequest<PlatformUser, PlatformUser>();
   const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
   const deleteRequest = useDeleteRequest();
-  const getAddedAndRemovedOrganizationIds = useCallback(
-    (updatedOrgIds: number[]) => {
-      const addedOrganizationIds: number[] = [];
-      const removedOrganizationIds: number[] = [];
-      if (!organizationsData?.results?.length) {
-        addedOrganizationIds.push(...updatedOrgIds);
-      } else {
-        for (const updatedOrgId of updatedOrgIds) {
-          if (
-            !organizationsData?.results?.some((org) => org.id === updatedOrgId) &&
-            !addedOrganizationIds?.some(
-              (addedOrganizationId) => addedOrganizationId === updatedOrgId
-            )
-          ) {
-            addedOrganizationIds.push(updatedOrgId);
-          }
-        }
-        for (const organization of organizationsData.results) {
-          if (
-            !updatedOrgIds.some((updatedOrgId) => updatedOrgId === organization.id) &&
-            !removedOrganizationIds.some(
-              (removedOrganizationId) => removedOrganizationId === organization.id
-            )
-          ) {
-            removedOrganizationIds.push(organization.id);
-          }
-        }
-      }
-      return {
-        addedOrganizationIds,
-        removedOrganizationIds,
-      };
-    },
-    [organizationsData?.results]
-  );
-  const orgIds = useMemo(
-    () => organizationsData?.results?.map((organization) => organization.id),
-    [organizationsData?.results]
-  );
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
-      const { confirmPassword, organizations, platformAdmin, platformAuditor, ...user } = userInput;
+      const {
+        confirmPassword,
+        organizations,
+        platformAdmin,
+        platformAuditor,
+        awxAdmin,
+        edaAdmin,
+        hubAdmin,
+        ...user
+      } = userInput;
       user.is_superuser = platformAdmin;
+
+      await updateServiceUserSuperuser({ userInput, awxUser, edaUser, hubUser });
+
       if (platformAuditor && !user.is_platform_auditor) {
         await postRequest(gatewayV1API`/role_user_assignments/`, {
           user: user.id,
@@ -279,44 +266,55 @@ export function EditPlatformUser() {
         }
       }
       user.is_platform_auditor = platformAuditor;
-      await patchUser(gatewayV1API`/users/${id.toString()}/`, user);
-      navigate(-1);
+      await patchUser(gatewayV1API`/users/${userId.toString()}/`, user);
+      pageNavigate(PlatformRoute.UserDetails, { params: { id: user.id } });
     },
     [
       alertToaster,
+      awxUser,
       deleteRequest,
+      edaUser,
       getAddedAndRemovedOrganizationIds,
       getRequest,
-      id,
-      navigate,
+      hubUser,
+      pageNavigate,
       patchUser,
       platformAuditorRoleData?.results,
       t,
+      updateServiceUserSuperuser,
+      userId,
     ]
   );
   const getPageUrl = useGetPageUrl();
 
   if (isLoading || isLoadingPlatformAuditorRole) return <LoadingPage breadcrumbs />;
   if (error) return <AwxError error={error} />;
-  if (!user) return <PageNotFound />;
+  if (!platformUser) return <PageNotFound />;
 
-  const { password, ...defaultUserValue } = user;
+  const { password, ...defaultUserValue } = platformUser;
   const defaultValue: Partial<IUserInput> = {
     ...defaultUserValue,
-    platformAdmin: Boolean(user.is_superuser),
-    platformAuditor: Boolean(user.is_platform_auditor),
+    platformAdmin: Boolean(platformUser.is_superuser),
+    platformAuditor: Boolean(platformUser.is_platform_auditor),
     organizations: orgIds || [],
+    awxAdmin: Boolean(awxUser?.is_superuser) || Boolean(platformUser?.is_superuser),
+    edaAdmin: Boolean(edaUser?.is_superuser) || Boolean(platformUser?.is_superuser),
+    hubAdmin: Boolean(hubUser?.is_superuser) || Boolean(platformUser?.is_superuser),
   };
 
   return (
     <PageLayout>
       <PageHeader
-        title={user?.username ? t('Edit {{userName}}', { userName: user?.username }) : t('Users')}
+        title={
+          platformUser?.username
+            ? t('Edit {{userName}}', { userName: platformUser?.username })
+            : t('Users')
+        }
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
           {
-            label: user?.username
-              ? t('Edit {{userName}}', { userName: user?.username })
+            label: platformUser?.username
+              ? t('Edit {{userName}}', { userName: platformUser?.username })
               : t('Users'),
           },
         ]}
@@ -384,10 +382,14 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
           labelHelpTitle={t`User type`}
           labelHelp={t`Selecting a user type determines the level of access within Ansible Automation Platform. An Administrator has full access to services and can manage other users. An Auditor has view-only permissions on all objects.`}
         >
-          <PageFormCheckbox
-            label={t`Ansible Automation Platform Administrator`}
-            name="platformAdmin"
-          />
+          {props.isCreate ? (
+            <PageFormCheckbox
+              label={t`Ansible Automation Platform Administrator`}
+              name="platformAdmin"
+            />
+          ) : (
+            <AdminCheckboxes />
+          )}
           <PageFormWatch watch="platformAdmin">
             {(platformAdmin) => {
               if (platformAdmin === true) {
@@ -419,5 +421,96 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         <PageFormPlatformOrganizationsSelect name="organizations" />
       </PageFormSection>
     </>
+  );
+}
+
+function AdminCheckboxes() {
+  const { t } = useTranslation();
+  const { control, setValue, watch } = useFormContext<IUserInput>();
+
+  const hasAwxService = useHasAwxService();
+  const hasEdaService = useHasEdaService();
+  const hasHubService = useHasHubService();
+
+  const awxAdmin = watch('awxAdmin');
+  const hubAdmin = watch('hubAdmin');
+  const edaAdmin = watch('edaAdmin');
+
+  const allEnabledSubServicesChecked = useMemo(
+    () =>
+      (!hasAwxService || awxAdmin) && (!hasHubService || hubAdmin) && (!hasEdaService || edaAdmin),
+    [awxAdmin, hubAdmin, edaAdmin, hasAwxService, hasHubService, hasEdaService]
+  );
+
+  useEffect(() => {
+    setValue('platformAdmin', allEnabledSubServicesChecked);
+  }, [setValue, allEnabledSubServicesChecked]);
+
+  const handlePlatformAdminChange = useCallback(
+    (val: boolean) => {
+      if (val) {
+        hasAwxService && setValue('awxAdmin', true);
+        hasHubService && setValue('hubAdmin', true);
+        hasEdaService && setValue('edaAdmin', true);
+      } else {
+        hasAwxService && setValue('awxAdmin', false);
+        hasHubService && setValue('hubAdmin', false);
+        hasEdaService && setValue('edaAdmin', false);
+      }
+      setValue('platformAdmin', val);
+    },
+    [hasAwxService, hasHubService, hasEdaService, setValue]
+  );
+
+  return (
+    <Controller
+      name="platformAdmin"
+      control={control}
+      shouldUnregister
+      render={({ field: { value }, fieldState: { error } }) => {
+        const helperTextInvalid = error?.message;
+        return (
+          <Checkbox
+            name="platformAdmin"
+            id={'platform-admin-checkbox'}
+            data-cy={'platform-admin-checkbox'}
+            aria-label={t`Ansible Automation Platform Administrator`}
+            label={
+              <div style={{ display: 'flex' }}>
+                <div>{t`Ansible Automation Platform Administrator`}</div>
+              </div>
+            }
+            description={
+              helperTextInvalid ?? (
+                <span style={{ color: getPatternflyColor(PFColorE.Danger) }}>
+                  {helperTextInvalid}
+                </span>
+              )
+            }
+            isChecked={Boolean(value)}
+            onChange={(_event, val) => handlePlatformAdminChange(val)}
+            body={
+              <>
+                <ServiceAdminCheckbox
+                  label={t`Automation Execution Administrator`}
+                  name="awxAdmin"
+                  isDisabled={Boolean(hasAwxService) === false}
+                />
+                <ServiceAdminCheckbox
+                  label={t`Automation Decisions Administrator`}
+                  name="edaAdmin"
+                  isDisabled={Boolean(hasEdaService) === false}
+                />
+                <ServiceAdminCheckbox
+                  label={t`Automation Content Administrator`}
+                  name="hubAdmin"
+                  isDisabled={Boolean(hasHubService) === false}
+                />
+              </>
+            }
+          />
+        );
+      }}
+    />
   );
 }
