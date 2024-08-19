@@ -2,16 +2,26 @@
 /// <reference types="cypress" />
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA Projects List', () => {
+    let edaOrg: EdaOrganization;
+    before(() => {
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+      });
+    });
+    after(() => {
+      cy.deleteEdaOrganization(edaOrg);
+    });
     it('renders the EDA projects page', () => {
       cy.navigateTo('eda', 'projects');
       cy.verifyPageTitle('Projects');
     });
 
     it('renders the Project details page', () => {
-      cy.createEdaProject().then((edaProject) => {
+      cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.navigateTo('eda', 'projects');
         cy.clickTableRow(edaProject.name);
         cy.verifyPageTitle(edaProject.name);
@@ -22,7 +32,7 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     it('can filter the Projects list based on Name', () => {
-      cy.createEdaProject().then((edaProject) => {
+      cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.navigateTo('eda', 'projects');
         cy.filterTableByText(edaProject.name);
         cy.get('td[data-cy=name-column-cell]').should('contain', edaProject.name);
@@ -31,8 +41,8 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     it('can bulk delete Projects from the Projects list', () => {
-      cy.createEdaProject().then((edaProject) => {
-        cy.createEdaProject().then((testProject) => {
+      cy.createEdaProject(edaOrg?.id).then((edaProject) => {
+        cy.createEdaProject(edaOrg?.id).then((testProject) => {
           cy.navigateTo('eda', 'projects');
           cy.selectTableRow(edaProject.name);
           cy.clickButton(/^Clear all filters$/);

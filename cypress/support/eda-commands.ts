@@ -32,6 +32,7 @@ import {
   PermissionsEnum,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 
 /*  EDA related custom command implementation  */
 
@@ -63,10 +64,10 @@ Cypress.Commands.add('edaRuleBookActivationActionsModal', (action: string, rbaNa
   });
 });
 
-Cypress.Commands.add('createEdaProject', () => {
+Cypress.Commands.add('createEdaProject', (edaOrgID: number) => {
   cy.requestPost<EdaProject>(edaAPI`/projects/`, {
     name: 'E2E Project ' + randomString(4),
-    organization_id: 1,
+    organization_id: edaOrgID,
     url: 'https://github.com/ansible/ansible-ui',
   }).then((edaProject) => {
     Cypress.log({
@@ -599,10 +600,10 @@ Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
   });
 });
 
-Cypress.Commands.add('createEdaDecisionEnvironment', () => {
+Cypress.Commands.add('createEdaDecisionEnvironment', (organizationId: number) => {
   cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
     name: 'E2E Decision Environment ' + randomString(4),
-    organization_id: 1,
+    organization_id: organizationId,
     image_url: 'quay.io/ansible/ansible-rulebook:main',
   }).then((edaDE) => {
     Cypress.log({
@@ -641,6 +642,48 @@ Cypress.Commands.add(
       Cypress.log({
         displayName: 'EDA DECISION ENVIRONMENT DELETION :',
         message: [`Deleted 👉  ${decisionEnvironment.name}`],
+      });
+    });
+  }
+);
+
+Cypress.Commands.add('createEdaOrganization', () => {
+  cy.requestPost<EdaOrganization>(edaAPI`/organizations/`, {
+    name: 'E2E Organization ' + randomString(4),
+  }).then((edaOrg) => {
+    Cypress.log({
+      displayName: 'EDA ORGANIZATION CREATION :',
+      message: [`Created 👉  ${edaOrg.name}`],
+    });
+    return edaOrg;
+  });
+});
+
+Cypress.Commands.add('getEdaOrganizationByName', (edaOrgName: string) => {
+  cy.requestGet<EdaResult<EdaOrganization>>(edaAPI`/organizations/?name=${edaOrgName}`).then(
+    (result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        return result.results[0];
+      } else {
+        return undefined;
+      }
+    }
+  );
+});
+
+Cypress.Commands.add(
+  'deleteEdaOrganization',
+  (
+    organization: EdaOrganization,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.requestDelete(edaAPI`/organizations/${organization.id.toString()}/`, options).then(() => {
+      Cypress.log({
+        displayName: 'EDA ORGANIZATION DELETION :',
+        message: [`Deleted 👉  ${organization.name}`],
       });
     });
   }
