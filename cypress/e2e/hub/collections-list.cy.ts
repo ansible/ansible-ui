@@ -1,29 +1,32 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
+//import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
 describe('Collections List', () => {
   let namespace: HubNamespace;
-  let repository: Repository;
+  //let repository: Repository;
   let collectionName: string;
 
   before(() => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
     });
-    cy.createHubRepository().then((repositoryResult) => {
+    /*cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
+      cy.createHubRepositoryDistribution({
+        distribution: { name: repository.name, repository: repository.pulp_href },
+      });
       cy.galaxykit('distribution create', repository.name);
       cy.waitForAllTasks();
-    });
+    });*/
   });
 
   after(() => {
     // TODO - this is another PR - cy.deletehubDistribution(repository.name);
-    cy.deleteHubRepository(repository);
+    //cy.deleteHubRepository(repository);
     cy.deleteCollectionsInNamespace(namespace.name);
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });
@@ -104,7 +107,7 @@ describe('Collections List', () => {
 
   it('can upload and then delete a new version to an existing collection', () => {
     cy.uploadCollection(collectionName, namespace.name);
-    cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', repository.name);
+    cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', 'community');
 
     cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
       (result: { filename: string }) => {
@@ -122,8 +125,8 @@ describe('Collections List', () => {
         // Upload page
 
         cy.get('#radio-non-pipeline').click();
-        cy.filterTableBySingleText(repository.name, true);
-        cy.getTableRowByText(repository.name, false).within(() => {
+        cy.filterTableBySingleText('community', true);
+        cy.getTableRowByText('community', false).within(() => {
           cy.getByDataCy('checkbox-column-cell').click();
         });
         cy.get('[data-cy="Submit"]').click();
@@ -153,7 +156,7 @@ describe('Collections List', () => {
 
   it('can copy a version to repository and then delete it from repository', () => {
     cy.uploadCollection(collectionName, namespace.name);
-    cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', repository.name);
+    cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', 'published');
 
     cy.navigateTo('hub', Collections.url);
     cy.filterTableBySingleText(collectionName);

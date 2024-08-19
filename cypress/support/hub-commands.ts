@@ -313,7 +313,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
-    cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
+    cy.moveCollection(collection, namespace, version, 'staging', 'published');
     cy.waitForAllTasks();
   }
 );

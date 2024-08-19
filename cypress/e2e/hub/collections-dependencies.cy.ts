@@ -19,7 +19,9 @@ describe('Collections Dependencies', () => {
     });
     cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
-      cy.galaxykit('distribution create', repository.name);
+      cy.createHubRepositoryDistribution({
+        distribution: { name: repository.name, repository: repository.pulp_href },
+      });
       cy.waitForAllTasks();
     });
   });

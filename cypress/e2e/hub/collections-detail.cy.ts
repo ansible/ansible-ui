@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
+//import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
@@ -16,23 +16,25 @@ function visitCollection(collection: string, namespace: string) {
 
 describe('Collections Details', () => {
   let namespace: HubNamespace;
-  let repository: Repository;
+  //let repository: Repository;
   let collectionName: string;
 
   before(() => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
     });
-    cy.createHubRepository().then((repositoryResult) => {
+    /*cy.createHubRepository().then((repositoryResult) => {
       repository = repositoryResult;
-      cy.galaxykit('distribution create', repository.name);
+      cy.createHubRepositoryDistribution({
+        distribution: { name: repository.name, repository: repository.pulp_href },
+      });
       cy.waitForAllTasks();
-    });
+    });*/
   });
 
   after(() => {
     // TODO - this is another PR - cy.deletehubDistribution(repository.name);
-    cy.deleteHubRepository(repository);
+    //cy.deleteHubRepository(repository);
     cy.deleteCollectionsInNamespace(namespace.name);
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });
@@ -177,20 +179,14 @@ describe('Collections Details', () => {
 
   it.skip('can sign a selected version of a collection', () => {
     cy.uploadCollection(collectionName, namespace.name).then(() => {
-      cy.galaxykit(
-        'collection move',
-        namespace.name,
-        collectionName,
-        '1.0.0',
-        'staging',
-        repository.name
-      );
+      cy.moveCollection(collectionName, namespace.name, '1.0.0', 'staging', 'community');
+
       cy.waitForAllTasks();
       cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
         (result: { filename: string }) => {
           //Visit the details screen of the newly uploaded collection
           visitCollection(collectionName, namespace.name);
-          //Assert baseline version nuumber
+          //Assert baseline version number
           cy.getByDataCy('version').should('contain', '1.0.0');
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
           //Upload new version to the collection
@@ -200,8 +196,8 @@ describe('Collections Details', () => {
             action: 'drag-drop',
           });
           cy.get('#radio-non-pipeline').click();
-          cy.filterTableBySingleText(repository.name, true);
-          cy.getTableRowByText(repository.name, false).within(() => {
+          cy.filterTableBySingleText('community', true);
+          cy.getTableRowByText('community', false).within(() => {
             cy.getByDataCy('checkbox-column-cell').click();
           });
           cy.get('[data-cy="Submit"]').click();
