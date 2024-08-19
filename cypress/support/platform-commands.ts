@@ -5,6 +5,9 @@ import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { Token } from '../../frontend/awx/interfaces/Token';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { PulpItemsResponse } from '../../frontend/hub/common/useHubView';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { Authenticator } from '../../platform/interfaces/Authenticator';
 import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsResponse';
@@ -12,6 +15,7 @@ import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganiza
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { awxAPI } from './formatApiPathForAwx';
+import { hubAPI } from './formatApiPathForHub';
 import './rest-commands';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
@@ -277,6 +281,21 @@ Cypress.Commands.add('getAwxTeamByAnsibleId', (ansibleId: string | undefined) =>
   });
 });
 
+Cypress.Commands.add('getHubTeamByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<PulpItemsResponse<HubTeam> | undefined>(
+        hubAPI`/_ui/v2/teams/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
 Cypress.Commands.add('getPlatformTeamByAnsibleId', (ansibleId: string | undefined) => {
   if (!ansibleId) {
     throw new Error('ansibleId is required');
@@ -300,6 +319,21 @@ Cypress.Commands.add('getAwxUserByAnsibleId', (ansibleId: string | undefined) =>
     () =>
       cy.requestGet<AwxItemsResponse<AwxUser> | undefined>(
         awxAPI`/users/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getHubUserByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<PulpItemsResponse<HubUser> | undefined>(
+        hubAPI`/_ui/v2/users/?resource__ansible_id=${ansibleId}`
       ),
     (results) => results.results.length > 0
   ).then((results) => {
