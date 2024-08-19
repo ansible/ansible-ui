@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /// <reference types="cypress" />
 
 /**
@@ -18,6 +19,11 @@ export function cyLabel(labels: string[], runTest: () => unknown) {
   const excludeLabels = envLabels
     .filter((label) => label.startsWith('!'))
     .map((label) => label.substring(1));
+
+  console.log('LABELS: ', labels);
+  console.log('ENV LABELS: ', envLabels);
+  console.log('Include LABELS: ', includeLabels);
+  console.log('Exclude LABELS: ', excludeLabels);
 
   // Test to see if the test should be skipped based on exluded labels
   for (const label of labels) {
