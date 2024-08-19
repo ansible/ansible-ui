@@ -11,7 +11,10 @@
 export function cyLabel(testLabels: string[], runTest: () => unknown) {
   const cypressEnvLabel = Cypress.env('LABELS') as unknown;
   const envLabel = typeof cypressEnvLabel === 'string' ? cypressEnvLabel : '';
-  const envLabels = envLabel.split(',').map((envLabel) => envLabel.trim());
+  const envLabels = envLabel
+    .split(',')
+    .map((envLabel) => envLabel.trim())
+    .filter((envLabel) => !!envLabel);
 
   // Include Labels - If there are no include labels, all tests are included unless they are excluded
   const includeEnvLabels = envLabels.filter((envLabel) => !envLabel.startsWith('!'));
