@@ -61,6 +61,12 @@ jobs:
           else
             echo "changed=true" >> "$GITHUB_OUTPUT" 
           fi
+
+  pr-queue:
+    name: PR Queue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: ahmadnassri/action-workflow-queue@v1
         with: 
           delay: 60000
@@ -95,7 +101,9 @@ jobs:
 
   awx-e2e:
     name: AWX E2E
-    needs: packages
+    needs:
+      - packages
+      - pr-queue
     uses: ./.github/workflows/awx-e2e.yml
     with:
       AWX_SERVER: ${{ vars.AWX_SERVER }}
@@ -107,7 +115,9 @@ jobs:
       
   eda-e2e:
     name: EDA E2E
-    needs: packages
+    needs:
+      - packages
+      - pr-queue
     uses: ./.github/workflows/eda-e2e.yml
     with:
       EDA_SERVER: ${{ vars.EDA_SERVER }}
@@ -119,7 +129,9 @@ jobs:
       
   hub-e2e:
     name: HUB E2E
-    needs: packages
+    needs:
+      - packages
+      - pr-queue    
     uses: ./.github/workflows/hub-e2e.yml
     with:
       HUB_SERVER: ${{ vars.HUB_SERVER }}
