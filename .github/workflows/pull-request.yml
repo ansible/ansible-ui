@@ -152,7 +152,7 @@ jobs:
   success:
     name: Success
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ success() }}
     needs: 
       - checks
       - component
@@ -160,14 +160,4 @@ jobs:
       - eda-e2e
       - hub-e2e
     steps:
-      - if: ${{ success() }}
-        run: |
-          echo Success
-      - if: ${{ failure() }}
-        run: |
-          echo Failure
-          exit 1
-      - if: ${{ cancelled() }}
-        run: |
-          echo Cancelled
-          exit 1          
+      - run: echo Success
