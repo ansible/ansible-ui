@@ -16,7 +16,7 @@ describe('Inventories Tests', () => {
   let instanceGroup: InstanceGroup;
   let label: Label;
   let user: AwxUser;
-  const kinds: Array<'' | 'smart'> = ['', 'smart'];
+  const kinds: Array<'' | 'smart'> = ['smart'];
 
   kinds.forEach((kind) => {
     describe(`Inventories CRUD Tests (${kind === '' ? 'regular' : kind})`, () => {

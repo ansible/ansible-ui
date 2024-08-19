@@ -33,8 +33,8 @@ export function cyLabel(testLabels: string[], runTest: () => unknown) {
   // If there are no include labels, all tests are included unless they are excluded
   if (includeEnvLabels.length > 0) {
     let include = false;
-    for (const label of testLabels) {
-      if (includeEnvLabels.includes(label)) {
+    for (const testLabel of testLabels) {
+      if (includeEnvLabels.includes(testLabel)) {
         include = true;
         break;
       }
