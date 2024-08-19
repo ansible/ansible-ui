@@ -182,7 +182,7 @@ export function CollectionPage() {
         );
 
         return {
-          remaining: data.meta.count - pageSize * page,
+          remaining: data.meta.count - pageSize * page < 0 ? 0 : data.meta.count - pageSize * page,
           options: data.data.map((item) => {
             let label =
               item.collection_version?.version +
@@ -192,7 +192,7 @@ export function CollectionPage() {
               `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} ${
                 display_signatures ? (item.is_signed ? t('signed') : t('unsigned')) : ''
               }`;
-            if (item === data.data[0]) {
+            if (item.is_highest) {
               label += ' (' + t('latest') + ')';
             }
             return {
