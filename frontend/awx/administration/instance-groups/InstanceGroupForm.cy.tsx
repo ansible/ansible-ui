@@ -11,7 +11,7 @@ describe('Create Edit Instance Group Form', () => {
     });
     it('should validate required fields on save', () => {
       cy.mount(<CreateInstanceGroup />);
-      cy.clickButton(/^Create Instance Group$/);
+      cy.clickButton(/^Create instance group$/);
       cy.contains('Name is required.').should('be.visible');
     });
 
@@ -30,7 +30,7 @@ describe('Create Edit Instance Group Form', () => {
 
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
-      cy.clickButton(/^Create Instance Group$/);
+      cy.clickButton(/^Create instance group$/);
       cy.wait('@createIG')
         .its('request.body')
         .then((createdIG) => {
