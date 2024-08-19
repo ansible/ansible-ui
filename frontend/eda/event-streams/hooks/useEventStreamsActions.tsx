@@ -11,12 +11,12 @@ import {
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { useDeleteWebhooks } from './useDeleteWebhooks';
+import { useDeleteEventStreams } from './useDeleteEventStreams';
 
-export function useWebhooksActions(view: IEdaView<EdaEventStream>) {
+export function useEventStreamsActions(view: IEdaView<EdaEventStream>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteWebhooks = useDeleteWebhooks(view.unselectItemsAndRefresh);
+  const deleteEventStreams = useDeleteEventStreams(view.unselectItemsAndRefresh);
   return useMemo<IPageAction<EdaEventStream>[]>(
     () => [
       {
@@ -26,17 +26,17 @@ export function useWebhooksActions(view: IEdaView<EdaEventStream>) {
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create event stream'),
-        onClick: () => pageNavigate(EdaRoute.CreateWebhook),
+        onClick: () => pageNavigate(EdaRoute.CreateEventStream),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected event streams'),
-        onClick: (webhooks: EdaEventStream[]) => deleteWebhooks(webhooks),
+        onClick: (webhooks: EdaEventStream[]) => deleteEventStreams(webhooks),
         isDanger: true,
       },
     ],
-    [deleteWebhooks, pageNavigate, t]
+    [deleteEventStreams, pageNavigate, t]
   );
 }

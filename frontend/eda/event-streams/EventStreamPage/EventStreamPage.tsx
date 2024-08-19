@@ -19,17 +19,17 @@ import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { useDeleteWebhooks } from '../hooks/useDeleteWebhooks';
+import { useDeleteEventStreams } from '../hooks/useDeleteEventStreams';
 
-export function WebhookPage() {
+export function EventStreamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const { data: webhook } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
 
-  const deleteWebhooks = useDeleteWebhooks((deleted) => {
+  const deleteEventStreams = useDeleteEventStreams((deleted) => {
     if (deleted.length > 0) {
-      pageNavigate(EdaRoute.Webhooks);
+      pageNavigate(EdaRoute.EventStreams);
     }
   });
 
@@ -43,7 +43,7 @@ export function WebhookPage() {
         isPinned: true,
         label: t('Edit event stream'),
         onClick: (webhook: EdaEventStream) =>
-          pageNavigate(EdaRoute.EditWebhook, { params: { id: webhook.id } }),
+          pageNavigate(EdaRoute.EditEventStream, { params: { id: webhook.id } }),
       },
       {
         type: PageActionType.Seperator,
@@ -53,11 +53,11 @@ export function WebhookPage() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
-        onClick: (webhook: EdaEventStream) => deleteWebhooks([webhook]),
+        onClick: (webhook: EdaEventStream) => deleteEventStreams([webhook]),
         isDanger: true,
       },
     ],
-    [deleteWebhooks, pageNavigate, t]
+    [deleteEventStreams, pageNavigate, t]
   );
 
   const getPageUrl = useGetPageUrl();
@@ -67,7 +67,7 @@ export function WebhookPage() {
       <PageHeader
         title={webhook?.name}
         breadcrumbs={[
-          { label: t('Event Streams'), to: getPageUrl(EdaRoute.Webhooks) },
+          { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
           { label: webhook?.name },
         ]}
         headerActions={
@@ -81,10 +81,10 @@ export function WebhookPage() {
       <PageRoutedTabs
         backTab={{
           label: t('Back to Event Streams'),
-          page: EdaRoute.Webhooks,
+          page: EdaRoute.EventStreams,
           persistentFilterKey: 'webhooks',
         }}
-        tabs={[{ label: t('Details'), page: EdaRoute.WebhookDetails }]}
+        tabs={[{ label: t('Details'), page: EdaRoute.EventStreamDetails }]}
         params={{ id: webhook?.id }}
       />
     </PageLayout>

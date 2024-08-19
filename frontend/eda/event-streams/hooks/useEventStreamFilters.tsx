@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 
-export function useWebhookFilters() {
+export function useEventStreamFilters() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter[]>(
     () => [

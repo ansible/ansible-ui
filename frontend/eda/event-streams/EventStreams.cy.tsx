@@ -1,12 +1,12 @@
 import { edaAPI } from '../common/eda-utils';
-import { Webhooks } from './Webhooks';
+import { EventStreams } from './EventStreams';
 
-describe('Webhooks.cy.ts', () => {
+describe('EventStreams.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       { method: 'GET', url: edaAPI`/event-streams/?page=1&page_size=10` },
       {
-        fixture: 'edaWebhooks.json',
+        fixture: 'edaEventStreams.json',
       }
     );
 
@@ -204,7 +204,7 @@ describe('Webhooks.cy.ts', () => {
   });
 
   it('Renders the correct webhooks columns', () => {
-    cy.mount(<Webhooks />);
+    cy.mount(<EventStreams />);
     cy.get('h1').should('contain', 'Event Streams');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('th', 'Name');
@@ -214,7 +214,7 @@ describe('Webhooks.cy.ts', () => {
   });
 
   it('Can delete an event stream not in use', () => {
-    cy.mount(<Webhooks />);
+    cy.mount(<EventStreams />);
     cy.intercept(
       { method: 'DELETE', url: edaAPI`/event-streams/2/` },
       {
@@ -255,7 +255,7 @@ describe('Empty list', () => {
     ).as('emptyList');
   });
   it('Empty state is displayed correctly', () => {
-    cy.mount(<Webhooks />);
+    cy.mount(<EventStreams />);
     cy.contains(/^There are currently no event streams created for your organization.$/);
     cy.contains(/^Please create an event stream by using the button below.$/);
     cy.contains('button', /^Create event stream$/).should('be.visible');

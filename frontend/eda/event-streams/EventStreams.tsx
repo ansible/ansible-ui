@@ -4,24 +4,24 @@ import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaEventStream } from '../interfaces/EdaEventStream';
 import { EdaRoute } from '../main/EdaRoutes';
-import { useWebhookActions } from './hooks/useWebhookActions';
-import { useWebhookColumns } from './hooks/useWebhookColumns';
-import { useWebhookFilters } from './hooks/useWebhookFilters';
-import { useWebhooksActions } from './hooks/useWebhooksActions';
+import { useEventStreamActions } from './hooks/useEventStreamActions';
+import { useEventStreamColumns } from './hooks/useEventStreamColumns';
+import { useEventStreamFilters } from './hooks/useEventStreamFilters';
+import { useEventStreamsActions } from './hooks/useEventStreamsActions';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
-export function Webhooks() {
+export function EventStreams() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const toolbarFilters = useWebhookFilters();
-  const tableColumns = useWebhookColumns();
+  const toolbarFilters = useEventStreamFilters();
+  const tableColumns = useEventStreamColumns();
   const view = useEdaView<EdaEventStream>({
     url: edaAPI`/event-streams/`,
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useWebhooksActions(view);
-  const rowActions = useWebhookActions(view);
+  const toolbarActions = useEventStreamsActions(view);
+  const rowActions = useEventStreamActions(view);
   return (
     <PageLayout>
       <PageHeader
@@ -42,7 +42,7 @@ export function Webhooks() {
         emptyStateDescription={t('Please create an event stream by using the button below.')}
         emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create event stream')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateWebhook)}
+        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateEventStream)}
         {...view}
         defaultSubtitle={t('Event stream')}
       />

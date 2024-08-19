@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../eda/common/eda-utils';
-import { useWebhookFilters } from './useWebhookFilters';
-import { useWebhookColumns } from './useWebhookColumns';
+import { useEventStreamFilters } from './useEventStreamFilters';
+import { useEventStreamColumns } from './useEventStreamColumns';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { MultiSelectDialog, usePageDialog } from '../../../../framework';
 
-export function useSelectWebhooks(webhookType?: number, title?: string) {
+export function useSelectEventStreams(webhookType?: number, title?: string) {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
-  const openSelectWebhooks = useCallback(
+  const openSelectEventStreams = useCallback(
     (onSelect: (webhooks: EdaEventStream[]) => void) => {
       setDialog(
         <SelectEdaEventStreams
@@ -22,7 +22,7 @@ export function useSelectWebhooks(webhookType?: number, title?: string) {
     },
     [webhookType, setDialog, t, title]
   );
-  return openSelectWebhooks;
+  return openSelectEventStreams;
 }
 
 function SelectEdaEventStreams(props: {
@@ -31,8 +31,8 @@ function SelectEdaEventStreams(props: {
   defaultEdaEventStream?: EdaEventStream;
   webhookType?: number;
 }) {
-  const toolbarFilters = useWebhookFilters();
-  const tableColumns = useWebhookColumns();
+  const toolbarFilters = useEventStreamFilters();
+  const tableColumns = useEventStreamColumns();
   const view = useEdaView<EdaEventStream>({
     url: edaAPI`/event-streams/`,
     toolbarFilters,

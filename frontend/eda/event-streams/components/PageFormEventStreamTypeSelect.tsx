@@ -12,10 +12,10 @@ import { edaAPI } from '../../common/eda-utils';
  *
  * @example
  * ```tsx
- * <PageFormSelectWebhookType<Credential> name="webhookType" />
+ * <PageFormSelectEventStreamType<Credential> name="webhookType" />
  * ```
  */
-export function PageFormSelectWebhookType<
+export function PageFormSelectEventStreamType<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {

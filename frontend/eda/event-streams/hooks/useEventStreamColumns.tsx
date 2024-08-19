@@ -12,7 +12,7 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
 
-export function useWebhookColumns() {
+export function useEventStreamColumns() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaEventStream>[]>(
@@ -22,7 +22,7 @@ export function useWebhookColumns() {
         cell: (webhook) => (
           <TextCell
             text={webhook.name}
-            to={getPageUrl(EdaRoute.WebhookPage, {
+            to={getPageUrl(EdaRoute.EventStreamPage, {
               params: { id: webhook.id },
             })}
           />

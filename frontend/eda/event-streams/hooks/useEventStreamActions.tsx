@@ -12,18 +12,18 @@ import {
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { useDeleteWebhooks } from './useDeleteWebhooks';
+import { useDeleteEventStreams } from './useDeleteEventStreams';
 import { edaAPI } from '../../common/eda-utils';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
-export function useWebhookActions(view: IEdaView<EdaEventStream>) {
+export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteWebhooks = useDeleteWebhooks(view.unselectItemsAndRefresh);
+  const deleteEventStreams = useDeleteEventStreams(view.unselectItemsAndRefresh);
   const patchRequest = usePatchRequest();
   const alertToaster = usePageAlertToaster();
 
-  const toggleWebhookMode: (testMode: boolean, webhook: EdaEventStream) => Promise<void> =
+  const toggleEventStreamMode: (testMode: boolean, webhook: EdaEventStream) => Promise<void> =
     useCallback(
       async (testMode, webhook) => {
         const alert: AlertProps = {
@@ -56,7 +56,7 @@ export function useWebhookActions(view: IEdaView<EdaEventStream>) {
         isPinned: true,
         label: t('Edit event stream'),
         onClick: (webhook: EdaEventStream) =>
-          pageNavigate(EdaRoute.EditWebhook, { params: { id: webhook.id } }),
+          pageNavigate(EdaRoute.EditEventStream, { params: { id: webhook.id } }),
       },
       {
         type: PageActionType.Button,
@@ -64,7 +64,7 @@ export function useWebhookActions(view: IEdaView<EdaEventStream>) {
         icon: DisconnectedIcon,
         label: t('Switch to test mode'),
         isHidden: (webhook: EdaEventStream) => !!webhook?.test_mode,
-        onClick: (webhook: EdaEventStream) => toggleWebhookMode(true, webhook),
+        onClick: (webhook: EdaEventStream) => toggleEventStreamMode(true, webhook),
       },
       {
         type: PageActionType.Button,
@@ -72,7 +72,7 @@ export function useWebhookActions(view: IEdaView<EdaEventStream>) {
         icon: ConnectedIcon,
         label: t('Switch to production mode'),
         isHidden: (webhook: EdaEventStream) => !webhook?.test_mode,
-        onClick: (webhook: EdaEventStream) => toggleWebhookMode(false, webhook),
+        onClick: (webhook: EdaEventStream) => toggleEventStreamMode(false, webhook),
       },
       {
         type: PageActionType.Seperator,
@@ -82,10 +82,10 @@ export function useWebhookActions(view: IEdaView<EdaEventStream>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
-        onClick: (webhook: EdaEventStream) => deleteWebhooks([webhook]),
+        onClick: (webhook: EdaEventStream) => deleteEventStreams([webhook]),
         isDanger: true,
       },
     ],
-    [deleteWebhooks, pageNavigate, t, toggleWebhookMode]
+    [deleteEventStreams, pageNavigate, t, toggleEventStreamMode]
   );
 }

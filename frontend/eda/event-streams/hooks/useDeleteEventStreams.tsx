@@ -6,12 +6,12 @@ import { requestDelete } from '../../../common/crud/Data';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { useWebhookColumns } from './useWebhookColumns';
+import { useEventStreamColumns } from './useEventStreamColumns';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 
-export function useDeleteWebhooks(onComplete?: (webhooks: EdaEventStream[]) => void) {
+export function useDeleteEventStreams(onComplete?: (webhooks: EdaEventStream[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useWebhookColumns();
+  const confirmationColumns = useEventStreamColumns();
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useEdaBulkConfirmation<EdaEventStream>();

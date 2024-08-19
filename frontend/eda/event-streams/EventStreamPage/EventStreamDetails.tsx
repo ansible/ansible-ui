@@ -18,7 +18,7 @@ import { StandardPopover } from '../../../../framework/components/StandardPopove
 import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-export function WebhookDetails() {
+export function EventStreamDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const getPageUrl = useGetPageUrl();
