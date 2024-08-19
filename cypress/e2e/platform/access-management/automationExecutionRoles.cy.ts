@@ -69,7 +69,7 @@ describe('Automation Execution: Roles', () => {
         cy.verifyPageTitle('Roles');
         cy.setTablePageSize('50');
         cy.getByDataCy('create-role').click();
-        cy.verifyPageTitle('Create Role');
+        cy.verifyPageTitle('Create role');
         const roleName = `${roleType.role}` + `${randomString(5)}`;
         cy.getByDataCy('name').type(`${roleName}`);
         cy.getByDataCy('description').type(`${roleType.role} description`);
@@ -179,7 +179,7 @@ describe('Automation Execution: Roles', () => {
           .within(() => {
             cy.getByDataCy('edit-role').click();
           });
-        cy.verifyPageTitle('Edit Role');
+        cy.verifyPageTitle(`Edit ${editableRole.name}`);
         cy.get(`[data-cy="permissions-form-group"]`)
           .click()
           .then(() => {
@@ -223,7 +223,7 @@ describe('Automation Execution: Roles', () => {
         expect(editableRole.permissions).to.include(permissionA);
         expect(editableRole.permissions).to.include(permissionB);
         cy.getByDataCy('edit-role').click();
-        cy.verifyPageTitle('Edit Role');
+        cy.verifyPageTitle(`Edit ${roleName}`);
         cy.get(`[data-cy="permissions-form-group"]`)
           .click()
           .then(() => {

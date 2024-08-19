@@ -1800,6 +1800,10 @@ declare global {
       getPlatformUserByAnsibleId(ansibleId: string | undefined): Chainable<PlatformUser>;
       getAwxUserByAnsibleId(ansibleId: string | undefined): Chainable<AwxUser>;
 
+      getHubUserByAnsibleId(userAnsibleId: string | undefined): Chainable<HubUser>;
+
+      getHubTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<HubTeam>;
+
       createPlatformUser(user?: Partial<PlatformUser>): Chainable<PlatformUser>;
       deletePlatformUser(
         user: PlatformUser,
