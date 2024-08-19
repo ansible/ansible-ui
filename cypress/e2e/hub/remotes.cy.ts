@@ -86,7 +86,8 @@ describe('Remotes', () => {
     cy.contains(Remotes.showAdvancedOptions).click();
     // cy.getBy('[data-cy="requirements-file-warning"]').should('be.visible');
     cy.getBy('[data-cy="url"]').clear().type(Remotes.remoteURL);
-    cy.getBy('[data-cy="signed-only-warning"]').should('not.exist');
+    // use get because it's checking element doesn't exist
+    cy.get('[data-cy="signed-only-warning"]').should('not.exist');
     // cy.getBy('[data-cy="requirements-file-warning"]').should('not.exist');
     cy.intercept({
       method: 'GET',
