@@ -38,7 +38,7 @@ export function useWebhookColumns() {
       {
         header: t('Last event received'),
         type: 'datetime',
-        value: (webhook) => webhook?.last_event_received_at,
+        value: (webhook) => webhook?.last_event_received_at ?? undefined,
       },
       {
         header: t('Mode'),
