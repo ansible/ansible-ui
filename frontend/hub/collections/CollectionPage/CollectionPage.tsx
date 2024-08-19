@@ -2,10 +2,11 @@ import { Button, Label } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
+  IPageAction,
   LoadingPage,
   PageActions,
   PageHeader,
@@ -21,7 +22,7 @@ import { PageSingleSelectContext } from '../../../../framework/PageInputs/PageSi
 import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
 import { requestGet } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
+import { useGet, useGetRequest } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { useHubContext } from '../../common/useHubContext';
@@ -33,22 +34,12 @@ import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionS
 
 export function CollectionPage() {
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { name, namespace, repository } = useParams();
   const context = useHubContext();
+  const [collection, setCollection] = useState<null | Partial<CollectionVersionSearch>>(null);
 
   const { display_signatures } = context.featureFlags;
-  // load collection by search params
-  const version = searchParams.get('version');
-
-  let queryFilter = '';
-
-  if (!version) {
-    // for unspecified version, load highest
-    queryFilter = '&is_highest=true';
-  } else {
-    queryFilter = '&version=' + version;
-  }
 
   const singleSelector = useSelectCollectionVersionSingle({
     collection: name || '',
@@ -59,40 +50,66 @@ export function CollectionPage() {
   const singleSelectorBrowser = singleSelectBrowseAdapter<CollectionVersionSearch>(
     singleSelector.openBrowse,
     (item) => {
-      return item.collection_version?.version || '';
+      return item?.collection_version?.version || '';
     },
     (name) => {
       return { collection_version: { version: name } };
     }
   );
 
+  let queryFilter;
+  const version = searchParams.get('version');
+  if (version) {
+    queryFilter = '&version=' + version;
+  } else if (collection) {
+    queryFilter = '&version=' + collection?.collection_version?.version;
+  } else {
+    queryFilter = '&is_highest=true';
+  }
   const collectionRequest = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
-      queryFilter
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}${queryFilter}`
   );
-
-  const collection =
-    collectionRequest?.data?.data && collectionRequest?.data?.data?.length > 0
-      ? collectionRequest.data?.data[0]
-      : undefined;
 
   const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
 
-  function setVersionParams(version: string | null) {
-    if (version === null) {
-      return;
+  const getRequest = useGetRequest<HubItemsResponse<CollectionVersionSearch>>();
+  useEffect(() => {
+    async function getCollectionData() {
+      const version = searchParams.get('version');
+      let queryFilter;
+      if (version) {
+        queryFilter = '&version=' + version;
+      } else if (collection) {
+        queryFilter = '&version=' + collection?.collection_version?.version;
+      } else {
+        queryFilter = '&is_highest=true';
+      }
+      const collectionRequest = await getRequest(
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}` +
+          queryFilter
+      );
+
+      const collectionData: null | CollectionVersionSearch =
+        collectionRequest?.data && collectionRequest?.data?.length > 0
+          ? collectionRequest.data[0]
+          : null;
+
+      if (
+        !collection ||
+        collection?.collection_version?.version !== collectionData?.collection_version?.version
+      ) {
+        setCollection(collectionData);
+      }
     }
-    setTimeout(() => {
-      setSearchParams((params) => {
-        params.set('version', version);
-        return params;
-      });
-    }, 0);
-  }
+
+    void getCollectionData();
+  }, [collection, getRequest, name, namespace, repository, searchParams, collectionRequest]);
 
   // load collection versions
   const queryOptions = useCallback(
-    (options: PageAsyncSelectQueryOptions): Promise<PageAsyncSelectQueryResult<string>> => {
+    (
+      options: PageAsyncSelectQueryOptions
+    ): Promise<PageAsyncSelectQueryResult<CollectionVersionSearch>> => {
       const pageSize = 10;
       const page = options.next ? Number(options.next) : 1;
 
@@ -114,11 +131,11 @@ export function CollectionPage() {
               `${DateTime.fromISO(item.collection_version?.pulp_created || '').toRelative()} ${
                 display_signatures ? (item.is_signed ? t('signed') : t('unsigned')) : ''
               }`;
-            if (item.is_highest) {
+            if (item === data.data[0]) {
               label += ' (' + t('latest') + ')';
             }
             return {
-              value: item.collection_version?.version || '',
+              value: item,
               label,
             };
           }),
@@ -157,8 +174,8 @@ export function CollectionPage() {
         ]}
         headerActions={
           collection && (
-            <PageActions<CollectionVersionSearch>
-              actions={itemActions}
+            <PageActions<Partial<CollectionVersionSearch>>
+              actions={itemActions as IPageAction<Partial<CollectionVersionSearch>>[]}
               position={DropdownPosition.right}
               selectedItem={collection}
             />
@@ -171,11 +188,14 @@ export function CollectionPage() {
             style={{ display: 'flex', alignItems: 'center', gridGap: '8px' }}
           >
             {t('Version')}
-            <PageAsyncSingleSelect<string>
+            <PageAsyncSingleSelect<Partial<CollectionVersionSearch>>
+              isRequired
               queryOptions={queryOptions}
-              onSelect={setVersionParams}
+              onSelect={(value) => {
+                setCollection(value);
+              }}
               placeholder={t('Select version')}
-              value={collection?.collection_version?.version || version || ''}
+              value={collection}
               footer={
                 <PageSingleSelectContext.Consumer>
                   {(context) => (
@@ -183,12 +203,11 @@ export function CollectionPage() {
                       variant="link"
                       onClick={() => {
                         context.setOpen(false);
-                        singleSelectorBrowser?.(
-                          (selection) => {
-                            setVersionParams(selection);
-                          },
-                          collection?.collection_version?.version || version || ''
-                        );
+                        singleSelectorBrowser?.((selection) => {
+                          setCollection({
+                            collection_version: { version: selection },
+                          } as Partial<CollectionVersionSearch>);
+                        }, collection.collection_version?.version);
                       }}
                     >
                       {t`Browse`}
@@ -196,7 +215,7 @@ export function CollectionPage() {
                   )}
                 </PageSingleSelectContext.Consumer>
               }
-              queryLabel={(value) => value}
+              queryLabel={(value) => `${value.collection_version?.version}`}
             />
             {collection?.collection_version &&
               t('Last updated') +
