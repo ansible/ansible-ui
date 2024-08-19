@@ -5,9 +5,19 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA Projects CRUD', () => {
+    let edaOrg: EdaOrganization;
+    before(() => {
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+      });
+    });
+    after(() => {
+      cy.deleteEdaOrganization(edaOrg);
+    });
     it('can create a Project, sync it, and assert the information showing on the details page', () => {
       const name = 'E2E Project ' + randomString(4);
       cy.navigateTo('eda', 'projects');
@@ -25,7 +35,7 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     it('can edit a project from the list view', () => {
-      cy.createEdaProject().then((edaProject) => {
+      cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.waitEdaProjectSync(edaProject);
         cy.navigateTo('eda', 'projects');
         cy.verifyPageTitle('Projects');
@@ -43,7 +53,7 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     it('deletes a Project from kebab menu from the project details page', () => {
-      cy.createEdaProject().then((edaProject) => {
+      cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.waitEdaProjectSync(edaProject);
         cy.navigateTo('eda', 'projects');
         cy.clickTableRow(edaProject.name);
