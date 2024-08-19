@@ -2,6 +2,7 @@ name: Pull Request
 
 on:
   pull_request:
+    types: [opened, synchronize, labeled, unlabeled]
 
 env:
   IS_GITHUB_ACTION: true
@@ -25,7 +26,7 @@ jobs:
           fetch-depth: 100
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -59,7 +60,17 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT" 
           else
             echo "changed=true" >> "$GITHUB_OUTPUT" 
-          fi        
+          fi
+
+  pr-queue:
+    name: PR Queue
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ahmadnassri/action-workflow-queue@v1
+        with: 
+          delay: 60000
+          timeout: 14400000
 
   checks:
     name: ESLint - Prettier - TSC
@@ -71,7 +82,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
       - name: Cache dependencies
@@ -89,7 +100,9 @@ jobs:
 
   awx-e2e:
     name: AWX E2E
-    needs: packages
+    needs:
+      - packages
+      - pr-queue
     uses: ./.github/workflows/awx-e2e.yml
     with:
       AWX_SERVER: ${{ vars.AWX_SERVER }}
@@ -101,7 +114,9 @@ jobs:
       
   eda-e2e:
     name: EDA E2E
-    needs: packages
+    needs:
+      - packages
+      - pr-queue
     uses: ./.github/workflows/eda-e2e.yml
     with:
       EDA_SERVER: ${{ vars.EDA_SERVER }}
@@ -113,7 +128,9 @@ jobs:
       
   hub-e2e:
     name: HUB E2E
-    needs: packages
+    needs:
+      - packages
+      - pr-queue    
     uses: ./.github/workflows/hub-e2e.yml
     with:
       HUB_SERVER: ${{ vars.HUB_SERVER }}
@@ -134,7 +151,7 @@ jobs:
   success:
     name: Success
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ success() }}
     needs: 
       - checks
       - component
@@ -142,14 +159,4 @@ jobs:
       - eda-e2e
       - hub-e2e
     steps:
-      - if: ${{ success() }}
-        run: |
-          echo Success
-      - if: ${{ failure() }}
-        run: |
-          echo Failure
-          exit 1
-      - if: ${{ cancelled() }}
-        run: |
-          echo Cancelled
-          exit 1          
+      - run: echo Success

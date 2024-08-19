@@ -93,7 +93,11 @@ export function Teams() {
       <PageHeader
         title={t('Teams')}
         description={t(
-          'A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+          'A team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
+        )}
+        titleHelpTitle={t('Teams')}
+        titleHelp={t(
+          'A team is a subdivision of an organization with associated users, projects, credentials, and permissions.'
         )}
       />
       <PageTable<EdaTeam>

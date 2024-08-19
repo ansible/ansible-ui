@@ -22,7 +22,6 @@ export function HubNamespaceCollections() {
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
     keyFn: collectionKeyFn,
     queryParams: {
-      is_deprecated: 'false',
       repository_label: '!hide_from_search',
       is_highest: 'true',
       namespace: params?.id || '',

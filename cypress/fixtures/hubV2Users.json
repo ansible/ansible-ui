@@ -1,0 +1,37 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "username": "galaxy",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "groups": [],
+      "date_joined": "2024-08-02T16:21:37.613247Z",
+      "is_superuser": false,
+      "auth_provider": ["django"],
+      "resource": {
+        "ansible_id": "b5e7100f-c24c-44e8-9d5d-acd7da601676",
+        "resource_type": "shared.user"
+      }
+    },
+    {
+      "id": 6,
+      "username": "demo-user",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "groups": [],
+      "date_joined": "2024-08-02T16:42:18.845295Z",
+      "is_superuser": false,
+      "auth_provider": ["django"],
+      "resource": {
+        "ansible_id": "61c19528-8f82-4c96-9d14-ee27c9de3b4a",
+        "resource_type": "shared.user"
+      }
+    }
+  ]
+}

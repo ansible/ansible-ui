@@ -28,6 +28,6 @@ describe('RuleAuditDetails', () => {
       'Long Running Range'
     );
     cy.get('[data-cy="created"] > .pf-v5-c-description-list__text').should('exist');
-    cy.get('[data-cy="fired-date"] > .pf-v5-c-description-list__text').should('exist');
+    cy.get('[data-cy="last-fired-date"] > .pf-v5-c-description-list__text').should('exist');
   });
 });

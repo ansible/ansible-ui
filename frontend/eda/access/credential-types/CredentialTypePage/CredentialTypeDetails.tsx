@@ -38,13 +38,15 @@ export function CredentialTypeDetailInner(props: { credentialType: EdaCredential
       <PageDetail label={t('Name')}>{renderCredentialTypeName(props.credentialType)}</PageDetail>
       <PageDetail label={t('Description')}>{props.credentialType.description}</PageDetail>
       <PageDetailCodeEditor
-        helpText={t('Input schema which defines a set of ordered fields for that type.')}
+        helpText={t(
+          'Input schema which defines a set of ordered fields for that type, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.'
+        )}
         label={t('Input configuration')}
         value={jsonToYaml(JSON.stringify(props.credentialType.inputs))}
       />
       <PageDetailCodeEditor
         helpText={t(
-          'Environment variables or extra variables that specify the values a credential type can inject.'
+          'Environment variables or extra variables that specify the values a credential type can inject, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.'
         )}
         label={t('Injector configuration')}
         value={jsonToYaml(JSON.stringify(props.credentialType.injectors))}

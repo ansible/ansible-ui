@@ -11,6 +11,10 @@ export enum HubRoute {
   NamespaceCollections = 'hub-namespace-collections',
   NamespaceDetails = 'hub-namespace-details',
   NamespaceCLI = 'hub-namespace-cli',
+  NamespaceTeamAccess = 'hub-namespace-team-access',
+  NamespaceUserAccess = 'hub-namespace-user-access',
+  NamespaceAddUsers = 'hub-namespace-add-users',
+  NamespaceAddTeams = 'hub-namespace-add-teams',
 
   CollectionSignatureUpload = 'hub-signature-upload',
   Collections = 'hub-collections',
@@ -34,7 +38,10 @@ export enum HubRoute {
   ExecutionEnvironmentImages = 'hub-create-execution-environment-images',
   ExecutionEnvironmentImagePage = 'hub-create-execution-environment-image-page',
   ExecutionEnvironmentImageDetails = 'hub-create-execution-environment-image-details',
-  ExecutionEnvironmentAccess = 'hub-create-execution-environment-access',
+  ExecutionEnvironmentAddTeams = 'hub-execution-environment-add-teams',
+  ExecutionEnvironmentAddUsers = 'hub-execution-environment-add-users',
+  ExecutionEnvironmentTeamAccess = 'hub-execution-environment-team-access',
+  ExecutionEnvironmentUserAccess = 'hub-execution-environment-user-access',
 
   SignatureKeys = 'hub-signature-keys',
 
@@ -44,13 +51,16 @@ export enum HubRoute {
   EditRepository = 'hub-edit-repository',
   RepositoryPage = 'hub-repository-page',
   RepositoryDetails = 'hub-repository-page-details',
-  RepositoryAccess = 'hub-repository-page-access',
   RepositoryCollectionVersion = 'hub-repository-page-collection-version',
   RepositoryVersions = 'hub-repository-page-versions',
   RepositoryVersionPage = 'hub-repository-page-version-page',
   RepositoryVersionDetails = 'hub-repository-page-version-page-details',
   RepositoryVersionCollections = 'hub-repository-page-version-page-collections',
   RepositoryDistributions = 'hub-repository-page-distributions',
+  RepositoryAddTeams = 'hub-repository-add-teams',
+  RepositoryAddUsers = 'hub-repository-add-users',
+  RepositoryTeamAccess = 'hub-repository-team-access',
+  RepositoryUserAccess = 'hub-repository-user-access',
 
   RemoteRegistries = 'hub-remote-registries',
   CreateRemoteRegistry = 'hub-create-remote-registry',
@@ -68,13 +78,28 @@ export enum HubRoute {
   EditRemote = 'hub-edit-remote',
   RemotePage = 'hub-remote-page',
   RemoteDetails = 'hub-remote-details',
-  RemoteAccess = 'hub-remote-access',
+  RemoteAddTeams = 'hub-remote-add-teams',
+  RemoteAddUsers = 'hub-remote-add-users',
+  RemoteTeamAccess = 'hub-remote-add-team-access',
+  RemoteUserAccess = 'hub-remote-user-access',
 
   // Access
   Access = 'hub-access',
   Organizations = 'hub-organizations',
+  // Teams
   Teams = 'hub-teams',
+  TeamPage = 'hub-team-page',
+  TeamRoles = 'hub-team-roles',
+  TeamAddRoles = 'hub-team-add-roles',
+  TeamDetails = 'hub-team-details',
+
+  // Users
   Users = 'hub-users',
+  UserPage = 'hub-user-page',
+  UserRoles = 'hub-user-roles',
+  UserAddRoles = 'hub-user-add-roles',
+  UserDetails = 'hub-user-details',
+
   APIToken = 'hub-api-token',
   MyImports = 'hub-my-imports',
   Roles = 'hub-roles',

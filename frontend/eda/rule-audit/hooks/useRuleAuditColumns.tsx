@@ -49,7 +49,7 @@ export function useRuleAuditColumns() {
         dashboard: 'hidden',
       },
       {
-        header: t('Fired date'),
+        header: t('Last fired date'),
         cell: (ruleAudit) => (
           <TextCell
             text={ruleAudit?.fired_at ? formatDateString(new Date(ruleAudit.fired_at)) : ''}

@@ -14,6 +14,7 @@ import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 import { useWindowLocation } from '../../../../framework/components/useWindowLocation';
 import { useSignAllCollections } from '../../collections/hooks/useSignAllCollections';
 import { useHubContext } from '../../common/useHubContext';
+import { useCanSignNamespace } from '../../common/utils/canSign';
 
 export function useHubNamespaceActions(options?: {
   onHubNamespacesDeleted: (namespaces: HubNamespace[]) => void;
@@ -27,16 +28,16 @@ export function useHubNamespaceActions(options?: {
   const { settings, featureFlags } = useHubContext();
   const signing_service = settings.GALAXY_COLLECTION_SIGNING_SERVICE;
   const can_upload_signatures = featureFlags.can_upload_signatures;
-  const can_create_signatures = featureFlags.can_create_signatures;
   const pageNavigate = usePageNavigate();
   const deleteHubNamespaces = useDeleteHubNamespaces(options.onHubNamespacesDeleted);
   const { location } = useWindowLocation();
   const signCollection = useSignAllCollections();
+  const canSignNamespace = useCanSignNamespace();
 
   return useMemo(() => {
     const isRepoSelected = () => location?.search.includes('repository=');
 
-    const canSignAllCollections = () => can_create_signatures && !can_upload_signatures;
+    const canSignAllCollections = () => canSignNamespace && !can_upload_signatures;
 
     const actions: IPageAction<HubNamespace>[] = [
       {
@@ -90,9 +91,9 @@ export function useHubNamespaceActions(options?: {
     return actions;
   }, [
     t,
-    can_upload_signatures,
-    can_create_signatures,
     location?.search,
+    canSignNamespace,
+    can_upload_signatures,
     pageNavigate,
     signCollection,
     options.onHubNamespacesSignAllCollections,

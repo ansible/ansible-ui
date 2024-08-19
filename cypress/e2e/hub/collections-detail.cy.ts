@@ -147,22 +147,6 @@ describe('Collections Details', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it('can deprecate a collection', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
-      visitCollection(collectionName, namespace.name);
-      cy.selectDetailsPageKebabAction('deprecate-collection');
-      cy.clickButton('Close');
-      cy.navigateTo('hub', Collections.url);
-      cy.verifyPageTitle(Collections.title);
-      cy.getHubCollection(collectionName).then((deprecated) => {
-        //Assert that the object returned shows that is_deprecated is equal to true
-        expect(deprecated.is_deprecated).to.eql(true);
-      });
-      cy.deleteHubCollectionByName(collectionName);
-    });
-  });
-
   it('can copy a version to repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
       cy.approveCollection(collectionName, namespace.name, '1.0.0');
@@ -254,6 +238,60 @@ describe('Collections Details', () => {
           cy.deleteHubCollectionByName(collectionName);
         }
       );
+    });
+  });
+
+  it('can deprecate/undeprecate a collection', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      // Deprecate collection
+      visitCollection(collectionName, namespace.name);
+      cy.selectDetailsPageKebabAction('deprecate-collection');
+      cy.clickButton(/^Close$/);
+      cy.getModal().should('not.exist');
+      // Verify collection has been deprecated
+      cy.contains('span', 'Deprecated');
+      // Undeprecate collection
+      cy.selectDetailsPageKebabAction('undeprecate-collection');
+      cy.clickButton(/^Close$/);
+      cy.getModal().should('not.exist');
+      // Verify collection has been undeprecated
+      cy.contains('span', 'Deprecated').should('not.exist');
+
+      // deprecate collection again
+      cy.selectDetailsPageKebabAction('deprecate-collection');
+      cy.clickButton(/^Close$/);
+      cy.getModal().should('not.exist');
+      // Verify collection has been deprecated
+      cy.contains('span', 'Deprecated');
+
+      cy.contains('a', namespace.name).click();
+      cy.contains(`[role="tab"]`, 'Collections').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.get(`[aria-label="Simple table"]`).within(() => {
+        cy.contains('td', collectionName).click();
+        cy.contains('span', 'Deprecated');
+      });
+
+      cy.getByDataCy('table-view').click();
+      cy.get(`[aria-label="Simple table"]`).within(() => {
+        cy.getByDataCy('actions-dropdown').click();
+      });
+      cy.contains('button', 'Undeprecate collection').click();
+
+      // click confirm
+      cy.getModal().within(() => {
+        cy.get(`input[type="checkbox"]`).click();
+      });
+      cy.contains('button', 'Undeprecate collections').click();
+      cy.clickButton(/^Close$/);
+      cy.getModal().should('not.exist');
+
+      cy.get(`[aria-label="Simple table"]`).within(() => {
+        cy.contains('td', collectionName).click();
+        cy.contains('span', 'Deprecated').should('not.exist');
+      });
+      cy.deleteHubCollectionByName(collectionName);
     });
   });
 });

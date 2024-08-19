@@ -1,0 +1,294 @@
+{
+  "id": 4,
+  "username": "dev",
+  "first_name": "",
+  "last_name": "",
+  "email": "",
+  "groups": [],
+  "date_joined": "2024-08-05T20:23:06.468451Z",
+  "is_superuser": true,
+  "auth_provider": ["django"],
+  "model_permissions": {
+    "galaxy.add_namespace": {
+      "name": "Add namespace",
+      "object_description": null,
+      "global_description": "Create a new namespace.",
+      "ui_category": "Collection Namespaces",
+      "has_model_permission": true
+    },
+    "galaxy.change_namespace": {
+      "name": "Change namespace",
+      "object_description": "Edit this namespace.",
+      "global_description": "Edit any existing namespace.",
+      "ui_category": "Collection Namespaces",
+      "has_model_permission": true
+    },
+    "galaxy.delete_namespace": {
+      "name": "Delete namespace",
+      "object_description": "Delete this namespace.",
+      "global_description": "Delete any existing namespace.",
+      "ui_category": "Collection Namespaces",
+      "has_model_permission": true
+    },
+    "galaxy.upload_to_namespace": {
+      "name": "Upload to namespace",
+      "object_description": "Upload collections to this namespace.",
+      "global_description": "Upload collections to any existing namespace.",
+      "ui_category": "Collection Namespaces",
+      "has_model_permission": true
+    },
+    "ansible.delete_collection": {
+      "name": "Delete collection",
+      "object_description": "Delete this collection.",
+      "global_description": "Delete any existing collection.",
+      "ui_category": "Collections",
+      "has_model_permission": true
+    },
+    "ansible.modify_ansible_repo_content": {
+      "name": "Modify Ansible repo content",
+      "object_description": "Modify content of this Ansible repository.",
+      "global_description": "Upload collections to any existing namespace.",
+      "ui_category": "Collections",
+      "has_model_permission": true
+    },
+    "ansible.sign_ansiblerepository": {
+      "name": "Sign collections",
+      "object_description": "Sign collections in this repository.",
+      "global_description": "Sign collections in any repository.",
+      "ui_category": "Collections",
+      "has_model_permission": true
+    },
+    "galaxy.add_user": {
+      "name": "Add user",
+      "object_description": null,
+      "global_description": "Add new users to the system.",
+      "ui_category": "Users",
+      "has_model_permission": true
+    },
+    "galaxy.change_user": {
+      "name": "Change user",
+      "object_description": "Edit this user.",
+      "global_description": "Edit any existing user in the system.",
+      "ui_category": "Users",
+      "has_model_permission": true
+    },
+    "galaxy.delete_user": {
+      "name": "Delete user",
+      "object_description": "Delete this user.",
+      "global_description": "Delete any existing user in the system.",
+      "ui_category": "Users",
+      "has_model_permission": true
+    },
+    "galaxy.view_user": {
+      "name": "View user",
+      "object_description": "View this user.",
+      "global_description": "View any user in the system.",
+      "ui_category": "Users",
+      "has_model_permission": true
+    },
+    "galaxy.add_group": {
+      "name": "Add group",
+      "object_description": null,
+      "global_description": "Create new groups in the system.",
+      "ui_category": "Groups",
+      "has_model_permission": true
+    },
+    "galaxy.change_group": {
+      "name": "Change group",
+      "object_description": "Edit this group",
+      "global_description": "Edit any existing group in the system.",
+      "ui_category": "Groups",
+      "has_model_permission": true
+    },
+    "galaxy.delete_group": {
+      "name": "Delete group",
+      "object_description": "Delete this group.",
+      "global_description": "Delete any group in the system.",
+      "ui_category": "Groups",
+      "has_model_permission": true
+    },
+    "galaxy.view_group": {
+      "name": "View group",
+      "object_description": "View this group.",
+      "global_description": "View any existing group in the system.",
+      "ui_category": "Groups",
+      "has_model_permission": true
+    },
+    "ansible.view_collectionremote": {
+      "name": "View collection remote",
+      "object_description": "View this collection remote.",
+      "global_description": "View any collection remote existing in the system.",
+      "ui_category": "Collection Remotes",
+      "has_model_permission": true
+    },
+    "ansible.add_collectionremote": {
+      "name": "Add collection remote",
+      "object_description": "Add this collection remote.",
+      "global_description": "Add any collection remote existing in the system.",
+      "ui_category": "Collection Remotes",
+      "has_model_permission": true
+    },
+    "ansible.change_collectionremote": {
+      "name": "Change collection remote",
+      "object_description": "Edit this collection remote.",
+      "global_description": "Edit any collection remote existing in the system.",
+      "ui_category": "Collection Remotes",
+      "has_model_permission": true
+    },
+    "ansible.delete_collectionremote": {
+      "name": "Delete collection remote",
+      "object_description": "Delete this collection remote.",
+      "global_description": "Delete any collection remote existing in the system.",
+      "ui_category": "Collection Remotes",
+      "has_model_permission": true
+    },
+    "ansible.manage_roles_collectionremote": {
+      "name": "Manage remote roles",
+      "object_description": "Configure who has permissions on this remote.",
+      "global_description": "Configure who has permissions on any remote.",
+      "ui_category": "Collection Remotes",
+      "has_model_permission": true
+    },
+    "ansible.view_ansiblerepository": {
+      "name": "View Ansible repository",
+      "object_description": "View this Ansible repository.",
+      "global_description": "View any Ansible repository existing in the system.",
+      "ui_category": "Ansible Repository",
+      "has_model_permission": true
+    },
+    "ansible.add_ansiblerepository": {
+      "name": "Add Ansible repository",
+      "object_description": "Add this Ansible repository.",
+      "global_description": "Add any Ansible repository existing in the system.",
+      "ui_category": "Ansible Repository",
+      "has_model_permission": true
+    },
+    "ansible.change_ansiblerepository": {
+      "name": "Change Ansible repository",
+      "object_description": "Change this Ansible repository.",
+      "global_description": "Change any Ansible repository existing in the system.",
+      "ui_category": "Ansible Repository",
+      "has_model_permission": true
+    },
+    "ansible.delete_ansiblerepository": {
+      "name": "Delete Ansible repository",
+      "object_description": "Delete this Ansible repository.",
+      "global_description": "Delete any Ansible repository existing in the system.",
+      "ui_category": "Ansible Repository",
+      "has_model_permission": true
+    },
+    "ansible.manage_roles_ansiblerepository": {
+      "name": "Manage repository roles",
+      "object_description": "Configure who has permissions on this repository.",
+      "global_description": "Configure who has permissions on any repository.",
+      "ui_category": "Ansible Repository",
+      "has_model_permission": true
+    },
+    "ansible.repair_ansiblerepository": {
+      "name": "Repair Ansible repository",
+      "object_description": "Repair artifacts associated with this Ansible repository.",
+      "global_description": "Repair artifacts associated with any Ansible repository existing in the system.",
+      "ui_category": "Ansible Repository",
+      "has_model_permission": true
+    },
+    "container.change_containernamespace": {
+      "name": "Change container namespace permissions",
+      "object_description": "Edit permissions on this container namespace.",
+      "global_description": "Edit permissions on any existing container namespace.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.namespace_change_containerdistribution": {
+      "name": "Change containers",
+      "object_description": "Edit all objects in this container namespace.",
+      "global_description": "Edit all objects in any container namespace in the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.namespace_modify_content_containerpushrepository": {
+      "name": "Change image tags",
+      "object_description": "Edit an image's tag in this container namespace",
+      "global_description": "Edit an image's tag in any container namespace the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.add_containernamespace": {
+      "name": "Create new containers",
+      "object_description": null,
+      "global_description": "Add new containers to the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.delete_containerrepository": {
+      "name": "Delete container repository",
+      "object_description": "Delete this container repository.",
+      "global_description": "Delete any existing container repository in the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.namespace_push_containerdistribution": {
+      "name": "Push to existing containers",
+      "object_description": "Push to this namespace.",
+      "global_description": "Push to any existing namespace in the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.namespace_add_containerdistribution": {
+      "name": "Push new containers",
+      "object_description": "Push a new container to this namespace.",
+      "global_description": "Push a new containers to any namespace in the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "container.manage_roles_containernamespace": {
+      "name": "Manage container namespace roles",
+      "object_description": "Manage container namespace roles.",
+      "global_description": "Manage container namespace roles existing in the system.",
+      "ui_category": "Execution Environments",
+      "has_model_permission": true
+    },
+    "galaxy.add_containerregistryremote": {
+      "name": "Add remote registry",
+      "object_description": null,
+      "global_description": "Add remote registry to the system.",
+      "ui_category": "Container Registry Remotes",
+      "has_model_permission": true
+    },
+    "galaxy.change_containerregistryremote": {
+      "name": "Change remote registry",
+      "object_description": "Edit this remote registry.",
+      "global_description": "Change any remote registry existing in the system.",
+      "ui_category": "Container Registry Remotes",
+      "has_model_permission": true
+    },
+    "galaxy.delete_containerregistryremote": {
+      "name": "Delete remote registry",
+      "object_description": "Delete this remote registry.",
+      "global_description": "Delete any remote registry existing in the system.",
+      "ui_category": "Container Registry Remotes",
+      "has_model_permission": true
+    },
+    "core.change_task": {
+      "name": "Change task",
+      "object_description": "Edit this task.",
+      "global_description": "Edit any task existing in the system.",
+      "ui_category": "Task Management",
+      "has_model_permission": true
+    },
+    "core.delete_task": {
+      "name": "Delete task",
+      "object_description": "Delete this task.",
+      "global_description": "Delete any task existing in the system.",
+      "ui_category": "Task Management",
+      "has_model_permission": true
+    },
+    "core.view_task": {
+      "name": "View all tasks",
+      "object_description": "View this task.",
+      "global_description": "View any task existing in the system.",
+      "ui_category": "Task Management",
+      "has_model_permission": true
+    }
+  },
+  "is_anonymous": false
+}

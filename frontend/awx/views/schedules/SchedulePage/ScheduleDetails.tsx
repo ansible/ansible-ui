@@ -127,7 +127,7 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
         {!hasDaysToKeep && (
           <PageDetail fullWidth>
             <PageDetailCodeEditor
-              label={t('Variables')}
+              label={t('Extra variables')}
               value={JSON.stringify(schedule.extra_data)}
             />
           </PageDetail>

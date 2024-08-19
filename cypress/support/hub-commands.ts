@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { SetRequired } from 'type-fest';
 import { randomLowercaseString, randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -17,6 +16,9 @@ import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
+import { SetRequired } from 'type-fest';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -107,6 +109,7 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
     if (count === 0) {
       throw new Error('Max loops reached while waiting for the tasks.');
     }
+    cy.wait(1000);
     cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
       (response) => {
         const tasks = response.results;
@@ -114,7 +117,6 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
         if (tasks.length === 0) {
           return;
         } else {
-          cy.wait(1000);
           waitForAllTasks(count - 1);
         }
       }
@@ -219,37 +221,49 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-Cypress.Commands.add('createNamespace', (namespaceName: string) => {
-  cy.galaxykit('namespace create', namespaceName);
-});
-
-Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.galaxykit('-i namespace delete', namespaceName);
-});
-
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
   ).then((itemsResponse) => {
     cy.log(`count of collections in namespace: ${itemsResponse.data.length}`);
     for (const collection of itemsResponse.data) {
-      cy.galaxykit(
-        'collection delete',
-        collection.collection_version?.namespace || '',
-        collection.collection_version?.name || '',
-        collection.collection_version?.version || '',
-        collection.repository?.name || ''
-      );
+      cy.deleteHubCollection(collection);
+      cy.waitForAllTasks();
     }
   });
 });
 
-Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
-  cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
-    name: remoteName,
-    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
-  });
-});
+Cypress.Commands.add(
+  'createRemote',
+  (
+    remoteName: string,
+    url?: string,
+    ca_cert?: string,
+    client_cert?: string,
+    requirements_file?: string
+  ) => {
+    const payload: {
+      name: string;
+      url: string;
+      ca_cert?: string;
+      client_cert?: string;
+      requirements_file?: string;
+    } = {
+      name: remoteName,
+      url: url ? url : 'https://console.redhat.com/api/automation-hub/',
+    };
+    if (ca_cert) {
+      payload.ca_cert = ca_cert;
+    }
+    if (client_cert) {
+      payload.client_cert = client_cert;
+    }
+    if (requirements_file) {
+      payload.requirements_file = requirements_file;
+    }
+    cy.requestPost(pulpAPI`/remotes/ansible/collection/`, payload);
+  }
+);
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
@@ -260,6 +274,7 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: 
 
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+  cy.waitForAllTasks();
 });
 
 Cypress.Commands.add(
@@ -283,19 +298,15 @@ Cypress.Commands.add(
       versionToDelete,
       repository
     );
+    cy.waitForAllTasks();
   }
 );
 
 Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
-    cy.galaxykit('collection upload', namespace, collection, version ? version : '1.0.0').then(
-      (result) => {
-        cy.waitForAllTasks().then(() => {
-          return result;
-        });
-      }
-    );
+    cy.galaxykit('collection upload', namespace, collection, version ? version : '1.0.0');
+    cy.waitForAllTasks();
   }
 );
 
@@ -303,6 +314,21 @@ Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
     cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
+    cy.waitForAllTasks();
+  }
+);
+
+Cypress.Commands.add(
+  'moveCollection',
+  (
+    collection: string,
+    namespace: string,
+    version: string,
+    sourceRepo: string,
+    targetRepo: string
+  ) => {
+    cy.waitForAllTasks();
+    cy.galaxykit('collection move', namespace, collection, version, sourceRepo, targetRepo);
     cy.waitForAllTasks();
   }
 );
@@ -341,7 +367,7 @@ Cypress.Commands.add(
       url: hubAPI`/_ui/v1/execution-environments/remotes/`,
       body: {
         name: randomE2Ename(),
-        upstream_name: 'library/alpine',
+        upstream_name: 'pulp/pulp-fixtures',
         include_tags: ['latest'],
         ...options?.executionEnvironment,
       },
@@ -405,7 +431,7 @@ Cypress.Commands.add('createHubRemoteRegistry', (options?: HubCreateRemoteRegist
     url: hubAPI`/_ui/v1/execution-environments/registries/`,
     body: {
       name: randomE2Ename(),
-      url: 'https://registry.hub.docker.com/',
+      url: 'https://quay.io/',
       ...options?.remoteRegistry,
     },
   });
@@ -518,6 +544,9 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
 
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.waitForAllTasks();
+  cy.deleteCollectionsInNamespace(options.name);
+  cy.waitForAllTasks();
   cy.hubDeleteRequest({
     ...options,
     url: hubAPI`/_ui/v1/namespaces/${options.name}/`,
@@ -635,10 +664,72 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
       const repeatedName = itemsResponse.data[0]?.collection_version?.name;
       if (collection?.collection_version?.name === repeatedName) {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
         break;
       } else {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
       }
     }
+  });
+});
+
+Cypress.Commands.add(
+  'getHubRoles',
+  (queryParams?: { content_type__model?: string; managed?: boolean }) => {
+    let roleDefinitionsUrl = hubAPI`/_ui/v2/role_definitions/?order_by=name`;
+    if (queryParams) {
+      const { content_type__model, managed } = queryParams;
+      roleDefinitionsUrl = content_type__model
+        ? (roleDefinitionsUrl += `&content_type__model=${content_type__model}`)
+        : roleDefinitionsUrl;
+      roleDefinitionsUrl =
+        managed !== undefined ? (roleDefinitionsUrl += `&managed=${managed}`) : roleDefinitionsUrl;
+    }
+
+    cy.requestGet<HubItemsResponse<HubRbacRole>>(roleDefinitionsUrl).then((response) => {
+      return response;
+    });
+  }
+);
+
+Cypress.Commands.add('getHubRoleDetail', (roleID: string) => {
+  cy.requestGet<HubRbacRole>(hubAPI`/_ui/v2/role_definitions/${roleID}/`);
+});
+
+Cypress.Commands.add(
+  'createHubRoleAPI',
+  ({
+    roleName,
+    description,
+    content_type,
+    permissions,
+  }: {
+    roleName: string;
+    description: string;
+    content_type: ContentTypeEnum;
+    permissions: string[];
+  }) => {
+    cy.requestPost<HubRbacRole>(hubAPI`/_ui/v2/role_definitions/`, {
+      name: roleName,
+      description: description,
+      content_type: content_type,
+      permissions: permissions,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Hub Role :',
+      });
+    });
+  }
+);
+
+Cypress.Commands.add('deleteHubRoleAPI', (hubRoleDefinition: HubRbacRole) => {
+  cy.requestDelete(hubAPI`/_ui/v2/role_definitions/${hubRoleDefinition.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'HUB ROLE DELETION :',
+      message: [`Deleted 👉  ${hubRoleDefinition.name}`],
+    });
   });
 });

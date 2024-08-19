@@ -77,9 +77,9 @@ export function ManualSubForm(props: { localPath?: string }) {
         )}
         <PageFormTextInput<Project>
           name="base_dir"
-          label={t('Project Base Path')}
+          label={t('Project base path')}
           placeholder={config?.project_base_dir ?? ''}
-          labelHelpTitle={t('Project Base Path')}
+          labelHelpTitle={t('Project base path')}
           labelHelp={basePathHelpBlock}
           isReadOnly
         />
@@ -87,12 +87,12 @@ export function ManualSubForm(props: { localPath?: string }) {
           isRequired
           name="local_path"
           id="project_local_path"
-          label={t('Playbook Directory')}
+          label={t('Playbook directory')}
           options={options}
-          placeholderText={t('Choose a Playbook Directory')}
-          labelHelpTitle={t('Playbook Directory')}
+          placeholderText={t('Choose a playbook directory')}
+          labelHelpTitle={t('Playbook directory')}
           labelHelp={t(
-            'Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks.'
+            'Select from the list of directories found in the project base path. Together the base path and the playbook directory provide the full path used to locate playbooks.'
           )}
         />
       </PageFormSection>

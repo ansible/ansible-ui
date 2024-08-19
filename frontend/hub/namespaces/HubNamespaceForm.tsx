@@ -20,8 +20,9 @@ import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';
 import { HubRoute } from '../main/HubRoutes';
 import { HubNamespace } from './HubNamespace';
-import { UsefulLinksFields } from './UsefulLinksFields';
 import { HubNamespacePage } from './HubNamespacePage/HubNamespacePage';
+import { UsefulLinksFields } from './UsefulLinksFields';
+import { HubNamespaceErrorAdapter } from './components/HubNamespaceErrorAdapter';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -54,6 +55,7 @@ export function CreateHubNamespace() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={{ groups: [], links: [{ name: '', url: '' }] }}
+        errorAdapter={HubNamespaceErrorAdapter}
       >
         <HubNamespaceInputs isDisabled={false} isRequired={true} />
         <UsefulLinksFields />
@@ -137,6 +139,7 @@ export function EditHubNamespace() {
         onSubmit={onSubmit}
         onCancel={() => navigate(-1)}
         defaultValue={namespace}
+        errorAdapter={HubNamespaceErrorAdapter}
       >
         <HubNamespaceInputs isDisabled={true} />
         <UsefulLinksFields />

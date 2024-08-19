@@ -32,6 +32,8 @@ export function DecisionEnvironments() {
       <PageHeader
         title={t('Decision Environments')}
         description={t('Decision environments are a container image to run Ansible rulebooks.')}
+        titleHelpTitle={t('Decision Environments')}
+        titleHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
       />
       <PageTable
         id="eda-decision-environments-table"

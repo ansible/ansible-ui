@@ -219,7 +219,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             name="notification_type"
             id="notification_type"
             label={t(`Type`)}
-            placeholder={t('Choose a Notification Type')}
+            placeholder={t('Choose a notification type')}
             isRequired={true}
             options={[
               { value: 'email', label: t('Email') },
@@ -255,14 +255,14 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
                 {{ job_friendly_name }}, {{ url }}, {{ status }}.<br />
                 <br />
                 You may apply a number of possible variables in the message. For more information,
-                refer to the
+                refer to the{' '}
                 <a href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications">
                   Ansible Controller Documentation.
                 </a>
               </Trans>
             }
             name={'customize_messages'}
-            label={t('Customize messages...')}
+            label={t('Customize messages')}
           />
         </PageFormSection>
 

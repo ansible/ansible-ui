@@ -1,10 +1,21 @@
 //Tests a user's ability to create, edit, and delete an decision environment in the EDA UI.
 import { randomString } from '../../../../framework/utils/random-string';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA decision environment- Create, Edit, Delete', () => {
+    let edaOrg: EdaOrganization;
+    before(() => {
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+      });
+    });
+    after(() => {
+      cy.deleteEdaOrganization(edaOrg);
+    });
+
     it('can render the decision environments list page', () => {
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
@@ -27,7 +38,7 @@ tag(['aaas-unsupported'], function () {
     });
 
     it('can verify edit functionality of a decision environment', () => {
-      cy.createEdaDecisionEnvironment().then((edaDE) => {
+      cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE) => {
         cy.navigateTo('eda', 'decision-environments');
         cy.verifyPageTitle('Decision Environments');
         /*
@@ -49,7 +60,7 @@ tag(['aaas-unsupported'], function () {
     });
 
     it('can delete a decision environment from the details page', () => {
-      cy.createEdaDecisionEnvironment().then((edaDE) => {
+      cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE) => {
         cy.navigateTo('eda', 'decision-environments');
         cy.verifyPageTitle('Decision Environments');
         cy.get('button[aria-label="table view"]').click();

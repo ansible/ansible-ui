@@ -30,7 +30,13 @@ export function RulebookActivations() {
     <PageLayout>
       <PageHeader
         title={t('Rulebook Activations')}
-        description={t('Rulebook activations are rulebooks that have been activated to run.')}
+        description={t(
+          'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
+        )}
+        titleHelpTitle={t('Rulebook Activations')}
+        titleHelp={t(
+          'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
+        )}
       />
       <PageTable
         id="eda-rulebook-activations-table"

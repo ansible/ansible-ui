@@ -46,7 +46,7 @@ export function CollectionInstall() {
   const content = contentResults?.results[0];
 
   if ((!basePath && !error) || (!content && !contentError)) {
-    <LoadingPage breadcrumbs tabs />;
+    return <LoadingPage breadcrumbs tabs />;
   }
 
   if (error) {

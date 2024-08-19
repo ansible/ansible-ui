@@ -2,10 +2,10 @@
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
 import { EdaCredentialCreate } from '../../../../frontend/eda/interfaces/EdaCredential';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials Type - Create, Edit, Delete', () => {
     it('can create a Credential Type', () => {
       const name = 'E2E Credential Type' + randomString(4);

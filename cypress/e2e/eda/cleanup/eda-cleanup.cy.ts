@@ -1,9 +1,9 @@
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
+import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { tag } from '../../../support/tag';
 
-tag(['aaas-unsupported'], function () {
+cyLabel(['aaas-unsupported'], function () {
   function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
     if (!resource.name) return false;
     if (!resource.name.startsWith(prefix)) return false;

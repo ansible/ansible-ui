@@ -32,6 +32,7 @@ describe('Approvals', () => {
   beforeEach(() => {
     cy.navigateTo('hub', Approvals.url);
     cy.verifyPageTitle(Approvals.title);
+    cy.get(`[data-cy="table-view"] button`).click();
     cy.contains('button', 'Clear all filters').click();
   });
 

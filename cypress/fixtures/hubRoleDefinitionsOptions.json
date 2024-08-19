@@ -1,0 +1,402 @@
+{
+  "name": "Role Definition List",
+  "description": "Role Definitions (roles) contain a list of permissions and can be used to\nassign those permissions to a user or team through the respective\nassignment endpoints.\n\nCustom roles can be created, modified, and deleted through this endpoint.\nSystem-managed roles are shown here, which cannot be edited or deleted,\nbut can be assigned to users.",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+  "actions": {
+    "POST": {
+      "id": {
+        "type": "integer",
+        "required": false,
+        "read_only": true,
+        "label": "ID"
+      },
+      "url": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Url"
+      },
+      "related": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Related"
+      },
+      "summary_fields": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Summary fields"
+      },
+      "permissions": {
+        "type": "list",
+        "required": true,
+        "read_only": false,
+        "label": "Permissions",
+        "child": {
+          "type": "choice",
+          "required": true,
+          "read_only": false,
+          "choices": [
+            {
+              "value": "galaxy.add_ansiblerepository",
+              "display_name": "galaxy.add_ansiblerepository"
+            },
+            {
+              "value": "galaxy.add_collection",
+              "display_name": "galaxy.add_collection"
+            },
+            {
+              "value": "galaxy.add_collectionimport",
+              "display_name": "galaxy.add_collectionimport"
+            },
+            {
+              "value": "galaxy.add_collectionremote",
+              "display_name": "galaxy.add_collectionremote"
+            },
+            {
+              "value": "galaxy.add_containernamespace",
+              "display_name": "galaxy.add_containernamespace"
+            },
+            {
+              "value": "galaxy.add_containerregistryremote",
+              "display_name": "galaxy.add_containerregistryremote"
+            },
+            {
+              "value": "galaxy.add_containerrepository",
+              "display_name": "galaxy.add_containerrepository"
+            },
+            {
+              "value": "galaxy.add_namespace",
+              "display_name": "galaxy.add_namespace"
+            },
+            {
+              "value": "galaxy.add_task",
+              "display_name": "galaxy.add_task"
+            },
+            {
+              "value": "galaxy.build_image_containerrepository",
+              "display_name": "galaxy.build_image_containerrepository"
+            },
+            {
+              "value": "galaxy.change_ansiblerepository",
+              "display_name": "galaxy.change_ansiblerepository"
+            },
+            {
+              "value": "galaxy.change_collection",
+              "display_name": "galaxy.change_collection"
+            },
+            {
+              "value": "galaxy.change_collectionimport",
+              "display_name": "galaxy.change_collectionimport"
+            },
+            {
+              "value": "galaxy.change_collectionremote",
+              "display_name": "galaxy.change_collectionremote"
+            },
+            {
+              "value": "galaxy.change_containernamespace",
+              "display_name": "galaxy.change_containernamespace"
+            },
+            {
+              "value": "galaxy.change_containerregistryremote",
+              "display_name": "galaxy.change_containerregistryremote"
+            },
+            {
+              "value": "galaxy.change_containerrepository",
+              "display_name": "galaxy.change_containerrepository"
+            },
+            {
+              "value": "galaxy.change_namespace",
+              "display_name": "galaxy.change_namespace"
+            },
+            {
+              "value": "galaxy.change_task",
+              "display_name": "galaxy.change_task"
+            },
+            {
+              "value": "galaxy.delete_ansiblerepository",
+              "display_name": "galaxy.delete_ansiblerepository"
+            },
+            {
+              "value": "galaxy.delete_collection",
+              "display_name": "galaxy.delete_collection"
+            },
+            {
+              "value": "galaxy.delete_collectionimport",
+              "display_name": "galaxy.delete_collectionimport"
+            },
+            {
+              "value": "galaxy.delete_collectionremote",
+              "display_name": "galaxy.delete_collectionremote"
+            },
+            {
+              "value": "galaxy.delete_containernamespace",
+              "display_name": "galaxy.delete_containernamespace"
+            },
+            {
+              "value": "galaxy.delete_containerregistryremote",
+              "display_name": "galaxy.delete_containerregistryremote"
+            },
+            {
+              "value": "galaxy.delete_containerrepository",
+              "display_name": "galaxy.delete_containerrepository"
+            },
+            {
+              "value": "galaxy.delete_containerrepository_versions",
+              "display_name": "galaxy.delete_containerrepository_versions"
+            },
+            {
+              "value": "galaxy.delete_namespace",
+              "display_name": "galaxy.delete_namespace"
+            },
+            {
+              "value": "galaxy.delete_task",
+              "display_name": "galaxy.delete_task"
+            },
+            {
+              "value": "galaxy.manage_roles_ansiblerepository",
+              "display_name": "galaxy.manage_roles_ansiblerepository"
+            },
+            {
+              "value": "galaxy.manage_roles_collectionremote",
+              "display_name": "galaxy.manage_roles_collectionremote"
+            },
+            {
+              "value": "galaxy.manage_roles_containernamespace",
+              "display_name": "galaxy.manage_roles_containernamespace"
+            },
+            {
+              "value": "galaxy.manage_roles_containerrepository",
+              "display_name": "galaxy.manage_roles_containerrepository"
+            },
+            {
+              "value": "galaxy.manage_roles_task",
+              "display_name": "galaxy.manage_roles_task"
+            },
+            {
+              "value": "galaxy.modify_ansible_repo_content",
+              "display_name": "galaxy.modify_ansible_repo_content"
+            },
+            {
+              "value": "galaxy.modify_content_containerrepository",
+              "display_name": "galaxy.modify_content_containerrepository"
+            },
+            {
+              "value": "galaxy.namespace_add_containerdistribution",
+              "display_name": "galaxy.namespace_add_containerdistribution"
+            },
+            {
+              "value": "galaxy.namespace_change_containerdistribution",
+              "display_name": "galaxy.namespace_change_containerdistribution"
+            },
+            {
+              "value": "galaxy.namespace_change_containerpushrepository",
+              "display_name": "galaxy.namespace_change_containerpushrepository"
+            },
+            {
+              "value": "galaxy.namespace_delete_containerdistribution",
+              "display_name": "galaxy.namespace_delete_containerdistribution"
+            },
+            {
+              "value": "galaxy.namespace_modify_content_containerpushrepository",
+              "display_name": "galaxy.namespace_modify_content_containerpushrepository"
+            },
+            {
+              "value": "galaxy.namespace_pull_containerdistribution",
+              "display_name": "galaxy.namespace_pull_containerdistribution"
+            },
+            {
+              "value": "galaxy.namespace_push_containerdistribution",
+              "display_name": "galaxy.namespace_push_containerdistribution"
+            },
+            {
+              "value": "galaxy.namespace_view_containerdistribution",
+              "display_name": "galaxy.namespace_view_containerdistribution"
+            },
+            {
+              "value": "galaxy.namespace_view_containerpushrepository",
+              "display_name": "galaxy.namespace_view_containerpushrepository"
+            },
+            {
+              "value": "galaxy.rebuild_metadata_ansiblerepository",
+              "display_name": "galaxy.rebuild_metadata_ansiblerepository"
+            },
+            {
+              "value": "galaxy.repair_ansiblerepository",
+              "display_name": "galaxy.repair_ansiblerepository"
+            },
+            {
+              "value": "galaxy.sign_ansiblerepository",
+              "display_name": "galaxy.sign_ansiblerepository"
+            },
+            {
+              "value": "galaxy.sync_ansiblerepository",
+              "display_name": "galaxy.sync_ansiblerepository"
+            },
+            {
+              "value": "galaxy.sync_containerrepository",
+              "display_name": "galaxy.sync_containerrepository"
+            },
+            {
+              "value": "galaxy.upload_to_namespace",
+              "display_name": "galaxy.upload_to_namespace"
+            },
+            {
+              "value": "galaxy.view_ansiblerepository",
+              "display_name": "galaxy.view_ansiblerepository"
+            },
+            {
+              "value": "galaxy.view_collection",
+              "display_name": "galaxy.view_collection"
+            },
+            {
+              "value": "galaxy.view_collectionimport",
+              "display_name": "galaxy.view_collectionimport"
+            },
+            {
+              "value": "galaxy.view_collectionremote",
+              "display_name": "galaxy.view_collectionremote"
+            },
+            {
+              "value": "galaxy.view_containernamespace",
+              "display_name": "galaxy.view_containernamespace"
+            },
+            {
+              "value": "galaxy.view_containerregistryremote",
+              "display_name": "galaxy.view_containerregistryremote"
+            },
+            {
+              "value": "galaxy.view_containerrepository",
+              "display_name": "galaxy.view_containerrepository"
+            },
+            {
+              "value": "galaxy.view_namespace",
+              "display_name": "galaxy.view_namespace"
+            },
+            {
+              "value": "galaxy.view_task",
+              "display_name": "galaxy.view_task"
+            },
+            {
+              "value": "shared.add_team",
+              "display_name": "shared.add_team"
+            },
+            {
+              "value": "shared.change_team",
+              "display_name": "shared.change_team"
+            },
+            {
+              "value": "shared.delete_team",
+              "display_name": "shared.delete_team"
+            },
+            {
+              "value": "shared.member_team",
+              "display_name": "shared.member_team"
+            },
+            {
+              "value": "shared.view_team",
+              "display_name": "shared.view_team"
+            }
+          ]
+        }
+      },
+      "content_type": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Content type",
+        "help_text": "The type of resource this applies to",
+        "choices": [
+          {
+            "value": "galaxy.ansiblerepository",
+            "display_name": "Ansible Repository"
+          },
+          {
+            "value": "galaxy.collection",
+            "display_name": "Collection"
+          },
+          {
+            "value": "galaxy.collectionimport",
+            "display_name": "Collection Import"
+          },
+          {
+            "value": "galaxy.collectionremote",
+            "display_name": "Collection Remote"
+          },
+          {
+            "value": "galaxy.containernamespace",
+            "display_name": "Container Namespace"
+          },
+          {
+            "value": "galaxy.containerregistryremote",
+            "display_name": "Container Registry Remote"
+          },
+          {
+            "value": "galaxy.containerrepository",
+            "display_name": "Container Repository"
+          },
+          {
+            "value": "galaxy.namespace",
+            "display_name": "Namespace"
+          },
+          {
+            "value": "galaxy.task",
+            "display_name": "Task"
+          },
+          {
+            "value": "shared.team",
+            "display_name": "Team"
+          }
+        ]
+      },
+      "modified": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Modified",
+        "help_text": "The date/time this resource was created"
+      },
+      "created": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Created",
+        "help_text": "The date/time this resource was created"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Description"
+      },
+      "managed": {
+        "type": "boolean",
+        "required": false,
+        "read_only": true,
+        "label": "Managed"
+      },
+      "modified_by": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Modified by",
+        "help_text": "The user who last modified this resource"
+      },
+      "created_by": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Created by",
+        "help_text": "The user who created this resource"
+      }
+    }
+  }
+}

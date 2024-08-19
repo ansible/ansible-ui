@@ -14,9 +14,10 @@ import { CollectionVersionSearch } from '../Collection';
 import { useCopyToRepository } from './useCopyToRepository';
 import { useDeleteCollections } from './useDeleteCollections';
 import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRepository';
-import { useDeprecateCollections } from './useDeprecateCollections';
+import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
+import { useCanSignNamespace } from '../../common/utils/canSign';
 
 export function useCollectionActions(
   callback: (collections: CollectionVersionSearch[]) => void,
@@ -25,7 +26,7 @@ export function useCollectionActions(
 ) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deprecateCollections = useDeprecateCollections(callback);
+  const deprecateOrUndeprecateCollections = useDeprecateOrUndeprecateCollections(callback);
   const deleteCollections = useDeleteCollections(callback, false, detail);
   const deleteCollectionsFromRepository = useDeleteCollectionsFromRepository(
     undefined,
@@ -46,9 +47,11 @@ export function useCollectionActions(
   const signCollection = useSignCollection(false, callback);
   const uploadSignature = useUploadSignature();
 
-  const context = useHubContext();
+  const { featureFlags } = useHubContext();
 
-  const { can_upload_signatures } = context.featureFlags;
+  const { can_upload_signatures } = featureFlags;
+
+  const canSign = useCanSignNamespace();
 
   return useMemo<IPageAction<CollectionVersionSearch>[]>(
     () => [
@@ -60,13 +63,14 @@ export function useCollectionActions(
         onClick: (collection) => {
           signCollection([collection]);
         },
+        isHidden: () => !canSign,
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: KeyIcon,
         label: t('Sign version'),
-        isHidden: () => (detail ? false : true),
+        isHidden: () => (detail && canSign ? false : true),
         onClick: (collection) => {
           if (can_upload_signatures) {
             // upload signature - it works only in insights, but we can leave it here for now
@@ -84,7 +88,22 @@ export function useCollectionActions(
         icon: BanIcon,
         label: t('Deprecate collection'),
         onClick: (collection) => {
-          deprecateCollections([collection]);
+          deprecateOrUndeprecateCollections([collection], 'deprecate');
+        },
+        isHidden: (collection) => {
+          return collection?.is_deprecated ? true : false;
+        },
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: BanIcon,
+        label: t('Undeprecate collection'),
+        onClick: (collection) => {
+          deprecateOrUndeprecateCollections([collection], 'undeprecate');
+        },
+        isHidden: (collection) => {
+          return collection?.is_deprecated ? false : true;
         },
       },
       {
@@ -95,9 +114,6 @@ export function useCollectionActions(
         onClick: (collection) => {
           copyToRepository(collection, 'copy');
         },
-        isDisabled: context.featureFlags.display_repositories
-          ? ''
-          : t`You do not have rights to this operation`,
       },
       {
         type: PageActionType.Button,
@@ -119,9 +135,6 @@ export function useCollectionActions(
           deleteCollectionsVersions([collection]);
         },
         isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -133,9 +146,6 @@ export function useCollectionActions(
           deleteCollectionsVersionsFromRepository([collection]);
         },
         isHidden: () => (detail ? false : true),
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -144,9 +154,6 @@ export function useCollectionActions(
         label: t('Delete entire collection from repository'),
         onClick: (collection) => deleteCollectionsFromRepository([collection]),
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
       {
         type: PageActionType.Button,
@@ -155,26 +162,23 @@ export function useCollectionActions(
         label: t('Delete entire collection from system'),
         onClick: (collection) => deleteCollections([collection]),
         isDanger: true,
-        isDisabled: context.hasPermission('ansible.delete_collection')
-          ? ''
-          : t('You do not have rights to this operation'),
       },
     ],
     [
       t,
-      context,
-      pageNavigate,
-      deleteCollections,
-      deprecateCollections,
-      deleteCollectionsVersions,
-      detail,
-      deleteCollectionsVersionsFromRepository,
-      copyToRepository,
-      can_upload_signatures,
+      canSign,
       signCollection,
-      signCollectionVersion,
+      deprecateOrUndeprecateCollections,
+      detail,
+      can_upload_signatures,
       uploadSignature,
+      signCollectionVersion,
+      copyToRepository,
+      pageNavigate,
+      deleteCollectionsVersions,
+      deleteCollectionsVersionsFromRepository,
       deleteCollectionsFromRepository,
+      deleteCollections,
     ]
   );
 }

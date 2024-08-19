@@ -1,0 +1,175 @@
+{
+  "meta": {
+    "count": 6
+  },
+  "links": {
+    "first": "/api/_ui/v1/collection-versions/?dependency=ansible.galaxy_collection&limit=10&offset=0&sort=-collection",
+    "previous": null,
+    "next": null,
+    "last": "/api/_ui/v1/collection-versions/?dependency=ansible.galaxy_collection&limit=10&offset=0&sort=-collection"
+  },
+  "data": [
+    {
+      "id": "524c7711-68a9-49e2-9f03-c9f5e72ff32a",
+      "namespace": "saito_hideki",
+      "name": "galaxyng_installer",
+      "version": "0.0.4",
+      "requires_ansible": null,
+      "created_at": "2023-05-09T11:16:15.733710Z",
+      "metadata": {
+        "dependencies": {
+          "pulp.pulp_installer": "*",
+          "ansible.galaxy_collection": "*"
+        },
+        "contents": [],
+        "documentation": "https://github.com/saito-hideki/galaxyng-demo",
+        "homepage": "https://github.com/saito-hideki/galaxyng-demo",
+        "issues": "https://github.com/saito-hideki/galaxyng-demo/issues",
+        "repository": "https://github.com/saito-hideki/galaxyng-demo",
+        "description": "Install and configure GalaxyNG site",
+        "authors": ["Hideki Saito <saito@fgrep.org>"],
+        "license": ["GPL-2.0-or-later"],
+        "tags": ["pulp", "galaxyng", "galaxy"],
+        "signatures": []
+      },
+      "contents": [],
+      "sign_state": "unsigned",
+      "repository_list": ["published"]
+    },
+    {
+      "id": "318e9f7a-b32c-4efb-8fec-484ff5715206",
+      "namespace": "saito_hideki",
+      "name": "galaxyng_installer",
+      "version": "0.0.3",
+      "requires_ansible": null,
+      "created_at": "2023-05-09T11:16:15.730377Z",
+      "metadata": {
+        "dependencies": {
+          "pulp.pulp_installer": "*",
+          "ansible.galaxy_collection": "*"
+        },
+        "contents": [],
+        "documentation": "https://github.com/saito-hideki/galaxyng-demo",
+        "homepage": "https://github.com/saito-hideki/galaxyng-demo",
+        "issues": "https://github.com/saito-hideki/galaxyng-demo/issues",
+        "repository": "https://github.com/saito-hideki/galaxyng-demo",
+        "description": "Build a GalaxyNG demo site",
+        "authors": ["Hideki Saito <saito@fgrep.org>"],
+        "license": ["GPL-2.0-or-later"],
+        "tags": ["pulp", "galaxyng", "galaxy"],
+        "signatures": []
+      },
+      "contents": [],
+      "sign_state": "unsigned",
+      "repository_list": ["published"]
+    },
+    {
+      "id": "39793729-c7b0-4b1c-9ac5-229319ab09b7",
+      "namespace": "saito_hideki",
+      "name": "galaxyng_installer",
+      "version": "0.0.5",
+      "requires_ansible": null,
+      "created_at": "2023-05-09T11:16:15.737023Z",
+      "metadata": {
+        "dependencies": {
+          "pulp.pulp_installer": "*",
+          "ansible.galaxy_collection": "*"
+        },
+        "contents": [],
+        "documentation": "https://github.com/saito-hideki/galaxyng-demo",
+        "homepage": "https://github.com/saito-hideki/galaxyng-demo",
+        "issues": "https://github.com/saito-hideki/galaxyng-demo/issues",
+        "repository": "https://github.com/saito-hideki/galaxyng-demo",
+        "description": "Install and configure GalaxyNG site",
+        "authors": ["Hideki Saito <saito@fgrep.org>"],
+        "license": ["GPL-2.0-or-later"],
+        "tags": ["pulp", "galaxyng", "galaxy"],
+        "signatures": []
+      },
+      "contents": [],
+      "sign_state": "unsigned",
+      "repository_list": ["published"]
+    },
+    {
+      "id": "990586ac-c30e-4603-ac9d-e9bf8982a569",
+      "namespace": "saito_hideki",
+      "name": "galaxyng_installer",
+      "version": "0.0.1",
+      "requires_ansible": null,
+      "created_at": "2023-05-09T11:16:15.727035Z",
+      "metadata": {
+        "dependencies": {
+          "pulp.pulp_installer": "*",
+          "ansible.galaxy_collection": "*"
+        },
+        "contents": [],
+        "documentation": "https://github.com/saito-hideki/galaxyng-demo",
+        "homepage": "https://github.com/saito-hideki/galaxyng-demo",
+        "issues": "https://github.com/saito-hideki/galaxyng-demo/issues",
+        "repository": "https://github.com/saito-hideki/galaxyng-demo",
+        "description": "Build a GalaxyNG demo site",
+        "authors": ["Hideki Saito <saito@fgrep.org>"],
+        "license": ["GPL-2.0-or-later"],
+        "tags": ["ansible", "development", "system"],
+        "signatures": []
+      },
+      "contents": [],
+      "sign_state": "unsigned",
+      "repository_list": ["published"]
+    },
+    {
+      "id": "bacd05aa-c3ff-47ce-8637-7cd2445487e2",
+      "namespace": "saito_hideki",
+      "name": "galaxyng_installer",
+      "version": "0.0.6",
+      "requires_ansible": null,
+      "created_at": "2023-05-09T11:16:15.740574Z",
+      "metadata": {
+        "dependencies": {
+          "pulp.pulp_installer": "*",
+          "ansible.galaxy_collection": "*"
+        },
+        "contents": [],
+        "documentation": "https://github.com/saito-hideki/galaxyng-demo",
+        "homepage": "https://github.com/saito-hideki/galaxyng-demo",
+        "issues": "https://github.com/saito-hideki/galaxyng-demo/issues",
+        "repository": "https://github.com/saito-hideki/galaxyng-demo",
+        "description": "Install and configure GalaxyNG site",
+        "authors": ["Hideki Saito <saito@fgrep.org>"],
+        "license": ["GPL-2.0-or-later"],
+        "tags": ["pulp", "galaxyng", "galaxy"],
+        "signatures": []
+      },
+      "contents": [],
+      "sign_state": "unsigned",
+      "repository_list": ["published"]
+    },
+    {
+      "id": "17adc201-3ad8-4dde-aa25-0efcd3bf189c",
+      "namespace": "saito_hideki",
+      "name": "galaxyng_installer",
+      "version": "0.0.2",
+      "requires_ansible": null,
+      "created_at": "2023-05-09T11:18:37.259526Z",
+      "metadata": {
+        "dependencies": {
+          "pulp.pulp_installer": "*",
+          "ansible.galaxy_collection": "*"
+        },
+        "contents": [],
+        "documentation": "https://github.com/saito-hideki/galaxyng-demo",
+        "homepage": "https://github.com/saito-hideki/galaxyng-demo",
+        "issues": "https://github.com/saito-hideki/galaxyng-demo/issues",
+        "repository": "https://github.com/saito-hideki/galaxyng-demo",
+        "description": "Build a GalaxyNG demo site",
+        "authors": ["Hideki Saito <saito@fgrep.org>"],
+        "license": ["GPL-2.0-or-later"],
+        "tags": ["ansible", "development", "system"],
+        "signatures": []
+      },
+      "contents": [],
+      "sign_state": "unsigned",
+      "repository_list": ["published"]
+    }
+  ]
+}

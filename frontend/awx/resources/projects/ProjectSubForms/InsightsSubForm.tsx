@@ -13,7 +13,7 @@ export function InsightsSubForm() {
       <PageFormSection title={t('Type Details')}>
         <PageFormCredentialSelect<Project>
           name="credential"
-          label={t('Insights Credential')}
+          label={t('Insights credential')}
           isRequired
           queryParams={{
             credential_type__namespace: 'insights',

@@ -258,7 +258,7 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
       </PageDetail>
       <PageDetailCodeEditor
         helpText={<LabelHelp inventoryKind={inventory.kind} />}
-        label={inventory.kind === 'constructed' ? t('Source vars') : t('Variables')}
+        label={inventory.kind === 'constructed' ? t('Source variables') : t('Variables')}
         showCopyToClipboard
         value={
           inventory.kind === 'constructed'

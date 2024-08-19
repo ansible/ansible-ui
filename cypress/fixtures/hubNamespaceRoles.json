@@ -1,0 +1,62 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 8,
+      "url": "",
+      "related": {},
+      "summary_fields": {},
+      "permissions": ["galaxy.change_namespace", "galaxy.upload_to_namespace"],
+      "content_type": "galaxy.namespace",
+      "modified": "2024-08-02T16:26:16.506024Z",
+      "created": "2024-08-02T16:26:16.442381Z",
+      "name": "galaxy.collection_namespace_owner",
+      "description": "Change and upload collections to namespaces.",
+      "managed": false,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 4,
+      "url": "",
+      "related": {},
+      "summary_fields": {},
+      "permissions": [
+        "galaxy.add_namespace",
+        "galaxy.change_namespace",
+        "galaxy.upload_to_namespace"
+      ],
+      "content_type": "galaxy.namespace",
+      "modified": "2024-08-02T16:26:15.282938Z",
+      "created": "2024-08-02T16:26:15.149260Z",
+      "name": "galaxy.collection_publisher",
+      "description": "Upload and modify collections.",
+      "managed": false,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 1,
+      "url": "",
+      "related": {},
+      "summary_fields": {},
+      "permissions": [
+        "galaxy.add_namespace",
+        "galaxy.change_namespace",
+        "galaxy.delete_namespace",
+        "galaxy.upload_to_namespace",
+        "galaxy.view_namespace"
+      ],
+      "content_type": "galaxy.namespace",
+      "modified": "2024-08-02T16:18:37.118965Z",
+      "created": "2024-08-02T16:18:37.118932Z",
+      "name": "Namespace Admin",
+      "description": "",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    }
+  ]
+}

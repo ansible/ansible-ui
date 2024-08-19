@@ -8,7 +8,6 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../../framework';
 import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 import { StatusCell } from '../../../../common/Status';
@@ -23,10 +22,7 @@ import { useRepositoryActions } from '../hooks/useRepositoryActions';
 
 export function RepositoryPage() {
   const params = useParams<{ id: string }>();
-  const pageNavigate = usePageNavigate();
-  const headerActions = useRepositoryActions({
-    onRepositoriesDeleted: () => pageNavigate(HubRoute.Repositories),
-  });
+  const headerActions = useRepositoryActions({ onRepositoriesDeleted: () => {} });
   const getPageUrl = useGetPageUrl();
   const { t } = useTranslation();
 
@@ -81,10 +77,6 @@ export function RepositoryPage() {
               page: HubRoute.RepositoryDetails,
             },
             {
-              label: t('Access'),
-              page: HubRoute.RepositoryAccess,
-            },
-            {
               label: t('Collection Versions'),
               page: HubRoute.RepositoryCollectionVersion,
             },
@@ -95,6 +87,14 @@ export function RepositoryPage() {
             {
               label: t('Distributions'),
               page: HubRoute.RepositoryDistributions,
+            },
+            {
+              label: t('Team Access'),
+              page: HubRoute.RepositoryTeamAccess,
+            },
+            {
+              label: t('User Access'),
+              page: HubRoute.RepositoryUserAccess,
             },
           ]}
           params={{ id: params.id, repo_id: repo_id }}

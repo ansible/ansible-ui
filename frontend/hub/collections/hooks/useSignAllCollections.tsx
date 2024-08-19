@@ -70,7 +70,7 @@ export function SignAllCollectionsModal(props: Readonly<SignAllCollectionsModalP
                 );
                 onCloseClicked();
               } catch (error: unknown) {
-                setError(t`Error occured in signing collection versions.`);
+                setError(t`Error occurred in signing collection versions.`);
                 setIsLoading(false);
               }
             })();

@@ -1,16 +1,18 @@
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
+import { compareStrings, usePageNavigate } from '../../../../../framework';
 import { nameKeyFn } from '../../../../common/utils/nameKeyFn';
 import { hubAPI } from '../../../common/api/formatPath';
 import { hubAPIDelete, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { RemoteRegistry } from '../RemoteRegistry';
 import { useRemoteRegistriesColumns } from './useRemoteRegistriesColumns';
+import { HubRoute } from '../../../main/HubRoutes';
 
 export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteRegistry[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRemoteRegistriesColumns();
   const bulkAction = useHubBulkConfirmation<RemoteRegistry>();
+  const pageNavigate = usePageNavigate();
 
   const deleteRemoteRegistry = (remoteRegistry: RemoteRegistry[]) => {
     bulkAction({
@@ -28,13 +30,13 @@ export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteReg
       alertPrompts: [
         t('This will also delete all associated resources under this remote registry.'),
       ],
-      actionFn: async (remoteRegistry: RemoteRegistry, signal: AbortSignal) =>
-        await hubAPIDelete(
+      actionFn: (remoteRegistry: RemoteRegistry, signal: AbortSignal) =>
+        hubAPIDelete(
           hubAPI`/_ui/v1/execution-environments/registries/${parsePulpIDFromURL(
             remoteRegistry.pulp_href
           )}/`,
           signal
-        ),
+        ).then(() => pageNavigate(HubRoute.RemoteRegistries)),
     });
   };
   return deleteRemoteRegistry;

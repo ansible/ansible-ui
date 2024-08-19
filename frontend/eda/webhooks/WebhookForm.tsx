@@ -64,7 +64,7 @@ function WebhookInputs() {
         )}
         maxLength={150}
       />
-      <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" />
+      <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" isRequired />
       <PageFormSelectWebhookType<IEdaWebhookCreate> name="type_id" isRequired />
       <PageFormHidden watch={'type'} hidden={() => true}>
         <PageFormTextInput<IEdaWebhookCreate>
@@ -120,7 +120,7 @@ function WebhookEditInputs() {
         isRequired
         maxLength={150}
       />
-      <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" />
+      <PageFormSelectOrganization<IEdaWebhookCreate> name="organization_id" isRequired />
       <PageFormTextInput<IEdaWebhookCreate>
         name="webhook_type"
         data-cy="type-form-field"

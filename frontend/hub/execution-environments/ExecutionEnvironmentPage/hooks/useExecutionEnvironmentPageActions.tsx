@@ -16,13 +16,12 @@ import {
   useSignExecutionEnvironments,
 } from '../../hooks/useExecutionEnvironmentsActions';
 import { useController } from '../../hooks/useController';
+import { useCanSignEE } from '../../../common/utils/canSign';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {
-    pageNavigate(HubRoute.ExecutionEnvironments);
-  });
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {});
 
   const { refresh } = options;
 
@@ -40,6 +39,7 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     );
 
   const useInController = useController();
+  const canSignEE = useCanSignEE();
 
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
@@ -63,14 +63,15 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
         isDisabled: (ee) => (isSyncRunning(ee) ? t('Sync is already running.') : undefined),
         onClick: (ee: ExecutionEnvironment) => syncExecutionEnvironments([ee]),
       },
-      useInController,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CheckIcon,
         label: t('Sign execution environment'),
+        isDisabled: () => (canSignEE ? undefined : t('You do not have rights to this operation')),
         onClick: (ee) => signExecutionEnvironments([ee]),
       },
+      useInController,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -83,11 +84,12 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     ];
     return actions;
   }, [
-    pageNavigate,
     t,
-    deleteExecutionEnvironments,
-    signExecutionEnvironments,
-    syncExecutionEnvironments,
     useInController,
+    pageNavigate,
+    syncExecutionEnvironments,
+    canSignEE,
+    signExecutionEnvironments,
+    deleteExecutionEnvironments,
   ]);
 }

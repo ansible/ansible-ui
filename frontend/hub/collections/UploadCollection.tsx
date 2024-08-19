@@ -209,7 +209,7 @@ export function UploadCollectionByFile() {
         throw new Error('');
       }
 
-      lastError = t(`Error occured during collection upload.`);
+      lastError = t(`Error occurred during collection upload.`);
 
       await hubPostRequestFile(
         hubAPI`/v3/plugin/ansible/content/${base_path}/collections/artifacts/`,

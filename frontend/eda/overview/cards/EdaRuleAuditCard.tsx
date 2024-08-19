@@ -26,8 +26,10 @@ export function EdaRuleAuditCard() {
       height="md"
       linkText={t('View all Rule Audit')}
       to={getPageUrl(EdaRoute.RuleAudits)}
-      helpTitle={t('Rule audit')}
-      help={t('Rule audit allows auditing of rules which have been triggered by incoming events.')}
+      helpTitle={t('Rule Audit')}
+      help={t(
+        'Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.'
+      )}
     >
       <PageTable
         disableBodyPadding={true}
