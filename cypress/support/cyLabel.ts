@@ -19,6 +19,11 @@ export function cyLabel(labels: string[], runTest: () => unknown) {
     .filter((label) => label.startsWith('!'))
     .map((label) => label.substring(1));
 
+  cy.log('LABELS: ', labels);
+  cy.log('ENV LABELS: ', envLabels);
+  cy.log('Include LABELS: ', includeLabels);
+  cy.log('Exclude LABELS: ', excludeLabels);
+
   // Test labels
   for (const label of labels) {
     // If the label is excluded, skip the test
