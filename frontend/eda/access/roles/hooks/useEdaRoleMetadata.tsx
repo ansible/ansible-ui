@@ -14,6 +14,7 @@ export enum EdaContentTypes {
   Credential = 'eda.edacredential',
   CredentialType = 'eda.credentialtype',
   DecisionEnvironment = 'eda.decisionenvironment',
+  EventStream = 'eda.eventstream',
   ExtraVar = 'eda.extravar',
   Organization = 'shared.organization',
   Project = 'eda.project',
@@ -73,6 +74,15 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
             'eda.change_decisionenvironment': t('Change decision environment'),
             'eda.delete_decisionenvironment': t('Delete decision environment'),
             'eda.view_decisionenvironment': t('View decision environment'),
+          },
+        },
+        'eda.eventstream': {
+          displayName: t('Event stream'),
+          permissions: {
+            'eda.add_eventstream': t('Add event stream'),
+            'eda.change_eventstream': t('Change event stream'),
+            'eda.delete_eventstream': t('Delete event stream'),
+            'eda.view_eventstream': t('View event stream'),
           },
         },
         'eda.extravar': {
