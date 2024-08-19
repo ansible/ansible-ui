@@ -60,7 +60,11 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT" 
           else
             echo "changed=true" >> "$GITHUB_OUTPUT" 
-          fi        
+          fi
+      - uses: ahmadnassri/action-workflow-queue@v1
+        with: 
+          delay: 60000
+          timeout: 14400000
 
   checks:
     name: ESLint - Prettier - TSC
