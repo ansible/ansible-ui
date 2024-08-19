@@ -20,8 +20,11 @@ describe('PlatformTeamDetails', () => {
       'contain',
       mockPlatformTeam.summary_fields.created_by.username
     );
-    cy.get('[data-cy="modified"]').should('contain', formatDateString(mockPlatformTeam.modified));
-    cy.get('[data-cy="modified"]').should(
+    cy.get('[data-cy="last-modified"]').should(
+      'contain',
+      formatDateString(mockPlatformTeam.modified)
+    );
+    cy.get('[data-cy="last-modified"]').should(
       'contain',
       mockPlatformTeam.summary_fields.modified_by.username
     );
