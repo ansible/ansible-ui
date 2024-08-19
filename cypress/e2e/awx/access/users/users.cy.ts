@@ -34,7 +34,6 @@ describe('Users Tests', () => {
       cy.deleteAwxUser(user, { failOnStatusCode: false });
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('filters users by id', () => {
       cy.filterTableByMultiSelect('id', [user.id.toString()]);
       cy.get('tr').should('have.length.greaterThan', 0);
@@ -44,7 +43,6 @@ describe('Users Tests', () => {
       cy.clearAllFilters();
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('creates and then deletes a basic user', () => {
       const userName = 'E2E_User_' + randomString(4);
       const password = randomString(12);
@@ -61,13 +59,11 @@ describe('Users Tests', () => {
       cy.verifyPageTitle('Users');
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('navigates to the edit form from the users list row item', () => {
       cy.clickTableRowPinnedAction(user.username, 'edit-user');
       cy.verifyPageTitle('Edit User');
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('edits a user from the details page', () => {
       cy.clickTableRowLink('username', user.username);
       cy.verifyPageTitle(user.username);
@@ -92,7 +88,6 @@ describe('Users Tests', () => {
       cy.verifyPageTitle('Users');
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('deletes a user from the details page', () => {
       cy.clickTableRowLink('username', user.username);
       cy.verifyPageTitle(user.username);
@@ -102,7 +97,6 @@ describe('Users Tests', () => {
       cy.verifyPageTitle('Users');
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('deletes a user from the users list row item', () => {
       cy.clickTableRowAction('username', user.username, 'delete-user', {
         inKebab: true,
@@ -114,7 +108,6 @@ describe('Users Tests', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    //Skipping due to https://issues.redhat.com/browse/AAP-28597
     it('deletes a user from the users list toolbar', () => {
       cy.selectTableRow(user.username);
       cy.clickToolbarKebabAction('delete-selected-users');

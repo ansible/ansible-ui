@@ -69,7 +69,6 @@ describe('Inventories Tests', () => {
           cy.verifyPageTitle('Inventories');
         });
 
-        //Skipping due to https://issues.redhat.com/browse/AAP-28597
         it('can edit an inventory from the list view and assert info on details page', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
@@ -105,7 +104,6 @@ describe('Inventories Tests', () => {
           cy.hasAlert(`${inventory.name} copied`);
         });
 
-        //Skipping due to https://issues.redhat.com/browse/AAP-28597
         it('can copy an inventory on the list view and assert that the copy has been successful', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
@@ -130,7 +128,6 @@ describe('Inventories Tests', () => {
           cy.clickButton(/^Clear all filters$/);
         });
 
-        //Skipping due to https://issues.redhat.com/browse/AAP-28597
         it('can delete an inventory from the inventory list toolbar', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);

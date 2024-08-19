@@ -127,7 +127,6 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  //Skipping due to https://issues.redhat.com/browse/AAP-28597
   it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
@@ -192,7 +191,6 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     cy.deleteAwxOrganization(organization);
   });
 
-  //Skipping due to https://issues.redhat.com/browse/AAP-28597
   it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
