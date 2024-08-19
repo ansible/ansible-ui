@@ -34,16 +34,6 @@ cyLabel(['upstream'], () => {
       });
     });
 
-    it('cleanup users', () => {
-      cy.requestGet<AwxItemsResponse<AwxUser>>(
-        awxAPI`/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
-      ).then((result) => {
-        for (const resource of result.results ?? []) {
-          cy.deleteAwxUser(resource, { failOnStatusCode: false });
-        }
-      });
-    });
-
     it('cleanup templates', () => {
       cy.requestGet<AwxItemsResponse<JobTemplate>>(
         awxAPI`/unified_job_templates/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
@@ -89,15 +79,15 @@ cyLabel(['upstream'], () => {
         }
       });
     });
-  });
 
-  it('cleanup organizations', () => {
-    cy.requestGet<AwxItemsResponse<Organization>>(
-      awxAPI`/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
-    ).then((result) => {
-      for (const resource of result.results ?? []) {
-        cy.deleteAwxOrganization(resource, { failOnStatusCode: false });
-      }
+    it('cleanup organizations', () => {
+      cy.requestGet<AwxItemsResponse<Organization>>(
+        awxAPI`/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+      ).then((result) => {
+        for (const resource of result.results ?? []) {
+          cy.deleteAwxOrganization(resource, { failOnStatusCode: false });
+        }
+      });
     });
 
     it('cleanup users', () => {
