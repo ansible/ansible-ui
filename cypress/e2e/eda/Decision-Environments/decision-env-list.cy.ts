@@ -1,11 +1,22 @@
 //Tests a user's ability to perform certain actions on the Decision Environment list in the EDA UI.
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA Decision Environment List', () => {
+    let edaOrg: EdaOrganization;
+    before(() => {
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+      });
+    });
+    after(() => {
+      cy.deleteEdaOrganization(edaOrg);
+    });
+
     it('can filter the Decision Environment list based on Name filter option', () => {
-      cy.createEdaDecisionEnvironment().then((edaDE) => {
+      cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE) => {
         cy.navigateTo('eda', 'decision-environments');
         cy.verifyPageTitle('Decision Environments');
         cy.setTableView('table');
@@ -16,8 +27,8 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     it('can bulk delete Decision Environments from the list', () => {
-      cy.createEdaDecisionEnvironment().then((edaDE1) => {
-        cy.createEdaDecisionEnvironment().then((edaDE2) => {
+      cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE1) => {
+        cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE2) => {
           cy.navigateTo('eda', 'decision-environments');
           cy.verifyPageTitle('Decision Environments');
           cy.setTableView('table');
@@ -44,7 +55,7 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     it('can verify the delete functionality of items in the kebab menu of the DE list view', () => {
-      cy.createEdaDecisionEnvironment().then((edaDE) => {
+      cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE) => {
         cy.navigateTo('eda', 'decision-environments');
         cy.verifyPageTitle('Decision Environments');
         cy.setTableView('table');

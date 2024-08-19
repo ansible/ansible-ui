@@ -8,6 +8,7 @@ import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA rulebook activations - Create', () => {
@@ -15,17 +16,21 @@ cyLabel(['aaas-unsupported'], function () {
     let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaRuleBook: EdaRulebook;
     let edaAwxToken: EdaControllerToken;
+    let edaOrg: EdaOrganization;
 
     before(() => {
-      cy.createEdaProject().then((project) => {
-        edaProject = project;
-        cy.waitEdaProjectSync(project);
-        cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
-          edaRuleBook = edaRuleBooks[0];
-          cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-            edaDecisionEnvironment = decisionEnvironment;
-            cy.addEdaCurrentUserAwxToken('E2E AWX token ' + randomString(4)).then((awxToken) => {
-              edaAwxToken = awxToken;
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+        cy.createEdaProject(edaOrg?.id).then((project) => {
+          edaProject = project;
+          cy.waitEdaProjectSync(project);
+          cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
+            edaRuleBook = edaRuleBooks[0];
+            cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+              edaDecisionEnvironment = decisionEnvironment;
+              cy.addEdaCurrentUserAwxToken('E2E AWX token ' + randomString(4)).then((awxToken) => {
+                edaAwxToken = awxToken;
+              });
             });
           });
         });
@@ -36,6 +41,7 @@ cyLabel(['aaas-unsupported'], function () {
       cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
       cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
       cy.deleteAllEdaCurrentUserTokens();
+      cy.deleteEdaOrganization(edaOrg);
     });
 
     it('can create a Rulebook Activation including custom variables and assert the information showing on the details page', () => {
