@@ -36,7 +36,7 @@ describe('Platform user details', () => {
     cy.get('[data-cy="username"]').should('have.text', 'new-user');
     cy.get('[data-cy="last-login"]').should('have.text', formatDateString(mockUser.last_login));
     cy.get('[data-cy="created"]').should('have.text', formatDateString(mockUser.created));
-    cy.get('[data-cy="modified"]').should('have.text', formatDateString(mockUser.modified));
+    cy.get('[data-cy="last-modified"]').should('have.text', formatDateString(mockUser.modified));
     cy.get('[data-cy="organization"]')
       .should('contain', 'Demo')
       .and('contain', 'Default')
