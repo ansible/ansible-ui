@@ -1,5 +1,5 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { ConnectedIcon, DisconnectedIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { DatabaseIcon, PencilAltIcon, TaskIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -64,7 +64,7 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: DisconnectedIcon,
+        icon: TaskIcon,
         label: t('Switch to test mode'),
         isHidden: (eventStream: EdaEventStream) => !!eventStream?.test_mode,
         onClick: (eventStream: EdaEventStream) => toggleEventStreamMode(true, eventStream),
@@ -72,7 +72,7 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: ConnectedIcon,
+        icon: DatabaseIcon,
         label: t('Switch to production mode'),
         isHidden: (eventStream: EdaEventStream) => !eventStream?.test_mode,
         onClick: (eventStream: EdaEventStream) => toggleEventStreamMode(false, eventStream),
