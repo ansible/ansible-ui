@@ -16,15 +16,15 @@ export function PageFormEventStreamSelect<
       {...props}
       name={props.name}
       id="webhook-select"
-      data-cy={'webhooks-select'}
+      data-cy={'event-streams-select'}
       placeholder={t('Add event streams')}
       labelHelpTitle={t('Event Streams')}
       labelHelp={props.labelHelp}
       label={t('Event stream')}
       selectTitle={t('Select an event stream')}
       selectOpen={selectEventStream}
-      validate={(webhooks: EdaEventStream[]) => {
-        if (props.isRequired && webhooks.length === 0) {
+      validate={(eventStreams: EdaEventStream[]) => {
+        if (props.isRequired && eventStreams.length === 0) {
           return t('Event stream is required.');
         }
         return undefined;

@@ -19,11 +19,11 @@ export function useEventStreamColumns() {
     () => [
       {
         header: t('Name'),
-        cell: (webhook) => (
+        cell: (eventStream) => (
           <TextCell
-            text={webhook.name}
+            text={eventStream.name}
             to={getPageUrl(EdaRoute.EventStreamPage, {
-              params: { id: webhook.id },
+              params: { id: eventStream.id },
             })}
           />
         ),
@@ -33,27 +33,27 @@ export function useEventStreamColumns() {
       {
         header: t('Events received'),
         type: 'count',
-        value: (webhook) => webhook?.events_received ?? 0,
+        value: (eventStream) => eventStream?.events_received ?? 0,
       },
       {
         header: t('Last event received'),
         type: 'datetime',
-        value: (webhook) => webhook?.last_event_received_at ?? undefined,
+        value: (eventStream) => eventStream?.last_event_received_at ?? undefined,
       },
       {
         header: t('Mode'),
-        cell: (webhook) => (
+        cell: (eventStream) => (
           <Tooltip
             content={
-              webhook.test_mode
+              eventStream.test_mode
                 ? t('Test Mode - events are not forwarded to Activation')
                 : t('Connected - events are forwarded to Activation')
             }
           >
             <TextCell
               text={t('')}
-              icon={webhook.test_mode ? <DisconnectedIcon /> : <ConnectedIcon />}
-              iconColor={webhook.test_mode ? 'yellow' : 'green'}
+              icon={eventStream.test_mode ? <DisconnectedIcon /> : <ConnectedIcon />}
+              iconColor={eventStream.test_mode ? 'yellow' : 'green'}
             />
           </Tooltip>
         ),
@@ -62,7 +62,7 @@ export function useEventStreamColumns() {
       },
       {
         header: t('URL'),
-        cell: (webhook) => <CopyCell text={webhook?.url ? webhook.url : ''} />,
+        cell: (eventStream) => <CopyCell text={eventStream?.url ? eventStream.url : ''} />,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
@@ -70,7 +70,7 @@ export function useEventStreamColumns() {
       {
         header: t('Created'),
         type: 'datetime',
-        value: (webhook) => webhook.created_at,
+        value: (eventStream) => eventStream.created_at,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
@@ -78,7 +78,7 @@ export function useEventStreamColumns() {
       {
         header: t('Last modified'),
         type: 'datetime',
-        value: (webhook) => webhook.modified_at,
+        value: (eventStream) => eventStream.modified_at,
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',

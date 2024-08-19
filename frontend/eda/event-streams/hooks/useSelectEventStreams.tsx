@@ -7,29 +7,29 @@ import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { MultiSelectDialog, usePageDialog } from '../../../../framework';
 
-export function useSelectEventStreams(webhookType?: number, title?: string) {
+export function useSelectEventStreams(eventStreamType?: number, title?: string) {
   const [_, setDialog] = usePageDialog();
   const { t } = useTranslation();
   const openSelectEventStreams = useCallback(
-    (onSelect: (webhooks: EdaEventStream[]) => void) => {
+    (onSelect: (eventStreams: EdaEventStream[]) => void) => {
       setDialog(
         <SelectEdaEventStreams
           title={t(title ? title : 'Select event stream')}
           onSelect={onSelect}
-          webhookType={webhookType}
+          eventStreamType={eventStreamType}
         />
       );
     },
-    [webhookType, setDialog, t, title]
+    [eventStreamType, setDialog, t, title]
   );
   return openSelectEventStreams;
 }
 
 function SelectEdaEventStreams(props: {
   title: string;
-  onSelect: (webhooks: EdaEventStream[]) => void;
+  onSelect: (eventStreams: EdaEventStream[]) => void;
   defaultEdaEventStream?: EdaEventStream;
-  webhookType?: number;
+  eventStreamType?: number;
 }) {
   const toolbarFilters = useEventStreamFilters();
   const tableColumns = useEventStreamColumns();
@@ -38,9 +38,9 @@ function SelectEdaEventStreams(props: {
     toolbarFilters,
     tableColumns: tableColumns,
     disableQueryString: true,
-    ...(props.webhookType && {
+    ...(props.eventStreamType && {
       queryParams: {
-        webhook_type: props.webhookType.toString(),
+        event_stream_type: props.eventStreamType.toString(),
       },
     }),
   });

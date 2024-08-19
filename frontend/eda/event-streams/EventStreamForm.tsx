@@ -40,15 +40,15 @@ function EventStreamInputs() {
     return data;
   };
 
-  const webhookType = useEventStreamTypeKind(typeId);
+  const eventStreamType = useEventStreamTypeKind(typeId);
 
   useEffect(() => {
     const resetCredential = () => {
       setValue('eda_credential_id', undefined);
-      setValue('event_stream_type', webhookType?.kind);
+      setValue('event_stream_type', eventStreamType?.kind);
     };
     resetCredential();
-  }, [typeId, setValue, webhookType?.kind]);
+  }, [typeId, setValue, eventStreamType?.kind]);
 
   return (
     <>
@@ -84,7 +84,7 @@ function EventStreamInputs() {
       <PageFormSelectEventStreamCredential<IEdaEventStreamCreate>
         isRequired
         name="eda_credential_id"
-        type={webhookType?.kind || ''}
+        type={eventStreamType?.kind || ''}
       />
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
@@ -107,7 +107,7 @@ function EventStreamInputs() {
 
 function EventStreamEditInputs() {
   const { t } = useTranslation();
-  const webhookType = useWatch<IEdaEventStreamCreate>({
+  const eventStreamType = useWatch<IEdaEventStreamCreate>({
     name: 'event_stream_type',
   }) as string;
   return (
@@ -130,7 +130,7 @@ function EventStreamEditInputs() {
       <PageFormSelectEventStreamCredential<IEdaEventStreamCreate>
         name="eda_credential_id"
         isRequired
-        type={webhookType}
+        type={eventStreamType}
       />
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
@@ -168,8 +168,8 @@ export function CreateEventStream() {
       ? organizations.results[0]
       : undefined;
 
-  const onSubmit: PageFormSubmitHandler<EdaEventStreamCreate> = async (webhook) => {
-    const newEventStream = await postRequest(edaAPI`/event-streams/`, webhook);
+  const onSubmit: PageFormSubmitHandler<EdaEventStreamCreate> = async (eventStream) => {
+    const newEventStream = await postRequest(edaAPI`/event-streams/`, eventStream);
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream?.id } });
   };
@@ -203,20 +203,20 @@ export function EditEventStream() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: webhook } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
+  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
 
-  const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (webhook) => {
-    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, webhook);
+  const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
+    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, eventStream);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
 
-  if (!webhook) {
+  if (!eventStream) {
     return (
       <PageLayout>
         <PageHeader
@@ -231,10 +231,10 @@ export function EditEventStream() {
     return (
       <PageLayout>
         <PageHeader
-          title={`${t('Edit')} ${webhook?.name || t('event stream')}`}
+          title={`${t('Edit')} ${eventStream?.name || t('event stream')}`}
           breadcrumbs={[
             { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
-            { label: `${t('Edit')} ${webhook?.name || t('event stream')}` },
+            { label: `${t('Edit')} ${eventStream?.name || t('event stream')}` },
           ]}
         />
         <EdaPageForm
@@ -243,9 +243,9 @@ export function EditEventStream() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           defaultValue={{
-            ...webhook,
-            organization_id: webhook.organization?.id,
-            eda_credential_id: webhook?.eda_credential?.id,
+            ...eventStream,
+            organization_id: eventStream.organization?.id,
+            eda_credential_id: eventStream?.eda_credential?.id,
           }}
         >
           <EventStreamEditInputs />

@@ -8,11 +8,11 @@ import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
 import { edaAPI } from '../../common/eda-utils';
 
 /**
- * A form input for selecting an webhookType.
+ * A form input for selecting an eventStreamType.
  *
  * @example
  * ```tsx
- * <PageFormSelectEventStreamType<Credential> name="webhookType" />
+ * <PageFormSelectEventStreamType<Credential> name="eventStreamType" />
  * ```
  */
 export function PageFormSelectEventStreamType<
@@ -20,8 +20,8 @@ export function PageFormSelectEventStreamType<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
   const { t } = useTranslation();
-  const webhookTypeColumns = useCredentialTypesColumns();
-  const webhookTypeFilters = useCredentialTypeFilters();
+  const eventStreamTypeColumns = useCredentialTypesColumns();
+  const eventStreamTypeFilters = useCredentialTypeFilters();
   return (
     <PageFormSingleSelectEdaResource<EdaCredentialType, TFieldValues, TFieldName>
       name={props.name}
@@ -35,8 +35,8 @@ export function PageFormSelectEventStreamType<
       helperText={props.helperText}
       url={edaAPI`/credential-types/`}
       queryParams={{ namespace: 'event_stream' }}
-      tableColumns={webhookTypeColumns}
-      toolbarFilters={webhookTypeFilters}
+      tableColumns={eventStreamTypeColumns}
+      toolbarFilters={eventStreamTypeFilters}
     />
   );
 }

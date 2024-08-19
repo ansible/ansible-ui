@@ -23,26 +23,29 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
   const patchRequest = usePatchRequest();
   const alertToaster = usePageAlertToaster();
 
-  const toggleEventStreamMode: (testMode: boolean, webhook: EdaEventStream) => Promise<void> =
+  const toggleEventStreamMode: (testMode: boolean, eventStream: EdaEventStream) => Promise<void> =
     useCallback(
-      async (testMode, webhook) => {
+      async (testMode, eventStream) => {
         const alert: AlertProps = {
           variant: 'success',
-          title: `${webhook.name || ''} ${testMode ? t('switched to test mode') : t('switched to production mode')}.`,
+          title: `${eventStream.name || ''} ${testMode ? t('switched to test mode') : t('switched to production mode')}.`,
           timeout: 5000,
         };
-        await patchRequest(edaAPI`/event-streams/${webhook?.id ? webhook?.id.toString() : ''}/`, {
-          test_mode: testMode,
-        })
+        await patchRequest(
+          edaAPI`/event-streams/${eventStream?.id ? eventStream?.id.toString() : ''}/`,
+          {
+            test_mode: testMode,
+          }
+        )
           .then(() => alertToaster.addAlert(alert))
           .catch(() => {
             alertToaster.addAlert({
               variant: 'danger',
-              title: `${t('Failed to switch the mode for')} ${webhook.name}`,
+              title: `${t('Failed to switch the mode for')} ${eventStream.name}`,
               timeout: 5000,
             });
           });
-        view.unselectItemsAndRefresh([webhook]);
+        view.unselectItemsAndRefresh([eventStream]);
       },
       [t, patchRequest, view, alertToaster]
     );
@@ -55,24 +58,24 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit event stream'),
-        onClick: (webhook: EdaEventStream) =>
-          pageNavigate(EdaRoute.EditEventStream, { params: { id: webhook.id } }),
+        onClick: (eventStream: EdaEventStream) =>
+          pageNavigate(EdaRoute.EditEventStream, { params: { id: eventStream.id } }),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: DisconnectedIcon,
         label: t('Switch to test mode'),
-        isHidden: (webhook: EdaEventStream) => !!webhook?.test_mode,
-        onClick: (webhook: EdaEventStream) => toggleEventStreamMode(true, webhook),
+        isHidden: (eventStream: EdaEventStream) => !!eventStream?.test_mode,
+        onClick: (eventStream: EdaEventStream) => toggleEventStreamMode(true, eventStream),
       },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: ConnectedIcon,
         label: t('Switch to production mode'),
-        isHidden: (webhook: EdaEventStream) => !webhook?.test_mode,
-        onClick: (webhook: EdaEventStream) => toggleEventStreamMode(false, webhook),
+        isHidden: (eventStream: EdaEventStream) => !eventStream?.test_mode,
+        onClick: (eventStream: EdaEventStream) => toggleEventStreamMode(false, eventStream),
       },
       {
         type: PageActionType.Seperator,
@@ -82,7 +85,7 @@ export function useEventStreamActions(view: IEdaView<EdaEventStream>) {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
-        onClick: (webhook: EdaEventStream) => deleteEventStreams([webhook]),
+        onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
         isDanger: true,
       },
     ],

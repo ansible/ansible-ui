@@ -25,7 +25,7 @@ export function EventStreamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: webhook } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
+  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
 
   const deleteEventStreams = useDeleteEventStreams((deleted) => {
     if (deleted.length > 0) {
@@ -42,8 +42,8 @@ export function EventStreamPage() {
         icon: PencilAltIcon,
         isPinned: true,
         label: t('Edit event stream'),
-        onClick: (webhook: EdaEventStream) =>
-          pageNavigate(EdaRoute.EditEventStream, { params: { id: webhook.id } }),
+        onClick: (eventStream: EdaEventStream) =>
+          pageNavigate(EdaRoute.EditEventStream, { params: { id: eventStream.id } }),
       },
       {
         type: PageActionType.Seperator,
@@ -53,7 +53,7 @@ export function EventStreamPage() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
-        onClick: (webhook: EdaEventStream) => deleteEventStreams([webhook]),
+        onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
         isDanger: true,
       },
     ],
@@ -65,16 +65,16 @@ export function EventStreamPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={webhook?.name}
+        title={eventStream?.name}
         breadcrumbs={[
           { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
-          { label: webhook?.name },
+          { label: eventStream?.name },
         ]}
         headerActions={
           <PageActions<EdaEventStream>
             actions={itemActions}
             position={DropdownPosition.right}
-            selectedItem={webhook}
+            selectedItem={eventStream}
           />
         }
       />
@@ -82,10 +82,10 @@ export function EventStreamPage() {
         backTab={{
           label: t('Back to Event Streams'),
           page: EdaRoute.EventStreams,
-          persistentFilterKey: 'webhooks',
+          persistentFilterKey: 'event-streams',
         }}
         tabs={[{ label: t('Details'), page: EdaRoute.EventStreamDetails }]}
-        params={{ id: webhook?.id }}
+        params={{ id: eventStream?.id }}
       />
     </PageLayout>
   );

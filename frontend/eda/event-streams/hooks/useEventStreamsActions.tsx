@@ -33,7 +33,7 @@ export function useEventStreamsActions(view: IEdaView<EdaEventStream>) {
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
         label: t('Delete selected event streams'),
-        onClick: (webhooks: EdaEventStream[]) => deleteEventStreams(webhooks),
+        onClick: (eventStreams: EdaEventStream[]) => deleteEventStreams(eventStreams),
         isDanger: true,
       },
     ],
