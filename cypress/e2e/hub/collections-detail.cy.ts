@@ -240,4 +240,24 @@ describe('Collections Details', () => {
       );
     });
   });
+
+  it('can deprecate/undeprecate a collection', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+      // Deprecate collection
+      visitCollection(collectionName, namespace.name);
+      cy.selectDetailsPageKebabAction('deprecate-collection');
+      cy.clickButton(/^Close$/);
+      cy.getModal().should('not.exist');
+      // Verify collection has been deprecated
+      cy.contains('span', 'Deprecated');
+      // Undeprecate collection
+      cy.selectDetailsPageKebabAction('undeprecate-collection');
+      cy.clickButton(/^Close$/);
+      cy.getModal().should('not.exist');
+      // Verify collection has been undeprecated
+      cy.contains('span', 'Deprecated').should('not.exist');
+      cy.deleteHubCollectionByName(collectionName);
+    });
+  });
 });
