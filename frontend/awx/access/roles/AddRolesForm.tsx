@@ -141,9 +141,7 @@ function UserCredentialRole() {
     <PageFormHidden watch="role" hidden={(type: string) => type !== 'credential'}>
       <PageFormCredentialSelect
         name="credentialName"
-        credentialPath="resource"
         label={t('Credentials')}
-        labelHelpTitle={t('Credentials')}
         labelHelp={t('Choose credentials that will be receiving new roles.')}
         isMultiple
       />
