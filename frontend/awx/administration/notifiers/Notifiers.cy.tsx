@@ -124,7 +124,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('actions-dropdown').click();
       });
-      cy.get('[data-cy="copy-notifier"]').should('not.be.disabled');
+      cy.getByDataCy('copy-notifier').should('not.be.disabled');
     });
 
     it('Edit notifier button is enabled if the user has the correct permissions', () => {
