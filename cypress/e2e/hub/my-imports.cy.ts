@@ -24,7 +24,12 @@ describe('My imports', () => {
 
   before(() => {
     cy.createHubNamespace({ namespace: { name: validCollection.namespace } }).then(() => {
-      cy.uploadCollection(validCollection.name, validCollection.namespace, validCollection.version);
+      cy.uploadCollection(
+        validCollection.name,
+        validCollection.namespace,
+        validCollection.version,
+        'staging'
+      );
     });
     cy.waitForAllTasks();
   });
