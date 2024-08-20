@@ -115,7 +115,15 @@ export function CollectionPage() {
     hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}${queryFilter}`
   );
 
-  const itemActions = useCollectionActions(() => void collectionRequest.refresh(), true);
+  const itemActions = useCollectionActions((collections) => {
+    async function getCollectionData() {
+      const collectionRequest = await getRequest(
+        hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&version=${collections[0]?.collection_version?.version}`
+      );
+      setCollection(collectionRequest?.data[0]);
+    }
+    void getCollectionData();
+  }, true);
 
   function setVersionParams(collection: Partial<CollectionVersionSearch> | null) {
     if (!collection) {
