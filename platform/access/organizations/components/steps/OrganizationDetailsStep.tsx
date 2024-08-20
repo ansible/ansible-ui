@@ -7,7 +7,6 @@ import { PageFormSelectExecutionEnvironment } from '../../../../../frontend/awx/
 import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
 import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
-import { useGetCredentialTypeIDs } from '../../../../../frontend/awx/resources/projects/hooks/useGetCredentialTypeIDs';
 import { useHasAwxService } from '../../../../main/GatewayServices';
 
 export function OrganizationDetailsStep(props: {
@@ -45,7 +44,6 @@ export function OrganizationDetailsStep(props: {
 function ControllerOrganizationDetails(props: { controllerOrganization?: ControllerOrganization }) {
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
-  const credentialTypeIDs = useGetCredentialTypeIDs();
   const config = useAwxConfig();
 
   return (
@@ -62,11 +60,12 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
       <PageFormCredentialSelect
         name="galaxyCredentials"
         label={t('Galaxy credentials')}
-        labelHelpTitle={t('Galaxy credentials')}
-        selectTitle={t('Galaxy credentials')}
-        credentialType={credentialTypeIDs.galaxy}
         placeholder={t('Add galaxy credentials')}
+        queryParams={{
+          credential_type__kind: 'galaxy',
+        }}
         isMultiple
+        allowDuplicateCredentialTypes
       />
       {config && config?.license_info.license_type !== 'open' && (
         <PageFormTextInput
