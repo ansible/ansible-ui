@@ -89,7 +89,7 @@ export function ResourcePeersList(props: { url: string }) {
       emptyStateTitle={t('No peers found')}
       emptyStateDescription={t('Please associate peers to populate this list.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={t('Associate peer(s)')}
+      emptyStateButtonText={t('Associate peers')}
       emptyStateButtonClick={() =>
         openPeerInstanceModal({ onPeer: associatePeerToInstance, instanceId: id ?? '' })
       }
