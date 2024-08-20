@@ -110,7 +110,7 @@ describe('Topology view', () => {
 
   cyLabel(['upstream'], () => {
     // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
-    it.skip('does not show Topology View in sidebar for non admins', function () {
+    it('does not show Topology View in sidebar for non admins', function () {
       cy.createAwxUser({ organization: organization.id }).then((awxUser) => {
         user = awxUser;
         cy.awxLoginTestUser(user.username, 'pw');
