@@ -92,12 +92,12 @@ jobs:
       - name: EDA Server Compose Pull
         if: ${{ !inputs.SKIP_JOB }}
         working-directory: ./tools/docker
-        run: docker-compose -p eda -f docker-compose-stage.yaml pull
+        run: docker compose -p eda -f docker-compose-stage.yaml pull
 
       - name: EDA Server Compose Up
         if: ${{ !inputs.SKIP_JOB }}
         working-directory: ./tools/docker
-        run: docker-compose -p eda -f docker-compose-stage.yaml up -d
+        run: docker compose -p eda -f docker-compose-stage.yaml up -d
 
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
