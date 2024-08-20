@@ -87,7 +87,7 @@ jobs:
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_TOKEN }}
+          password: ${{ secrets.QUAY_PASSWORD }}
           
       - name: EDA Server Compose Pull
         if: ${{ !inputs.SKIP_JOB }}
