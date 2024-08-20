@@ -306,7 +306,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'uploadCollection',
-  (collection: string, namespace: string, version?: string) => {
+  (collection: string, namespace: string, version: string, repository?: string) => {
     cy.galaxykit(
       'collection upload --skip-upload',
       namespace,
@@ -319,7 +319,7 @@ Cypress.Commands.add(
         formData.append('file', Cypress.Blob.binaryStringToBlob(fileData), filePath);
 
         cy.hubPostRequest({
-          url: hubAPI`/v3/plugin/ansible/content/staging/collections/artifacts/`,
+          url: hubAPI`/v3/plugin/ansible/content/${repository || 'validated'}/collections/artifacts/`,
           headers: {
             'Content-Type': 'multipart/form-data',
           },
