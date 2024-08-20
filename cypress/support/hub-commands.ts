@@ -28,18 +28,32 @@ export interface HubRequestOptions {
   body?: object;
   qs?: object;
   failOnStatusCode?: boolean;
+  headers?: object;
 }
 Cypress.Commands.add('hubRequest', (options: HubRequestOptions) => {
   cy.getCookie('csrftoken', { log: false }).then((cookie) =>
     cy
       .request({
         ...options,
-        headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
+        headers: {
+          ...(options.headers || {}),
+          'X-CSRFToken': cookie?.value,
+          Referer: Cypress.config().baseUrl,
+        },
       })
       .then((response) => {
         switch (response.status) {
-          case 202: // Accepted
-            return cy.waitOnHubTask((response.body as { task: string }).task);
+          case 201:
+            return cy.wrap(response.body);
+          case 202: {
+            // Accepted
+            // when posting as multipart/form-data, the response doesn't get parsed as JSON
+            const body =
+              response.body.toString() === '[object ArrayBuffer]'
+                ? (JSON.parse(new TextDecoder().decode(response.body as ArrayBuffer)) as object)
+                : (response.body as object);
+            return cy.waitOnHubTask((body as { task: string }).task);
+          }
         }
       })
   );
@@ -50,26 +64,14 @@ Cypress.Commands.add('hubGetRequest', (options: HubGetRequestOptions) => {
   cy.hubRequest({ ...options, method: 'GET' });
 });
 
-export type HubPutRequestOptions = Pick<
-  HubRequestOptions,
-  'url' | 'body' | 'qs' | 'failOnStatusCode'
->;
 export type HubPostRequestOptions = Pick<
   HubRequestOptions,
-  'url' | 'body' | 'qs' | 'failOnStatusCode'
+  'url' | 'body' | 'qs' | 'failOnStatusCode' | 'headers'
 >;
 Cypress.Commands.add('hubPostRequest', (options: HubPostRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'POST' }).then((response) => {
-    if (response.status === 201) {
-      return response.body;
-    }
-  });
+  cy.hubRequest({ ...options, method: 'POST' });
 });
 
-export type HubPatchRequestOptions = Pick<
-  HubRequestOptions,
-  'url' | 'body' | 'qs' | 'failOnStatusCode'
->;
 export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
 Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
   cy.hubRequest({ ...options, method: 'DELETE' });
@@ -305,7 +307,26 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'uploadCollection',
   (collection: string, namespace: string, version?: string) => {
-    cy.galaxykit('collection upload', namespace, collection, version ? version : '1.0.0');
+    cy.galaxykit(
+      'collection upload --skip-upload',
+      namespace,
+      collection,
+      version ? version : '1.0.0'
+    ).then((result) => {
+      const filePath = (result as unknown as Record<string, string>).filename;
+      cy.readFile(filePath, 'binary').then((fileData: string) => {
+        const formData = new FormData();
+        formData.append('file', Cypress.Blob.binaryStringToBlob(fileData), filePath);
+
+        cy.hubPostRequest({
+          url: hubAPI`/v3/plugin/ansible/content/staging/collections/artifacts/`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+        });
+      });
+    });
     cy.waitForAllTasks();
   }
 );
