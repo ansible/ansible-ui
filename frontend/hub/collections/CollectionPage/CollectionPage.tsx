@@ -138,7 +138,12 @@ export function CollectionPage() {
   useEffect(() => {
     if (!versionsCount && versions?.meta.count) {
       setVersionsCount(versions?.meta.count);
-    } else if (versions?.meta.count && versionsCount && versions?.meta.count > versionsCount) {
+    } else if (
+      collection &&
+      versions?.meta.count &&
+      versionsCount &&
+      versions?.meta.count > versionsCount
+    ) {
       setVersionsCount(versions?.meta.count);
       alertToaster.addAlert({
         variant: 'success',
@@ -154,17 +159,7 @@ export function CollectionPage() {
         timeout: false,
       });
     }
-  }, [
-    alertToaster,
-    collection?.collection_version?.name,
-    collection?.collection_version?.namespace,
-    collection?.repository?.name,
-    collectionRequest,
-    getPageUrl,
-    t,
-    versions,
-    versionsCount,
-  ]);
+  }, [collection, alertToaster, getPageUrl, t, versions, versionsCount]);
 
   // load collection versions
   const queryOptions = useCallback(
