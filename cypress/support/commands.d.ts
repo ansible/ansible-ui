@@ -30,6 +30,7 @@ import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTe
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
+import { EdaWebhook } from '../../frontend/eda/interfaces/EdaWebhook';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
@@ -1356,6 +1357,27 @@ declare global {
        * @returns {Chainable<EdaCredential>}
        */
       createEdaCredential(): Chainable<EdaCredential>;
+
+      /**
+       * Creates an EDA credential of type Basic Webhook and returns the same.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      createBasicWebhookCredential(): Chainable<EdaCredential>;
+
+      /**
+       * Creates an Event Stream with the Basic Webhook type credential and returns the same.
+       *
+       * @returns {Chainable<EdaWebhook>}
+       */
+      createBasicWebhook(credential: EdaCredential): Chainable<EdaWebhook>;
+
+      /**
+       * Deletes the Event Stream which is provided.
+       *
+       * @returns {Chainable<EdaWebhook>}
+       */
+      deleteWebhook(Webhook: EdaWebhook): Chainable<void>;
 
       /**
        * Some of the Eda roles (Admin, Contributor etc) have resources

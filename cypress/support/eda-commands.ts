@@ -9,6 +9,7 @@ import {
   EdaCredentialType,
   EdaCredentialTypeCreate,
 } from '../../frontend/eda/interfaces/EdaCredentialType';
+import { EdaWebhook, EdaWebhookCreate } from '../../frontend/eda/interfaces/EdaWebhook';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
@@ -289,6 +290,49 @@ Cypress.Commands.add('createEdaCredential', () => {
       message: [`Created 👉  ${edaCredential.name}`],
     });
     return edaCredential;
+  });
+});
+
+Cypress.Commands.add('createBasicWebhookCredential', () => {
+  cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
+    name: 'E2E Basic Webhook Credential ' + randomString(4),
+    credential_type_id: 7,
+    description: 'This is a basic webhook credential',
+    inputs: {
+      username: 'username',
+      password: 'password',
+    },
+  }).then((edaCredential) => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL CREATION :',
+      message: [`Created 👉  ${edaCredential.name}`],
+    });
+    return edaCredential;
+  });
+});
+
+Cypress.Commands.add('createBasicWebhook', (credential: EdaCredential) => {
+  cy.requestPost<EdaWebhookCreate>(edaAPI`/webhooks/`, {
+    name: 'E2E Basic Webhook ' + randomString(4),
+    webhook_type: 'basic',
+    eda_credential_id: credential.id,
+  }).then((Webhook) => {
+    Cypress.log({
+      displayName: 'EDA WEBHOOK CREATION :',
+      message: [`Created 👉  ${Webhook.name}`],
+    });
+    return Webhook;
+  });
+});
+
+Cypress.Commands.add('deleteWebhook', (Webhook: EdaWebhook) => {
+  cy.requestDelete(edaAPI`/webhooks/${Webhook.id.toString()}/?force=true`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA WEBHOOK DELETION :',
+      message: [`Deleted 👉  ${Webhook.name}`],
+    });
   });
 });
 
