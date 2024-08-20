@@ -21,7 +21,7 @@ export function createAndCheckHost(host_type: string, inventory: string) {
 
   // create host
   cy.clickButton(/^Create host$/);
-  cy.verifyPageTitle('Create Host');
+  cy.verifyPageTitle('Create host');
   cy.getByDataCy('name').type(hostName);
   cy.getByDataCy('description').type('This is the description');
 
@@ -73,7 +73,7 @@ function editHost(invenotryName: string, host_type: string, hostName: string, vi
   }
 
   cy.getByDataCy('edit-host').click();
-  cy.verifyPageTitle('Edit host');
+  cy.verifyPageTitle(`Edit ${hostName}`);
   cy.getByDataCy('description').clear().type('This is the description edited');
   cy.getByDataCy('Submit').click();
   cy.hasDetail(/^Description$/, 'This is the description edited');
