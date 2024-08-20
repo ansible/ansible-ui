@@ -40,6 +40,7 @@ describe('Tasks', () => {
     cy.get('[data-cy="task-detail"]').should('be.visible');
     cy.get('[data-cy="task-groups"]').should('be.visible');
     cy.get('[data-cy="reserve-resources"]').should('be.visible');
+    cy.get('[data-cy="progress-messages"]').should('be.visible');
   });
 
   it('should disable stop task button if task is not running/waiting', () => {
