@@ -137,15 +137,8 @@ describe('Namespaces - sign collections', () => {
       },
     }).then((ns: HubNamespace) => {
       namespace = ns;
-      cy.uploadCollection(collectionName, namespace.name).then(() => {
-        cy.uploadCollection(collectionName2, namespace.name).then(() => {
-          cy.approveCollection(collectionName, namespace.name, '1.0.0').then(() => {
-            cy.approveCollection(collectionName2, namespace.name, '1.0.0').then(() => {
-              cy.waitForAllTasks();
-            });
-          });
-        });
-      });
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.uploadCollection(collectionName2, namespace.name, '1.0.0');
     });
   });
 
@@ -190,7 +183,7 @@ describe('Namespaces - sign collections', () => {
     cy.setTableView('table');
 
     // Sign collection
-    cy.filterTableBySingleSelect('repository', 'published');
+    cy.filterTableBySingleSelect('repository', 'validated');
     cy.get('div[data-cy="manage-view"]').within(() => {
       cy.clickKebabAction('actions-dropdown', 'sign-all-collections');
     });

@@ -1,4 +1,3 @@
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
@@ -6,7 +5,6 @@ import { Collections } from './constants';
 
 describe('Collections Dependencies', () => {
   let namespace: HubNamespace;
-  let repository: Repository;
   let collectionName: string;
 
   before(() => {
@@ -14,18 +12,11 @@ describe('Collections Dependencies', () => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
-      cy.waitForAllTasks();
-    });
-    cy.createHubRepository().then((repositoryResult) => {
-      repository = repositoryResult;
-      cy.galaxykit('distribution create', repository.name);
       cy.waitForAllTasks();
     });
   });
 
   after(() => {
-    cy.deleteHubRepository(repository);
     cy.deleteCollectionsInNamespace(namespace.name);
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });

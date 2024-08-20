@@ -1662,7 +1662,8 @@ declare global {
       uploadCollection(
         collection: string,
         namespace: string,
-        version?: string
+        version: string,
+        repository?: string
       ): Cypress.Chainable<void>;
       approveCollection(
         collection: string,
