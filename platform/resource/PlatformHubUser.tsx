@@ -27,12 +27,14 @@ export function PlatformHubUser(props: { route?: string }) {
   }
 
   if (platformResponse.error) {
-    <Page>
-      <EmptyStateCustom
-        title={t('Error')}
-        description={t('An error occurred while loading the resource.')}
-      />
-    </Page>;
+    return (
+      <Page>
+        <EmptyStateCustom
+          title={t('Error')}
+          description={t('An error occurred while loading the resource.')}
+        />
+      </Page>
+    );
   }
 
   if (!platformResponse.data?.resource.resource_type) {

@@ -5,7 +5,7 @@ import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { useUserTokensColumns } from '../hooks/useAAPUserTokensColumns'
+import { useUserTokensColumns } from '../hooks/useAAPUserTokensColumns';
 
 export function PlatformAAPUserTokenDetails() {
   const params = useParams<{ id: string; tokenid: string }>();
@@ -20,7 +20,7 @@ export function PlatformAAPUserTokenDetails() {
     refresh: refreshToken,
   } = useGetItem<Token>(gatewayAPI`/tokens/`, params.tokenid);
 
-  if (userError) return <AwxError error={userError}  handleRefresh={refreshUser} />;
+  if (userError) return <AwxError error={userError} handleRefresh={refreshUser} />;
   if (tokenError) return <AwxError error={tokenError} handleRefresh={refreshToken} />;
 
   if (!user || !token) return <LoadingPage breadcrumbs tabs />;

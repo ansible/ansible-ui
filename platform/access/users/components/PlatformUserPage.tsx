@@ -24,7 +24,7 @@ export function PlatformUserPage() {
   const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
-  const { activePlatformUser:activeUser } = usePlatformActiveUser();
+  const { activePlatformUser: activeUser } = usePlatformActiveUser();
   const actions = useUserRowActions(() => pageNavigate(PlatformRoute.Users));
 
   const pageTabs = [

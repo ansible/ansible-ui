@@ -10,6 +10,10 @@
     "component": "CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=600000 concurrently --kill-others-on-fail npm:component:* -c auto",
     "component:platform": "cd .. && CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT=600000 cypress run --component --config-file=cypress.platform.config.ts",
     "docker:build": "cd .. && docker build --file platform/Dockerfile --target platform-ui --tag platform-ui .",
-    "docker:run": "echo https://localhost:4100 && docker run --name platform-ui --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui"
+    "docker:run": "echo https://localhost:4100 && docker run --name platform-ui --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui",
+    "eslint": "eslint --cache --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check !**/*.scss .",
+    "prettier:fix": "prettier --write ."
   }
 }

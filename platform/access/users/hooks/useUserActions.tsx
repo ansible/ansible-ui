@@ -146,7 +146,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
         isDanger: true,
       },
     ];
-  }, [deleteUsers, pageNavigate, t]);
+  }, [deleteUsers, pageNavigate, canEditUser, t]);
 
   return pageActions;
 }
