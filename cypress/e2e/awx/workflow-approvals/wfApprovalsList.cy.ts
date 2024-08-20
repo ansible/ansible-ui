@@ -443,7 +443,7 @@ describe('Workflow Approvals Tests', () => {
     let workflowApproval: WorkflowApproval;
 
     // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
-    it.skip('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
+    it('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-USER APPROVE-' + randomString(4),
       }).then((wfjt) => {

@@ -127,8 +127,7 @@ describe('Constructed Inventories CRUD Tests', () => {
       });
   });
 
-  //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
+  it('shows a failed sync on the constructed inventory if the user sets strict to true and enters bad variables', () => {
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
     cy.filterTableBySingleSelect('name', newInventory.name);
@@ -139,14 +138,8 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.verifyPageTitle('Edit Constructed Inventory');
     cy.getByDataCy('toggle-json').click();
     cy.getByDataCy('source-vars').type(
-      `{{}    
-      "plugin": "constructed",
-      "strict": true,
-      "groups": {
-      "is_shutdown": "state | default('running') == 'shutdown'",
-      "product_dev": "account_alias == 'product_dev'"
-      }}`,
-      { delay: 200 }
+      `{"plugin": "constructed","strict": true,"groups": {"is_shutdown": "state | default('running') == 'shutdown'","product_dev": "account_alias == 'product_dev'"}}`,
+      { parseSpecialCharSequences: false }
     );
     cy.clickButton(/^Save inventory$/);
     cy.verifyPageTitle(newInventory.name);
@@ -198,8 +191,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     cy.deleteAwxOrganization(organization);
   });
 
-  //Skipping due to https://issues.redhat.com/browse/AAP-28597
-  it.skip('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
+  it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
     cy.filterTableByMultiSelect('name', [constructedInv.name]);
