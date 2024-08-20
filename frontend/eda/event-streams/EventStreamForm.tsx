@@ -93,12 +93,16 @@ function EventStreamInputs() {
         placeholder={t('Enter include headers')}
         labelHelpTitle={t('Include headers')}
         labelHelp={t(
-          'A comma separated HTTP header keys that you want to include in the event payload.'
+          'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
+            'To include all headers in teh event payload, leave the field empty.'
         )}
       />
       <PageFormCheckbox<IEdaEventStreamCreate>
         label={t`Test mode`}
-        labelHelp={t('Test mode.')}
+        labelHelp={t(
+          'Event streams in test mode do not forward events to the rulebook activation where they are configured. ' +
+            'Use this mode to pause the event stream.'
+        )}
         name="test_mode"
       />
     </>
@@ -139,12 +143,16 @@ function EventStreamEditInputs() {
         placeholder={t('Enter include headers')}
         labelHelpTitle={t('Include headers')}
         labelHelp={t(
-          'A comma separated HTTP header keys that you want to include in the event payload.'
+          'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
+            'To include all headers in teh event payload, leave the field empty.'
         )}
       />
       <PageFormCheckbox<IEdaEventStreamCreate>
         label={t`Test mode`}
-        labelHelp={t('Test mode.')}
+        labelHelp={t(
+          'Event streams in test mode do not forward events to the rulebook activation where they are configured. ' +
+            'Use this mode to pause the event stream.'
+        )}
         name="test_mode"
       />
     </>
