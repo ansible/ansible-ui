@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster, usePageNavigate } from '../../../../framework';
-import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+import { usePageNavigate } from '../../../../framework';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { pollAwxItemsResponseItem } from '../../../../frontend/awx/common/pollAwxItemsResponseItem';
 import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
@@ -24,68 +23,53 @@ export function CreatePlatformOrganization() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const awxService = useHasAwxService();
-  const alertToaster = usePageAlertToaster();
   const createOrganizationRequest = usePostRequest<PlatformOrganization>();
   const updateControllerOrganizationRequest = usePatchRequest();
   const associateInstanceGroupsRequest = usePostRequest<AssociateControllerInstanceGroup>();
   const associateGalaxyCredential = usePostRequest<AssociateControllerCredential>();
 
   const handleSubmit = async (values: OrganizationWizardFormValues) => {
-    try {
-      const createdOrganization = await createOrganizationRequest(
-        gatewayV1API`/organizations/`,
-        values.organization
-      );
-      // Wait for the organization to be present in Controller before associating instance groups
-      if (!createdOrganization.summary_fields?.resource?.ansible_id) {
-        throw new Error(t('Organization resource ansible_id is not available'));
-      } else {
-        if (awxService) {
-          const controllerOrganization = await pollAwxItemsResponseItem<ControllerOrganization>(
-            awxAPI`/organizations/?resource__ansible_id=${createdOrganization.summary_fields.resource.ansible_id}`,
-            10,
-            1000
+    const createdOrganization = await createOrganizationRequest(
+      gatewayV1API`/organizations/`,
+      values.organization
+    );
+    // Wait for the organization to be present in Controller before associating instance groups
+    if (!createdOrganization.summary_fields?.resource?.ansible_id) {
+      throw new Error(t('Organization resource ansible_id is not available'));
+    } else {
+      if (awxService) {
+        const controllerOrganization = await pollAwxItemsResponseItem<ControllerOrganization>(
+          awxAPI`/organizations/?resource__ansible_id=${createdOrganization.summary_fields.resource.ansible_id}`,
+          10,
+          1000
+        );
+        for (const ig of values.instanceGroups || []) {
+          await associateInstanceGroupsRequest(
+            awxAPI`/organizations/${controllerOrganization.id.toString()}/instance_groups/`,
+            {
+              id: ig.id,
+            }
           );
-          for (const ig of values.instanceGroups || []) {
-            await associateInstanceGroupsRequest(
-              awxAPI`/organizations/${controllerOrganization.id.toString()}/instance_groups/`,
-              {
-                id: ig.id,
-              }
-            );
-          }
-          for (const cred of values.galaxyCredentials || []) {
-            await associateGalaxyCredential(
-              awxAPI`/organizations/${controllerOrganization.id.toString()}/galaxy_credentials/`,
-              {
-                id: cred.id,
-              }
-            );
-          }
-          if (values.executionEnvironment) {
-            await updateControllerOrganizationRequest(
-              awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
-              {
-                default_environment: values.executionEnvironment,
-                max_hosts: values?.maxHosts ?? 0,
-              }
-            );
-          }
         }
-        pageNavigate(PlatformRoute.OrganizationDetails, { params: { id: createdOrganization.id } });
+        for (const cred of values.galaxyCredentials || []) {
+          await associateGalaxyCredential(
+            awxAPI`/organizations/${controllerOrganization.id.toString()}/galaxy_credentials/`,
+            {
+              id: cred.id,
+            }
+          );
+        }
+        if (values.executionEnvironment) {
+          await updateControllerOrganizationRequest(
+            awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
+            {
+              default_environment: values.executionEnvironment,
+              max_hosts: values?.maxHosts ?? 0,
+            }
+          );
+        }
       }
-    } catch (error) {
-      const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-      alertToaster.addAlert({
-        variant: 'danger',
-        title: t('Failed to create organization.'),
-        children: (
-          <>
-            {genericErrors?.map((err) => err.message)}
-            {fieldErrors?.map((err) => err.message)}
-          </>
-        ),
-      });
+      pageNavigate(PlatformRoute.OrganizationDetails, { params: { id: createdOrganization.id } });
     }
   };
 
