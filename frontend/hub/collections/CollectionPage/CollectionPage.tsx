@@ -13,6 +13,7 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageAlertToaster,
+  usePageNavigate,
 } from '../../../../framework';
 import {
   PageAsyncSelectQueryOptions,
@@ -41,6 +42,8 @@ export function CollectionPage() {
   const [collection, setCollection] = useState<null | Partial<CollectionVersionSearch>>(null);
   const [versionsCount, setVersionsCount] = useState<undefined | number>(undefined);
   const getPageUrl = useGetPageUrl();
+  const alertToaster = usePageAlertToaster();
+  const pageNavigate = usePageNavigate();
 
   const { display_signatures } = context.featureFlags;
 
@@ -133,8 +136,6 @@ export function CollectionPage() {
     { refreshInterval: 1000 }
   );
 
-  const alertToaster = usePageAlertToaster();
-
   useEffect(() => {
     if (!versionsCount && versions?.meta.count) {
       setVersionsCount(versions?.meta.count);
@@ -144,22 +145,43 @@ export function CollectionPage() {
       versionsCount &&
       versions?.meta.count > versionsCount
     ) {
+      const sortedversion: CollectionVersionSearch[] = versions.data.sort((a, b) => {
+        const dateA = new Date(String(a.collection_version?.pulp_created));
+        const dateB = new Date(String(b.collection_version?.pulp_created));
+        return dateA < dateB ? 1 : -1;
+      });
       setVersionsCount(versions?.meta.count);
       alertToaster.addAlert({
         variant: 'success',
         title: (
           <span>
-            {t(`A new version of this collection has been uploaded. Please `)}
-            <Button style={{ padding: 0 }} variant="link" onClick={() => window.location.reload()}>
-              {t(`refresh`)}
+            {t(`A new version of this collection has been uploaded. Click `)}
+            <Button
+              style={{ padding: 0 }}
+              variant="link"
+              onClick={() => {
+                pageNavigate(HubRoute.CollectionDetails, {
+                  params: {
+                    name: collection?.collection_version?.name,
+                    namespace: collection.collection_version?.namespace,
+                    repository: collection.repository?.name,
+                  },
+                  query: {
+                    version: sortedversion[0].collection_version?.version,
+                  },
+                });
+                alertToaster.removeAlerts();
+              }}
+            >
+              {t(`here`)}
             </Button>
-            {t(` the page to see the latest version.`)}
+            {t(` to switch to it.`)}
           </span>
         ),
         timeout: false,
       });
     }
-  }, [collection, alertToaster, getPageUrl, t, versions, versionsCount]);
+  }, [collection, alertToaster, t, versions, versionsCount, pageNavigate]);
 
   // load collection versions
   const queryOptions = useCallback(
