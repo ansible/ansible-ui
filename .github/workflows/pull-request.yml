@@ -128,7 +128,7 @@ jobs:
       EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
       QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
       QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
-      
+
   hub-e2e:
     name: HUB E2E
     needs:
