@@ -72,6 +72,30 @@ jobs:
       matrix:
         containers: [1]
     steps:
+      - uses: actions/checkout@v4
+        if: ${{ !inputs.SKIP_JOB }}
+        with:
+          repository: github/ansible/eda-server
+          ref: main
+          fetch-depth: 1
+
+      - name: Login to Quay
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_TOKEN }}
+          
+      - name: EDA Server Compose Pull
+        if: ${{ !inputs.SKIP_JOB }}
+        working-directory: ./tools/docker
+        run: docker-compose -p eda -f docker-compose-stage.yaml pull
+
+      - name: EDA Server Compose Up
+        if: ${{ !inputs.SKIP_JOB }}
+        working-directory: ./tools/docker
+        run: docker-compose -p eda -f docker-compose-stage.yaml up -d
+
       - name: Checkout
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/checkout@v4
@@ -105,6 +129,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v6
@@ -118,9 +143,9 @@ jobs:
           config-file: cypress.eda.config.ts
           tag: ${{ inputs.TAGS }}
         env:
-          EDA_SERVER: ${{ inputs.EDA_SERVER }}
-          EDA_USERNAME: e2e
-          EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+          EDA_SERVER: http://localhost:8000
+          EDA_USERNAME: admin
+          EDA_PASSWORD: testpass
           CYPRESS_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
