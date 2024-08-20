@@ -28,6 +28,7 @@ export type PageFormCheckboxProps<
   label?: string;
   defaultValue?: boolean;
   enableReset?: boolean;
+  className?: string;
 } & Pick<CheckboxProps, 'description' | 'readOnly' | 'isDisabled' | 'isRequired'>;
 
 /** PatternFly Checkbox wrapper for use with react-hook-form */
@@ -61,6 +62,7 @@ export function PageFormCheckbox<
               id={props.id ?? name.split('.').join('-')}
               data-cy={props.id ?? name.split('.').join('-')}
               aria-label={props.label}
+              className={props.className}
               label={
                 <div style={{ display: 'flex' }}>
                   <div>
