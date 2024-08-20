@@ -30,6 +30,7 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/hub/api-tokens.cy.ts',
   'cypress/e2e/hub/approvals.cy.ts',
   'cypress/e2e/hub/collections-dependencies.cy.ts',
+  'cypress/e2e/hub/collections-detail-install.cy.ts',
   'cypress/e2e/hub/collections-detail.cy.ts',
   'cypress/e2e/hub/collections-list.cy.ts',
   'cypress/e2e/hub/feature-flags.cy.ts',
