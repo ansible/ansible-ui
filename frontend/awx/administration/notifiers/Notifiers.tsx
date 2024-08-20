@@ -76,17 +76,17 @@ export function Notifiers() {
         emptyStateTitle={
           canAddNotificationTemplate
             ? t('No notifiers found.')
-            : t('You do not have permission to add notifiers.')
+            : t('You do not have permission to create notifiers.')
         }
         emptyStateDescription={
           canAddNotificationTemplate
-            ? t('Please add notifiers to populate this list.')
+            ? t('Please create notifiers to populate this list.')
             : t(
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canAddNotificationTemplate ? t('Add notifier') : undefined}
+        emptyStateButtonText={canAddNotificationTemplate ? t('Create notifier') : undefined}
         emptyStateButtonClick={
           canAddNotificationTemplate
             ? () => pageNavigate(AwxRoute.AddNotificationTemplate)
