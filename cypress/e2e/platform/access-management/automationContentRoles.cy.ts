@@ -7,11 +7,13 @@ describe('Automation Content: Roles', () => {
     const roleTypes = [
       {
         role: 'galaxy.namespace',
+        type: 'Namespace',
         rolePermission: ['add-collection-import'],
       },
       {
-        role: 'galaxy.task',
-        rolePermission: ['view-namespace'],
+        role: 'galaxy.system',
+        type: 'System',
+        rolePermission: ['add-collection-remote'],
       },
     ];
 
@@ -29,7 +31,7 @@ describe('Automation Content: Roles', () => {
         cy.get(`[data-cy="content-type-form-group"]`)
           .click()
           .within(() => {
-            cy.contains('li', 'Namespace').click();
+            cy.contains('li', roleType.type).click();
           });
         const permissions = roleType.rolePermission;
         cy.get(`[data-cy="permissions-form-group"]`)
@@ -180,22 +182,22 @@ describe('Automation Content: Roles', () => {
     const role1 = {
       roleName: 'galaxy.' + `${randomString(5)}`,
       roleDescription: 'description',
-      contentType: 'galaxy.task',
-      permission: 'galaxy.view_task',
+      contentType: ContentTypeEnum.CollectionRemote,
+      permission: 'galaxy.view_collectionremote',
     };
 
     const role2 = {
       roleName: 'galaxy.' + `${randomString(5)}`,
       roleDescription: 'description',
-      contentType: ContentTypeEnum.Task,
-      permission: 'galaxy.view_task',
+      contentType: ContentTypeEnum.CollectionRemote,
+      permission: 'galaxy.view_collectionremote',
     };
 
     beforeEach(() => {
       cy.createHubRoleAPI({
         roleName: role1.roleName,
         description: role1.roleDescription,
-        content_type: ContentTypeEnum.Task,
+        content_type: ContentTypeEnum.CollectionRemote,
         permissions: [role1.permission],
       }).then((createdRole: HubRbacRole) => {
         editableRole1 = createdRole;
@@ -204,7 +206,7 @@ describe('Automation Content: Roles', () => {
       cy.createHubRoleAPI({
         roleName: role2.roleName,
         description: role2.roleDescription,
-        content_type: ContentTypeEnum.Task,
+        content_type: ContentTypeEnum.CollectionRemote,
         permissions: [role2.permission],
       }).then((createdRole: HubRbacRole) => {
         editableRole2 = createdRole;
