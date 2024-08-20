@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /// <reference types="cypress" />
 
 /**
@@ -7,27 +8,42 @@
  *   LABELS=smoke npm run e2e:run:awx
  *   LABELS='!flaky' npm run e2e:run:awx
  */
-export function cyLabel(labels: string[], runTest: () => unknown) {
-  const envLabel = (Cypress.env('LABELS') as string) ?? '';
-  const envLabels = envLabel.split(',').map((label) => label.trim());
+export function cyLabel(testLabels: string[], runTest: () => unknown) {
+  const cypressEnvLabel = Cypress.env('LABELS') as unknown;
+  const envLabel = typeof cypressEnvLabel === 'string' ? cypressEnvLabel : '';
+  const envLabels = envLabel
+    .split(',')
+    .map((envLabel) => envLabel.trim())
+    .filter((envLabel) => !!envLabel);
 
   // Include Labels - If there are no include labels, all tests are included unless they are excluded
-  const includeLabels = envLabels.filter((label) => !label.startsWith('!'));
+  const includeEnvLabels = envLabels.filter((envLabel) => !envLabel.startsWith('!'));
 
   // Exclude Labels
-  const excludeLabels = envLabels
-    .filter((label) => label.startsWith('!'))
-    .map((label) => label.substring(1));
+  const excludeEnvLabels = envLabels
+    .filter((envLabel) => envLabel.startsWith('!'))
+    .map((envLabel) => envLabel.substring(1));
 
-  // Test labels
-  for (const label of labels) {
+  // Test to see if the test should be skipped based on excluded labels
+  for (const testLabel of testLabels) {
     // If the label is excluded, skip the test
-    if (excludeLabels.includes(label)) {
+    if (excludeEnvLabels.includes(testLabel)) {
       return;
     }
+  }
 
-    // If there are include labels, skip the test if it is not included
-    if (includeLabels.length > 0 && !includeLabels.includes(label)) {
+  // Test to see if the test should be skipped based on included labels
+  // If there are no include labels, all tests are included unless they are excluded
+  if (includeEnvLabels.length > 0) {
+    let include = false;
+    for (const testLabel of testLabels) {
+      if (includeEnvLabels.includes(testLabel)) {
+        include = true;
+        break;
+      }
+    }
+
+    if (!include) {
       return;
     }
   }
