@@ -24,12 +24,14 @@ export function PlatformEdaTeam(props: { route?: string }) {
   }
 
   if (platformResponse.error) {
-    <Page>
-      <EmptyStateCustom
-        title={t('Error')}
-        description={t('An error occurred while loading the resource.')}
-      />
-    </Page>;
+    return (
+      <Page>
+        <EmptyStateCustom
+          title={t('Error')}
+          description={t('An error occurred while loading the resource.')}
+        />
+      </Page>
+    );
   }
 
   if (!platformResponse.data?.resource.resource_type) {
@@ -44,8 +46,8 @@ export function PlatformEdaTeam(props: { route?: string }) {
     <Navigate
       to={getPageUrl(PlatformRoute.PlatformResourceRoute, {
         params: {
-          resource_type: platformResponse.data.resource.resource_type,
-          ansible_id: platformResponse.data.resource.ansible_id,
+          resource_type: platformResponse?.data?.resource?.resource_type as string,
+          ansible_id: platformResponse?.data?.resource?.ansible_id as string,
           route: props.route || PlatformRoute.TeamDetails,
         },
       })}

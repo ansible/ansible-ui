@@ -6,7 +6,6 @@ import { EmptyStateCustom } from '../../framework/components/EmptyStateCustom';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { edaAPI } from '../../frontend/eda/common/eda-utils';
 import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
-// import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { useGetItem } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
@@ -25,12 +24,14 @@ export function PlatformEdaOrganization(props: { route?: string }) {
   }
 
   if (platformResponse.error) {
-    <Page>
-      <EmptyStateCustom
-        title={t('Error')}
-        description={t('An error occurred while loading the resource.')}
-      />
-    </Page>;
+    return (
+      <Page>
+        <EmptyStateCustom
+          title={t('Error')}
+          description={t('An error occurred while loading the resource.')}
+        />
+      </Page>
+    );
   }
 
   if (!platformResponse.data?.resource.resource_type) {
@@ -45,8 +46,8 @@ export function PlatformEdaOrganization(props: { route?: string }) {
     <Navigate
       to={getPageUrl(PlatformRoute.PlatformResourceRoute, {
         params: {
-          resource_type: platformResponse.data.resource.resource_type,
-          ansible_id: platformResponse.data.resource.ansible_id,
+          resource_type: platformResponse?.data?.resource?.resource_type as string,
+          ansible_id: platformResponse?.data?.resource?.ansible_id as string,
           route: props.route || PlatformRoute.OrganizationDetails,
         },
       })}

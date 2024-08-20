@@ -25,11 +25,9 @@ import { useDeleteUserTokens } from '../hooks/useDeleteAAPUserTokens';
 import { DetailInfo } from '../../../../framework/components/DetailInfo';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
-export function AAPUserTokens(props: {
-  infoMessage?: string;
-}) {
+export function AAPUserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();
-  const { activePlatformUser:activeUser } = usePlatformActiveUser();
+  const { activePlatformUser: activeUser } = usePlatformActiveUser();
   const pageNavigate = usePageNavigate();
 
   useEffect(() => {
@@ -42,10 +40,7 @@ export function AAPUserTokens(props: {
   if (!activeUser) return <LoadingPage breadcrumbs tabs />;
 
   return activeUser?.id.toString() === params.id ? (
-    <AAPUserTokensInternal
-      user={activeUser}
-      infoMessage={props.infoMessage}
-    />
+    <AAPUserTokensInternal user={activeUser} infoMessage={props.infoMessage} />
   ) : (
     <></>
   );
