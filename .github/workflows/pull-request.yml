@@ -126,6 +126,8 @@ jobs:
       EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
       EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
       EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
+      QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+      QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
       
   hub-e2e:
     name: HUB E2E
