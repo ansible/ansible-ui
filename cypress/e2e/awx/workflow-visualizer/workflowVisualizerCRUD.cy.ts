@@ -148,6 +148,7 @@ describe('Workflow Visualizer', () => {
       );
       cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
       cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
+      cy.reload();
       cy.getBy('button[id="fit-to-screen"]').click();
       cy.getByDataCy('workflow-visualizer-toolbar-close').click();
       cy.verifyPageTitle(`${workflowJobTemplate.name}`);
