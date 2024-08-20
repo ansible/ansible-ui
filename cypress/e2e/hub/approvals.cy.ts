@@ -17,7 +17,7 @@ describe('Approvals', () => {
           cy.waitForAllTasks();
           namespace = namespaceResult;
           collectionName = randomE2Ename();
-          cy.uploadCollection(collectionName, namespace.name);
+          cy.uploadCollection(collectionName, namespace.name, '1.0.0', 'staging');
         });
       }
     );
