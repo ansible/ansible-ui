@@ -160,7 +160,7 @@ describe('Collections Details', () => {
     });
   });
 
-  it.skip('can sign a selected version of a collection', () => {
+  it('can sign a selected version of a collection', () => {
     cy.uploadCollection(collectionName, namespace.name).then(() => {
       cy.waitForAllTasks();
       cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
