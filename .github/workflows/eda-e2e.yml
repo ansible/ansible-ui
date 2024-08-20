@@ -20,7 +20,10 @@ on:
         required: true
       EDA_RECORD_KEY:
         required: true
-
+      QUAY_USERNAME:
+        required: true
+      QUAY_PASSWORD:
+        required: true        
 jobs:
   eda-ui-image:
     name: EDA UI Image
