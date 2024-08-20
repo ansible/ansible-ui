@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
@@ -16,23 +15,15 @@ function visitCollection(collection: string, namespace: string) {
 
 describe('Collections Details', () => {
   let namespace: HubNamespace;
-  let repository: Repository;
   let collectionName: string;
 
   before(() => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
     });
-    cy.createHubRepository().then((repositoryResult) => {
-      repository = repositoryResult;
-      cy.galaxykit('distribution create', repository.name);
-      cy.waitForAllTasks();
-    });
   });
 
   after(() => {
-    // TODO - this is another PR - cy.deletehubDistribution(repository.name);
-    cy.deleteHubRepository(repository);
     cy.deleteCollectionsInNamespace(namespace.name);
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });
@@ -45,7 +36,6 @@ describe('Collections Details', () => {
 
   it('can delete entire collection from system', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -63,8 +53,7 @@ describe('Collections Details', () => {
   });
 
   it('can delete entire collection from repository', () => {
-    cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0', 'rh-certified');
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -84,8 +73,7 @@ describe('Collections Details', () => {
   it('user can delete version from system', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     cy.uploadCollection(collectionName, namespace.name, '1.1.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.1.0');
+
     // Delete version from system
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
@@ -97,7 +85,7 @@ describe('Collections Details', () => {
     cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
     cy.url().should(
       'contain',
-      `/collections/published/${namespace.name}/${collectionName}/details?version=1.0.0`
+      `/collections/validated/${namespace.name}/${collectionName}/details?version=1.0.0`
     );
     cy.selectDetailsPageKebabAction('delete-version-from-system');
     cy.clickButton(/^Close$/);
@@ -116,8 +104,7 @@ describe('Collections Details', () => {
   it('user can delete version from repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     cy.uploadCollection(collectionName, namespace.name, '1.1.0');
-    cy.approveCollection(collectionName, namespace.name, '1.0.0');
-    cy.approveCollection(collectionName, namespace.name, '1.1.0');
+
     // Delete version from repository
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
@@ -128,7 +115,7 @@ describe('Collections Details', () => {
     cy.get('.pf-v5-c-menu__item-text').contains('1.0.0').click();
     cy.url().should(
       'contain',
-      `/collections/published/${namespace.name}/${collectionName}/details?version=1.0.0`
+      `/collections/validated/${namespace.name}/${collectionName}/details?version=1.0.0`
     );
     cy.selectDetailsPageKebabAction('delete-version-from-repository');
     cy.clickButton(/^Close$/);
@@ -140,7 +127,7 @@ describe('Collections Details', () => {
     cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
     cy.url().should(
       'contain',
-      `/collections/published/${namespace.name}/${collectionName}/details`
+      `/collections/validated/${namespace.name}/${collectionName}/details`
     );
     cy.get(`[data-cy="browse-collection-version"] button`).first().click();
     cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
@@ -149,7 +136,6 @@ describe('Collections Details', () => {
 
   it('can copy a version to repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       cy.navigateTo('hub', Collections.url);
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
@@ -163,7 +149,7 @@ describe('Collections Details', () => {
 
   it('can sign a collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
+
       // Sign collection
       visitCollection(collectionName, namespace.name);
       cy.selectDetailsPageKebabAction('sign-collection');
@@ -243,7 +229,6 @@ describe('Collections Details', () => {
 
   it('can deprecate/undeprecate a collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
       // Deprecate collection
       visitCollection(collectionName, namespace.name);
       cy.selectDetailsPageKebabAction('deprecate-collection');
