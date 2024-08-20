@@ -1656,7 +1656,7 @@ declare global {
         collection: string,
         namespace: string,
         version: string,
-        repository? : string,
+        repository?: string
       ): Cypress.Chainable<void>;
       approveCollection(
         collection: string,

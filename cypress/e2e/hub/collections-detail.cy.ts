@@ -149,7 +149,6 @@ describe('Collections Details', () => {
 
   it('can sign a collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-
       // Sign collection
       visitCollection(collectionName, namespace.name);
       cy.selectDetailsPageKebabAction('sign-collection');
@@ -163,14 +162,6 @@ describe('Collections Details', () => {
 
   it.skip('can sign a selected version of a collection', () => {
     cy.uploadCollection(collectionName, namespace.name).then(() => {
-      cy.galaxykit(
-        'collection move',
-        namespace.name,
-        collectionName,
-        '1.0.0',
-        'staging',
-        repository.name
-      );
       cy.waitForAllTasks();
       cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
         (result: { filename: string }) => {
@@ -186,8 +177,8 @@ describe('Collections Details', () => {
             action: 'drag-drop',
           });
           cy.get('#radio-non-pipeline').click();
-          cy.filterTableBySingleText(repository.name, true);
-          cy.getTableRowByText(repository.name, false).within(() => {
+          cy.filterTableBySingleText('validated', true);
+          cy.getTableRowByText('validated', false).within(() => {
             cy.getByDataCy('checkbox-column-cell').click();
           });
           cy.get('[data-cy="Submit"]').click();

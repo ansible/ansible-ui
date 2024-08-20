@@ -306,7 +306,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'uploadCollection',
-  (collection: string, namespace: string, version: string, repository? : string) => {
+  (collection: string, namespace: string, version: string, repository?: string) => {
     cy.galaxykit(
       'collection upload --skip-upload',
       namespace,

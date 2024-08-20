@@ -93,7 +93,7 @@ describe('Collections List', () => {
 
   it('can upload and then delete a new version to an existing collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-   
+
     cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
       (result: { filename: string }) => {
         cy.getByDataCy('table-view').click();
@@ -141,7 +141,6 @@ describe('Collections List', () => {
 
   it('can copy a version to repository and then delete it from repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-
 
     cy.navigateTo('hub', Collections.url);
     cy.filterTableBySingleText(collectionName);
