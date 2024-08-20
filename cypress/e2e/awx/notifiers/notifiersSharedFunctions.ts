@@ -94,9 +94,11 @@ export function selectOrganization(orgName: string) {
   cy.contains('button', 'Browse').click();
 
   // sync dialog
+  cy.intercept('GET', awxAPI`/organizations/*`).as('orgList');
   cy.get(`[role="dialog"]`).within(() => {
     cy.contains('button', 'Confirm');
     cy.contains('button', 'Cancel');
+    cy.wait('@orgList');
     cy.get(`[aria-label="Simple table"]`);
   });
 

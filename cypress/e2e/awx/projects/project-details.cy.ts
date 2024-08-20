@@ -61,7 +61,9 @@ describe('Projects', () => {
       }).then((sched: Schedule) => {
         schedule = sched;
         cy.navigateTo('awx', 'projects');
+        cy.intercept('GET', awxAPI`/projects/?name*`).as('projectResults');
         cy.filterTableBySingleSelect('name', project.name);
+        cy.wait('@projectResults');
         cy.get('[data-cy="name-column-cell"]').click();
         cy.clickTab('Schedules', true);
       });
@@ -328,13 +330,16 @@ describe('Projects', () => {
           });
         cy.navigateTo('awx', 'projects');
         cy.verifyPageTitle('Projects');
+        cy.intercept('GET', awxAPI`/projects/?name*`).as('results');
         cy.filterTableByMultiSelect('name', [thisProject.name]);
+        cy.wait('@results');
         cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
         });
         cy.navigateTo('awx', 'projects');
         cy.verifyPageTitle('Projects');
         cy.filterTableByMultiSelect('name', [thisProject.name]);
+        cy.wait('@results');
         cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
         });
@@ -377,7 +382,9 @@ describe('Projects', () => {
 
     it('can navigate to the Projects Notifications list, toggle a Notification on Start, and navigate to its details page', () => {
       cy.navigateTo('awx', 'projects');
+      cy.intercept('GET', awxAPI`/projects/?name*`).as('projectResults');
       cy.filterTableByMultiSelect('name', [project.name]);
+      cy.wait('@projectResults');
       cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
