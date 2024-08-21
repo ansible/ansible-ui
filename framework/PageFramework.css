@@ -123,3 +123,7 @@ tr.selected:hover {
   /* padding: 10px; */
   border-right: unset;
 }
+
+pre {
+  white-space: pre-wrap;
+}
