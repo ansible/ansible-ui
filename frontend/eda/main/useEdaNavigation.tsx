@@ -81,6 +81,7 @@ import { EventStreamPage } from '../event-streams/EventStreamPage/EventStreamPag
 import { EventStreams } from '../event-streams/EventStreams';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
+import { EventStreamActivations } from '../event-streams/EventStreamPage/EventStreamActivations';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -340,6 +341,11 @@ export function useEdaNavigation() {
               id: EdaRoute.EventStreamDetails,
               path: 'details',
               element: <EventStreamDetails />,
+            },
+            {
+              id: EdaRoute.EventStreamActivations,
+              path: 'activations',
+              element: <EventStreamActivations />,
             },
             {
               path: '',

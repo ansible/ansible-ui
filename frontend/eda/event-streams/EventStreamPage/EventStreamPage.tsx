@@ -129,7 +129,10 @@ export function EventStreamPage() {
           page: EdaRoute.EventStreams,
           persistentFilterKey: 'event-streams',
         }}
-        tabs={[{ label: t('Details'), page: EdaRoute.EventStreamDetails }]}
+        tabs={[
+          { label: t('Details'), page: EdaRoute.EventStreamDetails },
+          { label: t('Activations'), page: EdaRoute.EventStreamActivations },
+        ]}
         params={{ id: eventStream?.id }}
       />
     </PageLayout>
