@@ -1,4 +1,3 @@
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
@@ -6,7 +5,6 @@ import { Collections } from './constants';
 
 describe('Collections Import Log', () => {
   let namespace: HubNamespace;
-  let repository: Repository;
   let collectionName: string;
 
   before(() => {
@@ -14,18 +12,10 @@ describe('Collections Import Log', () => {
     cy.createHubNamespace().then((namespaceResult) => {
       namespace = namespaceResult;
       cy.uploadCollection(collectionName, namespace.name, '1.0.0');
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
-      cy.waitForAllTasks();
-    });
-    cy.createHubRepository().then((repositoryResult) => {
-      repository = repositoryResult;
-      cy.galaxykit('distribution create', repository.name);
-      cy.waitForAllTasks();
     });
   });
 
   after(() => {
-    cy.deleteHubRepository(repository);
     cy.deleteCollectionsInNamespace(namespace.name);
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });
@@ -76,7 +66,7 @@ describe('Collections Import Log', () => {
     cy.getByDataCy('label-approval-status').should('be.visible');
     cy.getByDataCy('label-version').should('be.visible');
     cy.contains('Completed').should('be.visible');
-    cy.contains('Approved').should('be.visible');
+    cy.contains('Unsigned').should('be.visible');
     cy.contains('1.0.0').should('be.visible');
     // Code editor for log messages
     cy.getByDataCy('import-log').should('be.visible');
