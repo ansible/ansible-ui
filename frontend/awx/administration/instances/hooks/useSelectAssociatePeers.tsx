@@ -79,7 +79,7 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
       view={view}
-      confirmText={t('Associate peer(s)')}
+      confirmText={t('Associate peers')}
     />
   );
 }

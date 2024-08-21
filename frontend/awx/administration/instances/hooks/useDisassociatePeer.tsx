@@ -38,7 +38,7 @@ export function useDisassociatePeer(onComplete: (peers: Peer[]) => void, instanc
           : t('Yes, I confirm that I want to disassociate these {{count}} peers.', {
               count: peersToRemove.length,
             }),
-      actionButtonText: t('Disassociate peer', { count: peersToRemove.length }),
+      actionButtonText: t('Disassociate peers', { count: peersToRemove.length }),
       items: peersToRemove.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,

@@ -343,14 +343,14 @@ cyLabel(['upstream'], () => {
       cy.getByDataCy('associate-peer').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Select Peer Addresses');
-        cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button').contains('Associate peers').should('have.attr', 'aria-disabled', 'true');
         cy.filterTableBySingleText(instanceToAssociate.hostname, true);
         cy.intercept('GET', awxAPI`/instances/${instanceToAssociate.id.toString()}/`).as(
           'instanceA'
         );
         cy.getByDataCy('checkbox-column-cell').find('input').click();
         cy.wait('@instanceA');
-        cy.get('button').contains('Associate peer(s)').click();
+        cy.get('button').contains('Associate peers').click();
         cy.get('button').contains('Close').click();
       });
       cy.wait('@associatePeer')
@@ -379,11 +379,13 @@ cyLabel(['upstream'], () => {
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('disassociatePeer');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate peers');
-        cy.get('button').contains('Disassociate peer').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button')
+          .contains('Disassociate peers')
+          .should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('address-column-cell').should('have.text', instanceToAssociate.hostname);
         cy.get('input[id="confirm"]').click();
         cy.get('button')
-          .contains('Disassociate peer')
+          .contains('Disassociate peers')
           .should('have.attr', 'aria-disabled', 'false')
           .click();
       });
