@@ -375,7 +375,7 @@ cyLabel(['upstream'], () => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
-      cy.clickToolbarKebabAction('disassociate');
+      cy.clickToolbarKebabAction('disassociatePeer');
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('disassociatePeer');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate peers');
