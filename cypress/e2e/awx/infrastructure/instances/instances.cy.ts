@@ -20,7 +20,7 @@ cyLabel(['upstream'], () => {
     it('can add a new instance and navigate to the details page', () => {
       const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
       // Navigate to the create instance page
-      cy.getByDataCy('add-instance').click();
+      cy.getByDataCy('create-instance').click();
       cy.getByDataCy('page-title').should('contain', 'Create instance');
       // Create a new instance
       cy.getByDataCy('hostname').type(instanceHostname);
@@ -340,9 +340,9 @@ cyLabel(['upstream'], () => {
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('peers')).to.be.true;
       });
-      cy.getByDataCy('associate-peer').click();
+      cy.getByDataCy('associate-peers').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.get('header').contains('Select Peer Addresses');
+        cy.get('header').contains('Select peer addresses');
         cy.get('button').contains('Associate peers').should('have.attr', 'aria-disabled', 'true');
         cy.filterTableBySingleText(instanceToAssociate.hostname, true);
         cy.intercept('GET', awxAPI`/instances/${instanceToAssociate.id.toString()}/`).as(

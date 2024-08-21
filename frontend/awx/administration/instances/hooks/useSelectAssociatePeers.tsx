@@ -74,7 +74,7 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
 
   return (
     <MultiSelectDialog
-      title={t('Select Peer Addresses')}
+      title={t('Select peer addresses')}
       onSelect={onPeer}
       toolbarFilters={toolbarFilters}
       tableColumns={tableColumns}
