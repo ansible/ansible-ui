@@ -23,8 +23,6 @@ Cypress.Commands.add('login', () => {
       break;
     case '4101':
       cy.awxLogin();
-      cy.createGlobalOrganization();
-      cy.createGlobalProject();
       break;
     case '4102':
       cy.hubLogin();
@@ -36,8 +34,6 @@ Cypress.Commands.add('login', () => {
       switch (Cypress.env('E2E_MODE')) {
         case 'AWX':
           cy.awxLogin();
-          cy.createGlobalOrganization();
-          cy.createGlobalProject();
           break;
         case 'HUB':
           cy.hubLogin();
