@@ -1,13 +1,13 @@
+import { randomString } from '../../../../../framework/utils/random-string';
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../../frontend/awx/interfaces/Project';
-import { randomString } from '../../../../../framework/utils/random-string';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import {
   checkHostGroup,
   createHostAndCancelJob,
   launchHostJob,
 } from '../../../../support/hostsfunctions';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 describe('Host Tests', () => {
   let organization: Organization;
@@ -39,15 +39,7 @@ describe('Host Tests', () => {
     cy.verifyPageTitle('Create Host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
-    cy.getByDataCy('inventory').click();
-    cy.contains('button', 'Browse').click();
-    cy.intercept('GET', awxAPI`/inventories/?*`).as('inventories');
-    cy.getModal().within(() => {
-      cy.filterTableBySingleSelect('name', inventory.name);
-      cy.wait('@inventories');
-      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
-      cy.contains('button', 'Confirm').click();
-    });
+    cy.singleSelectByDataCy('inventory', inventory.name);
     cy.getByDataCy('variables').type('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
@@ -93,15 +85,7 @@ describe('Host Tests', () => {
     cy.verifyPageTitle('Create Host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
-    cy.getByDataCy('inventory').click();
-    cy.contains('button', 'Browse').click();
-    cy.intercept('GET', awxAPI`/inventories/?*`).as('inventories');
-    cy.getModal().within(() => {
-      cy.filterTableBySingleSelect('name', inventory.name);
-      cy.wait('@inventories');
-      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
-      cy.contains('button', 'Confirm').click();
-    });
+    cy.singleSelectByDataCy('inventory', inventory.name);
     cy.getByDataCy('variables').type('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
