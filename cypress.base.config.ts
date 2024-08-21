@@ -27,7 +27,7 @@ export const baseConfig: Cypress.ConfigOptions = {
       });
       return config;
     },
-    retries: { runMode: 2, openMode: 0 },
+    retries: { runMode: 0, openMode: 0 },
     env,
   },
   component: {
