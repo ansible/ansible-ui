@@ -6,14 +6,14 @@ The testing strategy outlines the processes and workflows that ensure all code c
 
 ## Ansible-UI
 
-In the upstream open-source repository Ansible-UI, every pull request (PR) undergoes comprehensive testing before the code is merged into the repository. The testing includes component-level tests and end-to-end (E2E) tests for different UI images to ensure the stability and functionality of the entire system.
+In the upstream open-source repository Ansible-UI, every pull request (PR) undergoes comprehensive testing before the code is merged into the repository. The testing includes component-level tests and end-to-end (E2E) tests for different product UIs to ensure the stability and functionality of the entire system.
 
 ```mermaid
 flowchart TD
 PR(Pull Request) --> Component(Component Tests)
-PR --> AWX_IMAGE(AWX UI Image) --> AWX_E2E(AWX E2E Tests)
-PR --> EDA_IMAGE(EDA UI Image) --> EDA_E2E(EDA E2E Tests)
-PR --> HUB_IMAGE(HUB UI Image) --> HUB_E2E(HUB E2E Tests)
+PR --> AWX_E2E(AWX E2E Tests)
+PR --> EDA_E2E(EDA E2E Tests)
+PR --> HUB_E2E(HUB E2E Tests)
 ```
 
 ## AAP-UI
@@ -23,7 +23,7 @@ In the downstream private repository AAP-UI, every PR is also subjected to rigor
 ```mermaid
 flowchart TD
 PR(Pull Request) --> Component(Component Tests)
-PR --> PLATFORM_IMAGE(Platform UI Image) --> PLATFORM_E2E(Platform E2E Tests)
+PR --> PLATFORM_E2E(Platform E2E Tests)
 ```
 
 ## Continuous Integration and Delivery
