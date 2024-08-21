@@ -77,7 +77,7 @@ cyLabel(['upstream'], () => {
       cy.hasDetail('Name', team.name);
       cy.hasDetail('Organization', organization.name);
       cy.clickButton(/^Edit team$/);
-      cy.verifyPageTitle('Edit Team');
+      cy.verifyPageTitle(`Edit ${team.name}`);
       cy.get('[data-cy="name"]')
         .clear()
         .type(team.name + '-edited');
@@ -94,7 +94,7 @@ cyLabel(['upstream'], () => {
     it('can navigate to the edit form from the team list row item', () => {
       cy.filterTableBySingleSelect('name', team.name);
       cy.clickTableRowAction('name', team.name, 'edit-team', { disableFilter: true });
-      cy.verifyPageTitle('Edit Team');
+      cy.verifyPageTitle(`Edit ${team.name}`);
       cy.get('[data-cy="name"]')
         .clear()
         .type(team.name + '-edited');
