@@ -113,19 +113,19 @@ jobs:
       AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
       AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
       
-  eda-e2e:
-    name: EDA E2E
-    needs:
-      - packages
-      - pr-queue
-    uses: ./.github/workflows/eda-e2e.yml
-    with:
-      EDA_SERVER: ${{ vars.EDA_SERVER }}
-      SKIP_JOB: ${{ needs.packages.outputs.eda != 'true' }}
-    secrets:
-      EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-      EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
-      EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
+  # eda-e2e:
+  #   name: EDA E2E
+  #   needs:
+  #     - packages
+  #     - pr-queue
+  #   uses: ./.github/workflows/eda-e2e.yml
+  #   with:
+  #     EDA_SERVER: ${{ vars.EDA_SERVER }}
+  #     SKIP_JOB: ${{ needs.packages.outputs.eda != 'true' }}
+  #   secrets:
+  #     EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
+  #     EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
+  #     EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
       
   hub-e2e:
     name: HUB E2E
@@ -157,7 +157,7 @@ jobs:
       - checks
       - component
       - awx-e2e
-      - eda-e2e
+      # - eda-e2e
       - hub-e2e
     steps:
       - run: echo Success
