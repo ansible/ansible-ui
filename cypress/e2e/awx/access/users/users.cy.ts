@@ -61,7 +61,7 @@ describe('Users Tests', () => {
 
     it('navigates to the edit form from the users list row item', () => {
       cy.clickTableRowPinnedAction(user.username, 'edit-user');
-      cy.verifyPageTitle('Edit User');
+      cy.verifyPageTitle(`Edit ${user.username}`);
     });
 
     it('edits a user from the details page', () => {
@@ -69,7 +69,7 @@ describe('Users Tests', () => {
       cy.verifyPageTitle(user.username);
       cy.url().should('contain', '/details');
       cy.clickButton(/^Edit user$/);
-      cy.verifyPageTitle('Edit User');
+      cy.verifyPageTitle(`Edit ${user.username}`);
       cy.get('[data-cy="username"]').type(user.username + 'a');
       cy.clickButton(/^Save user$/);
       cy.verifyPageTitle(`${user.username}a`);
