@@ -66,7 +66,9 @@ describe('activity-stream', () => {
   it('can navigate to event resource detail page from activity stream event details modal', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
+    cy.intercept('GET', awxAPI`/activity_stream/?search*`).as('search');
     cy.filterTableByTextFilter('keyword', inventory.name);
+    cy.wait('@search');
     openEventDetails(inventory.name);
     cy.getModal().within(() => {
       cy.getByDataCy('source-resource-detail').click();
@@ -77,7 +79,9 @@ describe('activity-stream', () => {
   it('can filter by keyword from activity stream list', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
+    cy.intercept('GET', awxAPI`/activity_stream/?search*`).as('search');
     cy.filterTableByTextFilter('keyword', inventory.name);
+    cy.wait('@search');
     cy.get('tbody').find('tr').should('have.length', 1);
     cy.get(`[data-cy='event-column-cell']`, { timeout: 30000 }).should(
       'have.text',
