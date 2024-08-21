@@ -8,7 +8,7 @@ import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { navigateAfterDelete } from './useDeleteCollectionsFromRepository';
+import { HubRoute } from '../../main/HubRoutes';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -33,7 +33,7 @@ export function useDeleteCollections(
 
       confirmText +=
         ' ' +
-        t(`Note that if you selected one collection in multiple repositories, it will be 
+        t(`Note that if you selected one collection in multiple repositories, it will be
       deleted only once from all repositories.`);
 
       const title = version
@@ -69,7 +69,7 @@ export function useDeleteCollections(
         actionFn: (collection: CollectionVersionSearch, signal) => {
           return deleteCollection(collection, version, signal).then(() => {
             if (detail) {
-              return navigateAfterDelete(collection, version || false, navigate);
+              navigate(HubRoute.Collections);
             }
           });
         },
