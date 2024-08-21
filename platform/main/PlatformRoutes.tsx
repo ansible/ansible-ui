@@ -8,7 +8,6 @@ export enum PlatformRoute {
   PlatformResource = 'platform-resource',
   PlatformResourceRoute = 'platform-resource-route',
   Applications = 'platform-applications',
-  ApplicationsPage = 'platform-applications-page',
   ApplicationPage = 'platform-application-page',
   ApplicationDetails = 'platform-application-details',
   ApplicationTokens = 'platform-application-tokens',

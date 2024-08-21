@@ -1,20 +1,20 @@
-import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { PageHeader, PageLayout } from '../../../framework';
 import { PlatformApplicationsTable } from './PlatformApplicationsTable';
 
 export function PlatformGatewayApplications() {
   const { t } = useTranslation();
-  // const awxRoles = useRolesMetadata();
   return (
-    <>
-      <Alert
-        title={t('These OAuth Applications apply to resources at platform level.')}
-        variant="info"
-        style={{ borderTop: 0 }}
-        className="border-bottom"
-        isInline
+    <PageLayout>
+      <PageHeader
+        title={t('OAuth Applications')}
+        description={t(
+          'Create and configure token-based authentication for external applications.'
+        )}
+        titleHelpTitle={t('OAuth Applications')}
+        titleHelp={t('Create and configure token-based authentication for external applications.')}
       />
       <PlatformApplicationsTable />
-    </>
+    </PageLayout>
   );
 }
