@@ -30,9 +30,9 @@ export function Projects() {
     <PageLayout>
       <PageHeader
         title={t('Projects')}
+        description={t('A project is a logical collection of rulebooks.')}
         titleHelpTitle={t('Projects')}
-        titleHelp={t('Projects are a logical collection of rulebooks.')}
-        description={t('Projects are a logical collection of rulebooks.')}
+        titleHelp={t('A project is a logical collection of rulebooks.')}
       />
       <PageTable
         id="eda-projects-table"
