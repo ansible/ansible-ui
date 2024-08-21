@@ -1,13 +1,13 @@
 import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
 import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../../frontend/awx/interfaces/Project';
+import { randomString } from '../../../../../framework/utils/random-string';
 import {
-  checkFactsInHost,
   checkHostGroup,
-  createAndEditAndDeleteHost,
   createHostAndCancelJob,
   launchHostJob,
 } from '../../../../support/hostsfunctions';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 describe('Host Tests', () => {
   let organization: Organization;
@@ -32,12 +32,42 @@ describe('Host Tests', () => {
     cy.deleteAwxProject(project, { failOnStatusCode: false });
   });
 
-  //tests
   it('can create, edit and delete a stand alone host', () => {
-    // use createAndEditAndDeleteHost function in order to test stand alone hosts basic functions
-    // after navigating to the right url
+    const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
-    createAndEditAndDeleteHost('stand_alone_host', inventory, 'list');
+    cy.clickButton(/^Create host$/);
+    cy.verifyPageTitle('Create Host');
+    cy.getByDataCy('name').type(hostName);
+    cy.getByDataCy('description').type('This is the description');
+    cy.getByDataCy('inventory').click();
+    cy.contains('button', 'Browse').click();
+    cy.intercept('GET', awxAPI`/inventories/?*`).as('inventories');
+    cy.getModal().within(() => {
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.wait('@inventories');
+      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
+      cy.contains('button', 'Confirm').click();
+    });
+    cy.getByDataCy('variables').type('test: true');
+    cy.clickButton(/^Create host/);
+    cy.hasDetail(/^Name$/, hostName);
+    cy.hasDetail(/^Description$/, 'This is the description');
+    cy.get('[data-cy="code-block-value"]').should('contains.text', 'test: true');
+    cy.navigateTo('awx', 'hosts');
+    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.getByDataCy('edit-host').click();
+    cy.verifyPageTitle('Edit host');
+    cy.getByDataCy('description').clear().type('This is the description edited');
+    cy.getByDataCy('Submit').click();
+    cy.hasDetail(/^Description$/, 'This is the description edited');
+    cy.navigateTo('awx', 'hosts');
+    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
+    cy.getByDataCy('delete-host').click();
+    cy.clickModalConfirmCheckbox();
+    cy.clickModalButton('Delete hosts');
+    cy.contains('button', 'Close').click();
+    cy.contains(/^No results found./);
   });
 
   it('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {
@@ -57,6 +87,39 @@ describe('Host Tests', () => {
   });
 
   it('can view host facts in stand alone host', () => {
-    checkFactsInHost(inventory, 'stand_alone');
+    const hostName = 'E2E Inventory host ' + randomString(4);
+    cy.navigateTo('awx', 'hosts');
+    cy.clickButton(/^Create host$/);
+    cy.verifyPageTitle('Create Host');
+    cy.getByDataCy('name').type(hostName);
+    cy.getByDataCy('description').type('This is the description');
+    cy.getByDataCy('inventory').click();
+    cy.contains('button', 'Browse').click();
+    cy.intercept('GET', awxAPI`/inventories/?*`).as('inventories');
+    cy.getModal().within(() => {
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.wait('@inventories');
+      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
+      cy.contains('button', 'Confirm').click();
+    });
+    cy.getByDataCy('variables').type('test: true');
+    cy.clickButton(/^Create host/);
+    cy.hasDetail(/^Name$/, hostName);
+    cy.hasDetail(/^Description$/, 'This is the description');
+    cy.get('[data-cy="code-block-value"]').should('contains.text', 'test: true');
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/hosts/*/ansible_facts/` },
+      {
+        ansible_dns: {
+          search: ['dev-ui.svc.cluster.local', 'svc.cluster.local', 'cluster.local'],
+          options: {
+            ndots: '5',
+          },
+          nameservers: ['10.43.0.10'],
+        },
+      }
+    );
+    cy.containsBy('a', 'Facts').click();
+    cy.get('code').should('contain', 'ansible_dns');
   });
 });

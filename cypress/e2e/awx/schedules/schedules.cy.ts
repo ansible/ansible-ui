@@ -101,7 +101,7 @@ describe('Schedules - Create and Delete', () => {
 
     it('can create a simple schedule of ending type UNTIL', () => {
       const d = new Date();
-      const date = new Date(d.setDate(d.getDate() + 1)).toISOString().split('T')[0];
+      const date = new Date(d.setDate(d.getDate() + 2)).toISOString().split('T')[0];
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       const scheduleName = 'E2E Schedule UNTIL ' + randomString(4);
