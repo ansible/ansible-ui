@@ -70,8 +70,6 @@ describe('Notifications', () => {
 
   cyLabel(['upstream'], () => {
     describe('Notifications Tab for Organizations', () => {
-      const orgName = randomE2Ename();
-
       it('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
         const notificationName = randomE2Ename();
         cy.createNotificationTemplate(notificationName, awxOrganization).then(() => {
@@ -82,7 +80,7 @@ describe('Notifications', () => {
       it('can toggle the Organizations -> Notification on and off for job approval', () => {
         testToggle(
           'organizations',
-          orgName,
+          awxOrganization.name,
           'Click to enable approval',
           'Click to disable approval',
           awxOrganization
@@ -92,7 +90,7 @@ describe('Notifications', () => {
       it('can toggle the Organizations -> Notification on and off for job start', () => {
         testToggle(
           'organizations',
-          orgName,
+          awxOrganization.name,
           'Click to enable start',
           'Click to disable start',
           awxOrganization
@@ -102,7 +100,7 @@ describe('Notifications', () => {
       it('can toggle the Organizations -> Notification on and off for job success', () => {
         testToggle(
           'organizations',
-          orgName,
+          awxOrganization.name,
           'Click to enable success',
           'Click to disable success',
           awxOrganization
@@ -112,7 +110,7 @@ describe('Notifications', () => {
       it('can toggle the Organizations -> Notification on and off for job failure', () => {
         testToggle(
           'organizations',
-          orgName,
+          awxOrganization.name,
           'Click to enable failure',
           'Click to disable failure',
           awxOrganization

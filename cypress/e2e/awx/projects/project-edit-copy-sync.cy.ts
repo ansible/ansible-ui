@@ -23,7 +23,9 @@ describe('Project Edit, Copy, Sync', () => {
   beforeEach(() => {
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
+    cy.intercept('GET', awxAPI`/projects/?*`).as('projectsList');
     cy.filterTableByMultiSelect('name', [project.name]);
+    cy.wait('@projectsList');
   });
 
   describe('Project Edit and Sync', () => {

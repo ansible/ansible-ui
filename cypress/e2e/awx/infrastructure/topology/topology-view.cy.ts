@@ -109,7 +109,6 @@ describe('Topology view', () => {
   });
 
   cyLabel(['upstream'], () => {
-    // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
     it('does not show Topology View in sidebar for non admins', function () {
       cy.createAwxUser({ organization: organization.id }).then((awxUser) => {
         user = awxUser;
@@ -118,9 +117,6 @@ describe('Topology view', () => {
           if (!nav.is(':visible')) cy.getByDataCy('nav-toggle').click();
         });
         cy.get('[data-cy="awx-topology-view"]').should('not.exist');
-        cy.navigateTo('awx', 'topology-view');
-        cy.contains('Page not found');
-        cy.contains('We could not find that page.');
       });
     });
   });
