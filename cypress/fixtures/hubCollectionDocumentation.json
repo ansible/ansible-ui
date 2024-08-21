@@ -14,12 +14,10 @@
       "sha384": "5fe23080451b7a4a46e3fc422be2f4c84059a960f7b9263c583881fc8707b6a058c0ee0f606b2335515339338260c05c",
       "sha512": "a444f16b641a84ab505dcfbb800d751e8f2345b33ef34b9fd969b703cbb43afadaebc5de9ae54c35bf931e2800a2b87ca436a0424154d72ff8c468f140a1f5bc",
       "id": "018d1d81-8f01-73c3-bb47-dbe499914a8c",
-      "authors": [
-        "Lauro Gomes <lagomes@redhat.com>"
-      ],
+      "authors": ["Lauro Gomes <lagomes@redhat.com>"],
       "contents": [
         {
-          "name": "roles",
+          "name": "roles_description",
           "description": null,
           "content_type": "role"
         },
@@ -67,17 +65,13 @@
                   {
                     "name": "name",
                     "required": true,
-                    "description": [
-                      "O nome para o qual exibir a saudação."
-                    ]
+                    "description": ["O nome para o qual exibir a saudação."]
                   }
                 ],
                 "filename": "/tmp/tmp2n2uf8tb/ansible_collections/laurobmb/hello/plugins/modules/hello_plugin.py",
                 "collection": "laurobmb.hello",
                 "has_action": false,
-                "description": [
-                  "Este módulo exibe uma mensagem de saudação."
-                ],
+                "description": ["Este módulo exibe uma mensagem de saudação."],
                 "short_description": "Exemplo de módulo Ansible em Python"
               },
               "return": null,
@@ -103,12 +97,8 @@
           "tags": [],
           "issues": "https://github.com/laurobmb/ansible_hello_collection/issues",
           "readme": "README.md",
-          "authors": [
-            "Lauro Gomes <lagomes@redhat.com>"
-          ],
-          "license": [
-            "GPL-2.0-or-later"
-          ],
+          "authors": ["Lauro Gomes <lagomes@redhat.com>"],
+          "license": ["GPL-2.0-or-later"],
           "version": "1.0.5",
           "homepage": "https://github.com/laurobmb",
           "namespace": "laurobmb",
@@ -239,9 +229,7 @@
       "documentation": "https://github.com/laurobmb/ansible_hello_collection/docs/",
       "homepage": "https://github.com/laurobmb",
       "issues": "https://github.com/laurobmb/ansible_hello_collection/issues",
-      "license": [
-        "GPL-2.0-or-later"
-      ],
+      "license": ["GPL-2.0-or-later"],
       "name": "hello",
       "namespace": "laurobmb",
       "origin_repository": "https://github.com/laurobmb/ansible_hello_collection",

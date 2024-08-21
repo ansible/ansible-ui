@@ -273,8 +273,6 @@ describe('Collections Details', () => {
   });
   it('can show documentation tab for a collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-      cy.approveCollection(collectionName, namespace.name, '1.0.0');
-      // Sign collection
       visitCollection(collectionName, namespace.name);
       cy.intercept('GET', pulpAPI`/content/ansible/collection_versions/?namespace*`, {
         fixture: 'hubCollectionDocumentation.json',
@@ -315,6 +313,13 @@ describe('Collections Details', () => {
         cy.get('h2').contains('Author Information');
       });
       cy.deleteHubCollectionByName(collectionName);
+    });
+  });
+  it('can show contents tab for a collection', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      visitCollection(collectionName, namespace.name);
+      cy.clickTab('Contents', true);
+      cy.contains('No content available').should('exist');
     });
   });
 });
