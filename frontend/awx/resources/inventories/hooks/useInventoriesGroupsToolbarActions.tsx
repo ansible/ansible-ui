@@ -8,7 +8,7 @@ import {
   PageActionType,
   usePageNavigate,
 } from '../../../../../framework';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';
 import { useParams } from 'react-router-dom';
 import { useOptions } from '../../../../common/crud/useOptions';
@@ -77,7 +77,7 @@ export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected groups'),
+        label: t('Delete groups'),
         onClick: deleteGroups,
         isDanger: true,
         isDisabled:
@@ -154,7 +154,7 @@ export function useRunCommandAction<T extends { name: string }>(
       selection: PageActionSelection.None,
       variant: ButtonVariant.secondary,
       isPinned: options?.isPinned !== undefined ? options?.isPinned : true,
-      label: t('Run Command'),
+      label: t('Run command'),
       onClick: () => {
         onClick(params.selectedItems || []);
       },
@@ -167,7 +167,8 @@ export function useRunCommandAction<T extends { name: string }>(
       type: PageActionType.Button,
       selection: PageActionSelection.Single,
       isPinned: options?.isPinned,
-      label: t('Run Command'),
+      icon: CogIcon,
+      label: t('Run command'),
       onClick: (item) => {
         onClick([item]);
       },

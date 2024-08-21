@@ -64,7 +64,7 @@ describe('Inventory Sources', () => {
         }).then((cred) => {
           credential = cred;
           goToSourceList(inventory.name);
-          cy.clickButton(/^Add source/);
+          cy.clickButton(/^Create source/);
           cy.verifyPageTitle('Add new source');
           cy.getByDataCy('name').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
@@ -116,7 +116,7 @@ describe('Inventory Sources', () => {
       });
       cy.getByDataCy('description').clear().type('mock description');
       cy.getByDataCy('overwrite').check();
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save source$/);
       cy.getByDataCy('description').should('contain', 'mock description');
       cy.getByDataCy('enabled-options').should('contain', 'Overwrite');
     });
