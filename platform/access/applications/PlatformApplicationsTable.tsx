@@ -19,6 +19,7 @@ import { PlatformRoute } from '../../main/PlatformRoutes';
 import { useDeleteApplications } from './hooks/useDeleteApplications';
 import { usePlatformActiveUser } from '../../main/PlatformActiveUserProvider';
 import { usePlatformView } from '../../hooks/usePlatformView';
+import { usePersistentFilters } from '../../../frontend/common/PersistentFilters';
 import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
@@ -31,6 +32,7 @@ export function PlatformApplicationsTable() {
   const orgFilter = useOrganizationToolbarFilter();
   const toolbarFilters: IToolbarFilter[] = [nameFilter, orgFilter];
   const tableColumns = useApplicationsColumns();
+  usePersistentFilters('applications');
 
   const view = usePlatformView<Application>({
     url: gatewayV1API`/applications/`,
