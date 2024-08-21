@@ -1,7 +1,6 @@
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-// cypress
 describe('collections-detail-install', () => {
   let collectionName: string = '';
   let namespaceName: string = '';
@@ -15,13 +14,18 @@ describe('collections-detail-install', () => {
     cy.getByDataCy('collection-install-tab').click();
   }
 
-  beforeEach(() => {
+  before(() => {
     namespaceName = randomE2Ename();
     collectionName = randomE2Ename();
 
     cy.createHubNamespace({ namespace: { name: namespaceName } }).then(() => {
       cy.uploadCollection(collectionName, namespaceName, '1.0.0');
     });
+  });
+
+  after(() => {
+    cy.deleteHubCollectionByName(collectionName);
+    cy.deleteHubNamespace({ name: namespaceName, failOnStatusCode: false });
   });
 
   it('can download tarball', () => {
@@ -51,11 +55,8 @@ describe('collections-detail-install', () => {
     // for now we test button is rendered
     cy.contains('button', 'Download tarball');
 
-    cy.contains('button', 'Show signature').click();
-    //cy.contains('BEGIN PGP SIGNATURE');
-  });
-
-  afterEach(() => {
-    cy.deleteHubCollectionByName(collectionName);
+    // FIXME: sign collection first
+    // cy.contains('button', 'Show signature').click();
+    // cy.contains('BEGIN PGP SIGNATURE');
   });
 });
