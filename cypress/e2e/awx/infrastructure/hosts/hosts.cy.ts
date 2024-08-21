@@ -40,15 +40,6 @@ describe('Host Tests', () => {
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);
-    // cy.getByDataCy('inventory').click();
-    // cy.contains('button', 'Browse').click();
-    // cy.intercept('GET', awxAPI`/inventories/?*`).as('inventories');
-    // cy.getModal().within(() => {
-    //   cy.filterTableBySingleSelect('name', inventory.name);
-    //   cy.wait('@inventories');
-    //   cy.get(`[data-cy="checkbox-column-cell"] input`).click();
-    //   cy.contains('button', 'Confirm').click();
-    // });
     cy.getByDataCy('variables').type('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
@@ -95,15 +86,6 @@ describe('Host Tests', () => {
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);
-    // cy.getByDataCy('inventory').click();
-    // cy.contains('button', 'Browse').click();
-    // cy.intercept('GET', awxAPI`/inventories/?*`).as('inventories');
-    // cy.getModal().within(() => {
-    //   cy.filterTableBySingleSelect('name', inventory.name);
-    //   cy.wait('@inventories');
-    //   cy.get(`[data-cy="checkbox-column-cell"] input`).click();
-    //   cy.contains('button', 'Confirm').click();
-    // });
     cy.getByDataCy('variables').type('test: true');
     cy.clickButton(/^Create host/);
     cy.hasDetail(/^Name$/, hostName);
