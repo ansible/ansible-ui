@@ -89,6 +89,7 @@ describe('Remotes User Access tab', () => {
       cy.selectTableRowByCheckbox('username', hubUser.username, {
         disableFilter: true,
       });
+      cy.contains(role.name).should('be.visible');
       removeRoleFromListRow(role.name);
       cy.deleteHubUser(hubUser, { failOnStatusCode: false });
     });
@@ -131,6 +132,7 @@ describe('Remotes User Access tab', () => {
       cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
         disableFilter: false,
       });
+      cy.contains(role.name).should('be.visible');
       removeRoleFromListRow(role.name);
       cy.deleteHubTeam(hubTeam, { failOnStatusCode: false });
     });
