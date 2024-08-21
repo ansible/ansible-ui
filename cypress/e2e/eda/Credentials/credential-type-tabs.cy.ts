@@ -36,27 +36,23 @@ cyLabel(['aaas-unsupported'], function () {
       cy.deleteEdaCredentialType(credtype);
     });
 
-    it.skip('can view credentials in use via Credentials Tab', () => {
+    it('can view credentials in use via Credentials Tab', () => {
       cy.navigateTo('eda', 'credential-types');
-      cy.get('h1').should('contain', 'Credential Types');
+      cy.verifyPageTitle('Credential Types');
       cy.clickTableRow(credtype.name, false);
       cy.verifyPageTitle(credtype.name);
-      cy.contains('li', 'Credentials').click();
+      cy.clickTab('Credentials', true);
       cy.clickTableRow(cred.name, false);
       cy.contains('h1', cred.name);
     });
 
-    it.skip('can remove credentials via Credentials Tab', () => {
+    it('can remove credentials via Credentials Tab', () => {
       cy.navigateTo('eda', 'credential-types');
-      cy.get('h1').should('contain', 'Credential Types');
+      cy.verifyPageTitle('Credential Types');
       cy.clickTableRow(credtype.name, false);
-      cy.get('[data-ouia-component-type="PF5/Tabs"]').within(() => {
-        cy.contains('li', 'Credentials').click();
-      });
-      cy.getTableRowByText(`${cred.name}`, false).within(() => {
-        cy.get('[data-cy="actions-dropdown"]').click();
-        cy.get('[data-cy="delete-credential"]').click();
-      });
+      cy.clickTab('Credentials', true);
+      cy.selectTableRow(cred.name);
+      cy.clickToolbarKebabAction('delete-credentials');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credentials');
       cy.clickButton(/^Close$/);
