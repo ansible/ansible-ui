@@ -27,10 +27,10 @@ export function CreateTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Team')}
+        title={t('Create team')}
         breadcrumbs={[
           { label: t('Teams'), to: getPageUrl(AwxRoute.Teams) },
-          { label: t('Create Team') },
+          { label: t('Create team') },
         ]}
       />
       <AwxPageForm submitText={t('Create team')} onSubmit={onSubmit} onCancel={() => navigate(-1)}>
@@ -67,10 +67,10 @@ export function EditTeam() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Team')}
+        title={team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Team')}
         breadcrumbs={[
           { label: t('Teams'), to: getPageUrl(AwxRoute.Teams) },
-          { label: t('Edit Team') },
+          { label: team?.name ? t('Edit {{teamName}}', { teamName: team?.name }) : t('Team') },
         ]}
       />
       <AwxPageForm
