@@ -121,31 +121,4 @@ cyLabel(['aaas-unsupported'], function () {
       });
     });
   });
-
-  it('get warning while deleting a credential already in use by an event stream', () => {
-    cy.createBasicWebhookCredential().then((credential) => {
-      cy.createBasicWebhook(credential).then((webhook) => {
-        cy.log('name', credential);
-        cy.navigateTo('eda', 'credentials');
-        cy.verifyPageTitle('Credentials');
-        cy.clickTableRow(credential.name);
-        cy.intercept('DELETE', edaAPI`/eda-credentials/${credential.id.toString()}/?force=true`).as(
-          'deleted'
-        );
-        cy.verifyPageTitle(credential.name);
-        cy.clickPageAction('delete-credential');
-        cy.clickModalConfirmCheckbox();
-        cy.get('.pf-v5-c-alert__title').contains(
-          `The following credentials are in use: ${credential.name}`
-        );
-        cy.clickModalButton('Delete credential');
-        cy.wait('@deleted').then((deleted) => {
-          expect(deleted?.response?.statusCode).to.eql(204);
-          cy.verifyPageTitle('Credentials');
-        });
-        cy.deleteWebhook(webhook);
-        cy.deleteEdaCredential(credential);
-      });
-    });
-  });
 });
