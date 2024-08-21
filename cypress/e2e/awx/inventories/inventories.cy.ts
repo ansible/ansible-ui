@@ -179,20 +179,7 @@ describe('Inventories Tests', () => {
             cy.getByDataCy('create-smart-inventory').click();
             cy.getByDataCy('name').type(name);
             cy.getByDataCy('description').type('description');
-            cy.getByDataCy('organization').click();
-            cy.contains('button', 'Browse').click();
-            cy.get(`[role="dialog"]`).within(() => {
-              cy.get(`[aria-label="Simple table"] tr`);
-              cy.contains('button', 'Cancel');
-              cy.contains('button', 'Confirm');
-              cy.get('#filter');
-            });
-            cy.get(`[role="dialog"]`).within(() => {
-              cy.filterTableByMultiSelect('name', [org.name]);
-              cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
-              cy.get(`input[type="radio"]`).click();
-              cy.contains('button', 'Confirm').click();
-            });
+            cy.singleSelectByDataCy('organization', org.name);
             cy.getByDataCy('host-filter').type('name=host1');
             cy.getByDataCy('Submit').click();
             cy.getByDataCy('name').should('have.text', name);
