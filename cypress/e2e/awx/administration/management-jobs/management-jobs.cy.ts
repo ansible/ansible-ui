@@ -60,8 +60,10 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                   cy.getByDataCy('type').should('have.text', 'Management job');
                   cy.intercept('DELETE', awxAPI`/system_jobs/${jobId}/`).as('deleteMgtJob');
                   cy.clickPageAction('delete-job');
-                  cy.get('#confirm').click();
-                  cy.clickButton(/^Delete job/);
+                  cy.getModal().within(() => {
+                    cy.get('#confirm').click();
+                    cy.clickButton(/^Delete job/);
+                  });
                   cy.wait('@deleteMgtJob')
                     .its('response')
                     .then((response) => {

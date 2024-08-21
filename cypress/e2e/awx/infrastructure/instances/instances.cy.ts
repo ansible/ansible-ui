@@ -21,7 +21,7 @@ cyLabel(['upstream'], () => {
       const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
       // Navigate to the create instance page
       cy.getByDataCy('add-instance').click();
-      cy.getByDataCy('page-title').should('contain', 'Add instance');
+      cy.getByDataCy('page-title').should('contain', 'Create instance');
       // Create a new instance
       cy.getByDataCy('hostname').type(instanceHostname);
       cy.getByDataCy('listener-port').type('9999');
@@ -172,13 +172,20 @@ cyLabel(['upstream'], () => {
 
     it('can remove an instance from instance list toolbar', () => {
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
+        });
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.contains('tr', instance.hostname).find('input').check();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
-      cy.get('[data-cy="remove-instance"]').click();
+      cy.get('[data-cy="actions-dropdown"]')
+        .click()
+        .then(() => {
+          cy.get('[data-cy="remove-instance"] button')
+            .should('not.have.attr', 'aria-disabled', 'false')
+            .click();
+        });
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
         cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
@@ -204,13 +211,12 @@ cyLabel(['upstream'], () => {
       arrayOfElementText.push(instance.hostname);
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableByMultiSelect('hostname', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 6);
       cy.getByDataCy('select-all').click();
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="remove-instance"]').should('have.attr', 'aria-disabled', 'false');
-      cy.get('[data-cy="remove-instance"]').click();
+      cy.get('[data-cy="remove-instance"] button').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Permanently remove instances');
         cy.get('button').contains('Remove instance').should('have.attr', 'aria-disabled', 'true');
@@ -242,14 +248,12 @@ cyLabel(['upstream'], () => {
 
     it('can run a health check on an Instance in the instance list toolbar and assert the expected results', () => {
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="run-health-check"] button').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.contains('tr', instance.hostname).find('input').check();
       cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'false');
-      cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-        cy.getByDataCy('run-health-check').click();
-      });
+      cy.get('[data-cy="run-health-check"] button').should('not.have.attr', 'aria-disabled');
+      cy.get('[data-cy="run-health-check"] button').click();
       cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Run health checks on these instances');

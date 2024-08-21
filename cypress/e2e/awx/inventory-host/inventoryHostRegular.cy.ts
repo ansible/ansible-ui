@@ -5,7 +5,6 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import {
-  checkFactsInHost,
   checkHostGroup,
   createAndEditAndDeleteHost,
   createHost,
@@ -59,7 +58,44 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   });
 
   it("can view a host's facts on the facts tab of a host inside an inventory", () => {
-    checkFactsInHost(inventory, 'inventory_host');
+    const hostName = 'E2E Inventory host ' + randomString(4);
+    cy.navigateTo('awx', 'hosts');
+    cy.clickButton(/^Create host$/);
+    cy.verifyPageTitle('Create Host');
+    cy.getByDataCy('name').type(hostName);
+    cy.getByDataCy('description').type('This is the description');
+    cy.getByDataCy('inventory').click();
+    cy.contains('button', 'Browse').click();
+    cy.getModal().within(() => {
+      cy.filterTableBySingleSelect('name', inventory.name);
+      cy.get(`[data-cy="checkbox-column-cell"] input`).click();
+      cy.contains('button', 'Confirm').click();
+    });
+    cy.getByDataCy('variables').type('test: true');
+    cy.clickButton(/^Create host/);
+    cy.hasDetail(/^Name$/, hostName);
+    cy.hasDetail(/^Description$/, 'This is the description');
+    cy.get('[data-cy="code-block-value"]').should('contains.text', 'test: true');
+    cy.intercept(
+      { method: 'GET', url: awxAPI`/hosts/*/ansible_facts/` },
+      {
+        ansible_dns: {
+          search: ['dev-ui.svc.cluster.local', 'svc.cluster.local', 'cluster.local'],
+          options: {
+            ndots: '5',
+          },
+          nameservers: ['10.43.0.10'],
+        },
+      }
+    );
+    cy.navigateTo('awx', 'inventories');
+    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
+    cy.containsBy('a', 'Facts').click();
+    cy.get('code').should('contain', 'ansible_dns');
   });
 
   it('can launch a job template that uses an inventory with a particular host and view the job on the host jobs tab inside the inventory', () => {
