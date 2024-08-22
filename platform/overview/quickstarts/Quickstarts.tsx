@@ -8,7 +8,7 @@ export function QuickStartsPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Quick starts')}
+        title={t('Quick Starts')}
         description={t('Learn Ansible automation with hands-on quickstarts.')}
       />
       <Scrollable>
