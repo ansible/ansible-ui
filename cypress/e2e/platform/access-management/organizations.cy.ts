@@ -176,7 +176,10 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
             cy.contains('h1', 'Review').should('be.visible');
             cy.verifyReviewStepWizardDetails(
               'edaRoles',
-              ['Editor', 'Has create and edit permissions.'],
+              [
+                'Organization Editor',
+                'Has create and update permissions to all objects within a single organization',
+              ],
               '1'
             );
             cy.verifyReviewStepWizardDetails(
@@ -290,11 +293,10 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
   //Organizations teams tab - add roles to team
   cyLabel(['aaas-unsupported'], function () {
     it("can add a team and apply and remove the roles from an organization's team via the teams tab", function () {
-      const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
-      cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
+      cy.createPlatformTeam({ organization: organization.id }).then((team) => {
         const createdPlatformTeam = team.name;
-        cy.filterTableByTextFilter('name', globalOrg.name, { disableFilterSelection: true });
-        cy.clickTableRowLink('name', globalOrg.name, { disableFilter: true });
+        cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+        cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Teams', true);
         // Adds roles to the team
         cy.getByDataCy('add-roles').click();
@@ -327,14 +329,17 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
           cy.verifyReviewStepWizardDetails(
             'edaRoles',
             [
-              'Operator',
-              'Has read permissions. Has permissions to enable and disable rulebook activations.',
+              'Organization Operator',
+              'Has read permission to all objects and enable/disable/restart permissions for all rulebook activations within a single organization',
             ],
             '1'
           );
           cy.verifyReviewStepWizardDetails(
             'awxRoles',
-            ['Organization Audit', 'Has audit permissions to a single organization'],
+            [
+              'Organization Audit',
+              'Has permission to view all objects inside of a single organization',
+            ],
             '1'
           );
           cy.verifyReviewStepWizardDetails('teams', [createdPlatformTeam], '1');
@@ -344,7 +349,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
           cy.clickButton(/^Close$/);
         });
         cy.getModal().should('not.exist');
-        cy.verifyPageTitle(globalOrg.name);
+        cy.verifyPageTitle(organization.name);
         cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
           cy.get('[data-cy="manage-roles"]').click();
         });
@@ -377,7 +382,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
           cy.clickButton(/^Finish/);
         });
         cy.clickButton(/^Close/);
-        cy.verifyPageTitle(globalOrg.name);
+        cy.verifyPageTitle(organization.name);
         cy.clickTableRowLink('name', createdPlatformTeam);
         cy.verifyPageTitle(createdPlatformTeam);
         cy.clickTab('Roles', true);
@@ -397,11 +402,10 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
   cyLabel(['aaas-unsupported'], function () {
     //Organizations teams tab - teams row item modal check
     it('verifies the modal displayed when organization roles are not added to the team', function () {
-      const globalOrg = this.globalPlatformOrganization as PlatformOrganization;
-      cy.createPlatformTeam({ organization: globalOrg.id }).then((team) => {
+      cy.createPlatformTeam({ organization: organization.id }).then((team) => {
         const createdPlatformTeam = team.name;
-        cy.filterTableByTextFilter('name', globalOrg.name, { disableFilterSelection: true });
-        cy.clickTableRowLink('name', globalOrg.name, { disableFilter: true });
+        cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+        cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Teams', true);
         cy.getByDataCy('add-roles').click();
         cy.verifyPageTitle('Add roles');
