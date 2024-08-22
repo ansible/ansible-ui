@@ -13,8 +13,15 @@ export const edaErrorAdapter = (error: unknown): ErrorOutput => {
     const data = error.json;
     for (const key in data) {
       const value = (data as Record<string, unknown>)[key];
+      if (key === 'detail') {
+        if (Array.isArray(value)) {
+          genericErrors.push({ message: value[0] as string });
+        } else {
+          genericErrors.push({ message: value as string });
+        }
+      }
       // Check for non-field errors
-      if (key === 'non_field_errors' && Array.isArray(value)) {
+      else if (key === 'non_field_errors' && Array.isArray(value)) {
         value.forEach((message) => {
           if (typeof message === 'string') {
             genericErrors.push({ message });
