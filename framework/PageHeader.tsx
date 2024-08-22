@@ -11,7 +11,6 @@ import {
   Stack,
   StackItem,
   Title,
-  Truncate,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { CSSProperties, Fragment, ReactNode, useMemo } from 'react';
@@ -196,15 +195,7 @@ export function PageHeader(props: PageHeaderProps) {
             )}
             {isMdOrLarger && description && (
               <div data-cy="app-description" style={{ paddingTop: isXl ? 4 : 2, opacity: 0.8 }}>
-                {typeof description === 'string' ? (
-                  <Truncate content={description} />
-                ) : (
-                  <Stack>
-                    {description.map((d) => (
-                      <StackItem key={d}>{d}</StackItem>
-                    ))}
-                  </Stack>
-                )}
+                {description}
               </div>
             )}
           </FlexItem>

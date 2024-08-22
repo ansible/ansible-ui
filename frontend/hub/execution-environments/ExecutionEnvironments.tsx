@@ -30,11 +30,11 @@ export function ExecutionEnvironments() {
     <PageLayout>
       <PageHeader
         title={t('Execution Environments')}
-        description={t(
-          'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
-        )}
         titleHelpTitle={t('Execution Environments')}
         titleHelp={t(
+          'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
+        )}
+        description={t(
           'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
         )}
       />
