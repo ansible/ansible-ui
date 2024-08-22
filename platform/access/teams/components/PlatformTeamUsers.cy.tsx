@@ -1,160 +1,27 @@
-import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
-import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformTeamUsers } from './PlatformTeamUsers';
+import * as GatewayServices from '../../../main/GatewayServices';
 
-describe('Team users list', () => {
-  describe('Non-empty list', () => {
-    beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayV1API`/teams/5/users/?*`,
-        },
-        {
-          fixture: 'platformTeamAdmins.json',
-        }
-      ).as('teamUsersList');
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayV1API`/teams/5/`,
-        },
-        mockPlatformTeams.results[0]
-      ).as('team');
+describe('PlatformTeamUsers', () => {
+  it('Displays all tabs when all services are enabled', () => {
+    cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
+      if (serviceType === 'controller') {
+        return '/api/controller/';
+      } else if (serviceType === 'hub') {
+        return '/api/hub/';
+      }
+      return undefined;
     });
-    it('Users list renders', () => {
-      cy.mount(<PlatformTeamUsers />, {
-        path: '/access/teams/:id/*',
-        initialEntries: ['/access/teams/5/users'],
-      });
-      cy.setTableView('table');
-      cy.get('tbody').find('tr').should('have.length', 3);
-      // Toolbar actions are visible
-      cy.get(`[data-cy="add-user(s)"]`).should('be.visible');
-      cy.get('.page-table-toolbar').within(() => {
-        cy.get('.toggle-kebab').click();
-        cy.document()
-          .its('body')
-          .find('.pf-v5-c-menu__content')
-          .within(() => {
-            cy.get('button')
-              .contains(/^Remove selected users$/)
-              .should('be.visible');
-          });
-      });
-    });
-    it('Add user(s) button is disabled if the user does not have required permissions', () => {
-      cy.mount(<PlatformTeamUsers />, {
-        path: '/access/teams/:id/*',
-        initialEntries: ['/access/teams/5/users'],
-      });
-      cy.get('[data-cy="add-user(s)"]').should('have.attr', 'aria-disabled', 'true');
-    });
-    it('Add user(s) button is enabled if the user has the required permissions', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            PUT: {
-              name: {
-                type: 'string',
-                required: true,
-                read_only: false,
-                label: 'Name',
-                help_text: 'The name of this resource',
-                max_length: 512,
-              },
-            },
-          },
-        },
-      }));
-      cy.mount(<PlatformTeamUsers />, {
-        path: '/access/teams/:id/*',
-        initialEntries: ['/access/teams/5/users'],
-      });
-      cy.get('[data-cy="add-user(s)"]').should('have.attr', 'aria-disabled', 'false');
-    });
+    cy.mount(<PlatformTeamUsers />);
+    cy.get('.pf-v5-c-tabs__item').should('have.length', 3);
+    cy.containsBy('button', /^Ansible Automation Platform$/);
+    cy.containsBy('button', /^Automation Execution$/);
+    cy.containsBy('button', /^Automation Content$/);
   });
-  describe('Empty list', () => {
-    beforeEach(() => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayV1API`/teams/5/users/*`,
-        },
-        {
-          fixture: 'emptyList.json',
-        }
-      ).as('emptyList');
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayV1API`/teams/5/`,
-        },
-        mockPlatformTeams.results[0]
-      ).as('team');
-    });
-    it('Empty state is displayed correctly for user with permission to add users', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            PUT: {
-              name: {
-                type: 'string',
-                required: true,
-                read_only: false,
-                label: 'Name',
-                help_text: 'The name of this resource',
-                max_length: 512,
-              },
-            },
-          },
-        },
-      }));
-      cy.mount(<PlatformTeamUsers />, {
-        path: '/access/teams/:id/*',
-        initialEntries: ['/access/teams/5/users'],
-      });
-      cy.contains(/^There are currently no users added to this team.$/);
-      cy.contains(/^Add users by clicking the button below.$/);
-    });
-    it('Empty state is displayed correctly for user without permission to add users', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {},
-        },
-      }));
-      cy.mount(<PlatformTeamUsers />, {
-        path: '/access/teams/:id/*',
-        initialEntries: ['/access/teams/5/users'],
-      });
-      cy.contains(/^You do not have permission to add a user to this team./);
-      cy.contains(
-        /^Please contact your organization administrator if there is an issue with your access.$/
-      );
-    });
-  });
-  describe('Error retrieving list', () => {
-    it('Displays error loading users', () => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayV1API`/teams/5/users/*`,
-        },
-        { statusCode: 500 }
-      ).as('error');
-      cy.intercept(
-        {
-          method: 'GET',
-          url: gatewayV1API`/teams/5/`,
-        },
-        mockPlatformTeams.results[0]
-      ).as('team');
-      cy.mount(<PlatformTeamUsers />, {
-        path: '/access/teams/:id/*',
-        initialEntries: ['/access/teams/5/users'],
-      });
-      cy.contains('Error loading users');
-    });
+  it('Hides Automation Execution and Automation Content tabs when services are not enabled', () => {
+    cy.mount(<PlatformTeamUsers />);
+    cy.get('.pf-v5-c-tabs__item').should('have.length', 1);
+    cy.containsBy('button', /^Ansible Automation Platform$/);
+    cy.contains('button', /^Automation Execution$/).should('not.exist');
+    cy.contains('button', /^Automation Content$/).should('not.exist');
   });
 });
