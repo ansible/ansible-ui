@@ -1,7 +1,7 @@
 import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
 import { hubAPI } from '../../support/formatApiPathForHub';
 
-describe.skip('Repositories user and team access tests', () => {
+describe('Repositories user and team access tests', () => {
   let repository: Repository;
   before(() => {
     cy.createHubRepository().then((createdRepository) => {
