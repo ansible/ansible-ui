@@ -97,7 +97,7 @@ Cypress.Commands.add('awxLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: awxAPI`/me` });
+        cy.request({ method: 'GET', url: awxAPI`/me/` });
       },
       cacheAcrossSpecs: true,
     }
