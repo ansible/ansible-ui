@@ -52,6 +52,9 @@ export function useGetLinkToResourcePage() {
         'galaxy.containernamespace': getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
           params: { id: objectId },
         }),
+        'galaxy.containerrepository': getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
+          params: { id: objectId },
+        }),
         'galaxy.collectionremote': getPageUrl(HubRoute.RemoteDetails, { params: { id: objectId } }),
       };
       return resourceToEndpointMapping[contentType] ?? undefined;

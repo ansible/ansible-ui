@@ -29,7 +29,7 @@ export function ExecutionEnvironmentUserAccess() {
   return (
     <UserAccess
       service="hub"
-      id={executionEnvironment?.id?.toString() || ''}
+      id={executionEnvironment?.namespace?.id?.toString() || ''}
       type={'containernamespace'}
       addRolesRoute={HubRoute.ExecutionEnvironmentAddUsers}
     />
