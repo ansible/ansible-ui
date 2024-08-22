@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
+import { PageNavigationItem, PageNotImplemented } from '../../framework';
 import { PlatformTeamDetails } from '../access/teams/components/PlatformTeamDetails';
 import { CreatePlatformTeam, EditPlatformTeam } from '../access/teams/components/PlatformTeamForm';
 import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
 import { PlatformTeamPage } from '../access/teams/components/PlatformTeamPage';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformTeamUsers } from '../access/teams/components/PlatformTeamUsers';
+import { PlatformAAPTeamUsers } from '../access/teams/components/PlatformAAPTeamUsers';
 import { PlatformTeamAdmins } from '../access/teams/components/PlatformTeamAdmins';
 import { PlatformTeamRoles } from '../access/teams/components/PlatformTeamRoles';
 import { PlatformAwxTeamIdLookup } from '../access/teams/components/PlatformAwxTeamIdLookup';
@@ -90,6 +91,27 @@ export function useGetPlatformTeamsRoutes() {
               id: PlatformRoute.TeamUsers,
               path: 'users',
               element: <PlatformTeamUsers />,
+              children: [
+                {
+                  id: PlatformRoute.AAPTeamUsers,
+                  path: 'platform',
+                  element: <PlatformAAPTeamUsers />,
+                },
+                {
+                  id: PlatformRoute.AwxTeamUsers,
+                  path: 'controller',
+                  element: <PageNotImplemented />,
+                },
+                {
+                  id: PlatformRoute.HubTeamUsers,
+                  path: 'hub',
+                  element: <PageNotImplemented />,
+                },
+                {
+                  path: '',
+                  element: <Navigate to="platform" />,
+                },
+              ],
             },
             {
               id: PlatformRoute.TeamAdmins,

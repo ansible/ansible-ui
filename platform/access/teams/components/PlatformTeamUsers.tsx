@@ -1,77 +1,34 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { LoadingPage, PageTable } from '../../../../framework';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useParams } from 'react-router-dom';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { CubesIcon } from '@patternfly/react-icons';
-import { useTeamUsersRowActions, useTeamUsersToolbarActions } from '../hooks/useTeamUsersActions';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
+import { useGatewayService } from '../../../main/GatewayServices';
 
 export function PlatformTeamUsers() {
   const { t } = useTranslation();
-  const toolbarFilters = useUsersFilters();
-  const tableColumns = useUsersColumns();
   const params = useParams<{ id: string }>();
-  const {
-    data: team,
-    isLoading,
-    error,
-  } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  const awxService = useGatewayService('controller');
+  const hubService = useGatewayService('hub');
 
-  const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/`,
-    toolbarFilters,
-    tableColumns,
-  });
-
-  const { data: teamOptions, isLoading: isLoadingOptions } = useOptions<
-    OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`);
-  const canEditTeam = Boolean(
-    teamOptions &&
-      teamOptions.actions &&
-      (teamOptions.actions['PUT'] || teamOptions.actions['PATCH'])
-  );
-  const toolbarActions = useTeamUsersToolbarActions(view);
-  const rowActions = useTeamUsersRowActions(view);
-
-  if (isLoading || isLoadingOptions) return <LoadingPage />;
-  if (error) return <AwxError error={error} />;
+  const usersTabs = useMemo(() => {
+    return [
+      {
+        label: t('Ansible Automation Platform'),
+        page: PlatformRoute.AAPTeamUsers as string,
+      },
+      ...(awxService
+        ? [{ label: t('Automation Execution'), page: PlatformRoute.AwxTeamUsers as string }]
+        : []),
+      ...(hubService
+        ? [{ label: t('Automation Content'), page: PlatformRoute.HubTeamUsers as string }]
+        : []),
+    ];
+  }, [awxService, hubService, t]);
 
   return (
-    <PageTable<PlatformUser>
-      id="platform-users-table"
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading users')}
-      emptyStateTitle={
-        canEditTeam
-          ? t('There are currently no users added to this team.')
-          : t('You do not have permission to add a user to this team.')
-      }
-      emptyStateDescription={
-        canEditTeam
-          ? t('Add users by clicking the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateIcon={canEditTeam ? undefined : CubesIcon}
-      emptyStateButtonText={canEditTeam ? t('Add users') : undefined}
-      emptyStateActions={canEditTeam ? toolbarActions.slice(0, 1) : undefined}
-      {...view}
-    />
+    <>
+      <PageRoutedTabs tabs={usersTabs} isBox={false} params={{ id: params.id }} />
+    </>
   );
 }
