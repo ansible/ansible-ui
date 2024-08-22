@@ -36,7 +36,7 @@ describe('Host Tests', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
     cy.clickButton(/^Create host$/);
-    cy.verifyPageTitle('Create Host');
+    cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);
@@ -82,7 +82,7 @@ describe('Host Tests', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
     cy.clickButton(/^Create host$/);
-    cy.verifyPageTitle('Create Host');
+    cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);
