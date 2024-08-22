@@ -566,3 +566,13 @@ Cypress.Commands.add('getEdaUsers', (page: number, perPage: number) => {
     edaAPI`/users/?page=${page.toString()}&page_size=${perPage.toString()}`
   );
 });
+
+Cypress.Commands.add('getEdaUserbyName', (username: string) => {
+  cy.requestGet<EdaResult<EdaUser>>(edaAPI`/users/?username=${username}`).then((result) => {
+    if (Array.isArray(result?.results) && result.results.length === 1) {
+      return result.results[0];
+    } else {
+      return undefined;
+    }
+  });
+});

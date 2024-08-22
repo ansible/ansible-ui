@@ -1286,6 +1286,7 @@ declare global {
       ): Chainable<EdaResult<EdaCredentialType>>;
       getEdaUsers(page: number, pageSize: number): Chainable<EdaResult<EdaUser>>;
       getEdaUser(id: number): Chainable<EdaUser>;
+      getEdaUserbyName(username: string): Chainable<EdaUser>;
 
       /**Identify a particular EDA project and make it available for use in testing. */
       getEdaProjectByName(edaProjectName: string): Chainable<EdaProject>;
