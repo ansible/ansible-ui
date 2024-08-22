@@ -51,7 +51,42 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         icon: ExternalLinkAltIcon,
         label: t('Push container images'),
         onClick: () => {
-          window.open(AAPDocsURL, '_blank');
+          const host = window.location.host;
+          const tlsVerify = window.location.protocol == 'https:';
+          const name = 'example';
+          const containerURL = `${host}/${name}:latest`;
+
+          console.log(`podman login --tls-verify=${tlsVerify.toString()} ${host}`);
+          console.log(`podman image tag ${name} ${containerURL}`);
+          console.log(`podman push --tls-verify=${tlsVerify.toString()} ${containerURL}`);
+          /*
+          const instructions = (
+            <ClipboardCopy isCode isReadOnly isExpanded variant='expansion'>
+              podman login --tls-verify={tlsVerify.toString()} {host}
+              {'\n'}
+              podman image tag {name} {containerURL}
+              {'\n'}
+              podman push --tls-verify={tlsVerify.toString()} {containerURL}
+              {'\n'}
+            </ClipboardCopy>
+          );
+
+          const pushImagesButton = (
+            <HelpButton
+              content={
+                <>
+                  {instructions}
+                  <ExternalLink href={AAPDocsURL}>{t`Documentation`}</ExternalLink>
+                </>
+              }
+              hasAutoWidth
+              header={t`Push container images`}
+              prefix={
+                <span data-cy='push-images-button'>{t`Push container images`}</span>
+              }
+            />
+          );
+          */
         },
       },
       {
