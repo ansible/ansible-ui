@@ -1,0 +1,241 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "artifact": "/api/pulp/api/v3/artifacts/018d1d81-8936-78a8-9da6-d2e533880a03/",
+      "pulp_created": "2024-01-18T16:57:26.537218Z",
+      "pulp_href": "/api/pulp/api/v3/content/ansible/collection_versions/018d1d81-8f01-73c3-bb47-dbe499914a8c/",
+      "sha256": "58f39d394089990a96942f6a252c0ec9c3cf2469f3275aa07428bbfb1718a8c7",
+      "md5": null,
+      "sha1": null,
+      "sha224": "892c5473062909dec2130a23ffe5ad30d0243855cb9ed3c6fcc3cf92",
+      "sha384": "5fe23080451b7a4a46e3fc422be2f4c84059a960f7b9263c583881fc8707b6a058c0ee0f606b2335515339338260c05c",
+      "sha512": "a444f16b641a84ab505dcfbb800d751e8f2345b33ef34b9fd969b703cbb43afadaebc5de9ae54c35bf931e2800a2b87ca436a0424154d72ff8c468f140a1f5bc",
+      "id": "018d1d81-8f01-73c3-bb47-dbe499914a8c",
+      "authors": ["Lauro Gomes <lagomes@redhat.com>"],
+      "contents": [
+        {
+          "name": "roles_description",
+          "description": null,
+          "content_type": "role"
+        },
+        {
+          "name": "hello_plugin",
+          "description": "Exemplo de módulo Ansible em Python",
+          "content_type": "module"
+        }
+      ],
+      "dependencies": {},
+      "description": "Example of test module",
+      "docs_blob": {
+        "contents": [
+          {
+            "doc_strings": {},
+            "readme_file": "README.md",
+            "readme_html": "<h1>Role Name</h1>\n<p>A brief description of the role goes here.</p>\n<h2>Requirements</h2>\n<p>Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.</p>\n<h2>Role Variables</h2>\n<p>A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.</p>\n<h2>Dependencies</h2>\n<p>A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.</p>\n<h2>Example Playbook</h2>\n<p>Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:</p>\n<pre><code>- hosts: servers\n  roles:\n     - { role: username.rolename, x: 42 }\n</code></pre>\n<h2>License</h2>\n<p>BSD</p>\n<h2>Author Information</h2>\n<p>An optional section for the role authors to include contact information, or a website (HTML is not allowed).</p>",
+            "content_name": "roles_description",
+            "content_type": "role"
+          },
+          {
+            "doc_strings": {
+              "doc": {
+                "notes": [
+                  {
+                    "Exemplo de uso": [
+                      {
+                        "name": "Use Hello Plugin",
+                        "register": "hello_result",
+                        "my_collection.hi": {
+                          "name": "John Doe"
+                        }
+                      },
+                      {
+                        "name": "Display Greeting",
+                        "debug": {
+                          "var": "hello_result.msg"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "module": "hello_plugin",
+                "options": [
+                  {
+                    "name": "name",
+                    "required": true,
+                    "description": ["O nome para o qual exibir a saudação."]
+                  }
+                ],
+                "filename": "/tmp/tmp2n2uf8tb/ansible_collections/laurobmb/hello/plugins/modules/hello_plugin.py",
+                "collection": "laurobmb.hello",
+                "has_action": false,
+                "description": ["Este módulo exibe uma mensagem de saudação."],
+                "short_description": "Exemplo de módulo Ansible em Python"
+              },
+              "return": null,
+              "examples": "\n- name: Exemplo de uso do Hello Plugin\n  my_collection.hello_plugin:\n    name: \"Jane Doe\"\n  register: hello_result\n\n- name: Exibir saudação\n  debug:\n    var: hello_result.msg\n",
+              "metadata": null
+            },
+            "readme_file": null,
+            "readme_html": null,
+            "content_name": "hello_plugin",
+            "content_type": "module"
+          }
+        ],
+        "collection_readme": {
+          "html": "<h1>Ansible Collection</h1>\n<p>Documentation for the collection.</p>\n<h3>Galaxy collection build</h3>\n<blockquote>\n<p>ansible-galaxy collection build</p>\n</blockquote>\n<h3>Galaxy collection install from file</h3>\n<blockquote>\n<p>ansible-galaxy collection install laurobmb-hello-1.0.0.tar.gz</p>\n</blockquote>\n<h3>Galaxy collection install from git</h3>\n<blockquote>\n<p>ansible-galaxy collection install git+https://github.com/laurobmb/ansible_hello_collection.git,main</p>\n<p>ansible-galaxy collection install laurobmb-hello-1.0.4.tar.gz -p collections/</p>\n</blockquote>\n<h3>Playbook sample</h3>\n<pre><code>---\n- name: Utilizando o módulo personalizado\n  hosts: localhost\n  tasks:\n    - name: Usar o módulo Hello Plugin\n      laurobmb.hello.hi:\n        name: \"Lauro Gomes\"\n      register: hello_result\n\n    - name: Exibir saudação\n      ansible.builtin.debug:\n        var: hello_result.msg\n</code></pre>",
+          "name": "README.md"
+        },
+        "documentation_files": []
+      },
+      "manifest": {
+        "format": 1,
+        "collection_info": {
+          "name": "hello",
+          "tags": [],
+          "issues": "https://github.com/laurobmb/ansible_hello_collection/issues",
+          "readme": "README.md",
+          "authors": ["Lauro Gomes <lagomes@redhat.com>"],
+          "license": ["GPL-2.0-or-later"],
+          "version": "1.0.5",
+          "homepage": "https://github.com/laurobmb",
+          "namespace": "laurobmb",
+          "repository": "https://github.com/laurobmb/ansible_hello_collection",
+          "description": "Example of test module",
+          "dependencies": {},
+          "license_file": null,
+          "documentation": "https://github.com/laurobmb/ansible_hello_collection/docs/"
+        },
+        "file_manifest_file": {
+          "name": "FILES.json",
+          "ftype": "file",
+          "format": 1,
+          "chksum_type": "sha256",
+          "chksum_sha256": "818479426f41ab68dae00f90422f7f2fdb8df3367bd31e0bdfcf797bc649b3be"
+        }
+      },
+      "files": {
+        "files": [
+          {
+            "name": ".",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "README.md",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "c967affb385f591bab8ddc509bfc3495fc7f78f1cc8869129fa14e1a8aed2f87"
+          },
+          {
+            "name": "docs",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "meta",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "meta/runtime.yml",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "a692bfeb30b438f6192ab1b59737252476debddf3c0d8a609ceb01fa7d05f155"
+          },
+          {
+            "name": "plugins",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "plugins/README.md",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "854081319843a15a95afeee3d0d6f5a17bd7f57ec0ad89e6c96e1481d4e8f64a"
+          },
+          {
+            "name": "plugins/modules",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "plugins/modules/hello_plugin.py",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "d8a8f5e70e94fe64fb68945948474858c810e0dfbfe717e8112f08772424c1c2"
+          },
+          {
+            "name": "roles",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "roles/tasks",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "roles/tasks/main.yml",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "70a74f5c0b1b75488966a52590747e09ece21cc288db53cad486fa787d0337a9"
+          },
+          {
+            "name": "roles/defaults",
+            "ftype": "dir",
+            "format": 1,
+            "chksum_type": null,
+            "chksum_sha256": null
+          },
+          {
+            "name": "roles/defaults/main.yml",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "c04890300123cf261a898954ae33ae6a578e76ae3c11ba24a0a75f740683e6e7"
+          },
+          {
+            "name": "roles/README.md",
+            "ftype": "file",
+            "format": 1,
+            "chksum_type": "sha256",
+            "chksum_sha256": "cc751d75266f757a38189f15d54e548dc87706f14a39756995c27b49eaca8a07"
+          }
+        ],
+        "format": 1
+      },
+      "documentation": "https://github.com/laurobmb/ansible_hello_collection/docs/",
+      "homepage": "https://github.com/laurobmb",
+      "issues": "https://github.com/laurobmb/ansible_hello_collection/issues",
+      "license": ["GPL-2.0-or-later"],
+      "name": "hello",
+      "namespace": "laurobmb",
+      "origin_repository": "https://github.com/laurobmb/ansible_hello_collection",
+      "tags": [],
+      "version": "1.0.5",
+      "requires_ansible": ">=2.9.10"
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
+import { pulpAPI } from '../../support/formatApiPathForHub';
 
 function visitCollection(collection: string, namespace: string) {
   cy.navigateTo('hub', Collections.url);
@@ -268,6 +269,57 @@ describe('Collections Details', () => {
         cy.contains('span', 'Deprecated').should('not.exist');
       });
       cy.deleteHubCollectionByName(collectionName);
+    });
+  });
+  it('can show documentation tab for a collection', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      visitCollection(collectionName, namespace.name);
+      cy.intercept('GET', pulpAPI`/content/ansible/collection_versions/?namespace*`, {
+        fixture: 'hubCollectionDocumentation.json',
+      });
+      cy.clickTab('Documentation', true);
+      cy.contains('Documentation (1)').should('exist');
+      cy.get('.hub-docs-content').within(() => {
+        cy.get('h1').contains('Ansible Collection');
+        cy.get('h3').contains('Galaxy collection build');
+        cy.get('h3').contains('Galaxy collection install from file');
+        cy.get('h3').contains('Galaxy collection install from git');
+        cy.get('h3').contains('Playbook sample');
+      });
+      cy.contains('Module(1)').should('exist');
+      cy.contains('hello_plugin').click();
+      cy.get('.hub-docs-content').within(() => {
+        cy.get('h1').contains('module > hello_plugin');
+        cy.get('h2').contains('Synopsis');
+        cy.get('h2').contains('Parameters');
+        cy.get('h2').contains('Notes');
+        cy.get('h2').contains('Examples');
+        // json view exists
+        cy.get('button').contains('json').click();
+        cy.contains(
+          'This will render content of the documentation in user non friendly format, but it will render complete content. Useful in situations, when documentation does not renders everything correctly.'
+        ).should('exist');
+        cy.get('pre').should('exist');
+      });
+      cy.contains('Role(1)').should('exist');
+      cy.contains('roles_description').click();
+      cy.get('.hub-docs-content').within(() => {
+        cy.get('h1').contains('Role Name');
+        cy.get('h2').contains('Requirements');
+        cy.get('h2').contains('Role Variables');
+        cy.get('h2').contains('Dependencies');
+        cy.get('h2').contains('Example Playbook');
+        cy.get('h2').contains('License');
+        cy.get('h2').contains('Author Information');
+      });
+      cy.deleteHubCollectionByName(collectionName);
+    });
+  });
+  it('can show contents tab for a collection', () => {
+    cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+      visitCollection(collectionName, namespace.name);
+      cy.clickTab('Contents', true);
+      cy.contains('No content available').should('exist');
     });
   });
 });
