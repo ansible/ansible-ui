@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   PageFormSubmitHandler,
-  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -227,6 +226,14 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             />
           )}
 
+          {!isNew && (
+            <PageFormTextInput<ExecutionEnvironmentFormProps>
+              name="description"
+              label={t('Description')}
+              placeholder={t('Enter a description')}
+            />
+          )}
+
           {isRemote && (
             <>
               <PageFormTextInput<ExecutionEnvironmentFormProps>
@@ -253,13 +260,6 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
               <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
             </>
           )}
-
-          <PageFormTextArea<ExecutionEnvironmentFormProps>
-            name="description"
-            label={t('Description')}
-            placeholder={t('Enter a description')}
-            isDisabled={mode === 'add'}
-          />
         </HubPageForm>
       )}
     </PageLayout>
