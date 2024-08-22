@@ -11,7 +11,7 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
     cy.createPlatformOrganization().then((organization) => {
       platformOrganization = organization;
     });
-    cy.navigateTo('platform', 'applications-page');
+    cy.navigateTo('platform', 'applications');
   });
 
   afterEach(() => {
@@ -58,7 +58,7 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         cy.contains('dd', authGrantType);
         cy.contains('dd', appClientType);
         //edit from list row and delete from details page
-        cy.navigateTo('platform', 'applications-page');
+        cy.navigateTo('platform', 'applications');
         cy.verifyPageTitle('Applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
           cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
@@ -91,7 +91,7 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
     cy.createPlatformOrganization().then((organization) => {
       platformOrganization = organization;
     });
-    cy.navigateTo('platform', 'applications-page');
+    cy.navigateTo('platform', 'applications');
   });
 
   afterEach(() => {
@@ -138,7 +138,7 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         cy.contains('dd', authGrantType);
         cy.contains('dd', appClientType);
         //delete from list page
-        cy.navigateTo('platform', 'applications-page');
+        cy.navigateTo('platform', 'applications');
         cy.verifyPageTitle('Applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
           cy.clickTableRowAction('name', oauthApplicationName, 'delete-application', {
@@ -175,7 +175,7 @@ describe('AAP OAuth Applications CRUD actions and Bulk Deletion', () => {
         platformApplication2 = aapApplication;
       }
     );
-    cy.navigateTo('platform', 'applications-page');
+    cy.navigateTo('platform', 'applications');
   });
 
   it('create an auth code applications (confidential & public clients) and performs bulk delete from the list toolbar', () => {
@@ -211,7 +211,7 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
         }
       );
     });
-    cy.navigateTo('platform', 'applications-page');
+    cy.navigateTo('platform', 'applications');
   });
 
   it("admin user creates an an AAP Oauth application and associates an AAP token with it, verifies the association in application's token tab", () => {
