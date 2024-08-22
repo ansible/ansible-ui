@@ -783,11 +783,17 @@ declare global {
 
       getAwxOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
 
+      getEdaOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
+
       getGatewayOrgByAnsibleId(orgAnsibleId: string | undefined): Chainable<Organization>;
 
       getAwxUserByAnsibleId(userAnsibleId: string | undefined): Chainable<AwxUser>;
 
+      getEdaUserByAnsibleId(userAnsibleId: string | undefined): Chainable<EdaUser>;
+
       getAwxTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<Team>;
+
+      getEdaTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<Team>;
 
       /**
        * pollAWXResults - Polls AWX until results are found

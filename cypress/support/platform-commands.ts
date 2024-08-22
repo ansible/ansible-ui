@@ -16,7 +16,12 @@ import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { awxAPI } from './formatApiPathForAwx';
 import { hubAPI } from './formatApiPathForHub';
+import { EdaItemsResponse } from '../../frontend/eda/common/EdaItemsResponse';
 import './rest-commands';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
+import { edaAPI } from './formatApiPathForEDA';
+import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
+import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -251,6 +256,21 @@ Cypress.Commands.add('getAwxOrgByAnsibleId', (ansibleId: string | undefined) => 
   });
 });
 
+Cypress.Commands.add('getEdaOrgByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<EdaItemsResponse<EdaOrganization> | undefined>(
+        edaAPI`/organizations/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
 Cypress.Commands.add('getPlatformOrgByAnsibleId', (ansibleId: string | undefined) => {
   if (!ansibleId) {
     throw new Error('ansibleId is required');
@@ -274,6 +294,21 @@ Cypress.Commands.add('getAwxTeamByAnsibleId', (ansibleId: string | undefined) =>
     () =>
       cy.requestGet<AwxItemsResponse<Team> | undefined>(
         awxAPI`/teams/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getEdaTeamByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<EdaItemsResponse<EdaTeam> | undefined>(
+        edaAPI`/teams/?resource__ansible_id=${ansibleId}`
       ),
     (results) => results.results.length > 0
   ).then((results) => {
@@ -319,6 +354,21 @@ Cypress.Commands.add('getAwxUserByAnsibleId', (ansibleId: string | undefined) =>
     () =>
       cy.requestGet<AwxItemsResponse<AwxUser> | undefined>(
         awxAPI`/users/?resource__ansible_id=${ansibleId}`
+      ),
+    (results) => results.results.length > 0
+  ).then((results) => {
+    cy.wrap(results.results[0]);
+  });
+});
+
+Cypress.Commands.add('getEdaUserByAnsibleId', (ansibleId: string | undefined) => {
+  if (!ansibleId) {
+    throw new Error('ansibleId is required');
+  }
+  cy.poll(
+    () =>
+      cy.requestGet<EdaItemsResponse<EdaUser> | undefined>(
+        edaAPI`/users/?resource__ansible_id=${ansibleId}`
       ),
     (results) => results.results.length > 0
   ).then((results) => {
