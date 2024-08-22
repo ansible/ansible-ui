@@ -34,6 +34,7 @@ export interface ActivationCreate {
   log_level?: LogLevelEnum;
   eda_credentials?: number[] | null;
   k8s_service_name?: string | null;
+  skip_audit_events?: boolean | null;
 }
 
 /** Serializer for the Activation Instance model. */
@@ -196,6 +197,7 @@ export interface ActivationRead {
   awx_token_id: number | null;
   eda_credentials?: EdaCredential[] | null;
   event_streams?: EventStreamOut[] | null;
+  webhooks?: EventStreamOut[] | null;
   /**
    * * `debug` - debug
    * * `info` - info
@@ -204,6 +206,7 @@ export interface ActivationRead {
   log_level?: LogLevelEnum;
   /** Service name of the activation */
   k8s_service_name?: string | null;
+  skip_audit_events: boolean;
 }
 
 export interface AuditAction {
@@ -1549,6 +1552,12 @@ export interface RulebookRef {
 /** * `git` - Git */
 export enum ScmTypeEnum {
   Git = 'git',
+}
+
+export interface Source {
+  name: string;
+  source_info: string;
+  rulebook_hash: string;
 }
 
 /**

@@ -32,7 +32,7 @@ export function EdaDecisionEnvironmentsCard() {
       height="md"
       linkText={t('View all Decision Environments')}
       to={getPageUrl(EdaRoute.DecisionEnvironments)}
-      helpTitle={t('Decision environments')}
+      helpTitle={t('Decision Environments')}
       help={t('Decision environments are a container image to run Ansible rulebooks.')}
     >
       <PageTable
@@ -46,7 +46,7 @@ export function EdaDecisionEnvironmentsCard() {
         emptyStateVariant={'light'}
         emptyStateTitle={t('There are currently no decision environments')}
         emptyStateDescription={t('Create a decision environment by clicking the button below.')}
-        emptyStateButtonText={t('Create Decision Environment')}
+        emptyStateButtonText={t('Create decision environment')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
         {...view}
         compact

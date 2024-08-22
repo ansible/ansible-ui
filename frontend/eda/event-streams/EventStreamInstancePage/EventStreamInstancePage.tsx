@@ -25,7 +25,7 @@ export function EventStreamInstancePage() {
       <PageHeader
         title={`${eventStreamInstance?.id || ''} - ${eventStreamInstance?.name || ''}`}
         breadcrumbs={[
-          { label: t('Event streams'), to: getPageUrl(EdaRoute.EventStreams) },
+          { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
           {
             label: eventStream?.name || '',
             to: getPageUrl(EdaRoute.EventStreamPage, { params: { id: eventStream?.id } }),

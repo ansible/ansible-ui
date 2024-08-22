@@ -74,7 +74,31 @@ export function CollectionDocumentation() {
     return Object.values(groups);
   }, [data, searchText]);
 
-  const [isDrawerOpen, setDrawerOpen] = useState(true);
+  const docsFiles = useMemo(() => {
+    let files:
+      | {
+          label: string;
+          name: string;
+        }[]
+      | [] = [];
+    if (data?.results[0].docs_blob) {
+      const { docs_blob } = data.results[0];
+      files = docs_blob.documentation_files.map(({ name }) => ({
+        label: name.charAt(0).toUpperCase() + name.slice(1).split('.')[0],
+        name: name.split('.')[0],
+      }));
+    }
+    return [
+      ...files,
+      {
+        name: 'readme',
+        label: t('Readme'),
+      },
+    ]
+      ?.filter(({ name }) => name.startsWith(searchText.toLowerCase()))
+      .sort((l, r) => l.name.localeCompare(r.name));
+  }, [data, searchText, t]);
+
   const lg = useBreakpoint('lg');
 
   if (!data && !error) {
@@ -100,8 +124,13 @@ export function CollectionDocumentation() {
 
   // for readme, use the root html of all contents
   let html = '';
-  if (!content_type) {
+  if (!content_type && !content_name) {
     html = dataItem?.docs_blob?.collection_readme?.html || '';
+  }
+  if (!content_type && content_name) {
+    html =
+      data.results[0].docs_blob.documentation_files.find((c) => c.name.startsWith(content_name))
+        ?.html || '';
   }
 
   // if the content has html, lets use that instead of content frontent generation
@@ -117,17 +146,15 @@ export function CollectionDocumentation() {
   }
 
   return (
-    <Drawer isExpanded={isDrawerOpen} isInline={lg} position="left">
+    <Drawer isExpanded isInline={lg} position="left">
       <DrawerContent
         panelContent={
-          isDrawerOpen ? (
-            <CollectionDocumentationTabPanel
-              setDrawerOpen={setDrawerOpen}
-              groups={groups}
-              setSearchText={setSearchText}
-              searchText={searchText}
-            />
-          ) : undefined
+          <CollectionDocumentationTabPanel
+            groups={groups}
+            setSearchText={setSearchText}
+            searchText={searchText}
+            docs={docsFiles}
+          />
         }
       >
         <DrawerContentBody className="body hub-docs-content pf-v5-c-content hub-content-alert-fix">
@@ -213,6 +240,7 @@ export type CollectionVersionContentItem = {
       html: string;
       name: string;
     };
+    documentation_files: { name: string; html: string }[];
   };
   license: string[];
 };

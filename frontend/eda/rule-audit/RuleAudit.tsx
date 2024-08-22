@@ -28,7 +28,7 @@ export function RuleAudit() {
           'Rule audit allows auditing of rules which have been triggered by incoming events.'
         )}
         description={t(
-          'Rule audit allows auditing of rules which have been triggered by incoming events.'
+          'Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.'
         )}
       />
       <PageTable

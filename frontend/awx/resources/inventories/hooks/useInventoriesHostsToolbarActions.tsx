@@ -68,7 +68,7 @@ export function useInventoriesHostsToolbarActions(view: IAwxView<AwxHost>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected hosts'),
+        label: t('Delete hosts'),
         onClick: deleteHosts,
         isDanger: true,
         isDisabled: (hosts: AwxHost[]) => cannotDeleteResources(hosts, t),

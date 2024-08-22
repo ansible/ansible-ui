@@ -48,7 +48,7 @@ export function NotificationDetails() {
               }
             />
           </PageDetail>
-          <PageDetail label={t('Last Modified')}>
+          <PageDetail label={t('Last modified')}>
             <DateTimeCell
               value={notificationTemplate.modified}
               author={notificationTemplate.summary_fields?.modified_by?.username}
@@ -69,7 +69,7 @@ export function NotificationDetails() {
               {notificationTemplate.summary_fields.organization.name}
             </Link>
           </PageDetail>
-          <PageDetail label={t('Notification Type')}>
+          <PageDetail label={t('Notification type')}>
             {notificationTemplate.notification_type}
           </PageDetail>
 
@@ -235,8 +235,8 @@ function returnCaption(notification_type: string | null, key: string) {
     if (key === 'username') return t('Username');
     if (key === 'password') return t('Password');
     if (key === 'host') return t('Host');
-    if (key === 'recipients') return t('Recipient List');
-    if (key === 'sender') return t('Sender Email');
+    if (key === 'recipients') return t('Recipient list');
+    if (key === 'sender') return t('Sender email');
     if (key === 'port') return t('Port');
     if (key === 'timeout') return t('Timeout');
     if (key === 'use_tls') return t('Use TLS');
@@ -265,9 +265,9 @@ function returnCaption(notification_type: string | null, key: string) {
   if (notification_type === 'grafana') {
     if (key === 'grafana_url') return t('Grafana URL');
     if (key === 'grafana_key') return t('Grafana API Key');
-    if (key === 'dashboardId') return t('ID of the dashboard (optional)');
-    if (key === 'panelId') return t('ID of the panel (optional)');
-    if (key === 'annotation_tags') return t('Tags for the annotation (optional)');
+    if (key === 'dashboardId') return t('ID of the dashboard');
+    if (key === 'panelId') return t('ID of the panel');
+    if (key === 'annotation_tags') return t('Tags for the annotation');
     if (key === 'grafana_no_verify_ssl') return t('Disable SSL verification');
   }
 

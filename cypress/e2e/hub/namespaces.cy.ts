@@ -1,25 +1,31 @@
 import { randomString } from '../../../framework/utils/random-string';
+import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { hubAPI } from '../../support/formatApiPathForHub';
+import { randomE2Ename } from '../../support/utils';
 import { MyImports, Namespaces } from './constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
-describe('Namespaces', () => {
-  const testSignature: string = randomString(5, undefined, { isLowercase: true });
-  function generateNamespaceName(): string {
-    return `test_${testSignature}_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-  }
+function visitNamespace(name: string) {
+  cy.navigateTo('hub', Namespaces.url);
+  cy.verifyPageTitle('Namespaces');
+  cy.filterTableBySingleText(name);
+  cy.get('a').contains(name).click();
+  cy.verifyPageTitle(name);
+}
 
+describe('Namespaces', () => {
   it('create, search and delete a namespace', () => {
     cy.navigateTo('hub', Namespaces.url);
-    cy.verifyPageTitle(Namespaces.title);
+    cy.verifyPageTitle('Namespaces');
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.getByDataCy('create-namespace').click();
     cy.url().should('include', Namespaces.urlCreate);
-    cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="company"]').type('test company');
-    cy.get('[data-cy="link-text-0"]').type('test link');
-    cy.get('[data-cy="link-url-0"]').type('https://test.com');
-    cy.get('[data-cy="Submit"]').click();
+    cy.getByDataCy('name').type(namespaceName);
+    cy.getByDataCy('company').type('test company');
+    cy.getByDataCy('link-text-0').type('test link');
+    cy.getByDataCy('link-url-0').type('https://test.com');
+    cy.getByDataCy('Submit').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
     cy.selectDetailsPageKebabAction('delete-namespace');
     cy.url().should('include', Namespaces.url);
@@ -28,155 +34,186 @@ describe('Namespaces', () => {
 
   it('should show the correct URL when clicking on the CLI configuration tab', () => {
     cy.navigateTo('hub', Namespaces.url);
+    cy.verifyPageTitle('Namespaces');
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
+    cy.getByDataCy('create-namespace').click();
     cy.url().should('include', Namespaces.urlCreate);
-    cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="company"]').type('test company');
-    cy.get('[data-cy="Submit"]').click();
+    cy.getByDataCy('name').type(namespaceName);
+    cy.getByDataCy('company').type('test company');
+    cy.getByDataCy('Submit').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
-    cy.get('[data-cy="namespace-cli-tab"]').should('contain', 'CLI Configuration');
-    cy.get('[data-cy="namespace-cli-tab"]').click();
-    cy.get('[class="pf-v5-c-truncate__start"]').should('contain', apiPrefix);
+    cy.getByDataCy('namespace-cli-tab').should('contain', 'CLI Configuration');
+    cy.getByDataCy('namespace-cli-tab').click();
+    cy.get('.pf-v5-c-truncate__start').should('contain', apiPrefix);
     // Delete namespace
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-namespace"]').click();
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('delete-namespace').click();
     cy.get('#confirm').click();
     cy.clickButton(/^Delete namespaces$/);
   });
+});
+
+describe('Namespaces - use existing namespaces', () => {
+  let namespace: HubNamespace;
+  before(() => {
+    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+    cy.createHubNamespace({
+      namespace: {
+        name: namespaceName,
+        description: 'test description',
+        company: 'test company',
+        links: [{ name: 'test link', url: 'https://test.com' }],
+      },
+    }).then((ns: HubNamespace) => {
+      namespace = ns;
+    });
+  });
+  after(() => cy.deleteHubNamespace(namespace));
 
   it('should show namespace details tab', () => {
-    cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
-    cy.url().should('include', Namespaces.urlCreate);
-    cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="description"]').type('test description');
-    cy.get('[data-cy="company"]').type('test company');
-    cy.get('[data-cy="link-text-0"]').type('test link');
-    cy.get('[data-cy="link-url-0"]').type('https://test.com');
-
-    cy.get('[data-cy="Submit"]').click();
-    cy.url().should('include', `/namespaces/${namespaceName}/details`);
-    cy.get('[data-cy="namespace-details-tab"]').should('contain', 'Details');
-    cy.get('[data-cy="namespace-details-tab"]').click();
-    //check name, company, description
-    cy.get('[data-cy="name"]').should('contain', namespaceName);
-    cy.get('[data-cy="description"]').should('contain', 'test description');
-    cy.get('[data-cy="company"]').should('contain', 'test company');
-    cy.get('[data-cy="key-value-list-title"]').should('contain', 'Useful links');
-    cy.get('[data-cy="item-key-0"]').should('contain', 'test link');
+    visitNamespace(namespace.name);
+    cy.getByDataCy('name').should('contain', namespace.name);
+    cy.getByDataCy('description').should('contain', 'test description');
+    cy.getByDataCy('company').should('contain', 'test company');
+    cy.getByDataCy('key-value-list-title').should('contain', 'Useful links');
+    cy.getByDataCy('item-key-0').should('contain', 'test link');
     const linkUrl = 'https://test.com';
-    cy.get(`[data-cy="item-value-${linkUrl}"]`).should('contain', linkUrl);
-    // Delete namespace
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-namespace"]').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete namespaces$/);
+    cy.getByDataCy(`item-value-${linkUrl}`).should('contain', linkUrl);
   });
 
   it('should show collections tab', () => {
-    cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
-    cy.url().should('include', Namespaces.urlCreate);
-    cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="description"]').type('test description');
-    cy.get('[data-cy="company"]').type('test company');
-    cy.get('[data-cy="Submit"]').click();
-    cy.url().should('include', `/namespaces/${namespaceName}/details`);
-    cy.get('[data-cy="collections-tab"]').should('contain', 'Collections');
-    cy.get('[data-cy="collections-tab"]').click();
-    cy.get('[data-cy="empty-state-title"]').should('contain', 'No collections yet');
-    cy.get('[data-cy="upload-collection"]').should('contain', 'Upload collection');
-
-    // Delete the edited namespace
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-namespace"]').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete namespaces$/);
-  });
-
-  it('edit a namespace', () => {
-    cy.navigateTo('hub', Namespaces.url);
-    const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.get('[data-cy="create-namespace"]').should('be.visible').click();
-    cy.url().should('include', Namespaces.urlCreate);
-    cy.get('[data-cy="name"]').type(namespaceName);
-    cy.get('[data-cy="company"]').type('test company');
-    cy.get('[data-cy="Submit"]').click();
-    cy.url().should('include', `/namespaces/${namespaceName}/details`);
-    cy.get('[data-cy="edit-namespace"]').click();
-    cy.get('[data-cy="name"]').should('be.disabled');
-    cy.get('[data-cy="company"]').clear().type('new company');
-    cy.get('[data-cy="description"]').clear().type('new description');
-    cy.get('[data-cy="Submit"]').click();
-    cy.get('[data-cy="company"]').contains(/^new company$/);
-    cy.get('[data-cy="description"]').contains(/^new description$/);
-
-    // Delete the edited namespace
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-namespace"]').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete namespaces$/);
-  });
-
-  it('explore different views and pagination', () => {
-    const nameSpaceName = `test_pagination_namespace_${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
-    cy.createNamespace(nameSpaceName);
-    cy.navigateTo('hub', Namespaces.url);
-    cy.setTablePageSize('50');
-    cy.filterTableBySingleText(nameSpaceName);
-    cy.get('[data-cy="card-view"]').click();
-    cy.contains(nameSpaceName).should('be.visible');
-    cy.get('[data-cy="list-view"]').click();
-    cy.contains(nameSpaceName).should('be.visible');
-    cy.get('[data-cy="table-view"]').click();
-    cy.contains(nameSpaceName).should('be.visible');
-    cy.get('[href*="/namespaces/test_pagination_namespace_"]').click();
-
-    // Delete the edited namespace
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.get('[data-cy="delete-namespace"]').click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete namespaces$/);
-  });
-
-  it('user can view import logs', () => {
-    const namespaceName = `test_pagination_namespace_${randomString(5, undefined, {
-      isLowercase: true,
-    })}`;
-    cy.createNamespace(namespaceName);
-    cy.visit(`${Namespaces.url}/${namespaceName}`);
+    visitNamespace(namespace.name);
+    cy.url().should('include', `/namespaces/${namespace.name}/details`);
+    cy.getByDataCy('collections-tab').should('contain', 'Collections');
+    cy.getByDataCy('collections-tab').click();
+    cy.getByDataCy('empty-state-title').should('contain', 'No collections yet');
+    cy.getByDataCy('upload-collection').should('contain', 'Upload collection');
 
     cy.clickPageAction('imports');
     cy.url().should('include', MyImports.url);
-    cy.url().should('include', namespaceName);
+    cy.url().should('include', namespace.name);
     cy.verifyPageTitle(MyImports.title);
-    cy.get('#namespace-selector').contains(namespaceName);
-
-    cy.deleteNamespace(namespaceName);
+    cy.get('#namespace-selector').contains(namespace.name);
   });
 
-  it('user can bulk dekete namespaces', () => {
-    const numberOfNamespaces = 5;
-    for (let i = 0; i < numberOfNamespaces; i++) {
-      const namespaceName = generateNamespaceName();
-      cy.createNamespace(namespaceName);
-    }
+  it('edit a namespace', () => {
+    visitNamespace(namespace.name);
+    cy.url().should('include', `/namespaces/${namespace.name}/details`);
+    cy.getByDataCy('edit-namespace').click();
+    cy.getByDataCy('company').clear().type('new company');
+    cy.getByDataCy('description').clear().type('new description');
+    cy.getByDataCy('Submit').click();
+    cy.getByDataCy('company').contains(/^new company$/);
+    cy.getByDataCy('description').contains(/^new description$/);
+  });
 
+  it('explore different views and pagination', () => {
+    cy.navigateTo('hub', Namespaces.url);
+    cy.verifyPageTitle('Namespaces');
+    cy.setTablePageSize('50');
+    cy.filterTableBySingleText(namespace.name);
+    cy.setTableView('card');
+    cy.contains(namespace.name).should('be.visible');
+    cy.setTableView('list');
+    cy.contains(namespace.name).should('be.visible');
+    cy.setTableView('table');
+    cy.contains(namespace.name).should('be.visible');
+  });
+});
+
+describe('Namespaces - sign collections', () => {
+  let namespace: HubNamespace;
+  const collectionName = randomE2Ename();
+  const collectionName2 = randomE2Ename();
+  const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
+
+  before(() => {
+    cy.createHubNamespace({
+      namespace: {
+        name: namespaceName,
+        description: 'test description',
+        company: 'test company',
+        links: [{ name: 'test link', url: 'https://test.com' }],
+      },
+    }).then((ns: HubNamespace) => {
+      namespace = ns;
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+      cy.uploadCollection(collectionName2, namespace.name, '1.0.0');
+    });
+  });
+
+  after(() => {
+    cy.deleteCollectionsInNamespace(namespace.name);
+    cy.deleteHubNamespace(namespace);
+  });
+
+  it('can sign a collection', () => {
+    cy.waitForAllTasks();
     cy.navigateTo('hub', 'namespaces');
-    cy.get('[data-cy="table-view"]').click({ force: true });
-    cy.filterTableBySingleText(testSignature);
-    cy.get('tbody').find('tr').should('have.length', 5);
-    cy.get('[data-cy="select-all"]', { timeout: 30000 }).click();
-    cy.clickToolbarKebabAction('delete-namespaces');
+    cy.verifyPageTitle('Namespaces');
+    cy.setTableView('table');
+    cy.filterTableBySingleText(namespace.name, true);
+    cy.clickTableRow(namespace.name, false);
+    cy.getByDataCy('collections-tab').click();
+    cy.setTableView('table');
+
+    // Sign collection
+    cy.filterTableBySingleText(collectionName, true);
+    cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
+    cy.get(`[data-cy="sign-collection"] button`).click();
     cy.get('#confirm').click();
-    cy.clickButton(/^Delete namespaces$/);
+    cy.clickButton(/^Sign collections$/);
     cy.contains(/^Success$/);
     cy.clickButton(/^Close$/);
-    cy.clickButton(/^Clear all filters$/);
+    cy.getModal().should('not.exist');
+    cy.get('div[data-cy="manage-view"]').within(() => {
+      cy.clickKebabAction('actions-dropdown', 'imports');
+    });
+    cy.getByDataCy('status').should('contain', 'Completed');
+    cy.getByDataCy('approval-status').should('be.visible');
+  });
+
+  it('can sign all collections', () => {
+    cy.navigateTo('hub', 'namespaces');
+    cy.verifyPageTitle('Namespaces');
+    cy.setTableView('table');
+    cy.filterTableBySingleText(namespace.name, true);
+    cy.clickTableRow(namespace.name, false);
+    cy.getByDataCy('collections-tab').click();
+    cy.setTableView('table');
+
+    // Sign collection
+    cy.filterTableBySingleSelect('repository', 'validated');
+    cy.get('div[data-cy="manage-view"]').within(() => {
+      cy.clickKebabAction('actions-dropdown', 'sign-all-collections');
+    });
+    cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signAll');
+    cy.getByDataCy('modal-sign-button').click();
+    cy.wait('@signAll').then((response) => {
+      expect(response?.response?.statusCode).to.eql(202);
+    });
+  });
+});
+
+describe('Namespaces - delete', () => {
+  it('user can bulk delete namespaces', () => {
+    cy.createHubNamespace().then((namespace1) => {
+      cy.createHubNamespace().then((namespace2) => {
+        cy.waitForAllTasks();
+        cy.navigateTo('hub', 'namespaces');
+        cy.verifyPageTitle('Namespaces');
+        cy.setTablePageSize('10');
+        cy.setTableView('table');
+        cy.filterTableBySingleText(namespace1.name, true);
+        cy.selectTableRow(namespace1.name, false);
+        cy.filterTableBySingleText(namespace2.name, true);
+        cy.selectTableRow(namespace2.name, false);
+        cy.clickToolbarKebabAction('delete-namespaces');
+        cy.clickModalConfirmCheckbox();
+        cy.clickModalButton('Delete namespaces');
+        cy.assertModalSuccess();
+        cy.clickButton(/^Close$/);
+      });
+    });
   });
 });

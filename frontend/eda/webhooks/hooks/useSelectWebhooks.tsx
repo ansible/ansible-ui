@@ -14,7 +14,7 @@ export function useSelectWebhooks(webhookType?: number, title?: string) {
     (onSelect: (webhooks: EdaWebhook[]) => void) => {
       setDialog(
         <SelectEdaWebhooks
-          title={t(title ? title : 'Select webhook')}
+          title={t(title ? title : 'Select event stream')}
           onSelect={onSelect}
           webhookType={webhookType}
         />

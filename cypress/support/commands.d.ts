@@ -80,6 +80,11 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 
 declare global {
   namespace Cypress {
@@ -909,8 +914,6 @@ declare global {
       ): Chainable<InstanceGroup>;
       createAwxInstance(hostname: string, listener_port?: number): Chainable<Instance>;
       createAwxLabel(label: Partial<Omit<Label, 'id'>>): Chainable<Label>;
-      createGlobalOrganization(): Chainable<void>;
-      createGlobalProject(): Chainable<void>;
 
       deleteAwxOrganization(
         organization: Organization,
@@ -1248,7 +1251,14 @@ declare global {
        *
        * @returns {Chainable<EdaProject>}
        */
-      createEdaProject(): Chainable<EdaProject>;
+      createEdaProject(edaOrgID: number): Chainable<EdaProject>;
+
+      createEdaOrganization(): Chainable<EdaOrganization>;
+
+      /**Identify a particular EDA organization and make it available for use in testing. */
+      getEdaOrganizationByName(edaOrganizationName: string): Chainable<EdaOrganization>;
+
+      deleteEdaOrganization(edaOrganization: EdaOrganization): Chainable<void>;
 
       /**Identify the specific Rulebooks populated by a specific project and make them available for use in testing. */
       getEdaRulebooks(edaProject: EdaProject, rulebookName?: string): Chainable<EdaRulebook[]>;
@@ -1480,7 +1490,7 @@ declare global {
       /**
        * Creates a DE and returns the same.
        */
-      createEdaDecisionEnvironment(): Chainable<EdaDecisionEnvironment>;
+      createEdaDecisionEnvironment(edaOrgID: number): Chainable<EdaDecisionEnvironment>;
 
       /**
        * Retrieves a DE by name.
@@ -1506,7 +1516,24 @@ declare global {
       // ==============================================================================================================
 
       // HUB Request Commands
+      createHubTeam(): Cypress.Chainable<HubTeam>;
+      deleteHubTeam(
+        hubTeam: HubTeam,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
+      createHubUser(hubUser?: HubUser): Cypress.Chainable<HubUser>;
+      deleteHubUser(
+        hubUser: HubUser,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Cypress.Chainable<void>;
       hubRequest<T>(options: HubRequestOptions): Cypress.Chainable<Response<T>>;
+
       hubGetRequest<T>(options: HubGetRequestOptions): Cypress.Chainable<Response<T>>;
       hubPutRequest<T>(
         options: HubPutRequestOptions
@@ -1521,6 +1548,7 @@ declare global {
         options: HubDeleteRequestOptions
       ): Cypress.Chainable<Response<T> | Response<Task>>;
       waitOnHubTask(taskUrl: string): Cypress.Chainable<Task>;
+      waitForAllTasks(): Cypress.Chainable<void>;
 
       // HUB Execution Environment Commands
       queryHubExecutionEnvironments(
@@ -1597,11 +1625,15 @@ declare global {
         }
       ): Cypress.Chainable<void>;
       uploadHubCollectionFile(hubFilePath: string): Cypress.Chainable<void>;
-      createNamespace(namespaceName: string): Cypress.Chainable<void>;
-      deleteNamespace(namespaceName: string): Cypress.Chainable<void>;
       deleteCollectionsInNamespace(namespaceName: string): Cypress.Chainable<void>;
       cleanupCollections(namespace: string, repo: string): Cypress.Chainable<void>;
-      createRemote(remoteName: string, url?: string): Cypress.Chainable<HubRemote>;
+      createRemote(
+        remoteName: string,
+        url?: string,
+        ca_cert?: string,
+        client_cert?: string,
+        requirements_file?: string
+      ): Cypress.Chainable<HubRemote>;
       deleteRemote(remoteName: string): Cypress.Chainable<void>;
       createRemoteRegistry(
         remoteRegistryName: string,
@@ -1621,14 +1653,22 @@ declare global {
       uploadCollection(
         collection: string,
         namespace: string,
-        version?: string
+        version: string,
+        repository?: string
       ): Cypress.Chainable<void>;
       approveCollection(
         collection: string,
         namespace: string,
         version: string
       ): Cypress.Chainable<void>;
-      collectionCopyVersionToRepositories(collection: string): Cypress.Chainable<void>;
+      moveCollection(
+        collection: string,
+        namespace: string,
+        version: string,
+        sourceRepo: string,
+        targetRepo: string
+      ): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;
@@ -1639,6 +1679,23 @@ declare global {
         namespaceName: string,
         repository: string
       ): Cypress.Chainable<void>;
+      getHubRoles(queryParams?: {
+        content_type__model?: string;
+        managed?: boolean;
+      }): Chainable<HubItemsResponse<HubRbacRole>>;
+      getHubRoleDetail(roleID: string): Chainable<HubRole>;
+      createHubRoleAPI({
+        roleName,
+        description,
+        content_type,
+        permissions,
+      }: {
+        roleName: string;
+        description: string;
+        content_type: ContentTypeEnum;
+        permissions: string[];
+      }): Cypress.Chainable<HubRbacRole>;
+      deleteHubRoleAPI(hubRoleDefinition: HubRbacRole): Chainable<void>;
 
       // ==============================================================================================================
       // END OF COMMANDS

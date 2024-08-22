@@ -1,17 +1,20 @@
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getPatternflyColor, PFColorE } from '../../../../framework';
 import { Alert, CodeBlock, Stack, StackItem } from '@patternfly/react-core';
 import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
 import { ImportStatusBar } from './ImportStatusBar';
 import styled from 'styled-components';
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
+import { getLogMessageColor } from '../../common/utils/getLogMessageColor';
+import { NavigationArrow } from '../../common/ImportLogNavigationArrow';
 
 const EmptyImportConsole = styled.div`
   height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
 `;
 
 interface IProps {
@@ -23,13 +26,14 @@ interface IProps {
 
 export function ImportLog({ isLoading, collectionImport, collection, error }: IProps) {
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
 
   if (error) return <EmptyStateError titleProp={error.name} message={error.message} />;
 
   if (isLoading) return <LoadingState />;
 
   return (
-    <>
+    <div ref={ref}>
       {collectionImport && (
         <ImportStatusBar collection={collection} collectionImport={collectionImport} />
       )}
@@ -51,22 +55,29 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
           <pre style={{ whiteSpace: 'pre-wrap' }}>{collectionImport?.error?.traceback}</pre>
         </Alert>
       )}
-      <CodeBlock style={{ marginTop: '10px' }} data-cy="import-console">
+      <CodeBlock
+        style={{
+          marginTop: '10px',
+          backgroundColor: 'var(--pf-v5-global--palette--black-850)',
+          position: 'relative',
+        }}
+        data-cy="import-console"
+      >
+        <NavigationArrow
+          direction="down"
+          onClick={() => ref.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })}
+        />
+        <NavigationArrow
+          direction="up"
+          onClick={() => ref.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })}
+        />
         {collectionImport ? (
           <>
             {collectionImport.messages?.map((message, index) => (
               <div
                 key={index}
                 style={{
-                  color: getPatternflyColor(
-                    message.level === 'INFO'
-                      ? PFColorE.Default
-                      : message.level === 'WARNING'
-                        ? PFColorE.Warning
-                        : message.level === 'ERROR'
-                          ? PFColorE.Danger
-                          : PFColorE.Disabled
-                  ),
+                  color: getLogMessageColor(message.level),
                 }}
               >
                 {message.message}
@@ -77,6 +88,6 @@ export function ImportLog({ isLoading, collectionImport, collection, error }: IP
           <EmptyImportConsole>{t`No data`}</EmptyImportConsole>
         )}
       </CodeBlock>
-    </>
+    </div>
   );
 }

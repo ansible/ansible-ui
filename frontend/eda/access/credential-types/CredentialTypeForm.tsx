@@ -25,7 +25,6 @@ import { EdaPageForm } from '../../common/EdaPageForm';
 import { Alert, Button } from '@patternfly/react-core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useCallback, useState } from 'react';
-import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialTypeDetails } from './CredentialTypePage/CredentialTypeDetails';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -188,14 +187,13 @@ function CredentialTypeInputs() {
         label={t('Description')}
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOrganization<EdaCredentialTypeCreate> name="organization_id" />
       <PageFormSection singleColumn>
         <PageFormDataEditor
           name="inputs"
           label={t('Input configuration')}
           labelHelpTitle={t('Input configuration')}
           labelHelp={t(
-            `Enter inputs using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+            `Input schema which defines a set of ordered fields for that type, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
           )}
           isRequired
           format="object"
@@ -221,7 +219,7 @@ function CredentialTypeInputs() {
             label={t('Injector configuration')}
             labelHelpTitle={t('Injector configuration')}
             labelHelp={t(
-              `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
+              `Environment variables or extra variables that specify the values a credential type can inject, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
             )}
             isRequired
             format="object"

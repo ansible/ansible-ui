@@ -21,7 +21,11 @@ export function useAwxConfigState() {
 export function AwxConfigProvider(props: { children: ReactNode; disabled?: boolean }) {
   return props?.disabled ? (
     <AwxConfigContext.Provider
-      value={{ awxConfig: undefined, awxConfigError: undefined, refreshAwxConfig: undefined }}
+      value={{
+        awxConfig: undefined,
+        awxConfigError: undefined,
+        refreshAwxConfig: undefined,
+      }}
     >
       {props.children}
     </AwxConfigContext.Provider>

@@ -5,6 +5,7 @@ import { IPageAction, PageActionType, PageActionSelection } from '../../../../..
 import { ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 import { useDeleteImages } from './useDeleteImages';
 import { useExecutionEnvironmentManageTags } from './useExecutionEnvironmentManageTags';
+import { useController } from '../../hooks/useController';
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
 
 export function useImagesToolbarActions({
@@ -26,6 +27,7 @@ export function useImagesToolbarActions({
   const executionEnvironmentManageTags = useExecutionEnvironmentManageTags(() => {
     void refresh?.();
   });
+  const useInController = useController(executionEnvironment, /* isImage: */ true);
 
   return useMemo<IPageAction<Image>[]>(
     () => [
@@ -38,12 +40,7 @@ export function useImagesToolbarActions({
         },
         isHidden: () => !!executionEnvironment.pulp?.repository?.remote,
       },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        label: t('Use in Controller'),
-        onClick: () => {},
-      },
+      useInController,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -55,6 +52,6 @@ export function useImagesToolbarActions({
         },
       },
     ],
-    [t, executionEnvironment, deleteImages, executionEnvironmentManageTags]
+    [t, executionEnvironment, deleteImages, executionEnvironmentManageTags, useInController]
   );
 }

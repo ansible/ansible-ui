@@ -238,7 +238,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
             {job.summary_fields?.inventory?.name}
           </Link>
         ),
-        helpText: t('Inventory used on this job'),
+        helpText: t('Inventory used on this job.'),
         value: (job: UnifiedJob) => job.summary_fields?.inventory?.name,
         table: ColumnTableOption.expanded,
         card: 'hidden',

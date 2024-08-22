@@ -8,7 +8,7 @@ import {
   PageTable,
 } from '../../../../../framework';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { RuleListItemType } from '../types';
 import { PlusCircleIcon } from '@patternfly/react-icons';
@@ -27,25 +27,30 @@ export function RulesList(props: {
   const { t } = useTranslation();
   const config = useAwxConfig();
   const [occurrences, setOccurrences] = useState<
-    { utc: string[]; local: string[]; id: number }[] | []
+    { utc: string[]; local: string[]; id: number; error: string }[] | []
   >([]);
 
   useEffect(() => {
     async function fetchRules() {
       const promises = await Promise.all(
         props.rules.map(async ({ rule, id }) => {
-          const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
-            awxAPI`/schedules/preview/`,
-            {
-              rrule: rule.toString(),
-            }
-          );
+          try {
+            const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
+              awxAPI`/schedules/preview/`,
+              {
+                rrule: rule.toString(),
+              }
+            );
 
-          return {
-            utc,
-            local,
-            id,
-          };
+            return {
+              utc,
+              local,
+              id,
+              error: '',
+            };
+          } catch (ex) {
+            return { utc: [], local: [], id: -1, error: 'Error' + ex?.toString() };
+          }
         })
       );
 
@@ -61,9 +66,9 @@ export function RulesList(props: {
       {
         header: props.ruleType === 'rules' ? t('Rules') : t('Exceptions'),
         cell: (item: RuleListItemType) => {
-          let labels;
-          occurrences.map(({ id, local }) => {
-            if (id === item.id) {
+          let labels: JSX.Element | undefined = undefined;
+          occurrences.map(({ id, local, error }) => {
+            if (id === item.id && !error) {
               labels = (
                 <LabelGroupWrapper numLabels={5}>
                   {local.map((dateTimeString) => (
@@ -74,7 +79,12 @@ export function RulesList(props: {
                 </LabelGroupWrapper>
               );
             }
+
+            if (!labels) {
+              labels = <div>{t(`Error loading preview`)}</div>;
+            }
           });
+
           return labels;
         },
       },
@@ -102,6 +112,7 @@ export function RulesList(props: {
     : t(
         'Schedule rules are a component of an overall schedule.  A schedule rule is used to determine when a schedule will run.  A schedule can have multiple rules.'
       );
+  const docUrl = useGetDocsUrl(config, 'schedules');
   return (
     <div>
       {props.needsHeader ? (
@@ -109,7 +120,7 @@ export function RulesList(props: {
           title={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelpTitle={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelp={t('Create as many schedule rules as you need.')}
-          titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/scheduling.html`}
+          titleDocLink={docUrl}
           description={description}
           headerActions={
             <>

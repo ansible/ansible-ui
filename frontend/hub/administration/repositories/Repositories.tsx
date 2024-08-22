@@ -56,8 +56,6 @@ export function Repositories() {
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
-        disableCardView
-        disableListView
         {...view}
       />
     </PageLayout>

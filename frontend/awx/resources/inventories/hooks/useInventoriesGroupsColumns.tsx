@@ -49,7 +49,7 @@ function useRelatedGroupsColumn() {
 
   const column: ITableColumn<InventoryGroup> = useMemo(
     () => ({
-      header: t('Related Groups'),
+      header: t('Related groups'),
       cell: (group) => {
         const groups: { results: Array<{ id: number; name: string }>; count: number } = group
           ?.summary_fields?.groups ?? {
@@ -57,7 +57,7 @@ function useRelatedGroupsColumn() {
           count: 0,
         };
         return (
-          <ChipGroup aria-label={t`Related Groups`}>
+          <ChipGroup aria-label={t`Related groups`}>
             {groups.results.map((group) => (
               <Chip key={group.name} isReadOnly>
                 {group.name}

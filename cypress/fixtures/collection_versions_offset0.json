@@ -3,28 +3,28 @@
     "count": 16
   },
   "links": {
-    "first": "/api/automation-hub/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&is_highest=true&limit=10&offset=0&repository_label=%21hide_from_search",
+    "first": "/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&is_highest=true&limit=10&offset=0&repository_label=%21hide_from_search",
     "previous": null,
-    "next": "/api/automation-hub/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&is_highest=true&limit=10&offset=10&repository_label=%21hide_from_search",
-    "last": "/api/automation-hub/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&is_highest=true&limit=10&offset=6&repository_label=%21hide_from_search"
+    "next": "/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&is_highest=true&limit=10&offset=10&repository_label=%21hide_from_search",
+    "last": "/api/galaxy/v3/plugin/ansible/search/collection-versions/?is_deprecated=false&is_highest=true&limit=10&offset=6&repository_label=%21hide_from_search"
   },
   "data": [
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/d7678469-4808-4bf3-bf66-8e91f73f3625/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/d7678469-4808-4bf3-bf66-8e91f73f3625/",
         "namespace": "test_ns",
         "name": "test_collection3",
         "version": "1.0.0",
@@ -41,7 +41,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -53,20 +53,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/e5efd402-0022-4ad9-9dbf-82dd1607b910/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/e5efd402-0022-4ad9-9dbf-82dd1607b910/",
         "namespace": "test_ns",
         "name": "test_collection4",
         "version": "1.0.0",
@@ -83,7 +83,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -95,20 +95,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/0a0e3f4e-4e2f-4f97-8d35-3cf8fdd8fdfd/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/0a0e3f4e-4e2f-4f97-8d35-3cf8fdd8fdfd/",
         "namespace": "test_ns",
         "name": "test_collection5",
         "version": "1.0.0",
@@ -125,7 +125,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -137,20 +137,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/fc723cff-d356-4e6c-9f21-e1216c54ee95/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/fc723cff-d356-4e6c-9f21-e1216c54ee95/",
         "namespace": "test_ns",
         "name": "test_collection6",
         "version": "1.0.0",
@@ -167,7 +167,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -179,20 +179,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/9033ba51-f68d-46c0-b595-6003c3d1830e/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/9033ba51-f68d-46c0-b595-6003c3d1830e/",
         "namespace": "test_ns",
         "name": "test_collection7",
         "version": "1.0.0",
@@ -209,7 +209,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -221,20 +221,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/c1e55b3a-f65c-4a68-b975-3b2fa3cd3759/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/c1e55b3a-f65c-4a68-b975-3b2fa3cd3759/",
         "namespace": "test_ns",
         "name": "test_collection8",
         "version": "1.0.0",
@@ -251,7 +251,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -263,20 +263,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/b9af5149-7ebc-4565-bf59-3dc01ea908c8/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/b9af5149-7ebc-4565-bf59-3dc01ea908c8/",
         "namespace": "test_ns",
         "name": "test_collection9",
         "version": "1.0.0",
@@ -293,7 +293,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -305,20 +305,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/1de5270b-0981-4db8-a92c-74a5370d69fa/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/1de5270b-0981-4db8-a92c-74a5370d69fa/",
         "namespace": "test_ns",
         "name": "test_collection10",
         "version": "1.0.0",
@@ -335,7 +335,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -347,20 +347,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/2a32d31d-5241-449c-8660-926c98ad0e8e/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/2a32d31d-5241-449c-8660-926c98ad0e8e/",
         "namespace": "test_ns",
         "name": "test_collection11",
         "version": "1.0.0",
@@ -377,7 +377,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",
@@ -389,20 +389,20 @@
     },
     {
       "repository": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/",
         "pulp_created": "2023-08-24T16:00:10.249391Z",
-        "versions_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
+        "versions_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/",
         "pulp_labels": {
           "pipeline": "approved"
         },
-        "latest_version_href": "/api/automation-hub/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
+        "latest_version_href": "/api/galaxy/pulp/api/v3/repositories/ansible/ansible/75d1d03c-a32a-4842-8bcb-ee4868dc327b/versions/458/",
         "name": "published",
         "description": "Certified content repository",
         "retain_repo_versions": 1,
         "remote": null
       },
       "collection_version": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/collection_versions/b7132f91-6efb-4057-866b-c38e70acd026/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/collection_versions/b7132f91-6efb-4057-866b-c38e70acd026/",
         "namespace": "test_ns",
         "name": "test_collection12",
         "version": "1.0.0",
@@ -419,7 +419,7 @@
       },
       "repository_version": "latest",
       "namespace_metadata": {
-        "pulp_href": "/api/automation-hub/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
+        "pulp_href": "/api/galaxy/pulp/api/v3/content/ansible/namespaces/1673e649-6cd4-4873-a079-44e81e4df842/",
         "name": "test_ns",
         "company": "",
         "description": "",

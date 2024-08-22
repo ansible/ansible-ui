@@ -129,7 +129,7 @@ export function AwxSettingsCategoryDetail(props: {
     case 'nested object':
       if (Object.keys(props.data[props.name] as object).length === 0) return null;
       return (
-        <PageDetail label={option.label}>
+        <PageDetail label={option.label} fullWidth>
           <pre>{jsyaml.dump(props.data[props.name])}</pre>
         </PageDetail>
       );

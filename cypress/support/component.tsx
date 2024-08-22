@@ -43,6 +43,9 @@ import './eda-commands';
 import { edaAPI } from './formatApiPathForEDA';
 import './hub-commands';
 import './rest-commands';
+import { hubAPI } from './formatApiPathForHub';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -70,6 +73,7 @@ declare global {
     interface Chainable {
       mount: IMount;
       mountEda: IMount;
+      mountHub: IMount;
     }
   }
   interface Window {
@@ -118,6 +122,31 @@ Cypress.Commands.add('mountEda', (component, route, activeUserFixture) => {
             </Routes>
           </Page>
         </EdaActiveUserProvider>
+      </PageFramework>
+    </MemoryRouter>
+  );
+});
+
+Cypress.Commands.add('mountHub', (component, route, activeUserFixture) => {
+  cy.fixture(activeUserFixture || 'hubSuperUser.json').then((activeUser: HubUser) => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: hubAPI`/_ui/v1/me/`,
+      },
+      activeUser
+    );
+  });
+  return mount(
+    <MemoryRouter initialEntries={route?.initialEntries || ['/1']}>
+      <PageFramework defaultRefreshInterval={60}>
+        <HubActiveUserProvider>
+          <Page>
+            <Routes>
+              <Route path={`${route?.path || '/:id/*'}`} element={component} />
+            </Routes>
+          </Page>
+        </HubActiveUserProvider>
       </PageFramework>
     </MemoryRouter>
   );

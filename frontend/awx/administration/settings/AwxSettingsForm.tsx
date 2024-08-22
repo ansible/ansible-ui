@@ -1,4 +1,4 @@
-import { FormGroup } from '@patternfly/react-core';
+import { Button, FormGroup } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { useRevertAllSettingsModal } from './useRevertAllSettingsModal';
 
 export interface AwxSettingsOptionsResponse {
   actions: {
@@ -97,6 +98,7 @@ export function AwxSettingsForm(props: {
 }) {
   const navigate = useNavigate();
   const patch = usePatchRequest();
+  const openRevertAllSettingsModal = useRevertAllSettingsModal();
   const onSubmit = useCallback(
     async (data: object) => {
       // Only send the data that is in the options
@@ -160,12 +162,39 @@ export function AwxSettingsForm(props: {
       return acc;
     }, {});
 
+  function getCategorySlugs(config: Record<string, AwxSettingsOptionsAction>): string[] {
+    const slugs = new Set<string>();
+
+    Object.values(config).forEach((item) => {
+      const slug = item?.category_slug;
+      if (slug) {
+        slugs.add(slug);
+      }
+    });
+
+    return Array.from(slugs);
+  }
+
   return (
     <AwxPageForm
       defaultValue={props.data}
       submitText={t('Save')}
       onCancel={() => navigate('..')}
       onSubmit={onSubmit}
+      additionalActions={
+        <Button
+          variant="secondary"
+          onClick={(e) => {
+            e.preventDefault();
+            openRevertAllSettingsModal({
+              categorySlugs: getCategorySlugs(options),
+              onComplete: () => navigate('..'),
+            });
+          }}
+        >
+          {t('Revert all to default')}
+        </Button>
+      }
     >
       {Object.entries(otherOptions).map(([key, option]) => {
         return <OptionActionsFormInput key={key} name={key} option={option} />;

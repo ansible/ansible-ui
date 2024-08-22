@@ -55,6 +55,8 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
           });
         },
         isDanger: false,
+        // is hidden for now because it works only for insights
+        isHidden: () => true,
         isDisabled: (collection) =>
           can_upload_signatures || collection.is_signed
             ? t('You do not have rights to this operation')

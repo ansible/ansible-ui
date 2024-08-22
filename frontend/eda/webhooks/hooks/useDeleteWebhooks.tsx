@@ -18,11 +18,11 @@ export function useDeleteWebhooks(onComplete?: (webhooks: EdaWebhook[]) => void)
   return useCallback(
     (webhooks: EdaWebhook[]) => {
       bulkAction({
-        title: t('Permanently delete webhooks', { count: webhooks.length }),
-        confirmText: t('Yes, I confirm that I want to delete these {{count}} webhooks.', {
+        title: t('Permanently delete event streams', { count: webhooks.length }),
+        confirmText: t('Yes, I confirm that I want to delete these {{count}} event streams.', {
           count: webhooks.length,
         }),
-        actionButtonText: t('Delete webhooks', { count: webhooks.length }),
+        actionButtonText: t('Delete event streams', { count: webhooks.length }),
         items: webhooks.sort((l, r) => compareStrings(l.name, r.name)),
         keyFn: idKeyFn,
         isDanger: true,

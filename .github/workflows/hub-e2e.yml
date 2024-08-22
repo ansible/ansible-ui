@@ -91,7 +91,7 @@ jobs:
         if: ${{ !inputs.SKIP_JOB }}
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: PreCache
         if: ${{ !inputs.SKIP_JOB }}
         run: npm version 0.0.0 --no-git-tag-version
@@ -107,11 +107,18 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
+
+      # galaxykit needs pip 23+, Ubuntu 22.04's default Python uses pip 22
+      - name: "Install python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Install galaxykit
         run: |
           # pip3 install galaxykit
-          # pending https://github.com/ansible/galaxykit/pull/99
-          pip3 install git+https://github.com/himdel/galaxykit.git@skip-upload
+          # pending a release with https://github.com/ansible/galaxykit/pull/116
+          pip3 install git+https://github.com/ansible/galaxykit.git@main
+
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v6
@@ -132,4 +139,4 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-          TAGS: '!flaky'
+          CYPRESS_LABELS: '!flaky'

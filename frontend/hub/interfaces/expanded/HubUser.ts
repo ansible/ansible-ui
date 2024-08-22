@@ -5,15 +5,19 @@ export type HubUser = {
   first_name: string;
   groups: HubUserGroup[];
   id: number;
-  is_anonymous: boolean;
+  is_anonymous?: boolean;
   is_superuser: boolean;
   last_name: string;
-  model_permissions: HubUserPermissions;
+  model_permissions?: HubUserPermissions;
   username: string;
   password?: string;
+  resource: {
+    ansible_id: string;
+    resource_type: string;
+  };
 };
 
-type HubUserGroup = {
+export type HubUserGroup = {
   id: number;
   name: string;
   object_roles?: string[];

@@ -10,10 +10,11 @@ export const RULES_DEFAULT_VALUES = {
   bymonthday: null,
   byyearday: null,
   bysetpos: null,
-  until: { endDate: '', endTime: '' },
+  until: { date: '', time: '' },
   count: null,
   byminute: null,
   byhour: null,
+  endType: 'never',
 };
 
 export const WEEKS_OF_YEAR = Array.from({ length: 52 }, (_, i) => i + 1).map((week) => ({

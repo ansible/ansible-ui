@@ -64,7 +64,7 @@ describe('Teams.cy.ts', () => {
     cy.get('h1').should('contain', 'Teams');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains(
-      /^A Team is a subdivision of an organization with associated users, projects, credentials, and permissions.$/
+      /^A team is a subdivision of an organization with associated users, projects, credentials, and permissions.$/
     ).should('be.visible');
     cy.contains('Team');
     cy.contains('Name');

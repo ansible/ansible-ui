@@ -478,7 +478,7 @@ function RemoteInputs({
     <>
       <PageFormTextInput<RemoteFormProps>
         name="name"
-        label={t('Remote name')}
+        label={t('Name')}
         placeholder={t('Enter a remote name')}
         isRequired
         isDisabled={disableEditName}

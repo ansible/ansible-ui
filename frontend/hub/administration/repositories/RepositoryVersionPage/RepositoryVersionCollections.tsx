@@ -21,9 +21,14 @@ export function RepositoryVersionCollections() {
         cell: (collection) => (
           <TextCell
             text={`${collection.namespace}.${collection.name} v${collection.version}`}
-            to={`${getPageUrl(HubRoute.CollectionPage)}?name=${collection.name}&namespace=${
-              collection.namespace
-            }&repository=${repository.name}&version=${collection.version}`}
+            to={getPageUrl(HubRoute.CollectionDetails, {
+              params: {
+                name: collection.name,
+                namespace: collection.namespace,
+                repository: repository.name,
+              },
+              query: { version: collection.version },
+            })}
           />
         ),
       },

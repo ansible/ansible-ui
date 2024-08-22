@@ -1,13 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
-import {
-  BuilderImageIcon,
-  CheckIcon,
-  PencilAltIcon,
-  SyncAltIcon,
-  TrashIcon,
-} from '@patternfly/react-icons';
+import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { HubRoute } from '../../../main/HubRoutes';
 import {
   IPageAction,
@@ -21,13 +15,13 @@ import {
   useSyncExecutionEnvironments,
   useSignExecutionEnvironments,
 } from '../../hooks/useExecutionEnvironmentsActions';
+import { useController } from '../../hooks/useController';
+import { useCanSignEE } from '../../../common/utils/canSign';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {
-    pageNavigate(HubRoute.ExecutionEnvironments);
-  });
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(() => {});
 
   const { refresh } = options;
 
@@ -43,6 +37,9 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     ['running', 'waiting', 'pending'].includes(
       ee.pulp?.repository?.remote?.last_sync_task?.state || ''
     );
+
+  const useInController = useController();
+  const canSignEE = useCanSignEE();
 
   return useMemo(() => {
     const actions: IPageAction<ExecutionEnvironment>[] = [
@@ -69,17 +66,12 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: BuilderImageIcon,
-        label: t('Use in controller'),
-        onClick: () => {},
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
         icon: CheckIcon,
         label: t('Sign execution environment'),
+        isDisabled: () => (canSignEE ? undefined : t('You do not have rights to this operation')),
         onClick: (ee) => signExecutionEnvironments([ee]),
       },
+      useInController,
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
@@ -92,10 +84,12 @@ export function useExecutionEnvironmentPageActions(options: { refresh?: () => un
     ];
     return actions;
   }, [
-    pageNavigate,
     t,
-    deleteExecutionEnvironments,
-    signExecutionEnvironments,
+    useInController,
+    pageNavigate,
     syncExecutionEnvironments,
+    canSignEE,
+    signExecutionEnvironments,
+    deleteExecutionEnvironments,
   ]);
 }

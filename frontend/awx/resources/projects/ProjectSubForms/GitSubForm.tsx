@@ -4,7 +4,7 @@ import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageForm
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { ScmTypeOptions } from './ScmTypeOptions';
 
@@ -61,9 +61,7 @@ export function GitSubForm() {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`${getDocsBaseUrl(
-            config
-          )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
+          href={useGetDocsUrl(config, 'managePlaybooksSC')}
         >
           {t`Documentation.`}
         </a>
@@ -76,28 +74,28 @@ export function GitSubForm() {
       <PageFormSection title={t('Type Details')}>
         <PageFormTextInput<Project>
           name="scm_url"
-          label={t('Source Control URL')}
-          labelHelpTitle={t('Source Control URL')}
+          label={t('Source control URL')}
+          labelHelpTitle={t('Source control URL')}
           labelHelp={gitSourceControlUrlHelp}
           isRequired
         />
         <PageFormTextInput<Project>
           name="scm_branch"
-          label={t('Source Control Branch/Tag/Commit')}
-          labelHelpTitle={t('Source Control Branch/Tag/Commit')}
+          label={t('Source control branch/tag/commit')}
+          labelHelpTitle={t('Source control branch/tag/commit')}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
           )}
         />
         <PageFormTextInput<Project>
           name="scm_refspec"
-          label={t('Source Control Refspec')}
-          labelHelpTitle={t('Source Control Refspec')}
+          label={t('Source control refspec')}
+          labelHelpTitle={t('Source control refspec')}
           labelHelp={sourceControlRefspecHelp}
         />
         <PageFormCredentialSelect<Project>
           name="credential"
-          label={t('Source Control Credential')}
+          label={t('Source control credential')}
           queryParams={{
             credential_type__namespace: 'scm',
           }}

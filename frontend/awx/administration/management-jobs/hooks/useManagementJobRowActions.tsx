@@ -45,7 +45,7 @@ export function useManagementJobRowActions() {
         variant: ButtonVariant.secondary,
         isPinned: true,
         icon: RocketIcon,
-        label: t(`Launch Management Job`),
+        label: t(`Launch management job`),
         onClick: launchManagementJob,
       },
     ];

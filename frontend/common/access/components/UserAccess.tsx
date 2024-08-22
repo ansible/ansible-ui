@@ -3,6 +3,7 @@ import { UserAssignment } from '../interfaces/UserAssignment';
 import { Access } from './Access';
 import { edaAPI } from '../../../eda/common/eda-utils';
 import { awxAPI } from '../../../awx/common/api/awx-utils';
+import { hubAPI } from '../../../hub/common/api/formatPath';
 
 export function UserAccess(props: {
   service: 'awx' | 'eda' | 'hub';
@@ -16,14 +17,18 @@ export function UserAccess(props: {
   const { type, service, ...rest } = props;
   const { t } = useTranslation();
   const roleUserAssignmentsURL =
-    service === 'awx' ? awxAPI`/role_user_assignments/` : edaAPI`/role_user_assignments/`;
+    service === 'awx'
+      ? awxAPI`/role_user_assignments/`
+      : service === 'eda'
+        ? edaAPI`/role_user_assignments/`
+        : hubAPI`/_ui/v2/role_user_assignments/`;
   return (
     <Access<UserAssignment>
       {...rest}
       service={service}
       tableColumnFunctions={{
         name: {
-          function: (userAccess: UserAssignment) => userAccess.summary_fields.user.username,
+          function: (userAccess: UserAssignment) => userAccess?.summary_fields?.user?.username,
           sort: 'user__username',
           label: t('Username'),
         },
@@ -32,17 +37,17 @@ export function UserAccess(props: {
         {
           header: t('First name'),
           type: 'text',
-          value: (item: UserAssignment) => item.summary_fields.user.first_name,
-          sort: 'first_name',
+          value: (item: UserAssignment) => item?.summary_fields?.user?.first_name,
+          sort: 'user__first_name',
         },
         {
           header: t('Last name'),
           type: 'text',
-          value: (item: UserAssignment) => item.summary_fields.user.last_name,
-          sort: 'last_name',
+          value: (item: UserAssignment) => item?.summary_fields?.user?.last_name,
+          sort: 'user__last_name',
         },
       ]}
-      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username' }}
+      toolbarNameColumnFiltersValues={{ label: t('Username'), query: 'user__username__icontains' }}
       url={roleUserAssignmentsURL}
       content_type_model={type}
       accessListType={'user'}

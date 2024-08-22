@@ -45,8 +45,8 @@ export function CollectionInstall() {
 
   const content = contentResults?.results[0];
 
-  if ((!basePath && !error) || (!content && !contentError)) {
-    <LoadingPage breadcrumbs tabs />;
+  if ((!basePath && !error) || (!content && !contentError) || !collection) {
+    return <LoadingPage breadcrumbs tabs />;
   }
 
   if (error) {
@@ -141,22 +141,18 @@ export function CollectionInstall() {
         </Button>
       </PageDetail>
 
-      <PageDetail label={t('Signature')}>
-        <Button
-          variant="link"
-          icon={<DownloadIcon />}
-          onClick={() => {
-            if (!showSignature) {
-              setShowSignature(true);
-            } else {
-              setShowSignature(false);
-            }
-          }}
-        >
-          {showSignature ? t(`Hide signature`) : t(`Show signature`)}
-        </Button>
-        {showSignature && <ShowSignature collection={collection} />}
-      </PageDetail>
+      {collection?.is_signed ? (
+        <PageDetail label={t('Signature')}>
+          <Button
+            variant="link"
+            icon={<DownloadIcon />}
+            onClick={() => setShowSignature(!showSignature)}
+          >
+            {showSignature ? t(`Hide signature`) : t(`Show signature`)}
+          </Button>
+          {showSignature && <ShowSignature collection={collection} />}
+        </PageDetail>
+      ) : null}
 
       <PageDetail label={t('Requires')}>
         {collection?.collection_version?.requires_ansible &&

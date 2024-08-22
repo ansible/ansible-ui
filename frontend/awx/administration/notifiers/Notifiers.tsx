@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useNotifiersFilters } from './hooks/useNotifiersFilters';
@@ -63,7 +63,7 @@ export function Notifiers() {
         description={t('Configure custom notifications to be sent based on predefined events.')}
         titleHelpTitle={t('Notifiers')}
         titleHelp={t('Configure custom notifications to be sent based on predefined events.')}
-        titleDocLink={`${getDocsBaseUrl(config)}/html/userguide/notifications.html`}
+        titleDocLink={useGetDocsUrl(config, 'notifiers')}
         headerActions={<ActivityStreamIcon type={'notification_template'} />}
       />
       <PageTable
@@ -76,17 +76,17 @@ export function Notifiers() {
         emptyStateTitle={
           canAddNotificationTemplate
             ? t('No notifiers found.')
-            : t('You do not have permission to add notifiers.')
+            : t('You do not have permission to create notifiers.')
         }
         emptyStateDescription={
           canAddNotificationTemplate
-            ? t('Please add notifiers to populate this list.')
+            ? t('Please create notifiers to populate this list.')
             : t(
                 'Please contact your organization administrator if there is an issue with your access.'
               )
         }
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canAddNotificationTemplate ? t('Add notifier') : undefined}
+        emptyStateButtonText={canAddNotificationTemplate ? t('Create notifier') : undefined}
         emptyStateButtonClick={
           canAddNotificationTemplate
             ? () => pageNavigate(AwxRoute.AddNotificationTemplate)

@@ -16,11 +16,10 @@ Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) =>
 
 Cypress.Commands.add('login', () => {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
+
   switch (devBaseUrlPort) {
     case '4101':
       cy.awxLogin();
-      cy.createGlobalOrganization();
-      cy.createGlobalProject();
       break;
     case '4102':
       cy.hubLogin();
@@ -28,6 +27,18 @@ Cypress.Commands.add('login', () => {
     case '4103':
       cy.edaLogin();
       break;
+    default:
+      switch (Cypress.env('E2E_MODE')) {
+        case 'AWX':
+          cy.awxLogin();
+          break;
+        case 'HUB':
+          cy.hubLogin();
+          break;
+        case 'EDA':
+          cy.edaLogin();
+          break;
+      }
   }
 });
 
@@ -43,6 +54,18 @@ Cypress.Commands.add('logout', () => {
     case '4103':
       cy.edaLogout();
       break;
+    default:
+      switch (Cypress.env('E2E_MODE')) {
+        case 'AWX':
+          cy.awxLogout();
+          break;
+        case 'HUB':
+          cy.hubLogout();
+          break;
+        case 'EDA':
+          cy.edaLogout();
+          break;
+      }
   }
 });
 

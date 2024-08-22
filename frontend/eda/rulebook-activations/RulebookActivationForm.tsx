@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useWatch } from 'react-hook-form';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -12,8 +12,11 @@ import {
   PageLayout,
   compareStrings,
   useGetPageUrl,
+  usePageDialog,
   usePageNavigate,
+  PageFormCheckbox,
 } from '../../../framework';
+import { Button, Label, Tooltip } from '@patternfly/react-core';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet, swrOptions } from '../../common/crud/Data';
@@ -37,7 +40,12 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { Alert } from '@patternfly/react-core';
+import { SourceEventStreamMappingModal } from './components/SourceEventStreamMapping';
+import { EdaSourceEventMapping } from '../interfaces/EdaSource';
+import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
+import jsyaml from 'js-yaml';
+import { LabelGroupWrapper } from '../../common/label-group-wrapper';
+import { EdaWebhook } from '../interfaces/EdaWebhook';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -70,9 +78,6 @@ export function CreateRulebookActivation() {
     );
     pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
   };
-  const { data: tokens } = useGet<EdaResult<AwxToken>>(
-    edaAPI`/users/me/awx-tokens/?page=1&page_size=1`
-  );
 
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -86,21 +91,6 @@ export function CreateRulebookActivation() {
           { label: t('Create rulebook activation') },
         ]}
       />
-      {(!tokens?.results || tokens?.results.length < 1) && (
-        <Alert
-          variant={'info'}
-          isInline
-          isPlain
-          style={{ paddingLeft: '24px', paddingTop: '16px' }}
-          title={t(
-            'Most rulebook activations require a controller token to authenticate with an Automation Controller.'
-          )}
-        >
-          <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>
-            {t('Create a controller token')}
-          </Link>
-        </Alert>
-      )}
       <EdaPageForm<IEdaRulebookActivationInputs>
         submitText={t('Create rulebook activation')}
         onSubmit={onSubmit}
@@ -122,6 +112,10 @@ export function CreateRulebookActivation() {
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(
+    undefined
+  );
+  const { register, setValue } = useFormContext();
   const restartPolicyHelpBlock = (
     <>
       <p>
@@ -155,6 +149,9 @@ export function RulebookActivationInputs() {
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
 
+  const { data: eventStreams } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/`);
+
+  const [_, setDialog] = usePageDialog();
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
     { label: t('Always'), value: 'always' },
@@ -171,6 +168,10 @@ export function RulebookActivationInputs() {
     name: 'project_id',
   }) as number;
 
+  const rulebook = useWatch<IEdaRulebookActivationInputs>({
+    name: 'rulebook',
+  }) as EdaRulebook;
+
   const query = useCallback(async () => {
     const response = await requestGet<EdaResult<EdaRulebook>>(
       projectId !== undefined
@@ -182,6 +183,22 @@ export function RulebookActivationInputs() {
       values: response.results?.sort((l, r) => compareStrings(l.name, r.name)) ?? [],
     });
   }, [projectId]);
+
+  useEffect(() => {
+    setValue('source_mappings', jsyaml.dump(sourceMappings));
+  }, [setValue, sourceMappings]);
+
+  useEffect(() => {
+    setSourceMappings(undefined);
+  }, [rulebook, setSourceMappings]);
+
+  const removeMapping = (webhook_name: string) => {
+    if (sourceMappings) {
+      const map = sourceMappings.filter((ev) => ev.webhook_name !== webhook_name);
+      setSourceMappings(map);
+      if (sourceMappings.length === 0) setSourceMappings(undefined);
+    }
+  };
 
   return (
     <>
@@ -198,7 +215,7 @@ export function RulebookActivationInputs() {
         id={'description'}
         placeholder={t('Enter description')}
       />
-      <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" />
+      <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" isRequired />
       <PageFormSelect<IEdaRulebookActivationInputs>
         name="project_id"
         label={t('Project')}
@@ -212,7 +229,7 @@ export function RulebookActivationInputs() {
             : []
         }
         footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>{t('Create project')}</Link>}
-        labelHelp={t('Projects are a logical collection of rulebooks.')}
+        labelHelp={t('A project is a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
       <PageFormAsyncSelect<IEdaRulebookActivationInputs>
@@ -230,8 +247,40 @@ export function RulebookActivationInputs() {
         isRequired
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
+        additionalControls={
+          <Button
+            variant="link"
+            data-cy={'manage_event_stream'}
+            isDisabled={!rulebook || !eventStreams || eventStreams.count < 1}
+            onClick={() =>
+              setDialog(
+                <SourceEventStreamMappingModal
+                  rulebook={rulebook}
+                  mappings={sourceMappings}
+                  setSourceMappings={setSourceMappings}
+                />
+              )
+            }
+          >
+            {t('Manage event streams')}
+          </Button>
+        }
       />
-      <PageFormCredentialSelect<{ credential_refs: string; id: string; credentialKind: string }>
+      {!!sourceMappings && sourceMappings.length > 0 && (
+        <PageFormGroup label={t('Event streams')} fieldId={'source_event_mappings'}>
+          <LabelGroupWrapper>
+            {sourceMappings.map((map) => (
+              <>
+                <Tooltip content={<div>{map.source_name}</div>}>
+                  <Label onClose={() => removeMapping(map.webhook_name)}>{map.webhook_name} </Label>
+                </Tooltip>
+              </>
+            ))}
+          </LabelGroupWrapper>
+        </PageFormGroup>
+      )}
+      <input type="hidden" {...register(`source_mappings`)} />
+      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         credentialKinds={['vault,cloud']}
         labelHelp={t(`Select the credentials for this rulebook activation.`)}
@@ -323,6 +372,17 @@ export function RulebookActivationInputs() {
           labelHelpTitle={t('Variables')}
         />
       </PageFormSection>
+      <PageFormSection singleColumn>
+        <PageFormGroup label={t('Options')}>
+          <PageFormCheckbox<IEdaRulebookActivationInputs>
+            label={t`Skip audit events`}
+            labelHelp={t(
+              'Skipping audit events will prevent you from seeing your events in the Rule Audit, its usually enabled when you are doing performance testing and want to intentionally skip the Audit events from being sent by ansible-rulebook.'
+            )}
+            name="skip_audit_events"
+          />
+        </PageFormGroup>
+      </PageFormSection>
     </>
   );
 }
@@ -330,7 +390,9 @@ export function RulebookActivationInputs() {
 type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
+  webhooks?: string[];
   project_id: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
+  source_mappings: EdaSourceEventMapping[];
 };

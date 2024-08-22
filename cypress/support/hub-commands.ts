@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { SetRequired } from 'type-fest';
 import { randomLowercaseString, randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -17,6 +16,9 @@ import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
+import { SetRequired } from 'type-fest';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -26,18 +28,32 @@ export interface HubRequestOptions {
   body?: object;
   qs?: object;
   failOnStatusCode?: boolean;
+  headers?: object;
 }
 Cypress.Commands.add('hubRequest', (options: HubRequestOptions) => {
   cy.getCookie('csrftoken', { log: false }).then((cookie) =>
     cy
       .request({
         ...options,
-        headers: { 'X-CSRFToken': cookie?.value, Referer: Cypress.config().baseUrl },
+        headers: {
+          ...(options.headers || {}),
+          'X-CSRFToken': cookie?.value,
+          Referer: Cypress.config().baseUrl,
+        },
       })
       .then((response) => {
         switch (response.status) {
-          case 202: // Accepted
-            return cy.waitOnHubTask((response.body as { task: string }).task);
+          case 201:
+            return cy.wrap(response.body);
+          case 202: {
+            // Accepted
+            // when posting as multipart/form-data, the response doesn't get parsed as JSON
+            const body =
+              response.body.toString() === '[object ArrayBuffer]'
+                ? (JSON.parse(new TextDecoder().decode(response.body as ArrayBuffer)) as object)
+                : (response.body as object);
+            return cy.waitOnHubTask((body as { task: string }).task);
+          }
         }
       })
   );
@@ -48,26 +64,14 @@ Cypress.Commands.add('hubGetRequest', (options: HubGetRequestOptions) => {
   cy.hubRequest({ ...options, method: 'GET' });
 });
 
-export type HubPutRequestOptions = Pick<
-  HubRequestOptions,
-  'url' | 'body' | 'qs' | 'failOnStatusCode'
->;
 export type HubPostRequestOptions = Pick<
   HubRequestOptions,
-  'url' | 'body' | 'qs' | 'failOnStatusCode'
+  'url' | 'body' | 'qs' | 'failOnStatusCode' | 'headers'
 >;
 Cypress.Commands.add('hubPostRequest', (options: HubPostRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'POST' }).then((response) => {
-    if (response.status === 201) {
-      return response.body;
-    }
-  });
+  cy.hubRequest({ ...options, method: 'POST' });
 });
 
-export type HubPatchRequestOptions = Pick<
-  HubRequestOptions,
-  'url' | 'body' | 'qs' | 'failOnStatusCode'
->;
 export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
 Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
   cy.hubRequest({ ...options, method: 'DELETE' });
@@ -102,10 +106,34 @@ Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {
   });
 });
 
+Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
+  function waitForAllTasks(count: number) {
+    if (count === 0) {
+      throw new Error('Max loops reached while waiting for the tasks.');
+    }
+    cy.wait(1000);
+    cy.requestGet<PulpItemsResponse<Task>>(pulpAPI`/tasks/?state__in=waiting,running`).then(
+      (response) => {
+        const tasks = response.results;
+        cy.log(`Tasks count: ${tasks.length}`);
+        if (tasks.length === 0) {
+          return;
+        } else {
+          waitForAllTasks(count - 1);
+        }
+      }
+    );
+  }
+
+  waitForAllTasks(100);
+});
+
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
-  const server = (Cypress.env('HUB_SERVER') as string) + apiPrefix + '/';
+  const platformServer = (Cypress.env('PLATFORM_SERVER') as string) || '';
+  const upstreamServer = Cypress.env('HUB_SERVER') as string;
+  const apiBase = (platformServer || upstreamServer) + apiPrefix;
   const options = { failOnNonZeroExit: false };
 
   operation = operation.trim();
@@ -113,7 +141,8 @@ Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
 
   cy.log(`${galaxykitCommand} ${operation} ${args.join(' ')}`);
 
-  const cmd = `${galaxykitCommand} -c -s '${server}' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${operation} ${escapeForShellCommand(
+  const gwRoot = platformServer ? `--gw_root_url '${platformServer}/'` : '';
+  const cmd = `${galaxykitCommand} -c -s '${apiBase}/' -u '${galaxykitUsername}' -p '${galaxykitPassword}' ${gwRoot} ${operation} ${escapeForShellCommand(
     args
   )}`;
 
@@ -171,8 +200,10 @@ Cypress.Commands.add(
         collectionName,
         `--tags ${tags.join(' ')}`
       );
+      cy.waitForAllTasks();
     } else {
       cy.galaxykit('-i collection upload', namespaceName, collectionName);
+      cy.waitForAllTasks();
     }
 
     waitTillPublished(10);
@@ -192,37 +223,49 @@ Cypress.Commands.add('uploadHubCollectionFile', (hubFilePath: string) => {
   });
 });
 
-Cypress.Commands.add('createNamespace', (namespaceName: string) => {
-  cy.galaxykit('namespace create', namespaceName);
-});
-
-Cypress.Commands.add('deleteNamespace', (namespaceName: string) => {
-  cy.galaxykit('-i namespace delete', namespaceName);
-});
-
 Cypress.Commands.add('deleteCollectionsInNamespace', (namespaceName: string) => {
   cy.requestGet<HubItemsResponse<CollectionVersionSearch>>(
     hubAPI`/v3/plugin/ansible/search/collection-versions/?namespace=${namespaceName}`
   ).then((itemsResponse) => {
     cy.log(`count of collections in namespace: ${itemsResponse.data.length}`);
     for (const collection of itemsResponse.data) {
-      cy.galaxykit(
-        'collection delete',
-        collection.collection_version?.namespace || '',
-        collection.collection_version?.name || '',
-        collection.collection_version?.version || '',
-        collection.repository?.name || ''
-      );
+      cy.deleteHubCollection(collection);
+      cy.waitForAllTasks();
     }
   });
 });
 
-Cypress.Commands.add('createRemote', (remoteName: string, url?: string) => {
-  cy.requestPost(pulpAPI`/remotes/ansible/collection/`, {
-    name: remoteName,
-    url: url ? url : 'https://console.redhat.com/api/automation-hub/',
-  });
-});
+Cypress.Commands.add(
+  'createRemote',
+  (
+    remoteName: string,
+    url?: string,
+    ca_cert?: string,
+    client_cert?: string,
+    requirements_file?: string
+  ) => {
+    const payload: {
+      name: string;
+      url: string;
+      ca_cert?: string;
+      client_cert?: string;
+      requirements_file?: string;
+    } = {
+      name: remoteName,
+      url: url ? url : 'https://console.redhat.com/api/automation-hub/',
+    };
+    if (ca_cert) {
+      payload.ca_cert = ca_cert;
+    }
+    if (client_cert) {
+      payload.client_cert = client_cert;
+    }
+    if (requirements_file) {
+      payload.requirements_file = requirements_file;
+    }
+    cy.requestPost(pulpAPI`/remotes/ansible/collection/`, payload);
+  }
+);
 
 Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: string) => {
   cy.requestPost(hubAPI`/_ui/v1/execution-environments/registries/`, {
@@ -233,12 +276,8 @@ Cypress.Commands.add('createRemoteRegistry', (remoteRegistryName: string, url?: 
 
 Cypress.Commands.add('deleteRemoteRegistry', (remoteRegistryId: string) => {
   cy.requestDelete(hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`);
+  cy.waitForAllTasks();
 });
-
-// Skipping until deeper debug
-// Cypress.Commands.add('deleteCollection', (collection: string, namespace: string, repository: string) => {
-//   cy.galaxykit(`collection delete ${namespace} ${collection}`);
-// });
 
 Cypress.Commands.add(
   'deleteCollection',
@@ -261,50 +300,75 @@ Cypress.Commands.add(
       versionToDelete,
       repository
     );
+    cy.waitForAllTasks();
   }
 );
 
 Cypress.Commands.add(
   'uploadCollection',
-  (collection: string, namespace: string, version?: string) => {
-    cy.galaxykit(`collection upload ${namespace} ${collection} ${version ? version : '1.0.0'}`);
+  (collection: string, namespace: string, version: string, repository?: string) => {
+    cy.galaxykit(
+      'collection upload --skip-upload',
+      namespace,
+      collection,
+      version ? version : '1.0.0'
+    ).then((result) => {
+      const filePath = (result as unknown as Record<string, string>).filename;
+      cy.readFile(filePath, 'binary').then((fileData: string) => {
+        const formData = new FormData();
+        formData.append('file', Cypress.Blob.binaryStringToBlob(fileData), filePath);
+
+        cy.hubPostRequest({
+          url: hubAPI`/v3/plugin/ansible/content/${repository || 'validated'}/collections/artifacts/`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+        });
+      });
+    });
+    cy.waitForAllTasks();
   }
 );
 
 Cypress.Commands.add(
   'approveCollection',
   (collection: string, namespace: string, version: string) => {
-    cy.galaxykit(`collection move ${namespace} ${collection} ${version} staging published`);
+    cy.galaxykit('collection move', namespace, collection, version, 'staging', 'published');
+    cy.waitForAllTasks();
   }
 );
 
-Cypress.Commands.add('collectionCopyVersionToRepositories', (collection: string) => {
-  cy.navigateTo('hub', 'collections');
-  cy.filterTableByText(collection);
+Cypress.Commands.add(
+  'moveCollection',
+  (
+    collection: string,
+    namespace: string,
+    version: string,
+    sourceRepo: string,
+    targetRepo: string
+  ) => {
+    cy.waitForAllTasks();
+    cy.galaxykit('collection move', namespace, collection, version, sourceRepo, targetRepo);
+    cy.waitForAllTasks();
+  }
+);
 
-  cy.get('[data-cy="data-list-name"]').should('have.text', collection);
-  cy.get('[data-cy="data-list-action"]').within(() => {
-    cy.get('[data-cy="actions-dropdown"]')
-      .first()
-      .click()
-      .then(() => {
-        cy.get('[data-cy="copy-version-to-repositories"]').click();
-      });
-  });
-
+Cypress.Commands.add('collectionCopyVersionToRepositories', (collectionName: string) => {
   cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    cy.clickButton(/^Clear all filters$/);
     cy.get('header').contains('Select repositories');
     cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
-    cy.filterTableByText('community');
+    cy.filterTableBySingleText('community');
     cy.get('[data-cy="data-list-check"]').click();
     cy.get('button').contains('Select').click();
   });
 
   cy.navigateTo('hub', 'approvals');
   cy.clickButton(/^Clear all filters$/);
-  cy.filterBySingleSelection(/^Repository$/, 'community');
-  cy.get('[data-cy="repository-column-cell"]').should('contain', 'community');
+
+  cy.filterTableBySingleText(collectionName);
+  cy.get('[aria-label="Simple table"] tr').should('have.length', 3);
+  cy.contains('No results found').should('not.exist');
 });
 
 // HUB Execution Environment Commands
@@ -324,7 +388,8 @@ Cypress.Commands.add(
       url: hubAPI`/_ui/v1/execution-environments/remotes/`,
       body: {
         name: randomE2Ename(),
-        upstream_name: 'library/alpine',
+        upstream_name: 'pulp/pulp-fixtures',
+        include_tags: ['latest'],
         ...options?.executionEnvironment,
       },
     });
@@ -349,7 +414,12 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'syncRemoteExecutionEnvironment',
   (executionEnvironment: HubExecutionEnvironment) => {
-    cy.visit(`${ExecutionEnvironments.url}/${executionEnvironment.name}/`);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.filterTableBySingleText(executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
+
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('sync-execution-environment').click();
 
@@ -382,7 +452,7 @@ Cypress.Commands.add('createHubRemoteRegistry', (options?: HubCreateRemoteRegist
     url: hubAPI`/_ui/v1/execution-environments/registries/`,
     body: {
       name: randomE2Ename(),
-      url: 'https://registry.hub.docker.com/',
+      url: 'https://quay.io/',
       ...options?.remoteRegistry,
     },
   });
@@ -495,6 +565,9 @@ Cypress.Commands.add('createHubNamespace', (options?: HubCreateNamespaceOptions)
 export type HubDeleteNamespaceOptions = { name: string } & Omit<HubDeleteRequestOptions, 'url'>;
 
 Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) => {
+  cy.waitForAllTasks();
+  cy.deleteCollectionsInNamespace(options.name);
+  cy.waitForAllTasks();
   cy.hubDeleteRequest({
     ...options,
     url: hubAPI`/_ui/v1/namespaces/${options.name}/`,
@@ -612,10 +685,72 @@ Cypress.Commands.add('deleteHubCollectionByName', (name: string) => {
       const repeatedName = itemsResponse.data[0]?.collection_version?.name;
       if (collection?.collection_version?.name === repeatedName) {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
         break;
       } else {
         cy.deleteHubCollection(collection);
+        cy.waitForAllTasks();
       }
     }
+  });
+});
+
+Cypress.Commands.add(
+  'getHubRoles',
+  (queryParams?: { content_type__model?: string; managed?: boolean }) => {
+    let roleDefinitionsUrl = hubAPI`/_ui/v2/role_definitions/?order_by=name`;
+    if (queryParams) {
+      const { content_type__model, managed } = queryParams;
+      roleDefinitionsUrl = content_type__model
+        ? (roleDefinitionsUrl += `&content_type__model=${content_type__model}`)
+        : roleDefinitionsUrl;
+      roleDefinitionsUrl =
+        managed !== undefined ? (roleDefinitionsUrl += `&managed=${managed}`) : roleDefinitionsUrl;
+    }
+
+    cy.requestGet<HubItemsResponse<HubRbacRole>>(roleDefinitionsUrl).then((response) => {
+      return response;
+    });
+  }
+);
+
+Cypress.Commands.add('getHubRoleDetail', (roleID: string) => {
+  cy.requestGet<HubRbacRole>(hubAPI`/_ui/v2/role_definitions/${roleID}/`);
+});
+
+Cypress.Commands.add(
+  'createHubRoleAPI',
+  ({
+    roleName,
+    description,
+    content_type,
+    permissions,
+  }: {
+    roleName: string;
+    description: string;
+    content_type: ContentTypeEnum;
+    permissions: string[];
+  }) => {
+    cy.requestPost<HubRbacRole>(hubAPI`/_ui/v2/role_definitions/`, {
+      name: roleName,
+      description: description,
+      content_type: content_type,
+      permissions: permissions,
+    }).then(() => {
+      Cypress.log({
+        displayName: 'Hub Role :',
+      });
+    });
+  }
+);
+
+Cypress.Commands.add('deleteHubRoleAPI', (hubRoleDefinition: HubRbacRole) => {
+  cy.requestDelete(hubAPI`/_ui/v2/role_definitions/${hubRoleDefinition.id.toString()}/`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'HUB ROLE DELETION :',
+      message: [`Deleted 👉  ${hubRoleDefinition.name}`],
+    });
   });
 });

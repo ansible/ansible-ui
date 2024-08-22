@@ -30,7 +30,7 @@ import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironment
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
@@ -67,11 +67,11 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
   const brand: string = process.env.BRAND ?? 'AWX';
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const signatureValidationHelpText = t`Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.`;
-  const playbookDirectoryHelpText = t`Select from the list of directories found in the Project Base Path. Together the base path and the playbook directory provide the full path used to locate playbooks`;
+  const playbookDirectoryHelpText = t`Select from the list of directories found in the project base path. Together the base path and the playbook directory provide the full path used to locate playbooks.`;
   const cacheTimeoutHelpText = t`Time in seconds to consider a project
   to be current. During job runs and callbacks the task
   system will evaluate the timestamp of the latest project
-  update. If it is older than Cache Timeout, it is not
+  update. If it is older than cache timeout, it is not
   considered current, and a new project update will be
   performed.`;
   const defaultEnvironmentHelpText = t`The execution environment that will be used for jobs
@@ -108,9 +108,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
       <a
         target="_blank"
         rel="noopener noreferrer"
-        href={`${getDocsBaseUrl(
-          config
-        )}/html/userguide/projects.html#manage-playbooks-using-source-control`}
+        href={useGetDocsUrl(config, 'managePlaybooksSC')}
       >
         {t`Documentation.`}
       </a>
@@ -283,7 +281,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
           </LabelGroup>
         </PageDetail>
       )}
-      <PageDetail label={t('Cache Timeout')} helpText={cacheTimeoutHelpText}>
+      <PageDetail label={t('Cache timeout')} helpText={cacheTimeoutHelpText}>
         {`${project.scm_update_cache_timeout} seconds`}
       </PageDetail>
       {project.summary_fields.default_environment && (
@@ -294,7 +292,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
           helpText={defaultEnvironmentHelpText}
         />
       )}
-      <PageDetail label={t('Project Base Path')} helpText={basePathHelpBlock}>
+      <PageDetail label={t('Project base path')} helpText={basePathHelpBlock}>
         {config?.project_base_dir}
       </PageDetail>
       <PageDetail label={t('Playbook directory')} helpText={playbookDirectoryHelpText}>

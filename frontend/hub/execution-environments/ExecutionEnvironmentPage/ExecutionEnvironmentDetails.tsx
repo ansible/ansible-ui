@@ -60,10 +60,10 @@ export function ExecutionEnvironmentDetails() {
           text: readme,
         }
       );
-    } catch (e) {
+    } catch (error) {
       alertToaster.addAlert({
         variant: 'danger',
-        title: t('Failed to save README file'),
+        title: (error as { details: string })?.details || t('Failed to save README file'),
         children: error instanceof Error && error.message,
       });
     }

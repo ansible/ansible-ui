@@ -18,7 +18,7 @@ import {
 import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { getDocsBaseUrl } from '../../../common/util/getDocsBaseUrl';
+import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 
 export function ConstructedInventoryHint() {
   const config = useAwxConfig();
@@ -32,7 +32,7 @@ export function ConstructedInventoryHint() {
       title={t`How to use constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
-          href={`${getDocsBaseUrl(config)}/html/userguide/inventories.html#constructed-inventories`}
+          href={useGetDocsUrl(config, 'constructedInventories')}
           component="a"
           target="_blank"
           rel="noopener noreferrer"
@@ -167,7 +167,7 @@ groups:
           {limitToIntersectionLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source vars`} fieldId="intersection-example-source-vars">
+      <FormGroup label={t`Source variabless`} fieldId="intersection-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
@@ -249,7 +249,7 @@ function FilterOnNestedGroupExample() {
           {nestedGroupsInventoryLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source vars`} fieldId="nested-groups-example-source-vars">
+      <FormGroup label={t`Source variables`} fieldId="nested-groups-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>
@@ -320,7 +320,7 @@ groups:
           {hostsByProcessorLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source vars`} fieldId="processor-example-source-vars">
+      <FormGroup label={t`Source variables`} fieldId="processor-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>

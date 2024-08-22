@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
+  CopyCell,
   LoadingPage,
   PageDetail,
   PageDetails,
@@ -30,6 +31,7 @@ export function WebhookDetails() {
     <Scrollable>
       <PageDetails disableScroll={true}>
         <PageDetail label={t('Name')}>{webhook?.name || ''}</PageDetail>
+        <PageDetail label={t('Event stream type')}>{webhook?.webhook_type || ''}</PageDetail>
         <PageDetail label={t('Organization')}>
           {webhook && webhook.organization ? (
             <Link
@@ -43,14 +45,34 @@ export function WebhookDetails() {
             webhook?.organization?.name || ''
           )}
         </PageDetail>
-        <PageDetail label={t('Url')}>{webhook?.url || ''}</PageDetail>
-        <PageDetail label={t('Hmac algorithm')}>{webhook?.hmac_algorithm || ''}</PageDetail>
-        <PageDetail label={t('Hmac signature prefix')}>
-          {webhook?.hmac_signature_prefix || ''}
+        <PageDetail label={t('Credential')}>
+          {webhook && webhook.eda_credential ? (
+            <Link
+              to={getPageUrl(EdaRoute.CredentialPage, {
+                params: { id: webhook?.eda_credential?.id },
+              })}
+            >
+              {webhook?.eda_credential?.name}
+            </Link>
+          ) : (
+            webhook?.eda_credential?.name || ''
+          )}
         </PageDetail>
-        <PageDetail label={t('hmac_format')}>{webhook?.hmac_format || ''}</PageDetail>
-        <PageDetail label={t('Header key')}>{webhook?.header_key || ''}</PageDetail>
-        <PageDetail label={t('Auth type')}>{webhook?.auth_type || ''}</PageDetail>
+        <PageDetail label={t('Url')}>
+          <CopyCell text={webhook?.url || ''} />
+        </PageDetail>
+        <PageDetail
+          label={t('Include headers')}
+          helpText={t(
+            'A comma separated HTTP header keys that you want to include in the event payload.'
+          )}
+        >
+          {webhook?.additional_data_headers || ''}
+        </PageDetail>
+        <PageDetail label={t('Events received')}>{webhook?.events_received}</PageDetail>
+        <PageDetail label={t('Last event received')}>
+          {webhook?.last_event_received_at ? formatDateString(webhook.last_event_received_at) : ''}
+        </PageDetail>
         <PageDetail label={t('Created')}>
           {webhook?.created_at ? formatDateString(webhook.created_at) : ''}
         </PageDetail>
@@ -60,19 +82,43 @@ export function WebhookDetails() {
             <DescriptionListGroup>
               <DescriptionListTerm style={{ opacity: 0.6 }}>
                 {t('Test mode')}
-                <StandardPopover header={t('Test mode')} content={t('Test mode.')} />
+                <StandardPopover
+                  header={t('Test mode')}
+                  content={t(
+                    ' In Test Mode events are not forwarded to the Activation. This mode helps in viewing the headers and payload'
+                  )}
+                />
               </DescriptionListTerm>
             </DescriptionListGroup>
           </PageDetail>
         )}
-        <PageDetail label={t('Test content type')}>{webhook?.test_content_type || ''}</PageDetail>
+        <PageDetail
+          label={t('Test content type')}
+          helpText={t('The HTTP Body that was sent from the Sender.')}
+        >
+          {webhook?.test_content_type || ''}
+        </PageDetail>
         <PageDetail label={t('Test error message')}>{webhook?.test_error_message || ''}</PageDetail>
+      </PageDetails>
+      <PageDetails numberOfColumns={'single'} disableScroll={true}>
+        {webhook?.test_headers && (
+          <PageDetailCodeEditor
+            value={webhook?.test_headers}
+            showCopyToClipboard={true}
+            label={t('Test headers')}
+            toggleLanguage={false}
+            helpText={t(
+              'The HTTP Headers received from the Sender. Any of these can be used in the "Include headers" field.'
+            )}
+          />
+        )}
       </PageDetails>
       <PageDetails numberOfColumns={'single'} disableScroll={true}>
         {webhook?.test_content && (
           <PageDetailCodeEditor
             value={webhook?.test_content}
             showCopyToClipboard={true}
+            toggleLanguage={false}
             label={t('Test content')}
             helpText={t('Test content')}
           />

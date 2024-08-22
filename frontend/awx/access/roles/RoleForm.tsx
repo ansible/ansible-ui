@@ -41,13 +41,13 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Role')}
+        title={t('Create role')}
         breadcrumbs={[
           {
             label: props.breadcrumbLabelForPreviousPage || t('Roles'),
             to: getPageUrl(AwxRoute.Roles),
           },
-          { label: t('Create Role') },
+          { label: t('Create role') },
         ]}
       />
       <AwxPageForm<AwxRbacRole>
@@ -100,13 +100,10 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
       return (
         <PageLayout>
           <PageHeader
-            title={t('Edit Role')}
+            title={role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles')}
             breadcrumbs={[
-              {
-                label: props.breadcrumbLabelForPreviousPage || t('Roles'),
-                to: getPageUrl(AwxRoute.Roles),
-              },
-              { label: t('Edit Role') },
+              { label: t('Roles'), to: getPageUrl(AwxRoute.Roles) },
+              { label: role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles') },
             ]}
           />
           <AwxPageForm<AwxRbacRole>
@@ -135,7 +132,7 @@ function AwxRoleInputs(props: { disableContentType?: boolean }) {
       <PageFormTextInput<AwxRbacRole> name="description" label={t('Description')} />
       <PageFormSelect
         name={'content_type'}
-        label={t('Content Type')}
+        label={t('Content type')}
         placeholderText={t('Select a content type')}
         options={Object.entries(awxRoleMetadata.content_types)
           .filter(([option]) => option !== 'shared.team')

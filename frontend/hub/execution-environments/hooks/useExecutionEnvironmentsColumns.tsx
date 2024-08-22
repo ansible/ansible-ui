@@ -16,7 +16,7 @@ export function useExecutionEnvironmentsColumns(_options?: {
   const tableColumns = useMemo<ITableColumn<ExecutionEnvironment>[]>(
     () => [
       {
-        header: t('Container repository name'),
+        header: t('Name'),
         cell: (executionEnvironment) => (
           <TextCell
             text={executionEnvironment.name}

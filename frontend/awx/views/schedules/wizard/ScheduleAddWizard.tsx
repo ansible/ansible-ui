@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import {
@@ -65,7 +66,7 @@ export function ScheduleAddWizard(props: {
     const ruleset = getRuleSet(rules, exceptions);
 
     const data: StandardizedFormData = {
-      rrule: ruleset.toString(),
+      rrule: ruleset.toString().split('\n').join(' '),
       ...rest,
     };
     try {
@@ -91,96 +92,98 @@ export function ScheduleAddWizard(props: {
 
   const onCancel = () => navigate(location.pathname.replace('create', ''));
 
-  const steps: PageWizardStep[] = [
-    {
-      id: 'details',
-      label: t('Details'),
-      inputs: <ScheduleSelectStep {...props} />,
-    },
-    {
-      id: 'promptStep',
-      label: t('Prompts'),
-      inputs: <SchedulePromptsStep />,
-      hidden: (wizardData: Partial<ScheduleFormWizard>) => {
-        const { resource, schedule_type, launch_config } = wizardData;
-        if (
-          (schedule_type === 'workflow_job_template' || schedule_type === 'job_template') &&
-          resource &&
-          launch_config
-        ) {
-          return shouldHideOtherStep(launch_config);
-        }
-        return true;
+  const steps: PageWizardStep[] = useMemo(() => {
+    return [
+      {
+        id: 'details',
+        label: t('Details'),
+        inputs: <ScheduleSelectStep {...props} />,
       },
-    },
-    {
-      id: 'survey',
-      label: t('Survey'),
-      inputs: <SurveyStep />,
-      hidden: (wizardData: Partial<WizardFormValues>) => {
-        if (Object.keys(wizardData).length === 0) {
-          return true;
-        }
-        if (wizardData.launch_config?.survey_enabled) {
-          return false;
-        }
-        return true;
-      },
-    },
-    {
-      id: 'rules',
-      label: t('Rules'),
-      inputs: <RulesStep />,
-      validate: (formData: Partial<RuleFields>) => {
-        if (!formData?.rules?.length) {
-          const errors = {
-            __all__: [t('Schedules must have at least one rule.')],
-          };
-
-          throw new RequestError('', '', 400, '', errors);
-        }
-      },
-    },
-    {
-      id: 'exceptions',
-      label: t('Exceptions'),
-      inputs: <ExceptionsStep />,
-    },
-    {
-      id: 'review',
-      label: t('Review'),
-      inputs: <ScheduleReviewStep />,
-
-      validate: async (_formData: object, wizardData: Partial<ScheduleFormWizard>) => {
-        if (!wizardData?.rules?.length) {
-          const errors = {
-            __all__: [t('Schedules must have at least one rule.')],
-          };
-
-          throw new RequestError('', '', 400, '', errors);
-        }
-
-        const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
-        const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
-          awxAPI`/schedules/preview/`,
-          {
-            rrule: ruleset.toString(),
+      {
+        id: 'promptStep',
+        label: t('Prompts'),
+        inputs: <SchedulePromptsStep />,
+        hidden: (wizardData: Partial<ScheduleFormWizard>) => {
+          const { resource, schedule_type, launch_config } = wizardData;
+          if (
+            (schedule_type === 'workflow_job_template' || schedule_type === 'job_template') &&
+            resource &&
+            launch_config
+          ) {
+            return shouldHideOtherStep(launch_config);
           }
-        );
-        if (!local.length && !utc.length) {
-          const errors = {
-            __all__: [
-              t(
-                'This schedule will never run.  If you have defined exceptions it is likely that the exceptions cancel out all the rules defined in the rules step.'
-              ),
-            ],
-          };
-
-          throw new RequestError('', '', 400, '', errors);
-        }
+          return true;
+        },
       },
-    },
-  ];
+      {
+        id: 'survey',
+        label: t('Survey'),
+        inputs: <SurveyStep />,
+        hidden: (wizardData: Partial<WizardFormValues>) => {
+          if (Object.keys(wizardData).length === 0) {
+            return true;
+          }
+          if (wizardData.launch_config?.survey_enabled) {
+            return false;
+          }
+          return true;
+        },
+      },
+      {
+        id: 'rules',
+        label: t('Rules'),
+        inputs: <RulesStep />,
+        validate: (formData: Partial<RuleFields>) => {
+          if (!formData?.rules?.length) {
+            const errors = {
+              __all__: [t('Schedules must have at least one rule.')],
+            };
+
+            throw new RequestError('', '', 400, '', errors);
+          }
+        },
+      },
+      {
+        id: 'exceptions',
+        label: t('Exceptions'),
+        inputs: <ExceptionsStep />,
+      },
+      {
+        id: 'review',
+        label: t('Review'),
+        inputs: <ScheduleReviewStep />,
+
+        validate: async (_formData: object, wizardData: Partial<ScheduleFormWizard>) => {
+          if (!wizardData?.rules?.length) {
+            const errors = {
+              __all__: [t('Schedules must have at least one rule.')],
+            };
+
+            throw new RequestError('', '', 400, '', errors);
+          }
+
+          const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
+          const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
+            awxAPI`/schedules/preview/`,
+            {
+              rrule: ruleset.toString().split('\n').join(' '),
+            }
+          );
+          if (!local.length && !utc.length) {
+            const errors = {
+              __all__: [
+                t(
+                  'This schedule will never run.  If you have defined exceptions it is likely that the exceptions cancel out all the rules defined in the rules step.'
+                ),
+              ],
+            };
+
+            throw new RequestError('', '', 400, '', errors);
+          }
+        },
+      },
+    ];
+  }, [getRuleSet, t, props]);
   const initialValues = {
     details: {
       name: '',

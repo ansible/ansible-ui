@@ -66,10 +66,10 @@ export function CreateProject() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Project')}
+        title={t('Create project')}
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
-          { label: t('Create Project') },
+          { label: t('Create project') },
         ]}
       />
       <AwxPageForm
@@ -128,10 +128,16 @@ export function EditProject() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Edit Project')}
+        title={
+          project?.name ? t('Edit {{projectName}}', { projectName: project?.name }) : t('Project')
+        }
         breadcrumbs={[
           { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
-          { label: t('Edit Project') },
+          {
+            label: project?.name
+              ? t('Edit {{projectName}}', { projectName: project?.name })
+              : t('Project'),
+          },
         ]}
       />
       <AwxPageForm<Project>
@@ -214,7 +220,7 @@ function ProjectInputs(props: { project?: Project }) {
         isRequired
         name="scm_type"
         id="source_control_type"
-        label={t('Source Control Type')}
+        label={t('Source control type')}
         options={
           scmTypeOptions
             ? scmTypeOptions.map(([value, label]) => ({
@@ -228,7 +234,7 @@ function ProjectInputs(props: { project?: Project }) {
       <PageFormCredentialSelect<Project>
         id="signature_validation_credential"
         name="signature_validation_credential"
-        label={t('Content Signature Validation Credential')}
+        label={t('Content signature validation credential')}
         labelHelp={t(
           'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
         )}

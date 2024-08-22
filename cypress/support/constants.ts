@@ -2,7 +2,6 @@ import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 
 export enum SERVER_NAME {
   AWX_SERVER = 'AWX Ansible Server',
@@ -11,18 +10,13 @@ export enum SERVER_NAME {
   GALAXY_SERVER = 'Galaxy Server',
 }
 
-type ResourceObject =
-  | EdaProject
-  | EdaDecisionEnvironment
-  | EdaRulebookActivation
-  | EdaCredential
-  | EdaCredentialType;
+type ResourceObject = EdaProject | EdaDecisionEnvironment | EdaRulebookActivation | EdaCredential;
 
 export interface AccessTabResource {
   name: string;
   roles_tab_name: string;
   content_type: string;
-  creation: (() => Cypress.Chainable<ResourceObject>) | null;
+  creation: ((orgId: number) => Cypress.Chainable<ResourceObject>) | null;
   deletion: (resourceObject: ResourceObject) => Cypress.Chainable<void>;
   role: string;
 }
@@ -31,7 +25,7 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     name: 'projects',
     roles_tab_name: 'Project',
     content_type: 'eda.project',
-    creation: () => cy.createEdaProject() as Cypress.Chainable<ResourceObject>,
+    creation: (orgId: number) => cy.createEdaProject(orgId) as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaProject(resourceObject as EdaProject),
     role: 'Project Admin',
   },
@@ -39,7 +33,8 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     name: 'decision-environments',
     roles_tab_name: 'Decision Environment',
     content_type: 'eda.decision-environment',
-    creation: () => cy.createEdaDecisionEnvironment() as Cypress.Chainable<ResourceObject>,
+    creation: (orgId: number) =>
+      cy.createEdaDecisionEnvironment(orgId) as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) =>
       cy.deleteEdaDecisionEnvironment(resourceObject as EdaDecisionEnvironment),
     role: 'Decision Environment Admin',
@@ -60,13 +55,5 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     creation: () => cy.createEdaCredential() as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaCredential(resourceObject as EdaCredential),
     role: 'Eda Credential Admin',
-  },
-  {
-    name: 'credential-types',
-    roles_tab_name: 'Credential Type',
-    content_type: 'eda.credentialtype',
-    creation: () => cy.createEdaCredentialType() as Cypress.Chainable<ResourceObject>,
-    deletion: (resourceObject) => cy.deleteEdaCredentialType(resourceObject as EdaCredentialType),
-    role: 'Credential Type Admin',
   },
 ];

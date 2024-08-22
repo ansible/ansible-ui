@@ -8,6 +8,7 @@ import './auth';
 import './awx-access-commands';
 import './awx-commands';
 import './awx-user-access-commands';
+import './hub-access-commands';
 import './common-commands';
 import './core-commands';
 import './e2e';
