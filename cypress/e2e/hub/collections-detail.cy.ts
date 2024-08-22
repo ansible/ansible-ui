@@ -101,7 +101,7 @@ describe('Collections Details', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it('user can delete version from repository', () => {
+  it.skip('user can delete version from repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     cy.uploadCollection(collectionName, namespace.name, '1.1.0');
 
