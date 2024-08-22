@@ -137,7 +137,7 @@ describe('Credential Types', () => {
 
     it('can create a new credential type with no configs', () => {
       cy.createAndDeleteCustomAWXCredentialTypeUI(customCredentialTypeName);
-      cy.verifyPageTitle('Create Types');
+      cy.verifyPageTitle('Credential Types');
     });
 
     it('creates a custom credential type with input and injector configurations in JSON format in the Monaco editor', () => {
