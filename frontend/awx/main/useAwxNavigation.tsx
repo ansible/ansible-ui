@@ -21,7 +21,6 @@ import { AwxOverview } from '../overview/AwxOverview';
 import { HostMetrics } from '../views/jobs/HostMetrics';
 import { AwxRoute } from './AwxRoutes';
 import { useAwxActivityStreamRoutes } from './routes/useAwxActivityStreamRoutes';
-import { useAwxApplicationsRoutes } from './routes/useAwxApplicationsRoutes';
 import { useAwxCredentialRoutes } from './routes/useAwxCredentialRoutes';
 import { useAwxCredentialTypesRoutes } from './routes/useAwxCredentialTypesRoutes';
 import { useAwxExecutionEnvironmentRoutes } from './routes/useAwxExecutionEnironmentRoutes';
@@ -58,7 +57,6 @@ export function useAwxNavigation() {
   const awxManagementJobsRoutes = useAwxManagementJobsRoutes();
   const awxInstanceGroupsRoutes = useAwxInstanceGroupsRoutes();
   const awxInstancesRoutes = useAwxInstancesRoutes();
-  const awxApplicationsRoutes = useAwxApplicationsRoutes();
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
   const { activeAwxUser } = useAwxActiveUser();
@@ -137,9 +135,8 @@ export function useAwxNavigation() {
             awxWorkflowApprovalRoutes,
             awxNotificationsRoutes,
             awxManagementJobsRoutes,
-            awxApplicationsRoutes,
           ]
-        : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes, awxApplicationsRoutes],
+        : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes],
     },
   ];
   const accessItems: PageNavigationItem[] = [
