@@ -50,6 +50,14 @@ describe('edaErrorAdapter', () => {
     ]);
   });
 
+  it('should handle "detail" errors as generic errors', () => {
+    const error = new RequestError('Validation failed', undefined, 400, {}, { detail: 'Error' });
+    const result = edaErrorAdapter(error);
+    expect(result.genericErrors.length).equal(1);
+    expect(result.fieldErrors.length).equal(0);
+    expect(result.genericErrors).to.deep.equal([{ message: 'Error' }]);
+  });
+
   it('should deal with "errors" errors as generic errors', () => {
     const error = new RequestError(
       'Errors',
