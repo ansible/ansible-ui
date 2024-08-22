@@ -227,6 +227,14 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             />
           )}
 
+          {!isNew && (
+            <PageFormTextArea<ExecutionEnvironmentFormProps>
+              name="description"
+              label={t('Description')}
+              placeholder={t('Enter a description')}
+            />
+          )}
+
           {isRemote && (
             <>
               <PageFormTextInput<ExecutionEnvironmentFormProps>
@@ -252,14 +260,6 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
               <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
               <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
             </>
-          )}
-
-          {!isNew && (
-            <PageFormTextArea<ExecutionEnvironmentFormProps>
-              name="description"
-              label={t('Description')}
-              placeholder={t('Enter a description')}
-            />
           )}
         </HubPageForm>
       )}
