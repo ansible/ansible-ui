@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   PageFormSubmitHandler,
-  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -228,7 +227,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           )}
 
           {!isNew && (
-            <PageFormTextArea<ExecutionEnvironmentFormProps>
+            <PageFormTextInput<ExecutionEnvironmentFormProps>
               name="description"
               label={t('Description')}
               placeholder={t('Enter a description')}
