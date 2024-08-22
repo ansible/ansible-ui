@@ -16,7 +16,6 @@ import { PlatformEdaUserIdLookup } from '../access/users/components/PlatformEdaU
 import { AddRolesToUser } from '../../frontend/awx/access/users/components/AddRolesToUser';
 import { EdaAddUserRoles } from '../../frontend/eda/access/users/EdaAddUserRoles';
 import { PlatformUserTokens } from '../access/users/components/PlatformUserTokens';
-import { UserTokens } from '../../frontend/awx/access/users/UserPage/UserTokens';
 import { Token } from '../../frontend/awx/interfaces/Token';
 import { CreateUserToken } from '../../frontend/awx/access/users/UserTokenForm';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
@@ -120,20 +119,6 @@ export function useGetPlatformUsersRoutes() {
                         'Ansible Automation Platform tokens authenticate your instance to run automation.'
                       )}
                     />
-                  ),
-                },
-                {
-                  id: PlatformRoute.AwxUserTokens,
-                  path: 'controller',
-                  element: (
-                    <PlatformAwxUserIdLookup>
-                      <UserTokens
-                        infoMessage={t(
-                          'Automation Execution tokens authenticate and connect to your Ansible Automation Platform to run automation.'
-                        )}
-                        createTokenRoute={PlatformRoute.CreateAwxUserToken}
-                      />
-                    </PlatformAwxUserIdLookup>
                   ),
                 },
                 {
