@@ -1,81 +1,30 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { PageTable } from '../../../../framework';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { CubesIcon } from '@patternfly/react-icons';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import {
-  useOrganizationUsersRowActions,
-  useOrganizationUsersToolbarActions,
-} from '../hooks/useOrganizationUsersActions';
-import { LoadingState } from '../../../../framework/components/LoadingState';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
+import { useGatewayService } from '../../../main/GatewayServices';
 
 export function PlatformOrganizationUsers() {
   const { t } = useTranslation();
-  const toolbarFilters = useUsersFilters();
-  const tableColumns = useUsersColumns();
   const params = useParams<{ id: string }>();
-  const {
-    data: organization,
-    isLoading,
-    error,
-  } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations`, params.id);
+  const awxService = useGatewayService('controller');
 
-  const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/users/`,
-    toolbarFilters,
-    tableColumns,
-  });
-
-  const { data: organizationOptions, isLoading: isLoadingOptions } = useOptions<
-    OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`);
-  const canEditOrganization = Boolean(
-    organizationOptions &&
-      organizationOptions.actions &&
-      (organizationOptions.actions['PUT'] || organizationOptions.actions['PATCH'])
-  );
-  const toolbarActions = useOrganizationUsersToolbarActions(view);
-  const rowActions = useOrganizationUsersRowActions(view);
-
-  if (isLoading || isLoadingOptions) return <LoadingState />;
-  if (error) return <AwxError error={error} />;
+  const usersTabs = useMemo(() => {
+    return [
+      {
+        label: t('Ansible Automation Platform'),
+        page: PlatformRoute.AAPOrganizationUsers as string,
+      },
+      ...(awxService
+        ? [{ label: t('Automation Execution'), page: PlatformRoute.AwxOrganizationUsers as string }]
+        : []),
+    ];
+  }, [awxService, t]);
 
   return (
-    <PageTable<PlatformUser>
-      id="platform-organization-users-table"
-      toolbarFilters={toolbarFilters}
-      toolbarActions={toolbarActions}
-      tableColumns={tableColumns}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading users')}
-      emptyStateTitle={
-        canEditOrganization
-          ? t('There are currently no users added to this organization.')
-          : t('You do not have permission to add a user to this organization.')
-      }
-      emptyStateDescription={
-        canEditOrganization
-          ? t('Add users by clicking the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateIcon={canEditOrganization ? undefined : CubesIcon}
-      emptyStateButtonText={canEditOrganization ? t('Add user(s)') : undefined}
-      emptyStateActions={canEditOrganization ? toolbarActions.slice(0, 1) : undefined}
-      {...view}
-    />
+    <>
+      <PageRoutedTabs tabs={usersTabs} isBox={false} params={{ id: params.id }} />
+    </>
   );
 }
