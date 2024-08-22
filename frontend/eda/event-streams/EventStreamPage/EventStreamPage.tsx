@@ -160,6 +160,8 @@ export function EventStreamPage() {
         tabs={[
           { label: t('Details'), page: EdaRoute.EventStreamDetails },
           { label: t('Activations'), page: EdaRoute.EventStreamActivations },
+          { label: t('Team Access'), page: EdaRoute.EventStreamTeamAccess },
+          { label: t('User Access'), page: EdaRoute.EventStreamUserAccess },
         ]}
         params={{ id: eventStream?.id }}
       />
