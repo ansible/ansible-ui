@@ -1,14 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
-import { Banner, Bullseye, Button, PageSection, Spinner } from '@patternfly/react-core';
-import { CogIcon, InfoCircleIcon } from '@patternfly/react-icons';
-import { useEffect } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { Bullseye, Button, PageSection, Spinner } from '@patternfly/react-core';
+import { CogIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout, usePageDialog } from '../../../framework';
+import { PageHeader, PageLayout } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { awxAPI } from '../common/api/awx-utils';
-import { useAwxConfig } from '../common/useAwxConfig';
-import { WelcomeModal } from './WelcomeModal';
 import { AwxCountsCard } from './cards/AwxCountsCard';
 import { AwxJobActivityCard } from './cards/AwxJobActivityCard';
 import { AwxRecentInventoriesCard } from './cards/AwxRecentInventoriesCard';
@@ -16,17 +13,12 @@ import { AwxRecentJobsCard } from './cards/AwxRecentJobsCard';
 import { AwxRecentProjectsCard } from './cards/AwxRecentProjectsCard';
 import { useManagedAwxDashboard } from './hooks/useManagedAwxDashboard';
 
-const HIDE_WELCOME_MESSAGE = 'hide-welcome-message';
 type Resource = { id: string; name: string };
 
 export function AwxOverview() {
   const { t } = useTranslation();
   const { openManageDashboard, managedResources } = useManagedAwxDashboard();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const config = useAwxConfig();
-  const [_, setDialog] = usePageDialog();
-  const welcomeMessageSetting = localStorage.getItem(HIDE_WELCOME_MESSAGE);
-  const hideWelcomeMessage = welcomeMessageSetting ? welcomeMessageSetting === 'true' : false;
   function renderCustomizeControls() {
     return (
       <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
@@ -34,25 +26,9 @@ export function AwxOverview() {
       </Button>
     );
   }
-  useEffect(() => {
-    if (config?.ui_next && !hideWelcomeMessage) {
-      setDialog(<WelcomeModal />);
-    }
-  }, [config?.ui_next, hideWelcomeMessage, setDialog]);
 
   return (
     <PageLayout>
-      {config?.ui_next && (
-        <Banner data-cy="tech-preview" variant="blue">
-          <p>
-            <InfoCircleIcon />{' '}
-            <Trans>
-              You are currently viewing a tech preview of the new {{ product }} user interface. To
-              return to the original interface, click <a href="/">here</a>.
-            </Trans>
-          </p>
-        </Banner>
-      )}
       <PageHeader
         title={t(`Welcome to {{product}}`, { product })}
         description={t('Define, operate, scale, and delegate automation across your enterprise.')}
