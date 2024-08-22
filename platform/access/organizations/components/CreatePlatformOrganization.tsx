@@ -33,15 +33,24 @@ export function CreatePlatformOrganization() {
       gatewayV1API`/organizations/`,
       values.organization
     );
+    const updateControllerOrg: boolean =
+      (Array.isArray(values.instanceGroups) && values.instanceGroups.length > 0) ||
+      (Array.isArray(values.galaxyCredentials) && values.galaxyCredentials.length > 0) ||
+      values.executionEnvironment !== undefined;
     // Wait for the organization to be present in Controller before associating instance groups
     if (!createdOrganization.summary_fields?.resource?.ansible_id) {
       throw new Error(t('Organization resource ansible_id is not available'));
     } else {
-      if (awxService) {
+      if (
+        // only perform Controller org updates if specified
+        awxService &&
+        updateControllerOrg
+      ) {
+        // increase polling to once every 2 seconds try and reduce sync mismatch, see AAP-29629 and AAP-27171
         const controllerOrganization = await pollAwxItemsResponseItem<ControllerOrganization>(
           awxAPI`/organizations/?resource__ansible_id=${createdOrganization.summary_fields.resource.ansible_id}`,
           10,
-          1000
+          2000
         );
         for (const ig of values.instanceGroups || []) {
           await associateInstanceGroupsRequest(
