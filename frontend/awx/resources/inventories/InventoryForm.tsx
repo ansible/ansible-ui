@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
@@ -333,7 +333,7 @@ export function useInventoryFormDetailLabels() {
 function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
-  const inventoryFormDetailLables = useInventoryFormDetailLabels();
+  const inventoryFormDetailLabels = useInventoryFormDetailLabels();
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -352,14 +352,23 @@ function InventoryInputs(props: { inventoryKind: string }) {
         <PageFormTextInput<InventoryCreate>
           name="host_filter"
           label={t('Smart host filter')}
-          labelHelp={[
-            t(
-              'Populate the hosts for this inventory by using a search filter. Example: name___icontains=RedHat.'
-            ),
-            t(
-              'Note: Smart inventories have been deprecated in favor of constructed inventories. Refer to the Ansible Controller documentation for further syntax and examples.'
-            ),
-          ]}
+          labelHelp={
+            <>
+              <Trans>
+                Populate the hosts for this inventory by using a search filter.
+                <br />
+                Example: {''}
+                <br />
+                <code>
+                  <b>name__icontains=RedHat</b>
+                </code>
+                <br />
+              </Trans>
+              {t(
+                'Note: Smart inventories have been deprecated in favor of constructed inventories. Refer to the Ansible Controller documentation for further syntax and examples.'
+              )}
+            </>
+          }
           placeholder={t('Enter smart host filter')}
           isRequired
         />
@@ -376,7 +385,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             id="update_cache_timeout"
             type="number"
             label={t(`Cache timeout (seconds)`)}
-            labelHelp={inventoryFormDetailLables.cache_timeout}
+            labelHelp={inventoryFormDetailLabels.cache_timeout}
             validate={(item) =>
               Number.parseFloat(item) >= 0
                 ? undefined
@@ -388,7 +397,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             id="verbosity"
             label={t(`Verbosity`)}
             placeholder={''}
-            labelHelp={inventoryFormDetailLables.verbosity}
+            labelHelp={inventoryFormDetailLabels.verbosity}
             options={[
               { value: 0, label: t('0 (Normal)') },
               { value: 1, label: t('1 (Verbose)') },
@@ -405,14 +414,14 @@ function InventoryInputs(props: { inventoryKind: string }) {
             name="limit"
             id="limit"
             label={t(`Limit`)}
-            labelHelp={inventoryFormDetailLables.limit}
+            labelHelp={inventoryFormDetailLabels.limit}
           />
         </>
       )}
       {inventoryKind === '' && (
         <PageFormLabelSelect<InventoryCreate>
           labelHelpTitle={t('Labels')}
-          labelHelp={inventoryFormDetailLables.labels}
+          labelHelp={inventoryFormDetailLabels.labels}
           name="labels"
         />
       )}
@@ -441,7 +450,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
           <PageFormCheckbox<InventoryCreate>
             label={t('Prevent instance group fallback')}
             labelHelpTitle={t('Prevent instance group fallback')}
-            labelHelp={inventoryFormDetailLables.prevent_instance_group_fallback}
+            labelHelp={inventoryFormDetailLabels.prevent_instance_group_fallback}
             name="prevent_instance_group_fallback"
           />
         </PageFormGroup>
@@ -532,7 +541,6 @@ async function loadInputInventories(
   const inventoriesData: InputInventory[] = inventories.map((inv) => {
     return { id: inv.id, url: '', type: '', name: '' };
   });
-
   inventories.forEach((inventory) => {
     const promise = requestGet<AwxItemsResponse<Inventory>>(
       awxAPI`/inventories/?id=${inventory.id.toString()}`
