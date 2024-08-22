@@ -26,7 +26,7 @@ export function Topology() {
         description={t(
           'View node type, node health, and specific details about each node in your mesh topology.'
         )}
-        titleHelpTitle={t('topology view')}
+        titleHelpTitle={t('Topology View')}
         titleHelp={t(
           'View node type, node health, and specific details about each node in your mesh topology.'
         )}

@@ -54,7 +54,7 @@ export function useAwxSettingsGroupsBase() {
       },
       {
         id: 'debug',
-        name: t('Troubleshooting'),
+        name: t('Troubleshooting Settings'),
         description: t('Debugging and troubleshooting settings.'),
         defaultSlugs: ['debug'],
         categories: [],

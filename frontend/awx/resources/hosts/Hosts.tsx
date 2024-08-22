@@ -39,7 +39,7 @@ export function Hosts() {
           `A system managed by {{product}}, which may include a physical, virtual, cloud-based server, or other device.`,
           { product }
         )}
-        titleHelpTitle={t('Host')}
+        titleHelpTitle={t('Hosts')}
         titleHelp={[
           t(
             `A system managed by {{product}}, which may include a physical, virtual, cloud-based server, or other device. Typically an operating system instance. Hosts are contained in Inventory. Sometimes referred to as a “node”.`,
