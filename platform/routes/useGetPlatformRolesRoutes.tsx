@@ -124,6 +124,10 @@ export function useGetPlatformRolesRoutes() {
                 path: 'details',
                 element: <EdaRoleDetails />,
               },
+              {
+                path: '',
+                element: <Navigate to="details" />,
+              },
             ],
           },
         ],
