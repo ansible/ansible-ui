@@ -10,7 +10,6 @@ import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider'
 export function PlatformUserTokens() {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const awxService = useGatewayService('controller');
   const edaService = useGatewayService('eda');
 
   const { activePlatformUser: activeUser } = usePlatformActiveUser();
@@ -26,14 +25,11 @@ export function PlatformUserTokens() {
   const tokensTabs = useMemo(() => {
     return [
       { label: t('Ansible Automation Platform'), page: PlatformRoute.AAPUserTokens as string },
-      ...(awxService
-        ? [{ label: t('Automation Execution'), page: PlatformRoute.AwxUserTokens as string }]
-        : []),
       ...(edaService
         ? [{ label: t('Automation Decisions'), page: PlatformRoute.EdaUserTokens as string }]
         : []),
     ];
-  }, [awxService, edaService, t]);
+  }, [edaService, t]);
 
   return <PageRoutedTabs tabs={tokensTabs} isBox={false} params={{ id: params.id }} />;
 }
