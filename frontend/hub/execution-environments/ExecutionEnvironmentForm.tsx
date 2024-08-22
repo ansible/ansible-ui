@@ -254,12 +254,13 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             </>
           )}
 
-          <PageFormTextArea<ExecutionEnvironmentFormProps>
-            name="description"
-            label={t('Description')}
-            placeholder={t('Enter a description')}
-            isDisabled={mode === 'add'}
-          />
+          {!isNew && (
+            <PageFormTextArea<ExecutionEnvironmentFormProps>
+              name="description"
+              label={t('Description')}
+              placeholder={t('Enter a description')}
+            />
+          )}
         </HubPageForm>
       )}
     </PageLayout>
