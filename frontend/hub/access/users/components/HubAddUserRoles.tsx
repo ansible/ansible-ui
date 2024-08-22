@@ -26,6 +26,8 @@ import {
 } from '../../common/HubRoleWizardSteps/HubSelectResourcesStep';
 import { HubSelectResourceTypeStep } from '../../common/HubRoleWizardSteps/HubSelectResourceTypeStep';
 import { HubSelectRolesStep } from '../../common/HubRoleWizardSteps/HubSelectRolesStep';
+import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
+import { ExecutionEnvironment } from '../../../execution-environments/ExecutionEnvironment';
 
 type ResourceTypeWithID = { id: number | string };
 type ResourceTypeWithPulpHref = { pulp_href: string };
@@ -125,10 +127,12 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
             role_definition: role.id,
             content_type: resourceType === 'system' ? null : resourceType,
             object_id:
-              resourceType !== 'system'
-                ? (resource as ResourceTypeWithID).id ??
-                  parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)
-                : undefined,
+              resourceType === (ContentTypeEnum.ExecutionEnvironment as string)
+                ? (resource as ExecutionEnvironment)?.namespace?.id
+                : resourceType !== 'system'
+                  ? (resource as ResourceTypeWithID).id ??
+                    parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)
+                  : undefined,
           }),
         onComplete: () => {
           resolve();
