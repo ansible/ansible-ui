@@ -44,7 +44,7 @@ export function useMapContentTypeToDisplayName() {
           : t('execution environment'),
         containerrepository: options?.isTitleCase
           ? t('Container Repository')
-          : t('container Repository'),
+          : t('container repository'),
         ansiblerepository: options?.isTitleCase ? t('Repository') : t('repository'),
         system: options?.isTitleCase ? t('System') : t('system'),
         null: options?.isTitleCase ? t('System') : t('system'),
