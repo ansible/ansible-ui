@@ -126,7 +126,7 @@ export function ExecutionEnvironmentAddTeams() {
             team: team.id,
             role_definition: role.id,
             content_type: 'galaxy.containernamespace', // Verify this one?
-            object_id: executionEnvironment?.id,
+            object_id: executionEnvironment?.namespace?.id,
           }),
         onComplete: () => {
           resolve();
