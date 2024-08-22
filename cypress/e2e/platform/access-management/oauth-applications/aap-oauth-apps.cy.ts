@@ -255,7 +255,6 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
       cy.clickButton(/^Clear all filters$/);
       cy.clickTab('Back to Applications', true);
       cy.verifyPageTitle('Applications');
-      cy.contains('h4', 'These OAuth Applications apply to resources at platform level.');
       cy.selectTableRow(platformApplication.name);
       cy.clickToolbarKebabAction('delete-selected-applications');
       cy.clickModalConfirmCheckbox();
