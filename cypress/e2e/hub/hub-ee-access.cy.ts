@@ -6,7 +6,7 @@ import { randomString } from '../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
-describe.skip('Execution Environment User Access tab', () => {
+describe('Execution Environment User Access tab', () => {
   let executionEnvironment: ExecutionEnvironment;
   let remoteRegistry: RemoteRegistry;
   let role: HubRbacRole;
@@ -25,7 +25,8 @@ describe.skip('Execution Environment User Access tab', () => {
     }).then((createdRole) => {
       role = createdRole;
     });
-    cy.createHubRemoteRegistry().then((remoteRegistry) => {
+    cy.createHubRemoteRegistry().then((remoteRegistryData) => {
+      remoteRegistry = remoteRegistryData;
       cy.createHubExecutionEnvironment({
         executionEnvironment: { registry: remoteRegistry.id },
       }).then((execution_Environment) => {
@@ -55,7 +56,6 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.clickButton(/^Remove role/);
       cy.contains(/^Success$/);
       cy.clickButton(/^Close$/);
-      cy.clearAllFilters();
     });
   }
 
@@ -107,7 +107,7 @@ describe.skip('Execution Environment User Access tab', () => {
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.selectTableRowByCheckbox('name', hubTeam.name, { disableFilter: true });
+        cy.selectTableRow(hubTeam.name);
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', role.name, {
@@ -132,7 +132,7 @@ describe.skip('Execution Environment User Access tab', () => {
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(executionEnvironment.name);
-      cy.selectTableRowByCheckbox('name', hubTeam.name, {
+      cy.selectTableRowByCheckbox('team-name', hubTeam.name, {
         disableFilter: true,
       });
       cy.contains(role.name).should('be.visible');
