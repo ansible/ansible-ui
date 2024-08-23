@@ -27,6 +27,7 @@ import {
   useRestartRulebookActivations,
 } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();
@@ -34,6 +35,7 @@ export function RulebookActivationPage() {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
+  const parseError = useEdaErrorMessageParser();
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     edaAPI`/activations/${params.id ?? ''}/`
@@ -67,16 +69,18 @@ export function RulebookActivationPage() {
         };
         await postRequest(edaAPI`/activations/${activation.id.toString()}/enable/`, undefined)
           .then(() => alertToaster.addAlert(alert))
-          .catch(() => {
+          .catch((err: Error) => {
+            const errorResults = parseError(err);
             alertToaster.addAlert({
               variant: 'danger',
               title: `${t('Failed to enable')} ${activation.name}`,
+              children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
               timeout: 5000,
             });
           });
         refresh();
       },
-      [alertToaster, refresh, t]
+      [alertToaster, refresh, parseError, t]
     );
 
   const isActionTab = location.href.includes(
