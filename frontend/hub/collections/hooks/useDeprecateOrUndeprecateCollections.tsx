@@ -22,7 +22,7 @@ export function useDeprecateOrUndeprecateCollections(
         title:
           type === 'deprecate'
             ? t('Permanently deprecate collections')
-            : t('Premanently undeprecate collections'),
+            : t('Permanently undeprecate collections'),
 
         confirmText:
           type === 'deprecate'

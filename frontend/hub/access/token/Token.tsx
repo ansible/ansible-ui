@@ -23,7 +23,7 @@ export function Token() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError(t('An unknown error occured.'));
+        setError(t('An unknown error occurred.'));
       }
     } finally {
       setWorking(false);
