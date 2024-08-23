@@ -58,14 +58,6 @@ export enum EdaRoute {
   CredentialTypeDetails = 'eda-credential-type-details',
   CredentialTypeCredentials = 'eda-credential-type-credentials',
 
-  EventStreams = 'eda-event-streams',
-  CreateEventStream = 'eda-create-event-stream',
-  EventStreamPage = 'eda-event-stream-page',
-  EventStreamDetails = 'eda-event-stream-details',
-  EventStreamHistory = 'eda-event-stream-history',
-  EventStreamInstancePage = 'eda-event-stream-instance-page',
-  EventStreamInstanceDetails = 'eda-event-stream-instance-details',
-
   Access = 'eda-access',
   Users = 'eda-users',
   CreateUser = 'eda-create-user',
@@ -94,11 +86,11 @@ export enum EdaRoute {
 
   CreateControllerToken = 'eda-create-controller-token',
 
-  Webhooks = 'eda-webhooks',
-  CreateWebhook = 'eda-create-webhook',
-  EditWebhook = 'eda-edit-webhook',
-  WebhookPage = 'eda-webhook-page',
-  WebhookDetails = 'eda-webhook-details',
+  EventStreams = 'eda-event-streams',
+  CreateEventStream = 'eda-create-event-stream',
+  EditEventStream = 'eda-edit-event-stream',
+  EventStreamPage = 'eda-event-stream-page',
+  EventStreamDetails = 'eda-event-stream-details',
 
   Settings = 'eda-settings',
   SettingsPreferences = 'eda-settings-preferences',

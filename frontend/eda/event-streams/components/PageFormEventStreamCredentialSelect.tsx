@@ -14,7 +14,7 @@ import { edaAPI } from '../../common/eda-utils';
  * <PageFormSelectCredential<Credential> name="Credential" />
  * ```
  */
-export function PageFormSelectWebhookCredential<
+export function PageFormSelectEventStreamCredential<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
