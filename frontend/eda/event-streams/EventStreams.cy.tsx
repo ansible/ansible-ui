@@ -211,7 +211,6 @@ describe('EventStreams.cy.ts', () => {
     cy.contains('th', 'Events received');
     cy.contains('th', 'Last event received');
     cy.contains('th', 'Event stream type');
-    cy.contains('th', 'Event stream mode');
   });
 
   it('Can delete an event stream', () => {

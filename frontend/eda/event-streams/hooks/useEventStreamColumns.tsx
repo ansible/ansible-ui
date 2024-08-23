@@ -10,7 +10,6 @@ import {
 } from '../../../../framework';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { Tooltip } from '@patternfly/react-core';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
 export function useEventStreamColumns() {
@@ -39,6 +38,7 @@ export function useEventStreamColumns() {
       {
         header: t('Last event received'),
         type: 'datetime',
+        modal: ColumnModalOption.hidden,
         value: (eventStream) => eventStream?.last_event_received_at ?? undefined,
       },
       {
@@ -57,22 +57,6 @@ export function useEventStreamColumns() {
         ),
         value: (eventStream) => eventStream.event_stream_type,
         modal: ColumnModalOption.hidden,
-      },
-      {
-        header: t('Event stream mode'),
-        cell: (eventStream) => (
-          <Tooltip
-            content={
-              eventStream.test_mode
-                ? t('Test mode - events are not forwarded to Activation')
-                : t('Production mode - events are forwarded to Activation')
-            }
-          >
-            <TextCell text={eventStream.test_mode ? t('Test mode') : t('Production mode')} />
-          </Tooltip>
-        ),
-        card: 'name',
-        list: 'name',
       },
       {
         header: t('URL'),

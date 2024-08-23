@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import {
-  PageFormCheckbox,
   PageFormSubmitHandler,
+  PageFormSwitch,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -97,13 +97,14 @@ function EventStreamInputs() {
             'To include all headers in teh event payload, leave the field empty.'
         )}
       />
-      <PageFormCheckbox<IEdaEventStreamCreate>
-        label={t`Test mode`}
+      <PageFormSwitch<IEdaEventStreamCreate>
+        label={t`Forward events`}
+        labelOn={t('Enabled')}
+        labelOff={t('Disabled')}
         labelHelp={t(
-          'Event streams in test mode do not forward events to the rulebook activation where they are configured. ' +
-            'Use this mode to pause the event stream.'
+          'Enable the event stream to forward events to the rulebook activation where it is configured. '
         )}
-        name="test_mode"
+        name="enabled"
       />
     </>
   );
@@ -147,13 +148,14 @@ function EventStreamEditInputs() {
             'To include all headers in teh event payload, leave the field empty.'
         )}
       />
-      <PageFormCheckbox<IEdaEventStreamCreate>
-        label={t`Test mode`}
+      <PageFormSwitch<IEdaEventStreamCreate>
+        label={t`Forward events`}
+        labelOn={t('Enabled')}
+        labelOff={t('Disabled')}
         labelHelp={t(
-          'Event streams in test mode do not forward events to the rulebook activation where they are configured. ' +
-            'Use this mode to pause the event stream.'
+          'Enable the event stream to forward events to the rulebook activation where it is configured. '
         )}
-        name="test_mode"
+        name="enabled"
       />
     </>
   );
@@ -176,8 +178,11 @@ export function CreateEventStream() {
       ? organizations.results[0]
       : undefined;
 
-  const onSubmit: PageFormSubmitHandler<EdaEventStreamCreate> = async (eventStream) => {
-    const newEventStream = await postRequest(edaAPI`/event-streams/`, eventStream);
+  const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
+    const newEventStream = await postRequest(edaAPI`/event-streams/`, {
+      ...eventStream,
+      test_mode: !eventStream?.enabled,
+    });
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream?.id } });
   };
@@ -198,7 +203,7 @@ export function CreateEventStream() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ organization_id: defaultOrganization?.id }}
+        defaultValue={{ organization_id: defaultOrganization?.id, test_mode: false, enabled: true }}
       >
         <EventStreamInputs />
       </EdaPageForm>
@@ -217,7 +222,10 @@ export function EditEventStream() {
   const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
 
   const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
-    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, eventStream);
+    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, {
+      ...eventStream,
+      test_mode: !eventStream?.enabled,
+    });
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
@@ -252,6 +260,7 @@ export function EditEventStream() {
           onCancel={onCancel}
           defaultValue={{
             ...eventStream,
+            enabled: !eventStream.test_mode,
             organization_id: eventStream.organization?.id,
             eda_credential_id: eventStream?.eda_credential?.id,
           }}
@@ -266,4 +275,5 @@ export function EditEventStream() {
 type IEdaEventStreamCreate = EdaEventStreamCreate & {
   type_id: number;
   kind: string;
+  enabled: boolean;
 };

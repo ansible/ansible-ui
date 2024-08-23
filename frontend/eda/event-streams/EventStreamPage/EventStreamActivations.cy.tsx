@@ -4,12 +4,29 @@ import { edaAPI } from '../../common/eda-utils';
 describe('EventStreamActivations.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: edaAPI`/event-streams/1/activations/&page=1&page_size=10` },
+      { method: 'GET', url: edaAPI`/event-streams/1/activations/*` },
       {
-        fixture: 'edaActivations.json',
+        fixture: 'edaRulebookActivations.json',
       }
     );
-
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/activations/*`,
+      },
+      {
+        fixture: 'edaRulebookActivationOptions.json',
+      }
+    ).as('activationsOptions');
+    cy.intercept(
+      {
+        method: 'GET',
+        url: edaAPI`/activations/*`,
+      },
+      {
+        fixture: 'edaRulebookActivations.json',
+      }
+    ).as('activations');
     cy.intercept(
       { method: 'GET', url: edaAPI`/event-streams/1/activations/?page=2&page_size=10` },
       {
@@ -59,11 +76,11 @@ describe('EventStreamActivations.cy.ts', () => {
     );
   });
 
-  it('Renders the correct credentials columns', () => {
+  it('Renders the correct activations columns', () => {
     cy.mount(<EventStreamActivations />);
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('th', 'Name');
-    cy.contains('th', 'Event stream');
+    cy.contains('th', 'Status');
   });
 });
 
@@ -79,8 +96,9 @@ describe('Empty list', () => {
       }
     ).as('emptyList');
   });
+
   it('Empty state is displayed correctly', () => {
     cy.mount(<EventStreamActivations />);
-    cy.contains(/^No activationss for this event stream$/);
+    cy.contains(/^No activations for this event stream$/);
   });
 });

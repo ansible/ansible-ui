@@ -1,6 +1,6 @@
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { DatabaseIcon, PencilAltIcon, TaskIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -22,6 +22,8 @@ import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteEventStreams } from '../hooks/useDeleteEventStreams';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { useDisableEventStreams } from '../hooks/useDisableEventStreams';
+import { EdaResult } from '../../interfaces/EdaResult';
 
 export function EventStreamPage() {
   const { t } = useTranslation();
@@ -30,40 +32,56 @@ export function EventStreamPage() {
   const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
   const patchRequest = usePatchRequest();
   const alertToaster = usePageAlertToaster();
+  const disableEventStreams = useDisableEventStreams();
 
-  const toggleEventStreamMode: (testMode: boolean, eventStream: EdaEventStream) => Promise<void> =
-    useCallback(
-      async (testMode, eventStream) => {
-        const alert: AlertProps = {
-          variant: 'success',
-          title: `${eventStream.name || ''} ${testMode ? t('switched to test mode') : t('switched to production mode')}.`,
-          timeout: 5000,
-        };
-        await patchRequest(
-          edaAPI`/event-streams/${eventStream?.id ? eventStream?.id.toString() : ''}/`,
-          {
-            test_mode: testMode,
-          }
-        )
-          .then(() => alertToaster.addAlert(alert))
-          .catch(() => {
-            alertToaster.addAlert({
-              variant: 'danger',
-              title: `${t('Failed to switch the mode for')} ${eventStream.name}`,
-              timeout: 5000,
-            });
-          });
-      },
-      [t, patchRequest, alertToaster]
-    );
   const deleteEventStreams = useDeleteEventStreams((deleted) => {
     if (deleted.length > 0) {
       pageNavigate(EdaRoute.EventStreams);
     }
   });
 
+  const enableEventStream: (eventStream: EdaEventStream) => Promise<void> = useCallback(
+    async (eventStream) => {
+      const alert: AlertProps = {
+        variant: 'success',
+        title: `${eventStream.name || ''}  ${t('switched to production mode.')}`,
+        timeout: 5000,
+      };
+      await patchRequest(
+        edaAPI`/event-streams/${eventStream?.id ? eventStream?.id.toString() : ''}/`,
+        {
+          test_mode: false,
+        }
+      )
+        .then(() => alertToaster.addAlert(alert))
+        .catch(() => {
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${t('Failed to enable the forwarding of events for')} ${eventStream.name}`,
+            timeout: 5000,
+          });
+        });
+    },
+    [t, patchRequest, alertToaster]
+  );
+  const { data: esActivations } = useGet<EdaResult<EdaEventStream>>(
+    edaAPI`/event-streams/${params.id ?? ''}/activations/?page=1&page_size=200`
+  );
   const itemActions = useMemo<IPageAction<EdaEventStream>[]>(
     () => [
+      {
+        type: PageActionType.Switch,
+        ariaLabel: (isEnabled) => (isEnabled ? t('Forward events ') : t('Not forwarding events')),
+        selection: PageActionSelection.Single,
+        isPinned: true,
+        label: t('Forward events'),
+        labelOff: t('Forward events'),
+        onToggle: (eventStream: EdaEventStream, mode: boolean) => {
+          if (mode) void enableEventStream(eventStream);
+          else void disableEventStreams([eventStream]);
+        },
+        isSwitchOn: (eventStream: EdaEventStream) => !eventStream.test_mode,
+      },
       {
         type: PageActionType.Button,
         variant: ButtonVariant.primary,
@@ -75,22 +93,6 @@ export function EventStreamPage() {
           pageNavigate(EdaRoute.EditEventStream, { params: { id: eventStream.id } }),
       },
       {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TaskIcon,
-        label: t('Switch to test mode'),
-        isHidden: (eventStream: EdaEventStream) => !!eventStream?.test_mode,
-        onClick: (eventStream: EdaEventStream) => toggleEventStreamMode(true, eventStream),
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: DatabaseIcon,
-        label: t('Switch to production mode'),
-        isHidden: (eventStream: EdaEventStream) => !eventStream?.test_mode,
-        onClick: (eventStream: EdaEventStream) => toggleEventStreamMode(false, eventStream),
-      },
-      {
         type: PageActionType.Seperator,
       },
       {
@@ -98,11 +100,22 @@ export function EventStreamPage() {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete event stream'),
+        isDisabled: () =>
+          esActivations?.results && esActivations.results.length > 0
+            ? t('To delete this event stream, disconnect it from all rulebook activations')
+            : undefined,
         onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
         isDanger: true,
       },
     ],
-    [deleteEventStreams, pageNavigate, t, toggleEventStreamMode]
+    [
+      deleteEventStreams,
+      disableEventStreams,
+      enableEventStream,
+      esActivations?.results,
+      pageNavigate,
+      t,
+    ]
   );
 
   const getPageUrl = useGetPageUrl();
