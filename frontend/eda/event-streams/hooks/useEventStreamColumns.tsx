@@ -1,12 +1,16 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { StatusCell } from '../../../common/Status';
+import {
+  ColumnTableOption,
+  CopyCell,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../framework';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { Label } from '@patternfly/react-core';
-import { InfoCircleIcon } from '@patternfly/react-icons';
+import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
+import { Tooltip } from '@patternfly/react-core';
 
 export function useEventStreamColumns() {
   const { t } = useTranslation();
@@ -14,55 +18,54 @@ export function useEventStreamColumns() {
   return useMemo<ITableColumn<EdaEventStream>[]>(
     () => [
       {
-        header: t('ID'),
-        type: 'text',
-        value: (eventStream) => eventStream.id.toString(),
-        modal: 'hidden',
-        dashboard: 'hidden',
-      },
-      {
         header: t('Name'),
-        cell: (eventStream) =>
-          eventStream?.status !== StatusEnum.Deleting ? (
-            <TextCell
-              text={eventStream.name}
-              to={getPageUrl(EdaRoute.EventStreamPage, {
-                params: { id: eventStream.id },
-              })}
-            />
-          ) : (
-            <TextCell text={eventStream.name} />
-          ),
+        cell: (eventStream) => (
+          <TextCell
+            text={eventStream.name}
+            to={getPageUrl(EdaRoute.EventStreamPage, {
+              params: { id: eventStream.id },
+            })}
+          />
+        ),
         card: 'name',
         list: 'name',
       },
       {
-        header: t('Description'),
-        type: 'description',
-        value: (eventStream) => eventStream.description,
-        table: ColumnTableOption.description,
-        card: 'description',
-        list: 'description',
-        modal: 'hidden',
-        dashboard: 'hidden',
+        header: t('Events received'),
+        type: 'count',
+        value: (eventStream) => eventStream?.events_received ?? 0,
       },
       {
-        header: t('Source type'),
-        type: 'description',
-        value: (eventStream) => eventStream.source_type,
-        modal: 'hidden',
-        dashboard: 'hidden',
+        header: t('Last event received'),
+        type: 'datetime',
+        value: (eventStream) => eventStream?.last_event_received_at ?? undefined,
       },
       {
-        header: t('Status'),
-        cell: (eventStream) =>
-          eventStream?.status === StatusEnum.Deleting ? (
-            <Label color="red" icon={<InfoCircleIcon />}>
-              {t('Pending delete')}
-            </Label>
-          ) : (
-            <StatusCell status={eventStream?.status} />
-          ),
+        header: t('Mode'),
+        cell: (eventStream) => (
+          <Tooltip
+            content={
+              eventStream.test_mode
+                ? t('Test Mode - events are not forwarded to Activation')
+                : t('Connected - events are forwarded to Activation')
+            }
+          >
+            <TextCell
+              text={t('')}
+              icon={eventStream.test_mode ? <DisconnectedIcon /> : <ConnectedIcon />}
+              iconColor={eventStream.test_mode ? 'yellow' : 'green'}
+            />
+          </Tooltip>
+        ),
+        card: 'name',
+        list: 'name',
+      },
+      {
+        header: t('URL'),
+        cell: (eventStream) => <CopyCell text={eventStream?.url ? eventStream.url : ''} />,
+        table: ColumnTableOption.expanded,
+        card: 'hidden',
+        list: 'secondary',
       },
       {
         header: t('Created'),
@@ -71,8 +74,6 @@ export function useEventStreamColumns() {
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: 'hidden',
-        dashboard: 'hidden',
       },
       {
         header: t('Last modified'),
@@ -81,8 +82,6 @@ export function useEventStreamColumns() {
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'secondary',
-        modal: 'hidden',
-        dashboard: 'hidden',
       },
     ],
     [getPageUrl, t]

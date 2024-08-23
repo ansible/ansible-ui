@@ -45,7 +45,7 @@ import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import jsyaml from 'js-yaml';
 import { LabelGroupWrapper } from '../../common/label-group-wrapper';
-import { EdaWebhook } from '../interfaces/EdaWebhook';
+import { EdaEventStream } from '../interfaces/EdaEventStream';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -149,7 +149,7 @@ export function RulebookActivationInputs() {
     edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
 
-  const { data: eventStreams } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/`);
+  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(edaAPI`/event-streams/`);
 
   const [_, setDialog] = usePageDialog();
   const RESTART_OPTIONS = [
@@ -192,9 +192,9 @@ export function RulebookActivationInputs() {
     setSourceMappings(undefined);
   }, [rulebook, setSourceMappings]);
 
-  const removeMapping = (webhook_name: string) => {
+  const removeMapping = (event_stream_name: string) => {
     if (sourceMappings) {
-      const map = sourceMappings.filter((ev) => ev.webhook_name !== webhook_name);
+      const map = sourceMappings.filter((ev) => ev.event_stream_name !== event_stream_name);
       setSourceMappings(map);
       if (sourceMappings.length === 0) setSourceMappings(undefined);
     }
@@ -272,7 +272,9 @@ export function RulebookActivationInputs() {
             {sourceMappings.map((map) => (
               <>
                 <Tooltip content={<div>{map.source_name}</div>}>
-                  <Label onClose={() => removeMapping(map.webhook_name)}>{map.webhook_name} </Label>
+                  <Label onClose={() => removeMapping(map.event_stream_name)}>
+                    {map.event_stream_name}{' '}
+                  </Label>
                 </Tooltip>
               </>
             ))}
@@ -390,7 +392,6 @@ export function RulebookActivationInputs() {
 type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
-  webhooks?: string[];
   project_id: string;
   awx_token_id: number;
   credential_refs?: EdaCredential[] | null;

@@ -24,16 +24,22 @@ export function EventStreams() {
   const rowActions = useEventStreamActions(view);
   return (
     <PageLayout>
-      <PageHeader title={t('Event Streams')} description={t('Event streams.')} />
+      <PageHeader
+        title={t('Event Streams')}
+        description={t(
+          'Event streams represent server side webhooks which ease the routing issues related to running webhooks ' +
+            'individually in a container or a pod. Sources can be swapped in a rulebook with a matching event stream.'
+        )}
+      />
       <PageTable
-        id="eda-event-streams-table"
+        id="eda-webhooks-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading event streams')}
         emptyStateTitle={t('There are currently no event streams created for your organization.')}
-        emptyStateDescription={t('Please create a event stream by using the button below.')}
+        emptyStateDescription={t('Please create an event stream by using the button below.')}
         emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={t('Create event stream')}
         emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateEventStream)}

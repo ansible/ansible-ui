@@ -75,10 +75,10 @@ import { RulebookActivationPage } from '../rulebook-activations/RulebookActivati
 import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
 import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationUserAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
-import { CreateWebhook, EditWebhook } from '../webhooks/WebhookForm';
-import { WebhookDetails } from '../webhooks/WebhookPage/WebhookDetails';
-import { WebhookPage } from '../webhooks/WebhookPage/WebhookPage';
-import { Webhooks } from '../webhooks/Webhooks';
+import { CreateEventStream, EditEventStream } from '../event-streams/EventStreamForm';
+import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
+import { EventStreamPage } from '../event-streams/EventStreamPage/EventStreamPage';
+import { EventStreams } from '../event-streams/EventStreams';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 
@@ -317,29 +317,29 @@ export function useEdaNavigation() {
       ],
     },
     {
-      id: EdaRoute.Webhooks,
+      id: EdaRoute.EventStreams,
       label: t('Event Streams'),
-      path: 'webhooks',
+      path: 'event-streams',
       children: [
         {
-          id: EdaRoute.CreateWebhook,
+          id: EdaRoute.CreateEventStream,
           path: 'create',
-          element: <CreateWebhook />,
+          element: <CreateEventStream />,
         },
         {
-          id: EdaRoute.EditWebhook,
+          id: EdaRoute.EditEventStream,
           path: 'edit/:id',
-          element: <EditWebhook />,
+          element: <EditEventStream />,
         },
         {
-          id: EdaRoute.WebhookPage,
+          id: EdaRoute.EventStreamPage,
           path: ':id',
-          element: <WebhookPage />,
+          element: <EventStreamPage />,
           children: [
             {
-              id: EdaRoute.WebhookDetails,
+              id: EdaRoute.EventStreamDetails,
               path: 'details',
-              element: <WebhookDetails />,
+              element: <EventStreamDetails />,
             },
             {
               path: '',
@@ -349,7 +349,7 @@ export function useEdaNavigation() {
         },
         {
           path: '',
-          element: <Webhooks />,
+          element: <EventStreams />,
         },
       ],
     },

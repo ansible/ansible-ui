@@ -17,7 +17,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 
 export interface EventStreamMappingProps {
   rulebook: EdaRulebook;
@@ -41,8 +41,8 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
   const addMapping = useCallback(() => {
     const map: EdaSourceEventMapping = {
       source_name: '',
-      webhook_id: '',
-      webhook_name: '',
+      event_stream_id: '',
+      event_stream_name: '',
       rulebook_hash: '',
     };
     addMap(map);
@@ -51,7 +51,9 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
   const { data: sources } = useGet<EdaResult<EdaSource>>(
     edaAPI`/rulebooks/` + `${options?.rulebook?.id}/sources/?page=1&page_size=200`
   );
-  const { data: events } = useGet<EdaResult<EdaWebhook>>(edaAPI`/webhooks/?page=1&page_size=200`);
+  const { data: events } = useGet<EdaResult<EdaEventStream>>(
+    edaAPI`/event-streams/?page=1&page_size=200`
+  );
 
   useEffect(() => {
     setValue(
@@ -61,8 +63,8 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
         : [
             {
               source_name: '',
-              webhook_id: '',
-              webhook_name: '',
+              event_stream_id: '',
+              event_stream_name: '',
               rulebook_hash: '',
             },
           ]
