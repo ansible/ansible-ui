@@ -5,13 +5,13 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { PageFormTextArea } from '../../../../framework';
 import { EdaSource, EdaSourceEventMapping } from '../../interfaces/EdaSource';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
-import { EdaWebhook } from '../../interfaces/EdaWebhook';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 import React, { useCallback, useEffect } from 'react';
 
 export function FormSingleSelectEventStream(props: {
   name: string;
-  eventOptions: EdaWebhook[] | undefined;
+  eventOptions: EdaEventStream[] | undefined;
   selectedEvent: number;
 }) {
   const { name, eventOptions, selectedEvent } = props;
@@ -24,9 +24,9 @@ export function FormSingleSelectEventStream(props: {
     if (eventOptions && mappingsNow && mappingsNow.length > 1) {
       events = eventOptions.filter((ev) => {
         return !mappingsNow.find((item) => {
-          return parseInt(item.webhook_id, 10) === selectedEvent
+          return parseInt(item.event_stream_id, 10) === selectedEvent
             ? false
-            : item?.webhook_name === ev.name;
+            : item?.event_stream_name === ev.name;
         });
       });
     }
@@ -100,7 +100,7 @@ export function SourceEventMapFields(props: {
   rulebook: EdaRulebook;
   source_mappings: EdaSourceEventMapping;
   sourceOptions: EdaSource[] | undefined;
-  eventOptions: EdaWebhook[] | undefined;
+  eventOptions: EdaEventStream[] | undefined;
   onDelete: (id: number) => void;
 }) {
   const { t } = useTranslation();
@@ -125,7 +125,7 @@ export function SourceEventMapFields(props: {
     setSourceInfo();
   }, [setSourceInfo]);
 
-  const selectedEvent = useWatch({ name: `mappings.${index}.webhook_id` }) as number;
+  const selectedEvent = useWatch({ name: `mappings.${index}.event_stream_id` }) as number;
 
   const setEventInfo = useCallback(() => {
     let evIndex = -1;
@@ -133,7 +133,7 @@ export function SourceEventMapFields(props: {
       evIndex = eventOptions.findIndex((event) => event.id === selectedEvent);
 
       if (evIndex > -1) {
-        setValue(`mappings.${index}.webhook_name`, eventOptions[evIndex].name);
+        setValue(`mappings.${index}.event_stream_name`, eventOptions[evIndex].name);
       }
     }
   }, [eventOptions, index, selectedEvent, setValue]);
@@ -167,7 +167,7 @@ export function SourceEventMapFields(props: {
       />
 
       <FormSingleSelectEventStream
-        name={`mappings.${index}.webhook_id`}
+        name={`mappings.${index}.event_stream_id`}
         eventOptions={eventOptions}
         selectedEvent={selectedEvent}
       />

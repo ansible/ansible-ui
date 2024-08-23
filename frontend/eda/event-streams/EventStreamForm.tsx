@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
 import {
-  PageFormDataEditor,
-  PageFormSelect,
+  PageFormCheckbox,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -10,31 +10,168 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { useGet } from '../../common/crud/useGet';
+import { requestGet, swrOptions } from '../../common/crud/Data';
+import { useGet, useGetItem } from '../../common/crud/useGet';
+import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
-import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
-import { EdaCredential } from '../interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaResult } from '../interfaces/EdaResult';
-import { LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
+import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
 import { EdaRoute } from '../main/EdaRoutes';
+import { PageFormSelectEventStreamType } from './components/PageFormEventStreamTypeSelect';
+import { PageFormSelectEventStreamCredential } from './components/PageFormEventStreamCredentialSelect';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { EdaCredentialType } from '../interfaces/EdaCredentialType';
+import { useEffect } from 'react';
+import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
+
+// eslint-disable-next-line react/prop-types
+function EventStreamInputs() {
+  const { t } = useTranslation();
+  const typeId = useWatch<IEdaEventStreamCreate>({
+    name: 'type_id',
+  }) as number;
+  const { setValue } = useFormContext();
+  const useEventStreamTypeKind = (type_id: number) => {
+    const { data } = useGetItem<EdaCredentialType>(edaAPI`/credential-types/`, type_id);
+    return data;
+  };
+
+  const eventStreamType = useEventStreamTypeKind(typeId);
+
+  useEffect(() => {
+    const resetCredential = () => {
+      setValue('eda_credential_id', undefined);
+      setValue('event_stream_type', eventStreamType?.kind);
+    };
+    resetCredential();
+  }, [typeId, setValue, eventStreamType?.kind]);
+
+  return (
+    <>
+      <PageFormTextInput<IEdaEventStreamCreate>
+        name="name"
+        data-cy="name-form-field"
+        label={t('Name')}
+        placeholder={t('Enter name')}
+        isRequired
+        labelHelpTitle={t('Name')}
+        labelHelp={t(
+          'The name should match the source name defined in the rulebook. If the source name matches we will swap the event source in the rulebook with this event source.'
+        )}
+        maxLength={150}
+      />
+      <PageFormSelectOrganization<IEdaEventStreamCreate> name="organization_id" isRequired />
+      <PageFormSelectEventStreamType<IEdaEventStreamCreate> name="type_id" isRequired />
+      <PageFormHidden watch={'type'} hidden={() => true}>
+        <PageFormTextInput<IEdaEventStreamCreate>
+          name="kind"
+          data-cy="name-form-field"
+          label={t('Kind')}
+        />
+      </PageFormHidden>
+      <PageFormHidden watch={'type_id'} hidden={() => true}>
+        <PageFormTextInput<IEdaEventStreamCreate>
+          name="event_stream_type"
+          data-cy="type-form-field"
+          isRequired
+          label={t('Event stream type')}
+        />
+      </PageFormHidden>
+      <PageFormSelectEventStreamCredential<IEdaEventStreamCreate>
+        isRequired
+        name="eda_credential_id"
+        type={eventStreamType?.kind || ''}
+      />
+      <PageFormTextInput<IEdaEventStreamCreate>
+        name="additional_data_headers"
+        data-cy="additional_data_headers-form-field"
+        label={t('Include headers')}
+        placeholder={t('Enter include headers')}
+        labelHelpTitle={t('Include headers')}
+        labelHelp={t(
+          'A comma separated HTTP header keys that you want to include in the event payload.'
+        )}
+      />
+      <PageFormCheckbox<IEdaEventStreamCreate>
+        label={t`Test mode`}
+        labelHelp={t('Test mode.')}
+        name="test_mode"
+      />
+    </>
+  );
+}
+
+function EventStreamEditInputs() {
+  const { t } = useTranslation();
+  const eventStreamType = useWatch<IEdaEventStreamCreate>({
+    name: 'event_stream_type',
+  }) as string;
+  return (
+    <>
+      <PageFormTextInput<IEdaEventStreamCreate>
+        name="name"
+        data-cy="name-form-field"
+        label={t('Name')}
+        placeholder={t('Enter name')}
+        isRequired
+        maxLength={150}
+      />
+      <PageFormSelectOrganization<IEdaEventStreamCreate> name="organization_id" isRequired />
+      <PageFormTextInput<IEdaEventStreamCreate>
+        name="event_stream_type"
+        data-cy="type-form-field"
+        isReadOnly
+        label={t('Event stream type')}
+      />
+      <PageFormSelectEventStreamCredential<IEdaEventStreamCreate>
+        name="eda_credential_id"
+        isRequired
+        type={eventStreamType}
+      />
+      <PageFormTextInput<IEdaEventStreamCreate>
+        name="additional_data_headers"
+        data-cy="additional_data_headers-form-field"
+        label={t('Include headers')}
+        placeholder={t('Enter include headers')}
+        labelHelpTitle={t('Include headers')}
+        labelHelp={t(
+          'A comma separated HTTP header keys that you want to include in the event payload.'
+        )}
+      />
+      <PageFormCheckbox<IEdaEventStreamCreate>
+        label={t`Test mode`}
+        labelHelp={t('Test mode.')}
+        name="test_mode"
+      />
+    </>
+  );
+}
 
 export function CreateEventStream() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
-  const postEdaEventStream = usePostRequest<object, EdaEventStream>();
 
-  const onSubmit: PageFormSubmitHandler<IEdaEventStreamInputs> = async (eventStream) => {
-    eventStream.credentials = eventStream.credential_refs
-      ? eventStream.credential_refs.map((credential) => `${credential.id || ''}`)
+  const { cache } = useSWRConfig();
+  const postRequest = usePostRequest<EdaEventStreamCreate, EdaEventStream>();
+  const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
+    edaAPI`/organizations/?name=Default`,
+    requestGet,
+    swrOptions
+  );
+  const defaultOrganization =
+    organizations && organizations?.results && organizations.results.length > 0
+      ? organizations.results[0]
       : undefined;
-    const newEventStream = await postEdaEventStream(edaAPI`/event-streams/`, eventStream);
-    pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream.id } });
+
+  const onSubmit: PageFormSubmitHandler<EdaEventStreamCreate> = async (eventStream) => {
+    const newEventStream = await postRequest(edaAPI`/event-streams/`, eventStream);
+    (cache as unknown as { clear: () => void }).clear?.();
+    pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream?.id } });
   };
   const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
@@ -42,23 +179,18 @@ export function CreateEventStream() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Event Stream')}
+        title={t('Create event stream')}
         breadcrumbs={[
           { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
-          { label: t('Create Event Stream') },
+          { label: t('Create event stream') },
         ]}
       />
-      <EdaPageForm<IEdaEventStreamInputs>
+      <EdaPageForm
         submitText={t('Create event stream')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{
-          restart_policy: RestartPolicyEnum.OnFailure,
-          log_level: LogLevelEnum.Error,
-          is_enabled: true,
-          source_args: '',
-        }}
+        defaultValue={{ organization_id: defaultOrganization?.id }}
       >
         <EventStreamInputs />
       </EdaPageForm>
@@ -66,128 +198,64 @@ export function CreateEventStream() {
   );
 }
 
-export function EventStreamInputs() {
+export function EditEventStream() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const id = Number(params.id);
+  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
+
+  const { cache } = useSWRConfig();
+  const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
+
+  const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
+    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, eventStream);
+    (cache as unknown as { clear: () => void }).clear?.();
+    navigate(-1);
+  };
+  const onCancel = () => navigate(-1);
   const getPageUrl = useGetPageUrl();
-  const restartPolicyHelpBlock = (
-    <>
-      <p>{t('A policy to decide when to restart an event source .')}</p>
-      <br />
-      <p>{t('Policies:')}</p>
-      <p>{t('Always: restarts.')}</p>
-      <p>{t('Never: never restarts.')}</p>
-      <p>{t('On failure: only restarts when it fails.')}</p>
-    </>
-  );
 
-  const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
-    edaAPI`/decision-environments/?page=1&page_size=200`
-  );
-
-  const RESTART_OPTIONS = [
-    { label: t('On failure'), value: 'on-failure' },
-    { label: t('Always'), value: 'always' },
-    { label: t('Never'), value: 'never' },
-  ];
-
-  const LOG_LEVEL_OPTIONS = [
-    { label: t('Error'), value: 'error' },
-    { label: t('Info'), value: 'info' },
-    { label: t('Debug'), value: 'debug' },
-  ];
-
-  return (
-    <>
-      <PageFormTextInput<IEdaEventStreamInputs>
-        name="name"
-        label={t('Name')}
-        id={'name'}
-        data-cy="name-form-field"
-        isRequired={true}
-        placeholder={t('Enter name')}
-      />
-      <PageFormTextInput<IEdaEventStreamInputs>
-        name="description"
-        label={t('Description')}
-        id={'description'}
-        data-cy="description-form-field"
-        placeholder={t('Enter description')}
-      />
-      <PageFormTextInput<IEdaEventStreamInputs>
-        name="source_type"
-        data-cy="sorce-type-form-field"
-        label={t('Source type')}
-        id={'source_type'}
-        isRequired
-        placeholder={t('Enter source type')}
-      />
-      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
-        name="credential_refs"
-        labelHelp={t(`Select the credentials for this event stream.`)}
-      />
-      <PageFormSelect<IEdaEventStreamInputs>
-        name="decision_environment_id"
-        data-cy="decision-environment-form-field"
-        label={t('Decision environment')}
-        placeholderText={t('Select decision environment')}
-        options={
-          environments?.results
-            ? environments.results.map((item: { name: string; id: number }) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            : []
-        }
-        isRequired
-        footer={
-          <Link to={getPageUrl(EdaRoute.CreateDecisionEnvironment)}>
-            Create decision environment
-          </Link>
-        }
-        labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
-        labelHelpTitle={t('Decision environment')}
-      />
-      <PageFormSelect<IEdaEventStreamInputs>
-        name="restart_policy"
-        data-cy="restart-policy-form-field"
-        label={t('Restart policy')}
-        placeholderText={t('Select restart policy')}
-        options={RESTART_OPTIONS}
-        labelHelp={restartPolicyHelpBlock}
-        labelHelpTitle={t('Restart policy')}
-      />
-      <PageFormSelect<IEdaEventStreamInputs>
-        name="log_level"
-        label={t('Log level')}
-        placeholderText={t('Select log level')}
-        isRequired
-        options={LOG_LEVEL_OPTIONS}
-        labelHelp={t('Error | Info | Debug')}
-        labelHelpTitle={t('Log level')}
-      />
-      <PageFormSection singleColumn>
-        <PageFormDataEditor<IEdaEventStreamInputs>
-          name="source_args"
-          data-cy="source-args-form-field"
-          label={t('Arguments')}
-          format="yaml"
-          isRequired
-          labelHelp={t(
-            `The arguments for the rulebook are in a JSON or YAML format. 
-            The content would be equivalent to the file passed through the '--vars' flag of ansible-rulebook command.`
-          )}
-          labelHelpTitle={t('Arguments')}
+  if (!eventStream) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[
+            { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
+            { label: t('Edit event stream') },
+          ]}
         />
-      </PageFormSection>
-    </>
-  );
+      </PageLayout>
+    );
+  } else {
+    return (
+      <PageLayout>
+        <PageHeader
+          title={`${t('Edit')} ${eventStream?.name || t('event stream')}`}
+          breadcrumbs={[
+            { label: t('Event Streams'), to: getPageUrl(EdaRoute.EventStreams) },
+            { label: `${t('Edit')} ${eventStream?.name || t('event stream')}` },
+          ]}
+        />
+        <EdaPageForm
+          submitText={t('Save event stream')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={{
+            ...eventStream,
+            organization_id: eventStream.organization?.id,
+            eda_credential_id: eventStream?.eda_credential?.id,
+          }}
+        >
+          <EventStreamEditInputs />
+        </EdaPageForm>
+      </PageLayout>
+    );
+  }
 }
 
-type IEdaEventStreamInputs = Omit<EdaEventStreamCreate, 'event-streams'> & {
-  is_enabled?: boolean;
-  source_type?: string;
-  project_id: string;
-  source_args: string;
-  credentials?: string[];
-  credential_refs?: EdaCredential[];
+type IEdaEventStreamCreate = EdaEventStreamCreate & {
+  type_id: number;
+  kind: string;
 };

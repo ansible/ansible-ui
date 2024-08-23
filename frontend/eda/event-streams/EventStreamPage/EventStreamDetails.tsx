@@ -1,113 +1,135 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
+  CopyCell,
   LoadingPage,
   PageDetail,
   PageDetails,
   Scrollable,
   useGetPageUrl,
 } from '../../../../framework';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { StatusCell } from '../../../common/Status';
-import { useGetItem } from '../../../common/crud/useGet';
+import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { RestartPolicyEnum } from '../../interfaces/generated/eda-api';
+import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
+import { StandardPopover } from '../../../../framework/components/StandardPopover';
+import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { logLevelName } from '../../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: eventStream } = useGetItem<EdaEventStream>(edaAPI`/event-streams/`, params.id);
   const getPageUrl = useGetPageUrl();
-  const restartPolicyHelpBlock = (
-    <>
-      <p>{t('A policy to decide when to restart a rulebook.')}</p>
-      <br />
-      <p>{t('Policies:')}</p>
-      <p>{t('Always: restarts when a rulebook finishes.')}</p>
-      <p>{t('Never: never restarts a rulebook when it finishes.')}</p>
-      <p>{t('On failure: only restarts when it fails.')}</p>
-    </>
-  );
+
+  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
   if (!eventStream) {
     return <LoadingPage />;
   }
   return (
     <Scrollable>
       <PageDetails disableScroll={true}>
-        <PageDetail label={t('Event stream ID')}>{eventStream?.id || ''}</PageDetail>
         <PageDetail label={t('Name')}>{eventStream?.name || ''}</PageDetail>
-        <PageDetail label={t('Description')}>{eventStream?.description || ''}</PageDetail>
-        <PageDetail label={t('Source type')}>{eventStream?.source_type || ''}</PageDetail>
-        {eventStream.credentials && eventStream.credentials.length > 0 && (
-          <PageDetail label={t('Credential(s)')}>
-            <LabelGroup>
-              {eventStream.credentials.map((credential) => (
-                <Label key={credential?.id}>{credential?.name}</Label>
-              ))}
-            </LabelGroup>
+        <PageDetail label={t('Event stream type')}>
+          {eventStream?.event_stream_type || ''}
+        </PageDetail>
+        <PageDetail label={t('Organization')}>
+          {eventStream && eventStream.organization ? (
+            <Link
+              to={getPageUrl(EdaRoute.OrganizationPage, {
+                params: { id: `${eventStream?.organization?.id}` },
+              })}
+            >
+              {eventStream?.organization?.name}
+            </Link>
+          ) : (
+            eventStream?.organization?.name || ''
+          )}
+        </PageDetail>
+        <PageDetail label={t('Credential')}>
+          {eventStream && eventStream.eda_credential ? (
+            <Link
+              to={getPageUrl(EdaRoute.CredentialPage, {
+                params: { id: eventStream?.eda_credential?.id },
+              })}
+            >
+              {eventStream?.eda_credential?.name}
+            </Link>
+          ) : (
+            eventStream?.eda_credential?.name || ''
+          )}
+        </PageDetail>
+        <PageDetail label={t('Url')}>
+          <CopyCell text={eventStream?.url || ''} />
+        </PageDetail>
+        <PageDetail
+          label={t('Include headers')}
+          helpText={t(
+            'A comma separated HTTP header keys that you want to include in the event payload.'
+          )}
+        >
+          {eventStream?.additional_data_headers || ''}
+        </PageDetail>
+        <PageDetail label={t('Events received')}>{eventStream?.events_received}</PageDetail>
+        <PageDetail label={t('Last event received')}>
+          {eventStream?.last_event_received_at
+            ? formatDateString(eventStream.last_event_received_at)
+            : ''}
+        </PageDetail>
+        <PageDetail label={t('Created')}>
+          {eventStream?.created_at ? formatDateString(eventStream.created_at) : ''}
+        </PageDetail>
+        <LastModifiedPageDetail value={eventStream?.modified_at ? eventStream.modified_at : ''} />
+        {!!eventStream?.test_mode && (
+          <PageDetail label={t('Mode')}>
+            <DescriptionListGroup>
+              <DescriptionListTerm style={{ opacity: 0.6 }}>
+                {t('Test mode')}
+                <StandardPopover
+                  header={t('Test mode')}
+                  content={t(
+                    ' In Test Mode events are not forwarded to the Activation. This mode helps in viewing the headers and payload'
+                  )}
+                />
+              </DescriptionListTerm>
+            </DescriptionListGroup>
           </PageDetail>
         )}
         <PageDetail
-          label={t('Decision environment')}
-          helpText={t('Decision environments are a container image to run Ansible rulebooks.')}
+          label={t('Test content type')}
+          helpText={t('The HTTP Body that was sent from the Sender.')}
         >
-          {eventStream && eventStream?.decision_environment?.id ? (
-            <Link
-              to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
-                params: { id: eventStream?.decision_environment?.id },
-              })}
-            >
-              {eventStream?.decision_environment?.name}
-            </Link>
-          ) : (
-            eventStream?.decision_environment?.name || ''
-          )}
+          {eventStream?.test_content_type || ''}
         </PageDetail>
-        <PageDetail label={t('Event stream status')}>
-          <StatusCell status={eventStream?.status || ''} />
+        <PageDetail label={t('Test error message')}>
+          {eventStream?.test_error_message || ''}
         </PageDetail>
-        <PageDetail label={t('Restart policy')} helpText={restartPolicyHelpBlock}>
-          {eventStream?.restart_policy ? restartPolicyName(eventStream?.restart_policy, t) : ''}
-        </PageDetail>
-        <PageDetail label={t('Log level')} helpText={t('Error | Info | Debug')}>
-          {logLevelName(eventStream.log_level, t)}
-        </PageDetail>
-        <PageDetail label={t('Created')}>
-          {eventStream?.created_at ? formatDateString(eventStream?.created_at) : ''}
-        </PageDetail>
-        <LastModifiedPageDetail value={eventStream?.modified_at ? eventStream?.modified_at : ''} />
       </PageDetails>
-      {eventStream?.source_args && (
-        <PageDetails disableScroll={true} numberOfColumns={'single'}>
+      <PageDetails numberOfColumns={'single'} disableScroll={true}>
+        {eventStream?.test_headers && (
           <PageDetailCodeEditor
-            value={eventStream.source_args}
+            value={eventStream?.test_headers}
+            showCopyToClipboard={true}
+            label={t('Test headers')}
+            toggleLanguage={false}
+            helpText={t(
+              'The HTTP Headers received from the Sender. Any of these can be used in the "Include headers" field.'
+            )}
+          />
+        )}
+      </PageDetails>
+      <PageDetails numberOfColumns={'single'} disableScroll={true}>
+        {eventStream?.test_content && (
+          <PageDetailCodeEditor
+            value={eventStream?.test_content}
             showCopyToClipboard={true}
             toggleLanguage={false}
-            label={t('Arguments')}
-            helpText={t('Arguments')}
+            label={t('Test content')}
+            helpText={t('Test content')}
           />
-        </PageDetails>
-      )}
+        )}
+      </PageDetails>
     </Scrollable>
   );
-}
-
-function restartPolicyName(policy: RestartPolicyEnum, t: (str: string) => string) {
-  switch (policy) {
-    case RestartPolicyEnum.OnFailure:
-      return t('On failure');
-    case RestartPolicyEnum.Always:
-      return t('Always');
-    case RestartPolicyEnum.Never:
-      return t('Never');
-    default:
-      return capitalizeFirstLetter(policy);
-  }
 }
