@@ -7,12 +7,14 @@ import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function useEnableRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
 ) {
   const { t } = useTranslation();
   const postRequest = usePostRequest<undefined, undefined>();
+  const parseError = useEdaErrorMessageParser();
   const alertToaster = usePageAlertToaster();
   return useCallback(
     async (rulebookActivations: EdaRulebookActivation[]) => {
@@ -28,10 +30,14 @@ export function useEnableRulebookActivations(
             undefined
           )
             .then(() => alertToaster.addAlert(alert))
-            .catch(() => {
+            .catch((err: Error) => {
+              const errorResults = parseError(err);
               alertToaster.addAlert({
                 variant: 'danger',
                 title: `${t('Failed to enable')} ${activation.name}`,
+                children: (
+                  <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>
+                ),
                 timeout: 5000,
               });
             });
@@ -39,7 +45,7 @@ export function useEnableRulebookActivations(
       );
       onComplete(rulebookActivations);
     },
-    [alertToaster, onComplete, postRequest, t]
+    [alertToaster, onComplete, postRequest, parseError, t]
   );
 }
 
