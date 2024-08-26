@@ -77,7 +77,7 @@ export function EventStreamDetails() {
           <CopyCell text={eventStream?.url || ''} />
         </PageDetail>
         <PageDetail
-          label={t('Include headers')}
+          label={t('Headers')}
           helpText={t(
             'A comma separated HTTP header keys that you want to include in the event payload.'
           )}
@@ -112,7 +112,7 @@ export function EventStreamDetails() {
             label={t('Test headers')}
             toggleLanguage={false}
             helpText={t(
-              'The HTTP Headers received from the Sender. Any of these can be used in the "Include headers" field.'
+              'The HTTP Headers received from the Sender. Any of these can be used in the "Headers" field.'
             )}
           />
         )}
