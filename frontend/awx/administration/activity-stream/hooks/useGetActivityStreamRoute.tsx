@@ -30,8 +30,6 @@ export function useGetActivityStreamRoute(resource?: string | null): AwxRoute | 
       return AwxRoute.WorkflowApprovalDetails;
     case 'management_job':
       return AwxRoute.ManagementJobSchedules;
-    case 'o_auth2_application':
-      return AwxRoute.ApplicationDetails;
     case 'organization':
       return AwxRoute.OrganizationDetails;
     case 'team':

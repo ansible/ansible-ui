@@ -253,13 +253,6 @@ export enum AwxRoute {
   InstancePeers = 'awx-instance-peers',
   InstanceListenerAddresses = 'awx-instance-listener-addresses',
 
-  Applications = 'awx-applications',
-  ApplicationPage = 'awx-application-page',
-  ApplicationDetails = 'awx-application-details',
-  ApplicationTokens = 'awx-application-tokens',
-  CreateApplication = 'awx-create-application',
-  EditApplication = 'awx-edit-application',
-
   ExecutionEnvironments = 'awx-execution-environments',
   ExecutionEnvironmentPage = 'awx-execution-environments-page',
   ExecutionEnvironmentDetails = 'awx-execution-environments-details',
