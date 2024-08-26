@@ -7,8 +7,8 @@ const verifyRequestBody = (
 ) => {
   cy.intercept('POST', '/api/v2/job_templates/*/survey_spec/').as('newQuestion');
 
-  if (variable) cy.contains('Save question').click();
-  else cy.contains('Create question').click();
+  if (variable) cy.contains('Save survey question').click();
+  else cy.contains('Create survey question').click();
 
   cy.wait('@newQuestion').then((intercept) => {
     const body = intercept.request.body as Survey;
@@ -47,7 +47,7 @@ describe('TemplateSurveyForm', () => {
     });
 
     it('should test form validation', () => {
-      cy.contains('Create question').click();
+      cy.contains('Create survey question').click();
       cy.getByDataCy('question-name-form-group').contains('Question is required.');
       cy.getByDataCy('question-variable-form-group').contains('Answer variable name is required.');
 
@@ -56,7 +56,7 @@ describe('TemplateSurveyForm', () => {
       cy.getByDataCy('question-variable').type('example variable');
 
       // Default answer type: Text
-      cy.contains('Create question').click();
+      cy.contains('Create survey question').click();
       cy.getByDataCy('question-name-form-group')
         .contains('Question is required.')
         .should('not.exist');
@@ -108,7 +108,7 @@ describe('TemplateSurveyForm', () => {
       cy.selectDropdownOptionByResourceName('type', 'Integer');
       cy.getByDataCy('question-default').should('have.value', '');
       cy.getByDataCy('question-default').type('3.14');
-      cy.contains('Create question').click();
+      cy.contains('Create survey question').click();
       cy.getByDataCy('question-default-form-group').contains('This field must be an integer.');
 
       cy.getByDataCy('question-default').clear().type('314');
@@ -134,14 +134,14 @@ describe('TemplateSurveyForm', () => {
       cy.contains('Choice option already exists.').should('not.exist');
 
       cy.getByDataCy('choice-option-3').clear().type('choice 1');
-      cy.contains('Create question').click();
+      cy.contains('Create survey question').click();
       cy.contains('Choice option already exists.');
 
       cy.getByDataCy('remove-choice-3').click();
 
       cy.intercept('POST', '/api/v2/job_templates/*/survey_spec/').as('createQuestion');
 
-      cy.contains('Create question').click();
+      cy.contains('Create survey question').click();
       cy.contains('Failed to create new survey question.');
     });
 
@@ -222,7 +222,7 @@ describe('TemplateSurveyForm', () => {
       cy.getByDataCy('question-name').type('long_answer');
       cy.getByDataCy('question-variable').type('long_answer');
 
-      cy.contains('Create question').click();
+      cy.contains('Create survey question').click();
       cy.contains('Survey already contains a question with variable named "long_answer"');
     });
   });
