@@ -258,7 +258,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', group.name, { disableFilter: true });
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
-        cy.clickButton(/^New group/);
+        cy.clickButton(/^Create group/);
         cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
