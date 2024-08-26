@@ -9,7 +9,12 @@ describe('EventStreams.cy.ts', () => {
         fixture: 'edaEventStreams.json',
       }
     );
-
+    cy.intercept(
+      { method: 'OPTIONS', url: edaAPI`/event-streams/*` },
+      {
+        fixture: 'edaEventStreamsOptions.json',
+      }
+    );
     cy.intercept(
       { method: 'GET', url: edaAPI`/event-streams/?page=2&page_size=10` },
       {
@@ -239,7 +244,16 @@ describe('EventStreams.cy.ts', () => {
 });
 
 describe('Empty list', () => {
-  beforeEach(() => {
+  before(() => {
+    cy.intercept(
+      {
+        method: 'OPTIONS',
+        url: edaAPI`/event-streams/`,
+      },
+      {
+        fixture: 'edaEventStreamsOptions.json',
+      }
+    ).as('getOptions');
     cy.intercept(
       {
         method: 'GET',

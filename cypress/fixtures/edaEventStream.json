@@ -1,0 +1,36 @@
+{
+  "name": "ev7",
+  "test_mode": true,
+  "additional_data_headers": "",
+  "organization": {
+    "id": 1,
+    "name": "Default",
+    "description": "The default organization"
+  },
+  "eda_credential": {
+    "id": 1,
+    "name": "basic es1",
+    "description": "",
+    "inputs": {
+      "username": "a",
+      "password": "$encrypted$",
+      "auth_type": "basic",
+      "http_header_key": "Authorization"
+    },
+    "managed": false,
+    "credential_type_id": 7,
+    "organization_id": 1
+  },
+  "event_stream_type": "basic",
+  "id": 8,
+  "owner": "admin",
+  "url": "https://localhost:8443/api/eda/v1/external_event_stream/87731dc0-cc3a-440a-af06-cdc24b52cfa7/post/",
+  "created_at": "2024-08-26T02:34:59.981077Z",
+  "modified_at": "2024-08-26T19:41:03.296883Z",
+  "test_content_type": "",
+  "test_content": "",
+  "test_error_message": "",
+  "test_headers": "",
+  "events_received": 0,
+  "last_event_received_at": null
+}

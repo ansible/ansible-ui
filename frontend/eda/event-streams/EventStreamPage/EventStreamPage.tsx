@@ -24,15 +24,21 @@ import { useDeleteEventStreams } from '../hooks/useDeleteEventStreams';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { useDisableEventStreams } from '../hooks/useDisableEventStreams';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function EventStreamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const getPageUrl = useGetPageUrl();
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/event-streams/${params.id ?? ''}/`
+  );
+  const canEditEventStream = Boolean(data && data.actions && data.actions['PATCH']);
   const { data: eventStream, refresh } = useGet<EdaEventStream>(
     edaAPI`/event-streams/${params.id ?? ''}/`
   );
+  const getPageUrl = useGetPageUrl();
   const patchRequest = usePatchRequest();
   const alertToaster = usePageAlertToaster();
   const disableEventStreams = useDisableEventStreams((disabled) => {
@@ -96,6 +102,10 @@ export function EventStreamPage() {
                 else void disableEventStreams([eventStream]);
               },
               isSwitchOn: (eventStream: EdaEventStream) => !eventStream.test_mode,
+              isDisabled: () =>
+                canEditEventStream
+                  ? ''
+                  : t(`The event stream cannot be updated due to insufficient permission`),
             },
             {
               type: PageActionType.Button,
@@ -104,6 +114,10 @@ export function EventStreamPage() {
               icon: PencilAltIcon,
               isPinned: true,
               label: t('Edit event stream'),
+              isDisabled: () =>
+                canEditEventStream
+                  ? ''
+                  : t(`The event stream cannot be edited due to insufficient permission`),
               onClick: (eventStream: EdaEventStream) =>
                 pageNavigate(EdaRoute.EditEventStream, { params: { id: eventStream.id } }),
             },
@@ -115,16 +129,22 @@ export function EventStreamPage() {
               selection: PageActionSelection.Single,
               icon: TrashIcon,
               label: t('Delete event stream'),
-              isDisabled: () =>
-                esActivations?.results && esActivations.results.length > 0
-                  ? t('To delete this event stream, disconnect it from all rulebook activations')
-                  : undefined,
+              isDisabled: () => {
+                if (canEditEventStream) {
+                  return esActivations?.results && esActivations.results.length > 0
+                    ? t('To delete this event stream, disconnect it from all rulebook activations')
+                    : '';
+                } else {
+                  return t(`The event stream cannot be deleted due to insufficient permission`);
+                }
+              },
               onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
               isDanger: true,
             },
           ]
         : [],
     [
+      canEditEventStream,
       deleteEventStreams,
       disableEventStreams,
       enableEventStream,
@@ -160,6 +180,8 @@ export function EventStreamPage() {
         tabs={[
           { label: t('Details'), page: EdaRoute.EventStreamDetails },
           { label: t('Activations'), page: EdaRoute.EventStreamActivations },
+          { label: t('Team Access'), page: EdaRoute.EventStreamTeamAccess },
+          { label: t('User Access'), page: EdaRoute.EventStreamUserAccess },
         ]}
         params={{ id: eventStream?.id }}
       />

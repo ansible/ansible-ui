@@ -27,6 +27,10 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { EdaCredentialType } from '../interfaces/EdaCredentialType';
 import { useEffect } from 'react';
 import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
+import { Alert } from '@patternfly/react-core';
+import { EventStreamDetails } from './EventStreamPage/EventStreamDetails';
 
 // eslint-disable-next-line react/prop-types
 function EventStreamInputs() {
@@ -216,6 +220,10 @@ export function EditEventStream() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/event-streams/${params.id ?? ''}/`
+  );
+  const canEditEventStream = Boolean(data && data.actions && data.actions['PATCH']);
   const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
@@ -253,20 +261,40 @@ export function EditEventStream() {
             { label: `${t('Edit')} ${eventStream?.name || t('event stream')}` },
           ]}
         />
-        <EdaPageForm
-          submitText={t('Save event stream')}
-          onSubmit={onSubmit}
-          cancelText={t('Cancel')}
-          onCancel={onCancel}
-          defaultValue={{
-            ...eventStream,
-            enabled: !eventStream.test_mode,
-            organization_id: eventStream.organization?.id,
-            eda_credential_id: eventStream?.eda_credential?.id,
-          }}
-        >
-          <EventStreamEditInputs />
-        </EdaPageForm>
+        {!canEditEventStream ? (
+          <>
+            <Alert
+              variant={'warning'}
+              isInline
+              style={{
+                marginLeft: '24px',
+                marginRight: '24px',
+                marginTop: '24px',
+                paddingLeft: '24px',
+                paddingTop: '16px',
+              }}
+              title={t(
+                'You do not have permissions to edit this credential. Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+            <EventStreamDetails />
+          </>
+        ) : (
+          <EdaPageForm
+            submitText={t('Save event stream')}
+            onSubmit={onSubmit}
+            cancelText={t('Cancel')}
+            onCancel={onCancel}
+            defaultValue={{
+              ...eventStream,
+              enabled: !eventStream.test_mode,
+              organization_id: eventStream.organization?.id,
+              eda_credential_id: eventStream?.eda_credential?.id,
+            }}
+          >
+            <EventStreamEditInputs />
+          </EdaPageForm>
+        )}
       </PageLayout>
     );
   }

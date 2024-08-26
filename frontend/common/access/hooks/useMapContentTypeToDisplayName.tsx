@@ -22,6 +22,7 @@ export function useMapContentTypeToDisplayName() {
         decisionenvironment: options?.isTitleCase
           ? t('Decision Environment')
           : t('decision environment'),
+        eventstream: options?.isTitleCase ? t('Event Stream') : t('event stream'),
         auditrule: options?.isTitleCase ? t('Rule Audit') : t('rule audit'),
         team: options?.isTitleCase ? t('Team') : t('team'),
         organization: options?.isTitleCase ? t('Organization') : t('organization'),
