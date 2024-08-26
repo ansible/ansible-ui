@@ -521,7 +521,7 @@ Cypress.Commands.add(
   (organizationId: number, edaCredential?: EdaCredential) => {
     cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
       name: 'E2E Decision Environment ' + randomString(4),
-      eda_credential_id: edaCredential.id ? edaCredential.id : 1,
+      eda_credential_id: edaCredential?.id ? edaCredential?.id : 1,
       organization_id: organizationId,
       image_url: 'quay.io/ansible/ansible-rulebook:main',
     }).then((edaDE) => {

@@ -114,11 +114,11 @@ describe(`Roles Tab for Users - actions`, () => {
     });
     cy.createEdaOrganization().then((organization) => {
       edaOrg = organization;
-      cy.createEdaCredential(edaOrg).then((edaCred1) => {
+      cy.createEdaCredential(edaOrg.id).then((edaCred1) => {
         cred1 = edaCred1;
-        cy.createEdaCredential(edaOrg).then((edaCred2) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCred2) => {
           cred2 = edaCred2;
-          cy.createEdaCredential(edaOrg).then((edaCred3) => {
+          cy.createEdaCredential(edaOrg.id).then((edaCred3) => {
             cred3 = edaCred3;
             cy.getEdaRoles().then((rolesArray) => {
               roleIDs = rolesArray.reduce((acc, role) => {

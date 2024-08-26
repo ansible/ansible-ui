@@ -82,7 +82,7 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('can edit a credential', () => {
-        cy.createEdaCredential(edaOrg).then((edaCredential) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
           cy.navigateTo('eda', 'credentials');
           cy.get('h1').should('contain', 'Credentials');
           cy.clickTableRow(edaCredential.name);
@@ -101,7 +101,7 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('can delete a credential', () => {
-        cy.createEdaCredential(edaOrg).then((edaCredential) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
           cy.navigateTo('eda', 'credentials');
           cy.get('h1').should('contain', 'Credentials');
           cy.clickTableRow(edaCredential.name);
@@ -120,7 +120,7 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('get warning while deleting a credential already in use', () => {
-        cy.createEdaCredential(edaOrg).then((edaCredential) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
           cy.requestPost<EdaProject>(edaAPI`/projects/`, {
             name: 'E2E Project ' + randomString(4),
             organization_id: edaOrg.id,
