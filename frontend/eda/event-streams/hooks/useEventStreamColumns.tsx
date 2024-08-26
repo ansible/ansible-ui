@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ColumnModalOption,
   ColumnTableOption,
   CopyCell,
   ITableColumn,
@@ -9,8 +10,7 @@ import {
 } from '../../../../framework';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { ConnectedIcon, DisconnectedIcon } from '@patternfly/react-icons';
-import { Tooltip } from '@patternfly/react-core';
+import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
 export function useEventStreamColumns() {
   const { t } = useTranslation();
@@ -38,27 +38,25 @@ export function useEventStreamColumns() {
       {
         header: t('Last event received'),
         type: 'datetime',
+        modal: ColumnModalOption.hidden,
         value: (eventStream) => eventStream?.last_event_received_at ?? undefined,
       },
       {
-        header: t('Mode'),
+        header: t('Event stream type'),
         cell: (eventStream) => (
-          <Tooltip
-            content={
-              eventStream.test_mode
-                ? t('Test Mode - events are not forwarded to Activation')
-                : t('Connected - events are forwarded to Activation')
+          <TextCell
+            text={t(capitalizeFirstLetter(eventStream.event_stream_type ?? ''))}
+            to={
+              eventStream?.eda_credential?.credential_type_id
+                ? getPageUrl(EdaRoute.CredentialTypePage, {
+                    params: { id: eventStream?.eda_credential?.credential_type_id },
+                  })
+                : ''
             }
-          >
-            <TextCell
-              text={t('')}
-              icon={eventStream.test_mode ? <DisconnectedIcon /> : <ConnectedIcon />}
-              iconColor={eventStream.test_mode ? 'yellow' : 'green'}
-            />
-          </Tooltip>
+          />
         ),
-        card: 'name',
-        list: 'name',
+        value: (eventStream) => eventStream.event_stream_type,
+        modal: ColumnModalOption.hidden,
       },
       {
         header: t('URL'),

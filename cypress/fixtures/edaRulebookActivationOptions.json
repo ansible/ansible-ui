@@ -1,0 +1,1016 @@
+{
+  "name": "Activation List",
+  "description": "",
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+  "actions": {
+    "GET": {
+      "id": {
+        "type": "integer",
+        "required": false,
+        "read_only": true,
+        "label": "ID"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Description"
+      },
+      "is_enabled": {
+        "type": "boolean",
+        "required": false,
+        "read_only": false,
+        "label": "Is enabled"
+      },
+      "status": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Status",
+        "choices": [
+          {
+            "value": "starting",
+            "display_name": "starting"
+          },
+          {
+            "value": "running",
+            "display_name": "running"
+          },
+          {
+            "value": "pending",
+            "display_name": "pending"
+          },
+          {
+            "value": "failed",
+            "display_name": "failed"
+          },
+          {
+            "value": "stopping",
+            "display_name": "stopping"
+          },
+          {
+            "value": "stopped",
+            "display_name": "stopped"
+          },
+          {
+            "value": "deleting",
+            "display_name": "deleting"
+          },
+          {
+            "value": "completed",
+            "display_name": "completed"
+          },
+          {
+            "value": "unresponsive",
+            "display_name": "unresponsive"
+          },
+          {
+            "value": "error",
+            "display_name": "error"
+          },
+          {
+            "value": "workers offline",
+            "display_name": "workers offline"
+          }
+        ]
+      },
+      "git_hash": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Git hash"
+      },
+      "extra_var": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Extra var"
+      },
+      "decision_environment_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Decision environment id"
+      },
+      "project_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Project id"
+      },
+      "rulebook_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Rulebook id"
+      },
+      "organization_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Organization id"
+      },
+      "restart_policy": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Restart policy",
+        "choices": [
+          {
+            "value": "always",
+            "display_name": "always"
+          },
+          {
+            "value": "on-failure",
+            "display_name": "on-failure"
+          },
+          {
+            "value": "never",
+            "display_name": "never"
+          }
+        ]
+      },
+      "restart_count": {
+        "type": "integer",
+        "required": false,
+        "read_only": false,
+        "label": "Restart count",
+        "min_value": -2147483648,
+        "max_value": 2147483647
+      },
+      "rulebook_name": {
+        "type": "string",
+        "required": false,
+        "read_only": true,
+        "label": "Rulebook name",
+        "help_text": "Name of the referenced rulebook"
+      },
+      "ruleset_stats": {
+        "type": "field",
+        "required": false,
+        "read_only": false,
+        "label": "Ruleset stats"
+      },
+      "current_job_id": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Current job id"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Created at"
+      },
+      "modified_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Modified at"
+      },
+      "status_message": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Status message"
+      },
+      "awx_token_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Awx token id"
+      },
+      "eda_credentials": {
+        "type": "list",
+        "required": false,
+        "read_only": false,
+        "label": "Eda credentials",
+        "child": {
+          "type": "nested object",
+          "required": true,
+          "read_only": false,
+          "children": {
+            "name": {
+              "type": "string",
+              "required": true,
+              "read_only": false,
+              "label": "Name"
+            },
+            "description": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Description"
+            },
+            "inputs": {
+              "type": "field",
+              "required": false,
+              "read_only": true,
+              "label": "Inputs"
+            },
+            "credential_type": {
+              "type": "nested object",
+              "required": false,
+              "read_only": false,
+              "label": "Credential type",
+              "children": {
+                "id": {
+                  "type": "integer",
+                  "required": false,
+                  "read_only": true,
+                  "label": "ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "read_only": false,
+                  "label": "Name"
+                },
+                "namespace": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Namespace"
+                },
+                "kind": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Kind"
+                }
+              }
+            },
+            "references": {
+              "type": "field",
+              "required": false,
+              "read_only": false,
+              "label": "References"
+            },
+            "id": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "ID"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Created at"
+            },
+            "modified_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Modified at"
+            },
+            "managed": {
+              "type": "boolean",
+              "required": false,
+              "read_only": true,
+              "label": "Managed"
+            },
+            "organization": {
+              "type": "nested object",
+              "required": true,
+              "read_only": false,
+              "label": "Organization",
+              "children": {
+                "id": {
+                  "type": "integer",
+                  "required": false,
+                  "read_only": true,
+                  "label": "ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "read_only": false,
+                  "label": "Name",
+                  "help_text": "The name of this resource",
+                  "max_length": 512
+                },
+                "description": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Description",
+                  "help_text": "The organization description."
+                }
+              }
+            }
+          }
+        }
+      },
+      "log_level": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Log level",
+        "choices": [
+          {
+            "value": "debug",
+            "display_name": "debug"
+          },
+          {
+            "value": "info",
+            "display_name": "info"
+          },
+          {
+            "value": "error",
+            "display_name": "error"
+          }
+        ]
+      },
+      "event_streams": {
+        "type": "list",
+        "required": false,
+        "read_only": false,
+        "label": "Event streams",
+        "child": {
+          "type": "nested object",
+          "required": true,
+          "read_only": false,
+          "children": {
+            "name": {
+              "type": "string",
+              "required": true,
+              "read_only": false,
+              "label": "Name",
+              "help_text": "The name of the webhook"
+            },
+            "test_mode": {
+              "type": "boolean",
+              "required": false,
+              "read_only": false,
+              "label": "Test mode",
+              "help_text": "Enable test mode"
+            },
+            "additional_data_headers": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Additional data headers",
+              "help_text": "The additional http headers which will be added to the event data. The headers are comma delimited"
+            },
+            "organization": {
+              "type": "field",
+              "required": false,
+              "read_only": true,
+              "label": "Organization"
+            },
+            "eda_credential": {
+              "type": "nested object",
+              "required": true,
+              "read_only": false,
+              "label": "Eda credential",
+              "children": {
+                "id": {
+                  "type": "integer",
+                  "required": false,
+                  "read_only": true,
+                  "label": "ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "read_only": false,
+                  "label": "Name"
+                },
+                "description": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Description"
+                },
+                "inputs": {
+                  "type": "field",
+                  "required": false,
+                  "read_only": true,
+                  "label": "Inputs"
+                },
+                "managed": {
+                  "type": "boolean",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Managed"
+                },
+                "credential_type_id": {
+                  "type": "field",
+                  "required": false,
+                  "read_only": true,
+                  "label": "Credential type id"
+                },
+                "organization_id": {
+                  "type": "field",
+                  "required": false,
+                  "read_only": true,
+                  "label": "Organization id"
+                }
+              }
+            },
+            "event_stream_type": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Event stream type",
+              "help_text": "The type of the event stream based on credential type"
+            },
+            "id": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "ID"
+            },
+            "owner": {
+              "type": "field",
+              "required": false,
+              "read_only": true,
+              "label": "Owner"
+            },
+            "url": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Url",
+              "help_text": "The URL which will be used to post to the event stream"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Created at"
+            },
+            "modified_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Modified at"
+            },
+            "test_content_type": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test content type",
+              "help_text": "The content type of test data, when in test mode"
+            },
+            "test_content": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test content",
+              "help_text": "The content recieved, when in test mode, stored as a yaml string"
+            },
+            "test_error_message": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test error message",
+              "help_text": "The error message,  when in test mode"
+            },
+            "test_headers": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test headers",
+              "help_text": "The headers recieved, when in test mode, stored as a yaml string"
+            },
+            "events_received": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "Events received",
+              "help_text": "The total number of events received by event stream"
+            },
+            "last_event_received_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Last event received at",
+              "help_text": "The date/time when the last event was received"
+            }
+          }
+        }
+      },
+      "skip_audit_events": {
+        "type": "boolean",
+        "required": false,
+        "read_only": false,
+        "label": "Skip audit events",
+        "help_text": "Skip audit events for activation"
+      }
+    },
+    "POST": {
+      "id": {
+        "type": "integer",
+        "required": false,
+        "read_only": true,
+        "label": "ID"
+      },
+      "name": {
+        "type": "string",
+        "required": true,
+        "read_only": false,
+        "label": "Name"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Description"
+      },
+      "is_enabled": {
+        "type": "boolean",
+        "required": false,
+        "read_only": false,
+        "label": "Is enabled"
+      },
+      "status": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Status",
+        "choices": [
+          {
+            "value": "starting",
+            "display_name": "starting"
+          },
+          {
+            "value": "running",
+            "display_name": "running"
+          },
+          {
+            "value": "pending",
+            "display_name": "pending"
+          },
+          {
+            "value": "failed",
+            "display_name": "failed"
+          },
+          {
+            "value": "stopping",
+            "display_name": "stopping"
+          },
+          {
+            "value": "stopped",
+            "display_name": "stopped"
+          },
+          {
+            "value": "deleting",
+            "display_name": "deleting"
+          },
+          {
+            "value": "completed",
+            "display_name": "completed"
+          },
+          {
+            "value": "unresponsive",
+            "display_name": "unresponsive"
+          },
+          {
+            "value": "error",
+            "display_name": "error"
+          },
+          {
+            "value": "workers offline",
+            "display_name": "workers offline"
+          }
+        ]
+      },
+      "git_hash": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Git hash"
+      },
+      "extra_var": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Extra var"
+      },
+      "decision_environment_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Decision environment id"
+      },
+      "project_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Project id"
+      },
+      "rulebook_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Rulebook id"
+      },
+      "organization_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Organization id"
+      },
+      "restart_policy": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Restart policy",
+        "choices": [
+          {
+            "value": "always",
+            "display_name": "always"
+          },
+          {
+            "value": "on-failure",
+            "display_name": "on-failure"
+          },
+          {
+            "value": "never",
+            "display_name": "never"
+          }
+        ]
+      },
+      "restart_count": {
+        "type": "integer",
+        "required": false,
+        "read_only": false,
+        "label": "Restart count",
+        "min_value": -2147483648,
+        "max_value": 2147483647
+      },
+      "rulebook_name": {
+        "type": "string",
+        "required": false,
+        "read_only": true,
+        "label": "Rulebook name",
+        "help_text": "Name of the referenced rulebook"
+      },
+      "ruleset_stats": {
+        "type": "field",
+        "required": false,
+        "read_only": false,
+        "label": "Ruleset stats"
+      },
+      "current_job_id": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Current job id"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Created at"
+      },
+      "modified_at": {
+        "type": "datetime",
+        "required": false,
+        "read_only": true,
+        "label": "Modified at"
+      },
+      "status_message": {
+        "type": "string",
+        "required": false,
+        "read_only": false,
+        "label": "Status message"
+      },
+      "awx_token_id": {
+        "type": "field",
+        "required": false,
+        "read_only": true,
+        "label": "Awx token id"
+      },
+      "eda_credentials": {
+        "type": "list",
+        "required": false,
+        "read_only": false,
+        "label": "Eda credentials",
+        "child": {
+          "type": "nested object",
+          "required": true,
+          "read_only": false,
+          "children": {
+            "name": {
+              "type": "string",
+              "required": true,
+              "read_only": false,
+              "label": "Name"
+            },
+            "description": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Description"
+            },
+            "inputs": {
+              "type": "field",
+              "required": false,
+              "read_only": true,
+              "label": "Inputs"
+            },
+            "credential_type": {
+              "type": "nested object",
+              "required": false,
+              "read_only": false,
+              "label": "Credential type",
+              "children": {
+                "id": {
+                  "type": "integer",
+                  "required": false,
+                  "read_only": true,
+                  "label": "ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "read_only": false,
+                  "label": "Name"
+                },
+                "namespace": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Namespace"
+                },
+                "kind": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Kind"
+                }
+              }
+            },
+            "references": {
+              "type": "field",
+              "required": false,
+              "read_only": false,
+              "label": "References"
+            },
+            "id": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "ID"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Created at"
+            },
+            "modified_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Modified at"
+            },
+            "managed": {
+              "type": "boolean",
+              "required": false,
+              "read_only": true,
+              "label": "Managed"
+            },
+            "organization": {
+              "type": "nested object",
+              "required": true,
+              "read_only": false,
+              "label": "Organization",
+              "children": {
+                "id": {
+                  "type": "integer",
+                  "required": false,
+                  "read_only": true,
+                  "label": "ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "read_only": false,
+                  "label": "Name",
+                  "help_text": "The name of this resource",
+                  "max_length": 512
+                },
+                "description": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Description",
+                  "help_text": "The organization description."
+                }
+              }
+            }
+          }
+        }
+      },
+      "log_level": {
+        "type": "choice",
+        "required": false,
+        "read_only": false,
+        "label": "Log level",
+        "choices": [
+          {
+            "value": "debug",
+            "display_name": "debug"
+          },
+          {
+            "value": "info",
+            "display_name": "info"
+          },
+          {
+            "value": "error",
+            "display_name": "error"
+          }
+        ]
+      },
+      "event_streams": {
+        "type": "list",
+        "required": false,
+        "read_only": false,
+        "label": "Event streams",
+        "child": {
+          "type": "nested object",
+          "required": true,
+          "read_only": false,
+          "children": {
+            "name": {
+              "type": "string",
+              "required": true,
+              "read_only": false,
+              "label": "Name",
+              "help_text": "The name of the webhook"
+            },
+            "test_mode": {
+              "type": "boolean",
+              "required": false,
+              "read_only": false,
+              "label": "Test mode",
+              "help_text": "Enable test mode"
+            },
+            "additional_data_headers": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Additional data headers",
+              "help_text": "The additional http headers which will be added to the event data. The headers are comma delimited"
+            },
+            "organization": {
+              "type": "field",
+              "required": false,
+              "read_only": true,
+              "label": "Organization"
+            },
+            "eda_credential": {
+              "type": "nested object",
+              "required": true,
+              "read_only": false,
+              "label": "Eda credential",
+              "children": {
+                "id": {
+                  "type": "integer",
+                  "required": false,
+                  "read_only": true,
+                  "label": "ID"
+                },
+                "name": {
+                  "type": "string",
+                  "required": true,
+                  "read_only": false,
+                  "label": "Name"
+                },
+                "description": {
+                  "type": "string",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Description"
+                },
+                "inputs": {
+                  "type": "field",
+                  "required": false,
+                  "read_only": true,
+                  "label": "Inputs"
+                },
+                "managed": {
+                  "type": "boolean",
+                  "required": false,
+                  "read_only": false,
+                  "label": "Managed"
+                },
+                "credential_type_id": {
+                  "type": "field",
+                  "required": false,
+                  "read_only": true,
+                  "label": "Credential type id"
+                },
+                "organization_id": {
+                  "type": "field",
+                  "required": false,
+                  "read_only": true,
+                  "label": "Organization id"
+                }
+              }
+            },
+            "event_stream_type": {
+              "type": "string",
+              "required": false,
+              "read_only": false,
+              "label": "Event stream type",
+              "help_text": "The type of the event stream based on credential type"
+            },
+            "id": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "ID"
+            },
+            "owner": {
+              "type": "field",
+              "required": false,
+              "read_only": true,
+              "label": "Owner"
+            },
+            "url": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Url",
+              "help_text": "The URL which will be used to post to the event stream"
+            },
+            "created_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Created at"
+            },
+            "modified_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Modified at"
+            },
+            "test_content_type": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test content type",
+              "help_text": "The content type of test data, when in test mode"
+            },
+            "test_content": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test content",
+              "help_text": "The content recieved, when in test mode, stored as a yaml string"
+            },
+            "test_error_message": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test error message",
+              "help_text": "The error message,  when in test mode"
+            },
+            "test_headers": {
+              "type": "string",
+              "required": false,
+              "read_only": true,
+              "label": "Test headers",
+              "help_text": "The headers recieved, when in test mode, stored as a yaml string"
+            },
+            "events_received": {
+              "type": "integer",
+              "required": false,
+              "read_only": true,
+              "label": "Events received",
+              "help_text": "The total number of events received by event stream"
+            },
+            "last_event_received_at": {
+              "type": "datetime",
+              "required": false,
+              "read_only": true,
+              "label": "Last event received at",
+              "help_text": "The date/time when the last event was received"
+            }
+          }
+        }
+      },
+      "skip_audit_events": {
+        "type": "boolean",
+        "required": false,
+        "read_only": false,
+        "label": "Skip audit events",
+        "help_text": "Skip audit events for activation"
+      }
+    }
+  }
+}
