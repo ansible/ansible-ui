@@ -48,7 +48,7 @@ export function useHostsGroupsToolbarActions(
       variant: ButtonVariant.primary,
       isPinned: true,
       icon: PlusCircleIcon,
-      label: t('Associate'),
+      label: t('Associate group'),
       onClick: () =>
         openInventoryHostsGroupsAddModal({
           onAdd: associateGroups,
@@ -74,7 +74,7 @@ export function useHostsGroupsToolbarActions(
     arr.push({
       type: PageActionType.Button,
       selection: PageActionSelection.Multiple,
-      label: t('Disassociate'),
+      label: t('Disassociate groups'),
       isDisabled:
         view.selectedItems.length === 0 ? t('Select at least one item from the list') : undefined,
       onClick: disassociateGroups,

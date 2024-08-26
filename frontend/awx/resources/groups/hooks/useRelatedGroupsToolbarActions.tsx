@@ -93,7 +93,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
           {
             type: PageActionType.Button,
             selection: PageActionSelection.None,
-            label: t('Create new group'),
+            label: t('Create group'),
             isHidden: () => isConstructed,
             onClick: () =>
               pageNavigate(String(AwxRoute.InventoryGroupRelatedGroupsCreate), {
@@ -122,7 +122,7 @@ export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Disassociate selected groups'),
+        label: t('Disassociate groups'),
         onClick: disassociateGroups,
         isDanger: true,
         isDisabled:
