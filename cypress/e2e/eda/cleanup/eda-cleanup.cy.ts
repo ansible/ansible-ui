@@ -10,7 +10,7 @@ cyLabel(['aaas-unsupported'], function () {
 
     if (!resource.created_at) return false;
     const created = new Date(resource.created_at);
-    const beforeTime = new Date(Date.now() - 10 * 60 * 1000);
+    const beforeTime = new Date(Date.now() - 2 * 60 * 60 * 1000);
 
     return created < beforeTime;
   }

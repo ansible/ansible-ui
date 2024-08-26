@@ -94,7 +94,6 @@ jobs:
       - awx-ui-image
       - generate-matrix
     strategy:
-      # max-parallel: 8
       fail-fast: false
       matrix:
         containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson(needs.generate-matrix.outputs.MATRIX) }}
