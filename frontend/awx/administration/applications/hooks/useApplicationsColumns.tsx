@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import { useMemo } from 'react';
+import { ITableColumn } from '../../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -14,16 +14,8 @@ export function useApplicationsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const pageNavigate = usePageNavigate();
-
-  const nameClick = useCallback(
-    (application: Application) =>
-      pageNavigate(AwxRoute.ApplicationDetails, { params: { id: application.id } }),
-    [pageNavigate]
-  );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
   });
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
