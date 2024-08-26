@@ -132,7 +132,8 @@ describe('Inventories Tests', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.selectTableRowByCheckbox('name', inventory.name, { disableFilter: true });
-          cy.clickToolbarKebabAction('delete-selected-inventories');
+          //Add an assertion that the expected inventory name appears where it should
+          cy.clickToolbarKebabAction('delete-inventories');
           cy.get('#confirm').click();
           cy.clickButton(/^Delete inventory/);
           cy.contains(/^Success$/);
@@ -157,7 +158,9 @@ describe('Inventories Tests', () => {
                   cy.contains(inv2.name);
                   cy.contains(inv3.name);
                   cy.getByDataCy('select-all').click();
-                  cy.clickToolbarKebabAction('delete-selected-inventories');
+
+                  cy.clickToolbarKebabAction('delete-inventories');
+
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete inventories/);
                   cy.contains(/^Success$/);

@@ -57,7 +57,7 @@ inventories.forEach((inventory) => {
           .then((results: InventoryGroup[]) => {
             const group = results[0];
             cy.selectTableRow(group.name, false);
-            cy.clickToolbarKebabAction('disassociate-selected-groups');
+            cy.clickToolbarKebabAction('disassociate-groups');
             cy.contains('Permanently disassociate groups');
           });
       });
@@ -151,7 +151,7 @@ inventories.forEach((inventory) => {
           .should('be.an', 'array')
           .then(() => {
             cy.get('[data-cy="add-group"]').click();
-            cy.get('#create-new-group').should('have.attr', 'aria-disabled', 'true');
+            cy.get('#create-group').should('have.attr', 'aria-disabled', 'true');
           });
       });
     }
@@ -179,7 +179,7 @@ inventories.forEach((inventory) => {
         cy.get(`[data-cy="run-command"]`);
         cy.get(`[data-cy="add-group"]`);
         cy.get(`[data-cy="actions-dropdown"]`).click();
-        cy.get(`[data-cy="disassociate-selected-groups"]`);
+        cy.get(`[data-cy="disassociate-groups"]`);
       });
     }
   });

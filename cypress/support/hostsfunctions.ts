@@ -136,7 +136,7 @@ export function navigateToBaseView(host_type: string, inventoryName: string) {
 function disassociate() {
   //this function will disassociate a group from given host
   // this is for stand alone or invntory host
-  cy.getByDataCy('disassociate').click();
+  cy.getByDataCy('disassociate-groups').click();
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Disassociate groups');
   cy.assertModalSuccess();
@@ -195,7 +195,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickLink(/^Groups$/);
       cy.contains(group.name).should('not.exist');
       //check single associate
-      cy.getByDataCy('associate').click();
+      cy.getByDataCy('associate-group').click();
       cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
       cy.clickModalButton('Confirm');
       cy.clickButton(/^Close$/);
