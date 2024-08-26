@@ -8,7 +8,9 @@ import { useEventStreamActions } from './hooks/useEventStreamActions';
 import { useEventStreamColumns } from './hooks/useEventStreamColumns';
 import { useEventStreamFilters } from './hooks/useEventStreamFilters';
 import { useEventStreamsActions } from './hooks/useEventStreamsActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useOptions } from '../../common/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function EventStreams() {
   const { t } = useTranslation();
@@ -21,6 +23,8 @@ export function EventStreams() {
     tableColumns,
   });
   const toolbarActions = useEventStreamsActions(view);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/event-streams/`);
+  const canCreateEventStream = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useEventStreamActions(view);
   return (
     <PageLayout>
@@ -38,11 +42,24 @@ export function EventStreams() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading event streams')}
-        emptyStateTitle={t('There are currently no event streams created for your organization.')}
-        emptyStateDescription={t('Please create an event stream by using the button below.')}
+        emptyStateTitle={
+          canCreateEventStream
+            ? t('There are currently no event streams created for your organization.')
+            : t('You do not have permission to create an event stream.')
+        }
+        emptyStateDescription={
+          canCreateEventStream
+            ? t('Please create an event stream by using the button below.')
+            : t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )
+        }
+        emptyStateIcon={canCreateEventStream ? undefined : CubesIcon}
         emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create event stream')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateEventStream)}
+        emptyStateButtonText={canCreateEventStream ? t('Create event stream') : undefined}
+        emptyStateButtonClick={
+          canCreateEventStream ? () => pageNavigate(EdaRoute.CreateEventStream) : undefined
+        }
         {...view}
         defaultSubtitle={t('Event stream')}
       />

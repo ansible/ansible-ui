@@ -1,0 +1,119 @@
+{
+  "count": 4,
+  "next": null,
+  "previous": null,
+  "page_size": 50,
+  "page": 1,
+  "results": [
+    {
+      "id": 22,
+      "url": "/api/eda/v1/role_definitions/22/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/22/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/22/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.change_eventstream", "eda.delete_eventstream", "eda.view_eventstream"],
+      "content_type": "eda.eventstream",
+      "modified": "2024-08-25T06:17:24.364224Z",
+      "created": "2024-08-21T22:20:59.657360Z",
+      "name": "Event Stream Admin",
+      "description": "Has all permissions to a single event stream",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 23,
+      "url": "/api/eda/v1/role_definitions/23/",
+      "related": {
+        "team_assignments": "/api/eda/v1/role_definitions/23/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/23/user_assignments/"
+      },
+      "summary_fields": {},
+      "permissions": ["eda.change_eventstream", "eda.view_eventstream"],
+      "content_type": "eda.eventstream",
+      "modified": "2024-08-25T06:17:24.367576Z",
+      "created": "2024-08-21T22:20:59.661014Z",
+      "name": "Event Stream Use",
+      "description": "Has use permissions to a single event stream",
+      "managed": true,
+      "modified_by": null,
+      "created_by": null
+    },
+    {
+      "id": 27,
+      "url": "/api/eda/v1/role_definitions/27/",
+      "related": {
+        "created_by": "/api/eda/v1/users/1/",
+        "modified_by": "/api/eda/v1/users/1/",
+        "team_assignments": "/api/eda/v1/role_definitions/27/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/27/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "email": "admin@test.com",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "email": "admin@test.com",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        }
+      },
+      "permissions": ["eda.view_eventstream"],
+      "content_type": "eda.eventstream",
+      "modified": "2024-08-26T20:16:26.148302Z",
+      "created": "2024-08-26T20:16:26.148326Z",
+      "name": "LGView",
+      "description": "",
+      "managed": false,
+      "modified_by": 1,
+      "created_by": 1
+    },
+    {
+      "id": 25,
+      "url": "/api/eda/v1/role_definitions/25/",
+      "related": {
+        "created_by": "/api/eda/v1/users/1/",
+        "modified_by": "/api/eda/v1/users/1/",
+        "team_assignments": "/api/eda/v1/role_definitions/25/team_assignments/",
+        "user_assignments": "/api/eda/v1/role_definitions/25/user_assignments/"
+      },
+      "summary_fields": {
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "email": "admin@test.com",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        },
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "email": "admin@test.com",
+          "first_name": "",
+          "last_name": "",
+          "is_superuser": true
+        }
+      },
+      "permissions": ["eda.view_eventstream"],
+      "content_type": "eda.eventstream",
+      "modified": "2024-08-26T18:20:07.813852Z",
+      "created": "2024-08-22T17:06:59.107929Z",
+      "name": "test",
+      "description": "",
+      "managed": false,
+      "modified_by": 1,
+      "created_by": 1
+    }
+  ]
+}

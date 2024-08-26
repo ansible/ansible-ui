@@ -92,6 +92,10 @@ export enum EdaRoute {
   EventStreamPage = 'eda-event-stream-page',
   EventStreamDetails = 'eda-event-stream-details',
   EventStreamActivations = 'eda-event-stream-activations',
+  EventStreamTeamAccess = 'eda-event-stream-team-access',
+  EventStreamUserAccess = 'eda-event-stream-user-access',
+  EventStreamAddTeams = 'eda-event-stream-add-teams',
+  EventStreamAddUsers = 'eda-event-stream-add-users',
 
   Settings = 'eda-settings',
   SettingsPreferences = 'eda-settings-preferences',

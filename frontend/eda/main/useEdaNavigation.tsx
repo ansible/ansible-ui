@@ -82,6 +82,10 @@ import { EventStreams } from '../event-streams/EventStreams';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
 import { EventStreamActivations } from '../event-streams/EventStreamPage/EventStreamActivations';
+import { EdaEventStreamAddTeams } from '../event-streams/components/EdaEventStreamAddTeams';
+import { EdaEventStreamAddUsers } from '../event-streams/components/EdaEventStreamAddUsers';
+import { EventStreamUserAccess } from '../event-streams/EventStreamPage/EventStreamUserAccess';
+import { EventStreamTeamAccess } from '../event-streams/EventStreamPage/EventStreamTeamAccess';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();
@@ -348,10 +352,30 @@ export function useEdaNavigation() {
               element: <EventStreamActivations />,
             },
             {
+              id: EdaRoute.EventStreamTeamAccess,
+              path: 'team-access',
+              element: <EventStreamTeamAccess />,
+            },
+            {
+              id: EdaRoute.EventStreamUserAccess,
+              path: 'user-access',
+              element: <EventStreamUserAccess />,
+            },
+            {
               path: '',
               element: <Navigate to="details" />,
             },
           ],
+        },
+        {
+          id: EdaRoute.EventStreamAddUsers,
+          path: ':id/user-access/add',
+          element: <EdaEventStreamAddUsers />,
+        },
+        {
+          id: EdaRoute.EventStreamAddTeams,
+          path: ':id/team-access/add',
+          element: <EdaEventStreamAddTeams />,
         },
         {
           path: '',
