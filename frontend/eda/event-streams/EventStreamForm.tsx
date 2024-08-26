@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
 import {
-  PageFormCheckbox,
   PageFormSubmitHandler,
+  PageFormSwitch,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -89,17 +89,22 @@ function EventStreamInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
-        label={t('Include headers')}
-        placeholder={t('Enter include headers')}
-        labelHelpTitle={t('Include headers')}
+        label={t('Headers')}
+        placeholder={t('Enter headers')}
+        labelHelpTitle={t('Headers')}
         labelHelp={t(
-          'A comma separated HTTP header keys that you want to include in the event payload.'
+          'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
+            'To include all headers in the event payload, leave the field empty.'
         )}
       />
-      <PageFormCheckbox<IEdaEventStreamCreate>
-        label={t`Test mode`}
-        labelHelp={t('Test mode.')}
-        name="test_mode"
+      <PageFormSwitch<IEdaEventStreamCreate>
+        label={t`Forward events`}
+        labelOn={t('Enabled')}
+        labelOff={t('Disabled')}
+        labelHelp={t(
+          'Enable the event stream to forward events to the rulebook activation where it is configured. '
+        )}
+        name="enabled"
       />
     </>
   );
@@ -135,17 +140,22 @@ function EventStreamEditInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
-        label={t('Include headers')}
-        placeholder={t('Enter include headers')}
-        labelHelpTitle={t('Include headers')}
+        label={t('Headers')}
+        placeholder={t('Enter headers')}
+        labelHelpTitle={t('Headers')}
         labelHelp={t(
-          'A comma separated HTTP header keys that you want to include in the event payload.'
+          'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
+            'To include all headers in teh event payload, leave the field empty.'
         )}
       />
-      <PageFormCheckbox<IEdaEventStreamCreate>
-        label={t`Test mode`}
-        labelHelp={t('Test mode.')}
-        name="test_mode"
+      <PageFormSwitch<IEdaEventStreamCreate>
+        label={t`Forward events`}
+        labelOn={t('Enabled')}
+        labelOff={t('Disabled')}
+        labelHelp={t(
+          'Enable the event stream to forward events to the rulebook activation where it is configured. '
+        )}
+        name="enabled"
       />
     </>
   );
@@ -168,8 +178,11 @@ export function CreateEventStream() {
       ? organizations.results[0]
       : undefined;
 
-  const onSubmit: PageFormSubmitHandler<EdaEventStreamCreate> = async (eventStream) => {
-    const newEventStream = await postRequest(edaAPI`/event-streams/`, eventStream);
+  const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
+    const newEventStream = await postRequest(edaAPI`/event-streams/`, {
+      ...eventStream,
+      test_mode: !eventStream?.enabled,
+    });
     (cache as unknown as { clear: () => void }).clear?.();
     pageNavigate(EdaRoute.EventStreamPage, { params: { id: newEventStream?.id } });
   };
@@ -190,7 +203,7 @@ export function CreateEventStream() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
-        defaultValue={{ organization_id: defaultOrganization?.id }}
+        defaultValue={{ organization_id: defaultOrganization?.id, test_mode: false, enabled: true }}
       >
         <EventStreamInputs />
       </EdaPageForm>
@@ -209,7 +222,10 @@ export function EditEventStream() {
   const patchRequest = usePatchRequest<IEdaEventStreamCreate, EdaEventStream>();
 
   const onSubmit: PageFormSubmitHandler<IEdaEventStreamCreate> = async (eventStream) => {
-    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, eventStream);
+    await patchRequest(edaAPI`/event-streams/${id.toString()}/`, {
+      ...eventStream,
+      test_mode: !eventStream?.enabled,
+    });
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };
@@ -244,6 +260,7 @@ export function EditEventStream() {
           onCancel={onCancel}
           defaultValue={{
             ...eventStream,
+            enabled: !eventStream.test_mode,
             organization_id: eventStream.organization?.id,
             eda_credential_id: eventStream?.eda_credential?.id,
           }}
@@ -258,4 +275,5 @@ export function EditEventStream() {
 type IEdaEventStreamCreate = EdaEventStreamCreate & {
   type_id: number;
   kind: string;
+  enabled: boolean;
 };
