@@ -9,7 +9,7 @@ describe('PlatformUserTokens', () => {
     });
   });
 
-  it('shows all three token tabs when all services are enabled', () => {
+  it('shows both token tabs when all services are enabled', () => {
     // this enables all services
     cy.stub(gatewaySvc, 'useGatewayService').callsFake((s: string) => s);
 
@@ -18,7 +18,6 @@ describe('PlatformUserTokens', () => {
       initialEntries: ['/users/20/tokens'],
     });
     cy.contains('Ansible Automation Platform');
-    cy.contains('Automation Execution');
     cy.contains('Automation Decisions');
   });
 
@@ -31,11 +30,10 @@ describe('PlatformUserTokens', () => {
       initialEntries: ['/users/20/tokens'],
     });
     cy.contains('Ansible Automation Platform');
-    cy.contains('Automation Execution').should('not.exist');
     cy.contains('Automation Decisions').should('not.exist');
   });
 
-  it('shows only AAP and Controller token tabs when EDA is disabled', () => {
+  it('shows only AAP token tab when EDA is disabled', () => {
     // this enables only controller service
     cy.stub(gatewaySvc, 'useGatewayService').callsFake((s: string) =>
       s === 'eda' ? undefined : s
@@ -46,7 +44,6 @@ describe('PlatformUserTokens', () => {
       initialEntries: ['/users/20/tokens'],
     });
     cy.contains('Ansible Automation Platform');
-    cy.contains('Automation Execution');
     cy.contains('Automation Decisions').should('not.exist');
   });
 });
