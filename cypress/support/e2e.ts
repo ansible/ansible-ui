@@ -6,6 +6,7 @@ import { randomString } from '../../framework/utils/random-string';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import './auth';
 import './awx-access-commands';
+import './eda-access-commands';
 import './awx-commands';
 import './awx-user-access-commands';
 import './hub-access-commands';
