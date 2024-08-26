@@ -10,13 +10,13 @@ import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
 import { cyLabel } from '../../../support/cyLabel';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
-const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
 
 cyLabel(['upstream'], () => {
   describe('AWX Cleanup', () => {
     it('cleanup projects', () => {
       cy.requestGet<AwxItemsResponse<Project>>(
-        awxAPI`/projects?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/projects?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.deleteAwxProject(resource, { failOnStatusCode: false });
@@ -26,7 +26,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup inventories', () => {
       cy.requestGet<AwxItemsResponse<Inventory>>(
-        awxAPI`/inventories?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/inventories?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.deleteAwxInventory(resource, { failOnStatusCode: false });
@@ -36,7 +36,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup organizations', () => {
       cy.requestGet<AwxItemsResponse<Organization>>(
-        awxAPI`/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/organizations?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.deleteAwxOrganization(resource, { failOnStatusCode: false });
@@ -46,7 +46,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup users', () => {
       cy.requestGet<AwxItemsResponse<AwxUser>>(
-        awxAPI`/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/users?username__startswith=e2e-&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.deleteAwxUser(resource, { failOnStatusCode: false });
@@ -56,7 +56,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup templates', () => {
       cy.requestGet<AwxItemsResponse<JobTemplate>>(
-        awxAPI`/unified_job_templates/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/unified_job_templates/?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.deleteAwxJobTemplate(resource, { failOnStatusCode: false });
@@ -66,7 +66,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup jobs', () => {
       cy.requestGet<AwxItemsResponse<Job>>(
-        awxAPI`/unified_jobs/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/unified_jobs/?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           const url = getJobsAPIUrl(resource.job_type ?? '');
@@ -77,7 +77,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup instance groups', () => {
       cy.requestGet<AwxItemsResponse<Job>>(
-        awxAPI`/instance_groups/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/instance_groups/?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.requestDelete(awxAPI`/instance_groups/${resource.id.toString()}/`, {
@@ -89,7 +89,7 @@ cyLabel(['upstream'], () => {
 
     it('cleanup workflow approvals', () => {
       cy.requestGet<AwxItemsResponse<WorkflowApproval>>(
-        awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&created__lt=${tenMinutesAgo}`
+        awxAPI`/workflow_approvals/?name__startswith=E2E&page=1&page_size=200&created__lt=${twoHoursAgo}`
       ).then((result) => {
         for (const resource of result.results ?? []) {
           cy.requestPost(awxAPI`/workflow_approvals/${resource.id.toString()}/deny/`, {}, false);
