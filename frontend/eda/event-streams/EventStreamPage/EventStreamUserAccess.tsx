@@ -8,7 +8,7 @@ export function EventStreamUserAccess() {
     <UserAccess
       service="eda"
       id={params.id || ''}
-      type={'project'}
+      type={'eventstream'}
       addRolesRoute={EdaRoute.EventStreamAddUsers}
     />
   );
