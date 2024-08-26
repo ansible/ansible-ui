@@ -199,7 +199,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
 
-  it.skip('should successfully sync execution environment from Docker registry', () => {
+  it('should successfully sync execution environment from Docker registry', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -234,7 +234,7 @@ describe('Execution Environment Activity tab', () => {
     });
   });
 
-  it.skip('should display populated activity tab', () => {
+  it('should display populated activity tab', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
