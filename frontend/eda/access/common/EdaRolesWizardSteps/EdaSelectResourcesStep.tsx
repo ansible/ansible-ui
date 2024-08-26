@@ -15,6 +15,7 @@ import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { edaAPI } from '../../../common/eda-utils';
 import styled from 'styled-components';
+import { EdaEventStream } from '../../../interfaces/EdaEventStream';
 
 export type EdaResourceType =
   | EdaActivationInstance
@@ -24,7 +25,8 @@ export type EdaResourceType =
   | EdaRulebookActivation
   | EdaRuleAudit
   | EdaProject
-  | EdaCredentialType;
+  | EdaCredentialType
+  | EdaEventStream;
 
 const resourceToEndpointMapping: { [key: string]: string } = {
   'eda.edacredential': edaAPI`/eda-credentials/`,
@@ -35,6 +37,7 @@ const resourceToEndpointMapping: { [key: string]: string } = {
   'eda.credentialtype': edaAPI`/credential-types/`,
   'eda.decisionenvironment': edaAPI`/decision-environments/`,
   'eda.auditrule': edaAPI`/audit-rules/`,
+  'eda.eventstream': edaAPI`/event-streams/`,
 };
 
 const StyledTitle = styled(Title)`
@@ -57,6 +60,7 @@ export function EdaSelectResourcesStep() {
       'eda.credentialtype': t('Select credential types'),
       'eda.decisionenvironment': t('Select decision environments'),
       'eda.auditrule': t('Select audit rules'),
+      'eda.eventstream': t('Select event stream'),
     };
   }, [t]);
   const tableColumns = useMemo<ITableColumn<EdaResourceType>[]>(

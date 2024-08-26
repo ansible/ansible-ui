@@ -130,6 +130,10 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
             'shared.change_team': t('Change team'),
             'shared.delete_team': t('Delete team'),
             'shared.view_team': t('View team'),
+            'eda.add_eventstream': t('Add event stream'),
+            'eda.change_eventstream': t('Change event stream'),
+            'eda.delete_eventstream': t('Delete event stream'),
+            'eda.view_eventstream': t('View event stream'),
           },
         },
         'eda.project': {
