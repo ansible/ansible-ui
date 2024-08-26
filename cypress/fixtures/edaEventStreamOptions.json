@@ -1,15 +1,8 @@
 {
   "name": "Event Stream Instance",
   "description": "",
-  "renders": [
-    "application/json",
-    "text/html"
-  ],
-  "parses": [
-    "application/json",
-    "application/x-www-form-urlencoded",
-    "multipart/form-data"
-  ],
+  "renders": ["application/json", "text/html"],
+  "parses": ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
   "actions": {
     "PATCH": {
       "name": {
