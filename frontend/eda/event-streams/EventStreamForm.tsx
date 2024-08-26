@@ -89,9 +89,9 @@ function EventStreamInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
-        label={t('Include headers')}
-        placeholder={t('Enter include headers')}
-        labelHelpTitle={t('Include headers')}
+        label={t('Headers')}
+        placeholder={t('Enter headers')}
+        labelHelpTitle={t('Headers')}
         labelHelp={t(
           'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
             'To include all headers in the event payload, leave the field empty.'
@@ -140,9 +140,9 @@ function EventStreamEditInputs() {
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
-        label={t('Include headers')}
-        placeholder={t('Enter include headers')}
-        labelHelpTitle={t('Include headers')}
+        label={t('Headers')}
+        placeholder={t('Enter headers')}
+        labelHelpTitle={t('Headers')}
         labelHelp={t(
           'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
             'To include all headers in teh event payload, leave the field empty.'

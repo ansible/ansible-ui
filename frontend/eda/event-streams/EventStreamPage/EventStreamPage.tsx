@@ -29,10 +29,16 @@ export function EventStreamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
-  const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${params.id ?? ''}/`);
+  const { data: eventStream, refresh } = useGet<EdaEventStream>(
+    edaAPI`/event-streams/${params.id ?? ''}/`
+  );
   const patchRequest = usePatchRequest();
   const alertToaster = usePageAlertToaster();
-  const disableEventStreams = useDisableEventStreams();
+  const disableEventStreams = useDisableEventStreams((disabled) => {
+    if (disabled.length > 0) {
+      refresh();
+    }
+  });
 
   const deleteEventStreams = useDeleteEventStreams((deleted) => {
     if (deleted.length > 0) {
@@ -61,8 +67,9 @@ export function EventStreamPage() {
             timeout: 5000,
           });
         });
+      refresh();
     },
-    [t, patchRequest, alertToaster]
+    [t, patchRequest, refresh, alertToaster]
   );
   const { data: esActivations } = useGet<EdaResult<EdaEventStream>>(
     edaAPI`/event-streams/${params.id ?? ''}/activations/?page=1&page_size=200`
