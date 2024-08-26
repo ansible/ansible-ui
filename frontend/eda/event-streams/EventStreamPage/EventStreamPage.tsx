@@ -105,7 +105,7 @@ export function EventStreamPage() {
               isDisabled: () =>
                 canEditEventStream
                   ? ''
-                  : t(`The event stream cannot be edited due to insufficient permission`),
+                  : t(`The event stream cannot be updated due to insufficient permission`),
             },
             {
               type: PageActionType.Button,
