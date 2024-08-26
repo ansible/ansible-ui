@@ -91,6 +91,7 @@ export enum EdaRoute {
   EditEventStream = 'eda-edit-event-stream',
   EventStreamPage = 'eda-event-stream-page',
   EventStreamDetails = 'eda-event-stream-details',
+  EventStreamActivations = 'eda-event-stream-activations',
 
   Settings = 'eda-settings',
   SettingsPreferences = 'eda-settings-preferences',

@@ -203,27 +203,23 @@ describe('EventStreams.cy.ts', () => {
     );
   });
 
-  it('Renders the correct webhooks columns', () => {
+  it('Renders the correct event streams columns', () => {
     cy.mount(<EventStreams />);
     cy.get('h1').should('contain', 'Event Streams');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains('th', 'Name');
     cy.contains('th', 'Events received');
     cy.contains('th', 'Last event received');
-    cy.contains('th', 'Mode');
+    cy.contains('th', 'Event stream type');
   });
 
-  it('Can delete an event stream not in use', () => {
+  it('Can delete an event stream', () => {
     cy.mount(<EventStreams />);
     cy.intercept(
       { method: 'DELETE', url: edaAPI`/event-streams/2/` },
       {
         statusCode: 204,
       }
-    );
-    cy.intercept(
-      { method: 'GET', url: edaAPI`/activations/?webhook_id=1` },
-      { count: 0, next: null, previous: null, page_size: 20, page: 1, results: [] }
     );
     cy.get('[data-cy="checkbox-column-cell"]').first().click();
     cy.get('[data-cy="actions-dropdown"]').first().click();

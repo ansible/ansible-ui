@@ -32,7 +32,7 @@ export function EventStreams() {
         )}
       />
       <PageTable
-        id="eda-webhooks-table"
+        id="eda-event-streams-table"
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
         toolbarFilters={toolbarFilters}
