@@ -12,12 +12,9 @@ cyLabel(['aaas-unsupported'], function () {
         edaOrg = organization;
       });
     });
+
     after(() => {
       cy.deleteEdaOrganization(edaOrg);
-    });
-    it('renders the EDA projects page', () => {
-      cy.navigateTo('eda', 'projects');
-      cy.verifyPageTitle('Projects');
     });
 
     it('renders the Project details page', () => {

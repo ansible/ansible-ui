@@ -16,11 +16,6 @@ cyLabel(['aaas-unsupported'], function () {
       cy.deleteEdaOrganization(edaOrg);
     });
 
-    it('can render the decision environments list page', () => {
-      cy.navigateTo('eda', 'decision-environments');
-      cy.verifyPageTitle('Decision Environments');
-    });
-
     it('can create an decision environment and assert the information showing on the details page', () => {
       const de_name = 'E2E Decision Environment ' + randomString(4);
       cy.navigateTo('eda', 'decision-environments');
@@ -41,10 +36,6 @@ cyLabel(['aaas-unsupported'], function () {
       cy.createEdaDecisionEnvironment(edaOrg?.id).then((edaDE) => {
         cy.navigateTo('eda', 'decision-environments');
         cy.verifyPageTitle('Decision Environments');
-        /*
-      DE's are displayed by default in card view hence clickTableRow() doesn't work
-      cy.clickTableRow(edaDE.name);
-      */
         cy.get('button[aria-label="table view"]').click();
         cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
         cy.contains('td', edaDE.name).within(() => {

@@ -8,23 +8,30 @@ import {
 import { EdaCredentialType } from '../../../../frontend/eda/interfaces/EdaCredentialType';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials Type - Tabs', () => {
     let cred: EdaCredential | EdaCredentialCreate;
     let credtype: EdaCredentialType;
+    let edaOrg: EdaOrganization;
+
     before(() => {
-      cy.createEdaCredentialType().then((credentialtype) => {
-        credtype = credentialtype;
-        cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
-          name: 'E2E Credential ' + randomString(4),
-          credential_type_id: credtype.id,
-          description: 'This is a Credential with custom credential type',
-          inputs: {
-            username: 'test_username',
-          },
-        }).then((credential) => {
-          cred = credential;
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+        cy.createEdaCredentialType().then((credentialtype) => {
+          credtype = credentialtype;
+          cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
+            name: 'E2E Credential ' + randomString(4),
+            organization_id: edaOrg.id,
+            credential_type_id: credtype.id,
+            description: 'This is a Credential with custom credential type',
+            inputs: {
+              username: 'test_username',
+            },
+          }).then((credential) => {
+            cred = credential;
+          });
         });
       });
     });
