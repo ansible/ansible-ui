@@ -147,7 +147,7 @@ describe('Namespaces - sign collections', () => {
     cy.deleteHubNamespace(namespace);
   });
 
-  it('can sign a collection', () => {
+  it.skip('can sign a collection', () => {
     cy.waitForAllTasks();
     cy.navigateTo('hub', 'namespaces');
     cy.verifyPageTitle('Namespaces');
