@@ -3,6 +3,7 @@ import { SetOptional, SetRequired } from 'type-fest';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
+import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
@@ -24,7 +25,6 @@ import { Schedule } from '../../frontend/awx/interfaces/Schedule';
 import { Survey, Spec as SurveySpec } from '../../frontend/awx/interfaces/Survey';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
-import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
 import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
@@ -32,9 +32,10 @@ import { EdaControllerToken } from '../../frontend/eda/interfaces/EdaControllerT
 import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
 import { EdaCredentialType } from '../../frontend/eda/interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
+import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
 import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { RoleDefinition } from '../../frontend/eda/interfaces/generated/eda-api';
 import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
@@ -42,7 +43,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
+import { RoleDefinition } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -50,7 +51,11 @@ import { Repository } from '../../frontend/hub/administration/repositories/Repos
 import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
 import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
 import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { IAwxResources } from './awx-commands';
 import {
@@ -80,11 +85,6 @@ import {
   HubQueryRolesOptions,
   HubRequestOptions,
 } from './hub-commands';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
-import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
-import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
-import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 
 declare global {
   namespace Cypress {
@@ -288,6 +288,9 @@ declare global {
       ): Chainable<void>;
       singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
       selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+
+      /** Checks the cell text value based on the column name. */
+      checkValueByHeaderName(headerName: string, expectedValue: string): Chainable<void>;
 
       // TODO REMOVE only needed in one test
       multiSelectShouldHaveSelectedOption(

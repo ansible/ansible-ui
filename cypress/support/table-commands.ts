@@ -182,3 +182,12 @@ Cypress.Commands.add(
     });
   }
 );
+
+Cypress.Commands.add('checkValueByHeaderName', (headerName, expectedValue) => {
+  cy.contains('dt', headerName)
+    .next('dd')
+    .invoke('text')
+    .then((text) => {
+      expect(text.trim()).to.equal(expectedValue);
+    });
+});
