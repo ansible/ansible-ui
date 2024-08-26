@@ -57,7 +57,8 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     name: 'credentials',
     roles_tab_name: 'Eda Credential',
     content_type: 'eda.edacredential',
-    creation: () => cy.createEdaCredential() as Cypress.Chainable<ResourceObject>,
+    creation: (edaOrg: number) =>
+      cy.createEdaCredential(edaOrg) as Cypress.Chainable<ResourceObject>,
     deletion: (resourceObject) => cy.deleteEdaCredential(resourceObject as EdaCredential),
     role: 'Eda Credential Admin',
   },

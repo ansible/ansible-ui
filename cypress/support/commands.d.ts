@@ -1357,7 +1357,7 @@ declare global {
        *
        * @returns {Chainable<EdaCredential>}
        */
-      createEdaCredential(organization: EdaOrganization): Chainable<EdaCredential>;
+      createEdaCredential(edaOrgId: number): Chainable<EdaCredential>;
 
       /**
        * Some of the Eda roles (Admin, Contributor etc) have resources

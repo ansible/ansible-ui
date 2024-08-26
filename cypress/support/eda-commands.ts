@@ -263,10 +263,10 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
   });
 });
 
-Cypress.Commands.add('createEdaCredential', (organization: EdaOrganization) => {
+Cypress.Commands.add('createEdaCredential', (edaOrgId: number) => {
   cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
     name: 'E2E Credential ' + randomString(4),
-    organization_id: organization.id,
+    organization_id: edaOrgId,
     credential_type_id: 2,
     description: 'This is a container registry credential',
     inputs: {

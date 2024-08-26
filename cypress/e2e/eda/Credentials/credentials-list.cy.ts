@@ -20,7 +20,7 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('renders the Credentials details page and shows expected information', () => {
-        cy.createEdaCredential(edaOrg).then((edaCredential) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
           cy.navigateTo('eda', 'credentials');
           cy.clickTableRow(edaCredential.name);
           cy.verifyPageTitle(edaCredential.name);
@@ -31,7 +31,7 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('can filter the Credentials list based on Name', () => {
-        cy.createEdaCredential(edaOrg).then((edaCredential) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
           cy.navigateTo('eda', 'credentials');
           cy.filterTableByText(edaCredential.name);
           cy.get('td[data-label="Name"]').should('contain', edaCredential.name);
@@ -40,8 +40,8 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('can bulk delete Credentials from the Credentials list', () => {
-        cy.createEdaCredential(edaOrg).then((edaCredential) => {
-          cy.createEdaCredential(edaOrg).then((testCredential) => {
+        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
+          cy.createEdaCredential(edaOrg.id).then((testCredential) => {
             cy.navigateTo('eda', 'credentials');
             cy.selectTableRow(edaCredential.name);
             cy.clearAllFilters();
