@@ -94,7 +94,7 @@ function EventStreamInputs() {
         labelHelpTitle={t('Include headers')}
         labelHelp={t(
           'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
-            'To include all headers in teh event payload, leave the field empty.'
+            'To include all headers in the event payload, leave the field empty.'
         )}
       />
       <PageFormSwitch<IEdaEventStreamCreate>
