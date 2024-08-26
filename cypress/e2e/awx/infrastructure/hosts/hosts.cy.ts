@@ -62,7 +62,7 @@ describe('Host Tests', () => {
     cy.contains(/^No results found./);
   });
 
-  it('can create, edit, assosiat and disassosiate groups at stand alone host groups tab', () => {
+  it('can create, edit, associate and disassociate groups at stand alone host groups tab', () => {
     // use checkHostGroup function in order to test stand alone host group
     checkHostGroup('stand_alone_host', organization);
   });
