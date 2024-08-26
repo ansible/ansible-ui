@@ -13,7 +13,7 @@ describe('EdaEventStreamAddUsers', () => {
   beforeEach(() => {
     cy.intercept('GET', edaAPI`/event-streams/*`, { fixture: 'edaEventStream.json' });
     cy.intercept('GET', edaAPI`/users/*`, { fixture: 'edaNormalUsers.json' });
-    cy.intercept('GET', edaAPI`/role_definitions/?content_type__model=event-stream*`, {
+    cy.intercept('GET', edaAPI`/role_definitions/?content_type__model=eventstream*`, {
       fixture: 'edaEventStreamRoles.json',
     });
     cy.mount(component, params);
@@ -48,7 +48,7 @@ describe('EdaEventStreamAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
     cy.clickButton(/^Next$/);
     cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one role.');
-    cy.selectTableRowByCheckbox('name', 'EventStream Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Event Stream Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
@@ -56,7 +56,7 @@ describe('EdaEventStreamAddUsers', () => {
   it('should display selected user and role in the Review step', () => {
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.selectTableRowByCheckbox('name', 'EventStream Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Event Stream Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', 'Users');
@@ -64,10 +64,10 @@ describe('EdaEventStreamAddUsers', () => {
     cy.get('[data-cy="expandable-section-users"]').should('contain.text', 'demo-user');
     cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Roles');
     cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', '1');
-    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'EventStream Admin');
+    cy.get('[data-cy="expandable-section-edaRoles"]').should('contain.text', 'Event Stream Admin');
     cy.get('[data-cy="expandable-section-edaRoles"]').should(
       'contain.text',
-      'Has all permissions to a single event-stream and its child resources - rulebook'
+      'Has all permissions to a single event stream'
     );
   });
   it('should trigger bulk action dialog on submit', () => {
@@ -77,7 +77,7 @@ describe('EdaEventStreamAddUsers', () => {
     }).as('createRoleAssignment');
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
-    cy.selectTableRowByCheckbox('name', 'EventStream Admin', { disableFilter: true });
+    cy.selectTableRowByCheckbox('name', 'Event Stream Admin', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Finish$/);
     cy.wait('@createRoleAssignment');
@@ -85,7 +85,7 @@ describe('EdaEventStreamAddUsers', () => {
     cy.get('.pf-v5-c-modal-box').within(() => {
       cy.get('table tbody').find('tr').should('have.length', 1);
       cy.get('table tbody').should('contain.text', 'demo-user');
-      cy.get('table tbody').should('contain.text', 'EventStream Admin');
+      cy.get('table tbody').should('contain.text', 'Event Stream Admin');
       cy.get('div.pf-v5-c-progress__description').should('contain.text', 'Success');
       cy.get('div.pf-v5-c-progress__status').should('contain.text', '100%');
     });
