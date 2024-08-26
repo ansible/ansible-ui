@@ -47,11 +47,11 @@ jobs:
     uses: ./.github/workflows/awx-e2e.yml
     with:
       AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
+      MAX_PARALLEL: ${{ needs.setup.outputs.MAX_PARALLEL }}
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
       AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
-      MAX_PARALLEL: ${{ needs.setup.outputs.MAX_PARALLEL }}
 
   awx-update-server:
     name: AWX Update Server
