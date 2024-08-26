@@ -1641,7 +1641,7 @@ Cypress.Commands.add(
     cy.wait('@getQuestions')
       .its('response.body')
       .then((survey: Survey) => {
-        if (survey?.spec?.length > 0) cy.clickButton('create-question');
+        if (survey?.spec?.length > 0) cy.clickButton('create-survey-question');
         else cy.clickButton('Create survey question');
       });
 
@@ -1676,7 +1676,7 @@ Cypress.Commands.add(
       });
     }
     cy.intercept('POST', awxAPI`/${template.type}s/*/survey_spec/`).as('createSurveySpec');
-    cy.clickButton('Create question');
+    cy.clickButton('Create survey question');
     cy.wait('@createSurveySpec')
       .its('response.statusCode')
       .then((statusCode) => {

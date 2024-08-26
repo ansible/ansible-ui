@@ -39,7 +39,7 @@ export class ReusableTemplateSurveyTestSuite {
       'POST',
       awxAPI`/${this.templateType}/${this.template.id.toString()}/survey_spec/`
     ).as('createQuestion');
-    cy.clickButton('Create question');
+    cy.clickButton('Create survey question');
     cy.wait('@createQuestion');
     cy.contains('Survey disabled');
     cy.get('[for="survey-switch"]').click();
@@ -56,13 +56,13 @@ export class ReusableTemplateSurveyTestSuite {
     cy.getByDataCy('name-column-cell').contains(question?.question_name);
     cy.getByDataCy('type-column-cell').contains(question?.type);
     cy.getByDataCy('default-column-cell').contains(question?.default);
-    cy.getByDataCy('edit-question').click();
+    cy.getByDataCy('edit-survey-question').click();
     cy.getByDataCy('question-name').clear().type('foo');
     cy.getByDataCy('question-description').clear();
     cy.selectDropdownOptionByResourceName('type', 'Integer');
     cy.getByDataCy('question-max').type('0');
     cy.getByDataCy('question-default').clear().type('1337');
-    cy.clickButton('Save question');
+    cy.clickButton('Save survey question');
     cy.getByDataCy('name-column-cell').contains('foo');
     cy.getByDataCy('type-column-cell').contains('integer');
     cy.getByDataCy('default-column-cell').contains('1337');
@@ -75,10 +75,7 @@ export class ReusableTemplateSurveyTestSuite {
       cy.contains(question.question_name);
       cy.contains(question.default);
       cy.contains('text');
-    });
-    cy.clickTableRowAction('name', question.question_name, 'delete-question', {
-      inKebab: true,
-      disableFilter: true,
+      cy.clickKebabAction('actions-dropdown', 'delete-survey-question');
     });
     cy.clickModalConfirmCheckbox();
     cy.intercept(
