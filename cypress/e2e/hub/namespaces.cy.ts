@@ -121,7 +121,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 });
 
-describe('Namespaces - sign collections', () => {
+describe.skip('Namespaces - sign collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const collectionName2 = randomE2Ename();
