@@ -26,7 +26,7 @@ jobs:
     outputs:
       AWX_SERVER: ${{ steps.step1.outputs.AWX_SERVER }}
       UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
-      MAX_PARALLEL: ${{ steps.step1.outputs.MAX_PARALLEL }}
+      MAX_PARALLEL_NUMBER: ${{ fromJSON(steps.step1.outputs.MAX_PARALLEL) }}
     steps:
       - id: step1
         run: |
