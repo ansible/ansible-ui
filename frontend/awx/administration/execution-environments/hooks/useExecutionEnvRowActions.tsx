@@ -69,7 +69,7 @@ export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnviron
             .catch((error) => {
               alertToaster.replaceAlert(alert, {
                 variant: 'danger',
-                title: t('Failed to copy execution envirionment'),
+                title: t('Failed to copy execution environment'),
                 children: error instanceof Error && error.message,
               });
             });
