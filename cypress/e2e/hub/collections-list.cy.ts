@@ -132,11 +132,10 @@ describe('Collections List', () => {
         cy.get('[data-ouia-component-id="Permanently delete collections versions"]').within(() => {
           cy.get('[data-ouia-component-id="confirm"]').click();
           cy.get('[data-ouia-component-id="submit"]').click();
-          cy.clickButton(/^Close$/);
         });
+        cy.deleteHubCollectionByName(collectionName);
       }
     );
-    cy.deleteHubCollectionByName(collectionName);
   });
 
   it('can copy a version to repository and then delete it from repository', () => {
