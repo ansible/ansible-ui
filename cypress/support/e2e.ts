@@ -7,6 +7,7 @@ import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import './auth';
 import './awx-access-commands';
+import './eda-access-commands';
 import './awx-commands';
 import './awx-user-access-commands';
 import './hub-access-commands';
