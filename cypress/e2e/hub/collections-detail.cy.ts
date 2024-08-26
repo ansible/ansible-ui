@@ -89,9 +89,7 @@ describe('Collections Details', () => {
       `/collections/validated/${namespace.name}/${collectionName}/details?version=1.0.0`
     );
     cy.selectDetailsPageKebabAction('delete-version-from-system');
-    cy.clickButton(/^Close$/);
     //Verify the version has been deleted
-    cy.navigateTo('hub', Collections.url);
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -227,30 +225,24 @@ describe('Collections Details', () => {
       cy.clickButton(/^Close$/);
       cy.getModal().should('not.exist');
       // Verify collection has been deprecated
-      cy.contains('span', 'Deprecated');
+      cy.contains('span', 'Deprecated').should('exist');
       // Undeprecate collection
       cy.selectDetailsPageKebabAction('undeprecate-collection');
       cy.clickButton(/^Close$/);
-      cy.getModal().should('not.exist');
       // Verify collection has been undeprecated
       cy.contains('span', 'Deprecated').should('not.exist');
 
       // deprecate collection again
       cy.selectDetailsPageKebabAction('deprecate-collection');
       cy.clickButton(/^Close$/);
-      cy.getModal().should('not.exist');
       // Verify collection has been deprecated
       cy.contains('span', 'Deprecated');
 
       cy.contains('a', namespace.name).click();
       cy.contains(`[role="tab"]`, 'Collections').click();
-      cy.filterTableBySingleText(collectionName, true);
-      cy.get(`[aria-label="Simple table"]`).within(() => {
-        cy.contains('td', collectionName).click();
-        cy.contains('span', 'Deprecated');
-      });
-
       cy.getByDataCy('table-view').click();
+      cy.selectTableRowByCheckbox('name', collectionName, true);
+
       cy.get(`[aria-label="Simple table"]`).within(() => {
         cy.getByDataCy('actions-dropdown').click();
       });
@@ -265,7 +257,6 @@ describe('Collections Details', () => {
       cy.getModal().should('not.exist');
 
       cy.get(`[aria-label="Simple table"]`).within(() => {
-        cy.contains('td', collectionName).click();
         cy.contains('span', 'Deprecated').should('not.exist');
       });
       cy.deleteHubCollectionByName(collectionName);

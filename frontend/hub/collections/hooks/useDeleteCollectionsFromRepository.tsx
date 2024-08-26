@@ -86,7 +86,7 @@ export function useDeleteCollectionsFromRepository(
           return deleteCollectionFromRepository(newRepository, [collection], version, t).then(
             () => {
               if (detail) {
-                return navigateAfterDelete(collection, version || false, navigate);
+                navigate(HubRoute.Collections);
               }
             }
           );
@@ -172,24 +172,5 @@ export async function deleteCollectionFromRepository(
         'Not all collections versions were removed. This operation can remove only 300 versions. Try to repeat this operation.'
       )
     );
-  }
-}
-
-export function navigateAfterDelete(
-  collection: CollectionVersionSearch,
-  version: boolean,
-  navigate: ReturnType<typeof usePageNavigate>
-) {
-  if (version) {
-    navigate(HubRoute.CollectionPage, {
-      query: {
-        repository: collection.repository?.name || '',
-        name: collection.collection_version?.name || '',
-        namespace: collection.collection_version?.namespace || '',
-        redirectIfEmpty: 'true',
-      },
-    });
-  } else {
-    navigate(HubRoute.Collections);
   }
 }
