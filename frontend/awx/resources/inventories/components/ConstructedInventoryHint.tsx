@@ -167,7 +167,7 @@ groups:
           {limitToIntersectionLimit}
         </ClipboardCopy>
       </FormGroup>
-      <FormGroup label={t`Source variabless`} fieldId="intersection-example-source-vars">
+      <FormGroup label={t`Source variables`} fieldId="intersection-example-source-vars">
         <CodeBlock
           actions={
             <CodeBlockAction>

@@ -273,7 +273,7 @@ export function CollectionDocumentationTabContent(props: {
                     </Th>
                     {content?.content_type !== 'module' && (
                       <Th>
-                        <Title headingLevel="h3">{t('Coonfiguration')}</Title>
+                        <Title headingLevel="h3">{t('Configuration')}</Title>
                       </Th>
                     )}
                     <Th>

@@ -60,17 +60,17 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
     {
       name: 'formColumns',
       label: t('Form columns'),
-      helpText: t('Allows diplaying forms and details in a single or multiple columns.'),
+      helpText: t('Allows displaying forms and details in a single or multiple columns.'),
       options: [
         {
           label: t('Single'),
           value: 'single',
-          description: 'Display forms and details using a single column.',
+          description: t('Display forms and details using a single column.'),
         },
         {
           label: t('Multiple'),
           value: 'multiple',
-          description: 'Display forms and details using multiple columns.',
+          description: t('Display forms and details using multiple columns.'),
         },
       ],
       defaultValue: 'multiple',
@@ -89,7 +89,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
         {
           label: t('Date and time'),
           value: 'date-time',
-          description: 'Show dates as date and time.',
+          description: t('Show dates as date and time.'),
         },
       ],
       defaultValue: 'date-time',
