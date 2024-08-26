@@ -80,7 +80,7 @@ describe('TemplateSurvey', () => {
             .contains('Delete survey question')
             .should('have.attr', 'aria-disabled', 'true');
         });
-      cy.contains('#delete-question', /^Delete question$/).should(
+      cy.contains('#delete-question', /^Delete survey question$/).should(
         'have.attr',
         'aria-disabled',
         'true'
