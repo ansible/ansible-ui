@@ -406,7 +406,7 @@ describe('Workflow Job Templates Tests', () => {
         ]);
         cy.selectTableRowByCheckbox('name', workflowJobTemplate.name, { disableFilter: true });
         cy.selectTableRowByCheckbox('name', newWorkflowJobTemplate.name, { disableFilter: true });
-        cy.clickToolbarKebabAction('delete-selected-templates');
+        cy.clickToolbarKebabAction('delete-templates');
         cy.clickModalConfirmCheckbox();
         cy.intercept(
           'DELETE',

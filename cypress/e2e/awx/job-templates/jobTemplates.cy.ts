@@ -563,7 +563,7 @@ describe('Job Templates Tests', function () {
         cy.filterTableByMultiSelect('name', [jobTemplate.name, jobTemplate2.name]);
         cy.selectTableRow(jobTemplate.name, false);
         cy.selectTableRow(jobTemplate2.name, false);
-        cy.clickToolbarKebabAction('delete-selected-templates');
+        cy.clickToolbarKebabAction('delete-templates');
         cy.intercept('DELETE', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
           'deleteJobTemplate1'
         );
