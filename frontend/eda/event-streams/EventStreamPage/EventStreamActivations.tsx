@@ -8,7 +8,6 @@ import { useEdaView } from '../../common/useEventDrivenView';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { PageLayout, PageTable } from '../../../../framework';
-import { useRulebookActivationActions } from '../../rulebook-activations/hooks/useRulebookActivationActions';
 
 export function EventStreamActivations() {
   const params = useParams<{ id: string }>();
@@ -21,13 +20,11 @@ export function EventStreamActivations() {
     toolbarFilters,
     tableColumns,
   });
-  const rowActions = useRulebookActivationActions(view);
   return (
     <PageLayout>
       <PageTable
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
-        rowActions={rowActions}
         errorStateTitle={t('Error loading activations for this event stream')}
         emptyStateTitle={t('No activations for this event stream')}
         emptyStateIcon={CubesIcon}
