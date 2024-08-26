@@ -100,7 +100,7 @@ describe('Collections Details', () => {
     cy.deleteHubCollectionByName(collectionName);
   });
 
-  it.skip('user can delete version from repository', () => {
+  it('user can delete version from repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     cy.uploadCollection(collectionName, namespace.name, '1.1.0');
 
@@ -116,6 +116,7 @@ describe('Collections Details', () => {
       'contain',
       `/collections/validated/${namespace.name}/${collectionName}/details?version=1.0.0`
     );
+    cy.wait(1000);
     cy.selectDetailsPageKebabAction('delete-version-from-repository');
     cy.clickButton(/^Close$/);
     //Verify the version has been deleted
@@ -128,6 +129,7 @@ describe('Collections Details', () => {
       'contain',
       `/collections/validated/${namespace.name}/${collectionName}/details`
     );
+    cy.wait(1000);
     cy.get(`[data-cy="browse-collection-version"] button`).first().click();
     cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains('1.1.0');
     cy.deleteHubCollectionByName(collectionName);
