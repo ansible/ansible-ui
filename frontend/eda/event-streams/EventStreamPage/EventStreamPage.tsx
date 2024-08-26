@@ -29,6 +29,7 @@ export function EventStreamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const { data: eventStream, refresh } = useGet<EdaEventStream>(
     edaAPI`/event-streams/${params.id ?? ''}/`
   );
@@ -74,58 +75,65 @@ export function EventStreamPage() {
   const { data: esActivations } = useGet<EdaResult<EdaEventStream>>(
     edaAPI`/event-streams/${params.id ?? ''}/activations/?page=1&page_size=200`
   );
+
+  const isActionTab = location.href.includes(
+    getPageUrl(EdaRoute.EventStreamDetails, { params: { id: eventStream?.id } })
+  );
   const itemActions = useMemo<IPageAction<EdaEventStream>[]>(
-    () => [
-      {
-        type: PageActionType.Switch,
-        ariaLabel: (isEnabled) => (isEnabled ? t('Forward events ') : t('Not forwarding events')),
-        selection: PageActionSelection.Single,
-        isPinned: true,
-        label: t('Forward events'),
-        labelOff: t('Forward events'),
-        onToggle: (eventStream: EdaEventStream, mode: boolean) => {
-          if (mode) void enableEventStream(eventStream);
-          else void disableEventStreams([eventStream]);
-        },
-        isSwitchOn: (eventStream: EdaEventStream) => !eventStream.test_mode,
-      },
-      {
-        type: PageActionType.Button,
-        variant: ButtonVariant.primary,
-        selection: PageActionSelection.Single,
-        icon: PencilAltIcon,
-        isPinned: true,
-        label: t('Edit event stream'),
-        onClick: (eventStream: EdaEventStream) =>
-          pageNavigate(EdaRoute.EditEventStream, { params: { id: eventStream.id } }),
-      },
-      {
-        type: PageActionType.Seperator,
-      },
-      {
-        type: PageActionType.Button,
-        selection: PageActionSelection.Single,
-        icon: TrashIcon,
-        label: t('Delete event stream'),
-        isDisabled: () =>
-          esActivations?.results && esActivations.results.length > 0
-            ? t('To delete this event stream, disconnect it from all rulebook activations')
-            : undefined,
-        onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
-        isDanger: true,
-      },
-    ],
+    () =>
+      isActionTab
+        ? [
+            {
+              type: PageActionType.Switch,
+              ariaLabel: (isEnabled) =>
+                isEnabled ? t('Forward events ') : t('Not forwarding events'),
+              selection: PageActionSelection.Single,
+              isPinned: true,
+              label: t('Forward events'),
+              labelOff: t('Forward events'),
+              onToggle: (eventStream: EdaEventStream, mode: boolean) => {
+                if (mode) void enableEventStream(eventStream);
+                else void disableEventStreams([eventStream]);
+              },
+              isSwitchOn: (eventStream: EdaEventStream) => !eventStream.test_mode,
+            },
+            {
+              type: PageActionType.Button,
+              variant: ButtonVariant.primary,
+              selection: PageActionSelection.Single,
+              icon: PencilAltIcon,
+              isPinned: true,
+              label: t('Edit event stream'),
+              onClick: (eventStream: EdaEventStream) =>
+                pageNavigate(EdaRoute.EditEventStream, { params: { id: eventStream.id } }),
+            },
+            {
+              type: PageActionType.Seperator,
+            },
+            {
+              type: PageActionType.Button,
+              selection: PageActionSelection.Single,
+              icon: TrashIcon,
+              label: t('Delete event stream'),
+              isDisabled: () =>
+                esActivations?.results && esActivations.results.length > 0
+                  ? t('To delete this event stream, disconnect it from all rulebook activations')
+                  : undefined,
+              onClick: (eventStream: EdaEventStream) => deleteEventStreams([eventStream]),
+              isDanger: true,
+            },
+          ]
+        : [],
     [
       deleteEventStreams,
       disableEventStreams,
       enableEventStream,
-      esActivations?.results,
+      esActivations,
+      isActionTab,
       pageNavigate,
       t,
     ]
   );
-
-  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
