@@ -75,16 +75,18 @@ describe('TemplateSurvey', () => {
           cy.get('[data-cy="actions-column-cell"]').within(() => {
             cy.get('[data-cy="edit-survey-question"]').should('have.attr', 'aria-disabled', 'true');
           });
-          cy.get('.pf-v5-c-dropdown__toggle').click();
-          cy.get('.pf-v5-c-dropdown__menu-item')
-            .contains('Delete survey question')
-            .should('have.attr', 'aria-disabled', 'true');
+          cy.getByDataCy('actions-dropdown').click();
+          cy.document()
+            .its('body')
+            .find('.pf-v5-c-menu__content ul[role="menu"]')
+            .within(() => {
+              cy.get(`[data-cy="delete-survey-question"] button`).should(
+                'have.attr',
+                'aria-disabled',
+                'true'
+              );
+            });
         });
-      cy.contains('#delete-question', /^Delete survey question$/).should(
-        'have.attr',
-        'aria-disabled',
-        'true'
-      );
     });
   });
 

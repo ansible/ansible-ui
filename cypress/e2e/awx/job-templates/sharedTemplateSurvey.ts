@@ -75,8 +75,7 @@ export class ReusableTemplateSurveyTestSuite {
       cy.contains(question.question_name);
       cy.contains(question.default);
       cy.contains('text');
-      cy.getByDataCy('actions-dropdown').click();
-      cy.contains('Delete survey question').click();
+      cy.clickKebabAction('actions-dropdown', 'delete-survey-question');
     });
     cy.clickModalConfirmCheckbox();
     cy.intercept(
