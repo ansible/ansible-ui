@@ -46,6 +46,7 @@ import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup'
 import jsyaml from 'js-yaml';
 import { LabelGroupWrapper } from '../../common/label-group-wrapper';
 import { EdaEventStream } from '../interfaces/EdaEventStream';
+import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -282,6 +283,19 @@ export function RulebookActivationInputs() {
         </PageFormGroup>
       )}
       <input type="hidden" {...register(`source_mappings`)} />
+      <PageFormEventSourceSelect
+        name={'source_mappings'}
+        selectOpen={() =>
+          setDialog(
+            <SourceEventStreamMappingModal
+              rulebook={rulebook}
+              mappings={sourceMappings}
+              setSourceMappings={setSourceMappings}
+            />
+          )
+        }
+        labelHelp={t('Source mappings')}
+      />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         credentialKinds={['vault,cloud']}
