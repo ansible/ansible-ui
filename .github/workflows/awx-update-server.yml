@@ -11,11 +11,6 @@ on:
         required: true
         default: false
         description: 'Update server on success'
-      MAX_PARALLEL:
-        type: number
-        required: true
-        default: 100
-        description: 'Maximum parallel jobs'
   schedule:
     - cron: '0 8 * * *'
 
@@ -26,7 +21,6 @@ jobs:
     outputs:
       AWX_SERVER: ${{ steps.step1.outputs.AWX_SERVER }}
       UPDATE_SERVER: ${{ steps.step1.outputs.UPDATE_SERVER }}
-      MAX_PARALLEL_NUMBER: ${{ fromJSON(steps.step1.outputs.MAX_PARALLEL) }}
     steps:
       - id: step1
         run: |
@@ -34,11 +28,9 @@ jobs:
           if([ "${{ github.event_name }}" == "workflow_dispatch" ]); then
             echo "AWX_SERVER=${{ github.event.inputs.AWX_SERVER || 'https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com' }}" >> "$GITHUB_OUTPUT"
             echo "UPDATE_SERVER=${{ github.event.inputs.UPDATE_SERVER }}" >> "$GITHUB_OUTPUT"
-            echo "MAX_PARALLEL=${{ github.event.inputs.MAX_PARALLEL }}" >> "$GITHUB_OUTPUT"
           else 
             echo "AWX_SERVER=https://awx.ci-ui-${CURRENTDATE}.gcp.testing.ansible.com" >> "$GITHUB_OUTPUT"
             echo "UPDATE_SERVER=true" >> "$GITHUB_OUTPUT"
-            echo "MAX_PARALLEL=100" >> "$GITHUB_OUTPUT"
           fi
 
   awx-e2e:
@@ -47,7 +39,6 @@ jobs:
     uses: ./.github/workflows/awx-e2e.yml
     with:
       AWX_SERVER: ${{ needs.setup.outputs.AWX_SERVER }}
-      MAX_PARALLEL: ${{ needs.setup.outputs.MAX_PARALLEL }}
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}

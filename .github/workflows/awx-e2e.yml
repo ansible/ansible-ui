@@ -13,11 +13,6 @@ on:
       TAGS:
         type: string
         required: false
-      MAX_PARALLEL:
-        type: number
-        required: true
-        default: 100
-        description: 'Maximum parallel jobs'        
     secrets:
       AWX_PASSWORD:
         required: true
@@ -99,7 +94,6 @@ jobs:
       - awx-ui-image
       - generate-matrix
     strategy:
-      max-parallel: ${{ inputs.MAX_PARALLEL }}
       fail-fast: false
       matrix:
         containers: ${{ contains(github.event.pull_request.labels.*.name, 'dashboard') && fromJson('[1,2,3,4]') || fromJson(needs.generate-matrix.outputs.MATRIX) }}

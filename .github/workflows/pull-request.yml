@@ -108,7 +108,6 @@ jobs:
     with:
       AWX_SERVER: ${{ vars.AWX_SERVER }}
       SKIP_JOB: ${{ needs.packages.outputs.awx != 'true' }}
-      MAX_PARALLEL: 100
     secrets:
       AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
       AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
