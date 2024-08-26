@@ -136,7 +136,7 @@ describe('Inventory Sources', () => {
       cy.getByDataCy('Submit').click();
       cy.verifyPageTitle('amazon ec2 source');
       cy.clickButton('Edit inventory source');
-      cy.verifyPageTitle('Edit source');
+      cy.verifyPageTitle(`Edit ${inventorySource.name}`);
       cy.getByDataCy('name').clear().type('updated amazon ec2 source');
       cy.getByDataCy('overwrite_vars').check();
       cy.getByDataCy('Submit').click();

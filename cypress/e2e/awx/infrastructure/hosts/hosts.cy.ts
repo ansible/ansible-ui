@@ -48,7 +48,7 @@ describe('Host Tests', () => {
     cy.navigateTo('awx', 'hosts');
     cy.filterTableByMultiSelect('name', [hostName]);
     cy.getByDataCy('edit-host').click();
-    cy.verifyPageTitle('Edit host');
+    cy.verifyPageTitle(`Edit ${hostName}`);
     cy.getByDataCy('description').clear().type('This is the description edited');
     cy.getByDataCy('Submit').click();
     cy.hasDetail(/^Description$/, 'This is the description edited');
