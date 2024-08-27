@@ -67,7 +67,12 @@ export function PageFormSingleSelectEdaResource<
           options:
             response.results?.map((resource) => ({
               value: resource.id as PathValue<FormData, Name>,
-              description: resource.description,
+              description: resource?.description
+                ? resource.description.slice(
+                    0,
+                    resource.description.indexOf('.') || resource.description.length
+                  )
+                : '',
               label: resource.name,
             })) ?? [],
           next: response.count,

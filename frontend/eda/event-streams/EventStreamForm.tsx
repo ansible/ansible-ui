@@ -85,11 +85,13 @@ function EventStreamInputs() {
           label={t('Event stream type')}
         />
       </PageFormHidden>
-      <PageFormSelectEventStreamCredential<IEdaEventStreamCreate>
-        isRequired
-        name="eda_credential_id"
-        type={eventStreamType?.kind || ''}
-      />
+      {eventStreamType && (
+        <PageFormSelectEventStreamCredential<IEdaEventStreamCreate>
+          isRequired
+          name="eda_credential_id"
+          type={eventStreamType?.kind || ''}
+        />
+      )}
       <PageFormTextInput<IEdaEventStreamCreate>
         name="additional_data_headers"
         data-cy="additional_data_headers-form-field"
