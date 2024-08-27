@@ -36,7 +36,7 @@ describe('Execution Environments', () => {
     });
   });
 
-  it('can add and delete a new execution environment', () => {
+  it('can add, edit, and delete a new execution environment', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       const eeName = `execution_environment_${randomString(3, undefined, { isLowercase: true })}`;
       const upstreamName = `upstream_name_${randomString(3, undefined, { isLowercase: true })}`;
@@ -78,6 +78,25 @@ describe('Execution Environments', () => {
           cy.url().should('contain', '/execution-environments/');
           cy.filterTableBySingleText(eeName);
           cy.get('tbody').find('tr').should('have.length', 1);
+          // edit ee
+          cy.get('tbody').within(() => {
+            cy.getByDataCy('name-column-cell').should('contain', eeName);
+            cy.get('[data-cy="edit-execution-environment"]').click();
+          });
+          cy.get('[data-cy="description"]').click().type('nice new description');
+          cy.get('[data-cy="upstream-name"]').click().clear().type('pulp/pulp-fixtures/new');
+          cy.getByDataCy('Submit').click();
+          cy.url().should('contain', '/execution-environments/');
+          cy.filterTableBySingleText(eeName);
+          cy.get('[data-cy="description-column-cell"]').should('contain', 'nice new description');
+          cy.get('tbody').within(() => {
+            cy.getByDataCy('name-column-cell').should('contain', eeName);
+            cy.get('[data-cy="edit-execution-environment"]').click();
+          });
+          cy.get('[data-cy="upstream-name"]').click().clear().type(upstreamName);
+          cy.getByDataCy('Submit').click();
+          // delete ee
+          cy.filterTableBySingleText(eeName);
           cy.get('tbody').within(() => {
             cy.getByDataCy('name-column-cell').should('contain', eeName);
             cy.get('[data-cy="actions-dropdown"]').click();
@@ -199,7 +218,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
 
-  it.skip('should successfully sync execution environment from Docker registry', () => {
+  it('should successfully sync execution environment from Docker registry', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -234,7 +253,7 @@ describe('Execution Environment Activity tab', () => {
     });
   });
 
-  it.skip('should display populated activity tab', () => {
+  it('should display populated activity tab', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {

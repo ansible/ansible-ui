@@ -21,6 +21,7 @@ import {
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
   const disableRulebookActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartRulebookActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
+  const parseError = useEdaErrorMessageParser();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
   const canCreateActivations = Boolean(data && data.actions && data.actions['POST']);
   const alertToaster = usePageAlertToaster();
@@ -42,15 +44,17 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         };
         await postRequest(edaAPI`/activations/${activation.id.toString()}/enable/`, undefined)
           .then(() => alertToaster.addAlert(alert))
-          .catch(() => {
+          .catch((err: Error) => {
+            const errorResults = parseError(err);
             alertToaster.addAlert({
               variant: 'danger',
               title: `${t('Failed to enable')} ${activation.name}`,
+              children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
               timeout: 5000,
             });
           });
       },
-      [alertToaster, t]
+      [alertToaster, parseError, t]
     );
   const enableRulebookActivations = useCallback(
     (activations: EdaRulebookActivation[]) => {

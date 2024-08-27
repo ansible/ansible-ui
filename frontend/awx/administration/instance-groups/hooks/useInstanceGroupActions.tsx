@@ -68,7 +68,7 @@ export function useInstanceGroupToolbarActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected instance groups'),
+        label: t('Delete instance groups'),
         onClick: deleteInstanceGroups,
         isDanger: true,
       },

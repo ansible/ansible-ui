@@ -50,7 +50,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(inventory.name);
         cy.get(`a[href*="/groups?"]`).click();
         cy.clickButton(/^Create group$/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
@@ -99,11 +99,8 @@ describe('Inventory Groups', () => {
         cy.getByDataCy('name-column-cell').should('contain', host.name);
         cy.clickTab(/^Groups$/, true);
         cy.filterTableByMultiSelect('name', [group.name]);
-        cy.clickTableRowAction('name', group.name, 'edit-group', {
-          inKebab: false,
-          disableFilter: true,
-        });
-        cy.verifyPageTitle('Edit group');
+        cy.clickTableRowKebabAction(group.name, 'edit-group', false);
+        cy.verifyPageTitle(`Edit ${group.name}`);
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
         cy.verifyPageTitle(group.name + '-changed');
@@ -181,7 +178,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(inventory.name);
         cy.get(`a[href*="/groups?"]`).click();
         cy.clickButton(/^Create group$/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
         cy.dataEditorTypeByDataCy('variables', 'test: true');
@@ -229,7 +226,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(group.name);
         cy.intercept('PATCH', awxAPI`/groups/*/`).as('editGroup');
         cy.get('[data-cy="edit-group"]').click();
-        cy.verifyPageTitle('Edit group');
+        cy.verifyPageTitle(`Edit ${group.name}`);
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
         cy.wait('@editGroup')
@@ -262,7 +259,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
         cy.clickButton(/^Create group/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
         cy.contains(newRelatedGroup);
@@ -315,7 +312,7 @@ describe('Inventory Groups', () => {
           disableFilter: true,
         });
         cy.intercept('PATCH', awxAPI`/groups/*/`).as('editGroup');
-        cy.verifyPageTitle('Edit group');
+        cy.verifyPageTitle(`Edit ${newGroup}`);
         cy.get('[data-cy="name-form-group"]').type('-changed');
         cy.get('[data-cy="Submit"]').click();
         cy.wait('@editGroup')
@@ -361,7 +358,7 @@ describe('Inventory Groups', () => {
         cy.verifyPageTitle(group.name);
         cy.clickTab(/^Related Groups$/, true);
         cy.clickButton(/^Create group/);
-        cy.verifyPageTitle('Create new group');
+        cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name-form-group"]').type(newRelatedGroup);
         cy.get('[data-cy="Submit"]').click();
         cy.contains(newRelatedGroup);
@@ -423,7 +420,7 @@ describe('Inventory Groups', () => {
       cy.clickModalButton(/^Close/);
       cy.intercept('POST', awxAPI`/hosts/`).as('createHost');
       cy.clickButton(/^Create host$/);
-      cy.verifyPageTitle('Create Host');
+      cy.verifyPageTitle('Create host');
       cy.getByDataCy('name').type(newHostName);
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Create host$/);
@@ -432,7 +429,7 @@ describe('Inventory Groups', () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
         });
-      cy.verifyPageTitle('Host Details');
+      cy.verifyPageTitle(newHostName);
       cy.clickTab(/^Back to Hosts$/, true);
       cy.filterTableBySingleSelect('name', newHostName);
     });
@@ -447,7 +444,7 @@ describe('Inventory Groups', () => {
         disableFilter: true,
       });
       cy.intercept('PATCH', awxAPI`/hosts/*/`).as('editHost');
-      cy.verifyPageTitle('Edit host');
+      cy.verifyPageTitle(`Edit ${thisHost.name}`);
       cy.getByDataCy('name').type('-edited');
       cy.getByDataCy('description').type('This is the description');
       cy.clickButton(/^Save host$/);
@@ -456,7 +453,7 @@ describe('Inventory Groups', () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(200);
         });
-      cy.verifyPageTitle('Host Details');
+      cy.verifyPageTitle(`${thisHost.name}-edited`);
       cy.clickTab(/^Back to Hosts$/, true);
       cy.filterTableBySingleSelect('name', thisHost.name + '-edited');
     });

@@ -11,7 +11,6 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
-  errorToAlertProps,
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
@@ -26,12 +25,14 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from '../hooks/useDeleteProjects';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function ProjectPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
+  const parseError = useEdaErrorMessageParser();
   const alertToaster = usePageAlertToaster();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/projects/${params.id ?? ''}/`
@@ -49,9 +50,17 @@ export function ProjectPage() {
             timeout: 5000,
           });
         })
-        .catch((err) => alertToaster.addAlert(errorToAlertProps(err)))
+        .catch((err: Error) => {
+          const errorResults = parseError(err);
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${t('Failed to sync')} ${project.name}`,
+            children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+            timeout: 5000,
+          });
+        })
         .finally(() => refresh()),
-    [alertToaster, refresh, t]
+    [alertToaster, refresh, parseError, t]
   );
   const deleteProjects = useDeleteProjects((deleted) => {
     if (deleted.length > 0) {

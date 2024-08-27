@@ -20,7 +20,7 @@ cyLabel(['upstream'], () => {
     it('can add a new instance and navigate to the details page', () => {
       const instanceHostname = 'E2EInstanceTestAddEdit' + randomString(5);
       // Navigate to the create instance page
-      cy.getByDataCy('add-instance').click();
+      cy.getByDataCy('create-instance').click();
       cy.getByDataCy('page-title').should('contain', 'Create instance');
       // Create a new instance
       cy.getByDataCy('hostname').type(instanceHostname);
@@ -60,7 +60,7 @@ cyLabel(['upstream'], () => {
       cy.getByDataCy('enabled').check();
       cy.getByDataCy('managed_by_policy').check();
       cy.getByDataCy('peers_from_control_nodes').check();
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save instance$/);
       cy.wait('@editedInstance')
         .its('response.body')
         .then((body: Instance) => {
@@ -119,7 +119,7 @@ cyLabel(['upstream'], () => {
       cy.getByDataCy('edit-instance').click();
       cy.getByDataCy('enabled').uncheck();
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
-      cy.clickButton(/^Save$/);
+      cy.clickButton(/^Save instance$/);
       cy.wait('@editedInstance')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(200);
@@ -340,17 +340,17 @@ cyLabel(['upstream'], () => {
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('peers')).to.be.true;
       });
-      cy.getByDataCy('associate-peer').click();
+      cy.getByDataCy('associate-peers').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.get('header').contains('Select Peer Addresses');
-        cy.get('button').contains('Associate peer(s)').should('have.attr', 'aria-disabled', 'true');
+        cy.get('header').contains('Select peer addresses');
+        cy.get('button').contains('Associate peers').should('have.attr', 'aria-disabled', 'true');
         cy.filterTableBySingleText(instanceToAssociate.hostname, true);
         cy.intercept('GET', awxAPI`/instances/${instanceToAssociate.id.toString()}/`).as(
           'instanceA'
         );
         cy.getByDataCy('checkbox-column-cell').find('input').click();
         cy.wait('@instanceA');
-        cy.get('button').contains('Associate peer(s)').click();
+        cy.get('button').contains('Associate peers').click();
         cy.get('button').contains('Close').click();
       });
       cy.wait('@associatePeer')
@@ -375,15 +375,17 @@ cyLabel(['upstream'], () => {
         cy.get('tbody tr').should('have.length', 1);
         cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
-      cy.clickToolbarKebabAction('disassociate');
+      cy.clickToolbarKebabAction('disassociate-peers');
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('disassociatePeer');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Disassociate peers');
-        cy.get('button').contains('Disassociate peer').should('have.attr', 'aria-disabled', 'true');
+        cy.get('button')
+          .contains('Disassociate peers')
+          .should('have.attr', 'aria-disabled', 'true');
         cy.getByDataCy('address-column-cell').should('have.text', instanceToAssociate.hostname);
         cy.get('input[id="confirm"]').click();
         cy.get('button')
-          .contains('Disassociate peer')
+          .contains('Disassociate peers')
           .should('have.attr', 'aria-disabled', 'false')
           .click();
       });

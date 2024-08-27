@@ -21,12 +21,12 @@ export function createAndCheckHost(host_type: string, inventory: string) {
 
   // create host
   cy.clickButton(/^Create host$/);
-  cy.verifyPageTitle('Create Host');
+  cy.verifyPageTitle('Create host');
   cy.getByDataCy('name').type(hostName);
   cy.getByDataCy('description').type('This is the description');
 
   if (host_type === 'stand_alone_host') {
-    cy.singleSelectByDataCy('inventory', inventory);
+    cy.singleSelectByDataCy('inventory-form-group', inventory);
   }
 
   // after creation - verify data is currect
@@ -55,19 +55,19 @@ export function createHost(host_type: string, inventoryID: number) {
   return hostName;
 }
 
-function editHost(invenotryName: string, host_type: string, hostName: string, view: string) {
+function editHost(inventoryName: string, host_type: string, hostName: string, view: string) {
   // function that editing host data from list or details views
   // this function cover both inventory host and stand alone host
   if (view === 'list') {
-    navigateToBaseView(host_type, invenotryName);
+    navigateToBaseView(host_type, inventoryName);
     cy.filterTableByMultiSelect('name', [hostName]);
   } else {
     // for details view
-    navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', invenotryName);
+    navigateToHost(host_type, hostName, '[data-cy="name-column-cell"] a', inventoryName);
   }
 
   cy.getByDataCy('edit-host').click();
-  cy.verifyPageTitle('Edit host');
+  cy.verifyPageTitle(`Edit ${hostName}`);
   cy.getByDataCy('description').clear().type('This is the description edited');
   cy.getByDataCy('Submit').click();
   cy.hasDetail(/^Description$/, 'This is the description edited');
@@ -155,7 +155,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
     cy.clickLink(/^Groups$/);
     //check edit group
     cy.getByDataCy('edit-group').click();
-    cy.verifyPageTitle('Edit group');
+    cy.verifyPageTitle(`Edit ${group.name}`);
     cy.getByDataCy('name-form-group').type('-changed');
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle(group.name + '-changed');
@@ -271,7 +271,7 @@ export function createHostAndCancelJob(
     cy.navigateTo('awx', 'inventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.get('.pf-v5-c-tabs__item > a').contains('Job templates').click();
+    cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
     // run  a template and wait for redirect to Job output
     cy.get('[data-cy="launch-template"]').first().click();
     cy.location('pathname').should('match', /\/output$/);
@@ -317,7 +317,7 @@ export function launchHostJob(
     cy.navigateTo('awx', 'inventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
-    cy.contains(`[role='tab']`, 'Job templates').click();
+    cy.contains(`[role='tab']`, 'Job Templates').click();
 
     // run  a template and wait for request
     cy.intercept('POST', awxAPI`/job_templates/*/launch`).as('launch');
