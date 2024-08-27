@@ -9,7 +9,7 @@ import {
   CreatePlatformApplication,
   EditPlatformApplication,
 } from '../access/applications/PlatformApplicationForm';
-import { ApplicationClientSecretModal } from '../../frontend/awx/administration/applications/ApplicationPage/ApplicationClientSecretModal';
+import { ApplicationClientSecretModal } from '../access/applications/ApplicationPage/ApplicationClientSecretModal';
 import { PlatformApplicationPageDetails } from '../access/applications/ApplicationPage/PlatformApplicationPageDetails';
 import { PlatformApplicationPageTokens } from '../access/applications/ApplicationPage/PlatformApplicationPageTokens';
 import { PlatformApplicationPage } from '../access/applications/ApplicationPage/PlatformApplicationPage';

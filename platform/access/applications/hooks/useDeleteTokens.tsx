@@ -2,7 +2,7 @@ import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings } from '../../../../framework';
-import { useTokensColumns } from '../../../../frontend/awx/administration/applications/hooks/useTokensColumns';
+import { useTokensColumns } from './useTokensColumns';
 import { useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
