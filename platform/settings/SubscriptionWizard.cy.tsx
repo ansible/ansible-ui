@@ -109,19 +109,20 @@ describe('Subscription Wizard', () => {
   });
   it('verify the wizard navigation has 3 steps', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
+    cy.get('[data-cy="wizard-nav"]').find('li').should('have.length', 3);
     cy.get('[data-cy="wizard-nav"]').within(() => {
       cy.get('[data-cy="wizard-nav-item-subscription"]').should(
         'contain',
         'Ansible Automation Platform Subscription'
       );
-      cy.get('[data-cy="wizard-nav-item-analytics"]').should('contain', 'Analytics');
       cy.get('[data-cy="wizard-nav-item-license-agreement"]').should(
         'contain',
         'End User License Agreement'
       );
+      cy.get('[data-cy="wizard-nav-item-review"]').should('contain', 'Review');
     });
   });
-  it('that step 2 is current and should allow to upload a manifest zip file', () => {
+  it('verify uploading a manifest zip file and agreeing to the terms of the license agreement', () => {
     cy.mount(<SubscriptionWizard onSuccess={() => {}} />);
     cy.fixture('manifest.zip', 'binary').then((fileBinary) => {
       const blob = Cypress.Blob.binaryStringToBlob(fileBinary as string);
@@ -138,30 +139,10 @@ describe('Subscription Wizard', () => {
     cy.get('[data-cy="wizard-footer"]').within(() => {
       cy.clickButton('Next');
     });
-    cy.get('[data-cy="wizard-nav-item-analytics"] .pf-v5-c-wizard__nav-link').should(
+    cy.get('[data-cy="wizard-nav-item-license-agreement"] .pf-v5-c-wizard__nav-link').should(
       'have.class',
       'pf-m-current'
     );
-    cy.contains('h1', 'Analytics').should('be.visible');
-    cy.get('[data-cy="analyticsEnabled"]').should('have.attr', 'checked');
-    cy.contains('a', 'Ansible Automation Platform documentation page').should(
-      'have.attr',
-      'target',
-      '_blank'
-    );
-    const automationAnalytics_URL =
-      'https://docs.ansible.com/automation-controller/latest/html/administration/usability_data_collection.html#automation-analytics';
-    cy.get('a[target="_blank"]').invoke('attr', 'href').as('externalLink');
-    cy.get('@externalLink').then((url) => {
-      expect(url).to.include(automationAnalytics_URL);
-    });
-    cy.checkAnchorLinks('a');
-    cy.contains('h3', 'Automation Analytics').should('be.visible');
-    cy.contains(
-      'p',
-      'Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, and explore automation process details.'
-    ).should('be.visible');
-    cy.clickButton('Next');
     cy.get('.pf-v5-c-check').within(() => {
       cy.get('[data-cy="agree"]').check();
       cy.get('.pf-v5-c-check__label').should(
@@ -172,7 +153,6 @@ describe('Subscription Wizard', () => {
     cy.clickButton('Next');
     cy.get('ol[role="list"]').within(() => {
       cy.contains('Subscription').parents('li').should('have.class', 'pf-m-success');
-      cy.contains('Analytics').parents('li').should('have.class', 'pf-m-success');
       cy.contains('Agreement').parents('li').should('have.class', 'pf-m-success');
     });
     //cy.clickButton('Finish');
