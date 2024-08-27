@@ -29,10 +29,8 @@ import { TeamDetails } from '../access/teams/TeamPage/TeamDetails';
 import { CreateTeam, EditTeam } from '../access/teams/TeamPage/TeamForm';
 import { TeamPage } from '../access/teams/TeamPage/TeamPage';
 import { Teams } from '../access/teams/Teams';
-import { CreateControllerToken } from '../access/users/CreateControllerToken';
 import { EdaAddUserRoles } from '../access/users/EdaAddUserRoles';
 import { CreateUser, EditCurrentUser, EditUser } from '../access/users/EditUser';
-import { ControllerTokens } from '../access/users/UserPage/ControllerTokens';
 import { EdaMyDetails } from '../access/users/UserPage/EdaMyDetails';
 import { EdaUserDetails } from '../access/users/UserPage/EdaUserDetails';
 import { EdaUserRoles } from '../access/users/UserPage/EdaUserRoles';
@@ -404,11 +402,6 @@ export function useEdaNavigation() {
                   element: <EdaMyDetails />,
                 },
                 {
-                  id: EdaRoute.MyTokens,
-                  path: 'tokens',
-                  element: <ControllerTokens />,
-                },
-                {
                   path: '',
                   element: <Navigate to="details" />,
                 },
@@ -445,11 +438,6 @@ export function useEdaNavigation() {
                   element: <EdaUserRoles />,
                 },
                 {
-                  id: EdaRoute.UserTokens,
-                  path: 'tokens',
-                  element: <ControllerTokens />,
-                },
-                {
                   path: '',
                   element: <Navigate to="details" />,
                 },
@@ -459,16 +447,6 @@ export function useEdaNavigation() {
               id: EdaRoute.UserAddRoles,
               path: ':id/roles/add-roles',
               element: <EdaAddUserRoles />,
-            },
-            {
-              path: 'tokens',
-              children: [
-                {
-                  id: EdaRoute.CreateControllerToken,
-                  path: 'create',
-                  element: <CreateControllerToken />,
-                },
-              ],
             },
             {
               path: '',
