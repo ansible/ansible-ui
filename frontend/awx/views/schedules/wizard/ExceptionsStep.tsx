@@ -18,12 +18,11 @@ export function ExceptionsStep() {
   const exceptions = getValues('exceptions') as RuleListItemType[];
   const hasExceptions = exceptions?.length > 0;
   const { setStepData, wizardData } = usePageWizard();
-  const { rules } = wizardData as ScheduleFormWizard;
+  const { rules, timezone } = wizardData as ScheduleFormWizard;
 
   useEffect(() => {
     setValue('rules', rules);
     const {
-      timezone,
       startDateTime: { date, time },
     } = wizardData as ScheduleFormWizard;
 
@@ -44,7 +43,7 @@ export function ExceptionsStep() {
     });
 
     setValue('exceptions', updatedExceptions);
-  }, [setStepData, setValue, exceptions, rules, wizardData]);
+  }, [setStepData, setValue, exceptions, timezone, rules, wizardData]);
 
   return (
     <PageFormSection singleColumn>
@@ -62,7 +61,13 @@ export function ExceptionsStep() {
       {isOpen && <RuleForm isOpen={isOpen} title={t('Define exceptions')} setIsOpen={setIsOpen} />}
 
       {(hasExceptions || (!isOpen && !hasExceptions)) && (
-        <RulesList rules={exceptions} needsHeader ruleType="exception" setIsOpen={setIsOpen} />
+        <RulesList
+          rules={exceptions}
+          timezone={timezone}
+          needsHeader
+          ruleType="exception"
+          setIsOpen={setIsOpen}
+        />
       )}
     </PageFormSection>
   );

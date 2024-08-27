@@ -17,6 +17,7 @@ export function RulesStep() {
   const { setValue, getValues } = useFormContext();
   const { wizardData } = usePageWizard();
 
+  const { timezone } = wizardData as ScheduleFormWizard;
   const rules = getValues('rules') as RuleListItemType[];
   const hasRules = rules?.length > 0;
   useEffect(() => {
@@ -60,7 +61,15 @@ export function RulesStep() {
         <RuleForm title={t('Define rules')} isOpen={isOpen} setIsOpen={setIsOpen} />
       )}
 
-      {hasRules && <RulesList needsHeader rules={rules} ruleType="rules" setIsOpen={setIsOpen} />}
+      {hasRules && (
+        <RulesList
+          needsHeader
+          timezone={timezone}
+          rules={rules}
+          ruleType="rules"
+          setIsOpen={setIsOpen}
+        />
+      )}
     </PageFormSection>
   );
 }
