@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+import { SetRequired } from 'type-fest';
 import { randomLowercaseString, randomString } from '../../framework/utils/random-string';
 import { Role } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
@@ -10,15 +11,14 @@ import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils'
 import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
 import { PayloadDataType as HubExecutionEnvironmentPayload } from '../../frontend/hub/execution-environments/ExecutionEnvironmentForm';
+import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
 import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
+import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
-import { SetRequired } from 'type-fest';
-import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
-import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -438,6 +438,26 @@ Cypress.Commands.add(
         cy.clickButton('Close');
       });
     });
+  }
+);
+
+Cypress.Commands.add(
+  'signRemoteExecutionEnvironment',
+  (executionEnvironment: HubExecutionEnvironment) => {
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.filterTableBySingleText(executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
+
+    cy.getByDataCy('actions-dropdown').click();
+    cy.getByDataCy('sign-execution-environment').click();
+
+    cy.clickModalConfirmCheckbox();
+
+    cy.clickButton('Sync execution environments');
+    cy.contains('Success');
+    cy.clickButton('Close');
   }
 );
 
