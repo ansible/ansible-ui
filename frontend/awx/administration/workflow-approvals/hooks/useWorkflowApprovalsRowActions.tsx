@@ -49,7 +49,7 @@ export function useWorkflowApprovalsRowActions(
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        variant: ButtonVariant.secondary,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: ThumbsUpIcon,
         label: t(`Approve`),
@@ -65,6 +65,7 @@ export function useWorkflowApprovalsRowActions(
         variant: ButtonVariant.secondary,
         isPinned: true,
         icon: ThumbsDownIcon,
+        isDanger: true,
         label: t(`Deny`),
         isDisabled: (workflow_approval: WorkflowApproval) => cannotDeny(workflow_approval),
         isHidden: (workflow_approval: WorkflowApproval) =>

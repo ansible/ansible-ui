@@ -110,7 +110,7 @@ describe('Users Tests', () => {
 
     it('deletes a user from the users list toolbar', () => {
       cy.selectTableRow(user.username);
-      cy.clickToolbarKebabAction('delete-selected-users');
+      cy.clickToolbarKebabAction('delete-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
       cy.contains(/^Success$/);
