@@ -27,12 +27,10 @@ export function RulesStep() {
 
     const [startHour, startMinute] = time.split(':');
     const isStartPM = time.includes('PM');
-    const start = DateTime.fromISO(`${date}`)
-      .set({
-        hour: isStartPM ? parseInt(startHour, 10) + 12 : parseInt(`${startHour}`, 10),
-        minute: parseInt(startMinute, 10),
-      })
-      .toUTC();
+    const start = DateTime.fromISO(`${date}`).set({
+      hour: isStartPM ? parseInt(startHour, 10) + 12 : parseInt(`${startHour}`, 10),
+      minute: parseInt(startMinute, 10),
+    });
     const { year, month, day, hour, minute } = start;
     const updatedRules = (rules || []).map(({ rule, id }) => {
       const newRule = new RRule({
