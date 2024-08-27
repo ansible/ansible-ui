@@ -63,7 +63,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
       cy.intercept('POST', awxAPI`/instance_groups/`).as('createInstanceGroup');
-      cy.clickButton(`Create Instance Group`);
+      cy.clickButton(`Create instance group`);
       cy.wait('@createInstanceGroup')
         .its('response')
         .then((response) => {
@@ -153,7 +153,7 @@ describe(`Instance Groups`, () => {
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 5);
       cy.getByDataCy('select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-instance-groups');
+      cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete instance groups`);
@@ -187,7 +187,7 @@ describe(`Instance Groups`, () => {
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 2);
       cy.get('#select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-instance-groups');
+      cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.contains(
@@ -247,7 +247,7 @@ describe(`Instance Groups`, () => {
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
       cy.intercept('POST', awxAPI`/instance_groups/`).as('createInstanceGroup');
-      cy.clickButton(`Create Container Group`);
+      cy.clickButton(`Create container group`);
       cy.wait('@createInstanceGroup')
         .its('response')
         .then((response) => {
@@ -326,7 +326,7 @@ describe(`Instance Groups`, () => {
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 5);
       cy.getByDataCy('select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-instance-groups');
+      cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains(`Permanently delete container groups`);
@@ -362,7 +362,7 @@ describe(`Instance Groups`, () => {
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 2);
       cy.get('#select-all').click();
-      cy.clickToolbarKebabAction('delete-selected-instance-groups');
+      cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.contains(

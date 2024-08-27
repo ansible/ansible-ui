@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, PlusIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
@@ -61,8 +61,8 @@ export function ResourcePeersList(props: { url: string }) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
-        icon: PlusIcon,
-        label: t('Associate'),
+        icon: PlusCircleIcon,
+        label: t('Associate peers'),
         onClick: () =>
           openPeerInstanceModal({ onPeer: associatePeerToInstance, instanceId: id ?? '' }),
       },
@@ -72,7 +72,7 @@ export function ResourcePeersList(props: { url: string }) {
         selection: PageActionSelection.Multiple,
         variant: ButtonVariant.primary,
         icon: MinusCircleIcon,
-        label: t('Disassociate'),
+        label: t('Disassociate peers'),
         onClick: (peers: Peer[]) => disassociatePeer(peers),
         isDanger: true,
       },
@@ -87,9 +87,9 @@ export function ResourcePeersList(props: { url: string }) {
       tableColumns={tableColumns}
       errorStateTitle={t('Error loading peers')}
       emptyStateTitle={t('No peers found')}
-      emptyStateDescription={t('Please add Peers to populate this list.')}
+      emptyStateDescription={t('Please associate peers to populate this list.')}
       emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={t('Associate peer')}
+      emptyStateButtonText={t('Associate peers')}
       emptyStateButtonClick={() =>
         openPeerInstanceModal({ onPeer: associatePeerToInstance, instanceId: id ?? '' })
       }
