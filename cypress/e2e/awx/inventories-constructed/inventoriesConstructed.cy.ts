@@ -135,7 +135,7 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.verifyPageTitle(newInventory.name);
     cy.getByDataCy('organization').contains(organization.name);
     cy.getByDataCy('edit-inventory').click();
-    cy.verifyPageTitle('Edit Constructed Inventory');
+    cy.verifyPageTitle(`Edit ${newInventory.name}`);
     cy.getByDataCy('toggle-json').click();
     cy.getByDataCy('source-vars').type(
       `{"plugin": "constructed","strict": true,"groups": {"is_shutdown": "state | default('running') == 'shutdown'","product_dev": "account_alias == 'product_dev'"}}`,
