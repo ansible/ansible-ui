@@ -1,19 +1,15 @@
 import {
-  Button,
   Divider,
   ProgressStep,
   ProgressStepper,
-  Split,
   Stack,
   Text,
   TextContent,
   Title,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Trans } from 'react-i18next';
 import { PageFormCheckbox, PageFormTextInput, PageWizard, PageWizardStep } from '../../framework';
 import { PageFormAsyncSingleSelect } from '../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
@@ -24,14 +20,12 @@ import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 import { ILicenseInfo } from '../../frontend/awx/interfaces/Config';
 import { postRequest, requestPatch } from '../../frontend/common/crud/Data';
-import Analytics from './Analytics.svg';
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'username';
   subscriptionFile: File;
   username: string;
   password: string;
-  analyticsEnabled: boolean;
   pool_id?: string;
   agree: boolean;
 }
@@ -45,11 +39,6 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
         id: 'subscription',
         label: t('Ansible Automation Platform Subscription'),
         inputs: <SubscriptionStep />,
-      },
-      {
-        id: 'analytics',
-        label: t('Analytics'),
-        inputs: <AnalyticsStep />,
       },
       {
         id: 'license-agreement',
@@ -87,7 +76,7 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
       }
       refreshAwxConfig?.();
       await requestPatch(awxAPI`/settings/system/`, {
-        INSIGHTS_TRACKING_STATE: data.analyticsEnabled,
+        INSIGHTS_TRACKING_STATE: true, // Default to true
       });
       props.onSuccess();
     },
@@ -97,11 +86,6 @@ export function SubscriptionWizard(props: { onSuccess: () => void }) {
   return (
     <PageWizard<SubscriptionWizardData>
       steps={steps}
-      defaultValue={{
-        analytics: {
-          analyticsEnabled: true,
-        },
-      }}
       onSubmit={onSubmit}
       errorAdapter={awxErrorAdapter}
       singleColumn
@@ -244,64 +228,6 @@ function SubscriptionStep() {
   );
 }
 
-function AnalyticsStep() {
-  return (
-    <>
-      <TextContent>
-        <Text component="h1">{t('Analytics')}</Text>
-        <Text component="p">
-          <Trans>
-            By default, Ansible Automation Platform collects and transmits data on usage to Red Hat.
-            For more information, see this{' '}
-            <a
-              href="https://docs.ansible.com/automation-controller/latest/html/administration/usability_data_collection.html#automation-analytics"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Ansible Automation Platform documentation page
-            </a>
-            . Uncheck the following box to disable this feature.
-          </Trans>
-        </Text>
-      </TextContent>
-      <PageFormCheckbox<SubscriptionWizardData>
-        name="analyticsEnabled"
-        label={t('Automation Analytics')}
-        description={t(
-          'This data is used to enhance future releases of the Ansible Automation Platform and to provide the Red Hat insights service to subscribers.'
-        )}
-      />
-      <Split hasGutter>
-        <div>
-          <Analytics />
-        </div>
-        <Stack hasGutter>
-          <TextContent>
-            <Text component="h3">{t('Automation Analytics')}</Text>
-            <Text component="p">
-              {t(
-                'Gain insights into your deployments through visual dashboards and organization statistics, calculate your return on investment, and explore automation process details.'
-              )}
-            </Text>
-          </TextContent>
-          <Button
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="end"
-            variant="link"
-            onClick={() =>
-              window.open('https://www.ansible.com/products/automation-analytics', '_blank')
-            }
-            isInline
-            type="button"
-          >
-            {t('Learn more')}
-          </Button>
-        </Stack>
-      </Split>
-    </>
-  );
-}
-
 function LicenseAgreementStep() {
   const config = useAwxConfig();
   return (
@@ -332,7 +258,6 @@ function LicenseReviewStep() {
       </TextContent>
       <ProgressStepper isVertical>
         <ProgressStep variant="success">{t('Subscription')}</ProgressStep>
-        <ProgressStep variant="success">{t('Analytics')}</ProgressStep>
         <ProgressStep variant="success">{t('Agreement')}</ProgressStep>
       </ProgressStepper>
     </Stack>
