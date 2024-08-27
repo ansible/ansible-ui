@@ -10,8 +10,8 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
-import { useTokensColumns } from '../../../../frontend/awx/administration/applications/hooks/useTokensColumns';
-import { useTokensFilters } from '../../../../frontend/awx/administration/applications/hooks/useTokensFilters';
+import { useTokensColumns } from '../hooks/useTokensColumns';
+import { useTokensFilters } from '../hooks/useTokensFilters';
 import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useDeleteTokens } from '../hooks/useDeleteTokens';
 import { usePlatformView } from '../../../hooks/usePlatformView';
