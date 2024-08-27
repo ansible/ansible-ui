@@ -65,7 +65,7 @@ describe('Inventory Sources', () => {
           credential = cred;
           goToSourceList(inventory.name);
           cy.clickButton(/^Create source/);
-          cy.verifyPageTitle('Add new source');
+          cy.verifyPageTitle('Create source');
           cy.getByDataCy('name').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
           cy.selectDropdownOptionByResourceName('project', project.name);
@@ -125,7 +125,7 @@ describe('Inventory Sources', () => {
       goToSourceList(inventory.name);
       // Create inventory source
       cy.getByDataCy('create-source').click();
-      cy.verifyPageTitle('Add new source');
+      cy.verifyPageTitle('Create source');
       cy.getByDataCy('name').type('amazon ec2 source');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
       cy.getByDataCy('host-filter').type('/^test$/');
@@ -136,7 +136,7 @@ describe('Inventory Sources', () => {
       cy.getByDataCy('Submit').click();
       cy.verifyPageTitle('amazon ec2 source');
       cy.clickButton('Edit inventory source');
-      cy.verifyPageTitle('Edit source');
+      cy.verifyPageTitle(`Edit amazon ec2 source`);
       cy.getByDataCy('name').clear().type('updated amazon ec2 source');
       cy.getByDataCy('overwrite_vars').check();
       cy.getByDataCy('Submit').click();
@@ -146,7 +146,7 @@ describe('Inventory Sources', () => {
       // Edit inventory source
       cy.clickButton('Edit inventory source');
       cy.location('pathname').should('match', /\/edit$/);
-      cy.verifyPageTitle('Edit source');
+      cy.verifyPageTitle(`Edit updated amazon ec2 source`);
       cy.getByDataCy('name').clear().type('new project');
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
       cy.getByDataCy('overwrite_vars').check();
