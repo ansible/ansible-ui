@@ -8,6 +8,7 @@ import { PlatformTeamPage } from '../access/teams/components/PlatformTeamPage';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformTeamUsers } from '../access/teams/components/PlatformTeamUsers';
 import { PlatformAAPTeamUsers } from '../access/teams/components/PlatformAAPTeamUsers';
+import { PlatformAwxTeamUsers } from '../access/teams/components/PlatformAwxTeamUsers';
 import { PlatformTeamAdmins } from '../access/teams/components/PlatformTeamAdmins';
 import { PlatformTeamRoles } from '../access/teams/components/PlatformTeamRoles';
 import { PlatformAwxTeamIdLookup } from '../access/teams/components/PlatformAwxTeamIdLookup';
@@ -100,7 +101,7 @@ export function useGetPlatformTeamsRoutes() {
                 {
                   id: PlatformRoute.AwxTeamUsers,
                   path: 'controller',
-                  element: <PageNotImplemented />,
+                  element: <PlatformAwxTeamUsers />,
                 },
                 {
                   id: PlatformRoute.HubTeamUsers,
