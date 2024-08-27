@@ -363,7 +363,7 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
     .should((_) => {})
     .then(($elements) => {
       if ($elements.length) {
-        cy.get(`${menuSelector}`).find('svg[data-cy="lookup-button"]').click();
+        cy.get(`${menuSelector}`).find('button').click();
         cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
           //wait for table to load
           cy.get('table').should('exist');

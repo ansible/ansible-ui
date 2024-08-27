@@ -5,6 +5,7 @@ import { EdaRulebookActivation } from '../../../../../frontend/eda/interfaces/Ed
 import { LogLevelEnum } from '../../../../../frontend/eda/interfaces/generated/eda-api';
 import { IAwxResources } from '../../../../support/awx-commands';
 import { cyLabel } from '../../../../support/cyLabel';
+import { EdaOrganization } from '../../../../../frontend/eda/interfaces/EdaOrganization';
 
 cyLabel(['aaas-unsupported'], () => {
   describe('EDA rulebook activations- Create, Edit, Delete', () => {
@@ -13,22 +14,28 @@ cyLabel(['aaas-unsupported'], () => {
     let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaRBA: EdaRulebookActivation;
     let edaRuleBook: EdaRulebook;
+    let edaOrganization: EdaOrganization;
 
     before(() => {
       cy.ensureEdaCurrentUserAwxToken();
-
-      cy.createEdaProject().then((project) => {
-        edaProject = project;
-        cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
-          edaRuleBook = edaRuleBooks[0];
-          cy.createEdaDecisionEnvironment().then((decisionEnvironment) => {
-            edaDecisionEnvironment = decisionEnvironment;
-            cy.createEdaRulebookActivation({
-              rulebook_id: edaRuleBook.id,
-              decision_environment_id: decisionEnvironment.id,
-              log_level: LogLevelEnum.Error,
-            }).then((edaRulebookActivation) => {
-              edaRBA = edaRulebookActivation;
+      cy.createEdaOrganization().then((edaOrg) => {
+        edaOrganization = edaOrg;
+        cy.createEdaProject(edaOrganization.id).then((project) => {
+          edaProject = project;
+          cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
+            edaRuleBook = edaRuleBooks[0];
+            cy.createEdaDecisionEnvironment(edaOrganization.id).then((decisionEnvironment) => {
+              edaDecisionEnvironment = decisionEnvironment;
+              cy.createEdaRulebookActivation(
+                {
+                  rulebook_id: edaRuleBook.id,
+                  decision_environment_id: decisionEnvironment.id,
+                  log_level: LogLevelEnum.Error,
+                },
+                edaOrganization
+              ).then((edaRulebookActivation) => {
+                edaRBA = edaRulebookActivation;
+              });
             });
           });
         });

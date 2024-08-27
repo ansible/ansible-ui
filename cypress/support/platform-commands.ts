@@ -22,6 +22,7 @@ import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 import { edaAPI } from './formatApiPathForEDA';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -240,6 +241,47 @@ Cypress.Commands.add('createGlobalPlatformOrganization', function () {
       }
     });
 });
+
+Cypress.Commands.add(
+  'createPlatformNotificationTemplate',
+  function (notificationName: string, organization: PlatformOrganization) {
+    cy.requestPost<
+      Pick<
+        NotificationTemplate,
+        'name' | 'organization' | 'notification_type' | 'notification_configuration'
+      >,
+      NotificationTemplate
+    >(awxAPI`/notification_templates/`, {
+      name: notificationName ? notificationName : 'E2E Notification ' + randomString(4),
+      organization: organization.id,
+      notification_type: 'email',
+      notification_configuration: {
+        host: '127.0.0.1',
+        port: 10,
+        sender: 'sjdkfljdslf@jkdljfldjjfkjd.com',
+        timeout: 30,
+        use_ssl: false,
+        use_tls: false,
+        password: '',
+        username: '',
+        recipients: ['sdfdsfsdfsdfs'],
+      },
+    });
+  }
+);
+
+Cypress.Commands.add(
+  'deletePlatformNotificationTemplate',
+  (
+    notification: NotificationTemplate,
+    options?: {
+      /** Whether to fail on response codes other than 2xx and 3xx */
+      failOnStatusCode?: boolean;
+    }
+  ) => {
+    cy.requestDelete(awxAPI`/notification_templates/${notification.id.toString()}/`, options);
+  }
+);
 
 Cypress.Commands.add('getAwxOrgByAnsibleId', (ansibleId: string | undefined) => {
   if (!ansibleId) {

@@ -103,6 +103,10 @@ describe('Platform Teams - Create, Edit and Delete', function () {
   it('can edit a team with an org and a user from the details page and delete it from the ui', function () {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.associateUsersWithPlatformTeam(platformTeam, [createdPlatformUser]).then(() => {
+        cy.verifyPageTitle('Teams');
+        cy.getBy('[data-cy="text-input"]').type(platformTeam.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.contains(platformTeam.name);
         cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
         cy.clickPageAction('edit-team');
         cy.verifyPageTitle(`Edit ${platformTeam.name}`);

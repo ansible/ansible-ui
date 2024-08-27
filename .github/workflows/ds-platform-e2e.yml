@@ -141,3 +141,4 @@ jobs:
           CYPRESS_EDA_API_PREFIX: /api/eda/v1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+          CYPRESS_LABELS: '!upstream'

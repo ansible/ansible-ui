@@ -14,7 +14,7 @@ cyLabel(['aaas-unsupported'], () => {
       cy.verifyPageTitle('Rule Audit');
       cy.get('[data-cy="app-description"]').should(
         'have.text',
-        'Rule audit allows auditing of rules which have been triggered by incoming events.'
+        'Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.'
       );
     });
 
@@ -23,7 +23,7 @@ cyLabel(['aaas-unsupported'], () => {
       cy.verifyPageTitle('Rulebook Activations');
       cy.get('[data-cy="app-description"]').should(
         'have.text',
-        'Rulebook activations are rulebooks that have been activated to run.'
+        'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
       );
       cy.contains('button', 'Create rulebook activation').should('exist');
     });
@@ -33,7 +33,7 @@ cyLabel(['aaas-unsupported'], () => {
       cy.verifyPageTitle('Projects');
       cy.get('[data-cy="app-description"]').should(
         'have.text',
-        'Projects are a logical collection of rulebooks.'
+        'A project is a logical collection of rulebooks.'
       );
       cy.contains('button', 'Create project').should('exist');
     });
