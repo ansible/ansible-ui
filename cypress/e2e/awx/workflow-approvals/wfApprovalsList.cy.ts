@@ -429,8 +429,9 @@ describe('Workflow Approvals Tests', () => {
   function deleteApprovalFromListToolbar() {
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.getByDataCy('select-all').click();
-    cy.clickToolbarKebabAction('delete');
-
+    cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+      cy.clickKebabAction('actions-dropdown', 'delete-workflow-approvals');
+    });
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
@@ -525,7 +526,7 @@ describe('Workflow Approvals Tests', () => {
                         cy.getByDataCy('status-column-cell').should('contain', 'Approve');
                         cy.getByDataCy('checkbox-column-cell').click();
                       });
-                      cy.clickToolbarKebabAction('delete');
+                      cy.clickToolbarKebabAction('delete-workflow-approvals');
                       cy.getModal().within(() => {
                         cy.get('[data-cy="alert-toaster"]').should(
                           'contain',
