@@ -45,7 +45,7 @@ export function AddInstance() {
         ]}
       />
       <AwxPageForm
-        submitText={t('Save')}
+        submitText={t('Create instance')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -103,7 +103,7 @@ export function EditInstance() {
           ]}
         />
         <AwxPageForm
-          submitText={t('Save')}
+          submitText={t('Save instance')}
           onSubmit={onSubmit}
           cancelText={t('Cancel')}
           onCancel={onCancel}
