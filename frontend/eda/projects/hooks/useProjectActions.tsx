@@ -6,7 +6,6 @@ import {
   IPageAction,
   PageActionSelection,
   PageActionType,
-  errorToAlertProps,
   usePageAlertToaster,
   usePageNavigate,
 } from '../../../../framework';
@@ -17,10 +16,12 @@ import { EdaProject } from '../../interfaces/EdaProject';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from './useDeleteProjects';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function useProjectActions(view: IEdaView<EdaProject>) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
+  const parseError = useEdaErrorMessageParser();
   const deleteProjects = useDeleteProjects(view.unselectItemsAndRefresh);
   const alertToaster = usePageAlertToaster();
   const syncProject = useCallback(
@@ -34,8 +35,16 @@ export function useProjectActions(view: IEdaView<EdaProject>) {
           });
           view.unselectItemsAndRefresh([project]);
         })
-        .catch((err) => alertToaster.addAlert(errorToAlertProps(err))),
-    [alertToaster, view, t]
+        .catch((err: Error) => {
+          const errorResults = parseError(err);
+          alertToaster.addAlert({
+            variant: 'danger',
+            title: `${t('Failed to sync')} ${project.name}`,
+            children: <>{errorResults.parsedErrors.map((errorResult) => errorResult.message)}</>,
+            timeout: 5000,
+          });
+        }),
+    [alertToaster, view, parseError, t]
   );
   return useMemo<IPageAction<EdaProject>[]>(
     () => [
