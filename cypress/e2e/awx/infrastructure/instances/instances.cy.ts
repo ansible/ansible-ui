@@ -4,7 +4,7 @@ import { Instance } from '../../../../../frontend/awx/interfaces/Instance';
 import { cyLabel } from '../../../../support/cyLabel';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
-cyLabel(['upstream'], () => {
+cyLabel(['openshift'], () => {
   //An instance can only be created in an Openshift or Kubernetes build
   describe('Instances: Add/Edit', () => {
     let instance: Instance;

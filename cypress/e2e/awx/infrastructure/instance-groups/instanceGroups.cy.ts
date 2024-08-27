@@ -1029,7 +1029,7 @@ describe(`Instance Groups`, () => {
   });
 });
 
-cyLabel(['upstream'], () => {
+cyLabel(['openshift'], () => {
   //An instance can only be created in an Openshift or Kubernetes build
   describe('Instance Groups: Instances Tab', () => {
     let instance: Instance;
