@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem, PageNotImplemented } from '../../framework';
+import { PageNavigationItem } from '../../framework';
 import { PlatformOrganizationDetails } from '../access/organizations/components/PlatformOrganizationDetails';
 import { PlatformOrganizationList } from '../access/organizations/components/PlatformOrganizationList';
 import { PlatformOrganizationPage } from '../access/organizations/components/PlatformOrganizationPage';
@@ -9,6 +9,7 @@ import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformOrganizationAdmins } from '../access/organizations/components/PlatformOrganizationAdmins';
 import { PlatformOrganizationUsers } from '../access/organizations/components/PlatformOrganizationUsers';
 import { PlatformAAPOrganizationUsers } from '../access/organizations/components/PlatformAAPOrganizationUsers';
+import { PlatformAwxOrganizationUsers } from '../access/organizations/components/PlatformAwxOrganizationUsers';
 import { PlatformOrganizationTeams } from '../access/organizations/components/PlatformOrganizationTeams';
 import { PlatformAwxOrganizationIdLookup } from '../access/organizations/components/PlatformAwxOrganizationIdLookup';
 import { PlatformOrganizationAddUsers } from '../access/organizations/components/PlatformOrganizationAddUsers';
@@ -61,7 +62,7 @@ export function useGetPlatformOrganizationsRoutes() {
                 {
                   id: PlatformRoute.AwxOrganizationUsers,
                   path: 'controller',
-                  element: <PageNotImplemented />,
+                  element: <PlatformAwxOrganizationUsers />,
                 },
                 {
                   path: '',
