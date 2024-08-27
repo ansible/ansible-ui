@@ -226,6 +226,9 @@ describe('Execution Environment Details tab', () => {
         },
       }).then((executionEnvironment) => {
         cy.syncRemoteExecutionEnvironment(executionEnvironment);
+        // sign ee from ui
+        cy.signRemoteExecutionEnvironment(executionEnvironment);
+        //
         cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
           cy.deleteHubRemoteRegistry(remoteRegistry);
         });
@@ -253,7 +256,7 @@ describe('Execution Environment Activity tab', () => {
     });
   });
 
-  it('should display populated activity tab', () => {
+  it('should display populated activity and images tabs', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -279,7 +282,7 @@ describe('Execution Environment Activity tab', () => {
         cy.contains('sha256');
         cy.contains('latest was added');
         cy.wait('@getActivity');
-
+        cy.getByDataCy('execution-environment-images-tab').click();
         cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
           cy.deleteHubRemoteRegistry(remoteRegistry);
         });

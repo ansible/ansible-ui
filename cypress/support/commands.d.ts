@@ -1570,6 +1570,9 @@ declare global {
       syncRemoteExecutionEnvironment(
         executionEnvironment: HubExecutionEnvironment
       ): Cypress.Chainable<void>;
+      signRemoteExecutionEnvironment(
+        executionEnvironment: HubExecutionEnvironment
+      ): Cypress.Chainable<void>;
 
       // HUB Remote Registry Commands
       createHubRemoteRegistry(
