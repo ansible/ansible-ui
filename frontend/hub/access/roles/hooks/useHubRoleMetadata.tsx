@@ -81,6 +81,21 @@ export function useHubRoleMetadata(): HubRoleMetadata {
             'galaxy.change_containernamespace': t('Change container namespace'),
             'galaxy.delete_containernamespace': t('Delete container namespace'),
             'galaxy.view_containernamespace': t('View container namespace'),
+            'galaxy.namespace_add_containerdistribution': t('Push new containers'),
+            'galaxy.namespace_delete_containerdistribution':
+              'galaxy.namespace_delete_containerdistribution',
+            'galaxy.namespace_view_containerdistribution':
+              'galaxy.namespace_view_containerdistribution',
+            'galaxy.namespace_pull_containerdistribution':
+              'galaxy.namespace_pull_containerdistribution',
+            'galaxy.namespace_push_containerdistribution': t('Push to existing containers'),
+            'galaxy.namespace_change_containerdistribution': t('Change containers'),
+            'galaxy.namespace_view_containerpushrepository':
+              'galaxy.namespace_view_containerpushrepository',
+            'galaxy.namespace_modify_content_containerpushrepository': t('Change image tags'),
+            'galaxy.namespace_change_containerpushrepository':
+              'galaxy.namespace_change_containerpushrepository',
+            'galaxy.manage_roles_containernamespace': t('Manage container namespace roles'),
           },
         },
         'galaxy.containerregistryremote': {
@@ -133,22 +148,18 @@ export function useHubRoleMetadata(): HubRoleMetadata {
             'galaxy.change_collectionremote': t('Change collection remote'),
             'galaxy.delete_collectionremote': t('Delete collection remote'),
             'galaxy.view_collectionremote': t('View collection remote'),
-            'galaxy.namespace_add_containerdistribution':
-              'galaxy.namespace_add_containerdistribution',
+            'galaxy.namespace_add_containerdistribution': t('Push new containers'),
             'galaxy.namespace_delete_containerdistribution':
               'galaxy.namespace_delete_containerdistribution',
             'galaxy.namespace_view_containerdistribution':
               'galaxy.namespace_view_containerdistribution',
             'galaxy.namespace_pull_containerdistribution':
               'galaxy.namespace_pull_containerdistribution',
-            'galaxy.namespace_push_containerdistribution':
-              'galaxy.namespace_push_containerdistribution',
-            'galaxy.namespace_change_containerdistribution':
-              'galaxy.namespace_change_containerdistribution',
+            'galaxy.namespace_push_containerdistribution': t('Push to existing containers'),
+            'galaxy.namespace_change_containerdistribution': t('Change containers'),
             'galaxy.namespace_view_containerpushrepository':
               'galaxy.namespace_view_containerpushrepository',
-            'galaxy.namespace_modify_content_containerpushrepository':
-              'galaxy.namespace_modify_content_containerpushrepository',
+            'galaxy.namespace_modify_content_containerpushrepository': t('Change image tags'),
             'galaxy.namespace_change_containerpushrepository':
               'galaxy.namespace_change_containerpushrepository',
             'galaxy.manage_roles_containernamespace': t('Manage container namespace roles'),
