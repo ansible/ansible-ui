@@ -13,7 +13,7 @@ cyLabel(['aaas-unsupported'], () => {
         'Empower, automate, connect: Unleash possibilities with the Ansible Automation Platform.'
       );
       cy.get('[data-cy="quick-starts"]').within(() => {
-        cy.get('[data-cy="card-title"]').should('have.text', 'Quick starts');
+        cy.get('[data-cy="card-title"]').should('have.text', 'Quick Starts');
 
         cy.get('[data-cy="card-subtitle"]').should(
           'have.text',

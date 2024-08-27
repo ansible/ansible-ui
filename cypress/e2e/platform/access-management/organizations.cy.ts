@@ -4,6 +4,10 @@ import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOr
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { cyLabel } from '../../../support/cyLabel';
 import { randomE2Ename } from '../../../support/utils';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
   const organizationName = `e2e org ${randomE2Ename()}`;
@@ -383,10 +387,9 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
         });
         cy.clickButton(/^Close/);
         cy.verifyPageTitle(organization.name);
-        cy.clickTableRowLink('name', createdPlatformTeam);
+        cy.contains('a', `${createdPlatformTeam}`).click();
         cy.verifyPageTitle(createdPlatformTeam);
         cy.clickTab('Roles', true);
-        // Verify the roles are removed from the team
         cy.contains('h4', 'There are currently no roles assigned to this team.').should(
           'be.visible'
         );
@@ -454,5 +457,226 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
       .then((team: PlatformTeam) => {
         cy.deletePlatformTeam(team, { failOnStatusCode: false });
       });
+  });
+});
+
+describe('Notifications Tab for Organizations', function () {
+  const notificationName = randomE2Ename();
+  let organization: PlatformOrganization;
+  let notification: NotificationTemplate;
+  let awxOrganization: Organization;
+
+  beforeEach(() => {
+    cy.createPlatformOrganization().then((org) => {
+      organization = org;
+
+      cy.getAwxOrgByAnsibleId(organization.summary_fields.resource?.ansible_id).then((awxOrg) => {
+        awxOrganization = awxOrg;
+      });
+    });
+
+    cy.navigateTo('platform', 'organizations');
+    cy.verifyPageTitle('Organizations');
+    cy.setTableView('table');
+  });
+
+  it('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
+    cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
+      notification = notifier;
+      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.contains(awxOrganization.name);
+      cy.contains(`a[role="tab"]`, 'Notifications').click();
+      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+      cy.getByDataCy(`apply-filter`).click();
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.contains(notificationName);
+      cy.deletePlatformNotificationTemplate(notification, { failOnStatusCode: false });
+    });
+  });
+
+  it('can edit a Notification on its details page and assert the edited info', () => {
+    let platformOrganization: PlatformOrganization;
+    const notificationName = randomE2Ename();
+    const orgName = randomE2Ename();
+    cy.createPlatformOrganization({ name: orgName }).then((platformOrg) => {
+      platformOrganization = platformOrg;
+      cy.getAwxOrgByAnsibleId(platformOrganization.summary_fields.resource?.ansible_id).then(
+        (awxOrg) => {
+          awxOrganization = awxOrg;
+
+          cy.navigateTo('awx', 'notification-templates');
+          cy.get(`[data-cy="create-notifier"]`).click();
+          cy.verifyPageTitle('Create notifier');
+          cy.get(`[data-cy="name"]`).type(notificationName);
+          cy.singleSelectByDataCy('organization', awxOrganization.name);
+          cy.get(`[data-cy="description"]`).type('this is test description');
+          cy.get(`[data-cy="notification_type"]`).click();
+          cy.contains('span', 'Email').click();
+          cy.get(`[data-cy="notification-configuration-username"]`).type('email user');
+          cy.get(`[data-cy="notification-configuration-password"]`).type('email password');
+          cy.get(`[data-cy="notification-configuration-host"]`).type('https://host.com');
+          cy.get(`[data-cy="notification-configuration-recipients"]`).type(
+            'receipient1{enter}receipient2'
+          );
+          cy.get(`[data-cy="notification-configuration-sender"]`).type('sender@email.com');
+          cy.get(`[data-cy="notification-configuration-port"]`).type('80');
+          cy.get(`[data-cy="notification-configuration-timeout"]`).type('100');
+          cy.get(`[data-cy="notification_configuration-use_tls"]`).click();
+          cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
+          cy.get('[data-cy="customize-messages-toggle"]').parent().find('span').click();
+          cy.get(`[data-cy="Submit"]`).click();
+          cy.contains(`[data-cy="name"]`, notificationName);
+          cy.contains(`[data-cy="description"]`, 'this is test description');
+          cy.contains(`[data-cy="notification-type"]`, 'email');
+          cy.contains(`[data-cy="organization"]`, awxOrganization.name);
+          cy.contains(`[data-cy="username"]`, 'email user');
+          cy.contains(`[data-cy="use-tls"]`, 'true');
+          cy.contains(`[data-cy="use-ssl"]`, 'true');
+          cy.contains(`[data-cy="host"]`, 'https://host.com');
+          cy.contains(`[data-cy="recipient-list"]`, 'receipient1');
+          cy.contains(`[data-cy="recipient-list"]`, 'receipient2');
+          cy.contains(`[data-cy="sender-email"]`, 'sender@email.com');
+          cy.contains(`[data-cy="port"]`, '80');
+          cy.contains(`[data-cy="timeout"]`, '100');
+          cy.getByDataCy(`edit-notifier`).click();
+          cy.get(`[data-cy="name"]`).clear().type(notificationName);
+          cy.get(`[data-cy="description"]`).clear().type('this is test description edited');
+          cy.get(`[data-cy="notification-configuration-username"]`)
+            .clear()
+            .type('email user edited');
+          cy.get(`[data-cy="notification-configuration-host"]`)
+            .clear()
+            .type('https://host_edited.com');
+          cy.get(`[data-cy="notification-configuration-recipients"]`)
+            .clear()
+            .type('receipient1{enter}receipient2{enter}receipient3');
+          cy.get(`[data-cy="notification-configuration-sender"]`)
+            .clear()
+            .type('sender@email_edited.com');
+          cy.get(`[data-cy="notification-configuration-port"]`).clear().type('100');
+          cy.get(`[data-cy="notification-configuration-timeout"]`).clear().type('120');
+          cy.get(`[data-cy="notification_configuration-use_tls"]`).click();
+          cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
+          cy.get(`[data-cy="Submit"]`).click();
+          cy.contains(`[data-cy="description"]`, 'this is test description edited');
+          cy.contains(`[data-cy="name"]`, notificationName);
+          cy.contains(`[data-cy="organization"]`, awxOrganization.name);
+          cy.contains(`[data-cy="username"]`, 'email user edited');
+          cy.contains(`[data-cy="use-tls"]`, 'false');
+          cy.contains(`[data-cy="use-ssl"]`, 'false');
+          cy.contains(`[data-cy="host"]`, 'https://host_edited.com');
+          cy.contains(`[data-cy="recipient-list"]`, 'receipient1');
+          cy.contains(`[data-cy="recipient-list"]`, 'receipient2');
+          cy.contains(`[data-cy="recipient-list"]`, 'receipient3');
+          cy.contains(`[data-cy="sender-email"]`, 'sender@email_edited.com');
+          cy.contains(`[data-cy="port"]`, '100');
+          cy.contains(`[data-cy="timeout"]`, '120');
+          cy.get(`[data-cy="actions-dropdown"]`).click();
+          cy.get(`[data-cy="delete-notifier"]`).click();
+          cy.get(`[role="dialog"] input`).click();
+          cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
+          cy.verifyPageTitle('Notifiers');
+          cy.contains('Configure custom notifications to be sent based on predefined events.');
+          cy.requestGet<AwxItemsResponse<Notification>>(
+            awxAPI`/notification_templates/?name={name}`
+          )
+            .its('results')
+            .then((results) => {
+              expect(results).to.have.length(0);
+            });
+        }
+      );
+    });
+  });
+
+  it('can toggle the Organizations -> Notification on and off for job approval', () => {
+    cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
+      notification = notifier;
+      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.wait('@orgSearch');
+      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.contains(awxOrganization.name);
+      cy.contains(`a[role="tab"]`, 'Notifications').click();
+      cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
+      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+      cy.getByDataCy(`apply-filter`).click();
+      cy.wait('@notifierSearch');
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Click to enable approval"]`).click();
+      cy.get(`[aria-label="Click to disable approval"]`, { timeout: 5000 }).click();
+      cy.get(`[aria-label="Click to enable approval"]`, { timeout: 5000 });
+      cy.deletePlatformNotificationTemplate(notification, { failOnStatusCode: false });
+    });
+  });
+
+  it('can toggle the Organizations -> Notification on and off for job start', () => {
+    cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
+      notification = notifier;
+      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.wait('@orgSearch');
+      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.contains(awxOrganization.name);
+      cy.contains(`a[role="tab"]`, 'Notifications').click();
+      cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
+      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+      cy.getByDataCy(`apply-filter`).click();
+      cy.wait('@notifierSearch');
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Click to enable start"]`).eq(0).click();
+      cy.get(`[aria-label="Click to disable start"]`, { timeout: 5000 }).eq(0).click();
+      cy.get(`[aria-label="Click to enable start"]`, { timeout: 5000 }).eq(0).click();
+      cy.deletePlatformNotificationTemplate(notification, { failOnStatusCode: false });
+    });
+  });
+
+  it('can toggle the Organizations -> Notification on and off for job success', () => {
+    cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
+      notification = notifier;
+      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.wait('@orgSearch');
+      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.contains(awxOrganization.name);
+      cy.contains(`a[role="tab"]`, 'Notifications').click();
+      cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
+      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+      cy.getByDataCy(`apply-filter`).click();
+      cy.wait('@notifierSearch');
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Click to enable success"]`).click();
+      cy.get(`[aria-label="Click to disable success"]`, { timeout: 5000 }).click();
+      cy.get(`[aria-label="Click to enable success"]`, { timeout: 5000 });
+      cy.deletePlatformNotificationTemplate(notification, { failOnStatusCode: false });
+    });
+  });
+
+  it('can toggle the Organizations -> Notification on and off for job failure', () => {
+    cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
+      notification = notifier;
+      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
+      cy.getBy('button[data-cy="apply-filter"]').click();
+      cy.wait('@orgSearch');
+      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.contains(awxOrganization.name);
+      cy.contains(`a[role="tab"]`, 'Notifications').click();
+      cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
+      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
+      cy.getByDataCy(`apply-filter`).click();
+      cy.wait('@notifierSearch');
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Click to enable failure"]`).click();
+      cy.get(`[aria-label="Click to disable failure"]`, { timeout: 5000 }).click();
+      cy.get(`[aria-label="Click to enable failure"]`, { timeout: 5000 });
+      cy.deletePlatformNotificationTemplate(notification, { failOnStatusCode: false });
+    });
   });
 });

@@ -1776,6 +1776,17 @@ declare global {
         }
       ): Cypress.Chainable<void>;
       createGlobalPlatformOrganization(): Chainable<void>;
+      createPlatformNotificationTemplate(
+        notificationName: string,
+        organization: PlatformOrganization
+      ): Chainable<NotificationTemplate>;
+      deletePlatformNotificationTemplate(
+        notification: NotificationTemplate,
+        options?: {
+          /** Whether to fail on response codes other than 2xx and 3xx */
+          failOnStatusCode?: boolean;
+        }
+      ): Chainable<void>;
       createPlatformTeam(platformTeam: Partial<PlatformTeam>): Cypress.Chainable<PlatformTeam>;
       deletePlatformTeam(
         platformTeam: PlatformTeam,
