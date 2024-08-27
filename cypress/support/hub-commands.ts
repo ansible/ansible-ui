@@ -455,7 +455,7 @@ Cypress.Commands.add(
 
     cy.clickModalConfirmCheckbox();
 
-    cy.clickButton('Sync execution environments');
+    cy.clickButton('Sign execution environments');
     cy.contains('Success');
     cy.clickButton('Close');
   }
