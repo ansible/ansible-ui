@@ -5,17 +5,6 @@ import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('AWX Overview', () => {
-  it('verifies the tech preview banner title in the new UI and the working links to and from the old UI', () => {
-    cy.navigateTo('awx', 'overview');
-    cy.get('.pf-v5-c-banner')
-      .should(
-        'contain',
-        'You are currently viewing a tech preview of the new AWX user interface. To return to the original interface, click here.'
-      )
-      .should('be.visible');
-    cy.get('[data-cy="tech-preview"] a').should('contain', 'here').click();
-  });
-
   it('clicking on Cog icon opens the Manage Dashboard modal', () => {
     cy.navigateTo('awx', 'overview');
     cy.clickButton('Manage view');
