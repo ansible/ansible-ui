@@ -180,7 +180,7 @@ export function NodePromptsStep() {
           label={t('Verbosity')}
           labelHelpTitle={t('Verbosity')}
           labelHelp={t(
-            'Control the level of output ansible will produce as the playbook executes.'
+            'Control the level of output Ansible will produce as the playbook executes.'
           )}
           options={[
             { label: t`0 (Normal)`, value: 0 },

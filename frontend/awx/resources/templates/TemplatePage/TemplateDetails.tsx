@@ -208,7 +208,7 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
       <PageDetail
         label={t('Verbosity')}
-        helpText={t('Control the level of output ansible will produce as the playbook executes.')}
+        helpText={t('Control the level of output Ansible will produce as the playbook executes.')}
       >
         {verbosity}
       </PageDetail>
