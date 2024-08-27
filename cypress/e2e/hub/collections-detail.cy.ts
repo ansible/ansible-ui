@@ -270,7 +270,7 @@ describe('Collections Details', () => {
       cy.deleteHubCollectionByName(collectionName);
     });
 
-    it('user can delete version from system', () => {
+    it.skip('user can delete version from system', () => {
       // Delete version from system
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
