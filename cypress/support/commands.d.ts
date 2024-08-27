@@ -1312,7 +1312,8 @@ declare global {
        * @returns {Chainable<EdaRulebookActivation>}
        */
       createEdaRulebookActivation(
-        edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>
+        edaRulebookActivation: Partial<EdaRulebookActivationCreate>,
+        organization: EdaOrganization
       ): Chainable<EdaRulebookActivation>;
 
       /**
@@ -1356,7 +1357,7 @@ declare global {
        *
        * @returns {Chainable<EdaCredential>}
        */
-      createEdaCredential(): Chainable<EdaCredential>;
+      createEdaCredential(edaOrgId: number): Chainable<EdaCredential>;
 
       /**
        * Some of the Eda roles (Admin, Contributor etc) have resources
@@ -1493,7 +1494,10 @@ declare global {
       /**
        * Creates a DE and returns the same.
        */
-      createEdaDecisionEnvironment(edaOrgID: number): Chainable<EdaDecisionEnvironment>;
+      createEdaDecisionEnvironment(
+        organizationId: number,
+        edaCredential?: EdaCredential
+      ): Chainable<EdaDecisionEnvironment>;
 
       /**
        * Retrieves a DE by name.

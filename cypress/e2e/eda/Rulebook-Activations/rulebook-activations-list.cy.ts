@@ -31,12 +31,15 @@ cyLabel(['aaas-unsupported'], function () {
             edaRuleBook1 = edaRuleBooks[0];
             cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
               edaDecisionEnvironment = decisionEnvironment;
-              cy.createEdaRulebookActivation({
-                rulebook_id: edaRuleBook1.id,
-                decision_environment_id: decisionEnvironment.id,
-                k8s_service_name: 'sample',
-                log_level: LogLevelEnum.Error,
-              }).then((edaRulebookActivation) => {
+              cy.createEdaRulebookActivation(
+                {
+                  rulebook_id: edaRuleBook1.id,
+                  decision_environment_id: decisionEnvironment.id,
+                  k8s_service_name: 'sample',
+                  log_level: LogLevelEnum.Error,
+                },
+                edaOrg
+              ).then((edaRulebookActivation) => {
                 edaRBA1 = edaRulebookActivation;
               });
             });
@@ -45,12 +48,15 @@ cyLabel(['aaas-unsupported'], function () {
             edaRuleBook2 = edaRuleBooks[0];
             cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
               edaDecisionEnvironment = decisionEnvironment;
-              cy.createEdaRulebookActivation({
-                rulebook_id: edaRuleBook2.id,
-                decision_environment_id: decisionEnvironment.id,
-                k8s_service_name: 'sample',
-                log_level: LogLevelEnum.Error,
-              }).then((edaRulebookActivation) => {
+              cy.createEdaRulebookActivation(
+                {
+                  rulebook_id: edaRuleBook2.id,
+                  decision_environment_id: decisionEnvironment.id,
+                  k8s_service_name: 'sample',
+                  log_level: LogLevelEnum.Error,
+                },
+                edaOrg
+              ).then((edaRulebookActivation) => {
                 edaRBA2 = edaRulebookActivation;
               });
             });
@@ -59,12 +65,15 @@ cyLabel(['aaas-unsupported'], function () {
             edaRuleBook3 = edaRuleBooks[0];
             cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
               edaDecisionEnvironment = decisionEnvironment;
-              cy.createEdaRulebookActivation({
-                rulebook_id: edaRuleBook3.id,
-                decision_environment_id: decisionEnvironment.id,
-                k8s_service_name: 'sample',
-                log_level: LogLevelEnum.Error,
-              }).then((edaRulebookActivation) => {
+              cy.createEdaRulebookActivation(
+                {
+                  rulebook_id: edaRuleBook3.id,
+                  decision_environment_id: decisionEnvironment.id,
+                  k8s_service_name: 'sample',
+                  log_level: LogLevelEnum.Error,
+                },
+                edaOrg
+              ).then((edaRulebookActivation) => {
                 edaRBA3 = edaRulebookActivation;
               });
             });
