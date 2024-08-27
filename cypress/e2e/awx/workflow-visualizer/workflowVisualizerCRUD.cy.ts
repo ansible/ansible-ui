@@ -55,17 +55,17 @@ describe('Workflow Visualizer', () => {
       });
   });
 
-  afterEach(() => {
-    cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
-    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-    cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
-  });
+  // afterEach(() => {
+  //   cy.deleteAwxInventorySource(inventorySource, { failOnStatusCode: false });
+  //   cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+  //   cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+  //   cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+  // });
 
-  after(() => {
-    cy.deleteAwxProject(project, { failOnStatusCode: false });
-    cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
-  });
+  // after(() => {
+  //   cy.deleteAwxProject(project, { failOnStatusCode: false });
+  //   cy.deleteAwxOrganization(awxOrganization, { failOnStatusCode: false });
+  // });
 
   describe('Workflow Visualizer: Add Nodes', () => {
     it('should render a workflow visualizer view with multiple nodes present', () => {
@@ -128,8 +128,18 @@ describe('Workflow Visualizer', () => {
             force: true,
           });
           cy.getByDataCy('add-node-and-link').click();
+          //change implementation due to problem finding #filter
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-          cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+          cy.getBy('button[id="job-template-select"]').click();
+          cy.get('button[data-cy="browse-button"]').click();
+          cy.getModal().within(() => {
+            cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+            cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+            cy.getBy('button[data-cy="apply-filter"]').click();
+            cy.wait('@jtSearch');
+            cy.getBy('[data-cy="checkbox-column-cell"]').click();
+            cy.clickButton('Confirm');
+          });
           cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Test Node');
@@ -139,9 +149,16 @@ describe('Workflow Visualizer', () => {
             'POST',
             awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/workflow_nodes/`
           ).as('saved');
+          cy.intercept(
+            'GET',
+            awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/workflow_nodes/?*`
+          ).as('wfjtNodes');
+          cy.intercept('PATCH', awxAPI`/workflow_approval_templates/*`).as('edit');
           cy.clickButton('Save');
           cy.wait('@saved');
           cy.getByDataCy('alert-toaster').should('be.visible');
+          cy.wait('@wfjtNodes');
+          cy.wait('@edit');
           cy.get(`g[data-id="${projectNode.id}-${approvalNode.id}"]`).should(
             'have.text',
             'Run on success'
@@ -291,7 +308,16 @@ describe('Workflow Visualizer', () => {
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.clickButton('Add step');
       cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
       cy.getByDataCy('node-alias').type('Test Node');
       cy.clickButton('Next');
@@ -349,7 +375,16 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('alert-toaster').should('be.visible');
           cy.clickButton('Add step');
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-          cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+          cy.getBy('button[id="job-template-select"]').click();
+          cy.get('button[data-cy="browse-button"]').click();
+          cy.getModal().within(() => {
+            cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+            cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+            cy.getBy('button[data-cy="apply-filter"]').click();
+            cy.wait('@jtSearch');
+            cy.getBy('[data-cy="checkbox-column-cell"]').click();
+            cy.clickButton('Confirm');
+          });
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Test Node');
           cy.clickButton('Next');
@@ -359,7 +394,19 @@ describe('Workflow Visualizer', () => {
           });
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
-          cy.selectDropdownOptionByResourceName('project', `${project.name}`);
+          cy.getBy('button[id="project"]').click();
+          cy.get('button[data-cy="browse-button"]').click();
+          cy.getModal().within(() => {
+            cy.contains('h1', 'Select project');
+            cy.intercept('GET', awxAPI`/projects/?page_size=20&order_by=name`).as('projSearch');
+            cy.getBy('[data-cy="filter-input"]').click();
+            cy.wait('@projSearch');
+          });
+          cy.intercept('GET', awxAPI`/projects/?name*`).as('result');
+          cy.get('[id="filter-input-select"]').type(project.name);
+          cy.wait('@result');
+          cy.getBy('[data-cy="checkbox-column-cell"]').click();
+          cy.clickButton('Confirm');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Project Node');
           cy.clickButton('Next');
@@ -397,7 +444,16 @@ describe('Workflow Visualizer', () => {
                 cy.contains('button', 'Save').should('be.visible').click();
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-                cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+                cy.getBy('button[id="job-template-select"]').click();
+                cy.get('button[data-cy="browse-button"]').click();
+                cy.getModal().within(() => {
+                  cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+                  cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+                  cy.getBy('button[data-cy="apply-filter"]').click();
+                  cy.wait('@jtSearch');
+                  cy.getBy('[data-cy="checkbox-column-cell"]').click();
+                  cy.clickButton('Confirm');
+                });
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.getByDataCy('node-alias').type('Test Node');
                 cy.clickButton('Next');
@@ -466,7 +522,16 @@ describe('Workflow Visualizer', () => {
           });
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-          cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+          cy.getBy('button[id="job-template-select"]').click();
+          cy.get('button[data-cy="browse-button"]').click();
+          cy.getModal().within(() => {
+            cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+            cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+            cy.getBy('button[data-cy="apply-filter"]').click();
+            cy.wait('@jtSearch');
+            cy.getBy('[data-cy="checkbox-column-cell"]').click();
+            cy.clickButton('Confirm');
+          });
           cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Test Node');

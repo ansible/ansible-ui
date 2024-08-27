@@ -15,9 +15,9 @@ export function testNotification(
     cy.getByDataCy('create-notifier').click();
     cy.verifyPageTitle('Create notifier');
 
+    selectOrganization(orgName);
     fillBasicData(notificationName, type);
     fillNotificationType(type);
-    selectOrganization(orgName);
     verifyDefaultsMessages(type);
 
     cy.get(`[data-cy="Submit"]`).click();
