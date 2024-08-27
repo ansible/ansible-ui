@@ -1,11 +1,29 @@
 import * as path from 'path';
 import { randomString } from '../../../../../framework/utils/random-string';
 import { Instance } from '../../../../../frontend/awx/interfaces/Instance';
-import { cyLabel } from '../../../../support/cyLabel';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
 
-cyLabel(['upstream'], () => {
-  //An instance can only be created in an Openshift or Kubernetes build
+describe('Instances K8S', () => {
+  let isK8S = false;
+
+  before(() => {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      if (data?.IS_K8S) {
+        isK8S = true;
+      } else {
+        cy.log('Skip test not running on IS_K8S');
+      }
+    });
+  });
+
+  beforeEach(function () {
+    if (isK8S === false) {
+      // An instance can only be created in an Openshift or Kubernetes build
+      this.skip();
+    }
+  });
+
   describe('Instances: Add/Edit', () => {
     let instance: Instance;
 
