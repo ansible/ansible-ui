@@ -51,6 +51,15 @@ cyLabel(['aaas-unsupported'], function () {
       cy.get('h1').should('contain', 'Create rulebook activation');
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
+      cy.getBy('[data-cy="organization_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
       cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
       cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
       cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);

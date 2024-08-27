@@ -36,12 +36,15 @@ cyLabel(['upstream'], () => {
               cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
                 edaRuleBook = edaRuleBooks[0];
                 cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
-                  cy.createEdaRulebookActivation({
-                    rulebook_id: edaRuleBook.id,
-                    decision_environment_id: decisionEnvironment.id,
-                    k8s_service_name: 'sample',
-                    log_level: LogLevelEnum.Error,
-                  }).then((edaRulebookActivation) => {
+                  cy.createEdaRulebookActivation(
+                    {
+                      rulebook_id: edaRuleBook.id,
+                      decision_environment_id: decisionEnvironment.id,
+                      k8s_service_name: 'sample',
+                      log_level: LogLevelEnum.Error,
+                    },
+                    edaOrg
+                  ).then((edaRulebookActivation) => {
                     resource_object = edaRulebookActivation;
                   });
                 });
@@ -105,41 +108,45 @@ cyLabel(['upstream'], () => {
     let cred1: EdaCredential;
     let cred2: EdaCredential;
     let cred3: EdaCredential;
+    let edaOrg: EdaOrganization;
 
     before(() => {
-      cy.createEdaTeam().then((EdaTeam) => {
-        team = EdaTeam;
-      });
-      cy.createEdaCredential().then((edaCred1) => {
-        cred1 = edaCred1;
-        cy.createEdaCredential().then((edaCred2) => {
-          cred2 = edaCred2;
-          cy.createEdaCredential().then((edaCred3) => {
-            cred3 = edaCred3;
-            cy.getEdaRoles().then((rolesArray) => {
-              roleIDs = rolesArray.reduce((acc, role) => {
-                const { name, id } = role;
-                return { ...acc, [name]: id };
-              }, {});
-              RoleID = roleIDs['Eda Credential Admin'];
-              cy.createRoleTeamAssignments(
-                cred1.id.toString(),
-                RoleID,
-                team.id,
-                'eda.edacredential'
-              );
-              cy.createRoleTeamAssignments(
-                cred2.id.toString(),
-                RoleID,
-                team.id,
-                'eda.edacredential'
-              );
-              cy.createRoleTeamAssignments(
-                cred3.id.toString(),
-                RoleID,
-                team.id,
-                'eda.edacredential'
-              );
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+        cy.createEdaTeam().then((EdaTeam) => {
+          team = EdaTeam;
+        });
+        cy.createEdaCredential(edaOrg.id).then((edaCred1) => {
+          cred1 = edaCred1;
+          cy.createEdaCredential(edaOrg.id).then((edaCred2) => {
+            cred2 = edaCred2;
+            cy.createEdaCredential(edaOrg.id).then((edaCred3) => {
+              cred3 = edaCred3;
+              cy.getEdaRoles().then((rolesArray) => {
+                roleIDs = rolesArray.reduce((acc, role) => {
+                  const { name, id } = role;
+                  return { ...acc, [name]: id };
+                }, {});
+                RoleID = roleIDs['Eda Credential Admin'];
+                cy.createRoleTeamAssignments(
+                  cred1.id.toString(),
+                  RoleID,
+                  team.id,
+                  'eda.edacredential'
+                );
+                cy.createRoleTeamAssignments(
+                  cred2.id.toString(),
+                  RoleID,
+                  team.id,
+                  'eda.edacredential'
+                );
+                cy.createRoleTeamAssignments(
+                  cred3.id.toString(),
+                  RoleID,
+                  team.id,
+                  'eda.edacredential'
+                );
+              });
             });
           });
         });

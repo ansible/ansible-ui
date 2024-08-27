@@ -1,4 +1,3 @@
-import { SetOptional } from 'type-fest';
 import { randomString } from '../../framework/utils/random-string';
 import {
   EdaControllerToken,
@@ -31,6 +30,7 @@ import {
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 
 /*  EDA related custom command implementation  */
 
@@ -85,9 +85,10 @@ Cypress.Commands.add('getEdaRulebooks', (edaProject, rulebookName?: string) => {
 
 Cypress.Commands.add(
   'createEdaRulebookActivation',
-  (edaRulebookActivation: SetOptional<EdaRulebookActivationCreate, 'name'>) => {
+  (edaRulebookActivation: Partial<EdaRulebookActivationCreate>, organization: EdaOrganization) => {
     cy.requestPost<EdaRulebookActivationCreate>(edaAPI`/activations/`, {
       name: 'E2E Rulebook Activation ' + randomString(5),
+      organization_id: organization.id,
       restart_policy: RestartPolicyEnum.OnFailure,
       ...edaRulebookActivation,
     }).then((edaRulebookActivation) => {
@@ -262,10 +263,11 @@ Cypress.Commands.add('pollEdaResults', (url: string) => {
   });
 });
 
-Cypress.Commands.add('createEdaCredential', () => {
+Cypress.Commands.add('createEdaCredential', (edaOrgId: number) => {
   cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
     name: 'E2E Credential ' + randomString(4),
-    credential_type_id: 1,
+    organization_id: edaOrgId,
+    credential_type_id: 2,
     description: 'This is a container registry credential',
     inputs: {
       username: 'username',
@@ -514,19 +516,23 @@ Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
   });
 });
 
-Cypress.Commands.add('createEdaDecisionEnvironment', (organizationId: number) => {
-  cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
-    name: 'E2E Decision Environment ' + randomString(4),
-    organization_id: organizationId,
-    image_url: 'quay.io/ansible/ansible-rulebook:main',
-  }).then((edaDE) => {
-    Cypress.log({
-      displayName: 'EDA DECISION CREATION :',
-      message: [`Created 👉  ${edaDE.name}`],
+Cypress.Commands.add(
+  'createEdaDecisionEnvironment',
+  (organizationId: number, edaCredential?: EdaCredential) => {
+    cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, {
+      name: 'E2E Decision Environment ' + randomString(4),
+      eda_credential_id: edaCredential?.id ? edaCredential?.id : 1,
+      organization_id: organizationId,
+      image_url: 'quay.io/ansible/ansible-rulebook:main',
+    }).then((edaDE) => {
+      Cypress.log({
+        displayName: 'EDA DECISION CREATION :',
+        message: [`Created 👉  ${edaDE.name}`],
+      });
+      return edaDE;
     });
-    return edaDE;
-  });
-});
+  }
+);
 
 Cypress.Commands.add('getEdaDecisionEnvironmentByName', (edaDEName: string) => {
   cy.requestGet<EdaResult<EdaDecisionEnvironment>>(

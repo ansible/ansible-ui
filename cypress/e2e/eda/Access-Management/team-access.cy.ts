@@ -33,12 +33,15 @@ cyLabel(['upstream'], () => {
               cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
                 edaRuleBook = edaRuleBooks[0];
                 cy.createEdaDecisionEnvironment(organization?.id).then((decisionEnvironment) => {
-                  cy.createEdaRulebookActivation({
-                    rulebook_id: edaRuleBook.id,
-                    decision_environment_id: decisionEnvironment.id,
-                    k8s_service_name: 'sample',
-                    log_level: LogLevelEnum.Error,
-                  }).then((edaRulebookActivation) => {
+                  cy.createEdaRulebookActivation(
+                    {
+                      rulebook_id: edaRuleBook.id,
+                      decision_environment_id: decisionEnvironment.id,
+                      k8s_service_name: 'sample',
+                      log_level: LogLevelEnum.Error,
+                    },
+                    edaOrg
+                  ).then((edaRulebookActivation) => {
                     resource_object = edaRulebookActivation;
                   });
                 });
@@ -127,12 +130,15 @@ cyLabel(['upstream'], () => {
               cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
                 edaRuleBook = edaRuleBooks[0];
                 cy.createEdaDecisionEnvironment(edaOrganization?.id).then((decisionEnvironment) => {
-                  cy.createEdaRulebookActivation({
-                    rulebook_id: edaRuleBook.id,
-                    decision_environment_id: decisionEnvironment.id,
-                    k8s_service_name: 'sample',
-                    log_level: LogLevelEnum.Error,
-                  }).then((edaRulebookActivation) => {
+                  cy.createEdaRulebookActivation(
+                    {
+                      rulebook_id: edaRuleBook.id,
+                      decision_environment_id: decisionEnvironment.id,
+                      k8s_service_name: 'sample',
+                      log_level: LogLevelEnum.Error,
+                    },
+                    edaOrganization
+                  ).then((edaRulebookActivation) => {
                     resource_object = edaRulebookActivation;
                   });
                 });
