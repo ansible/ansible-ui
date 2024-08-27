@@ -1,7 +1,6 @@
 import {
   Button,
   EmptyState,
-  EmptyStateBody,
   EmptyStateIcon,
   Stack,
   EmptyStateActions,
@@ -22,7 +21,6 @@ export function PageNotImplemented() {
         icon={<EmptyStateIcon icon={WrenchIcon} />}
         headingLevel="h2"
       />
-      <EmptyStateBody>{t('This page is not yet available in the tech preview.')}</EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
           <Stack hasGutter>
