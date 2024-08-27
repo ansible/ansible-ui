@@ -62,7 +62,7 @@ export function HubSelectRolesStep(props: {
         list: 'description',
       },
     ];
-  }, [t]);
+  }, [managedRolesWithDescription, t]);
 
   const view = useHubMultiSelectListView<HubRbacRole>(
     {
