@@ -36,7 +36,7 @@ describe('Host Tests', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
     cy.clickButton(/^Create host$/);
-    cy.verifyPageTitle('Create Host');
+    cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);
@@ -48,7 +48,7 @@ describe('Host Tests', () => {
     cy.navigateTo('awx', 'hosts');
     cy.filterTableByMultiSelect('name', [hostName]);
     cy.getByDataCy('edit-host').click();
-    cy.verifyPageTitle('Edit host');
+    cy.verifyPageTitle(`Edit ${hostName}`);
     cy.getByDataCy('description').clear().type('This is the description edited');
     cy.getByDataCy('Submit').click();
     cy.hasDetail(/^Description$/, 'This is the description edited');
@@ -82,7 +82,7 @@ describe('Host Tests', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
     cy.clickButton(/^Create host$/);
-    cy.verifyPageTitle('Create Host');
+    cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
     cy.singleSelectByDataCy('inventory', inventory.name);

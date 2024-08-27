@@ -26,7 +26,7 @@ interface GroupFormPageHeaderProps {
 
 interface BreadCrumbLink {
   label: string;
-  to: string;
+  to?: string;
 }
 
 type BreadCrumbs = Record<string, BreadCrumbLink>;
@@ -66,7 +66,7 @@ function GroupFormPageHeader(props: GroupFormPageHeaderProps) {
       }),
     },
     relatedGroups: {
-      label: t('Related groups'),
+      label: t('Related Groups'),
       to: getPageUrl(AwxRoute.InventoryGroupRelatedGroups, {
         params: {
           ...breadcrumbsParams.id,
@@ -75,6 +75,8 @@ function GroupFormPageHeader(props: GroupFormPageHeaderProps) {
         },
       }),
     },
+    createGroup: { label: t('Create group') },
+    editGroup: { label: t('Edit {{groupName}}', { groupName: props.groupName }) },
   };
 
   return (
@@ -97,12 +99,17 @@ export function CreateGroup() {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!inventory) return <LoadingPage breadcrumbs tabs />;
 
-  const breadcrumbs: Array<keyof BreadCrumbs> = ['inventories', 'inventory', 'groups'];
+  const breadcrumbs: Array<keyof BreadCrumbs> = [
+    'inventories',
+    'inventory',
+    'groups',
+    'createGroup',
+  ];
 
   return (
     <PageLayout>
       <GroupFormPageHeader
-        title={t('Create new group')}
+        title={t('Create group')}
         breadcrumbs={breadcrumbs}
         urlParams={params}
         inventoryName={inventory?.name}
@@ -124,12 +131,12 @@ export function EditGroup() {
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!group) return <LoadingPage breadcrumbs tabs />;
 
-  const breadcrumbs: Array<keyof BreadCrumbs> = ['inventories', 'inventory', 'groups', 'group'];
+  const breadcrumbs: Array<keyof BreadCrumbs> = ['inventories', 'inventory', 'groups', 'editGroup'];
 
   return (
     <PageLayout>
       <GroupFormPageHeader
-        title={t('Edit group')}
+        title={t('Edit {{groupName}}', { groupName: group?.name })}
         breadcrumbs={breadcrumbs}
         urlParams={params}
         inventoryName={group?.summary_fields.inventory.name}
@@ -158,12 +165,13 @@ export function CreateRelatedGroup() {
     'groups',
     'group',
     'relatedGroups',
+    'createGroup',
   ];
 
   return (
     <PageLayout>
       <GroupFormPageHeader
-        title={t('Create new group')}
+        title={t('Create group')}
         breadcrumbs={breadcrumbs}
         urlParams={params}
         inventoryName={inventoryGroup?.summary_fields.inventory.name}
