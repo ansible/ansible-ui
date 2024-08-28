@@ -15,25 +15,14 @@ import { UserDateDetail } from '../../../common/UserDateDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import {
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  Divider,
-  Flex,
-  FlexItem,
-  Label,
-  LabelGroup,
-  ToggleGroup,
-  ToggleGroupItem,
-} from '@patternfly/react-core';
+import { Divider, Label, LabelGroup } from '@patternfly/react-core';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { useEffect, useState } from 'react';
-import { postRequest } from '../../../../common/crud/Data';
-import { DateTime } from 'luxon';
 import { RRuleSet, rrulestr } from 'rrule';
 import { RulesList } from '../components/RulesList';
+import { ScheduleSummary } from '../components/ScheduleSummary';
+import { TimezoneToggle } from './TimezoneToggle';
+import { useState } from 'react';
 
 /**
  *
@@ -44,6 +33,8 @@ import { RulesList } from '../components/RulesList';
  */
 export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }) {
   const { t } = useTranslation();
+  const [isLocal, setIsLocal] = useState(true);
+
   const params = useParams<{ id: string; schedule_id: string }>();
   const pageNavigate = usePageNavigate();
   const {
@@ -139,75 +130,38 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
               : schedule.extra_data.days?.toString()}
           </PageDetail>
         )}
-        {schedule && <ScheduleSummary rrule={schedule.rrule} />}
+
+        {schedule && (
+          <>
+            <PageDetail fullWidth label={t('Toggle timezone')}>
+              <TimezoneToggle
+                isLocal={isLocal}
+                setIsLocal={setIsLocal}
+                localTimezone={schedule.timezone}
+              />
+            </PageDetail>
+
+            <ScheduleSummary rrule={schedule.rrule} isLocal={isLocal} />
+          </>
+        )}
 
         <PageDetail fullWidth>
-          <RulesList ruleType="rules" rules={rules} />
-          {exceptions.length ? <RulesList ruleType="exceptions" rules={exceptions} /> : null}
+          <RulesList
+            ruleType="rules"
+            timezone={schedule.timezone}
+            rules={rules}
+            isLocalForDetails={isLocal}
+          />
+          {exceptions.length ? (
+            <RulesList
+              ruleType="exceptions"
+              timezone={schedule.timezone}
+              rules={exceptions}
+              isLocalForDetails={isLocal}
+            />
+          ) : null}
         </PageDetail>
       </PageDetails>
     </>
-  );
-}
-
-export function ScheduleSummary(props: { rrule: string }) {
-  const { t } = useTranslation();
-  const [mode, setMode] = useState('local');
-  const [preview, setPreview] = useState<{ local: string[]; utc: string[] }>();
-  useEffect(() => {
-    async function fetchPreview() {
-      const { local, utc } = await postRequest<{ local: string[]; utc: string[] }>(
-        awxAPI`/schedules/preview/`,
-        {
-          rrule: props.rrule,
-        }
-      );
-      setPreview({ local, utc });
-    }
-    if (props.rrule) {
-      void fetchPreview();
-    }
-  }, [props.rrule]);
-  const timesArray = mode === 'utc' ? preview?.utc : preview?.local;
-
-  return (
-    <DescriptionListGroup>
-      <DescriptionListTerm>
-        <Flex>
-          <FlexItem>{t('Schedule summary')}</FlexItem>
-          <FlexItem align={{ default: 'alignRight' }}>
-            <ToggleGroup isCompact>
-              <ToggleGroupItem
-                id="toggle-local"
-                data-cy="toggle-local"
-                aria-label={t('Toggle to local')}
-                isSelected={mode === 'local'}
-                text="Local"
-                type="button"
-                onChange={() => setMode('local')}
-              />
-              <ToggleGroupItem
-                id="toggle-utc"
-                data-cy="toggle-utc"
-                aria-label={t('Toggle to UTC')}
-                isSelected={mode === 'utc'}
-                text="UTC"
-                type="button"
-                onChange={() => setMode('utc')}
-              />
-            </ToggleGroup>
-          </FlexItem>
-        </Flex>
-      </DescriptionListTerm>
-      {timesArray?.map((value, i) => {
-        return (
-          <DescriptionListDescription key={i}>
-            {DateTime.fromISO(value, { setZone: true }).toLocaleString(
-              DateTime.DATETIME_SHORT_WITH_SECONDS
-            )}
-          </DescriptionListDescription>
-        );
-      })}
-    </DescriptionListGroup>
   );
 }

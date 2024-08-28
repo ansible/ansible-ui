@@ -8,6 +8,8 @@ import { ScheduleFormWizard } from '../types';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RRule, RRuleSet } from 'rrule';
 import { RulesList } from '../components/RulesList';
+import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
+import { useState } from 'react';
 
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -21,6 +23,7 @@ const ResourceLink: { [key: string]: string } = {
 export function ScheduleReviewStep() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const [isLocal, setIsLocal] = useState(true);
 
   const { wizardData, visibleSteps } = usePageWizard() as {
     wizardData: ScheduleFormWizard;
@@ -99,8 +102,18 @@ export function ScheduleReviewStep() {
           <PageDetail label={t('Days of data to keep')}>{schedule_days_to_keep}</PageDetail>
           {hasPromptDetails ? <PromptReviewDetails /> : null}
         </PageDetails>
-        <RulesList ruleType="rules" rules={rules} />
-        {exceptions.length ? <RulesList ruleType="exceptions" rules={exceptions} /> : null}
+        <PageDetail fullWidth label={t('Toggle timezone')}>
+          <TimezoneToggle isLocal={isLocal} setIsLocal={setIsLocal} localTimezone={timezone} />
+        </PageDetail>
+        <RulesList ruleType="rules" rules={rules} timezone={timezone} isLocalForDetails={isLocal} />
+        {exceptions.length ? (
+          <RulesList
+            ruleType="exceptions"
+            rules={exceptions}
+            timezone={timezone}
+            isLocalForDetails={isLocal}
+          />
+        ) : null}
       </PageFormSection>
     </>
   );
