@@ -35,7 +35,7 @@ export function PlatformUserPage() {
 
   // add tokens tab if the user from params(URL path) matches active user
   if (activeUser?.id !== undefined && activeUser?.id.toString() === params.id) {
-    pageTabs.push({ label: t('Tokens'), page: PlatformRoute.UserTokens });
+    pageTabs.push({ label: t('Tokens'), page: PlatformRoute.AAPUserTokens });
   }
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;

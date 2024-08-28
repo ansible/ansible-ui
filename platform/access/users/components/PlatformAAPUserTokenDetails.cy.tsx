@@ -27,8 +27,8 @@ describe('PlatformAAPUserTokenDetails', () => {
       }
     );
     cy.mount(<PlatformAAPUserTokenDetails />, {
-      path: '/users/:id/tokens/platform/:tokenid/details',
-      initialEntries: ['/users/20/tokens/platform/8/details'],
+      path: '/users/:id/tokens/:tokenid/details',
+      initialEntries: ['/users/20/tokens/8/details'],
     });
 
     // check name of the application, in this case there is no app hence "Personal access token"
@@ -61,8 +61,8 @@ describe('PlatformAAPUserTokenDetails', () => {
       }
     );
     cy.mount(<PlatformAAPUserTokenDetails />, {
-      path: '/users/:id/tokens/platform/:tokenid/details',
-      initialEntries: ['/users/20/tokens/platform/8/details'],
+      path: '/users/:id/tokens/:tokenid/details',
+      initialEntries: ['/users/20/tokens/8/details'],
     });
 
     cy.get('[data-cy="application-name"]').should('have.text', 'test app 1');
@@ -105,8 +105,8 @@ describe('PlatformAAPUserTokenDetails', () => {
       }
     );
     cy.mount(<PlatformAAPUserTokenDetails />, {
-      path: '/users/:id/tokens/platform/:tokenid/details',
-      initialEntries: ['/users/4096/tokens/platform/8/details'],
+      path: '/users/:id/tokens/:tokenid/details',
+      initialEntries: ['/users/4096/tokens/8/details'],
     });
     cy.contains('Not Found');
   });
@@ -124,8 +124,8 @@ describe('PlatformAAPUserTokenDetails', () => {
       }
     );
     cy.mount(<PlatformAAPUserTokenDetails />, {
-      path: '/users/:id/tokens/platform/:tokenid/details',
-      initialEntries: ['/users/1/tokens/platform/111/details'],
+      path: '/users/:id/tokens/:tokenid/details',
+      initialEntries: ['/users/1/tokens/111/details'],
     });
     cy.contains('Not Found');
   });

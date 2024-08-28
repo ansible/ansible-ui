@@ -7,7 +7,6 @@ import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformAwxOrganization } from '../resource/PlatformAwxOrganization';
 import { PlatformAwxTeam } from '../resource/PlatformAwxTeam';
 import { PlatformAwxUser } from '../resource/PlatformAwxUser';
-import { PlatformEdaCreateControllerToken } from '../resource/PlatformEdaCreateControllerToken';
 import { PlatformEdaOrganization } from '../resource/PlatformEdaOrganization';
 import { PlatformEdaUser } from '../resource/PlatformEdaUser';
 import { PlatformHubTeam } from '../resource/PlatformHubTeam';
@@ -144,24 +143,9 @@ export function useGetPlatformResourceRoutes() {
         element: <PlatformEdaUser />,
       },
       {
-        id: EdaRoute.MyTokens,
-        path: 'eda/users/:id/tokens/eda',
-        element: <PlatformEdaUser route={PlatformRoute.EdaUserTokens} />,
-      },
-      {
-        id: EdaRoute.UserTokens,
-        path: 'eda/users/:id/tokens/eda',
-        element: <PlatformEdaUser route={PlatformRoute.EdaUserTokens} />,
-      },
-      {
         id: EdaRoute.UserRoles,
         path: 'eda/user/:id',
         element: <PlatformEdaUser route={PlatformRoute.UserRoles} />,
-      },
-      {
-        id: EdaRoute.CreateControllerToken,
-        path: 'eda/users/tokens/create',
-        element: <PlatformEdaCreateControllerToken />,
       },
       {
         id: HubRoute.Users,

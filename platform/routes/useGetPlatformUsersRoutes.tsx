@@ -15,15 +15,12 @@ import { EdaUserRoles } from '../../frontend/eda/access/users/UserPage/EdaUserRo
 import { PlatformEdaUserIdLookup } from '../access/users/components/PlatformEdaUserIdLookup';
 import { AddRolesToUser } from '../../frontend/awx/access/users/components/AddRolesToUser';
 import { EdaAddUserRoles } from '../../frontend/eda/access/users/EdaAddUserRoles';
-import { PlatformUserTokens } from '../access/users/components/PlatformUserTokens';
 import { Token } from '../../frontend/awx/interfaces/Token';
 import { CreateUserToken } from '../../frontend/awx/access/users/UserTokenForm';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
 import { UserTokenPage } from '../../frontend/awx/access/users/UserPage/UserTokenPage';
 import { UserTokenSecretsModal } from '../../frontend/awx/access/users/UserPage/UserTokenSecretsModal';
 import { UserTokenDetails } from '../../frontend/awx/access/users/UserPage/UserTokenDetails';
-import { ControllerTokens } from '../../frontend/eda/access/users/UserPage/ControllerTokens';
-import { CreateControllerToken } from '../../frontend/eda/access/users/CreateControllerToken';
 import { AAPUserTokens } from '../access/users/components/PlatformAAPUserTokens';
 import { CreateAAPUserToken } from '../access/users/components/PlatformAAPUserTokenForm';
 import { PlatformAAPUserTokenDetails } from '../access/users/components/PlatformAAPUserTokenDetails';
@@ -106,43 +103,15 @@ export function useGetPlatformUsersRoutes() {
               ],
             },
             {
-              id: PlatformRoute.UserTokens,
+              id: PlatformRoute.AAPUserTokens,
               path: 'tokens',
-              element: <PlatformUserTokens />,
-              children: [
-                {
-                  id: PlatformRoute.AAPUserTokens,
-                  path: 'platform',
-                  element: (
-                    <AAPUserTokens
-                      infoMessage={t(
-                        'Ansible Automation Platform tokens authenticate your instance to run automation.'
-                      )}
-                    />
-                  ),
-                },
-                {
-                  id: PlatformRoute.EdaUserTokens,
-                  path: 'eda',
-                  element: (
-                    <PlatformEdaUserIdLookup>
-                      <ControllerTokens
-                        createTokenRoute={PlatformRoute.CreateEdaControllerToken}
-                        infoMessage={t(
-                          'Automation Decisions tokens authenticate and connect to your Ansible Automation Platform to run automation.'
-                        )}
-                        createTokenButtonLabel="Add Automation Execution token"
-                        emptyStateTitle="No Automation Execution tokens"
-                        emptyStateDescription=" To use Automation Decisions to run rulebook activations, create an Automation Execution token and paste it into the form when adding a token by using the button below."
-                      />
-                    </PlatformEdaUserIdLookup>
-                  ),
-                },
-                {
-                  path: '',
-                  element: <Navigate to="platform" />,
-                },
-              ],
+              element: (
+                <AAPUserTokens
+                  infoMessage={t(
+                    'Ansible Automation Platform tokens authenticate your instance to run automation.'
+                  )}
+                />
+              ),
             },
             {
               path: '',
@@ -152,19 +121,13 @@ export function useGetPlatformUsersRoutes() {
         },
         {
           id: PlatformRoute.CreateAapUserToken,
-          path: ':id/tokens/platform/create',
+          path: ':id/tokens/create',
           element: <CreateAAPUserToken onSuccessfulCreate={(t: Token) => setNewUserToken(t)} />,
         },
         {
           id: PlatformRoute.CreateAwxUserToken,
           path: ':id/tokens/controller/create',
           element: <CreateUserToken onSuccessfulCreate={(t: Token) => setNewUserToken(t)} />,
-        },
-        {
-          // this route does not have :id in path because the upstream component does not use it
-          id: PlatformRoute.CreateEdaControllerToken,
-          path: 'tokens/eda/create',
-          element: <CreateControllerToken />,
         },
         {
           id: AwxRoute.UserTokenPage,
@@ -197,7 +160,7 @@ export function useGetPlatformUsersRoutes() {
         },
         {
           id: PlatformRoute.AAPUserTokenPage,
-          path: ':id/tokens/platform/:tokenid',
+          path: ':id/tokens/:tokenid',
           element: (
             <>
               <PlatformAAPUserTokenPage />

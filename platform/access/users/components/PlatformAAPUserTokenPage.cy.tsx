@@ -16,8 +16,8 @@ describe('PlatformAAPUserTokenPage', () => {
 
   it('renders token page with title, breadcrumbs, back tab and token details tab', () => {
     cy.mount(<PlatformAAPUserTokenPage />, {
-      path: '/users/:id/tokens/platform/:tokenid',
-      initialEntries: ['/users/20/tokens/platform/1'],
+      path: '/users/:id/tokens/:tokenid',
+      initialEntries: ['/users/20/tokens/1'],
     });
     cy.get('[data-cy="page-title"]').contains('Token');
     cy.get('nav[aria-label="Breadcrumb"]').within(() => {
