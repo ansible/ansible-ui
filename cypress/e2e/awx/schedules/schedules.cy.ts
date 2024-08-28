@@ -417,7 +417,9 @@ describe('Schedules - Create and Delete', () => {
         );
       });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
-        cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
+        cy.getByDataCy('next-occurrence-timestamps-column-header')
+          .should('be.visible')
+          .and('contain', 'Rules');
         cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
         cy.get('tbody tr').should('have.length', 1);
       });
@@ -439,7 +441,7 @@ describe('Schedules - Create and Delete', () => {
         );
       });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
-        cy.getByDataCy('exceptions-column-header')
+        cy.getByDataCy('next-exclusion-timestamps-column-header')
           .should('be.visible')
           .and('contain', 'Exceptions');
         cy.getByDataCy('exceptions-column-cell').should('have.descendants', 'ul');
@@ -489,7 +491,9 @@ describe('Schedules - Create and Delete', () => {
         .first()
         .scrollIntoView()
         .within(() => {
-          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
+          cy.getByDataCy('next-occurrence-timestamps-column-header')
+            .should('be.visible')
+            .and('contain', 'Rules');
           cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1);
         });
@@ -498,7 +502,7 @@ describe('Schedules - Create and Delete', () => {
         .last()
         .scrollIntoView()
         .within(() => {
-          cy.getByDataCy('exceptions-column-header')
+          cy.getByDataCy('next-exclusion-timestamps-column-header')
             .should('be.visible')
             .and('contain', 'Exceptions');
           cy.getByDataCy('exceptions-column-cell').should('have.descendants', 'ul');
@@ -677,8 +681,10 @@ describe('Schedules - Edit', () => {
       `RRULE:FREQ=MINUTELY;INTERVAL=1;WKST=SU;UNTIL=${date.replaceAll('-', '')}T`
     );
     cy.get('[data-ouia-component-id="simple-table"]').within(() => {
-      cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
-      cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+      cy.getByDataCy('next-occurrence-timestamps-column-header')
+        .should('be.visible')
+        .and('contain', 'Next occurrence timestamps');
+      cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
       cy.get('tbody tr').should('have.length', 3);
     });
     cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
@@ -823,7 +829,7 @@ describe('Schedules - Edit', () => {
         'RRULE:FREQ=MONTHLY'
       );
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
-        cy.get('[data-cy="exceptions-column-header"]').should('not.exist');
+        cy.get("[data-cy='next-exclusion-timestamps-column-header']").should('not.exist');
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');

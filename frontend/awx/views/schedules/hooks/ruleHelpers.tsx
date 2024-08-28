@@ -10,7 +10,6 @@ export function useGetFrequencyOptions() {
     { label: t('Daily'), value: Frequency.DAILY },
     { label: t('Hourly'), value: Frequency.HOURLY },
     { label: t('Minutely'), value: Frequency.MINUTELY },
-    { label: t('Secondly'), value: Frequency.SECONDLY },
   ];
 }
 

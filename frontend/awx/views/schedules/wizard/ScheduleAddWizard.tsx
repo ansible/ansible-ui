@@ -191,7 +191,7 @@ export function ScheduleAddWizard(props: {
       schedule_type: '',
       resource: '',
       startDateTime: { date: currentDate, time: time },
-      timezone: 'America/New_York',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
     rules: { ...RULES_DEFAULT_VALUES, rules: [] },
     exceptions: { ...RULES_DEFAULT_VALUES, exceptions: [] },
