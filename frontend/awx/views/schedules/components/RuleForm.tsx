@@ -62,7 +62,7 @@ export function RuleForm(
     const values = getValues() as RuleFields;
     delete values.endType;
     delete values.id;
-    const { rules = [], exceptions = [], until = null, ...rest } = values;
+    const { rules = [], exceptions = [], endType, until = null, ...rest } = values;
     const start = DateTime.fromISO(`${date}`).set(get24Hour(time));
     const { year, month, day, hour, minute } = start;
     const dateString = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(minute)}00`;
@@ -70,8 +70,8 @@ export function RuleForm(
     const ruleStart = RRule.fromString(rrulestring);
     const rule = new RRule({ ...ruleStart.options, ...rest });
     if (until !== null) {
-      const { time: untilTime, date: untilDate } = until;
-
+      const untilTime = until?.time;
+      const untilDate = until?.date;
       if (untilDate && untilTime) {
         const utcDate = DateTime.fromISO(`${untilDate}`).set(get24Hour(untilTime)).toUTC();
         const { year, month, day, hour, minute } = utcDate;

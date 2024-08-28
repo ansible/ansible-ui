@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
@@ -12,90 +12,48 @@ import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { RuleListItemType } from '../types';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Label } from '@patternfly/react-core';
-import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { postRequest } from '../../../../common/crud/Data';
-import { LabelGroupWrapper } from '../../../../common/label-group-wrapper';
+import { ScheduleSummary } from './ScheduleSummary';
+import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
 
 export function RulesList(props: {
   setIsOpen?: (isOpen: boolean | number) => void;
   ruleType: string;
   rules: RuleListItemType[];
+  timezone: string;
   needsHeader?: boolean;
+  isLocalForDetails?: boolean;
 }) {
+  const [isLocal, setIsLocal] = useState(true);
+
   const { t } = useTranslation();
   const config = useAwxConfig();
-  const [occurrences, setOccurrences] = useState<
-    { utc: string[]; local: string[]; id: number; error: string }[] | []
-  >([]);
-
-  useEffect(() => {
-    async function fetchRules() {
-      const promises = await Promise.all(
-        props.rules.map(async ({ rule, id }) => {
-          try {
-            const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
-              awxAPI`/schedules/preview/`,
-              {
-                rrule: rule.toString(),
-              }
-            );
-
-            return {
-              utc,
-              local,
-              id,
-              error: '',
-            };
-          } catch (ex) {
-            return { utc: [], local: [], id: -1, error: 'Error' + ex?.toString() };
-          }
-        })
-      );
-
-      setOccurrences(promises);
-    }
-    void fetchRules();
-  }, [props.rules]);
   const isExceptions = props.ruleType === 'exception';
-
   const rowActions = useRuleRowActions(props.rules, props.setIsOpen);
   const columns = useMemo<ITableColumn<RuleListItemType>[]>(
     () => [
       {
-        header: props.ruleType === 'rules' ? t('Rules') : t('Exceptions'),
+        header:
+          props.ruleType === 'rules'
+            ? t('Next occurrence timestamps')
+            : t('Next exclusion timestamps'),
         cell: (item: RuleListItemType) => {
-          let labels: JSX.Element | undefined = undefined;
-          occurrences.map(({ id, local, error }) => {
-            if (id === item.id && !error) {
-              labels = (
-                <LabelGroupWrapper numLabels={5}>
-                  {local.map((dateTimeString) => (
-                    <Label key={dateTimeString}>
-                      {formatDateString(dateTimeString, item.rule.options.tzid as string)}
-                    </Label>
-                  ))}
-                </LabelGroupWrapper>
-              );
-            }
-
-            if (!labels) {
-              labels = <div>{t(`Error loading preview`)}</div>;
-            }
-          });
-
-          return labels;
+          return (
+            <ScheduleSummary
+              rrule={item.rule.toString()}
+              isLocal={props.isLocalForDetails !== undefined ? props.isLocalForDetails : isLocal}
+              hideColumnTitle
+            />
+          );
         },
       },
       {
-        header: t('Rrule'),
+        header: props.ruleType === 'rules' ? t('RRule') : t('Exrule'),
         cell: (rule: RuleListItemType) => <CopyCell text={rule.rule.toString()} />,
         modal: ColumnModalOption.hidden,
         dashboard: ColumnModalOption.hidden,
       },
     ],
-    [t, occurrences, props.ruleType]
+    [t, props.ruleType, isLocal, props.isLocalForDetails]
   );
   const view = {
     pageItems: props.rules,
@@ -117,6 +75,13 @@ export function RulesList(props: {
     <div>
       {props.needsHeader ? (
         <PageHeader
+          controls={
+            <TimezoneToggle
+              isLocal={isLocal}
+              setIsLocal={(b) => setIsLocal(b)}
+              localTimezone={props.timezone}
+            />
+          }
           title={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelpTitle={isExceptions ? t('Schedule Exceptions') : t('Schedule Rules')}
           titleHelp={t('Create as many schedule rules as you need.')}
