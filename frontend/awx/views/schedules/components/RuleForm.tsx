@@ -69,7 +69,7 @@ export function RuleForm(
     const rrulestring = `DTSTART;TZID=${timezone}:${dateString}`;
     const ruleStart = RRule.fromString(rrulestring);
     const rule = new RRule({ ...ruleStart.options, ...rest });
-    if (endType === 'until') {
+    if (until !== null) {
       const untilTime = until?.time;
       const untilDate = until?.date;
       if (untilDate && untilTime) {

@@ -120,8 +120,10 @@ describe('Projects', () => {
       cy.get('[data-ouia-component-id="simple-table"]')
         .scrollIntoView()
         .within(() => {
-          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
-          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          cy.getByDataCy('next-occurrence-timestamps-column-header')
+            .should('be.visible')
+            .and('contain', 'Next occurrence timestamps');
+          cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1); //First, 1 rule is showing
         });
       cy.getByDataCy('edit-schedule').click();
@@ -142,8 +144,10 @@ describe('Projects', () => {
       cy.get('[data-ouia-component-id="simple-table"]')
         .scrollIntoView()
         .within(() => {
-          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
-          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          cy.getByDataCy('next-occurrence-timestamps-column-header')
+            .should('be.visible')
+            .and('contain', 'Next occurrence timestamps');
+          cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 2); //Now, 2 rules are showing
         });
       cy.getByDataCy('edit-schedule').click();
@@ -164,8 +168,10 @@ describe('Projects', () => {
       cy.get('[data-ouia-component-id="simple-table"]')
         .scrollIntoView()
         .within(() => {
-          cy.getByDataCy('rules-column-header').should('be.visible').and('contain', 'Rules');
-          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          cy.getByDataCy('next-occurrence-timestamps-column-header')
+            .should('be.visible')
+            .and('contain', 'Next occurrence timestamps');
+          cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1); //1 Rule is showing again
         });
     });
@@ -190,9 +196,9 @@ describe('Projects', () => {
       cy.clickButton(/^Next$/);
       cy.wait('@preview');
       cy.getByDataCy('local-time-zone').should('contain', 'UTC');
-      cy.get('[data-cy="exceptions-column-header"]')
+      cy.get('[data-cy="next-exclusion-timestamps-column-header"]')
         .should('be.visible')
-        .and('contain', 'Exceptions');
+        .and('contain', 'Next exclusion timestamps');
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('edited');
       cy.getByDataCy('Submit').click();
       cy.intercept('GET', awxAPI`/projects/${project.id.toString()}/`).as('projectList');
@@ -219,7 +225,7 @@ describe('Projects', () => {
       cy.intercept('PATCH', awxAPI`/schedules/${schedule.id.toString()}/`).as('editedAgain');
       cy.getByDataCy('Submit').click();
       cy.wait('@editedAgain');
-      cy.get('[data-cy="exceptions-column-header"]').should('not.exist');
+      cy.get('[data-cy="next-exclusion-timestamps-column-header"]').should('not.exist');
     });
 
     it('can toggle a schedule', () => {

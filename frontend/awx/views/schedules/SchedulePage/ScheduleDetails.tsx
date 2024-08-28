@@ -146,9 +146,19 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
         )}
 
         <PageDetail fullWidth>
-          <RulesList ruleType="rules" rules={rules} isLocalForDetails={isLocal} />
+          <RulesList
+            ruleType="rules"
+            timezone={schedule.timezone}
+            rules={rules}
+            isLocalForDetails={isLocal}
+          />
           {exceptions.length ? (
-            <RulesList ruleType="exceptions" rules={exceptions} isLocalForDetails={isLocal} />
+            <RulesList
+              ruleType="exceptions"
+              timezone={schedule.timezone}
+              rules={exceptions}
+              isLocalForDetails={isLocal}
+            />
           ) : null}
         </PageDetail>
       </PageDetails>
