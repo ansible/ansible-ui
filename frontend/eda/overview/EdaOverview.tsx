@@ -6,7 +6,6 @@ import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
-import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -27,13 +26,6 @@ export function EdaOverview() {
     defaultSort: 'modified_at',
     defaultSortDirection: 'desc',
   });
-  const edaControllerTokenView = useEdaView<EdaControllerToken>({
-    url: edaAPI`/users/me/awx-tokens/`,
-    queryParams: { page: '1', page_size: '10' },
-    disableQueryString: true,
-    defaultSort: 'modified_at',
-    defaultSortDirection: 'desc',
-  });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
     url: edaAPI`/decision-environments/`,
     queryParams: { page: '1', page_size: '10' },
@@ -45,7 +37,6 @@ export function EdaOverview() {
     disableQueryString: true,
   });
   const hasProject = edaProjectView.itemCount !== 0;
-  const hasControllerToken = edaControllerTokenView.itemCount !== 0;
   const hasDecisionEnvironment = edaDecisionEnvironmentView.itemCount !== 0;
   const hasRulebookActivation = edaRulebookActivationView.itemCount !== 0;
   const product: string = process.env.PRODUCT ?? t('EDA Server');
@@ -58,7 +49,7 @@ export function EdaOverview() {
         )}
       />
       <PageDashboard>
-        {(!hasProject || !hasRulebookActivation || !hasControllerToken) && (
+        {(!hasProject || !hasRulebookActivation) && (
           <PageDashboardCard
             title={t('Getting Started')}
             description={t(
