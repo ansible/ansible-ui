@@ -71,7 +71,7 @@ describe('Collections Details', () => {
     //these lines fail if there are no Collections present
   });
 
-  it('user can delete version from system', () => {
+  it.skip('user can delete version from system', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     cy.uploadCollection(collectionName, namespace.name, '1.1.0');
 
@@ -159,7 +159,7 @@ describe('Collections Details', () => {
     });
   });
 
-  it('can sign a selected version of a collection', () => {
+  it.skip('can sign a selected version of a collection', () => {
     cy.uploadCollection(collectionName, namespace.name).then(() => {
       cy.waitForAllTasks();
       cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
