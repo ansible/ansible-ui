@@ -86,14 +86,6 @@ export function EdaOverview() {
                 </Text>
                 <ProgressStepper>
                   <ProgressStep
-                    variant={hasControllerToken ? 'success' : 'info'}
-                    description={t('Create a Controller token.')}
-                  >
-                    <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>
-                      {t('Controller Token')}
-                    </Link>
-                  </ProgressStep>
-                  <ProgressStep
                     variant={hasProject ? 'success' : 'info'}
                     description={t('Create a project.')}
                   >

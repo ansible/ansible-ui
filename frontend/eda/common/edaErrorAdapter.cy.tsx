@@ -64,12 +64,12 @@ describe('edaErrorAdapter', () => {
       undefined,
       400,
       {},
-      { non_field_errors: ['No controller token specified'] }
+      { non_field_errors: ['Generic non-field error'] }
     );
     const result = edaErrorAdapter(error);
     expect(result.genericErrors.length).equal(1);
     expect(result.fieldErrors.length).equal(0);
-    expect(result.genericErrors).to.deep.equal([{ message: 'No controller token specified' }]);
+    expect(result.genericErrors).to.deep.equal([{ message: 'Generic non-field error' }]);
   });
 });
 

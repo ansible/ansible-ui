@@ -66,9 +66,7 @@ export enum EdaRoute {
   UserPage = 'eda-user-page',
   MyPage = 'eda-me-page',
   MyDetails = 'eda-my-details',
-  MyTokens = 'eda-my-tokens',
   UserDetails = 'eda-user-details',
-  UserTokens = 'eda-user-tokens',
   UserRoles = 'eda-user-roles',
   UserAddRoles = 'eda-user-add-roles',
 
@@ -83,8 +81,6 @@ export enum EdaRoute {
   EditRole = 'eda-edit-role',
   RolePage = 'eda-role-page',
   RoleDetails = 'eda-role-details',
-
-  CreateControllerToken = 'eda-create-controller-token',
 
   EventStreams = 'eda-event-streams',
   CreateEventStream = 'eda-create-event-stream',

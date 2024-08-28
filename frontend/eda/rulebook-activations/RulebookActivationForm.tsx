@@ -34,7 +34,7 @@ import {
   EdaRulebookActivation,
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
-import { AwxToken, LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
+import { LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
 import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
@@ -143,10 +143,6 @@ export function RulebookActivationInputs() {
   const { data: projects } = useGet<EdaResult<EdaProject>>(edaAPI`/projects/?page=1&page_size=200`);
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
     edaAPI`/decision-environments/?page=1&page_size=200`
-  );
-
-  const { data: tokens } = useGet<EdaResult<AwxToken>>(
-    edaAPI`/users/me/awx-tokens/?page=1&page_size=200`
   );
 
   const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(edaAPI`/event-streams/`);
@@ -309,27 +305,6 @@ export function RulebookActivationInputs() {
         labelHelpTitle={t('Decision environment')}
       />
       <PageFormSelect<IEdaRulebookActivationInputs>
-        name="awx_token_id"
-        label={t('Controller token')}
-        placeholderText={t('Select controller token')}
-        options={
-          tokens?.results
-            ? tokens.results.map((item: { name: string; id: number }) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            : []
-        }
-        footer={
-          <Link to={getPageUrl(EdaRoute.CreateControllerToken)}>Create controller token</Link>
-        }
-        labelHelpTitle={t('Controller tokens')}
-        labelHelp={[
-          t('Controller tokens are used to authenticate with controller API.'),
-          t('Controller tokens can be added under the current user details.'),
-        ]}
-      />
-      <PageFormSelect<IEdaRulebookActivationInputs>
         name="restart_policy"
         label={t('Restart policy')}
         placeholderText={t('Select restart policy')}
@@ -393,7 +368,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
-  awx_token_id: number;
   credential_refs?: EdaCredential[] | null;
   source_mappings: EdaSourceEventMapping[];
 };
