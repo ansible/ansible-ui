@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem, PageNotImplemented } from '../../framework';
+import { PageNavigationItem } from '../../framework';
 import { PlatformTeamDetails } from '../access/teams/components/PlatformTeamDetails';
 import { CreatePlatformTeam, EditPlatformTeam } from '../access/teams/components/PlatformTeamForm';
 import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
@@ -9,6 +9,7 @@ import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformTeamUsers } from '../access/teams/components/PlatformTeamUsers';
 import { PlatformAAPTeamUsers } from '../access/teams/components/PlatformAAPTeamUsers';
 import { PlatformAwxTeamUsers } from '../access/teams/components/PlatformAwxTeamUsers';
+import { PlatformHubTeamUsers } from '../access/teams/components/PlatformHubTeamUsers';
 import { PlatformTeamAdmins } from '../access/teams/components/PlatformTeamAdmins';
 import { PlatformTeamRoles } from '../access/teams/components/PlatformTeamRoles';
 import { PlatformAwxTeamIdLookup } from '../access/teams/components/PlatformAwxTeamIdLookup';
@@ -106,7 +107,7 @@ export function useGetPlatformTeamsRoutes() {
                 {
                   id: PlatformRoute.HubTeamUsers,
                   path: 'hub',
-                  element: <PageNotImplemented />,
+                  element: <PlatformHubTeamUsers />,
                 },
                 {
                   path: '',
