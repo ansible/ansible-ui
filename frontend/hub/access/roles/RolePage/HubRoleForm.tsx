@@ -157,12 +157,13 @@ function HubRoleInputs(props: { disableContentType?: boolean }) {
         name={'content_type'}
         label={t('Content Type')}
         placeholderText={t('Select a content type')}
-        options={Object.entries(hubRoleMetadata.content_types)
-          .filter(([option]) => !['shared.team'].includes(option))
-          .map(([key, value]) => ({
-            label: value?.displayName,
-            value: key,
-          }))}
+        options={[
+          { value: 'galaxy.ansiblerepository', label: t('Repository') },
+          { value: 'galaxy.collectionremote', label: t('Remote') },
+          { value: 'galaxy.containernamespace', label: t('Execution Environment') },
+          { value: 'galaxy.namespace', label: t('Namespace') },
+          { value: 'null', label: t('System') },
+        ]}
         isDisabled={disableContentType}
         isRequired
       />
