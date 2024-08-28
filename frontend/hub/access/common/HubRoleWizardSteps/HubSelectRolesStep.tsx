@@ -7,6 +7,7 @@ import { useHubRoleFilters } from '../hooks/useHubRoleFilters';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
 import { hubAPI } from '../../../common/api/formatPath';
+import { useManagedRolesWithDescription } from '../../roles/hooks/useManagedRolesWithDescription';
 
 export function HubSelectRolesStep(props: {
   contentType?: string;
@@ -19,6 +20,7 @@ export function HubSelectRolesStep(props: {
   const { wizardData } = usePageWizard();
   const { resourceType } = wizardData as { [key: string]: unknown };
   const { fieldNameForPreviousStep, title } = props;
+  const managedRolesWithDescription = useManagedRolesWithDescription();
 
   const contentType = useMemo(() => {
     return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
@@ -53,12 +55,14 @@ export function HubSelectRolesStep(props: {
       },
       {
         header: t('Description'),
-        cell: (role) => role.description && <TextCell text={role.description} />,
+        cell: (role) => (
+          <TextCell text={managedRolesWithDescription[role.name] ?? role.description} />
+        ),
         card: 'description',
         list: 'description',
       },
     ];
-  }, [t]);
+  }, [managedRolesWithDescription, t]);
 
   const view = useHubMultiSelectListView<HubRbacRole>(
     {
