@@ -51,7 +51,7 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
       <PageFormSelectExecutionEnvironment
         organizationId={controllerOrganization ? controllerOrganization.id : undefined}
         name="executionEnvironment"
-        label={t('Default execution environment')}
+        label={t('Execution environment')}
       />
       <PageFormInstanceGroupSelect
         name="instanceGroups"

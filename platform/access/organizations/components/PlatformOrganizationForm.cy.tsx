@@ -269,7 +269,7 @@ describe('PlatformOrganizationForm', () => {
     cy.clickButton('Next');
     cy.contains(`Name`).should('be.visible');
     cy.contains(`Description`).should('be.visible');
-    cy.contains(`Default execution environment`).should('not.exist');
+    cy.contains(`Execution environment`).should('not.exist');
     cy.contains(`Instance groups`).should('not.exist');
     cy.contains(`Galaxy credentials`).should('not.exist');
     cy.clickButton('Finish').then(() => {
