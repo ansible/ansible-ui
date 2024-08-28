@@ -91,7 +91,6 @@ export function UserPage() {
     ? [
         { label: t('Details'), page: EdaRoute.UserDetails },
         { label: t('Roles'), page: EdaRoute.UserRoles },
-        { label: t('Controller Tokens'), page: EdaRoute.UserTokens },
       ]
     : [
         { label: t('Details'), page: EdaRoute.UserDetails },

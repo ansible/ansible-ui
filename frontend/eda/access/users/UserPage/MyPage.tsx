@@ -83,10 +83,7 @@ export function MyPage() {
         }
       />
       <PageRoutedTabs
-        tabs={[
-          { label: t('Details'), page: EdaRoute.MyDetails },
-          { label: t('Controller Tokens'), page: EdaRoute.MyTokens },
-        ]}
+        tabs={[{ label: t('Details'), page: EdaRoute.MyDetails }]}
         params={{ id: user?.id }}
       />
     </PageLayout>
