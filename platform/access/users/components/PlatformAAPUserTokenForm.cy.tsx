@@ -22,8 +22,8 @@ describe('CreateAAPUserToken', () => {
   it('renders a token form with breadcrumbs, title and form inputs', () => {
     const onCreateFn = cy.stub();
     cy.mount(<CreateAAPUserToken onSuccessfulCreate={onCreateFn} />, {
-      path: '/users/:id/tokens/platform/create',
-      initialEntries: ['/users/20/tokens/platform/create'],
+      path: '/users/:id/tokens/create',
+      initialEntries: ['/users/20/tokens/create'],
     });
 
     cy.get('nav[aria-label="Breadcrumb"]').within(() => {
@@ -57,8 +57,8 @@ describe('CreateAAPUserToken', () => {
   it('attempting to create a token without scope shows an error message', () => {
     const onCreateFn = cy.stub();
     cy.mount(<CreateAAPUserToken onSuccessfulCreate={onCreateFn} />, {
-      path: '/users/:id/tokens/platform/create',
-      initialEntries: ['/users/20/tokens/platform/create'],
+      path: '/users/:id/tokens/create',
+      initialEntries: ['/users/20/tokens/create'],
     });
     cy.get('button[data-cy="Submit"]').click();
     cy.get('[data-cy="scope-form-group"]').within(() => {

@@ -73,7 +73,7 @@ function CreateAAPUserTokenInternal(props: {
           },
           {
             label: t('Tokens'),
-            to: getPageUrl(PlatformRoute.UserTokens, { params: { id: user.id } }),
+            to: getPageUrl(PlatformRoute.AAPUserTokens, { params: { id: user.id } }),
           },
         ]}
       />
