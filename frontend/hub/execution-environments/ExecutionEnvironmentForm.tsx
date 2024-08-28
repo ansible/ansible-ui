@@ -15,21 +15,17 @@ import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup'
 import { useGet } from '../../common/crud/useGet';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
-import { hubAPIPost } from '../common/api/hub-api-utils';
+import { hubAPIPatch, hubAPIPost, hubAPIPut } from '../common/api/hub-api-utils';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 
 import { usePageNavigate } from '../../../framework';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { patchHubRequest, putHubRequest } from '../common/api/request';
 import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { HubError } from '../common/HubError';
-import { TaskResponse } from '../administration/tasks/Task';
-import { waitForTask } from '../common/api/hub-api-utils';
-import { parsePulpIDFromURL } from '../common/api/hub-api-utils';
 import { hubErrorAdapter } from '../../../frontend/hub/common/adapters/hubErrorAdapter';
 
 export function CreateExecutionEnvironment() {
@@ -115,30 +111,23 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
         payload
       );
     } else {
-      const promises = [];
-
       if (isRemote && !isNew) {
-        promises.push(
-          putHubRequest(
-            hubAPI`/_ui/v1/execution-environments/remotes/${
-              executionEnvironment.data?.pulp?.repository?.remote?.id || ''
-            }/`,
-            payload
-          )
+        await hubAPIPut<ExecutionEnvironment>(
+          hubAPI`/_ui/v1/execution-environments/remotes/${
+            executionEnvironment.data?.pulp?.repository?.remote?.id || ''
+          }/`,
+          payload
         );
       }
 
       if (formData.description !== executionEnvironment.data?.description) {
-        const { response } = await patchHubRequest(
+        await hubAPIPatch(
           pulpAPI`/distributions/container/container/${
             executionEnvironment.data?.pulp?.distribution?.id || ''
           }/`,
           { description: formData.description || null }
         );
-        promises.push(waitForTask(parsePulpIDFromURL((response as TaskResponse)?.task)));
       }
-
-      await Promise.all(promises);
     }
 
     navigate(HubRoute.ExecutionEnvironments);
