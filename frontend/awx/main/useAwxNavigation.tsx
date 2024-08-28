@@ -147,7 +147,7 @@ export function useAwxNavigation() {
       children: [
         {
           id: AwxRoute.SettingsAuthentication,
-          label: t('Authentication'),
+          label: t('Authentication Methods'),
           path: 'authentication',
           children: [
             {
