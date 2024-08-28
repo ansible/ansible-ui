@@ -31,7 +31,7 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PencilAltIcon,
-        label: t('Edit'),
+        label: t('Edit platform gateway settings'),
         onClick: () => navigate('./edit'),
         isPinned: true,
       },

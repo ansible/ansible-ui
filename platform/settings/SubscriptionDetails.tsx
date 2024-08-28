@@ -1,6 +1,6 @@
-import { Label } from '@patternfly/react-core';
+import { ButtonVariant, Label } from '@patternfly/react-core';
 import { DropdownPosition } from '@patternfly/react-core/deprecated';
-import { CheckIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { CheckIcon, ExclamationCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -35,6 +35,8 @@ export function SubscriptionDetails() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
+        icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit subscription'),
         onClick: () => pageNavigate(PlatformRoute.SubscriptionWizard),
         isPinned: true,

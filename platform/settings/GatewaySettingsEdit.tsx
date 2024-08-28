@@ -38,7 +38,7 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
     <PageLayout>
       <PageHeader title={category.title} description={category.description} />
       <PageForm
-        submitText={t('Save changes')}
+        submitText={t('Save platform gateway settings')}
         onSubmit={async (values) => {
           if ('custom_logo' in values && values.custom_logo instanceof File) {
             // get the extension of the file
