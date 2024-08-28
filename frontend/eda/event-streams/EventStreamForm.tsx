@@ -225,7 +225,7 @@ export function EditEventStream() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/event-streams/${params.id ?? ''}/`
   );
-  const canEditEventStream = Boolean(data && data.actions && data.actions['PATCH']);
+  const canEditEventStream = data ? Boolean(data.actions && data.actions['PATCH']) : true;
   const { data: eventStream } = useGet<EdaEventStream>(edaAPI`/event-streams/${id.toString()}/`);
 
   const { cache } = useSWRConfig();
