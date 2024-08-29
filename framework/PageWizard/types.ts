@@ -42,6 +42,7 @@ export interface PageWizardState {
   onBack: () => void;
   submitError?: Error | undefined;
   setSubmitError: React.Dispatch<SetStateAction<Error | undefined>>;
+  isSubmitting: boolean;
 }
 
 export interface PageWizardBody {

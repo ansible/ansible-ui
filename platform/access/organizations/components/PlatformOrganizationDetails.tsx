@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import {
+  LoadingPage,
   PageDetail,
   PageDetails,
   PageDetailsFromColumns,
@@ -11,6 +12,7 @@ import {
 import { CredentialLabel } from '../../../../frontend/awx/common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../../frontend/awx/common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useAwxConfig } from '../../../../frontend/awx/common/useAwxConfig';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Organization as AwxOrganization } from '../../../../frontend/awx/interfaces/Organization';
@@ -21,7 +23,6 @@ import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
-import { useAwxConfig } from '../../../../frontend/awx/common/useAwxConfig';
 
 export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
@@ -29,7 +30,7 @@ export function PlatformOrganizationDetails() {
   const awxService = useHasAwxService();
   const columns = useOrganizationColumns();
 
-  const { data: platformOrganization } = useGet<PlatformOrganization>(
+  const { data: platformOrganization, isLoading } = useGet<PlatformOrganization>(
     gatewayV1API`/organizations/${id.toString()}/`
   );
 
@@ -37,6 +38,8 @@ export function PlatformOrganizationDetails() {
     () => columns.filter((col) => col.id !== 'execution-environment'),
     [columns]
   );
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <PageDetails>
@@ -55,13 +58,15 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
   const getPageUrl = useGetPageUrl();
   const config = useAwxConfig();
 
-  const { resource: controllerOrganization } = useAwxResource<AwxOrganization>(
+  const { resource: controllerOrganization, isLoading } = useAwxResource<AwxOrganization>(
     'organizations/',
     platformOrganization
   );
 
   const galaxyCredentials = useGalaxyCredentials(controllerOrganization?.id.toString() || '0');
   const instanceGroups = useInstanceGroups(controllerOrganization?.id.toString() || '0');
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <>
