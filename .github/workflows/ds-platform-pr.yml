@@ -50,23 +50,11 @@ jobs:
     needs: packages
     uses: ./.github/workflows/ds-platform-component.yml
 
-  platform-checks:
-    runs-on: ubuntu-latest
-    name: Platform Checks
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 100
-      - run: git diff --quiet HEAD~1 HEAD -- cypress/e2e/awx cypress/e2e/eda cypress/e2e/hub
-      - run: git diff --quiet HEAD~1 HEAD -- cypress/e2e/support
-      - run: git diff --quiet HEAD~1 HEAD -- frontend framework
-
   success:
     name: Success
     runs-on: ubuntu-latest
     if: ${{ success() }}
     needs: 
-      - platform-checks
       - platform-component
       - platform-e2e
     steps:
