@@ -14,8 +14,8 @@ import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { Alert } from '@patternfly/react-core';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();
@@ -73,7 +73,7 @@ export function EventStreamDetails() {
             eventStream?.eda_credential?.name || ''
           )}
         </PageDetail>
-        <PageDetail label={t('Url')}>
+        <PageDetail label={t('URL')}>
           <CopyCell text={eventStream?.url || ''} />
         </PageDetail>
         <PageDetail
@@ -106,11 +106,10 @@ export function EventStreamDetails() {
       </PageDetails>
       <PageDetails numberOfColumns={'single'} disableScroll={true}>
         {eventStream?.test_headers && (
-          <PageDetailCodeEditor
+          <PageDetailCodeBlock
             value={eventStream?.test_headers}
             showCopyToClipboard={true}
             label={t('Test headers')}
-            toggleLanguage={false}
             helpText={t(
               'The HTTP Headers received from the Sender. Any of these can be used in the "Headers" field.'
             )}
@@ -119,10 +118,9 @@ export function EventStreamDetails() {
       </PageDetails>
       <PageDetails numberOfColumns={'single'} disableScroll={true}>
         {eventStream?.test_content && (
-          <PageDetailCodeEditor
+          <PageDetailCodeBlock
             value={eventStream?.test_content}
             showCopyToClipboard={true}
-            toggleLanguage={false}
             label={t('Test content')}
             helpText={t('Test content')}
           />
