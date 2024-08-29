@@ -45,7 +45,6 @@ export function useAwxRoleMetadata(): AwxRoleMetadata {
           permissions: {
             'awx.change_executionenvironment': t('Change execution environment'),
             'awx.delete_executionenvironment': t('Delete execution environment'),
-            'awx.view_executionenvironment': t('View execution environment'),
           },
         },
         'awx.instancegroup': {
@@ -133,7 +132,6 @@ export function useAwxRoleMetadata(): AwxRoleMetadata {
             'awx.add_executionenvironment': t('Add execution environment'),
             'awx.change_executionenvironment': t('Change execution environment'),
             'awx.delete_executionenvironment': t('Delete execution environment'),
-            'awx.view_executionenvironment': t('View execution environment'),
           },
         },
         'awx.project': {
