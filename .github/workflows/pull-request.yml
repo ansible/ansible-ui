@@ -54,19 +54,40 @@ jobs:
         run: npm ci
       - run: npm run checks
 
-  component:
-    name: AWX Component
+  awx:
+    name: AWX
     needs: packages
     uses: ./.github/workflows/component.yml
     with:
-      directory: 'frontend'
+      directory: frontend/awx
+
+  eda:
+    name: EDA
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/eda
+
+  hub:
+    name: HBU
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/hub
+
+  common:
+    name: Common
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/common
 
   framework:
-    name: AWX Component
+    name: Framework
     needs: packages
     uses: ./.github/workflows/component.yml
     with:
-      directory: 'framework'
+      directory: framework
 
   success:
     name: Success
@@ -74,7 +95,10 @@ jobs:
     if: ${{ success() }}
     needs: 
       - checks
-      - component
+      - awx
+      - eda
+      - hub
+      - common
       - framework
     steps:
       - run: echo Success
