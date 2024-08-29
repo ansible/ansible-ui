@@ -39,7 +39,7 @@ export function RulesList(props: {
         cell: (item: RuleListItemType) => {
           return (
             <ScheduleSummary
-              rrule={item.rule.toString()}
+              rrule={item.rule}
               isLocal={props.isLocalForDetails !== undefined ? props.isLocalForDetails : isLocal}
               hideColumnTitle
             />
@@ -48,7 +48,7 @@ export function RulesList(props: {
       },
       {
         header: props.ruleType === 'rules' ? t('RRule') : t('Exrule'),
-        cell: (rule: RuleListItemType) => <CopyCell text={rule.rule.toString()} />,
+        cell: (rule: RuleListItemType) => <CopyCell text={rule.rule} />,
         modal: ColumnModalOption.hidden,
         dashboard: ColumnModalOption.hidden,
       },

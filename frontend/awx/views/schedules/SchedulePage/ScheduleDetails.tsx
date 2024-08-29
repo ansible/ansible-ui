@@ -18,7 +18,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { Divider, Label, LabelGroup } from '@patternfly/react-core';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { RRuleSet, rrulestr } from 'rrule';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { RulesList } from '../components/RulesList';
 import { ScheduleSummary } from '../components/ScheduleSummary';
 import { TimezoneToggle } from './TimezoneToggle';
@@ -58,8 +58,12 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
   const extraData = schedule?.extra_data as string | object;
 
   const ruleSet = rrulestr(schedule.rrule, { forceset: true }) as RRuleSet;
-  const rules = ruleSet.rrules().map((rule, i) => ({ rule, id: i }));
-  const exceptions = ruleSet.exrules().map((rule, i) => ({ rule, id: i }));
+  const rules = ruleSet
+    .rrules()
+    .map((rule, i) => ({ rule: RRule.optionsToString(rule.origOptions), id: i }));
+  const exceptions = ruleSet
+    .exrules()
+    .map((rule, i) => ({ rule: RRule.optionsToString(rule.origOptions), id: i }));
   return (
     <>
       <PageDetails numberOfColumns="multiple">

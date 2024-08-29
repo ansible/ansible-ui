@@ -75,7 +75,7 @@ export function RuleForm(
       if (untilDate && untilTime) {
         const utcDate = DateTime.fromISO(`${untilDate}`).set(get24Hour(untilTime)).toUTC();
         const { year, month, day, hour, minute } = utcDate;
-        rule.options.until = datetime(year, month, day, hour, minute);
+        rule.origOptions.until = datetime(year, month, day, hour, minute);
       } else {
         if (untilDate) {
           // This block is used when the user enters a date, but no time.
@@ -84,7 +84,7 @@ export function RuleForm(
 
           const utcDate = DateTime.fromISO(`${untilDate}`).toUTC();
           const { year, day, month, hour, minute } = utcDate;
-          rule.options.until = datetime(year, month, day, hour, minute);
+          rule.origOptions.until = datetime(year, month, day, hour, minute);
         }
         if (untilTime) {
           // This block is used when the user enters a time, but no date.
@@ -96,7 +96,7 @@ export function RuleForm(
             .set(get24Hour(untilTime))
             .toUTC();
 
-          rule.options.until = datetime(year, month, day, hour, minute);
+          rule.origOptions.until = datetime(year, month, day, hour, minute);
         }
       }
     }
@@ -106,7 +106,7 @@ export function RuleForm(
       : isRulesStep
         ? rules.length + 1 || 1
         : exceptions.length + 1 || 1;
-    const ruleObject = { rule, id: itemId };
+    const ruleObject = { rule: RRule.optionsToString({ ...rule.origOptions }), id: itemId };
     const index = isRulesStep
       ? rules.findIndex((r) => r.id === ruleId)
       : exceptions.findIndex((r) => r.id === ruleId);
