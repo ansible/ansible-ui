@@ -59,4 +59,5 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
+          component: true
           spec: ${{ matrix.directory }}/**/*.cy.tsx
