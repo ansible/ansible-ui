@@ -3,3 +3,4 @@ theme: minima
 minima:
   skin: dark
 header_pages:
+  - index.md
