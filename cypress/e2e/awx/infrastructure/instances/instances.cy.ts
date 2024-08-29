@@ -69,9 +69,7 @@ describe('Instances K8S', () => {
       cy.intercept('PATCH', awxAPI`/instances/*/`).as('editedInstance');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('details')).to.be.true;
-      });
+      cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
       cy.getByDataCy('actions-dropdown').click();
       cy.getByDataCy('edit-instance').click();
       cy.getByDataCy('listener-port').type('9999');
@@ -129,9 +127,7 @@ describe('Instances K8S', () => {
     it('can uncheck the Enable Instance checkbox on the edit form, save form, and see the toggle is off', () => {
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/infrastructure/instances/${instance.id}/details`)).to.be.true;
-      });
+      cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
       cy.get('input[aria-label="Enabled"]').should('exist');
       cy.getByDataCy('actions-dropdown').click();
       cy.getByDataCy('edit-instance').click();
@@ -169,9 +165,7 @@ describe('Instances K8S', () => {
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('details')).to.be.true;
-      });
+      cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
       cy.getByDataCy('actions-dropdown').click();
       cy.getByDataCy('remove-instance').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -250,81 +244,85 @@ describe('Instances K8S', () => {
   });
 
   describe('Instances: Run Health Check', () => {
-    let instance: Instance;
-
     beforeEach(() => {
-      cy.createAwxInstance('E2EInstanceRunHealthCheck' + randomString(5)).then((ins: Instance) => {
-        instance = ins;
-      });
+      cy.createAwxInstance('E2EInstanceRunHealthCheck' + randomString(5)).as('instance');
       cy.navigateTo('awx', 'instances');
       cy.verifyPageTitle('Instances');
     });
 
     afterEach(() => {
-      cy.removeAwxInstance(instance.id.toString());
+      cy.get<Instance>('@instance').then((instance) => {
+        cy.removeAwxInstance(instance.id.toString());
+      });
     });
 
     it('can run a health check on an Instance in the instance list toolbar and assert the expected results', () => {
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="run-health-check"] button').should('have.attr', 'aria-disabled', 'true');
-      cy.filterTableBySingleSelect('hostname', instance.hostname);
-      cy.contains('tr', instance.hostname).find('input').check();
-      cy.get('[data-cy="actions-dropdown"]').click();
-      cy.get('[data-cy="run-health-check"] button').should('not.have.attr', 'aria-disabled');
-      cy.get('[data-cy="run-health-check"] button').click();
-      cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
-      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-        cy.get('header').contains('Run health checks on these instances');
-        cy.get('button').contains('Run health check').should('have.attr', 'aria-disabled', 'true');
-        cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
-        cy.get('input[id="confirm"]').click();
-        cy.get('button').contains('Run health check').click();
-      });
-      cy.wait('@runHealthCheck')
-        .then((response) => {
-          expect(response.response?.statusCode).to.eql(200);
-        })
-        .its('response.body.msg')
-        .then((response) => {
-          expect(response).contains(`Health check is running for ${instance.hostname}.`);
+      cy.get<Instance>('@instance').then((instance) => {
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="run-health-check"] button').should('have.attr', 'aria-disabled', 'true');
+        cy.filterTableBySingleSelect('hostname', instance.hostname);
+        cy.contains('tr', instance.hostname).find('input').check();
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.get('[data-cy="run-health-check"] button').should('not.have.attr', 'aria-disabled');
+        cy.get('[data-cy="run-health-check"] button').click();
+        cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('header').contains('Run health checks on these instances');
+          cy.get('button')
+            .contains('Run health check')
+            .should('have.attr', 'aria-disabled', 'true');
+          cy.getByDataCy('name-column-cell').should('have.text', instance.hostname);
+          cy.get('input[id="confirm"]').click();
+          cy.get('button').contains('Run health check').click();
         });
-      cy.clickModalButton('Close');
-      cy.get('[data-cy="status-column-cell"]').contains('Running');
+        cy.wait('@runHealthCheck')
+          .then((response) => {
+            expect(response.response?.statusCode).to.eql(200);
+          })
+          .its('response.body.msg')
+          .then((response) => {
+            expect(response).contains(`Health check is running for ${instance.hostname}.`);
+          });
+        cy.clickModalButton('Close');
+        cy.get('[data-cy="status-column-cell"]').contains('Running');
+      });
     });
 
     it('can run a health check on an Instance in the instance details page and assert the expected results', () => {
-      cy.filterTableBySingleSelect('hostname', instance.hostname);
-      cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
-      cy.verifyPageTitle(instance.hostname);
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`/infrastructure/instances/${instance.id}/details`)).to.be.true;
+      cy.get<Instance>('@instance').then((instance) => {
+        cy.filterTableBySingleSelect('hostname', instance.hostname);
+        cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
+        cy.verifyPageTitle(instance.hostname);
+        cy.url().should('include', `/infrastructure/instances/${instance.id}/details`);
+        cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
+        cy.getByDataCy('run-health-check').click();
+        cy.wait('@runHealthCheck')
+          .then((response) => {
+            expect(response.response?.statusCode).to.eql(200);
+          })
+          .its('response.body.msg')
+          .then((response) => {
+            expect(response).contains(`Health check is running for ${instance.hostname}.`);
+          });
+        cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'true');
       });
-      cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
-      cy.getByDataCy('run-health-check').click();
-      cy.wait('@runHealthCheck')
-        .then((response) => {
-          expect(response.response?.statusCode).to.eql(200);
-        })
-        .its('response.body.msg')
-        .then((response) => {
-          expect(response).contains(`Health check is running for ${instance.hostname}.`);
-        });
-      cy.get('[data-cy="run-health-check"]').should('have.attr', 'aria-disabled', 'true');
     });
 
     it('can run a health check on an Instance in the instance list from row action and assert the expected results', () => {
-      cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
-      cy.filterTableBySingleSelect('hostname', instance.hostname);
-      cy.clickTableRowPinnedAction(instance.hostname, 'run-health-check', false);
-      cy.wait('@runHealthCheck')
-        .then((response) => {
-          expect(response.response?.statusCode).to.eql(200);
-        })
-        .its('response.body.msg')
-        .then((response) => {
-          expect(response).contains(`Health check is running for ${instance.hostname}.`);
-        });
-      cy.get('[data-cy="status-column-cell"]').contains('Running');
+      cy.get<Instance>('@instance').then((instance) => {
+        cy.intercept('POST', awxAPI`/instances/*/health_check/`).as('runHealthCheck');
+        cy.filterTableBySingleSelect('hostname', instance.hostname);
+        cy.clickTableRowPinnedAction(instance.hostname, 'run-health-check', false);
+        cy.wait('@runHealthCheck')
+          .then((response) => {
+            expect(response.response?.statusCode).to.eql(200);
+          })
+          .its('response.body.msg')
+          .then((response) => {
+            expect(response).contains(`Health check is running for ${instance.hostname}.`);
+          });
+        cy.get('[data-cy="status-column-cell"]').contains('Running');
+      });
     });
   });
 
@@ -355,9 +353,7 @@ describe('Instances K8S', () => {
       cy.filterTableBySingleSelect('hostname', instance.hostname);
       cy.clickTableRowLink('name', instance.hostname, { disableFilter: true });
       cy.getByDataCy('instances-peers-tab').click();
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes('peers')).to.be.true;
-      });
+      cy.url().should('include', `/infrastructure/instances/${instance.id}/peers`);
       cy.getByDataCy('associate-peers').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.get('header').contains('Select peer addresses');
@@ -384,9 +380,7 @@ describe('Instances K8S', () => {
       });
       cy.getByDataCy('instances-details-tab').should('be.visible');
       cy.go('back');
-      cy.url().then((currentUrl) => {
-        expect(currentUrl.includes(`infrastructure/instances/${instance.id}/peers`)).to.be.true;
-      });
+      cy.url().should('include', `/infrastructure/instances/${instance.id}/peers`);
       cy.verifyPageTitle(instance.hostname);
       cy.filterTableBySingleText(instanceToAssociate.hostname, true);
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
