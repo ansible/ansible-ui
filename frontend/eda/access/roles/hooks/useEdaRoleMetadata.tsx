@@ -12,10 +12,8 @@ export enum EdaContentTypes {
   Activation = 'eda.activation',
   AuditRule = 'eda.auditrule',
   Credential = 'eda.edacredential',
-  CredentialType = 'eda.credentialtype',
   DecisionEnvironment = 'eda.decisionenvironment',
   EventStream = 'eda.eventstream',
-  ExtraVar = 'eda.extravar',
   Organization = 'shared.organization',
   Project = 'eda.project',
   Rulebook = 'eda.rulebook',
@@ -54,18 +52,9 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
         'eda.edacredential': {
           displayName: t('Credential'),
           permissions: {
-            'eda.add_edacredential': t('Add credential'),
             'eda.change_edacredential': t('Change credential'),
             'eda.delete_edacredential': t('Delete credential'),
             'eda.view_edacredential': t('View credential'),
-          },
-        },
-        'eda.credentialtype': {
-          displayName: t('Credential Type'),
-          permissions: {
-            'eda.change_credentialtype': t('Change credential type'),
-            'eda.delete_credentialtype': t('Delete credential type'),
-            'eda.view_credentialtype': t('View credential type'),
           },
         },
         'eda.decisionenvironment': {
@@ -79,16 +68,9 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
         'eda.eventstream': {
           displayName: t('Event stream'),
           permissions: {
-            'eda.add_eventstream': t('Add event stream'),
             'eda.change_eventstream': t('Change event stream'),
             'eda.delete_eventstream': t('Delete event stream'),
             'eda.view_eventstream': t('View event stream'),
-          },
-        },
-        'eda.extravar': {
-          displayName: t('Extra Var'),
-          permissions: {
-            'eda.view_extravar': t('View extra var'),
           },
         },
         'shared.organization': {
@@ -106,10 +88,6 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
             'eda.delete_activation': t('Delete activation'),
             'eda.view_rulebookprocess': t('View rulebook process'),
             'eda.view_auditrule': t('View audit rule'),
-            'eda.add_credentialtype': t('Add credential type'),
-            'eda.change_credentialtype': t('Change credential type'),
-            'eda.delete_credentialtype': t('Delete credential type'),
-            'eda.view_credentialtype': t('View credential type'),
             'eda.add_edacredential': t('Add credential'),
             'eda.change_edacredential': t('Change credential'),
             'eda.delete_edacredential': t('Delete credential'),
@@ -118,8 +96,7 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
             'eda.change_decisionenvironment': t('Change decision environment'),
             'eda.delete_decisionenvironment': t('Delete decision environment'),
             'eda.view_decisionenvironment': t('View decision environment'),
-            'eda.add_extravar': t('Add extra var'),
-            'eda.view_extravar': t('View extra var'),
+            'eda.sync_project': t('Sync project'),
             'eda.add_project': t('Add project'),
             'eda.change_project': t('Change project'),
             'eda.delete_project': t('Delete project'),
@@ -139,6 +116,7 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
         'eda.project': {
           displayName: t('Project'),
           permissions: {
+            'eda.sync_project': t('Sync project'),
             'eda.change_project': t('Change project'),
             'eda.delete_project': t('Delete project'),
             'eda.view_project': t('View project'),
@@ -162,7 +140,6 @@ export function useEdaRoleMetadata(): EdaRoleMetadata {
           displayName: t('Team'),
           permissions: {
             'shared.member_team': t('Member team'),
-            'shared.add_team': t('Add team'),
             'shared.change_team': t('Change team'),
             'shared.delete_team': t('Delete team'),
             'shared.view_team': t('View team'),
