@@ -1,3 +1,3 @@
-# Hello
+# AAP UI Docs
 
-- [Capitalization](.CAPITALIZATION.md)
+- [Capitalization](./CAPITALIZATION.md)
