@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   MultiSelectDialog,
@@ -112,7 +112,7 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
     selectTeams(
       t('Add teams'),
       t('Select teams below to be added to this user'),
-      t('Save'),
+      t('Add teams'),
       async (teams: PlatformTeam[]) => {
         if (!userId) return;
         try {
@@ -190,15 +190,15 @@ function useUserTeamsToolbarActions(userId: string, view: IPlatformView<Platform
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add team(s)'),
+        label: t('Add teams'),
         onClick: associateTeams,
       },
       { type: PageActionType.Seperator },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Remove selected teams'),
+        icon: MinusCircleIcon,
+        label: t('Remove teams'),
         onClick: removeTeams,
         isDanger: true,
       },
