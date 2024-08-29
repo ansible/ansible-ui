@@ -1,2 +1,5 @@
-[Capitalization](./CAPITALIZATION.md)
-[[DEVELOPMENT]]
+[i18n](i18n.md)
+[Testing Strategy](Testing%20Strategy.md)
+[Dependency Updates](Dependency%20Updates.md)
+[DEVELOPMENT](DEVELOPMENT.md)
+[CAPITALIZATION](CAPITALIZATION.md)
