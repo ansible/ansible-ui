@@ -241,7 +241,7 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
         ).should('not.exist');
         cy.selectTableRow(currentPlatformUser.username);
       });
-      cy.clickToolbarKebabAction('delete-selected-tokens');
+      cy.clickToolbarKebabAction('delete-tokens');
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', gatewayV1API`/tokens/*/`).as('deleteAAPToken');
       cy.getModal().within(() => {

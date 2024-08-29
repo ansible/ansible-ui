@@ -135,7 +135,7 @@ export function useGetPlatformUsersRoutes() {
           element: (
             <>
               <UserTokenPage
-                backTabLabel="Back To Automation Execution tokens"
+                backTabLabel="Back to Automation Execution tokens"
                 breadcrumbLabelForPreviousPage="Automation Execution tokens"
               />
               {newUserToken && (

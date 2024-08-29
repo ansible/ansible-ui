@@ -76,7 +76,7 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected tokens'),
+        label: t('Delete tokens'),
         isDanger: true,
         onClick: deleteTokens,
       },
@@ -92,6 +92,7 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
         icon: TrashIcon,
         label: t('Delete token'),
         isDanger: true,
+        isPinned: true,
         onClick: (token) => {
           deleteTokens([token]);
         },
