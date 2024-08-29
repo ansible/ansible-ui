@@ -1,4 +1,4 @@
 title: AAP UI Docs
-theme: jekyll-theme-minimal
-plugins:
-  - jekyll-search
+theme: minima
+minima:
+  skin: dark
