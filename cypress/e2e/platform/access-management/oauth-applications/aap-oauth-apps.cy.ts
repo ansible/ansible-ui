@@ -26,7 +26,7 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         const oauthApplicationName = `AAP OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
-        cy.getByDataCy('create-application').click();
+        cy.getByDataCy('create-oauth-application').click();
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
         cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
@@ -59,20 +59,19 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         cy.contains('dd', appClientType);
         //edit from list row and delete from details page
         cy.navigateTo('platform', 'applications');
-        cy.verifyPageTitle('Applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
-          cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-application', false);
+          cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-oauth-application', false);
           cy.verifyPageTitle(`Edit ${oauthApplicationName}`);
           cy.getByDataCy('description')
             .clear()
             .type(`${authGrantType} with ${appClientType} edited`);
           cy.getByDataCy('Submit').click();
           cy.verifyPageTitle(oauthApplicationName);
-          cy.clickButton(/^Delete application/);
+          cy.clickKebabAction('actions-dropdown', 'delete-oauth-application');
           cy.intercept('DELETE', gatewayV1API`/applications/*/`).as('deleteApplication');
           cy.getModal().within(() => {
             cy.get('#confirm').click();
-            cy.clickButton(/^Delete application/);
+            cy.clickButton(/^Delete OAuth application/);
             cy.wait('@deleteApplication')
               .its('response')
               .then((response) => {
@@ -106,7 +105,7 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         const oauthApplicationName = `AAP OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
-        cy.getByDataCy('create-application').click();
+        cy.getByDataCy('create-oauth-application').click();
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
         cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
@@ -141,14 +140,14 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         cy.navigateTo('platform', 'applications');
         cy.verifyPageTitle('Applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
-          cy.clickTableRowAction('name', oauthApplicationName, 'delete-application', {
+          cy.clickTableRowAction('name', oauthApplicationName, 'delete-oauth-application', {
             inKebab: true,
             disableFilter: true,
           });
           cy.clickModalConfirmCheckbox();
           cy.intercept('DELETE', gatewayV1API`/applications/*/`).as('deleteApplication');
           cy.getModal().within(() => {
-            cy.clickButton(/^Delete application/);
+            cy.clickButton(/^Delete OAuth application/);
             cy.wait('@deleteApplication')
               .its('response')
               .then((response) => {
@@ -182,12 +181,12 @@ describe('AAP OAuth Applications CRUD actions and Bulk Deletion', () => {
     cy.verifyPageTitle('Applications');
     cy.selectTableRow(platformApplication1.name);
     cy.selectTableRow(platformApplication2.name);
-    cy.clickToolbarKebabAction('delete-selected-applications');
+    cy.clickToolbarKebabAction('delete-oauth-applications');
     cy.clickModalConfirmCheckbox();
     cy.intercept('DELETE', gatewayV1API`/applications/*/`).as('deleteOAuthApp1');
     cy.intercept('DELETE', gatewayV1API`/applications/*`).as('deleteOAuthApp2');
     cy.getModal().within(() => {
-      cy.clickButton(/^Delete application/);
+      cy.clickButton(/^Delete OAuth application/);
       cy.wait(['@deleteOAuthApp1', '@deleteOAuthApp2']).then((deleteTeamArr) => {
         expect(deleteTeamArr[0]?.response?.statusCode).to.eql(204);
         expect(deleteTeamArr[1]?.response?.statusCode).to.eql(204);
@@ -220,7 +219,7 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
       cy.clickTableRowLink('name', platformApplication.name, { disableFilter: true });
       cy.verifyPageTitle(platformApplication.name);
       cy.clickTab('Tokens', true);
-      cy.contains('h4', 'There are currently no tokens associated with this application');
+      cy.contains('h4', 'There are currently no tokens associated with this OAuth application');
       cy.contains('.pf-v5-c-empty-state__body', 'You can create a token from your user page.');
       cy.getCurrentPlatformUser().then((currentPlatformUser: PlatformUser) => {
         cy.createPlatformToken({ application: platformApplication.id, scope: 'write' }).then(
@@ -232,9 +231,10 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
               });
           }
         );
-        cy.contains('h4', 'There are currently no tokens associated with this application').should(
-          'not.exist'
-        );
+        cy.contains(
+          'h4',
+          'There are currently no tokens associated with this OAuth application'
+        ).should('not.exist');
         cy.contains(
           '.pf-v5-c-empty-state__body',
           'You can create a token from your user page.'
@@ -256,11 +256,11 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
       cy.clickTab('Back to Applications', true);
       cy.verifyPageTitle('Applications');
       cy.selectTableRow(platformApplication.name);
-      cy.clickToolbarKebabAction('delete-selected-applications');
+      cy.clickToolbarKebabAction('delete-oauth-applications');
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', gatewayV1API`/applications/*/`).as('deleteOAuthApp');
       cy.getModal().within(() => {
-        cy.clickButton(/^Delete application/);
+        cy.clickButton(/^Delete OAuth application/);
         cy.wait('@deleteOAuthApp').then((deleteOAuthApp) => {
           expect(deleteOAuthApp?.response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);

@@ -56,7 +56,7 @@ export function CreatePlatformApplication(props: {
         ]}
       />
       <AwxPageForm
-        submitText={t('Create application')}
+        submitText={t('Create OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
@@ -135,7 +135,7 @@ export function EditPlatformApplication() {
         ]}
       />
       <AwxPageForm<Application>
-        submitText={t('Save application')}
+        submitText={t('Save OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
