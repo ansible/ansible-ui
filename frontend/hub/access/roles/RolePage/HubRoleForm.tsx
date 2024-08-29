@@ -1,6 +1,6 @@
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useWatch } from 'react-hook-form';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -10,18 +10,18 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
-import { useInvalidateCacheOnUnmount } from '../../../../common/useInvalidateCache';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { hubAPI } from '../../../common/api/formatPath';
-import { HubRoute } from '../../../main/HubRoutes';
-import { HubPageForm } from '../../../common/HubPageForm';
-import { useHubRoleMetadata } from '../hooks/useHubRoleMetadata';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { PageFormMultiSelect } from '../../../../../framework/PageForm/Inputs/PageFormMultiSelect';
-import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
+import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { useInvalidateCacheOnUnmount } from '../../../../common/useInvalidateCache/useInvalidateCache';
+import { hubAPI } from '../../../common/api/formatPath';
+import { HubPageForm } from '../../../common/HubPageForm';
+import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { HubRoute } from '../../../main/HubRoutes';
+import { useHubRoleMetadata } from '../hooks/useHubRoleMetadata';
 import { useIsValidRoleName } from '../hooks/useIsValidRoleName';
 
 export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
