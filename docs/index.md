@@ -1,3 +1,5 @@
+Documentation for the Ansible Automation Platform UI.
+
 ## Development
 
 - [Development](Development/Development.md)
