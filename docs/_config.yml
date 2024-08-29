@@ -1,2 +1,4 @@
 title: AAP UI Docs
 theme: jekyll-theme-architect
+plugins:
+  - jekyll-search
