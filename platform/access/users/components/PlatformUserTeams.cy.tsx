@@ -49,8 +49,8 @@ describe('User teams list', () => {
       cy.get('tbody').find('tr').should('have.length', 3);
 
       // Toolbar actions are visible & enabled
-      cy.get(`[data-cy="add-team(s)"]`).should('be.visible');
-      cy.get('[data-cy="add-team(s)"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get(`[data-cy="add-teams"]`).should('be.visible');
+      cy.get('[data-cy="add-teams"]').should('have.attr', 'aria-disabled', 'false');
 
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab').click();
@@ -59,7 +59,7 @@ describe('User teams list', () => {
           .find('.pf-v5-c-menu__content')
           .within(() => {
             cy.get('button')
-              .contains(/^Remove selected teams$/)
+              .contains(/^Remove teams$/)
               .should('be.visible');
           });
       });

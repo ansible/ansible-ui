@@ -21,7 +21,7 @@ describe('Users - Create, Edit and Delete', () => {
       cy.verifyPageTitle(createdPlatformUser.username);
       cy.clickTab(/^Back to Users$/, true);
       cy.selectTableRowByCheckbox('username', `edited-${createdPlatformUser.username}`);
-      cy.clickToolbarKebabAction('delete-selected-users');
+      cy.clickToolbarKebabAction('delete-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
       cy.clickButton('Close');
@@ -56,7 +56,7 @@ describe('Users - Create, Edit and Delete', () => {
       cy.createPlatformUser().then((createdPlatformUser2: PlatformUser) => {
         cy.selectTableRowByCheckbox('username', createdPlatformUser1.username);
         cy.selectTableRowByCheckbox('username', createdPlatformUser2.username);
-        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.clickToolbarKebabAction('delete-users');
         cy.getModal().within(() => {
           cy.get('#confirm').click();
           cy.get('#submit').click();
@@ -101,7 +101,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
         cy.selectTableRowByCheckbox('username', `${createdUser.username}`);
-        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.clickToolbarKebabAction('delete-users');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete user/);
         cy.clickButton('Close');
@@ -134,7 +134,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
         cy.selectTableRowByCheckbox('username', `${createdUser.username}`);
-        cy.clickToolbarKebabAction('delete-selected-users');
+        cy.clickToolbarKebabAction('delete-users');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete user/);
         cy.clickButton('Close');
@@ -218,7 +218,7 @@ describe('Users - Teams and Roles Tab Tests', () => {
     cy.createPlatformUser().then((createdPlatformUser: PlatformUser) => {
       cy.clickTableRowLink('username', createdPlatformUser.username);
       cy.clickTab('Teams', true);
-      cy.get('[data-cy="add-team(s)"]').click();
+      cy.get('[data-cy="add-teams"]').click();
       cy.getModal().within(() => {
         cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
         cy.selectTableRowByCheckbox('name', platformTeam.name, { disableFilter: true });
@@ -227,7 +227,7 @@ describe('Users - Teams and Roles Tab Tests', () => {
       cy.getModal().should('not.exist');
       cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
       cy.selectTableRowByCheckbox('name', platformTeam.name, { disableFilter: true });
-      cy.clickToolbarKebabAction('remove-selected-teams');
+      cy.clickToolbarKebabAction('remove-teams');
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
