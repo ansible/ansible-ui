@@ -1,1 +1,2 @@
-- [Capitalization](./CAPITALIZATION.md)
+[Capitalization](./CAPITALIZATION.md)
+[[DEVELOPMENT]]
