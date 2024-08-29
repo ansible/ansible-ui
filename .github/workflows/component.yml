@@ -1,42 +1,46 @@
-name: Pull Request
+name: Component
 
 on:
   workflow_call:
-    secrets:
-      COMPONENT_PROJECT_ID:
-        required: true
-      COMPONENT_RECORD_KEY:
-        required: true
+
 jobs:
+  generate-matrix:
+    name: Generate Test Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.MATRIX }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate matrix
+        id: set-matrix
+        run: |
+          matrix=$(find frontend -type f -name '*.cy.tsx' | awk -F'/' '{print $1"/"$2"/"$3}' | sort -u | jq -R . | jq -s -c .)
+          echo "Matrix value: $matrix"
+          echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
+
   component:
     name: Component
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
-        task: [
-          "awx:access",
-          "awx:administration",
-          "awx:common",
-          "awx:overview",
-          "awx:resources",
-          "awx:views",
-          "eda",
-          "hub",
-          "common",
-          "framework"
-        ]
+        directory: ${{ fromJson(needs.generate-matrix.outputs.MATRIX) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
+
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v4
@@ -45,8 +49,13 @@ jobs:
             ./node_modules
             /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - name: Run Cypress component tests ${{ matrix.task }}
-        run: npm run component:${{ matrix.task }}
+
+      - name: Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          spec: frontend/${{ matrix.directory }}/**/*.cy.ts
