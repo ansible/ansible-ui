@@ -1,4 +1,4 @@
-import { Alert, PageSection } from '@patternfly/react-core';
+import { Alert, Bullseye, PageSection, Spinner } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useCallback, useEffect } from 'react';
 import { useFormState } from 'react-hook-form';
@@ -18,7 +18,7 @@ export function PageWizardBody({
   singleColumn,
 }: PageWizardBody) {
   const navigate = useNavigate();
-  const { activeStep, stepData, onNext, onBack, submitError } = usePageWizard();
+  const { activeStep, stepData, onNext, onBack, submitError, isSubmitting } = usePageWizard();
 
   const onClose = useCallback((): void => {
     if (onCancel) {
@@ -27,6 +27,14 @@ export function PageWizardBody({
       navigate(-1);
     }
   }, [navigate, onCancel]);
+
+  if (isSubmitting) {
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
+  }
 
   return (
     <PageLayout>

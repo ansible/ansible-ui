@@ -37,6 +37,7 @@ export function PageWizardProvider<T extends object>(props: {
   const [stepData, setStepData] = useState<Record<string, object>>(props.defaultValue ?? {});
   const [stepError, setStepError] = useState<Record<string, object>>({});
   const [submitError, setSubmitError] = useState<Error>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [_, setSearchParams] = useURLSearchParams();
   const flattenedSteps = useMemo(() => getFlattenedSteps(steps), [steps]);
@@ -72,10 +73,13 @@ export function PageWizardProvider<T extends object>(props: {
       const isLastStep =
         activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
       if (isLastStep) {
+        setIsSubmitting(true);
         try {
           await onSubmit(wizardData as T);
         } catch (e) {
           setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
+        } finally {
+          setIsSubmitting(false);
         }
         return;
       }
@@ -108,30 +112,50 @@ export function PageWizardProvider<T extends object>(props: {
     setActiveStep(previousStep);
   }, [activeStep?.id, flattenedSteps, setSearchParams, wizardData]);
 
+  const contextValue = useMemo(
+    () => ({
+      wizardData,
+      setWizardData: setWizardData,
+      stepData,
+      setStepData: setStepData,
+      steps: props.steps,
+      visibleSteps: getVisibleSteps(steps, wizardData),
+      visibleStepsFlattened: getVisibleStepsFlattened(steps, wizardData),
+      activeStep,
+      setActiveStep: setActiveStep,
+      stepError,
+      setStepError: setStepError,
+      submitError,
+      setSubmitError: setSubmitError,
+      isToggleExpanded: isToggleExpanded,
+      setToggleExpanded: setToggleExpanded,
+      onNext,
+      onBack,
+      isSubmitting,
+    }),
+    [
+      wizardData,
+      setWizardData,
+      stepData,
+      setStepData,
+      props.steps,
+      steps,
+      activeStep,
+      setActiveStep,
+      stepError,
+      setStepError,
+      submitError,
+      setSubmitError,
+      isToggleExpanded,
+      setToggleExpanded,
+      onNext,
+      onBack,
+      isSubmitting,
+    ]
+  );
+
   return (
-    <PageWizardContext.Provider
-      value={{
-        wizardData,
-        setWizardData: setWizardData,
-        stepData,
-        setStepData: setStepData,
-        steps: props.steps,
-        visibleSteps: getVisibleSteps(steps, wizardData),
-        visibleStepsFlattened: getVisibleStepsFlattened(steps, wizardData),
-        activeStep,
-        setActiveStep: setActiveStep,
-        stepError,
-        setStepError: setStepError,
-        submitError,
-        setSubmitError: setSubmitError,
-        isToggleExpanded: isToggleExpanded,
-        setToggleExpanded: setToggleExpanded,
-        onNext,
-        onBack,
-      }}
-    >
-      {props.children}
-    </PageWizardContext.Provider>
+    <PageWizardContext.Provider value={contextValue}>{props.children}</PageWizardContext.Provider>
   );
 }
 

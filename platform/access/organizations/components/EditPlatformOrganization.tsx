@@ -1,7 +1,6 @@
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../../framework';
 import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
@@ -9,7 +8,8 @@ import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { Credential } from '../../../../frontend/awx/interfaces/Credential';
 import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
 import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { requestGet, swrOptions } from '../../../../frontend/common/crud/Data';
+import { requestGet } from '../../../../frontend/common/crud/Data';
+import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { gatewayAPI, gatewayV1API } from '../../../api/gateway-api-utils';
@@ -36,6 +36,18 @@ interface DisassociateControllerCredential {
   disassociate: boolean;
 }
 
+function areArraysEqualInOrder<T>(arr1: T[], arr2: T[]): boolean {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function EditPlatformOrganization() {
   const pageNavigate = usePageNavigate();
   const alertToaster = usePageAlertToaster();
@@ -43,10 +55,8 @@ export function EditPlatformOrganization() {
   const id = Number(params.id);
   const awxService = useHasAwxService();
 
-  const { data: platformOrganization } = useSWR<PlatformOrganization>(
-    gatewayAPI`/organizations/${id.toString()}/`,
-    requestGet,
-    swrOptions
+  const { data: platformOrganization } = useGet<PlatformOrganization>(
+    gatewayAPI`/organizations/${id.toString()}/`
   );
 
   const [controllerOrganization, setControllerOrganization] = useState<
@@ -79,7 +89,6 @@ export function EditPlatformOrganization() {
   }, [platformOrganization, awxService]);
 
   const patchRequest = usePatchRequest<PlatformOrganization, PlatformOrganization>();
-
   const updateControllerOrganizationRequest = usePatchRequest();
   const associateInstanceGroupsRequest = usePostRequest<AssociateControllerInstanceGroup>();
   const disassociateInstanceGroupsRequest = usePostRequest<DisassociateControllerInstanceGroup>();
@@ -87,62 +96,86 @@ export function EditPlatformOrganization() {
   const disassociateGalaxyCredentialsRequest = usePostRequest<DisassociateControllerCredential>();
 
   const handleSubmit = async (values: OrganizationWizardFormValues) => {
+    const currentInstanceGroups = values.instanceGroups || [];
+    const previousInstanceGroups = instanceGroups || [];
+    const currentGalaxyCredentials = values.galaxyCredentials || [];
+    const previousGalaxyCredentials = galaxyCredentials || [];
+
+    const currentInstanceGroupsIds = currentInstanceGroups.map((ig) => ig.id);
+    const previousInstanceGroupsIds = previousInstanceGroups.map((ig) => ig.id);
+    const currentGalaxyCredentialsIds = currentGalaxyCredentials.map((cred) => cred.id);
+    const previousGalaxyCredentialsIds = previousGalaxyCredentials.map((cred) => cred.id);
+
+    const instanceGroupsChanged = !areArraysEqualInOrder<number>(
+      currentInstanceGroupsIds,
+      previousInstanceGroupsIds
+    );
+
+    const galaxyCredentialsChanged = !areArraysEqualInOrder<number>(
+      currentGalaxyCredentialsIds,
+      previousGalaxyCredentialsIds
+    );
+
     try {
       await patchRequest(gatewayV1API`/organizations/${id.toString()}/`, values.organization);
 
       if (awxService && controllerOrganization) {
-        const disassociateAndUpdateRequests = [];
-        disassociateAndUpdateRequests.push(
-          updateControllerOrganizationRequest(
-            awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
-            {
-              default_environment: values?.executionEnvironment ?? null,
-              max_hosts: values?.maxHosts ? values?.maxHosts : 0,
-            }
-          )
+        await updateControllerOrganizationRequest(
+          awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
+          {
+            default_environment: values?.executionEnvironment ?? null,
+            max_hosts: values?.maxHosts ? values?.maxHosts : 0,
+          }
         );
-        for (const previousIg of instanceGroups || []) {
-          disassociateAndUpdateRequests.push(
-            disassociateInstanceGroupsRequest(
+
+        // Resolve promises for instance groups and galaxy credentials in order to
+        // avoid race conditions and ensure order of operations
+
+        if (instanceGroupsChanged) {
+          // Disassociate all instance groups before associating new ones
+          for (const previousIg of previousInstanceGroups) {
+            await disassociateInstanceGroupsRequest(
               awxAPI`/organizations/${controllerOrganization.id.toString()}/instance_groups/`,
               {
                 id: previousIg.id,
                 disassociate: true,
               }
-            )
-          );
+            );
+          }
+
+          for (const newIg of currentInstanceGroups) {
+            await associateInstanceGroupsRequest(
+              awxAPI`/organizations/${controllerOrganization.id.toString()}/instance_groups/`,
+              {
+                id: newIg.id,
+              }
+            );
+          }
         }
-        for (const previousGalaxyCred of galaxyCredentials || []) {
-          disassociateAndUpdateRequests.push(
-            disassociateGalaxyCredentialsRequest(
+
+        if (galaxyCredentialsChanged) {
+          // Disassociate all galaxy credentials before associating new ones
+          for (const previousGalaxyCred of previousGalaxyCredentials) {
+            await disassociateGalaxyCredentialsRequest(
               awxAPI`/organizations/${controllerOrganization.id.toString()}/galaxy_credentials/`,
               {
                 id: previousGalaxyCred.id,
                 disassociate: true,
               }
-            )
-          );
-        }
+            );
+          }
 
-        await Promise.all(disassociateAndUpdateRequests);
-
-        for (const newIg of values.instanceGroups || []) {
-          await associateInstanceGroupsRequest(
-            awxAPI`/organizations/${controllerOrganization.id.toString()}/instance_groups/`,
-            {
-              id: newIg.id,
-            }
-          );
-        }
-        for (const newGalaxyCred of values.galaxyCredentials || []) {
-          await associateGalaxyCredentialsRequest(
-            awxAPI`/organizations/${controllerOrganization.id.toString()}/galaxy_credentials/`,
-            {
-              id: newGalaxyCred.id,
-            }
-          );
+          for (const newGalaxyCred of currentGalaxyCredentials) {
+            await associateGalaxyCredentialsRequest(
+              awxAPI`/organizations/${controllerOrganization.id.toString()}/galaxy_credentials/`,
+              {
+                id: newGalaxyCred.id,
+              }
+            );
+          }
         }
       }
+
       pageNavigate(PlatformRoute.OrganizationDetails, { params: { id } });
     } catch (error) {
       const { genericErrors, fieldErrors } = awxErrorAdapter(error);
