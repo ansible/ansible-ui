@@ -1,3 +1,5 @@
+# Capitalization
+
 [PatternFly Guidelines](https://www.patternfly.org/v4/ux-writing/capitalization/#capitalization-across-red-hat-uis)
 
 - Write navigation items and their corresponding page titles in title case.
