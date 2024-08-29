@@ -11,7 +11,7 @@ import { useRemoveTeamUsers } from './useRemoveTeamUsers';
 import { useMemo } from 'react';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useAssociateTeamUsers } from './useAssociateTeamUsers';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
@@ -40,7 +40,7 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add user(s)'),
+        label: t('Add users'),
         isDisabled: canEditTeam
           ? undefined
           : t(
@@ -52,8 +52,8 @@ export function useTeamUsersToolbarActions(view: IPlatformView<PlatformUser>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Remove selected users'),
+        icon: MinusCircleIcon,
+        label: t('Remove users'),
         isDisabled: canEditTeam
           ? undefined
           : t(

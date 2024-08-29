@@ -19,7 +19,7 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
     selectUsers(
       t('Add users'),
       t('Select users below to be added to this team'),
-      t('Save'),
+      t('Add users'),
       async (users: PlatformUser[]) => {
         if (!team) return;
         await postRequest(gatewayV1API`/teams/${team?.id?.toString() ?? ''}/users/associate/`, {

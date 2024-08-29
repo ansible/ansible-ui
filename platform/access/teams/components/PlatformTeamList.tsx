@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
@@ -81,6 +81,7 @@ export function PlatformTeamList() {
               )
         }
         emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
         emptyStateButtonClick={
           canCreateTeam ? () => pageNavigate(PlatformRoute.CreateTeam) : undefined

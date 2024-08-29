@@ -36,12 +36,9 @@ describe('Teams list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
-          .within(() => {
-            cy.get('button')
-              .contains(/^Delete selected teams$/)
-              .should('be.visible');
-          });
+          .find('.pf-v5-c-menu__item')
+          .contains('Delete teams')
+          .should('be.visible');
       });
     });
     it('Create Team button is disabled if the user does not have permission to create teams', () => {
