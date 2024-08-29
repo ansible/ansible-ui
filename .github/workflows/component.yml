@@ -16,7 +16,7 @@ jobs:
       - name: Generate matrix
         id: set-matrix
         run: |
-          matrix=$(find frontend -type f -name '*.cy.tsx' | awk -F'/' '{print $1"/"$2"/"$3}' | sort -u | sed 's|^frontend/||'  jq -R . | jq -s -c .)
+          matrix=$(find frontend -type f -name '*.cy.tsx' | awk -F'/' '{print $1"/"$2"/"$3}' | sort -u | sed 's|^frontend/||' | jq -R . | jq -s -c .)
           echo "Matrix value: $matrix"
           echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
 
