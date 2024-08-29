@@ -97,6 +97,7 @@ export function useOrganizationAdminsRowActions(view: IPlatformView<PlatformUser
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: MinusCircleIcon,
+        isPinned: true,
         label: t('Remove administrator'),
         isDisabled: canEditOrganization
           ? ''

@@ -197,7 +197,7 @@ describe('Platform Teams - Tabs Tests', function () {
             });
             cy.getModal().should('not.exist');
             cy.clickTableRowAction('username', user1.username, 'remove-user', {
-              inKebab: true,
+              inKebab: false,
             });
             cy.getModal().within(() => {
               cy.getBy('#confirm').click();
@@ -230,7 +230,7 @@ describe('Platform Teams - Tabs Tests', function () {
             });
             cy.getModal().should('not.exist');
             cy.clickTableRowAction('username', user1.username, 'remove-administrator', {
-              inKebab: true,
+              inKebab: false,
             });
             cy.getModal().within(() => {
               cy.getBy('#confirm').click();
