@@ -1,0 +1,20 @@
+name: EDA Component
+
+on:
+  pull_request:
+    paths:
+      - 'cypress/support/**'
+      - 'frontend/eda/**'
+      - 'frontend/common/**'
+      - 'framework/**'
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  awx:
+    name: EDA
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/eda

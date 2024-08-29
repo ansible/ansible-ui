@@ -1,0 +1,20 @@
+name: AWX Component
+
+on:
+  pull_request:
+    paths:
+      - 'cypress/support/**'
+      - 'frontend/awx/**'
+      - 'frontend/common/**'
+      - 'framework/**'
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  awx:
+    name: AWX
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/awx

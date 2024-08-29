@@ -1,0 +1,19 @@
+name: Common Component
+
+on:
+  pull_request:
+    paths:
+      - 'cypress/support/**'
+      - 'frontend/common/**'
+      - 'framework/**'
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  awx:
+    name: Common
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/common
