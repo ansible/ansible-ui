@@ -1,8 +1,4 @@
-title: AAP UI Docs
+title: Ansible Automation Platform UI Docs
 theme: minima
-domain: aap-ui.github.io
-url: https://aap-ui.github.io
-minima:
-  skin: dark
 header_pages:
   - index.md
