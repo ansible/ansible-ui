@@ -13,8 +13,22 @@
       </form>
     </header>
 
-    <main>{{ content }}</main>
+    <main>
+      {{ content }}
+      <div id="search-results"></div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/jekyll-search@2.4.0/dist/jekyll-search.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var options = {
+          inputSelector: '#search-input',
+          searchIndex: '{{ '/search.json' | relative_url }}',
+          resultsContainerSelector: '#search-results',
+          placeholder: 'Search...',
+        };
+        new JekyllSearch(options);
+      });
+    </script>
   </body>
 </html>
