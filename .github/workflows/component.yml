@@ -2,6 +2,11 @@ name: Component
 
 on:
   workflow_call:
+    inputs:
+      directory:
+        description: 'The base directory to search for .cy.tsx files'
+        required: true
+        type: string
 
 jobs:
   generate-matrix:
@@ -16,7 +21,8 @@ jobs:
       - name: Generate matrix
         id: set-matrix
         run: |
-          matrix=$(find frontend -type f -name '*.cy.tsx' | awk -F'/' '{print $1"/"$2"/"$3}' | sort -u | sed 's|^frontend/||' | jq -R . | jq -s -c .)
+          BASE_DIR="${{ inputs.directory }}"
+          matrix=$(find "$BASE_DIR" -type f -name '*.cy.tsx' | sort -u | sed "s|^$BASE_DIR/||" | jq -R . | jq -s -c .)
           echo "Matrix value: $matrix"
           echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
 
@@ -60,4 +66,4 @@ jobs:
         with:
           install: false
           component: true
-          spec: frontend/${{ matrix.directory }}/**/*.cy.tsx
+          spec: ${{ inputs.directory }}/${{ matrix.directory }}/**/*.cy.tsx

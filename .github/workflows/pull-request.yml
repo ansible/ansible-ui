@@ -55,10 +55,19 @@ jobs:
       - run: npm run checks
 
   component:
-    name: Component
+    name: AWX Component
     needs: packages
     uses: ./.github/workflows/component.yml
-            
+    with:
+      directory: 'frontend'
+
+  framework:
+    name: AWX Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: 'framework'
+
   success:
     name: Success
     runs-on: ubuntu-latest
@@ -66,5 +75,6 @@ jobs:
     needs: 
       - checks
       - component
+      - framework
     steps:
       - run: echo Success
