@@ -1,5 +1,3 @@
-# [github.com/ansible/aap-ui](https://github.com/ansible/aap-ui)
-
 Documentation for the Ansible Automation Platform UI.
 
 ## Development
