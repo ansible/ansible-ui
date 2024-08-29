@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   MultiSelectDialog,
@@ -219,7 +219,8 @@ function useUserTeamsRowActions(userId: string, view: IPlatformView<PlatformTeam
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
+        isPinned: true,
         label: t('Remove team'),
         onClick: (team) => removeTeams([team]),
         isDanger: true,

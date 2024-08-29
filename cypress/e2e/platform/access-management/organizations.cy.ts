@@ -279,7 +279,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
 
       // Remove Administrator
       cy.clickTableRowAction('username', user.username, 'remove-administrator', {
-        inKebab: true,
+        inKebab: false,
       });
       cy.getModal().within(() => {
         cy.getBy('#confirm').click();
