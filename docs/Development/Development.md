@@ -1,5 +1,3 @@
-# Development
-
 ## PR Review Checklist
 
 - [ ] **Code Style**: Ensure that the code adheres to the project's style guidelines. We use Prettier and ESLint for code formatting and linting.
@@ -38,4 +36,4 @@ See: [CYPRESS.md](../cypress/CYPRESS.md)
 
 ## Internationalization (i18n)
 
-See: [i18n.md](./i18n.md)
+See: [i18n.md](i18n.md)

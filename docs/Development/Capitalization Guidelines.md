@@ -1,9 +1,4 @@
-# Capitalization
-
-From PatternFly Guidelines
-
-<https://www.patternfly.org/v4/ux-writing/capitalization/#capitalization-across-red-hat-uis>
-
+From [PatternFly Guidelines](https://www.patternfly.org/v4/ux-writing/capitalization/#capitalization-across-red-hat-uis)
 - Write navigation items and their corresponding page titles in title case.
 - Write all other areas (such as menu items, button text, form field labels, and empty state headings) in sentence case.
 
