@@ -1,6 +1,8 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { RemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
+import { HubItemsResponse } from '../../../frontend/hub/common/useHubView';
 import { ExecutionEnvironment } from '../../../frontend/hub/execution-environments/ExecutionEnvironment';
+import { ExecutionEnvironmentImage } from '../../../frontend/hub/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImage';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
@@ -10,6 +12,22 @@ function visitEEDetail(name: string) {
   cy.filterTableBySingleText(name);
   cy.get('a').contains(name).click();
   cy.verifyPageTitle(name);
+}
+
+function sumLayers(layers: { size: number }[]): number {
+  return layers.reduce((acc, curr) => acc + curr.size, 0);
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0';
+  if (!+bytes) return '';
+
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${Math.round(bytes / Math.pow(k, i))} ${sizes[i]}`;
 }
 
 describe('Execution Environments', () => {
@@ -234,7 +252,7 @@ describe('Execution Environment Details tab', () => {
   });
 });
 
-describe('Execution Environment Activity tab', () => {
+describe('Execution Environment Activity and Image tabs', () => {
   it('should display empty activity tab', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
@@ -253,7 +271,7 @@ describe('Execution Environment Activity tab', () => {
     });
   });
 
-  it('should display populated activity tab', () => {
+  it('should display populated activity and images tabs', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -279,6 +297,73 @@ describe('Execution Environment Activity tab', () => {
         cy.contains('sha256');
         cy.contains('latest was added');
         cy.wait('@getActivity');
+
+        //test the images tab
+        cy.getByDataCy('execution-environment-images-tab').click();
+        cy.get('tbody tr').should('have.length', 1);
+        cy.get('button[aria-label="Copy to clipboard"]').click();
+        cy.get('[data-cy="alert-toaster"]').should('be.visible');
+        cy.get('[data-cy="alert-toaster"]').within(() => {
+          cy.get('button').click();
+        });
+        cy.requestGet<HubItemsResponse<ExecutionEnvironmentImage>>(
+          hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/images/?exclude_child_manifests=true&offset=0&limit=10`
+        ).then((res) => {
+          expect(res?.data).to.have.length(1);
+          const image: ExecutionEnvironmentImage = res.data[0];
+          const { updated_at, tags, layers } = image;
+          cy.get('[data-cy="tag-column-cell"]').within(() => {
+            tags.forEach((tag) => {
+              cy.get('li').contains(tag).should('exist');
+            });
+          });
+          const createdDate = new Date(updated_at);
+          const formattedDateTime = `${createdDate.toLocaleDateString()}, ${createdDate.toLocaleTimeString()}`;
+          cy.get('[data-cy="published-column-cell"]')
+            .invoke('text')
+            .then((text) => {
+              expect(text).to.include(formattedDateTime);
+            });
+          cy.get('[data-cy="layers-column-cell"]')
+            .invoke('text')
+            .then((text) => {
+              expect(text.trim()).to.equal(layers.length.toString());
+            });
+          cy.get('[data-cy="size-column-cell"]')
+            .invoke('text')
+            .then((text) => {
+              const totalSize: number = sumLayers(layers);
+              const formattedSize: string = formatBytes(totalSize);
+              expect(text.trim()).to.equal(formattedSize);
+            });
+        });
+        cy.get('[data-cy="digest-column-cell"]').within(() => {
+          cy.requestGet<HubItemsResponse<ExecutionEnvironmentImage>>(
+            hubAPI`/v3/plugin/execution-environments/repositories/${executionEnvironment.name}/_content/images/?exclude_child_manifests=true&offset=0&limit=10`
+          ).then((res) => {
+            expect(res?.data).to.have.length(1);
+            const image: ExecutionEnvironmentImage = res.data[0];
+            const { digest } = image;
+
+            cy.get('a')
+              .should('have.attr', 'href')
+              .then((hrefAttr) => {
+                {
+                  typeof hrefAttr === 'string' &&
+                    expect(decodeURIComponent(hrefAttr)).to.include(
+                      `/execution-environments/${executionEnvironment.name}/images/${digest}/`
+                    );
+                }
+              });
+
+            cy.get('a span.pf-v5-c-label__text')
+              .invoke('text')
+              .then((text) => {
+                const truncatedDigest = digest.substring(0, 12);
+                expect(text.trim()).to.match(new RegExp(`^${truncatedDigest}`));
+              });
+          });
+        });
 
         cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
           cy.deleteHubRemoteRegistry(remoteRegistry);
