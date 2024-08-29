@@ -22,7 +22,7 @@ jobs:
         id: set-matrix
         run: |
           BASE_DIR="${{ inputs.directory }}"
-          matrix=$(find "$BASE_DIR" -type f -name '*.cy.tsx' | sed "s|^$BASE_DIR/||" | awk -F'/' '{print $1"/"$2}' | sort -u | jq -R . | jq -s -c .)
+          matrix=$(find "$BASE_DIR" -type f -name '*.cy.tsx' -exec dirname {} \; | sed "s|^$BASE_DIR/||" | sort -u | jq -R . | jq -s -c .)
           echo "Matrix value: $matrix"
           echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
 

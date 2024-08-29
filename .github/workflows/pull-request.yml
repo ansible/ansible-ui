@@ -69,7 +69,7 @@ jobs:
       directory: frontend/eda
 
   hub:
-    name: HBU
+    name: HUB
     needs: packages
     uses: ./.github/workflows/component.yml
     with:
