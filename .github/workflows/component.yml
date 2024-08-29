@@ -5,7 +5,7 @@ on:
 
 jobs:
   generate-matrix:
-    name: Test Matrix
+    name: Generate Matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.MATRIX }}
