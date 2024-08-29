@@ -568,8 +568,9 @@ Cypress.Commands.add('deleteHubNamespace', (options: HubDeleteNamespaceOptions) 
   cy.waitForAllTasks();
   cy.deleteCollectionsInNamespace(options.name);
   cy.waitForAllTasks();
+  const options2 = { ...options, failOnStatusCode: false };
   cy.hubDeleteRequest({
-    ...options,
+    ...options2,
     url: hubAPI`/_ui/v1/namespaces/${options.name}/`,
   });
 });
