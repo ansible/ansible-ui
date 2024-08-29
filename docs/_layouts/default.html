@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ site.title }}</title>
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}" />
+  </head>
+  <body>
+    <header>
+      <h1>{{ site.title }}</h1>
+      <form id="search-form" action="/">
+        <input type="search" name="q" id="search-input" placeholder="Search..." />
+        <input type="submit" value="Search" />
+      </form>
+    </header>
+
+    <main>{{ content }}</main>
+
+    <script src="https://cdn.jsdelivr.net/npm/jekyll-search@2.4.0/dist/jekyll-search.min.js"></script>
+  </body>
+</html>
