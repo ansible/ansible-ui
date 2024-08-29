@@ -1407,7 +1407,7 @@ Cypress.Commands.add(
     );
     cy.get('[data-cy="client-type"]').should('contain', customClientType.toLowerCase());
     //Click on Edit application button
-    cy.clickButton('Edit application');
+    cy.clickButton('Edit OAuth application');
     cy.intercept('PATCH', awxAPI`/applications/*/`).as('editApp');
     cy.selectDropdownOptionByResourceName('client-type', newCustomClientType);
     cy.clickButton('Save application');

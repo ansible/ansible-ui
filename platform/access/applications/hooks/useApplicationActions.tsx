@@ -11,6 +11,7 @@ import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteApplications } from './useDeleteApplications';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function useApplicationActions(options: {
   onApplicationsDeleted: (applications: Application[]) => void;
@@ -28,7 +29,8 @@ export function useApplicationActions(options: {
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit application'),
+        variant: ButtonVariant.primary,
+        label: t('Edit OAuth application'),
         ouiaId: 'application-detail-edit-button',
         isHidden: (_application) => !activePlatformUser?.is_superuser ?? false,
         onClick: (application) =>
@@ -39,7 +41,7 @@ export function useApplicationActions(options: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete application'),
+        label: t('Delete OAuth application'),
         isHidden: (_application) => !activePlatformUser?.is_superuser ?? false,
         onClick: (application) => {
           if (!application) return;
@@ -47,7 +49,7 @@ export function useApplicationActions(options: {
         },
         ouiaId: 'application-detail-delete-button',
         isDanger: true,
-        isPinned: true,
+        isPinned: false,
       },
     ];
     return itemActions;

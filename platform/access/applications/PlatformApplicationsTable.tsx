@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { EditIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -53,12 +53,12 @@ export function PlatformApplicationsTable() {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Create application'),
+        label: t('Create OAuth application'),
         isDisabled:
           activePlatformUser?.is_superuser && canCreateApplication
             ? undefined
             : t(
-                'You do not have permission to create an application. Please contact your system administrator if there is an issue with your access.'
+                'You do not have permission to create an OAuth application. Please contact your system administrator if there is an issue with your access.'
               ),
         onClick: () => pageNavigate(PlatformRoute.CreateApplication),
       },
@@ -67,11 +67,11 @@ export function PlatformApplicationsTable() {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected applications'),
+        label: t('Delete OAuth applications'),
         isDisabled: activePlatformUser?.is_superuser
           ? undefined
           : t(
-              'You do not have permission to delete an application. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to delete an OAuth application. Please contact your system administrator if there is an issue with your access.'
             ),
         onClick: deleteApplications,
         isDanger: true,
@@ -85,13 +85,13 @@ export function PlatformApplicationsTable() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: EditIcon,
+        icon: PencilAltIcon,
         isPinned: true,
-        label: t('Edit application'),
+        label: t('Edit OAuth application'),
         isDisabled: activePlatformUser?.is_superuser
           ? undefined
           : t(
-              'You do not have permission to edit an application. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to edit an OAuth application. Please contact your system administrator if there is an issue with your access.'
             ),
         onClick: (application) =>
           pageNavigate(PlatformRoute.EditApplication, { params: { id: application.id } }),
@@ -101,11 +101,11 @@ export function PlatformApplicationsTable() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete application'),
+        label: t('Delete OAuth application'),
         isDisabled: activePlatformUser?.is_superuser
           ? undefined
           : t(
-              'You do not have permission to delete an application. Please contact your system administrator if there is an issue with your access.'
+              'You do not have permission to delete an OAuth application. Please contact your system administrator if there is an issue with your access.'
             ),
         onClick: (application) => deleteApplications([application]),
         isDanger: true,
@@ -121,15 +121,15 @@ export function PlatformApplicationsTable() {
       toolbarActions={toolbarActions}
       tableColumns={tableColumns}
       rowActions={rowActions}
-      errorStateTitle={t('Error loading applications')}
+      errorStateTitle={t('Error loading OAuth applications')}
       emptyStateTitle={
         canCreateApplication && activePlatformUser?.is_superuser
-          ? t('There are currently no applications added')
-          : t('You do not have permission to create an application.')
+          ? t('There are currently no OAuth applications added')
+          : t('You do not have permission to create an OAuth application.')
       }
       emptyStateDescription={
         canCreateApplication && activePlatformUser?.is_superuser
-          ? t('Please create an application by using the button below.')
+          ? t('Please create an OAuth application by using the button below.')
           : t(
               'Please contact your organization administrator if there is an issue with your access.'
             )
@@ -137,7 +137,7 @@ export function PlatformApplicationsTable() {
       emptyStateButtonIcon={<PlusCircleIcon />}
       emptyStateButtonText={
         canCreateApplication && activePlatformUser?.is_superuser
-          ? t('Create application')
+          ? t('Create OAuth application')
           : undefined
       }
       emptyStateButtonClick={

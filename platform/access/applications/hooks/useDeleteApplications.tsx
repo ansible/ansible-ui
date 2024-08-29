@@ -19,11 +19,11 @@ export function useDeleteApplications(onComplete: (applications: Application[]) 
   const bulkAction = useBulkConfirmation<Application>();
   const deleteApplications = (applications: Application[]) => {
     bulkAction({
-      title: t('Permanently delete applications', { count: applications.length }),
+      title: t('Permanently delete OAuth applications', { count: applications.length }),
       confirmText: t('Yes, I confirm that I want to delete these {{count}} applications.', {
         count: applications.length,
       }),
-      actionButtonText: t('Delete application', { count: applications.length }),
+      actionButtonText: t('Delete OAuth application', { count: applications.length }),
       items: applications.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: getItemKey,
       isDanger: true,

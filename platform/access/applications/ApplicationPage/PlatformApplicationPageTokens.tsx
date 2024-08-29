@@ -65,7 +65,7 @@ export function PlatformApplicationPageTokens() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading tokens')}
-        emptyStateTitle={t('There are currently no tokens associated with this application')}
+        emptyStateTitle={t('There are currently no tokens associated with this OAuth application')}
         emptyStateDescription={t('You can create a token from your user page.')}
         {...view}
         defaultSubtitle={t('Token')}
