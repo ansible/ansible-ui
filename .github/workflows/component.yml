@@ -59,4 +59,4 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
-          spec: ${{ matrix.directory }}/**/*.cy.ts
+          spec: ${{ matrix.directory }}/**/*.cy.tsx
