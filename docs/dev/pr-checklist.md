@@ -28,6 +28,6 @@ Ensure that the tests cover the new changes and pass without issues, and that no
 
 ## Dependencies
 
- Assess any newly added dependencies.
+Assess any newly added dependencies.
 
 - Confirm that new dependencies are necessary and justified.

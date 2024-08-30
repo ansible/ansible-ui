@@ -1,23 +1,23 @@
 import { randomString } from '../../../../framework/utils/random-string';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { gatewayAPI } from '../../../../platform/api/gateway-api-utils';
+import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 import { cyLabel } from '../../../support/cyLabel';
-import { gatewayAPI } from '../../../../platform/api/gateway-api-utils';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 
 cyLabel(['aaas-unsupported'], () => {
   describe('Users: RBAC', () => {
     let edaProject: EdaProject;
     let edaRuleBook: EdaRulebook;
     let RBA: EdaRulebookActivation;
-    let edadecisionEnvironment: EdaDecisionEnvironment;
+    let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaOrganization: EdaOrganization;
 
     before(() => {
@@ -35,7 +35,7 @@ cyLabel(['aaas-unsupported'], () => {
                 edaCredential,
                 'quay.io/abakshirht/galaxy-ng-locust:ansible2.13'
               ).then((decisionEnvironment) => {
-                edadecisionEnvironment = decisionEnvironment;
+                edaDecisionEnvironment = decisionEnvironment;
                 cy.createEdaRulebookActivation(
                   {
                     rulebook_id: edaRuleBook.id,
@@ -57,7 +57,7 @@ cyLabel(['aaas-unsupported'], () => {
     after(() => {
       cy.deleteEdaRulebookActivation(RBA);
       cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
-      cy.deleteEdaDecisionEnvironment(edadecisionEnvironment, { failOnStatusCode: false });
+      cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
       cy.deleteEdaOrganization(edaOrganization);
     });
 

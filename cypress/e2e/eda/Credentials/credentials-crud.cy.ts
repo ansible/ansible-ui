@@ -142,16 +142,18 @@ cyLabel(['aaas-unsupported'], function () {
           }).then((project) => {
             cy.navigateTo('eda', 'credentials');
             cy.get('h1').should('contain', 'Credentials');
-            cy.clickTableRow(edaCredential.name);
+            const edaCredentialName = edaCredential.name as string;
+            cy.clickTableRow(edaCredentialName);
+            const edaCredentialId = edaCredential.id as number;
             cy.intercept(
               'DELETE',
-              edaAPI`/eda-credentials/${edaCredential.id.toString()}/?force=true`
+              edaAPI`/eda-credentials/${edaCredentialId.toString()}/?force=true`
             ).as('deleted');
-            cy.verifyPageTitle(edaCredential.name);
+            cy.verifyPageTitle(edaCredentialName);
             cy.clickPageAction('delete-credential');
             cy.clickModalConfirmCheckbox();
             cy.get('.pf-v5-c-alert__title').contains(
-              `The following credentials are in use: ${edaCredential.name}`
+              `The following credentials are in use: ${edaCredentialName}`
             );
             cy.clickModalButton('Delete credential');
             cy.wait('@deleted').then((deleted) => {

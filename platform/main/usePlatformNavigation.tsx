@@ -73,7 +73,6 @@ export function usePlatformNavigation() {
 
     // HERE
     removeNavigationItemById(awxNav, AwxRoute.Access);
-    removeNavigationItemById(awxNav, AwxRoute.Applications);
 
     removeNavigationItemById(edaNav, EdaRoute.Overview);
     removeNavigationItemById(edaNav, EdaRoute.Users);
