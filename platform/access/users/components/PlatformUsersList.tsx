@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
@@ -80,6 +80,7 @@ export function PlatformUsersList() {
               )
         }
         emptyStateIcon={canCreateUser ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateUser ? t('Create user') : undefined}
         emptyStateButtonClick={
           canCreateUser ? () => pageNavigate(PlatformRoute.CreateUser) : undefined

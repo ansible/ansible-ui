@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
@@ -79,6 +79,7 @@ export function PlatformOrganizationList() {
               )
         }
         emptyStateIcon={canCreateOrganization ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateOrganization ? t('Create organization') : undefined}
         emptyStateButtonClick={
           canCreateOrganization ? () => pageNavigate(PlatformRoute.CreateOrganization) : undefined
