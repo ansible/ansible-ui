@@ -1,4 +1,4 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import {
@@ -66,6 +66,7 @@ export function AuthenticatorsList() {
               )
         }
         emptyStateIcon={canCreateAuthenticator ? undefined : CubesIcon}
+        emptyStateButtonIcon={<PlusCircleIcon />}
         emptyStateButtonText={canCreateAuthenticator ? t('Create authentication') : undefined}
         emptyStateButtonClick={
           canCreateAuthenticator ? () => pageNavigate(PlatformRoute.CreateAuthenticator) : undefined
