@@ -1,10 +1,12 @@
 # Test Server Setup
 
-Goto the Jenkins YOLO Provisioner
-[https://main-jenkins-csb-aap.apps.ocp-c1.prod.psi.redhat.com/job/AAPQA/job/AAPQA%20Provisioner/job/AAPQA-Provisioner-Yolo/](https://main-jenkins-csb-aap.apps.ocp-c1.prod.psi.redhat.com/job/AAPQA/job/AAPQA%20Provisioner/job/AAPQA-Provisioner-Yolo/)  
-Note: VPN Needed
+Goto the [Jenkins YOLO Provisioner](https://main-jenkins-csb-aap.apps.ocp-c1.prod.psi.redhat.com/job/AAPQA/job/AAPQA%20Provisioner/job/AAPQA-Provisioner-Yolo/)
 
-## On the left navigation click **Build with Parameters**
+> Note: VPN Needed
+
+## Build with Parameters
+
+This is in the left navigation
 
 1. PROVISION\_PREFIX  
    Prefix with: aap-ui \+ dev or e2e \+ date in format MM-DD-YY  
