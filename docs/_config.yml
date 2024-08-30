@@ -1,4 +1,6 @@
 title: Ansible Automation Platform UI Docs
-theme: minima
+remote_theme: jekyll/minima
 header_pages:
   - index.md
+minima:
+  skin: dark
