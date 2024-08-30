@@ -243,6 +243,7 @@ export function RepositoryForm() {
         />
         <PageFormGroup
           label={t('Distributions')}
+          labelHelpTitle={t('Distributions')}
           labelHelp={t(
             'Content in repositories without a distribution will not be visible to clients for sync, download or search.'
           )}
@@ -262,8 +263,9 @@ export function RepositoryForm() {
         <PageFormSelect
           name={'pipeline'}
           label={t('Pipeline')}
+          labelHelpTitle={t('Pipeline')}
           labelHelp={t(
-            'Pipeline adds repository labels with pre-defined meanings: None - users require permissions to modify content in this repository to upload collection. Approved - collections can be moved here on approval. Publishing directly to this repository is disabled. Staging - collections uploaded here require approval before showing up on the search page. Anyone with upload permissions for a namespace can upload collections to this repository'
+            'Pipeline adds repository labels with pre-defined meanings: None - users require permissions to modify content in this repository to upload collection. Approved - collections can be moved here on approval. Publishing directly to this repository is disabled. Staging - collections uploaded here require approval before showing up on the search page. Anyone with upload permissions for a namespace can upload collections to this repository.'
           )}
           placeholderText={t('Select a pipeline')}
           isRequired
@@ -275,6 +277,7 @@ export function RepositoryForm() {
         />
         <PageFormGroup
           label={t('Labels')}
+          labelHelpTitle={t('Labels')}
           labelHelp={t(
             'Repository labels can change the context in which a repository is seen.\n' +
               'Hide from search (hide_from_search) - prevent collections in this repository from showing up on the home page\n' +
@@ -317,12 +320,17 @@ export function RepositoryForm() {
           {Object.keys(repositoryFormValues?.pulp_labels).length === 0 && t('None')}
           <br />
         </PageFormGroup>
-        <PageFormGroup label={t('Private')} labelHelp={t('Make the repository private.')}>
+        <PageFormGroup
+          label={t('Private')}
+          labelHelpTitle={t('Private')}
+          labelHelp={t('Make the repository private.')}
+        >
           <PageFormCheckbox<RepositoryFormProps> name="private" label={t('Make private')} />
         </PageFormGroup>
         <PageFormAsyncSelect<RepositoryFormProps>
           name="remote"
           label={t('Remote')}
+          labelHelpTitle={t('Remote')}
           labelHelp={t('Setting a remote allows a repository to sync from elsewhere.')}
           placeholder={t('Select a remote')}
           query={query}
