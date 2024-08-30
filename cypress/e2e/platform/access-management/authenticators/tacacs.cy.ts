@@ -7,7 +7,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
 
     cy.fixture('platform-authenticators/tacacs').then((tacacsData: Tacacs) => {
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       // creates a new TACACS authenticator
       cy.verifyPageTitle('Authentication Methods');
 
@@ -41,7 +41,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
         '$encrypted$'
       );
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // Enables the TACACS authenticator
@@ -50,11 +50,11 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
       });
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // Edit the TACACS authenticator
-      cy.clickTableRowAction('name', tacacsAuthenticator, 'edit-authenticator');
+      cy.clickTableRowAction('name', tacacsAuthenticator, 'edit-authentication');
 
       // Authentication Wizard
       cy.get('[data-cy="name"]')
@@ -70,7 +70,7 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
       cy.get('[data-cy="name"]').should('have.text', tacacsAuthenticator + '_edited');
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
       // Delete the TACACS authenticator
       cy.clickTableRowAction('name', tacacsAuthenticator + '_edited', 'delete-authentication', {
