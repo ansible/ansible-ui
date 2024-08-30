@@ -172,18 +172,21 @@ export function AuthenticatorDetailsStep(props: {
           <PageFormCheckbox
             name="enabled"
             label={t('Enabled')}
-            labelHelp={t(' Should this authenticator be enabled')}
+            labelHelpTitle={t('Enabled')}
+            labelHelp={t('Should this authenticator be enabled.')}
           />
           <PageFormCheckbox
             name="create_objects"
             label={t('Create objects')}
-            labelHelp={t('Allow authenticator to create objects (users, teams, organizations)')}
+            labelHelpTitle={t('Create objects')}
+            labelHelp={t('Allow authenticator to create objects (users, teams, organizations).')}
           />
           <PageFormCheckbox
             name="remove_users"
             label={t('Remove users')}
+            labelHelpTitle={t('Remove users')}
             labelHelp={t(
-              'When a user authenticates from this source should they be removed from any other groups they were previously added to'
+              'When a user authenticates from this source should they be removed from any other groups they were previously added to.'
             )}
           />
         </PageFormGroup>
