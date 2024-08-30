@@ -1,8 +1,10 @@
 import {
+  Alert,
   DescriptionListGroup,
   DescriptionListTerm,
   Label,
   LabelGroup,
+  Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
@@ -26,6 +28,8 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 import { SelectVariant } from '@patternfly/react-core/deprecated';
 import { StandardPopover } from '../../../../framework/components/StandardPopover';
+import jsyaml from 'js-yaml';
+import { EdaSourceEventMapping } from '../../interfaces/EdaSource';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();
@@ -48,8 +52,30 @@ export function RulebookActivationDetails() {
   if (!rulebookActivation) {
     return <LoadingPage />;
   }
+  const sourceMappings: EdaSourceEventMapping[] | undefined = rulebookActivation.source_mappings
+    ? (jsyaml.load(rulebookActivation.source_mappings) as EdaSourceEventMapping[])
+    : undefined;
+
+  const anyEventsDisabled =
+    rulebookActivation.event_streams && rulebookActivation.event_streams.length > 0
+      ? rulebookActivation.event_streams.find((ev) => ev.test_mode)
+      : false;
   return (
     <Scrollable>
+      {anyEventsDisabled && (
+        <Alert
+          variant={'warning'}
+          isInline
+          style={{ marginLeft: '24px', marginTop: '16px', marginRight: '16px' }}
+          title={t('Event stream disabled.')}
+        >
+          <p>
+            {t(
+              "One of the rulebook activation's event streams has been disabled and is not forwarding events to the activation."
+            )}
+          </p>
+        </Alert>
+      )}
       <PageDetails
         disableScroll={true}
         alertPrompts={
@@ -97,11 +123,32 @@ export function RulebookActivationDetails() {
         >
           {rulebookActivation?.rulebook?.name || rulebookActivation?.rulebook_name || ''}
         </PageDetail>
-        {rulebookActivation.event_streams && rulebookActivation.event_streams.length > 0 && (
+        {!!sourceMappings && sourceMappings.length > 0 && (
           <PageDetail label={t('Event stream(s)')}>
             <LabelGroup>
-              {rulebookActivation.event_streams.map((stream) => (
-                <Label key={stream?.id}>{stream?.name}</Label>
+              {sourceMappings.map((mapping) => (
+                <Tooltip
+                  key={mapping?.event_stream_id}
+                  content={`${mapping?.event_stream_name} ${t(' was swapped with ')} ${mapping?.source_name}`}
+                >
+                  <Label
+                    color="blue"
+                    data-cy={`mapping-${mapping?.event_stream_id}`}
+                    key={mapping?.event_stream_id}
+                    render={({ className }) => (
+                      <Link
+                        to={getPageUrl(EdaRoute.EventStreamPage, {
+                          params: { id: mapping?.event_stream_id },
+                        })}
+                        className={className}
+                      >
+                        {mapping?.event_stream_name ?? ''}
+                      </Link>
+                    )}
+                  >
+                    {mapping?.event_stream_name ?? ''}
+                  </Label>
+                </Tooltip>
               ))}
             </LabelGroup>
           </PageDetail>

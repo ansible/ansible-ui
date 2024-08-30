@@ -12,11 +12,9 @@ import {
   PageLayout,
   compareStrings,
   useGetPageUrl,
-  usePageDialog,
   usePageNavigate,
   PageFormCheckbox,
 } from '../../../framework';
-import { Button, Label, Tooltip } from '@patternfly/react-core';
 import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet, swrOptions } from '../../common/crud/Data';
@@ -40,11 +38,10 @@ import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { SourceEventStreamMappingModal } from './components/SourceEventStreamMapping';
 import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import jsyaml from 'js-yaml';
-import { LabelGroupWrapper } from '../../common/label-group-wrapper';
+import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
 import { EdaEventStream } from '../interfaces/EdaEventStream';
 
 export function CreateRulebookActivation() {
@@ -115,7 +112,7 @@ export function RulebookActivationInputs() {
   const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(
     undefined
   );
-  const { register, setValue } = useFormContext();
+  const { setValue } = useFormContext();
   const restartPolicyHelpBlock = (
     <>
       <p>
@@ -145,9 +142,10 @@ export function RulebookActivationInputs() {
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
 
-  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(edaAPI`/event-streams/`);
+  const { data: eventStreams } = useGet<EdaResult<EdaEventStream>>(
+    edaAPI`/event-streams/?test_mode=false`
+  );
 
-  const [_, setDialog] = usePageDialog();
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
     { label: t('Always'), value: 'always' },
@@ -187,14 +185,6 @@ export function RulebookActivationInputs() {
   useEffect(() => {
     setSourceMappings(undefined);
   }, [rulebook, setSourceMappings]);
-
-  const removeMapping = (event_stream_name: string) => {
-    if (sourceMappings) {
-      const map = sourceMappings.filter((ev) => ev.event_stream_name !== event_stream_name);
-      setSourceMappings(map);
-      if (sourceMappings.length === 0) setSourceMappings(undefined);
-    }
-  };
 
   return (
     <>
@@ -243,41 +233,21 @@ export function RulebookActivationInputs() {
         isRequired
         labelHelp={t('Rulebooks will be shown according to the project selected.')}
         labelHelpTitle={t('Rulebook')}
-        additionalControls={
-          <Button
-            variant="link"
-            data-cy={'manage_event_stream'}
-            isDisabled={!rulebook || !eventStreams || eventStreams.count < 1}
-            onClick={() =>
-              setDialog(
-                <SourceEventStreamMappingModal
-                  rulebook={rulebook}
-                  mappings={sourceMappings}
-                  setSourceMappings={setSourceMappings}
-                />
-              )
-            }
-          >
-            {t('Manage event streams')}
-          </Button>
-        }
       />
-      {!!sourceMappings && sourceMappings.length > 0 && (
-        <PageFormGroup label={t('Event streams')} fieldId={'source_event_mappings'}>
-          <LabelGroupWrapper>
-            {sourceMappings.map((map) => (
-              <>
-                <Tooltip content={<div>{map.source_name}</div>}>
-                  <Label onClose={() => removeMapping(map.event_stream_name)}>
-                    {map.event_stream_name}{' '}
-                  </Label>
-                </Tooltip>
-              </>
-            ))}
-          </LabelGroupWrapper>
-        </PageFormGroup>
-      )}
-      <input type="hidden" {...register(`source_mappings`)} />
+      <PageFormEventSourceSelect
+        name={'source_mappings'}
+        label={t('Event streams')}
+        selectTitle={t('Event streams')}
+        placeholder={t('Select event streams')}
+        rulebook={rulebook}
+        sourceMappings={sourceMappings || []}
+        setSourceMappings={setSourceMappings}
+        labelHelp={t(
+          'Event streams are server side webhooks that enable you to connect various event sources to your rulebook activations.'
+        )}
+        labelHelpTitle={t('Event streams')}
+        isDisabled={!rulebook || !eventStreams || eventStreams.count < 1}
+      />
       <PageFormCredentialSelect<{ credential_refs: string; id: string }>
         name="credential_refs"
         credentialKinds={['vault,cloud']}

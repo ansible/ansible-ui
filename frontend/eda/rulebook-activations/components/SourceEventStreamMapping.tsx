@@ -52,7 +52,7 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
     edaAPI`/rulebooks/` + `${options?.rulebook?.id}/sources/?page=1&page_size=200`
   );
   const { data: events } = useGet<EdaResult<EdaEventStream>>(
-    edaAPI`/event-streams/?page=1&page_size=200`
+    edaAPI`/event-streams/?test_mode=false&page=1&page_size=200`
   );
 
   useEffect(() => {
@@ -80,6 +80,7 @@ export function SourceEventStreamMapping(options: EventStreamMappingProps) {
         </PageDetails>
         {mappings.map((mapping, i) => (
           <SourceEventMapFields
+            data-cy={`source-event-map-field-${mapping.id}`}
             key={mapping.id}
             index={i}
             source_mappings={mapping as unknown as EdaSourceEventMapping}
@@ -130,14 +131,13 @@ export function SourceEventStreamMappingModal(options: EventStreamMappingProps) 
       title={t('Event streams')}
       aria-label={t('Event streams')}
       ouiaId={'Event streams'}
-      data-cy={'event-streams'}
+      data-cy={'event-streams-modal'}
       description={
         <div style={{ fontSize: 'small' }}>
           {t(
-            'Event streams represent server side webhooks which ease the routing issues related to running webhooks individually in a container or a pod. ' +
-              'You can swap the sources in your rulebook with a matching event stream. Typically the sources to swap out are of the type ansible.eda.rulebook, ' +
-              'but you may also be able to swap out your own webhook source plugins. The swapping process replaces just the source type and args and leaves your ' +
-              'filters intact. We swap out the webhook source type with a source of type ansible.eda.pg_listener.'
+            'Event streams are server-side webhooks that enable you to connect various event sources to your rulebook activations. ' +
+              'To add event streams to your rulebooks, replace an ansible.eda.webhook or compatible custom source with the desired event stream. ' +
+              'This modifies the activation only, while leaving your filters intact.'
           )}
         </div>
       }

@@ -19,10 +19,10 @@ export function FormSingleSelectEventStream(props: {
   const { getValues } = useFormContext();
 
   const getEventOptions = () => {
-    let events = eventOptions;
+    let events = eventOptions ? eventOptions.filter((event) => !event.test_mode) : eventOptions;
     const mappingsNow = getValues('mappings') as EdaSourceEventMapping[];
-    if (eventOptions && mappingsNow && mappingsNow.length > 1) {
-      events = eventOptions.filter((ev) => {
+    if (events && mappingsNow && mappingsNow.length > 1) {
+      events = events.filter((ev) => {
         return !mappingsNow.find((item) => {
           return parseInt(item.event_stream_id, 10) === selectedEvent
             ? false
@@ -44,7 +44,9 @@ export function FormSingleSelectEventStream(props: {
       label={t('Event stream')}
       placeholder={t('Select event stream')}
       isRequired
-      labelHelp={t('Event streams to swap with the selected source.')}
+      labelHelp={t(
+        'All the event streams available and set up to forward events to rulebook activations will be displayed.'
+      )}
       labelHelpTitle={t('Event stream')}
       options={getEventOptions()}
     />
@@ -107,7 +109,6 @@ export function SourceEventMapFields(props: {
   const { index, sourceOptions, eventOptions, onDelete } = props;
   const { register, setValue } = useFormContext();
   const selectedSource = useWatch({ name: `mappings.${index}.source_name` }) as string;
-  //const mappings: EdaSourceEventMapping[] = getValues('mappings') as EdaSourceEventMapping[];
 
   const setSourceInfo = useCallback(() => {
     let srcIndex = -1;
