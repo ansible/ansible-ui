@@ -11,3 +11,4 @@ Dockerfile
 .prettierignore
 .*.sw[po]
 /framework/publish
+LICENSE.md
