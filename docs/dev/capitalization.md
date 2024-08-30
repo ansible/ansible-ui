@@ -7,7 +7,7 @@
 
 ## Examples
 
-|                    | Caseing  | Example                                    |
+|           Location |   Case   | Example                                    |
 | -----------------: | :------: | ------------------------------------------ |
 | Sidebar Navigation |  Title   | Execution Environments                     |
 |        Page header |  Title   | Create Execution Environments              |
