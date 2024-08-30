@@ -267,6 +267,7 @@ function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretIn
     <>
       <PageFormGroup
         label={t('TLS validation')}
+        labelHelpTitle={t('TLS validation')}
         labelHelp={t('If selected, TLS peer validation must be performed.')}
       >
         <PageFormCheckbox<RemoteRegistryProps> name="tls_validation" />
