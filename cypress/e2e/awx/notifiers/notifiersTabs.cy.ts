@@ -69,6 +69,7 @@ describe('Notifications', () => {
         cy.verifyPageTitle('Create notifier');
         cy.get(`[data-cy="name"]`).type(notificationName);
         cy.get(`[data-cy="description"]`).type('this is test description');
+        cy.singleSelectByDataCy('organization', orgName);
         cy.get(`[data-cy="notification_type"]`).click();
         cy.contains('span', 'Email').click();
         cy.get(`[data-cy="notification-configuration-username"]`).type('email user');
@@ -82,7 +83,6 @@ describe('Notifications', () => {
         cy.get(`[data-cy="notification-configuration-timeout"]`).type('100');
         cy.get(`[data-cy="notification_configuration-use_tls"]`).click();
         cy.get(`[data-cy="notification_configuration-use_ssl"]`).click();
-        cy.singleSelectByDataCy('organization', orgName);
         cy.get('[data-cy="customize-messages-toggle"]').parent().find('span').click();
         cy.get(`[data-cy="Submit"]`).click();
         cy.contains(`[data-cy="name"]`, notificationName);

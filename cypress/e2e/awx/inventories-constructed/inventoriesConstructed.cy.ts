@@ -60,7 +60,6 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.getByDataCy('name').type(constInvName);
     cy.getByDataCy('description').type(`Description of "${constInvName}" typed by Cypress`);
     cy.singleSelectBy('[data-cy="organization"]', organization.name);
-    // this can be simplified if we include data-cy to the search button of instance groups
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroup.name]);
     cy.multiSelectByDataCy('inventories', [inventory.name]);
     cy.getByDataCy('update_cache_timeout').clear().type(String(cacheTimeoutValue));

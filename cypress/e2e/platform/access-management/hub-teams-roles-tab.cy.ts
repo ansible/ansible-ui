@@ -1,7 +1,6 @@
 //Tests a user's ability to give permissions to a user from the roles tab.
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { hub_resources_roles_tab } from '../../../support/constants';
 import { Repository } from '../../../../frontend/hub/administration/repositories/Repository';
 import { HubRemote } from '../../../../frontend/hub/administration/remotes/Remotes';
 import { HubNamespace } from '../../../../frontend/hub/namespaces/HubNamespace';
@@ -9,91 +8,169 @@ import { randomString } from '../../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
-hub_resources_roles_tab.forEach((resource) => {
-  describe(`Assign Role to a Team `, () => {
-    let role: HubRbacRole;
-    let PlatformUser: PlatformUser;
-    let PlatformTeam: PlatformTeam;
-    let resource_object: Repository | HubRemote | HubNamespace;
-    before(() => {
-      cy.createHubRoleAPI({
-        roleName: 'galaxy.' + `${randomString(5)}`,
-        description: 'Custom Role',
-        content_type: resource.content_type,
-        permissions: [resource.permission],
-      }).then((createdRole) => {
-        role = createdRole;
-      });
-      resource.creation().then((resource_instance) => {
-        resource_object = resource_instance;
-      });
-      cy.createPlatformUser({ password: 'pass' }).then((user) => {
-        PlatformUser = user;
-        cy.createPlatformTeam({
-          organization: 1,
-        }).then((team) => {
-          cy.associateUsersWithPlatformTeam(team, [PlatformUser]).then(() => {
-            PlatformTeam = team;
-          });
+describe(`Assign Role to a Team `, () => {
+  let PlatformUser: PlatformUser;
+  let PlatformTeam: PlatformTeam;
+  let hubRepository: Repository;
+  let hubRemote: HubRemote;
+  let hubNamespace: HubNamespace;
+  let repositoryRole: HubRbacRole;
+  let remoteRole: HubRbacRole;
+  let namespaceRole: HubRbacRole;
+
+  before(() => {
+    cy.createHubRoleAPI({
+      roleName: 'galaxy.' + `${randomString(5)}-repository`,
+      description: 'Custom Repository Role',
+      content_type: ContentTypeEnum.Repository,
+      permissions: ['galaxy.view_ansiblerepository'],
+    }).then((repoRole) => {
+      repositoryRole = repoRole;
+    });
+    cy.createHubRoleAPI({
+      roleName: 'galaxy.' + `${randomString(5)}-remote`,
+      description: 'Custom Collection Remote Role',
+      content_type: ContentTypeEnum.CollectionRemote,
+      permissions: ['galaxy.view_collectionremote'],
+    }).then((remRole) => {
+      remoteRole = remRole;
+    });
+    cy.createHubRoleAPI({
+      roleName: 'galaxy.' + `${randomString(5)}-namespace`,
+      description: 'Custom Namespace Role',
+      content_type: ContentTypeEnum.Namespace,
+      permissions: ['galaxy.view_namespace'],
+    }).then((nsRole) => {
+      namespaceRole = nsRole;
+    });
+
+    const testSignature: string = randomString(5, undefined, { isLowercase: true });
+    const generateRemoteName = `test-${testSignature}-remote-${randomString(5, undefined, { isLowercase: true })}`;
+    cy.createRemote(generateRemoteName).then((hubRem) => {
+      hubRemote = hubRem;
+    });
+
+    cy.createHubRepository().then((hubRepo) => {
+      hubRepository = hubRepo;
+    });
+
+    cy.createHubNamespace().then((hubNS) => {
+      hubNamespace = hubNS;
+    });
+
+    cy.createPlatformUser({ password: 'pass' }).then((user) => {
+      PlatformUser = user;
+      cy.createPlatformTeam({
+        organization: 1,
+      }).then((team) => {
+        cy.associateUsersWithPlatformTeam(team, [PlatformUser]).then(() => {
+          PlatformTeam = team;
         });
       });
     });
+  });
 
-    after(() => {
-      cy.deleteHubRoleAPI(role);
-      if (resource.name === 'Remote') {
-        cy.navigateTo('hub', 'remotes');
-        cy.setTablePageSize('50');
-        cy.filterTableBySingleText(resource_object.name);
-        cy.get('[data-cy="card-view"]').click();
-        cy.contains(resource_object.name).should('be.visible');
-        cy.get('#select-all').click();
-        cy.clickToolbarKebabAction('delete-remotes');
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete remotes$/);
-        cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
-        cy.clickButton(/^Clear all filters$/);
-      } else {
-        resource.deletion(resource_object);
-      }
-      cy.deletePlatformUser(PlatformUser);
-      cy.deletePlatformTeam(PlatformTeam);
-      cy.deleteHubRoleAPI(role);
-    });
+  after(() => {
+    cy.deleteHubRoleAPI(repositoryRole);
+    cy.deleteHubRoleAPI(remoteRole);
+    cy.deleteHubRoleAPI(namespaceRole);
+    cy.deleteHubRepository(hubRepository);
+    cy.deleteHubNamespace(hubNamespace);
+    cy.deletePlatformUser(PlatformUser, { failOnStatusCode: false });
+    cy.deletePlatformTeam(PlatformTeam, { failOnStatusCode: false });
+  });
 
-    it(`for ${resource.name} role type`, () => {
-      cy.navigateTo('platform', 'teams');
-      cy.verifyPageTitle('Teams');
-      cy.clickTableRow(PlatformTeam.name, true);
-      cy.clickTab('Roles', true);
-      cy.clickTab('Automation Content', true);
-      cy.getByDataCy('add-roles').click();
-      cy.getWizard().within(() => {
-        cy.selectDropdownOptionByResourceName('resourcetype', resource.name);
-        cy.clickButton(/^Next$/);
-        if (resource.name === 'Namespace') {
-          cy.get('[data-cy="text-input"]')
-            .should('be.visible')
-            .within(() => {
-              cy.get('input').clear().type(resource_object.name);
-            });
-          cy.contains('.pf-v5-c-chip__text', resource_object.name);
-        }
-        cy.selectTableRow(resource_object.name, false);
-        cy.clickButton(/^Next$/);
-        cy.selectTableRow(role.name, false);
-        cy.clickButton(/^Next$/);
-        cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
-        cy.clickButton(/^Finish$/);
-      });
-      cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
-      cy.verifyPageTitle(PlatformTeam.name);
-      cy.contains(resource_object.name);
-      cy.contains(role.name);
-      cy.contains(resource.name);
+  it(`for Repository role type`, () => {
+    cy.navigateTo('platform', 'teams');
+    cy.verifyPageTitle('Teams');
+    cy.clickTableRow(PlatformTeam.name, true);
+    cy.clickTab('Roles', true);
+    cy.clickTab('Automation Content', true);
+    cy.getByDataCy('add-roles').click();
+    cy.getWizard().within(() => {
+      cy.selectDropdownOptionByResourceName('resourcetype', 'Repository');
+      cy.clickButton(/^Next$/);
+      cy.selectTableRow(hubRepository.name, false);
+      cy.clickButton(/^Next$/);
+      cy.selectTableRow(repositoryRole.name, false);
+      cy.clickButton(/^Next$/);
+      cy.verifyReviewStepWizardDetails('resources', [hubRepository.name], '1');
+      cy.clickButton(/^Finish$/);
     });
+    cy.assertModalSuccess();
+    cy.clickButton(/^Close$/);
+    cy.verifyPageTitle(PlatformTeam.name);
+    cy.contains(hubRepository.name);
+    cy.contains(repositoryRole.name);
+    cy.contains('Repository');
+  });
+
+  it(`for Remote role type`, () => {
+    cy.navigateTo('platform', 'teams');
+    cy.verifyPageTitle('Teams');
+    cy.clickTableRow(PlatformTeam.name, true);
+    cy.clickTab('Roles', true);
+    cy.clickTab('Automation Content', true);
+    cy.getByDataCy('add-roles').click();
+    cy.getWizard().within(() => {
+      cy.selectDropdownOptionByResourceName('resourcetype', 'Remote');
+      cy.clickButton(/^Next$/);
+      cy.selectTableRow(hubRemote.name, false);
+      cy.clickButton(/^Next$/);
+      cy.selectTableRow(remoteRole.name, false);
+      cy.clickButton(/^Next$/);
+      cy.verifyReviewStepWizardDetails('resources', [hubRemote.name], '1');
+      cy.clickButton(/^Finish$/);
+    });
+    cy.assertModalSuccess();
+    cy.clickButton(/^Close$/);
+    cy.verifyPageTitle(PlatformTeam.name);
+    cy.contains(hubRemote.name);
+    cy.contains(remoteRole.name);
+    cy.contains('Remote');
+    cy.navigateTo('hub', 'remotes');
+    cy.setTablePageSize('50');
+    cy.filterTableBySingleText(hubRemote.name);
+    cy.get('[data-cy="card-view"]').click();
+    cy.contains(hubRemote.name).should('be.visible');
+    cy.get('#select-all').click();
+    cy.clickToolbarKebabAction('delete-remotes');
+    cy.get('#confirm').click();
+    cy.clickButton(/^Delete remotes$/);
+    cy.contains(/^Success$/);
+    cy.clickButton(/^Close$/);
+    cy.clickButton(/^Clear all filters$/);
+  });
+
+  it(`for Namespace role type`, () => {
+    cy.navigateTo('platform', 'teams');
+    cy.verifyPageTitle('Teams');
+    cy.clickTableRow(PlatformTeam.name, true);
+    cy.clickTab('Roles', true);
+    cy.clickTab('Automation Content', true);
+    cy.getByDataCy('add-roles').click();
+    cy.getWizard().within(() => {
+      cy.selectDropdownOptionByResourceName('resourcetype', 'Namespace');
+      cy.clickButton(/^Next$/);
+      cy.get('[data-cy="text-input"]')
+        .should('be.visible')
+        .within(() => {
+          cy.get('input').clear().type(hubNamespace.name);
+        });
+      cy.contains('.pf-v5-c-chip__text', hubNamespace.name);
+      cy.selectTableRow(hubNamespace.name, false);
+      cy.clickButton(/^Next$/);
+      cy.selectTableRow(namespaceRole.name, false);
+      cy.clickButton(/^Next$/);
+      cy.verifyReviewStepWizardDetails('resources', [hubNamespace.name], '1');
+      cy.clickButton(/^Finish$/);
+    });
+    cy.assertModalSuccess();
+    cy.clickButton(/^Close$/);
+    cy.verifyPageTitle(PlatformTeam.name);
+    cy.contains(hubNamespace.name);
+    cy.contains(namespaceRole.name);
+    cy.contains('Namespace');
   });
 });
 

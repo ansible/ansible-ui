@@ -1509,7 +1509,8 @@ declare global {
        */
       createEdaDecisionEnvironment(
         organizationId: number,
-        edaCredential?: EdaCredential
+        edaCredential?: EdaCredential,
+        imageUrl?: string
       ): Chainable<EdaDecisionEnvironment>;
 
       /**

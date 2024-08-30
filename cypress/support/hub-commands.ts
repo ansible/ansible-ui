@@ -74,7 +74,7 @@ Cypress.Commands.add('hubPostRequest', (options: HubPostRequestOptions) => {
 
 export type HubDeleteRequestOptions = Pick<HubRequestOptions, 'url' | 'qs' | 'failOnStatusCode'>;
 Cypress.Commands.add('hubDeleteRequest', (options: HubDeleteRequestOptions) => {
-  cy.hubRequest({ ...options, method: 'DELETE' });
+  cy.hubRequest({ ...options, failOnStatusCode: false, method: 'DELETE' });
 });
 
 Cypress.Commands.add('waitOnHubTask', function waitOnHubTask(taskUrl: string) {

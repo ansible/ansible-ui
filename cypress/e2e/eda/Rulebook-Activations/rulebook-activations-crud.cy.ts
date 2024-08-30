@@ -72,9 +72,6 @@ cyLabel(['aaas-unsupported'], function () {
         cy.navigateTo('eda', 'rulebook-activations');
         cy.deleteEdaRulebookActivation(rbaToBeDeleted);
       });
-      cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-      cy.deleteEdaProject(edaProject);
-      cy.deleteAllEdaCurrentUserTokens();
     });
   });
 });

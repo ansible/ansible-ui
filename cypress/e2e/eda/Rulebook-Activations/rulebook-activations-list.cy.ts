@@ -83,8 +83,8 @@ cyLabel(['aaas-unsupported'], function () {
     });
 
     after(() => {
-      cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-      cy.deleteEdaProject(edaProject);
+      cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
+      cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
       cy.deleteAllEdaCurrentUserTokens();
       cy.deleteEdaOrganization(edaOrg);
     });
