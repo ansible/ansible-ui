@@ -144,7 +144,7 @@ describe('Create job template ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);
-    cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
+    cy.singleSelectByDataCy('inventory', 'Demo Inventory');
     cy.selectDropdownOptionByResourceName('project', 'Demo Project').as('ProjectInput');
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroups[0].name]);

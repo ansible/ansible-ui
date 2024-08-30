@@ -66,6 +66,8 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.verifyPageTitle('Authentication Methods');
+        cy.getBy('[data-cy="text-input"]').type(createdLocalAuthenticator.name);
+        cy.getBy('[data-cy="apply-filter"]').click();
         cy.contains('tr', createdLocalAuthenticator.name).within(() => {
           cy.get('[data-cy=toggle-switch]').click();
           cy.get('.pf-v5-c-switch__label.pf-m-on')

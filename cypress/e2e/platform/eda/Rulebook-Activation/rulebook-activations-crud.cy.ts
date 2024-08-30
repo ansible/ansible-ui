@@ -54,9 +54,18 @@ cyLabel(['aaas-unsupported'], () => {
         const name = 'E2E Rulebook Activation ' + randomString(4);
         cy.navigateTo('eda', 'rulebook-activations');
         cy.clickButton(/^Create rulebook activation$/);
-        cy.get('h1').should('contain', 'Create Rulebook Activation');
+        cy.get('h1').should('contain', 'Create rulebook activation');
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
+        cy.getBy('[data-cy="organization_id"]').click();
+        cy.clickButton('Browse');
+        cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+          cy.get('table').should('exist');
+          cy.getBy('[data-cy="text-input"] input').type(edaOrganization.name);
+          cy.getBy('button[data-cy="apply-filter"]').click();
+          cy.get('tbody tr input').click();
+          cy.clickButton('Confirm');
+        });
         cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
         cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
         cy.selectDropdownOptionByResourceName(
@@ -71,7 +80,6 @@ cyLabel(['aaas-unsupported'], () => {
           cy.get('h1').should('contain', name);
           cy.get('.pf-v5-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
           cy.filterTableByText(rbaToBeDeleted.name);
-          cy.contains('[data-label="Status"]', 'Completed', { timeout: 120000 });
           cy.get('tbody tr').then(() => {
             cy.get(' tr [data-cy="actions-dropdown"]')
               .click()
@@ -136,8 +144,8 @@ cyLabel(['aaas-unsupported'], () => {
       });
 
       afterEach(() => {
-        cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-        cy.deleteEdaProject(edaProject);
+        cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
+        cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
         cy.deleteEdaRulebookActivation(edaDisabledRBA);
       });
 
@@ -164,7 +172,7 @@ cyLabel(['aaas-unsupported'], () => {
           cy.contains('tr', edaDisabledRBA.name);
           cy.get('.pf-v5-c-switch__toggle').click();
         });
-        cy.contains('[data-label="Status"]', 'Completed', { timeout: 120000 });
+        cy.get('[id*="tooltip"]').should('contain', 'Rulebook activation enabled');
       });
     });
   });

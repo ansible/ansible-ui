@@ -314,7 +314,16 @@ describe('Projects', () => {
         cy.selectTableRow(jobTemplate.name, false);
         cy.getBy('[data-cy="edit-template"]').click();
         cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
-        cy.selectDropdownOptionByResourceName('project', thisProject.name);
+        cy.getBy('button[id="project"]').click();
+        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+        cy.getModal().within(() => {
+          cy.get('[data-cy="filter-input"]').click();
+        });
+        cy.get('[id="filter-input-search"]').type(thisProject.name);
+        const projName = thisProject.name.toLowerCase().split(' ').join('-').toString();
+        cy.get(`[id="${projName}"]`).find('input').check();
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
         cy.getByDataCy('Submit').click();
         cy.wait('@edited')

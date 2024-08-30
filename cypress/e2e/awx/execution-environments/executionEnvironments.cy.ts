@@ -342,8 +342,24 @@ describe('Execution Environments', () => {
       cy.getByDataCy('create-template').click();
       cy.clickLink(/^Create job template$/);
       cy.getByDataCy('name').type(jtName);
-      cy.selectDropdownOptionByResourceName('inventory', inventory.name);
-      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
+      const endOfInvName = inventory.name.split(' ').slice(-1).toString();
+      cy.get('input[id="inventory-select-typeahead"]').click();
+      cy.get('[data-cy="inventory-form-group"]').within(() => {
+        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
+          delay: 200,
+        });
+      });
+      cy.get('li').contains(`${inventory.name}`).click();
+      cy.getBy('button[id="project"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.get('[data-cy="filter-input"]').click();
+      });
+      cy.get('[id="filter-input-search"]').type(project.name);
+      const projName = project.name.toLowerCase().split(' ').join('-').toString();
+      cy.get(`[id="${projName}"]`).find('input').check();
+      cy.getBy('[data-cy="checkbox-column-cell"]').click();
+      cy.clickButton('Confirm');
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.singleSelectBy('[data-cy="executionEnvironment"]', execEnvName);
       cy.intercept('POST', awxAPI`/job_templates/`).as('createJT');

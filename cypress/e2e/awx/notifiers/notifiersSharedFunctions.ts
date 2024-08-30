@@ -15,9 +15,9 @@ export function testNotification(
     cy.getByDataCy('create-notifier').click();
     cy.verifyPageTitle('Create notifier');
 
+    selectOrganization(orgName);
     fillBasicData(notificationName, type);
     fillNotificationType(type);
-    selectOrganization(orgName);
     verifyDefaultsMessages(type);
 
     cy.get(`[data-cy="Submit"]`).click();
@@ -511,7 +511,11 @@ function fillTwilioForm() {
   cy.get(`[data-cy="notification-configuration-account-token-form-group"]`).type('twilio_token');
   cy.get(`[data-cy="notification-configuration-from-number-form-group"]`).type('+1234567890');
   cy.get(`[data-cy="notification-configuration-to-numbers-form-group"]`).type(
-    '+1987654321{enter}+1123456789'
+    '+1987654321{shift+enter}+1123456789'
+  );
+  cy.getBy('[data-cy="edit-notifier"]').click();
+  cy.get(`[data-cy="notification-configuration-to-numbers-form-group"]`).type(
+    '{downArrow}+1123456789'
   );
 }
 

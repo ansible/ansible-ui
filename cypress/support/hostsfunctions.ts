@@ -26,7 +26,7 @@ export function createAndCheckHost(host_type: string, inventory: string) {
   cy.getByDataCy('description').type('This is the description');
 
   if (host_type === 'stand_alone_host') {
-    cy.singleSelectByDataCy('inventory-form-group', inventory);
+    cy.singleSelectByDataCy('inventory', inventory);
   }
 
   // after creation - verify data is currect
