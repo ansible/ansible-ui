@@ -1,7 +1,10 @@
+# Ansible Automation Platform UI Docs
+
 Documentation for the [Ansible Automation Platform UI](https://github.com/ansible/aap-ui).
 
 ## Development
 
+- [Platform UI Architecture](Architecture.md)
 - [PR Checklist](Development/PR Checklist.md)
 - [Capitalization](Development/Capitalization.md)
 - [Translations](Development/Translations.md)
