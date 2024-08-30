@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart TD
-   ui(Platform UI) --- platform(Platform gateway)
+   ui(Platform UI) --- platform(Platform Gateway)
    platform --- awx(Controller)
    platform --- hub(Automation HUB)
    platform --- eda(Event Driven Ansible)
@@ -19,7 +19,7 @@ The [Platform UI](https://github.com/ansible/aap-ui) is the unified UI for the A
   - Access management
   - Settings
 
-It uses the [AAP Gateway](https://github.com/ansible/aap-gateway) as the backend.
+It uses the [Platform Gateway](https://github.com/ansible/aap-gateway) as the backend.
 
 - Unifies the APIs for the Ansible products such as AWX, HUB, and EDA
 - Provides centralized authentication and access management
