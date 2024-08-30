@@ -2,7 +2,7 @@ Documentation for the [Ansible Automation Platform UI](https://github.com/ansibl
 
 ## Development
 
-- [Development](Development/Development.md)
+- [PR Checklist](Development/PR Checklist.md)
 - [Capitalization](Development/Capitalization.md)
 - [Translations](Development/Translations.md)
 
