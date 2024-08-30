@@ -7,7 +7,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
     cy.fixture('platform-authenticators/github').then((githubData: GithubAuthenticator) => {
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // Click on the Create Authentication button
@@ -37,7 +37,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
       cy.get('[data-cy="github-oauth2-secret"]').should('have.text', '$encrypted$');
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // Enable the GitHub authenticator
@@ -62,11 +62,11 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
       cy.platformLogin();
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // Edit the GitHub authenticator
-      cy.clickTableRowAction('name', name, 'edit-authenticator');
+      cy.clickTableRowAction('name', name, 'edit-authentication');
 
       // Authentication Wizard
       cy.get('[data-cy="name"]')
@@ -82,7 +82,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
       cy.get('[data-cy="name"]').should('have.text', name + '_edited');
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
       // Delete the GitHub authenticator
       cy.clickTableRowAction('name', name + '_edited', 'delete-authentication', { inKebab: true });

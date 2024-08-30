@@ -39,7 +39,7 @@ describe('Users list', () => {
           .find('.pf-v5-c-menu__content')
           .within(() => {
             cy.get('button')
-              .contains(/^Delete selected users$/)
+              .contains(/^Delete users$/)
               .should('be.visible');
           });
       });

@@ -43,10 +43,10 @@ cyLabel(['aaas-unsupported'], () => {
     });
 
     after(() => {
-      cy.deleteAwxResources(awxResources);
+      cy.deleteAwxResources(awxResources, { failOnStatusCode: false });
       cy.deleteEdaRulebookActivation(edaRBA);
-      cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment);
-      cy.deleteEdaProject(edaProject);
+      cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
+      cy.deleteEdaProject(edaProject, { failOnStatusCode: false });
       cy.deleteAllEdaCurrentUserTokens();
     });
 

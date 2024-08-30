@@ -80,7 +80,6 @@ describe('Repositories user and team access tests', () => {
       cy.clickTab('Team Access', true);
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
-
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
         cy.selectTableRow(hubTeam.name);

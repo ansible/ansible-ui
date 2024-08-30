@@ -68,7 +68,16 @@ describe('Inventory Sources', () => {
           cy.verifyPageTitle('Create source');
           cy.getByDataCy('name').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
-          cy.selectDropdownOptionByResourceName('project', project.name);
+          cy.getBy('button[id="project"]').click();
+          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+          cy.getModal().within(() => {
+            cy.get('[data-cy="filter-input"]').click();
+          });
+          cy.get('[id="filter-input-search"]').type(project.name);
+          const projName = project.name.toLowerCase().split(' ').join('-').toString();
+          cy.get(`[id="${projName}"]`).find('input').check();
+          cy.getBy('[data-cy="checkbox-column-cell"]').click();
+          cy.clickButton('Confirm');
           cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
           cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
@@ -102,7 +111,6 @@ describe('Inventory Sources', () => {
           cy.getByDataCy('source-variables').should('contain', 'test: output');
           cy.getByDataCy('created').should('exist');
           cy.getByDataCy('last-modified').should('exist');
-          // Cleanup credential and execution environment
           cy.deleteAwxCredential(credential, { failOnStatusCode: false });
           cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
         });
@@ -123,7 +131,6 @@ describe('Inventory Sources', () => {
 
     it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page, ', () => {
       goToSourceList(inventory.name);
-      // Create inventory source
       cy.getByDataCy('create-source').click();
       cy.verifyPageTitle('Create source');
       cy.getByDataCy('name').type('amazon ec2 source');
@@ -140,10 +147,8 @@ describe('Inventory Sources', () => {
       cy.getByDataCy('name').clear().type('updated amazon ec2 source');
       cy.getByDataCy('overwrite_vars').check();
       cy.getByDataCy('Submit').click();
-      // Verify details
       cy.location('pathname').should('match', /\/details$/);
       cy.verifyPageTitle('updated amazon ec2 source');
-      // Edit inventory source
       cy.clickButton('Edit inventory source');
       cy.location('pathname').should('match', /\/edit$/);
       cy.verifyPageTitle(`Edit updated amazon ec2 source`);
@@ -151,10 +156,18 @@ describe('Inventory Sources', () => {
       cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
       cy.getByDataCy('overwrite_vars').check();
       cy.getByDataCy('update_on_launch').check();
-      cy.selectDropdownOptionByResourceName('project', project.name);
+      cy.getBy('button[id="project"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.get('[data-cy="filter-input"]').click();
+      });
+      cy.get('[id="filter-input-search"]').type(project.name);
+      const projName = project.name.toLowerCase().split(' ').join('-').toString();
+      cy.get(`[id="${projName}"]`).find('input').check();
+      cy.getBy('[data-cy="checkbox-column-cell"]').click();
+      cy.clickButton('Confirm');
       cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
       cy.getByDataCy('Submit').click();
-      // Verify edited details
       cy.location('pathname').should('match', /\/details$/);
       cy.verifyPageTitle('new project');
       cy.getByDataCy('name').should('contain', 'new project');

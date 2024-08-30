@@ -182,8 +182,8 @@ describe('Inventories Tests', () => {
             cy.getByDataCy('create-smart-inventory').click();
             cy.getByDataCy('name').type(name);
             cy.getByDataCy('description').type('description');
-            cy.singleSelectByDataCy('organization', org.name);
             cy.getByDataCy('host-filter').type('name=host1');
+            cy.singleSelectByDataCy('organization', org.name);
             cy.getByDataCy('Submit').click();
             cy.getByDataCy('name').should('have.text', name);
             cy.getByDataCy('description').should('have.text', 'description');

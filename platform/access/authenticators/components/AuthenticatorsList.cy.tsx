@@ -33,12 +33,9 @@ describe('Authenticators list', () => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
-          .within(() => {
-            cy.get('button')
-              .contains(/^Delete selected authentications$/)
-              .should('be.visible');
-          });
+          .find('.pf-v5-c-menu__list')
+          .contains('Delete authentications')
+          .should('be.visible');
       });
     });
 
@@ -65,7 +62,7 @@ describe('Authenticators list', () => {
       cy.intercept({ method: 'POST', url: gatewayV1API`/authenticators/2/delete/` });
       cy.get('[data-cy="row-id-2"] > [data-cy="checkbox-column-cell"]').click();
       cy.get('[data-cy="actions-dropdown"]').first().click();
-      cy.get('[data-cy="delete-selected-authentications"]').click();
+      cy.get('[data-cy="delete-authentications"]').click();
       cy.get('div[role="dialog"]').within(() => {
         cy.get('.pf-v5-c-check__label').should(
           'contain',

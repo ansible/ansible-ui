@@ -19,7 +19,7 @@ export function useAssociateTeamAdmins(onComplete: () => Promise<void>) {
     selectUsers(
       t('Add administrators'),
       t('Select users below to be added to this team as administrators.'),
-      t('Save'),
+      t('Add administrators'),
       async (users: PlatformUser[]) => {
         if (!team) return;
         await postRequest(gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate/`, {

@@ -10,7 +10,7 @@ import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useMemo } from 'react';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useParams } from 'react-router-dom';
@@ -40,7 +40,7 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
         variant: ButtonVariant.primary,
         isPinned: true,
         icon: PlusCircleIcon,
-        label: t('Add administrator(s)'),
+        label: t('Add administrators'),
         isDisabled: canEditTeam
           ? undefined
           : t(
@@ -52,8 +52,8 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
-        label: t('Remove selected administrators'),
+        icon: MinusCircleIcon,
+        label: t('Remove administrators'),
         isDisabled: canEditTeam
           ? undefined
           : t(

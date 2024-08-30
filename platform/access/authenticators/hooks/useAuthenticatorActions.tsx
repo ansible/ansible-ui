@@ -55,7 +55,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         variant: ButtonVariant.primary,
         isPinned: false,
         icon: PlusCircleIcon,
-        label: t('Manage authenticators'),
+        label: t('Manage authentications'),
         isDisabled: canCreateAuthenticator
           ? undefined
           : t(
@@ -69,7 +69,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Delete selected authentications'),
+        label: t('Delete authentications'),
         onClick: deleteAuthenticators,
         isDanger: true,
       },
@@ -152,7 +152,7 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         // variant: ButtonVariant.primary,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit authenticator'),
+        label: t('Edit authentication'),
         isDisabled: (authenticator: Authenticator) => cannotEditAuthenticator(authenticator),
         onClick: (authenticator) =>
           pageNavigate(PlatformRoute.EditAuthenticator, { params: { id: authenticator.id } }),
@@ -219,17 +219,17 @@ export function useAuthenticatorPageActions(
       {
         type: PageActionType.Switch,
         ariaLabel: (isEnabled) =>
-          isEnabled ? t('Click to disable authenticator') : t('Click to enable authenticator'),
+          isEnabled ? t('Click to disable authentication') : t('Click to enable authentication'),
         selection: PageActionSelection.Single,
         onToggle: (authenticator, enabled) => handleToggleAuthenticator(authenticator, enabled),
         isSwitchOn: (authenticator: Authenticator) => (authenticator.enabled ? true : false),
-        label: t('Authenticator enabled'),
-        labelOff: t('Authenticator disabled'),
+        label: t('Authentication enabled'),
+        labelOff: t('Authentication disabled'),
         showPinnedLabel: false,
         isPinned: true,
         isDisabled: cannotEditAuthenticator,
         tooltip: t(
-          'Indicates if an authenticator is enabled and will be included in the hierarchy of authentication mechanisms.'
+          'Indicates if an authentication is enabled and will be included in the hierarchy of authentication mechanisms.'
         ),
       },
       {
@@ -237,7 +237,8 @@ export function useAuthenticatorPageActions(
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
-        label: t('Edit authenticator'),
+        variant: ButtonVariant.primary,
+        label: t('Edit authentication'),
         isDisabled: cannotEditAuthenticator,
         onClick: (authenticator) =>
           pageNavigate(PlatformRoute.EditAuthenticator, { params: { id: authenticator.id } }),
@@ -247,7 +248,7 @@ export function useAuthenticatorPageActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
-        label: t('Delete authenticator'),
+        label: t('Delete authentication'),
         isDisabled: cannotDeleteAuthenticator,
         onClick: (authenticator) => deleteAuthenticators([authenticator]),
         isDanger: true,

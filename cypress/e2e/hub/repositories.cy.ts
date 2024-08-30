@@ -59,22 +59,18 @@ describe('Repositories', () => {
   it('should be able to create edit and delete a repository', () => {
     const repositoryName = randomE2Ename();
     const repositoryDescription = 'Here goes description';
-
     // Create repository
     cy.getByDataCy('create-repository').click();
     cy.verifyPageTitle('Create repository');
     cy.getByDataCy('name').type(repositoryName);
     cy.getByDataCy('description').type(repositoryDescription);
-
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle(`${repositoryName}`);
     cy.hasDetail(/^Description$/, 'Here goes description');
     cy.hasDetail(/^Labels$/, 'None'); //pipelines
     cy.hasDetail(/^Remote$/, 'None');
     cy.hasDetail(/^Retained version count$/, '1');
-
     navigateToRepositories();
-
     //* Edit Repository *//
     const editDescripiption = 'repositoryDescription edited';
     const RetainedNumber = '10';
@@ -87,15 +83,9 @@ describe('Repositories', () => {
     // Edit Pipeline\Lables
     cy.getByDataCy('pipeline-form-group').click().getByDataCy('approved').click();
     // Edit Remote
-    cy.getByDataCy('remote-form-group').click();
-    cy.getByDataCy('browse-button').click();
-    cy.getByDataCy('text-input').clear().type(remote.name);
-    cy.get(`[data-cy="row-0"] [data-cy="checkbox-column-cell"]`).click();
-    cy.clickModalButton('Confirm');
-
+    cy.get('[id="remote"]').click();
+    cy.get('li').contains(`${remote.name}`).click();
     cy.getByDataCy('Submit').click();
-
-    // Check Repository Details
     cy.verifyPageTitle(repositoryName);
     cy.hasDetail('Name', repositoryName);
     cy.hasDetail('Description', editDescripiption);
@@ -103,7 +93,6 @@ describe('Repositories', () => {
     cy.hasDetail('Labels', 'approved');
     cy.hasDetail('Remote', remote.name);
     navigateToRepositories();
-
     // Delete Rpository
     cy.clickTableRowLink('name', repositoryName);
     // Repository Details
@@ -112,7 +101,6 @@ describe('Repositories', () => {
     cy.get('[data-cy="delete-repository"]').click();
     cy.get('#confirm').click();
     cy.get('button').contains('Delete repositories').click();
-
     // Repositories Page
     cy.verifyPageTitle('Repositories');
     cy.filterTableByTextFilter('name', repositoryName);
@@ -122,7 +110,6 @@ describe('Repositories', () => {
 
   it('should copy CLI to clipboard', () => {
     cy.clickTableRowLink('name', repository.name);
-
     // Repository Details
     cy.verifyPageTitle(repository.name);
     cy.clickPageAction('copy-cli-configuration');
@@ -135,12 +122,10 @@ describe('Repositories', () => {
 
   it('should sync repository', () => {
     cy.clickTableRowAction('name', repository.name, 'sync-repository', { inKebab: true });
-
     // Sync modal
     cy.getModal().within(() => {
       cy.get('button').contains('Sync').click();
     });
-
     cy.get('[data-cy="alert-toaster"]')
       .should('be.visible')
       .should('contain', `Sync started for repository "${repository.name}".`);
@@ -153,10 +138,8 @@ describe('Repositories', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
-
     // Collection versions tab
     cy.clickTab('Collection Versions', true);
-
     // Add collections
     cy.getByDataCy('add-collections').click();
     cy.getModal().within(() => {
@@ -165,18 +148,15 @@ describe('Repositories', () => {
       cy.contains('button', 'Select').click();
     });
     cy.getModal().should('not.exist');
-
     // Verify collections are added and visible
     cy.setTableView('table');
     cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
-
     // Should show the remove dialog from row action
     cy.clickTableRowAction('name', collectionName, 'remove', { disableFilter: true });
     cy.getModal().within(() => {
       cy.contains('button', 'Delete collections versions').should('be.visible');
       cy.get('#cancel').click();
     });
-
     // Remove collection using table bulk action
     cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
     cy.containsBy('button', 'Remove collections').click();
@@ -185,10 +165,8 @@ describe('Repositories', () => {
       cy.get('#submit').click();
       cy.contains('button', 'Close').click();
     });
-
     // Verify collections are removed
     cy.contains('tr', collectionName).should('not.exist');
-
     navigateToRepositories();
   });
 
@@ -196,11 +174,9 @@ describe('Repositories', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
-
     // Collection versions tab
     cy.clickTab('Collection Versions', true);
     cy.contains('No collection versions yet');
-
     // Add collections
     cy.getByDataCy('add-collections').click();
     cy.getModal().within(() => {
@@ -209,14 +185,11 @@ describe('Repositories', () => {
       cy.contains('button', 'Select').click();
     });
     cy.getModal().should('not.exist');
-
     // Verify collections are added and visible
     cy.get(`[aria-label="table view"]`).click();
     cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
-
     // Versions tab
     cy.clickTab(/^Versions$/, true);
-
     // Revert repository version
     cy.contains('Version number');
     // Takes a while for the version to switch to 1 (latest)
@@ -230,12 +203,10 @@ describe('Repositories', () => {
       cy.get('#submit').click();
       cy.contains('button', 'Close').click();
     });
-
     // Collection versions tab
     cy.clickTab('Collection Versions', true);
     // Verify collections are removed since we are reverting to repository version 0
     cy.contains('No collection versions yet');
-
     navigateToRepositories();
   });
 });

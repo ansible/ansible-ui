@@ -31,17 +31,14 @@ describe('Team admins list', () => {
       cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
-      cy.get(`[data-cy="add-administrator(s)"]`).should('be.visible');
+      cy.get(`[data-cy="add-administrators"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab').click();
         cy.document()
           .its('body')
-          .find('.pf-v5-c-menu__content')
-          .within(() => {
-            cy.get('button')
-              .contains(/^Remove selected administrators$/)
-              .should('be.visible');
-          });
+          .find('.pf-v5-c-menu__item')
+          .contains('Remove administrators')
+          .should('be.visible');
       });
     });
     it('Add administrator(s) button is disabled if the user does not have required permissions', () => {
@@ -49,7 +46,7 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.get('[data-cy="add-administrator(s)"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="add-administrators"]').should('have.attr', 'aria-disabled', 'true');
     });
     it('Add administrator(s) button is enabled if the user has the required permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
@@ -72,7 +69,7 @@ describe('Team admins list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/admins'],
       });
-      cy.get('[data-cy="add-administrator(s)"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-administrators"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {

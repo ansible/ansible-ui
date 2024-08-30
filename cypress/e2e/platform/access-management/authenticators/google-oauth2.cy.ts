@@ -7,7 +7,7 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
 
     cy.fixture('platform-authenticators/google-oauth2').then((data: GoogleOAuth2) => {
       const googleData = data;
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
       // creates a new Google OAuth2 authenticator
       cy.containsBy('a', 'Create authentication').click();
@@ -46,22 +46,29 @@ describe('Google OAuth2 Authentication form - create, edit, update and delete', 
       cy.get('[data-cy="name"]').should('have.text', googleAuthenticator);
 
       // enable the Google OAuth2 authenticator
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // edit and update
-      cy.clickTableRowAction('name', googleAuthenticator, 'edit-authenticator');
-      cy.get('[data-cy="name"]').clear().type(`${googleAuthenticator} edited`);
+      cy.searchAndDisplayResourceByFilterOption(googleAuthenticator, 'name').then(() => {
+        cy.contains('tr', googleAuthenticator).within(() => {
+          cy.get('[data-cy=toggle-switch]').click();
+          cy.getByDataCy('actions-column-cell').within(() => {
+            cy.getByDataCy('edit-authentication').click();
+          });
+        });
+      });
+      cy.get('[data-cy="name"]').clear().type(`${googleAuthenticator} Updated`);
       cy.clickButton('Next');
       cy.clickButton('Next');
       cy.clickButton('Finish');
 
-      cy.verifyPageTitle(`${googleAuthenticator} edited`);
+      cy.verifyPageTitle(`${googleAuthenticator} Updated`);
 
       //delete the created Google OAuth2 authenticator
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
-      cy.clickTableRowAction('name', `${googleAuthenticator} edited`, 'delete-authentication', {
+      cy.clickTableRowAction('name', `${googleAuthenticator} Updated`, 'delete-authentication', {
         inKebab: true,
       });
       cy.getModal().within(() => {

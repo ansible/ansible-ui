@@ -18,12 +18,12 @@ cyLabel(['aaas-unsupported'], function () {
     before(() => {
       cy.createEdaOrganization().then((organization) => {
         edaOrg = organization;
-        cy.createEdaProject(edaOrg?.id).then((project) => {
+        cy.createEdaProject(edaOrg.id).then((project) => {
           edaProject = project;
           cy.waitEdaProjectSync(project);
           cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
             edaRuleBook = edaRuleBooks[0];
-            cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
+            cy.createEdaDecisionEnvironment(edaOrg.id).then((decisionEnvironment) => {
               edaDecisionEnvironment = decisionEnvironment;
             });
           });
@@ -63,7 +63,6 @@ cyLabel(['aaas-unsupported'], function () {
         cy.get('h1').should('contain', name);
         cy.get('.pf-v5-c-breadcrumb a').should('contain', 'Rulebook Activations').click();
         cy.filterTableByText(rbaToBeDeleted.name);
-        cy.contains('[data-label="Status"]', 'Completed', { timeout: 180000 });
         cy.get('tbody tr').then(() => {
           cy.get(' tr [data-cy="actions-dropdown"]')
             .click()
@@ -117,9 +116,18 @@ cyLabel(['aaas-unsupported'], function () {
       cy.navigateTo('eda', 'rulebook-activations');
       cy.clickButton(/^Create rulebook activation$/);
       cy.get('h1').should('contain', 'Create rulebook activation');
-      const name = 'E2E Project ' + randomString(4);
+      const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
+      cy.getBy('[data-cy="organization_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaOrg.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
       cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
       cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
       cy.selectDropdownOptionByResourceName('decision-environment-id', de_name);

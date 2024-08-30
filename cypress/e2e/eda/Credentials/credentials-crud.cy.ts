@@ -5,6 +5,10 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import {
+  EdaCredential,
+  EdaCredentialCreate,
+} from '../../../../frontend/eda/interfaces/EdaCredential';
 
 cyLabel(['aaas-unsupported'], function () {
   describe('EDA Credentials', () => {
@@ -120,7 +124,16 @@ cyLabel(['aaas-unsupported'], function () {
       });
 
       it('get warning while deleting a credential already in use', () => {
-        cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
+        cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
+          name: 'E2E Credential ' + randomString(4),
+          organization_id: edaOrg.id,
+          credential_type_id: 1,
+          description: 'This is a Credential with Source Control type',
+          inputs: {
+            username: 'username',
+            password: 'password',
+          },
+        }).then((edaCredential: Partial<EdaCredential>) => {
           cy.requestPost<EdaProject>(edaAPI`/projects/`, {
             name: 'E2E Project ' + randomString(4),
             organization_id: edaOrg.id,
