@@ -3,7 +3,7 @@ import { randomE2Ename } from '../../../../support/utils';
 
 describe('Authenticators - Local CRUD UI', () => {
   beforeEach(() => {
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
   });
 
@@ -47,7 +47,7 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.verifyPageTitle(localAuthenticator);
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
     cy.clickTableRowAction('name', localAuthenticator, 'delete-authentication', {
       inKebab: true,
@@ -91,7 +91,8 @@ describe('Authenticators - Local CRUD UI', () => {
     const localAuthenticatorName = randomE2Ename();
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
-        cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'edit-authenticator', {
+        cy.searchAndDisplayResourceByFilterOption(createdLocalAuthenticator.name, 'name');
+        cy.clickTableRowAction('name', createdLocalAuthenticator.name, 'edit-authentication', {
           inKebab: false,
         });
         cy.getByDataCy('name').clear().type(`${createdLocalAuthenticator.name} Edited`);
@@ -109,8 +110,8 @@ describe('Authenticators - Local CRUD UI', () => {
     cy.createLocalPlatformAuthenticator(localAuthenticatorName).then(
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
-        cy.getByDataCy('edit-authenticator').click();
-        cy.getByDataCy('name').clear().type(`${createdLocalAuthenticator.name} Edited`);
+        cy.get('[data-cy="edit-authentication"]').click();
+        cy.get('[data-cy="name"]').clear().type(`${createdLocalAuthenticator.name} Edited`);
         cy.clickButton('Next');
         cy.clickButton('Next');
         cy.clickButton('Finish');
@@ -142,7 +143,7 @@ describe('Authenticators - Local CRUD UI', () => {
                 });
               }
             );
-            cy.clickToolbarKebabAction('delete-selected-authentications');
+            cy.clickToolbarKebabAction('delete-authentications');
             cy.getModal().within(() => {
               cy.get('#confirm').click();
               cy.get('#submit').click();
