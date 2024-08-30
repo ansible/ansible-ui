@@ -4,7 +4,7 @@ import { gatewayV1API } from '../../../../../platform/api/gateway-api-utils';
 
 describe('Platform Basic Authentication', () => {
   it('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
 
     const localAuthenticator = randomE2Ename();
@@ -20,7 +20,7 @@ describe('Platform Basic Authentication', () => {
     cy.clickButton('Finish');
     cy.verifyPageTitle(localAuthenticator);
 
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
 
     // Enable the newly created local authenticator
@@ -47,10 +47,10 @@ describe('Platform Basic Authentication', () => {
     cy.platformLogin();
 
     // Authentication List Page
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
     // Edit the GitHub authenticator
-    cy.clickTableRowAction('name', localAuthenticator, 'edit-authenticator');
+    cy.clickTableRowAction('name', localAuthenticator, 'edit-authentication');
 
     // Authentication Wizard
     cy.get('[data-cy="name"]')
@@ -66,7 +66,7 @@ describe('Platform Basic Authentication', () => {
     cy.get('[data-cy="name"]').should('have.text', localAuthenticator + '_edited');
 
     // Authentication List Page
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication');
 
     // Delete the Local authenticator

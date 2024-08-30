@@ -21,7 +21,7 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       const USER_SEARCH_Json = toJson(USER_SEARCH);
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       // creates a new LDAP authenticator
       cy.verifyPageTitle('Authentication Methods');
 
@@ -67,7 +67,7 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       //Authentication Details Page
       cy.verifyPageTitle(ldapAuthenticator);
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
 
       // Enables the LDAP authenticator
@@ -76,11 +76,11 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       });
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication');
 
       // Edit the LDAP authenticator
-      cy.clickTableRowAction('name', ldapAuthenticator, 'edit-authenticator');
+      cy.clickTableRowAction('name', ldapAuthenticator, 'edit-authentication');
 
       // Authentication Wizard
       cy.get('[data-cy="name"]')
@@ -96,7 +96,7 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       cy.get('[data-cy="name"]').should('have.text', ldapAuthenticator + '_edited');
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
       // Delete the LDAP authenticator
       cy.clickTableRowAction('name', ldapAuthenticator + '_edited', 'delete-authentication', {

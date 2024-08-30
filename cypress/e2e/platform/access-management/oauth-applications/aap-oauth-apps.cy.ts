@@ -29,7 +29,7 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         cy.getByDataCy('create-oauth-application').click();
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
-        cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
+        cy.singleSelectByDataCy('organization', platformOrganization.name);
         cy.selectDropdownOptionByResourceName('authorization-grant-type', grantType);
         cy.selectDropdownOptionByResourceName('client-type', clientType);
         cy.getByDataCy('redirect-uris').type('https://redhat.com');
@@ -108,7 +108,7 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         cy.getByDataCy('create-oauth-application').click();
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
-        cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
+        cy.singleSelectByDataCy('organization', platformOrganization.name);
         cy.selectDropdownOptionByResourceName('authorization-grant-type', grantType);
         cy.selectDropdownOptionByResourceName('client-type', clientType);
         cy.getByDataCy('redirect-uris').type('https://redhat.com');

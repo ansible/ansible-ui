@@ -31,7 +31,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
     cy.containsBy('a', 'Create team').click();
     const teamName = `Platform E2E Team ${randomE2Ename()}`;
     cy.getByDataCy('name').type(teamName);
-    cy.singleSelectByDataCy('organization', `${platformOrganization.name}`);
+    cy.singleSelectByDataCy('organization', platformOrganization.name);
     cy.getByDataCy('Submit').click();
 
     cy.wait('@createPlatformTeam')
@@ -136,7 +136,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
     }).then((testPlatformTeam1: PlatformTeam) => {
       cy.selectTableRow(platformTeam.name);
       cy.selectTableRow(testPlatformTeam1.name);
-      cy.clickToolbarKebabAction('delete-selected-teams');
+      cy.clickToolbarKebabAction('delete-teams');
       cy.get('#confirm').click();
       cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as('deleteTeam1');
       cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam1.id.toString()}/`).as(
@@ -189,7 +189,7 @@ describe('Platform Teams - Tabs Tests', function () {
             cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
             cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
             cy.clickTab('Users', true);
-            cy.getByDataCy('add-user(s)').click();
+            cy.getByDataCy('add-users').click();
             cy.getModal().within(() => {
               cy.selectTableRowByCheckbox('username', user1.username);
               cy.selectTableRowByCheckbox('username', user2.username);
@@ -222,7 +222,7 @@ describe('Platform Teams - Tabs Tests', function () {
             cy.filterTableByTextFilter('name', platformTeam.name, { disableFilterSelection: true });
             cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
             cy.clickTab('Administrators', true);
-            cy.getByDataCy('add-administrator(s)').click();
+            cy.getByDataCy('add-administrators').click();
             cy.getModal().within(() => {
               cy.selectTableRowByCheckbox('username', user1.username);
               cy.selectTableRowByCheckbox('username', user2.username);

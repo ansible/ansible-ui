@@ -31,7 +31,7 @@ describe('Team users list', () => {
       cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 3);
       // Toolbar actions are visible
-      cy.get(`[data-cy="add-user(s)"]`).should('be.visible');
+      cy.get(`[data-cy="add-users"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
         cy.get('.toggle-kebab').click();
         cy.document()
@@ -39,19 +39,19 @@ describe('Team users list', () => {
           .find('.pf-v5-c-menu__content')
           .within(() => {
             cy.get('button')
-              .contains(/^Remove selected users$/)
+              .contains(/^Remove users$/)
               .should('be.visible');
           });
       });
     });
-    it('Add user(s) button is disabled if the user does not have required permissions', () => {
+    it('Add users button is disabled if the user does not have required permissions', () => {
       cy.mount(<PlatformAAPTeamUsers />, {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.get('[data-cy="add-user(s)"]').should('have.attr', 'aria-disabled', 'true');
+      cy.get('[data-cy="add-users"]').should('have.attr', 'aria-disabled', 'true');
     });
-    it('Add user(s) button is enabled if the user has the required permissions', () => {
+    it('Add users button is enabled if the user has the required permissions', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
           actions: {
@@ -72,7 +72,7 @@ describe('Team users list', () => {
         path: '/access/teams/:id/*',
         initialEntries: ['/access/teams/5/users'],
       });
-      cy.get('[data-cy="add-user(s)"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="add-users"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
   describe('Empty list', () => {

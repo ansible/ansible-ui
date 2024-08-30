@@ -61,7 +61,7 @@ describe('Credentials', () => {
       cy.getByDataCy('name').clear().type(`${credential.name}`);
       cy.clickButton(/^Save credential$/);
       cy.verifyPageTitle(credential.name);
-      cy.deleteAwxCredential(credential);
+      cy.deleteAwxCredential(credential, { failOnStatusCode: false });
     });
 
     it('can delete machine credential from the list row action', () => {
@@ -360,8 +360,18 @@ describe('Credentials', () => {
       cy.getByDataCy('create-template').click();
       cy.verifyPageTitle('Create job template');
       cy.getByDataCy('name').type(jobTemplateName);
-      cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-      cy.selectDropdownOptionByResourceName('project', project.name);
+      cy.getBy('[data-cy="inventory-form-group"]').click();
+      cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}{downArrow}{enter}`);
+      cy.getBy('button[id="project"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.get('[data-cy="filter-input"]').click();
+      });
+      cy.get('[id="filter-input-search"]').type(project.name);
+      const projName = project.name.toLowerCase().split(' ').join('-').toString();
+      cy.get(`[id="${projName}"]`).find('input').check();
+      cy.getBy('[data-cy="checkbox-column-cell"]').click();
+      cy.clickButton('Confirm');
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.multiSelectByDataCy('credential', [machineCredential.name]);
       cy.getByDataCy('Submit').click();

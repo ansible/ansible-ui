@@ -53,8 +53,18 @@ describe('Job Templates Tests', function () {
       cy.clickLink(/^Create job template$/);
       cy.getBy('[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type(jtDescription);
-      cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-      cy.selectDropdownOptionByResourceName('project', awxProject.name);
+      cy.getBy('[data-cy="inventory-form-group"]').click();
+      cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}{downArrow}{enter}`);
+      cy.getBy('button[id="project"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.get('[data-cy="filter-input"]').click();
+      });
+      cy.get('[id="filter-input-search"]').type(awxProject.name);
+      const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
+      cy.get(`[id="${projName}"]`).find('input').check();
+      cy.getBy('[data-cy="checkbox-column-cell"]').click();
+      cy.clickButton('Confirm');
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.getBy('[data-cy="Submit"]').click();
       cy.wait('@createJT')
@@ -62,7 +72,6 @@ describe('Job Templates Tests', function () {
         .then((result: JobTemplate) => {
           jobTemplate = result;
         });
-
       cy.verifyPageTitle(jtName);
       cy.hasDetail(/^Name$/, jtName);
       cy.hasDetail(/^Description$/, jtDescription);
@@ -75,7 +84,6 @@ describe('Job Templates Tests', function () {
 
     it('can create a job template with prompted fields, launch from the list view, and complete launch via wizard', function () {
       const jtName = 'E2E-POLJT ' + randomString(4);
-
       cy.createAWXCredential({
         kind: 'machine',
         organization: awxOrganization.id,
@@ -90,7 +98,16 @@ describe('Job Templates Tests', function () {
         cy.getBy('[data-cy="name"]').type(jtName);
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
         cy.selectPromptOnLaunch('inventory');
-        cy.selectDropdownOptionByResourceName('project', `${awxProject.name}`);
+        cy.getBy('button[id="project"]').click();
+        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+        cy.getModal().within(() => {
+          cy.get('[data-cy="filter-input"]').click();
+        });
+        cy.get('[id="filter-input-search"]').type(awxProject.name);
+        const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
+        cy.get(`[id="${projName}"]`).find('input').check();
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
         cy.selectPromptOnLaunch('credential');
@@ -105,9 +122,12 @@ describe('Job Templates Tests', function () {
             cy.filterTableByMultiSelect('name', [jtName]);
             cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
             cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
-            cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-            cy.multiSelectByDataCy('credential', [machineCredential.name]);
-            // close credential select dropdown
+            cy.getBy('button[data-cy="credential"]').click();
+            cy.get('[data-cy="search-input"]').find('input').type(`${machineCredential.name}`);
+            cy.get('li').contains(`${machineCredential.name}`).click();
+            cy.getBy('[data-cy="inventory-form-group"]').click();
+            cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}`);
+            cy.get('li').contains(`${awxInventory.name}`).click();
             cy.get('body').click(0, 0);
             cy.singleSelectBy(
               '[data-cy="executionEnvironment"]',
@@ -122,7 +142,6 @@ describe('Job Templates Tests', function () {
             cy.wait('@postLaunch')
               .its('response.body.id')
               .then((jobId: string) => {
-                cy.log(jobId);
                 cy.waitForTemplateStatus(jobId);
               });
             cy.getByDataCy('job-status-label').should('not.contain', 'Running');
@@ -146,7 +165,16 @@ describe('Job Templates Tests', function () {
         cy.getBy('[data-cy="name"]').type(jtName);
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
         cy.selectPromptOnLaunch('inventory');
-        cy.selectDropdownOptionByResourceName('project', awxProject.name);
+        cy.getBy('button[id="project"]').click();
+        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+        cy.getModal().within(() => {
+          cy.get('[data-cy="filter-input"]').click();
+        });
+        cy.get('[id="filter-input-search"]').type(awxProject.name);
+        const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
+        cy.get(`[id="${projName}"]`).find('input').check();
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
         cy.selectPromptOnLaunch('credential');
@@ -158,9 +186,12 @@ describe('Job Templates Tests', function () {
             jobTemplate = jt;
             cy.verifyPageTitle(jtName);
             cy.clickButton(/^Launch template$/);
-            cy.selectDropdownOptionByResourceName('inventory', awxInventory.name);
-            cy.multiSelectByDataCy('credential', [machineCredential.name]);
-            // close credential select dropdown
+            cy.getBy('button[data-cy="credential"]').click();
+            cy.get('[data-cy="search-input"]').find('input').type(`${machineCredential.name}`);
+            cy.get('li').contains(`${machineCredential.name}`).click();
+            cy.getBy('[data-cy="inventory-form-group"]').click();
+            cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}`);
+            cy.get('li').contains(`${awxInventory.name}`).click();
             cy.get('body').click(0, 0);
             cy.singleSelectBy(
               '[data-cy="executionEnvironment"]',
@@ -250,7 +281,6 @@ describe('Job Templates Tests', function () {
         .then((response: JobTemplate) => {
           expect(response.name).to.eql(newName);
         });
-
       cy.verifyPageTitle(newName);
       cy.hasDetail(/^Name$/, newName);
       cy.hasDetail(/^Description$/, newDescription);
@@ -274,12 +304,10 @@ describe('Job Templates Tests', function () {
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
               disableFilter: true,
             });
-            // verify job template inventory detail
             cy.verifyPageTitle(jobTemplateToEdit.name);
             cy.getByDataCy('inventory')
               .contains(jobTemplateToEdit.summary_fields.inventory.name)
               .click();
-            // delete job template inventory
             cy.clickKebabAction('actions-dropdown', 'delete-inventory');
             cy.clickModalConfirmCheckbox();
             cy.intercept('DELETE', awxAPI`/inventories/${inventoryToDelete.id.toString()}/`).as(
@@ -292,21 +320,25 @@ describe('Job Templates Tests', function () {
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
               disableFilter: true,
             });
-            // verify job template inventory deleted detail
             cy.verifyPageTitle(jobTemplateToEdit.name);
             cy.hasDetail(/^Inventory$/, 'Deleted');
-            // edit job template inventory
             cy.clickLink('Edit template');
-            cy.selectDropdownOptionByResourceName('inventory', inventoryToAssign.name);
+            cy.verifyPageTitle(jobTemplateToEdit.name);
             cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplateToEdit.id.toString()}/`).as(
               'saveJT'
             );
-            cy.clickButton('Save job template');
-            cy.wait('@saveJT');
-            // verify job template edited inventory detail
+            const endOfInvName = inventoryToAssign.name.split(' ').slice(-1).toString();
+            cy.get('input[id="inventory-select-typeahead"]').click();
+            cy.get('[data-cy="inventory-form-group"]').within(() => {
+              cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
+                delay: 200,
+              });
+            });
+            cy.get('li').contains(`${inventoryToAssign.name}`).click();
+            cy.getBy('[data-cy="Submit"]').click();
             cy.verifyPageTitle(jobTemplateToEdit.name);
             cy.hasDetail(/^Name$/, jobTemplateToEdit.name);
-            cy.hasDetail(/^Inventory$/, inventoryToAssign.name);
+            cy.getBy('[data-cy="inventory"]').should('have.text', inventoryToAssign.name);
           });
         });
       });
@@ -321,7 +353,6 @@ describe('Job Templates Tests', function () {
       cy.clickLink('Edit template');
       cy.getByDataCy('isWebhookEnabled').should('not.be.checked');
       cy.getByDataCy('isProvisioningCallbackEnabled').should('not.be.checked');
-      // Enable webhook
       cy.getByDataCy('isWebhookEnabled').click();
       cy.getByDataCy('isWebhookEnabled').should('be.checked');
       cy.get('[data-cy="related-webhook-receiver"]').should('have.value', '');
@@ -354,7 +385,6 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('isWebhookEnabled').should('be.checked');
       cy.getByDataCy('webhook-service-form-group').contains('GitHub');
       cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
-      // Enable provisioning callback
       cy.getByDataCy('isProvisioningCallbackEnabled').click();
       cy.contains('Provisioning callback details');
       cy.getByDataCy('host-config-key').type('foobar');
@@ -719,7 +749,16 @@ describe('Job Templates Tests', function () {
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);
           cy.selectPromptOnLaunch('inventory');
-          cy.selectDropdownOptionByResourceName('project', `${awxProject.name}`);
+          cy.getBy('button[id="project"]').click();
+          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+          cy.getModal().within(() => {
+            cy.get('[data-cy="filter-input"]').click();
+          });
+          cy.get('[id="filter-input-search"]').type(awxProject.name);
+          const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
+          cy.get(`[id="${projName}"]`).find('input').check();
+          cy.getBy('[data-cy="checkbox-column-cell"]').click();
+          cy.clickButton('Confirm');
           cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
           cy.multiSelectByDataCy('credential', [machineCredential1.name, machineCredential2.name]);
           cy.getBy('[data-cy="Submit"]').click();
@@ -774,7 +813,16 @@ describe('Job Templates Tests', function () {
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);
           cy.selectPromptOnLaunch('inventory');
-          cy.selectDropdownOptionByResourceName('project', `${awxProject.name}`);
+          cy.getBy('button[id="project"]').click();
+          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+          cy.getModal().within(() => {
+            cy.get('[data-cy="filter-input"]').click();
+          });
+          cy.get('[id="filter-input-search"]').type(awxProject.name);
+          const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
+          cy.get(`[id="${projName}"]`).find('input').check();
+          cy.getBy('[data-cy="checkbox-column-cell"]').click();
+          cy.clickButton('Confirm');
           cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
           cy.multiSelectByDataCy('credential', [vaultCredential1.name, vaultCredential2.name]);
           cy.getBy('[data-cy="Submit"]').click();

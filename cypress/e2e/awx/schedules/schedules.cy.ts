@@ -47,7 +47,16 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -57,7 +66,6 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
       });
-
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
@@ -75,7 +83,16 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Schedule COUNT ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -107,7 +124,16 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Schedule UNTIL ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -141,7 +167,16 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('create-schedule').click();
       cy.verifyPageTitle('Create schedule');
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', jobTemplate.name);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.clickButton('Next');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -178,7 +213,16 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule Project' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Project sync');
-      cy.selectDropdownOptionByResourceName('project', `${project.name}`);
+      cy.getBy('button[id="project"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.get('[data-cy="filter-input"]').click();
+      });
+      cy.get('[id="filter-input-search"]').type(project.name);
+      const projName = project.name.toLowerCase().split(' ').join('-').toString();
+      cy.get(`[id="${projName}"]`).find('input').check();
+      cy.getBy('[data-cy="checkbox-column-cell"]').click();
+      cy.clickButton('Confirm');
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -287,8 +331,17 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule Inventory ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
-      cy.selectDropdownOptionByResourceName('inventory', `${inventory.name}`);
-      cy.selectDropdownOptionByResourceName('inventory-source-select', `${inventorySource.name}`);
+      const endOfInvName = inventory.name.split(' ').slice(-1).toString();
+      cy.get('input[id="inventory-select-typeahead"]').click();
+      cy.get('[data-cy="inventory-form-group"]').within(() => {
+        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
+          delay: 200,
+        });
+      });
+      cy.get('li').contains(`${inventory.name}`).click();
+      cy.get('[id="inventory-source-select"]').click();
+      cy.get('li').contains(`${inventorySource.name}`).click();
+      cy.getBy('[data-cy="Submit"]').click();
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -379,7 +432,16 @@ describe('Schedules - Create and Delete', () => {
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate.name}`);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
       cy.clickButton(/^Next$/);

@@ -28,16 +28,7 @@ describe('Topology view', () => {
     );
   });
 
-  after(() => {
-    user?.id && cy.deleteAwxUser(user, { failOnStatusCode: false });
-  });
-
-  it('render the Topology page', () => {
-    cy.navigateTo('awx', 'topology-view');
-    cy.verifyPageTitle('Topology View');
-  });
-
-  it('refresh the Topology page', () => {
+  it('render and refresh the Topology page', () => {
     cy.navigateTo('awx', 'topology-view');
     cy.verifyPageTitle('Topology View');
     cy.get('#refresh').click();
@@ -117,6 +108,8 @@ describe('Topology view', () => {
           if (!nav.is(':visible')) cy.getByDataCy('nav-toggle').click();
         });
         cy.get('[data-cy="awx-topology-view"]').should('not.exist');
+
+        cy.deleteAwxUser(user, { failOnStatusCode: false });
       });
     });
   });

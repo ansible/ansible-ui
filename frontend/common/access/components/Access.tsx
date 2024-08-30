@@ -12,7 +12,7 @@ import {
 } from '../../../../framework';
 import { useCallback, useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { requestDelete } from '../../../common/crud/Data';
 import { Assignment } from '../interfaces/Assignment';
@@ -213,7 +213,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
+        icon: MinusCircleIcon,
         label: t('Remove roles'),
         onClick: (items: T[]) => removeRoles(items),
         isDanger: true,

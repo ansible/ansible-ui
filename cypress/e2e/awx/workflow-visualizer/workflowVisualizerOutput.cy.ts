@@ -134,7 +134,16 @@ describe('Workflow Visualizer', () => {
       });
       cy.getBy('li[data-cy="edit-node"]').click();
       cy.contains('Edit step').should('be.visible');
-      cy.selectDropdownOptionByResourceName('job-template-select', `${jobTemplate?.name}`);
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.getBy('[data-cy="text-input"]').type(jobTemplate?.name);
+        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.wait('@jtSearch');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('Submit').click();
       cy.getBy('[class="view-lines monaco-mouse-cursor-text"]').type('foo: bar');
       cy.getByDataCy('Submit').click();

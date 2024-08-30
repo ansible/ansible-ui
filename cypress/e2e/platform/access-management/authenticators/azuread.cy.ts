@@ -6,7 +6,7 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
     const azureAdAuthenticator = randomE2Ename();
 
     cy.fixture('platform-authenticators/azuread').then((azureADData: AzureAD) => {
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
       cy.verifyPageTitle('Authentication Methods');
       // create a new Azure AD authenticator
       // Click on the Create Authentication button
@@ -31,7 +31,7 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.get('[data-cy="oidc-secret"]').should('have.text', '$encrypted$');
 
       // Authentication List Page
-      cy.navigateTo('platform', 'authenticators');
+      cy.navigateTo('platform', 'authentications');
 
       // Enable the Azure AD authenticator
       cy.getTableRow('name', azureAdAuthenticator).within(() => {
@@ -55,10 +55,11 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
     // Login
     cy.platformLogin();
     // Authentication List Page
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
     // Edit the GitHub authenticator
-    cy.clickTableRowAction('name', azureAdAuthenticator, 'edit-authenticator');
+    cy.clickTableRowAction('name', azureAdAuthenticator, 'edit-authentication');
+
     // Authentication Wizard
     cy.get('[data-cy="name"]')
       .clear()
@@ -71,7 +72,7 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
     cy.verifyPageTitle(azureAdAuthenticator + '_edited');
     cy.get('[data-cy="name"]').should('have.text', azureAdAuthenticator + '_edited');
     // Authentication List Page
-    cy.navigateTo('platform', 'authenticators');
+    cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
     // Delete the GitHub authenticator
     cy.clickTableRowAction('name', azureAdAuthenticator + '_edited', 'delete-authentication', {

@@ -37,6 +37,7 @@ import { useSelectCollectionVersionSingle } from '../hooks/useCollectionVersionS
 export function CollectionPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { name, namespace, repository } = useParams();
   const context = useHubContext();
   const [collection, setCollection] = useState<null | Partial<CollectionVersionSearch>>(null);
@@ -97,6 +98,8 @@ export function CollectionPage() {
       ) {
         setCollection(collectionData);
       }
+
+      setIsLoading(false);
     }
 
     void getCollectionData();
@@ -234,15 +237,15 @@ export function CollectionPage() {
     [name, namespace, repository, t, display_signatures]
   );
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   if (collectionRequest.error) {
     return <HubError error={collectionRequest.error} handleRefresh={collectionRequest.refresh} />;
   }
 
-  if (!collectionRequest.data && !collectionRequest.error) {
-    return <LoadingPage />;
-  }
-
-  if (!collection) {
+  if (!collection || !collection.collection_version) {
     return <HubError handleRefresh={collectionRequest.refresh} />;
   }
 
