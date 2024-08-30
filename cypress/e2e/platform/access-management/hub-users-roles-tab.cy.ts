@@ -14,7 +14,7 @@ hub_resources_roles_tab.forEach((resource) => {
     let user: PlatformUser;
     let resource_object: Repository | HubRemote | HubNamespace;
     before(() => {
-      resource.creation().then((resource_instance) => {
+      resource?.creation?.().then((resource_instance) => {
         resource_object = resource_instance;
       });
       cy.createPlatformUser().then((PlatformUser) => {
@@ -46,7 +46,9 @@ hub_resources_roles_tab.forEach((resource) => {
         cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
       } else {
-        resource.deletion(resource_object);
+        if (resource.deletion !== null && resource_object !== undefined) {
+          resource.deletion(resource_object);
+        }
       }
       cy.deletePlatformUser(user);
     });
