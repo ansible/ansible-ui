@@ -109,10 +109,7 @@ export function EventStreamDetails() {
           <PageDetailCodeBlock
             value={eventStream?.test_headers}
             showCopyToClipboard={true}
-            label={t('Test headers')}
-            helpText={t(
-              'The HTTP Headers received from the Sender. Any of these can be used in the "Headers" field.'
-            )}
+            label={t('Headers')}
           />
         )}
       </PageDetails>
@@ -121,8 +118,7 @@ export function EventStreamDetails() {
           <PageDetailCodeBlock
             value={eventStream?.test_content}
             showCopyToClipboard={true}
-            label={t('Test content')}
-            helpText={t('Test content')}
+            label={t('Body')}
           />
         )}
       </PageDetails>
