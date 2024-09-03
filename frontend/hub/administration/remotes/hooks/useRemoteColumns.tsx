@@ -26,7 +26,7 @@ export function useRemoteColumns() {
         sort: 'name',
       },
       {
-        header: t('URL'),
+        header: t('Server URL'),
         cell: (remote) => <CopyCell text={remote.url} />,
         sort: 'url',
       },

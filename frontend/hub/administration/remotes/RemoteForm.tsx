@@ -493,8 +493,8 @@ function RemoteInputs({
       />
       <PageFormTextInput<RemoteFormProps>
         name="url"
-        label={t('URL')}
-        placeholder={t('Enter a URL')}
+        label={t('Server URL')}
+        placeholder={t('Enter server URL')}
         labelHelp={t('The URL of an external content source.')}
         isRequired
         validate={isValidUrl}
