@@ -61,7 +61,7 @@ export function RemoteDetails() {
     <>
       <PageDetails>
         <PageDetail label={t('Name')}>{remote?.name}</PageDetail>
-        <PageDetail label={t('URL')}>
+        <PageDetail label={t('Server URL')}>
           <CopyCell text={remote?.url} />
         </PageDetail>
         <PageDetail label={t('Proxy URL')}>
