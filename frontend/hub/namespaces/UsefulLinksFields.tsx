@@ -49,7 +49,7 @@ export function UsefulLinksFields() {
                     <TextInput
                       data-cy={`link-text-${index}`}
                       {...field}
-                      placeholder={t('Link text')}
+                      placeholder={t('Enter link text')}
                     />
                     {error?.message ? (
                       <FormHelperText>
@@ -73,7 +73,7 @@ export function UsefulLinksFields() {
                         data-cy={`link-url-${index}`}
                         {...field}
                         type="url"
-                        placeholder={t('Link URL')}
+                        placeholder={t('Enter link URL')}
                       />
                       {error?.message ? (
                         <FormHelperText>
