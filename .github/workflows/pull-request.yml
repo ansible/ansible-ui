@@ -2,10 +2,6 @@ name: Pull Request
 
 on:
   pull_request:
-    types: [opened, synchronize, labeled, unlabeled]
-
-env:
-  IS_GITHUB_ACTION: true
 
 concurrency:
   group: ${{ github.ref }}
@@ -15,15 +11,8 @@ jobs:
   packages:
     name: Packages
     runs-on: ubuntu-latest
-    # timeout-minutes: 10
-    outputs:
-      awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
-      hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
-      eda: ${{ steps.changed-eda.outputs.changed == 'true' }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 100
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -40,47 +29,13 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - id: changed-awx
-        run: |
-          if $(git diff --quiet HEAD^ HEAD -- frontend/awx frontend/common cypress/e2e/awx framework cypress/support package.json); then
-            echo "changed=false" >> "$GITHUB_OUTPUT" 
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT" 
-          fi
-      - id: changed-hub
-        run: |
-          if $(git diff --quiet HEAD^ HEAD -- frontend/hub frontend/common cypress/e2e/hub framework cypress/support package.json); then
-            echo "changed=false" >> "$GITHUB_OUTPUT" 
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT" 
-          fi
-      - id: changed-eda
-        run: |
-          if $(git diff --quiet HEAD^ HEAD -- frontend/eda frontend/common cypress/e2e/eda framework cypress/support package.json); then
-            echo "changed=false" >> "$GITHUB_OUTPUT" 
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT" 
-          fi
-
-  pr-queue:
-    name: PR Queue
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ahmadnassri/action-workflow-queue@v1
-        with: 
-          delay: 60000
-          timeout: 14400000
 
   checks:
     name: ESLint - Prettier - TSC
     runs-on: ubuntu-latest
-    # timeout-minutes: 10
     needs: packages
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -99,65 +54,51 @@ jobs:
         run: npm ci
       - run: npm run checks
 
-  awx-e2e:
-    name: AWX E2E
-    needs:
-      - packages
-      - pr-queue
-    uses: ./.github/workflows/awx-e2e.yml
-    with:
-      AWX_SERVER: ${{ vars.AWX_SERVER }}
-      SKIP_JOB: ${{ needs.packages.outputs.awx != 'true' }}
-    secrets:
-      AWX_PASSWORD: ${{ secrets.AWX_PASSWORD }}
-      AWX_PROJECT_ID: ${{ secrets.AWX_PROJECT_ID }}
-      AWX_RECORD_KEY: ${{ secrets.AWX_RECORD_KEY }}
-      
-  # eda-e2e:
-  #   name: EDA E2E
-  #   needs:
-  #     - packages
-  #     - pr-queue
-  #   uses: ./.github/workflows/eda-e2e.yml
-  #   with:
-  #     EDA_SERVER: ${{ vars.EDA_SERVER }}
-  #     SKIP_JOB: ${{ needs.packages.outputs.eda != 'true' }}
-  #   secrets:
-  #     EDA_PASSWORD: ${{ secrets.EDA_PASSWORD }}
-  #     EDA_PROJECT_ID: ${{ secrets.EDA_PROJECT_ID }}
-  #     EDA_RECORD_KEY: ${{ secrets.EDA_RECORD_KEY }}
-      
-  hub-e2e:
-    name: HUB E2E
-    needs:
-      - packages
-      - pr-queue    
-    uses: ./.github/workflows/hub-e2e.yml
-    with:
-      HUB_SERVER: ${{ vars.HUB_SERVER }}
-      SKIP_JOB: ${{ needs.packages.outputs.hub != 'true' }}
-    secrets:
-      HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
-      HUB_PROJECT_ID: ${{ secrets.HUB_PROJECT_ID }}
-      HUB_RECORD_KEY: ${{ secrets.HUB_RECORD_KEY }}
-
-  component:
-    name: Component
+  awx:
+    name: AWX
     needs: packages
     uses: ./.github/workflows/component.yml
-    secrets:
-      COMPONENT_PROJECT_ID: ${{ secrets.COMPONENT_PROJECT_ID }}
-      COMPONENT_RECORD_KEY: ${{ secrets.COMPONENT_RECORD_KEY }}
-            
+    with:
+      directory: frontend/awx
+
+  eda:
+    name: EDA
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/eda
+
+  hub:
+    name: HUB
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/hub
+
+  common:
+    name: Common
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/common
+
+  framework:
+    name: Framework
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: framework
+
   success:
     name: Success
     runs-on: ubuntu-latest
     if: ${{ success() }}
     needs: 
       - checks
-      - component
-      - awx-e2e
-      # - eda-e2e
-      - hub-e2e
+      - awx
+      - eda
+      - hub
+      - common
+      - framework
     steps:
       - run: echo Success

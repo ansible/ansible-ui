@@ -14,7 +14,7 @@ import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSecti
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { usePutRequest } from '../../common/crud/usePutRequest';
-import { useClearCache } from '../../common/useInvalidateCache';
+import { useClearCache } from '../../common/useInvalidateCache/useInvalidateCache';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';

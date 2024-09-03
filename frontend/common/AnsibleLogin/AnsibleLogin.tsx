@@ -10,15 +10,15 @@ import {
   LoginMainHeader,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
-import { ReactNode, useCallback, useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 import styled from 'styled-components';
-import { ErrorBoundary } from '../../framework/components/ErrorBoundary';
-import { useFrameworkTranslations } from '../../framework/useFrameworkTranslations';
-import { AuthOption, SocialAuthLogin } from './SocialAuthLogin';
-import { RequestError, createRequestError } from './crud/RequestError';
-import { getCookie } from './crud/cookie';
+import { useFrameworkTranslations } from '../../../framework';
+import { ErrorBoundary } from '../../../framework/components/ErrorBoundary';
+import { getCookie } from '../crud/cookie';
+import { createRequestError, RequestError } from '../crud/RequestError';
+import { AuthOption, SocialAuthLogin } from '../SocialAuthLogin';
 
 export function AnsibleLogin(props: {
   /** Title for the login main body header of the login page */
