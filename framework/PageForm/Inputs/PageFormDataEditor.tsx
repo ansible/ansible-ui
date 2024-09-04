@@ -437,18 +437,29 @@ export function objectToString(obj: object, language: DataEditorLanguages): stri
     return '';
   }
 
+  if (obj instanceof Error) {
+    return obj.message;
+  }
+
   switch (language) {
     case 'json':
       return JSON.stringify(obj, null, 2);
     case 'yaml': {
-      const yaml = jsyaml.dump(obj).trimEnd();
-      switch (yaml) {
-        case 'null':
-        case '{}':
-        case '[]':
-          return '';
-        default:
-          return yaml;
+      try {
+        const yaml = jsyaml.dump(obj).trimEnd();
+        switch (yaml) {
+          case 'null':
+          case '{}':
+          case '[]':
+            return '';
+          default:
+            return yaml;
+        }
+      } catch (err) {
+        if (err instanceof Error || err instanceof YAMLException) {
+          return err.message;
+        }
+        return '';
       }
     }
     default:
