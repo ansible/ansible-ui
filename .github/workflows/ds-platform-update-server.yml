@@ -31,7 +31,6 @@ jobs:
     if: ${{ github.event.inputs.UPDATE_SERVER == 'true' }}
     needs:
       - platform-e2e
-      - setup
     runs-on: ubuntu-latest
     steps:
       - name: Update Server Variable
