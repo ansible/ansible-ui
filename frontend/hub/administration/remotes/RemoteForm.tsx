@@ -21,7 +21,7 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useClearCache } from '../../../common/useInvalidateCache';
+import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';

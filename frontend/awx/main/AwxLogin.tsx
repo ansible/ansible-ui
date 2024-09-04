@@ -1,7 +1,7 @@
 import { Page } from '@patternfly/react-core';
 import useSWR, { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
-import { AnsibleLogin } from '../../common/AnsibleLogin';
+import { AnsibleLogin } from '../../common/AnsibleLogin/AnsibleLogin';
 import type { AuthOption } from '../../common/SocialAuthLogin';
 import { requestGet } from '../../common/crud/Data';
 import { awxAPI } from '../common/api/awx-utils';

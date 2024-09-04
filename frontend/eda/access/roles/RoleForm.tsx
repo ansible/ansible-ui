@@ -1,3 +1,4 @@
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -9,18 +10,17 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
 import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
+import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache/useInvalidateCache';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaContentTypes, useEdaRoleMetadata } from './hooks/useEdaRoleMetadata';
-import { PageFormMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormMultiSelect';
-import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
-import { useWatch } from 'react-hook-form';
 
 export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
