@@ -32,7 +32,7 @@ export function useManagedPlatformOverview() {
 
     if (hasAwx) {
       baseResources.push(
-        { id: 'counts', name: t('Resource Counts') },
+        { id: 'counts', name: t('Resource counts') },
         { id: 'job_activity', name: t('Job activity') },
         { id: 'recent_jobs', name: t('Recent jobs') },
         { id: 'recent_projects', name: t('Recent projects') },
