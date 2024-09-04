@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
 import { LoadingState } from '../../framework/components/LoadingState';
-import { AnsibleLogin } from '../../frontend/common/AnsibleLogin';
+import { AnsibleLogin } from '../../frontend/common/AnsibleLogin/AnsibleLogin';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../api/gateway-api-utils';
 import AAPLogo from '../assets/aap-logo.svg';
