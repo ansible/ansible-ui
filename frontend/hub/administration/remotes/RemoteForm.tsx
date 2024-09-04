@@ -387,6 +387,7 @@ function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretIn
     <>
       <PageFormGroup
         label={t('TLS validation')}
+        labelHelpTitle={t('TLS validation')}
         labelHelp={t('If selected, TLS peer validation must be performed.')}
       >
         <PageFormCheckbox<RemoteFormProps> name="tls_validation" />
@@ -511,7 +512,8 @@ function RemoteInputs({
       ) : null}
       <PageFormGroup
         label={t('Sync all dependencies')}
-        labelHelp={t('Include all dependencies when syncing a collection')}
+        labelHelpTitle={t('Sync all dependencies')}
+        labelHelp={t('Include all dependencies when syncing a collection.')}
       >
         <PageFormCheckbox<RemoteFormProps> name="sync_dependencies" />
       </PageFormGroup>
