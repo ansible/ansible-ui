@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useClearCache } from '../useInvalidateCache';
+import { useClearCache } from '../useInvalidateCache/useInvalidateCache';
 import { createRequestError } from './RequestError';
 import { requestCommon } from './requestCommon';
 

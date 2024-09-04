@@ -1,7 +1,7 @@
 import { Page } from '@patternfly/react-core';
 import { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
-import { AnsibleLogin } from '../../common/AnsibleLogin';
+import { AnsibleLogin } from '../../common/AnsibleLogin/AnsibleLogin';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 

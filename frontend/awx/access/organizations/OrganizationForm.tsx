@@ -11,15 +11,15 @@ import {
 import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
+import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache/useInvalidateCache';
 import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
+import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 
 type IOrganizationData = Organization & {
   instanceGroups?: InstanceGroup[];

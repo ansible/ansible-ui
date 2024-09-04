@@ -4,10 +4,6 @@ import { hubAPI } from './formatApiPathForHub';
 import { gatewayV1API } from './formatApiPathForPlatform';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
-  if (Cypress.env('IS_GITHUB_ACTION') || process.env.IS_GITHUB_ACTION) {
-    cy.log('Skipping requiredVariablesAreSet check in GitHub Actions');
-    return;
-  }
   requiredVariables.forEach((variable) => {
     if (!Cypress.env(variable)) {
       throw new Error(`Missing required environment variable: ${variable}`);
