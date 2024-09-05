@@ -164,7 +164,10 @@ describe('Projects', () => {
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
+      cy.intercept('POST', awxAPI`/schedules/preview/`).as('edit');
       cy.clickButton(/^Finish$/);
+      cy.wait('@edit');
+      cy.verifyPageTitle(schedule.name);
       cy.get('[data-ouia-component-id="simple-table"]')
         .scrollIntoView()
         .within(() => {

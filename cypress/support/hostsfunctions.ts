@@ -259,7 +259,7 @@ export function createHostAndCancelJob(
     inventory: inventory.id,
     organization: organizationId,
     project: projectId,
-  }).then(() => {
+  }).then((jobTemplate) => {
     // go to inventory hosts
     cy.navigateTo('awx', 'inventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
@@ -274,7 +274,9 @@ export function createHostAndCancelJob(
     cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
     // run  a template and wait for redirect to Job output
     cy.get('[data-cy="launch-template"]').first().click();
-    cy.location('pathname').should('match', /\/output$/);
+    cy.getBy('[data-cy="Output"]').should('be.visible');
+    cy.url().should('contain', '/output');
+    cy.verifyPageTitle(jobTemplate.name);
     if (hostInInventory) {
       // go to the Hosts under Inventory
       cy.navigateTo('awx', 'inventories');
