@@ -83,8 +83,10 @@ cyLabel(['aaas-unsupported'], function () {
             'deleted'
           );
           cy.clickPageAction('delete-credential-type');
-          cy.clickModalConfirmCheckbox();
-          cy.clickModalButton('Delete credential type');
+          cy.getModal().within(() => {
+            cy.getBy('#confirm').click();
+            cy.getBy('#submit').click();
+          });
           cy.wait('@deleted').then((deleted) => {
             expect(deleted?.response?.statusCode).to.eql(204);
           });
