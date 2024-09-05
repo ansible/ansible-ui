@@ -51,9 +51,10 @@ export function AuthenticatorReviewStep(props: {
         value,
       });
     } else {
+      const fieldValue = textInputTypes.includes(definition.type) ? value : value ? 'On' : 'Off';
       fields.push({
         label: definition?.ui_field_label || definition.name,
-        value: textInputTypes.includes(definition.type) ? value : value ? 'On' : 'Off',
+        value: key === 'BIND_PASSWORD' ? '$encrypted$' : fieldValue,
       });
     }
   });
