@@ -31,19 +31,11 @@ function ExecutionEnvironmentDetail(props: {
   verifyMissingVirtualEnv?: boolean;
   helpText?: string;
 }) {
-  const {
-    executionEnvironment,
-    isDefaultEnvironment,
-    virtualEnvironment,
-    verifyMissingVirtualEnv,
-    helpText,
-  } = props;
+  const { executionEnvironment, virtualEnvironment, verifyMissingVirtualEnv, helpText } = props;
   const { t } = useTranslation();
   const config = useAwxConfig();
   const docsLink = useGetDocsUrl(config, 'eeMigration');
-  const label = isDefaultEnvironment
-    ? t('Default execution environment')
-    : t('Execution environment');
+  const label = t('Execution environment');
   const getPageUrl = useGetPageUrl();
 
   if (executionEnvironment) {

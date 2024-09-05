@@ -60,7 +60,7 @@ export function OrganizationDetails() {
           verifyMissingVirtualEnv
           virtualEnvironment={organization.custom_virtualenv || undefined}
           executionEnvironment={organization.summary_fields?.default_environment}
-          isDefaultEnvironment
+          isDefaultEnvironment={false}
           helpText={t`The execution environment that will be used for jobs
           inside of this organization. This will be used a fallback when
           an execution environment has not been explicitly assigned at the

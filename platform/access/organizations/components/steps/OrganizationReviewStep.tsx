@@ -1,17 +1,17 @@
+import { Label, LabelGroup, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants, LabelGroup, Label } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
-import { Link } from 'react-router-dom';
-import { AwxRoute } from '../../../../../frontend/awx/main/AwxRoutes';
+import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { CredentialLabel } from '../../../../../frontend/awx/common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../../../frontend/awx/common/ExecutionEnvironmentDetail';
-import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
 import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
-import { useGetItem } from '../../../../../frontend/common/crud/useGet';
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';
+import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
+import { AwxRoute } from '../../../../../frontend/awx/main/AwxRoutes';
+import { useGetItem } from '../../../../../frontend/common/crud/useGet';
+import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
 
 export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
             virtualEnvironment={controllerOrganization?.custom_virtualenv || undefined}
             executionEnvironment={fetchedEE}
             verifyMissingVirtualEnv
-            isDefaultEnvironment
+            isDefaultEnvironment={false}
             helpText={t`The execution environment that will be used for jobs
           inside of this organization. This will be used a fallback when
           an execution environment has not been explicitly assigned at the

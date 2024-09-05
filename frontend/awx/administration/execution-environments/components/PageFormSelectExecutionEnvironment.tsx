@@ -29,6 +29,7 @@ export function PageFormSelectExecutionEnvironment<
   helperText?: string;
   organizationId?: number | null;
   label?: string;
+  labelHelp?: string;
   additionalControls?: ReactNode;
 }) {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export function PageFormSelectExecutionEnvironment<
     <PageFormSingleSelectAwxResource<ExecutionEnvironment, TFieldValues, TFieldName>
       name={props.name}
       id="executionEnvironment"
+      labelHelp={props.labelHelp}
       label={props.label ?? t('Execution environment')}
       placeholder={t('Select execution environment')}
       queryPlaceholder={t('Loading execution environments...')}
