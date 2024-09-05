@@ -17,7 +17,6 @@ on:
 jobs:
   platform-e2e:
     name: Platform E2E
-    needs: setup
     uses: ./.github/workflows/ds-platform-e2e.yml
     with:
       PLATFORM_SERVER: ${{ github.event.inputs.PLATFORM_SERVER }}
@@ -69,10 +68,9 @@ jobs:
 
   slack-failure-notification:
     name: Slack Failure Notification
-    if: ${{ failure() && needs.setup.outputs.UPDATE_SERVER == 'true' }}
+    if: ${{ failure() && github.event.inputs.UPDATE_SERVER == 'true' }}
     needs:
       - platform-update-server
-      - setup
     runs-on: ubuntu-latest
     steps:
       - name: Slack Notification
