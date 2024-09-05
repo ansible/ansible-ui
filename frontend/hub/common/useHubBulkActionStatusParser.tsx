@@ -17,7 +17,7 @@ export function useHubBulkActionStatusParser() {
   return useCallback(
     (response: unknown) => {
       const backgroundTaskObject = response as BackgroundTaskInterface;
-      if (backgroundTaskObject.backgroundTask) {
+      if (backgroundTaskObject?.backgroundTask) {
         const backgroundTaskUrl = backgroundTaskObject?.backgroundTask
           ? getPageUrl(backgroundTaskObject?.route ?? '', {
               params: { id: backgroundTaskObject?.id },
