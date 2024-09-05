@@ -73,7 +73,7 @@ cyLabel(['aaas-unsupported'], () => {
                 );
                 cy.clickButton(/^Create rulebook activation$/);
               });
-            cy.verifyPageTitle('Create Rulebook Activation');
+            cy.verifyPageTitle('Create rulebook activation');
           } else if (results.length >= 1) {
             cy.get('#rulebook-activations')
               .scrollIntoView()

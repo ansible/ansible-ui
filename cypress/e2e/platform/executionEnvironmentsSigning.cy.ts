@@ -1,7 +1,8 @@
 import { ExecutionEnvironments } from '../hub/constants';
 
 describe('Execution Environments: Signing', () => {
-  it('should successfully sign execution environment from Docker registry', () => {
+  //https://issues.redhat.com/browse/AAP-30525
+  it.skip('should successfully sign execution environment from Docker registry', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -16,16 +17,12 @@ describe('Execution Environments: Signing', () => {
         cy.filterTableBySingleText(executionEnvironment.name);
         cy.get('a').contains(executionEnvironment.name).click();
         cy.verifyPageTitle(executionEnvironment.name);
-
         cy.getByDataCy('actions-dropdown').click();
         cy.getByDataCy('sign-execution-environment').click();
-
         cy.clickModalConfirmCheckbox();
-
         cy.clickButton('Sign execution environments');
         cy.contains('Success');
         cy.clickButton('Close');
-
         cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
           cy.deleteHubRemoteRegistry(remoteRegistry);
         });

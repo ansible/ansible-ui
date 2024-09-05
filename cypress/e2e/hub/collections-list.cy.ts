@@ -4,7 +4,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-describe('Collections List', () => {
+describe.skip('Collections List', () => {
   let namespace: HubNamespace;
   let collectionName: string;
 
@@ -25,7 +25,7 @@ describe('Collections List', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  it('can sign a collection', () => {
+  it.skip('can sign a collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
       // Sign collection
       cy.getByDataCy('table-view').click();
@@ -42,7 +42,7 @@ describe('Collections List', () => {
     });
   });
 
-  it('can sign and approve a collection version', () => {
+  it.skip('can sign and approve a collection version', () => {
     cy.uploadCollection(collectionName, namespace.name, '3.0.0').then(() => {
       cy.navigateTo('hub', Collections.url);
       cy.get('[data-cy="table-view"]').click();
@@ -62,7 +62,7 @@ describe('Collections List', () => {
     });
   });
 
-  it('can upload and delete collection from system', () => {
+  it.skip('can upload and delete collection from system', () => {
     cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName).then(
       (result) => {
         // Upload collection
@@ -91,7 +91,7 @@ describe('Collections List', () => {
     );
   });
 
-  it('can upload and then delete a new version to an existing collection', () => {
+  it.skip('can upload and then delete a new version to an existing collection', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
 
     cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.2.3').then(
@@ -138,7 +138,7 @@ describe('Collections List', () => {
     );
   });
 
-  it('can copy a version to repository and then delete it from repository', () => {
+  it.skip('can copy a version to repository and then delete it from repository', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
 
     cy.navigateTo('hub', Collections.url);

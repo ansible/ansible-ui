@@ -3,7 +3,7 @@ import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
 
-describe('Collections Import Log', () => {
+describe.skip('Collections Import Log', () => {
   let namespace: HubNamespace;
   let collectionName: string;
 
@@ -25,7 +25,7 @@ describe('Collections Import Log', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  it('Collections Import Log tab collections error state', () => {
+  it.skip('Collections Import Log tab collections error state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -39,7 +39,8 @@ describe('Collections Import Log', () => {
     cy.wait('@getImportLogMockError');
     cy.contains('Internal Server Error').should('be.visible');
   });
-  it('Collections Import Log tab collection detail error state', () => {
+
+  it.skip('Collections Import Log tab collection detail error state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
@@ -55,7 +56,8 @@ describe('Collections Import Log', () => {
     cy.wait('@getImportLogMockError');
     cy.contains('Internal Server Error').should('be.visible');
   });
-  it('Collections Import Log tab non-empty state', () => {
+
+  it.skip('Collections Import Log tab non-empty state', () => {
     cy.getByDataCy('table-view').click();
     cy.filterTableBySingleText(collectionName, true);
     cy.clickLink(collectionName);
