@@ -113,6 +113,7 @@ export function AuthenticatorDetailsStep(props: {
               labelHelpTitle={field.ui_field_label || field.name}
               labelHelp={field.help_text}
               isRequired={field.required}
+              type={field.name === 'BIND_PASSWORD' ? 'password' : undefined}
               placeholder={t(`Enter ${field.ui_field_label || field.name}`)}
             />
           )
