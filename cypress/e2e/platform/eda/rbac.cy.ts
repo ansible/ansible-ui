@@ -212,12 +212,11 @@ cyLabel(['aaas-unsupported'], () => {
         cy.get('[data-cy="name"]').should('contain', edaProject.name);
         cy.url().should('contain', '/details');
         cy.get(`a[href*="/decisions/projects/${edaProject.id}/team-access?"]`).click();
-        cy.get('tbody').within(() => {
-          cy.getBy('[data-cy="team-name-column-cell"]').should('contain', edaTeam.name);
-        });
-        cy.get('tbody').within(() => {
-          cy.getBy('[data-cy="role-column-cell"]').should('contain', 'Project Admin');
-        });
+        cy.getBy('[data-cy="text-input"] input').type(edaTeam.name);
+        cy.get('tr').contains(edaTeam.name);
+        cy.contains('tr', 'Project Admin');
+        cy.platformLogout();
+        cy.login();
       });
 
       // it.skip('permissions are reflected in teams-> roles tab', () => {});
