@@ -18,7 +18,11 @@ import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColu
 import { usePaged } from '../PageTable/useTableItems';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { compareStrings } from '../utils/compare';
-import { BulkActionDialogProps, useBulkActionDialog } from './BulkActionDialog';
+import {
+  BulkActionDialogProps,
+  StatusWithMessageAndUrl,
+  useBulkActionDialog,
+} from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
 
 const ModalBodyDiv = styled.div`
@@ -250,7 +254,8 @@ function useBulkConfirmationDialog<T extends object>() {
  * @returns {(options: BulkConfirmationDialog<T> & BulkActionDialogProps<T>) => void} - A function to initiate the bulk confirmation and action process.
  */
 export function useBulkConfirmation<T extends object>(
-  errorAdapter: ErrorAdapter = genericErrorAdapter
+  errorAdapter: ErrorAdapter = genericErrorAdapter,
+  statusParser?: (response: unknown) => null | StatusWithMessageAndUrl
 ) {
   const bulkConfirmationDialog = useBulkConfirmationDialog<T>();
   const bulkActionDialog = useBulkActionDialog<T>();
@@ -259,7 +264,7 @@ export function useBulkConfirmation<T extends object>(
       options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
         Omit<BulkActionDialogProps<T>, 'onClose'>
     ) => {
-      const bulkActionOptions = { ...options, errorAdapter };
+      const bulkActionOptions = { ...options, errorAdapter, statusParser };
       if (options.isItemNonActionable && options.isItemNonActionable !== undefined) {
         bulkActionOptions.items = options.items.filter(
           (item) => options.isItemNonActionable !== undefined && !options.isItemNonActionable(item)
@@ -270,6 +275,6 @@ export function useBulkConfirmation<T extends object>(
         onConfirm: () => bulkActionDialog(bulkActionOptions),
       });
     },
-    [bulkActionDialog, bulkConfirmationDialog, errorAdapter]
+    [bulkActionDialog, bulkConfirmationDialog, errorAdapter, statusParser]
   );
 }

@@ -21,6 +21,7 @@ import { useAbortController } from '../hooks/useAbortController';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { usePageDialog } from './PageDialog';
 
+export type StatusWithMessageAndUrl = { message: string; url: string };
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
@@ -63,6 +64,9 @@ export interface BulkActionDialogProps<T extends object> {
 
   /** Error adapter used to parse the error message */
   errorAdapter?: ErrorAdapter;
+
+  /** function to parse the response */
+  statusParser?: (response: unknown) => null | StatusWithMessageAndUrl;
 }
 
 /**
@@ -95,6 +99,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     isDanger,
     errorAdapter = genericErrorAdapter,
     description,
+    statusParser,
   } = props;
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
@@ -102,7 +107,8 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
   const [isCanceled, setCanceled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
-  const [statuses, setStatuses] = useState<Record<string | number, string | null | undefined>>();
+  const [statuses, setStatuses] =
+    useState<Record<string | number, string | null | undefined | StatusWithMessageAndUrl>>();
   const abortController = useAbortController();
   const [_, setDialog] = usePageDialog();
 
@@ -126,8 +132,14 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     setDialog(undefined);
     onClose?.(
       isCanceled ? 'canceled' : error ? 'failures' : 'success',
-      items.filter((item) => statuses?.[keyFn(item)] === null),
-      items.filter((item) => statuses?.[keyFn(item)] !== null),
+      items.filter(
+        (item) =>
+          statuses?.[keyFn(item)] === null ||
+          (statuses?.[keyFn(item)] as StatusWithMessageAndUrl).message
+      ),
+      items.filter(
+        (item) => statuses?.[keyFn(item)] !== null && typeof statuses?.[keyFn(item)] === 'string'
+      ),
       items.filter((item) => statuses?.[keyFn(item)] === undefined)
     );
   }, [error, isCanceled, items, keyFn, onClose, setDialog, statuses]);
@@ -143,9 +155,16 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             if (abortController.signal.aborted) return;
             const key = keyFn(item);
             try {
-              await actionFn(item, abortController.signal);
+              const response = await actionFn(item, abortController.signal);
               if (!abortController.signal.aborted) {
-                setStatuses((statuses) => ({ ...(statuses ?? {}), [key]: null }));
+                let successState = undefined;
+                if (statusParser) {
+                  successState = statusParser(response);
+                }
+                setStatuses((statuses) => ({
+                  ...(statuses ?? {}),
+                  [key]: successState !== undefined ? successState : null,
+                }));
               }
               successfulItems.push(item);
             } catch (err) {
@@ -192,6 +211,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     translations.errorText,
     t,
     errorAdapter,
+    statusParser,
   ]);
 
   const pagination = usePaged(items);
@@ -261,9 +281,19 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
                       </span>
                     );
                   }
+                  if (
+                    (status as StatusWithMessageAndUrl).message &&
+                    (status as StatusWithMessageAndUrl).url
+                  ) {
+                    return (
+                      <a href={(status as StatusWithMessageAndUrl).url}>
+                        {(status as StatusWithMessageAndUrl).message}
+                      </a>
+                    );
+                  }
                   return (
                     <span style={{ color: pfDanger }}>
-                      {<ExclamationCircleIcon />}&nbsp; {statuses?.[key]}
+                      {<ExclamationCircleIcon />}&nbsp; {statuses?.[key] as string}
                     </span>
                   );
                 },
@@ -318,7 +348,8 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
  * openBulkActionDialog(...) // Pass BulkActionDialogProps
  */
 export function useBulkActionDialog<T extends object>(
-  defaultErrorAdapter: ErrorAdapter = genericErrorAdapter
+  defaultErrorAdapter: ErrorAdapter = genericErrorAdapter,
+  statusParser?: (response: unknown) => null | StatusWithMessageAndUrl
 ) {
   const [_, setDialog] = usePageDialog();
   const [props, setProps] = useState<BulkActionDialogProps<T>>();
@@ -337,12 +368,13 @@ export function useBulkActionDialog<T extends object>(
         <BulkActionDialog<T>
           {...props}
           errorAdapter={props.errorAdapter ?? defaultErrorAdapter}
+          statusParser={props.statusParser ?? statusParser}
           onClose={onCloseHandler}
         />
       );
     } else {
       setDialog(undefined);
     }
-  }, [props, setDialog, defaultErrorAdapter]);
+  }, [props, setDialog, defaultErrorAdapter, statusParser]);
   return setProps;
 }

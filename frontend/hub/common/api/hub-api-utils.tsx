@@ -14,12 +14,22 @@ import {
   postHubRequest,
   putHubRequest,
 } from './request';
+import { HubRoute } from '../../main/HubRoutes';
 
 // returns the preferred distribution base_path given a repo name
 // if there is a distribution with the same name as the repository, it will be used (as long as it's connected to the right repo too)
 // if not, the oldest will be used
 // reject if no distributions or repository
 // optional pulp_href param skips repo lookup
+
+export interface BackgroundTaskInterface {
+  /** Flag to indicate presence of a background task */
+  backgroundTask: boolean;
+  /** React route to the Task Management UI */
+  route: string;
+  /** id for a specific task to link to the relevant task details */
+  id: string;
+}
 
 export async function getRepositoryBasePath(
   name: string,
@@ -300,7 +310,11 @@ export async function waitForTask(
     }
   }
   if (retries === 0) {
-    throw new Error(`Task did not finish within the specified retries`);
+    return {
+      backgroundTask: true, // The task did not complete in the specified retries but it can be tracked via the Task Management UI
+      route: HubRoute.TaskPage,
+      id: taskHref,
+    } as BackgroundTaskInterface;
   }
 }
 
