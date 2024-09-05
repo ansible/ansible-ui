@@ -92,15 +92,18 @@ cyLabel(['aaas-unsupported'], function () {
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="url"]').type('https://github.com/ansible/aap-ui');
       cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
+      cy.intercept('POST', edaAPI`/projects/`).as('project');
       cy.clickButton(/^Create project$/);
-      cy.getEdaProjectByName(name).then((thisProject: EdaProject) => {
-        cy.waitEdaProjectSync(thisProject).then((result) => {
-          cy.hasDetail('Status', 'Failed');
-          cy.hasDetail('Import error', 'Credentials not provided or incorrect');
-          expect(result.import_state).to.eql('failed');
-          if (thisProject) cy.deleteEdaProject(result);
+      cy.wait('@project')
+        .its('response.body')
+        .then((newProject: EdaProject) => {
+          cy.waitEdaProjectSync(newProject).then((result) => {
+            cy.hasDetail('Status', 'Failed');
+            cy.hasDetail('Import error', 'Credentials not provided or incorrect');
+            expect(result.import_state).to.eql('failed');
+            if (newProject) cy.deleteEdaProject(result);
+          });
         });
-      });
     });
 
     it('cannot use a private DE without credentials', () => {

@@ -1,7 +1,6 @@
 //Tests a user's ability to create, edit, and delete rulebook activations in the EDA UI.
 //IMPORTANT: rulebook activations do not have Edit capability in the UI. They can only be enabled or disabled.
 import { randomString } from '../../../../framework/utils/random-string';
-import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
@@ -15,7 +14,6 @@ cyLabel(['aaas-unsupported'], function () {
     let edaProject: EdaProject;
     let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaRuleBook: EdaRulebook;
-    let edaAwxToken: EdaControllerToken;
     let edaOrg: EdaOrganization;
 
     before(() => {
@@ -24,13 +22,10 @@ cyLabel(['aaas-unsupported'], function () {
         cy.createEdaProject(edaOrg?.id).then((project) => {
           edaProject = project;
           cy.waitEdaProjectSync(project);
-          cy.getEdaRulebooks(edaProject, 'basic_short.yml').then((edaRuleBooks) => {
+          cy.getEdaRulebooks(edaProject, 'hello_echo.yml').then((edaRuleBooks) => {
             edaRuleBook = edaRuleBooks[0];
             cy.createEdaDecisionEnvironment(edaOrg?.id).then((decisionEnvironment) => {
               edaDecisionEnvironment = decisionEnvironment;
-              cy.addEdaCurrentUserAwxToken('E2E AWX token ' + randomString(4)).then((awxToken) => {
-                edaAwxToken = awxToken;
-              });
             });
           });
         });
@@ -63,7 +58,6 @@ cyLabel(['aaas-unsupported'], function () {
       cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
       cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
       cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
-      cy.selectDropdownOptionByResourceName('awx-token-id', edaAwxToken.name);
       cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
       cy.clickButton(/^Create rulebook activation$/);
       cy.wait('@edaRBA').then((edaRBA) => {

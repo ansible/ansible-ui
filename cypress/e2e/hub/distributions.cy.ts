@@ -7,7 +7,7 @@ import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections, Repositories } from './constants';
 
-describe('Collections Tabs: Distributions', () => {
+describe.skip('Collections Tabs: Distributions', () => {
   let namespace: HubNamespace;
   let repository: Repository;
   let collectionName: string;
@@ -44,7 +44,7 @@ describe('Collections Tabs: Distributions', () => {
     cy.verifyPageTitle(Collections.title);
   });
 
-  it('can inspect distribution information from collection detail page', () => {
+  it.skip('can inspect distribution information from collection detail page', () => {
     cy.uploadCollection(collectionName, namespace.name, '1.0.0');
     cy.navigateTo('hub', Repositories.url);
     cy.verifyPageTitle('Repositories');

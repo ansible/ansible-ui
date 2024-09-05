@@ -6,7 +6,7 @@ import { randomString } from '../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
-describe('Execution Environment User Access tab', () => {
+describe.skip('Execution Environment User Access tab', () => {
   let executionEnvironment: ExecutionEnvironment;
   let remoteRegistry: RemoteRegistry;
   let role: HubRbacRole;

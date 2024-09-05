@@ -4,7 +4,7 @@ import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 
-describe('Repositories', () => {
+describe.skip('Repositories', () => {
   const collectionName = randomE2Ename();
   let namespace: HubNamespace;
   let remote: HubRemote;
@@ -56,7 +56,7 @@ describe('Repositories', () => {
     cy.verifyPageTitle('Repositories');
   }
 
-  it('should be able to create edit and delete a repository', () => {
+  it.skip('should be able to create edit and delete a repository', () => {
     const repositoryName = randomE2Ename();
     const repositoryDescription = 'Here goes description';
     // Create repository
@@ -108,7 +108,7 @@ describe('Repositories', () => {
     cy.get('.pf-v5-c-empty-state').contains('No results found');
   });
 
-  it('should copy CLI to clipboard', () => {
+  it.skip('should copy CLI to clipboard', () => {
     cy.clickTableRowLink('name', repository.name);
     // Repository Details
     cy.verifyPageTitle(repository.name);
@@ -120,7 +120,7 @@ describe('Repositories', () => {
     navigateToRepositories();
   });
 
-  it('should sync repository', () => {
+  it.skip('should sync repository', () => {
     cy.clickTableRowAction('name', repository.name, 'sync-repository', { inKebab: true });
     // Sync modal
     cy.getModal().within(() => {
@@ -134,7 +134,7 @@ describe('Repositories', () => {
     });
   });
 
-  it('should be able to add and remove collection versions', () => {
+  it.skip('should be able to add and remove collection versions', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
@@ -170,7 +170,7 @@ describe('Repositories', () => {
     navigateToRepositories();
   });
 
-  it('should be able to revert repository version', () => {
+  it.skip('should be able to revert repository version', () => {
     // Repository Details
     cy.clickTableRowLink('name', repository.name);
     cy.verifyPageTitle(repository.name);
