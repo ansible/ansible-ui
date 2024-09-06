@@ -45,13 +45,11 @@ jobs:
           timeout: 14400000
 
   checks:
-    name: ESLint - Prettier - TSC
+    name: Checks
     runs-on: ubuntu-latest
     needs: packages
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -68,22 +66,50 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
+      - name: Checks
+        run: npm run checks
 
-      # Run ESLint separately on each directory
-      - name: Run ESLint on frontend
-        run: npm run eslint:frontend
+  awx-component:
+    name: AWX Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/awx
 
-      - name: Run ESLint on framework
-        run: npm run eslint:framework
+  eda-component:
+    name: EDA Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/eda
 
-      - name: Run ESLint on cypress
-        run: npm run eslint:cypress
+  hub-component:
+    name: HUB Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/hub
 
-      - name: Run Prettier
-        run: npm run prettier --check .
+  common-component:
+    name: Common Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: frontend/common
 
-      - name: Run TypeScript Compiler
-        run: npm run tsc --noEmit
+  framework-component:
+    name: Framework Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: framework
+
+  platform-component:
+    name: Platform Component
+    needs: packages
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: platform
 
   platform-e2e:
     name: Platform E2E
@@ -98,17 +124,17 @@ jobs:
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
       PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
 
-  platform-component:
-    name: Platform Component
-    needs: packages
-    uses: ./.github/workflows/ds-platform-component.yml
-
   success:
     name: Success
     runs-on: ubuntu-latest
     if: ${{ success() }}
     needs: 
       - checks
+      - awx-component
+      - eda-component
+      - hub-component
+      - common-component
+      - framework-component
       - platform-component
       - platform-e2e
     steps:
