@@ -45,7 +45,7 @@ function ProjectCreateInputs() {
         <PageFormTextInput<EdaProjectCreate>
           name="name"
           label={t('Name')}
-          placeholder={t('Enter name')}
+          placeholder={t('Enter project name')}
           isRequired
           maxLength={150}
         />
@@ -69,7 +69,7 @@ function ProjectCreateInputs() {
           name="url"
           isRequired={true}
           label={t('Source control URL')}
-          placeholder={t('Enter Source control URL')}
+          placeholder={t('Enter source control URL')}
           labelHelpTitle={t('Source control URL')}
           labelHelp={t('HTTP[S] protocol address of a repository, such as GitHub or GitLab.')}
         />
@@ -83,7 +83,7 @@ function ProjectCreateInputs() {
         <PageFormTextInput
           name="scm_branch"
           label={t('Source control branch/tag/commit')}
-          placeholder={t('Enter branch/tag/commit')}
+          placeholder={t('Enter source control branch/tag/commit')}
           labelHelpTitle={'Source control branch/tag/commit'}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
@@ -92,7 +92,7 @@ function ProjectCreateInputs() {
         <PageFormTextInput
           name="scm_refspec"
           label={t('Source control refspec')}
-          placeholder={t('Enter refspec')}
+          placeholder={t('Enter source control refspec')}
           labelHelpTitle={'Source control refspec'}
           labelHelp={t(
             'A refspec to fetch (passed to the Ansible git module). This parameter allows access to references via the branch field not otherwise available.'
@@ -101,7 +101,7 @@ function ProjectCreateInputs() {
         <PageFormSelect
           name={'eda_credential_id'}
           label={t('Source control credential')}
-          placeholderText={t('Select credential')}
+          placeholderText={t('Select source control credential')}
           options={
             credentials?.results
               ? credentials.results.map((item: { name: string; id: number }) => ({
@@ -120,7 +120,7 @@ function ProjectCreateInputs() {
           labelHelp={t(
             'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
           )}
-          placeholderText={t('Select validation credential')}
+          placeholderText={t('Select content signature validation credential')}
           options={
             verifyCredentials?.results
               ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
@@ -162,7 +162,7 @@ function ProjectEditInputs() {
         <PageFormTextInput<EdaProjectCreate>
           name="name"
           label={t('Name')}
-          placeholder={t('Enter name')}
+          placeholder={t('Enter project name')}
           isRequired
           maxLength={150}
         />
@@ -192,7 +192,7 @@ function ProjectEditInputs() {
         <PageFormTextInput
           name="scm_branch"
           label={t('Source control branch/tag/commit')}
-          placeholder={t('Enter branch/tag/commit')}
+          placeholder={t('Enter source branch/tag/commit')}
           labelHelpTitle={'Source control branch/tag/commit'}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
@@ -201,7 +201,7 @@ function ProjectEditInputs() {
         <PageFormTextInput
           name="scm_refspec"
           label={t('Source control refspec')}
-          placeholder={t('Enter refspec')}
+          placeholder={t('Enter source control refspec')}
           labelHelpTitle={t('Source control refspec')}
           labelHelp={t(
             'A refspec to fetch (passed to the Ansible git module). This parameter allows access to references via the branch field not otherwise available.'
@@ -213,7 +213,7 @@ function ProjectEditInputs() {
           label={t('Source control credential')}
           labelHelpTitle={t('Source control credential')}
           labelHelp={t('The token needed to utilize the source control URL.')}
-          placeholderText={t('Select credential')}
+          placeholderText={t('Select source control credential')}
           options={
             credentials?.results
               ? credentials.results.map((item: { name: string; id: number }) => ({
@@ -232,7 +232,7 @@ function ProjectEditInputs() {
           labelHelp={t(
             'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
           )}
-          placeholderText={t('')}
+          placeholderText={t('Select content signature validation credential')}
           options={
             verifyCredentials?.results
               ? verifyCredentials.results.map((item: { name: string; id: number }) => ({
