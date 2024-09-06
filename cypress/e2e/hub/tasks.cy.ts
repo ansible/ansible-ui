@@ -55,9 +55,9 @@ describe('Tasks', () => {
 
   it('should disable stop task button if task is not running/waiting', () => {
     cy.navigateTo('hub', Tasks.url);
-    cy.filterTableByTextFilter('task-name', 'pulpcore.app.tasks.base.general_create');
+    cy.filterTableByTextFilter('task-name', 'pulpcore.app.tasks.base.general_delete');
     cy.get('tr')
-      .contains('td[data-cy="name-column-cell"]', 'pulpcore.app.tasks.base.general_create')
+      .contains('td[data-cy="name-column-cell"]', 'pulpcore.app.tasks.base.general_delete')
       .parent('tr');
     cy.get('[data-cy="stop-task"]').should('have.attr', 'aria-disabled', 'true');
   });
