@@ -192,7 +192,7 @@ export function RulebookActivationInputs() {
         label={t('Name')}
         id={'name'}
         isRequired={true}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter rulebook activation name')}
       />
       <PageFormTextInput<IEdaRulebookActivationInputs>
         name="description"

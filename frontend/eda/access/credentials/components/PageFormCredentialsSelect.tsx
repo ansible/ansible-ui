@@ -22,7 +22,7 @@ export function PageFormCredentialSelect<
       name={props.name}
       id="credential-select"
       data-cy={'credentials-select'}
-      placeholder={t('Add credentials')}
+      placeholder={t('Select credentials')}
       labelHelpTitle={t('Credentials')}
       labelHelp={props.labelHelp}
       label={t('Credential')}
