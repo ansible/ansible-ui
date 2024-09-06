@@ -42,7 +42,7 @@ jobs:
       - uses: ahmadnassri/action-workflow-queue@v1
         with: 
           delay: 60000
-          timeout: 14400000
+          timeout: 28800000
 
   checks:
     name: Checks
