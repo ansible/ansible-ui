@@ -12,7 +12,6 @@ describe('Constructed Inventories CRUD Tests', () => {
   let inventory: Inventory;
 
   before(() => {
-    cy.login();
     const orgName = 'E2E Org Constructed Inventory tests ' + randomString(4);
     cy.createAwxOrganization({ name: orgName }).then((org) => {
       organization = org;
@@ -41,9 +40,9 @@ describe('Constructed Inventories CRUD Tests', () => {
 
   after(() => {
     cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-    cy.deleteAwxInventory(newInventory);
-    cy.deleteAwxInstanceGroup(instanceGroup);
-    cy.deleteAwxOrganization(organization);
+    cy.deleteAwxInventory(newInventory, { failOnStatusCode: false });
+    cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
