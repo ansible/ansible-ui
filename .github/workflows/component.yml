@@ -67,3 +67,5 @@ jobs:
           install: false
           component: true
           spec: ${{ inputs.directory }}/${{ matrix.directory }}/**/*.cy.tsx
+        env:
+          CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT: 300000
