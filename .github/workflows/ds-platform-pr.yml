@@ -127,15 +127,35 @@ jobs:
   success:
     name: Success
     runs-on: ubuntu-latest
-    if: ${{ success() }}
     needs: 
-      - checks
-      - awx-component
-      - eda-component
-      - hub-component
-      - common-component
-      - framework-component
-      - platform-component
-      - platform-e2e
+        - checks
+        - awx-component
+        - eda-component
+        - hub-component
+        - common-component
+        - framework-component
+        - platform-component
+        - platform-e2e
+    if: ${{ always() }}
     steps:
-      - run: echo Success
+      - name: Success Check
+        if: ${{ needs.checks.result == 'success' && 
+                needs.awx-component.result == 'success' &&
+                needs.eda-component.result == 'success' &&
+                needs.hub-component.result == 'success' &&
+                needs.common-component.result == 'success' &&
+                needs.framework-component.result == 'success' &&
+                needs.platform-component.result == 'success' &&
+                needs.platform-e2e.result == 'success' }}
+        run: echo "All jobs succeeded"
+      
+      - name: Failure or Cancelled
+        if: ${{ needs.checks.result != 'success' || 
+                needs.awx-component.result != 'success' ||
+                needs.eda-component.result != 'success' ||
+                needs.hub-component.result != 'success' ||
+                needs.common-component.result != 'success' ||
+                needs.framework-component.result != 'success' ||
+                needs.platform-component.result != 'success' ||
+                needs.platform-e2e.result != 'success' }}
+        run: exit 1
