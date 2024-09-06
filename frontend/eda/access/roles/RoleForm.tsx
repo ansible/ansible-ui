@@ -134,12 +134,21 @@ function EdaRoleInputs(props: { disableContentType?: boolean }) {
   const content_type = useWatch<EdaRbacRole>({ name: 'content_type' });
   return (
     <>
-      <PageFormTextInput<EdaRbacRole> name="name" label={t('Name')} isRequired />
-      <PageFormTextInput<EdaRbacRole> name="description" label={t('Description')} />
+      <PageFormTextInput<EdaRbacRole>
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter role name')}
+        isRequired
+      />
+      <PageFormTextInput<EdaRbacRole>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
       <PageFormSelect
         name={'content_type'}
         label={t('Content Type')}
-        placeholderText={t('Select a content type')}
+        placeholderText={t('Select content type')}
         options={Object.entries(edaRoleMetadata.content_types)
           .filter(
             ([option]) =>

@@ -149,14 +149,19 @@ function HubRoleInputs(props: { disableContentType?: boolean }) {
       <PageFormTextInput<HubRbacRole>
         name="name"
         label={t('Name')}
+        placeholder={t('Enter role name')}
         validate={isValidRoleName}
         isRequired
       />
-      <PageFormTextInput<HubRbacRole> name="description" label={t('Description')} />
+      <PageFormTextInput<HubRbacRole>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
       <PageFormSelect
         name={'content_type'}
         label={t('Content Type')}
-        placeholderText={t('Select a content type')}
+        placeholderText={t('Select content type')}
         options={[
           { value: 'galaxy.ansiblerepository', label: t('Repository') },
           { value: 'galaxy.collectionremote', label: t('Remote') },
