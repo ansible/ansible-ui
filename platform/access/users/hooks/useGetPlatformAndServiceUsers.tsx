@@ -52,7 +52,7 @@ export function useGetPlatformAndServiceUsers(userId: number): IPlatformAndServi
     platformUser
   );
   const { resource: hubResource, refresh: hubRefresh } = useHubResource<HubUser>(
-    '_ui/v2/users/',
+    '_ui/v2/users',
     platformUser
   );
 
