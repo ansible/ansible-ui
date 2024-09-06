@@ -60,7 +60,7 @@ function EventStreamInputs() {
         name="name"
         data-cy="name-form-field"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter event stream name')}
         isRequired
         maxLength={150}
       />
@@ -125,7 +125,7 @@ function EventStreamEditInputs() {
         name="name"
         data-cy="name-form-field"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter event stream name')}
         isRequired
         maxLength={150}
       />

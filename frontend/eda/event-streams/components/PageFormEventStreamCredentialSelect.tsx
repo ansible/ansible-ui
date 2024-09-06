@@ -32,7 +32,7 @@ export function PageFormSelectEventStreamCredential<
       name={props.name}
       id="credential_id"
       label={t('Credential')}
-      placeholder={t('Select Credential')}
+      placeholder={t('Select credential')}
       queryPlaceholder={t('Loading Credentials...')}
       queryErrorText={t('Error loading Credentials')}
       isRequired={props.isRequired}
