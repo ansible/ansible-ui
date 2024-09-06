@@ -128,12 +128,21 @@ function AwxRoleInputs(props: { disableContentType?: boolean }) {
   const content_type = useWatch<AwxRbacRole>({ name: 'content_type' });
   return (
     <>
-      <PageFormTextInput<AwxRbacRole> name="name" label={t('Name')} isRequired />
-      <PageFormTextInput<AwxRbacRole> name="description" label={t('Description')} />
+      <PageFormTextInput<AwxRbacRole>
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter role name')}
+        isRequired
+      />
+      <PageFormTextInput<AwxRbacRole>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
       <PageFormSelect
         name={'content_type'}
         label={t('Content type')}
-        placeholderText={t('Select a content type')}
+        placeholderText={t('Select content type')}
         options={Object.entries(awxRoleMetadata.content_types)
           .filter(([option]) => option !== 'shared.team')
           .map(([key, value]) => ({
