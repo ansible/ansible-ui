@@ -53,8 +53,14 @@ describe('Job Templates Tests', function () {
       cy.clickLink(/^Create job template$/);
       cy.getBy('[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type(jtDescription);
-      cy.getBy('[data-cy="inventory-form-group"]').click();
-      cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}{downArrow}{enter}`);
+      const endOfInvName = awxInventory.name.split(' ').slice(-1).toString();
+      cy.get('input[id="inventory-select-typeahead"]').click();
+      cy.get('[data-cy="inventory-form-group"]').within(() => {
+        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
+          delay: 200,
+        });
+      });
+      cy.get('li').contains(`${awxInventory.name}`).click();
       cy.getBy('button[id="project"]').click();
       cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
       cy.getModal().within(() => {
