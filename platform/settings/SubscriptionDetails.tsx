@@ -129,7 +129,9 @@ export function SubscriptionDetails() {
           {Math.floor(license_info.time_remaining / (24 * 60 * 60))}
         </PageDetail>
         <PageDetail label={t('Expires on')}>
-          {new Date(Date.now() + license_info.time_remaining * 1000).toLocaleDateString()}
+          {new Date(
+            Date.now() + license_info.time_remaining * 1000 + 2 * 60 * 1000
+          ).toLocaleDateString()}
         </PageDetail>
       </PageDetails>
     </PageLayout>
