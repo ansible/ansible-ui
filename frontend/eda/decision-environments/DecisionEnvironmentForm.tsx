@@ -55,7 +55,7 @@ function DecisionEnvironmentInputs() {
       <PageFormTextInput<EdaDecisionEnvironment>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter decision environment name')}
         isRequired
         maxLength={150}
       />
@@ -69,7 +69,8 @@ function DecisionEnvironmentInputs() {
       <PageFormTextInput<EdaDecisionEnvironment>
         name="image_url"
         label={t('Image')}
-        placeholder={t('Enter image name')}
+        placeholder={t('Enter image')}
+        maxLength={150}
         isRequired
         labelHelpTitle={t('Image')}
         labelHelp={imageHelpBlock}
