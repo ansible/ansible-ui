@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useGet } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function useGetOrganizationsForUser(userId: number): {
   orgIds: number[]; // Array of organization IDs
@@ -12,7 +12,7 @@ export function useGetOrganizationsForUser(userId: number): {
   };
 } {
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayV1API`/users/${userId?.toString() ?? ''}/organizations/`
+    gatewayAPI`/users/${userId?.toString() ?? ''}/organizations/`
   );
 
   const orgIds = useMemo(

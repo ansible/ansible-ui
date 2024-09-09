@@ -4,24 +4,24 @@ import '@4tw/cypress-drag-drop';
 import '@cypress/code-coverage/support';
 import { randomString } from '../../framework/utils/random-string';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import './auth';
 import './awx-access-commands';
-import './eda-access-commands';
 import './awx-commands';
 import './awx-user-access-commands';
-import './hub-access-commands';
 import './common-commands';
 import './core-commands';
 import './e2e';
+import './eda-access-commands';
 import './eda-commands';
 import { hubAPI } from './formatApiPathForHub';
+import './hub-access-commands';
 import './hub-commands';
 import './input-commands';
 import './rest-commands';
 import './table-commands';
 
 // Platform Imports
+import { gatewayAPI } from './formatApiPathForPlatform';
 import './platform-commands';
 
 export const galaxykitUsername: string = `e2e_${randomString(4)}`;
@@ -72,7 +72,7 @@ before(function () {
   switch (devBaseUrlPort) {
     // Platform E2E
     case '4100': {
-      cy.requestPost<unknown>(gatewayV1API`/users/`, {
+      cy.requestPost<unknown>(gatewayAPI`/users/`, {
         username: galaxykitUsername,
         password: galaxykitPassword,
       });
@@ -104,7 +104,7 @@ after(function () {
   const devBaseUrlPort = Cypress.config().baseUrl?.split(':').slice(-1).toString();
   switch (devBaseUrlPort) {
     case '4100': // Platform E2E
-      cy.requestDelete(gatewayV1API`/users/${galaxykitUsername}/`, { failOnStatusCode: false });
+      cy.requestDelete(gatewayAPI`/users/${galaxykitUsername}/`, { failOnStatusCode: false });
       break;
     case '4102': // HUB E2E
       cy.requestGet<HubUser>(hubAPI`/_ui/v1/users/${galaxyE2EUserID}/`).then((user) => {

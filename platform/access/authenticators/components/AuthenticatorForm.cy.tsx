@@ -1,8 +1,8 @@
 import plugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.json';
 import authenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { AuthenticatorForm } from './AuthenticatorForm';
 
 describe('AuthenticatorForm', () => {

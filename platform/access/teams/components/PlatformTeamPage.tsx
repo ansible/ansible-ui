@@ -11,16 +11,16 @@ import {
 } from '../../../../framework';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamPageActions } from '../hooks/useTeamActions';
-import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 
 export function PlatformTeamPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
+  const { error, data: team, refresh } = useGetItem<PlatformTeam>(gatewayAPI`/teams/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const actions = useTeamPageActions(() => pageNavigate(PlatformRoute.Teams));

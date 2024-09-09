@@ -1,10 +1,10 @@
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
-import { PlatformUserDetails } from './PlatformUserDetails';
+import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
 import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { PlatformUserDetails } from './PlatformUserDetails';
 
 const mockUser = {
   id: 1,
-  url: gatewayV1API`/users/1/`,
+  url: gatewayAPI`/users/1/`,
   created: '2023-11-01T20:04:54.789802Z',
   created_by: 'admin',
   modified: '2023-11-01T20:04:54.789827Z',
@@ -23,9 +23,9 @@ const mockUser = {
 
 describe('Platform user details', () => {
   it('Renders first & last name, username, email, last login, created & modified timestamps', () => {
-    cy.intercept(gatewayV1API`/users/1/`, mockUser);
-    cy.intercept(gatewayV1API`/users/1/organizations/`, { fixture: 'platformOrganizations.json' });
-    cy.intercept(gatewayV1API`/users/1/authenticators/`, {
+    cy.intercept(gatewayAPI`/users/1/`, mockUser);
+    cy.intercept(gatewayAPI`/users/1/organizations/`, { fixture: 'platformOrganizations.json' });
+    cy.intercept(gatewayAPI`/users/1/authenticators/`, {
       fixture: 'platformUserAuthenticators.json',
     });
 

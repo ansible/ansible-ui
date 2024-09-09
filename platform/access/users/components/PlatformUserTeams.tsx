@@ -1,8 +1,8 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   MultiSelectDialog,
@@ -15,13 +15,13 @@ import {
   usePageAlertToaster,
   usePageDialog,
 } from '../../../../framework';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { getItemKey, postRequest } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { IPlatformView, usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
+import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
 
 export function PlatformUserTeams() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function PlatformUserTeams() {
   const userId = useParams<{ id: string }>().id || '';
 
   const view = usePlatformView<PlatformTeam>({
-    url: userId && gatewayV1API`/users/${userId}/teams/`,
+    url: userId && gatewayAPI`/users/${userId}/teams/`,
     toolbarFilters,
     tableColumns,
   });
@@ -63,7 +63,7 @@ function SelectTeams(props: {
   const toolbarFilters = useTeamFilters();
   const tableColumns = useTeamColumns({ disableLinks: true });
   const view = usePlatformView<PlatformTeam>({
-    url: gatewayV1API`/teams/`,
+    url: gatewayAPI`/teams/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,
@@ -118,7 +118,7 @@ function useAssociateUserTeams(userId: string, onComplete: () => Promise<void>) 
         try {
           await Promise.all(
             teams.map((team) =>
-              postRequest(gatewayV1API`/teams/${team.id.toString()}/users/associate/`, {
+              postRequest(gatewayAPI`/teams/${team.id.toString()}/users/associate/`, {
                 instances: [userId],
               })
             )
@@ -167,7 +167,7 @@ function useRemoveUserTeams(userId: string, onComplete: (teams: PlatformTeam[]) 
       onComplete,
       actionFn: (team: PlatformTeam, signal) =>
         postRequest(
-          userId && team?.id ? gatewayV1API`/teams/${team.id.toString()}/users/disassociate/` : '',
+          userId && team?.id ? gatewayAPI`/teams/${team.id.toString()}/users/disassociate/` : '',
           { instances: [userId] },
           signal
         ),

@@ -5,10 +5,10 @@ import { pollAwxItemsResponseItem } from '../../../../frontend/awx/common/pollAw
 import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 interface AssociateControllerInstanceGroup {
@@ -30,7 +30,7 @@ export function CreatePlatformOrganization() {
 
   const handleSubmit = async (values: OrganizationWizardFormValues) => {
     const createdOrganization = await createOrganizationRequest(
-      gatewayV1API`/organizations/`,
+      gatewayAPI`/organizations/`,
       values.organization
     );
     const updateControllerOrg: boolean =

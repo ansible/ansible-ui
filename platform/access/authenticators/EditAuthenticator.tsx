@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
+import { AwxError } from '../../../frontend/awx/common/AwxError';
 import {
   postRequest,
   requestDelete,
@@ -9,19 +10,18 @@ import {
   requestPatch,
 } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../api/gateway-api-utils';
 import { Authenticator } from '../../interfaces/Authenticator';
 import { AuthenticatorMap } from '../../interfaces/AuthenticatorMap';
 import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
+import { PlatformItemsResponse } from '../../interfaces/PlatformItemsResponse';
 import { PlatformRoute } from '../../main/PlatformRoutes';
+import { gatewayAPI } from '../../utils/gateway-api-utils';
 import {
   AuthenticatorForm,
   AuthenticatorFormValues,
   buildTriggers,
   formatConfiguration,
 } from './components/AuthenticatorForm';
-import { PlatformItemsResponse } from '../../interfaces/PlatformItemsResponse';
-import { AwxError } from '../../../frontend/awx/common/AwxError';
 
 type Errors = { [key: string]: string } | undefined;
 

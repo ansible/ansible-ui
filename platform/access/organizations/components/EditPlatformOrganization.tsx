@@ -12,10 +12,10 @@ import { requestGet } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayAPI, gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 interface AssociateControllerInstanceGroup {
@@ -117,7 +117,7 @@ export function EditPlatformOrganization() {
     );
 
     try {
-      await patchRequest(gatewayV1API`/organizations/${id.toString()}/`, values.organization);
+      await patchRequest(gatewayAPI`/organizations/${id.toString()}/`, values.organization);
 
       if (awxService && controllerOrganization) {
         await updateControllerOrganizationRequest(

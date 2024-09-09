@@ -1,5 +1,5 @@
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
+import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformAAPOrganizationUsers } from './PlatformAAPOrganizationUsers';
 
@@ -12,7 +12,7 @@ describe('Organization users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/users/?*`,
+          url: gatewayAPI`/organizations/1/users/?*`,
         },
         {
           fixture: 'platformOrganizationUsers.json',
@@ -21,7 +21,7 @@ describe('Organization users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/`,
+          url: gatewayAPI`/organizations/1/`,
         },
         mockPlatformOrganization
       ).as('organization');
@@ -98,7 +98,7 @@ describe('Organization users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/users/*`,
+          url: gatewayAPI`/organizations/1/users/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -107,7 +107,7 @@ describe('Organization users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/`,
+          url: gatewayAPI`/organizations/1/`,
         },
         mockPlatformOrganization
       ).as('organization');
@@ -157,14 +157,14 @@ describe('Organization users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/users/*`,
+          url: gatewayAPI`/organizations/1/users/*`,
         },
         { statusCode: 500 }
       ).as('error');
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/`,
+          url: gatewayAPI`/organizations/1/`,
         },
         mockPlatformOrganization
       ).as('organization');

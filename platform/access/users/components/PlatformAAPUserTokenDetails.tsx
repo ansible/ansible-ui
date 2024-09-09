@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { LoadingPage, PageDetails, PageDetailsFromColumns } from '../../../../framework';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { Token } from '../../../../frontend/awx/interfaces/Token';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserTokensColumns } from '../hooks/useAAPUserTokensColumns';
 
 export function PlatformAAPUserTokenDetails() {

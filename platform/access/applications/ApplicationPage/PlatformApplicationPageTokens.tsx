@@ -1,5 +1,4 @@
 import { TrashIcon } from '@patternfly/react-icons';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -10,11 +9,12 @@ import {
   PageLayout,
   PageTable,
 } from '../../../../framework';
+import { Token } from '../../../../frontend/awx/interfaces/Token';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useDeleteTokens } from '../hooks/useDeleteTokens';
 import { useTokensColumns } from '../hooks/useTokensColumns';
 import { useTokensFilters } from '../hooks/useTokensFilters';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useDeleteTokens } from '../hooks/useDeleteTokens';
-import { usePlatformView } from '../../../hooks/usePlatformView';
 
 export function PlatformApplicationPageTokens() {
   const { t } = useTranslation();
@@ -22,7 +22,7 @@ export function PlatformApplicationPageTokens() {
   const toolbarFilters = useTokensFilters();
   const params = useParams<{ id: string }>();
   const view = usePlatformView<Token>({
-    url: gatewayV1API`/applications/${params.id ?? ''}/tokens/`,
+    url: gatewayAPI`/applications/${params.id ?? ''}/tokens/`,
     tableColumns,
     toolbarFilters,
   });

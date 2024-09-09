@@ -14,10 +14,10 @@ import {
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
 import { AwxPageForm } from '../../../frontend/awx/common/AwxPageForm';
 import { Application } from '../../../frontend/awx/interfaces/Application';
-import { requestGet, swrOptions, requestPatch } from '../../../frontend/common/crud/Data';
+import { requestGet, requestPatch, swrOptions } from '../../../frontend/common/crud/Data';
 import { usePostRequest } from '../../../frontend/common/crud/usePostRequest';
-import { gatewayV1API } from '../../api/gateway-api-utils';
 import { PlatformRoute } from '../../main/PlatformRoutes';
+import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../organizations/components/PageFormPlatformOrganizationSelect';
 
 const ClientType = {
@@ -38,7 +38,7 @@ export function CreatePlatformApplication(props: {
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Application>();
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
-    const newApplication = await postRequest(gatewayV1API`/applications/`, application);
+    const newApplication = await postRequest(gatewayAPI`/applications/`, application);
     if (props.onSuccessfulCreate) props.onSuccessfulCreate(newApplication);
     pageNavigate(PlatformRoute.ApplicationDetails, { params: { id: newApplication.id } });
   };
@@ -74,7 +74,7 @@ export function EditPlatformApplication() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: application } = useSWR<Application>(
-    gatewayV1API`/applications/${id.toString()}/`,
+    gatewayAPI`/applications/${id.toString()}/`,
     requestGet,
     swrOptions
   );
@@ -94,7 +94,7 @@ export function EditPlatformApplication() {
       return false;
     }
     const editedApplication = await requestPatch<Application>(
-      gatewayV1API`/applications/${id.toString()}/`,
+      gatewayAPI`/applications/${id.toString()}/`,
       application
     );
     pageNavigate(PlatformRoute.ApplicationDetails, { params: { id: editedApplication.id } });

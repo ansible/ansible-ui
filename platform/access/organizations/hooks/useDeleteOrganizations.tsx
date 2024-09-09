@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useOrganizationColumns } from './useOrganizationColumns';
 
 export function useDeleteOrganizations(
@@ -66,7 +66,7 @@ export function useDeleteOrganizations(
       actionColumns,
       onComplete,
       actionFn: (organization: PlatformOrganization, signal) =>
-        requestDelete(gatewayV1API`/organizations/${organization.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/organizations/${organization.id.toString()}/`, signal),
     });
   };
   return deleteOrganizations;

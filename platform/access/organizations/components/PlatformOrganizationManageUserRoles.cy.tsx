@@ -6,8 +6,8 @@ import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrga
 import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import * as GatewayServices from '../../../main/GatewayServices';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
 
 const mockPlatformOrganization = mockPlatformOrganizations.results[1];
@@ -27,12 +27,12 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: gatewayV1API`/organizations/1/`,
+        url: gatewayAPI`/organizations/1/`,
       },
       mockPlatformOrganization
     ).as('organization');
 
-    cy.intercept('GET', gatewayV1API`/users/2/`, mockPlatformUser);
+    cy.intercept('GET', gatewayAPI`/users/2/`, mockPlatformUser);
 
     // AWX
     cy.intercept('GET', awxAPI`/role_definitions/?content_type__model=organization*`, {

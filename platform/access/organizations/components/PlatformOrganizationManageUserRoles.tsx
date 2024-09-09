@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,22 +10,21 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { AwxSelectRolesStep } from '../../../../frontend/awx/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
 import { RoleAssignmentsReviewStep } from '../../../../frontend/common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest, requestDelete } from '../../../../frontend/common/crud/Data';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { useGatewayService } from '../../../main/GatewayServices';
-import { useCallback, useMemo } from 'react';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useGetAwxOrganizationRolesForUser } from '../hooks/useGetAwxOrganizationRolesForUser';
 import { useGetEdaOrganizationRolesForUser } from '../hooks/useGetEdaOrganizationRolesForUser';
 import { getAddedAndRemovedRoles } from '../utils/getAddedAndRemovedRoles';
@@ -60,11 +60,11 @@ export function PlatformOrganizationManageUserRoles() {
   const progressDialog = useAwxBulkActionDialog<UserAndRolePair>();
   // Platform Organization
   const { data: organization, isLoading: isLoadingOrg } = useGet<PlatformOrganization>(
-    gatewayV1API`/organizations/${params.id || ''}/`
+    gatewayAPI`/organizations/${params.id || ''}/`
   );
   // Platform User
   const { data: user, isLoading: isLoadingUser } = useGet<PlatformUser>(
-    gatewayV1API`/users/${params.userId || ''}/`
+    gatewayAPI`/users/${params.userId || ''}/`
   );
 
   // Existing selection of roles for the user based on role user assignments

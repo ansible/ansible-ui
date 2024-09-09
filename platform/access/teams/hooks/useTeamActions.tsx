@@ -2,6 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,18 +15,17 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteTeams } from './useDeleteTeams';
-import { useParams } from 'react-router-dom';
 
 export function useTeamToolbarActions(view: IPlatformView<PlatformTeam>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const deleteTeams = useDeleteTeams(view.unselectItemsAndRefresh);
 
@@ -97,7 +97,7 @@ export function useTeamPageActions(onTeamsDeleted: (teams: PlatformTeam[]) => vo
   const deleteTeams = useDeleteTeams(onTeamsDeleted);
   const params = useParams<{ id: string }>();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${params.id ?? ''}/`
+    gatewayAPI`/teams/${params.id ?? ''}/`
   );
 
   const canEditTeam = Boolean(

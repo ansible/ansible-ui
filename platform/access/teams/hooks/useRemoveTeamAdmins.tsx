@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, postRequest } from '../../../../frontend/common/crud/Data';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useUsersColumns } from '../../users/hooks/useUserColumns';
 
 export function useRemoveTeamAdmins(onComplete: (users: PlatformUser[]) => void) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
   const confirmationColumns = useUsersColumns({ disableLinks: true });
   const removeActionNameColumn = useMemo(
     () => ({
@@ -44,7 +44,7 @@ export function useRemoveTeamAdmins(onComplete: (users: PlatformUser[]) => void)
       onComplete,
       actionFn: (user: PlatformUser, signal) =>
         postRequest(
-          gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/disassociate/`,
+          gatewayAPI`/teams/${team?.id?.toString() ?? ''}/admins/disassociate/`,
           { instances: [user.id.toString()] },
           signal
         ),

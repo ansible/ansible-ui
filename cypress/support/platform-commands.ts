@@ -1,28 +1,28 @@
 import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
+import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
 import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { Team } from '../../frontend/awx/interfaces/Team';
 import { Token } from '../../frontend/awx/interfaces/Token';
 import { AwxUser } from '../../frontend/awx/interfaces/User';
+import { EdaItemsResponse } from '../../frontend/eda/common/EdaItemsResponse';
+import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
+import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
+import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import { PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
 import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { gatewayV1API } from '../../platform/api/gateway-api-utils';
 import { Authenticator } from '../../platform/interfaces/Authenticator';
 import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 import { awxAPI } from './formatApiPathForAwx';
-import { hubAPI } from './formatApiPathForHub';
-import { EdaItemsResponse } from '../../frontend/eda/common/EdaItemsResponse';
-import './rest-commands';
-import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 import { edaAPI } from './formatApiPathForEDA';
-import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { NotificationTemplate } from '../../frontend/awx/interfaces/NotificationTemplate';
+import { hubAPI } from './formatApiPathForHub';
+import { gatewayAPI } from './formatApiPathForPlatform';
+import './rest-commands';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -54,12 +54,12 @@ Cypress.Commands.add('platformLogin', () => {
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: gatewayV1API`/me/` });
+        cy.request({ method: 'GET', url: gatewayAPI`/me/` });
       },
       cacheAcrossSpecs: true,
     }
   );
-  cy.requestPost(gatewayV1API`/session/`, {});
+  cy.requestPost(gatewayAPI`/session/`, {});
   cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
 
@@ -69,7 +69,7 @@ Cypress.Commands.add('platformLogout', () => {
   cy.get('[data-ouia-component-id="account-menu"]')
     .click()
     .then(() => {
-      cy.intercept('POST', gatewayV1API`/logout/`).as('logout');
+      cy.intercept('POST', gatewayAPI`/logout/`).as('logout');
       cy.contains('a', 'Logout').click();
       cy.wait('@logout');
       cy.then(Cypress.session.clearAllSavedSessions);
@@ -79,7 +79,7 @@ Cypress.Commands.add('platformLogout', () => {
 Cypress.Commands.add(
   'createLocalPlatformAuthenticator',
   (localAuthenticatorName: string, isEnabled?: boolean) => {
-    cy.requestPost(gatewayV1API`/authenticators/`, {
+    cy.requestPost(gatewayAPI`/authenticators/`, {
       name: localAuthenticatorName,
       type: 'ansible_base.authentication.authenticator_plugins.local',
       configuration: {},
@@ -98,7 +98,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (authenticator.id !== 1) {
-      cy.requestDelete(gatewayV1API`/authenticators/${authenticator.id.toString()}/`, options);
+      cy.requestDelete(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, options);
     }
   }
 );
@@ -113,7 +113,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (localAuthenticator.id !== 1) {
-      cy.requestDelete(gatewayV1API`/authenticators/${localAuthenticator.id.toString()}/`, options);
+      cy.requestDelete(gatewayAPI`/authenticators/${localAuthenticator.id.toString()}/`, options);
     }
   }
 );
@@ -128,7 +128,7 @@ Cypress.Commands.add('createPlatformOrganization', (org?: Partial<PlatformOrgani
   if (!org.name) {
     org.name = `E2E Platform Org ${randomString(4)}`;
   }
-  cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, org);
+  cy.requestPost<PlatformOrganization>(gatewayAPI`/organizations/`, org);
 });
 
 /* The `Cypress.Commands.add('deletePlatformOrganization', ...)` function is a custom Cypress command
@@ -143,7 +143,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (!organization?.id) return;
-    cy.requestDelete(gatewayV1API`/organizations/${organization?.id.toString()}/`, options);
+    cy.requestDelete(gatewayAPI`/organizations/${organization?.id.toString()}/`, options);
   }
 );
 
@@ -152,7 +152,7 @@ responsible for creating a new platform user. Here's a breakdown of what it does
 
 Cypress.Commands.add('createPlatformUser', (user?: Partial<PlatformUser>) => {
   const userName = `platform-e2e-user-${randomString(4).toLowerCase()}`;
-  cy.requestPost<PlatformUser>(gatewayV1API`/users/`, {
+  cy.requestPost<PlatformUser>(gatewayAPI`/users/`, {
     username: userName,
     password: 'pw',
     ...user,
@@ -171,7 +171,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (!user?.id) return;
-    cy.requestDelete(gatewayV1API`/users/${user?.id.toString()}/`, options);
+    cy.requestDelete(gatewayAPI`/users/${user?.id.toString()}/`, options);
   }
 );
 
@@ -179,7 +179,7 @@ Cypress.Commands.add(
 responsible for creating a new platform team. Here's a breakdown of what it does: */
 Cypress.Commands.add('createPlatformTeam', function (platformTeam: Partial<PlatformTeam>) {
   const teamName = `Platform E2E Team-${randomString(3).toLowerCase()}`;
-  cy.requestPost<Partial<PlatformTeam>>(gatewayV1API`/teams/`, {
+  cy.requestPost<Partial<PlatformTeam>>(gatewayAPI`/teams/`, {
     name: teamName,
     ...platformTeam,
   });
@@ -197,7 +197,7 @@ Cypress.Commands.add(
     }
   ) => {
     if (platformTeam?.id) {
-      cy.requestDelete(gatewayV1API`/teams/${platformTeam.id.toString()}/`, options);
+      cy.requestDelete(gatewayAPI`/teams/${platformTeam.id.toString()}/`, options);
     }
   }
 );
@@ -205,7 +205,7 @@ Cypress.Commands.add(
   'associateUsersWithPlatformOrganization', //
   (platformOrganization: PlatformOrganization, users: PlatformUser[]) => {
     cy.requestPost(
-      gatewayV1API`/organizations/${platformOrganization.id.toString()}/users/associate/`,
+      gatewayAPI`/organizations/${platformOrganization.id.toString()}/users/associate/`,
       {
         instances: users.map((user) => user.id),
       }
@@ -216,7 +216,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'associateUsersWithPlatformTeam',
   (platformTeam: PlatformTeam, users: PlatformUser[]) => {
-    cy.requestPost(gatewayV1API`/teams/${platformTeam.id.toString()}/users/associate/`, {
+    cy.requestPost(gatewayAPI`/teams/${platformTeam.id.toString()}/users/associate/`, {
       instances: users.map((user) => user.id),
     });
   }
@@ -228,11 +228,11 @@ already exist. Here's a breakdown of what it does: */
 const GLOBAL_PLATFORM_ORG_NAME = 'Global Platform Level Organization';
 
 Cypress.Commands.add('createGlobalPlatformOrganization', function () {
-  cy.requestGet<PlatformOrganization>(gatewayV1API`/organizations?name=${GLOBAL_PLATFORM_ORG_NAME}`)
+  cy.requestGet<PlatformOrganization>(gatewayAPI`/organizations?name=${GLOBAL_PLATFORM_ORG_NAME}`)
     .its('results')
     .then((platformOrgResults: PlatformOrganization[]) => {
       if (platformOrgResults.length === 0) {
-        cy.requestPost<PlatformOrganization>(gatewayV1API`/organizations/`, {
+        cy.requestPost<PlatformOrganization>(gatewayAPI`/organizations/`, {
           name: GLOBAL_PLATFORM_ORG_NAME,
         });
         cy.wait(100).then(() => cy.createGlobalPlatformOrganization());
@@ -320,7 +320,7 @@ Cypress.Commands.add('getPlatformOrgByAnsibleId', (ansibleId: string | undefined
   cy.poll(
     () =>
       cy.requestGet<PlatformItemsResponse<PlatformOrganization> | undefined>(
-        gatewayV1API`/organizations/?resource__ansible_id=${ansibleId}`
+        gatewayAPI`/organizations/?resource__ansible_id=${ansibleId}`
       ),
     (results) => results.results.length > 0
   ).then((results) => {
@@ -380,7 +380,7 @@ Cypress.Commands.add('getPlatformTeamByAnsibleId', (ansibleId: string | undefine
   cy.poll(
     () =>
       cy.requestGet<PlatformItemsResponse<PlatformTeam> | undefined>(
-        gatewayV1API`/teams/?resource__ansible_id=${ansibleId}`
+        gatewayAPI`/teams/?resource__ansible_id=${ansibleId}`
       ),
     (results) => results.results.length > 0
   ).then((results) => {
@@ -440,7 +440,7 @@ Cypress.Commands.add('getPlatformUserByAnsibleId', (ansibleId: string | undefine
   cy.poll(
     () =>
       cy.requestGet<PlatformItemsResponse<PlatformUser> | undefined>(
-        gatewayV1API`/users/?resource__ansible_id=${ansibleId}`
+        gatewayAPI`/users/?resource__ansible_id=${ansibleId}`
       ),
     (results) => results.results.length > 0
   ).then((results) => {
@@ -520,7 +520,7 @@ Cypress.Commands.add(
         | 'authorization_grant_type'
         | 'redirect_uris'
       >
-    >(gatewayV1API`/applications/`, {
+    >(gatewayAPI`/applications/`, {
       name: `AAP OAuth Application ${randomString(4)}`,
       description: 'E2E Application Description',
       organization: organization ? organization?.id : 1,
@@ -533,14 +533,14 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('createPlatformToken', (aapToken?: Partial<Token>) => {
-  const url = gatewayV1API`/tokens/`;
+  const url = gatewayAPI`/tokens/`;
   const body = { ...aapToken };
 
   return cy.requestPost<Token>(url, body);
 });
 
 Cypress.Commands.add('getCurrentPlatformUser', () => {
-  cy.requestGet<PlatformItemsResponse<PlatformUser>>(gatewayV1API`/me/`)
+  cy.requestGet<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me/`)
     .its('results')
     .then((results) => {
       return results[0];

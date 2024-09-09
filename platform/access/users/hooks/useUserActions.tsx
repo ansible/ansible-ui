@@ -2,6 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,18 +15,17 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteUsers } from './useDeleteUsers';
-import { useParams } from 'react-router-dom';
 
 export function useUserToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const deleteUsers = useDeleteUsers(view.unselectItemsAndRefresh);
 
@@ -113,7 +113,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
   const deleteUsers = useDeleteUsers(onUsersDeleted);
   const params = useParams<{ id: string }>();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/users/${params.id ?? ''}/`
+    gatewayAPI`/users/${params.id ?? ''}/`
   );
 
   const canEditUser = Boolean(

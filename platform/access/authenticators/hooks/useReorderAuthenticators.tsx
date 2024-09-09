@@ -1,13 +1,13 @@
 import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
 import { ReorderItems } from '../../../../framework/components/ReorderItems';
 import { requestPatch } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { useGet } from '../../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
-import { useGet } from '../../../../frontend/common/crud/useGet';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export interface ReorderItemsProps {
   onComplete?: (items: Authenticator[]) => void;
@@ -18,17 +18,17 @@ export interface ReorderItemsProps {
  */
 export function ReorderAuthenticatorsModal(options: ReorderItemsProps) {
   const { data: authInfo } = useGet<PlatformItemsResponse<Authenticator>>(
-    gatewayV1API`/authenticators/?order_by=order&page=1&page_size=1`
+    gatewayAPI`/authenticators/?order_by=order&page=1&page_size=1`
   );
   const { data } = useGet<PlatformItemsResponse<Authenticator>>(
-    gatewayV1API`/authenticators/?order_by=order&page=1&page_size=${authInfo?.count.toString() || '10'}`
+    gatewayAPI`/authenticators/?order_by=order&page=1&page_size=${authInfo?.count.toString() || '10'}`
   );
 
   const onApplyChanges = useCallback(
     (orderedItems: Authenticator[]) => {
       void Promise.all(
         orderedItems.map(async (item, index) => {
-          await requestPatch(gatewayV1API`/authenticators/`.concat(`${item.id}/`), {
+          await requestPatch(gatewayAPI`/authenticators/`.concat(`${item.id}/`), {
             order: index + 1,
           });
         })

@@ -2,9 +2,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePageDialog } from '../../../../framework';
 import { SingleSelectDialog } from '../../../../framework/PageDialogs/SingleSelectDialog';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
 

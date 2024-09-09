@@ -1,12 +1,12 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
+import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { cyLabel } from '../../../support/cyLabel';
-import { randomE2Ename } from '../../../support/utils';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
+import { randomE2Ename } from '../../../support/utils';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
   const organizationName = `e2e org ${randomE2Ename()}`;
@@ -53,7 +53,7 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
       .clear()
       .type(`${listEditedOrganizationName} from list page`);
     const orgId = `${organization.id}`.toString();
-    cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
+    cy.intercept('PATCH', gatewayAPI`/organizations/${orgId}`).as('edited');
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.wait('@edited')
@@ -73,7 +73,7 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
       .clear()
       .type(`${detailsEditedOrganizationName} from details page`);
     const orgId = `${organization.id}`.toString();
-    cy.intercept('PATCH', gatewayV1API`/organizations/${orgId}`).as('edited');
+    cy.intercept('PATCH', gatewayAPI`/organizations/${orgId}`).as('edited');
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.wait('@edited')
@@ -107,10 +107,10 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
         cy.clearAllFilters();
         cy.selectTableRow(testOrganization2.name);
         cy.clickToolbarKebabAction('delete-organizations');
-        cy.intercept('DELETE', gatewayV1API`/organizations/${testOrganization1.id.toString()}/`).as(
+        cy.intercept('DELETE', gatewayAPI`/organizations/${testOrganization1.id.toString()}/`).as(
           'edaPlatformOrg1'
         );
-        cy.intercept('DELETE', gatewayV1API`/organizations/${testOrganization1.id.toString()}/`).as(
+        cy.intercept('DELETE', gatewayAPI`/organizations/${testOrganization1.id.toString()}/`).as(
           'edaPlatformOrg2'
         );
         cy.clickModalConfirmCheckbox();
@@ -435,7 +435,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
 
     // Create Team
     const teamName = `E2E PlatformTeam ${randomString(4)}`;
-    cy.intercept('POST', gatewayV1API`/teams/`).as('createTeam');
+    cy.intercept('POST', gatewayAPI`/teams/`).as('createTeam');
     cy.getByDataCy('create-team').click();
     cy.get('[data-cy="name"]').type(teamName);
     cy.singleSelectByDataCy('organization', organization.name);
@@ -499,7 +499,7 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job approval', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
       cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
       cy.getBy('button[data-cy="apply-filter"]').click();
       cy.wait('@orgSearch');
@@ -521,7 +521,7 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job start', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
       cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
       cy.getBy('button[data-cy="apply-filter"]').click();
       cy.wait('@orgSearch');
@@ -543,7 +543,7 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job success', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
       cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
       cy.getBy('button[data-cy="apply-filter"]').click();
       cy.wait('@orgSearch');
@@ -565,7 +565,7 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job failure', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayV1API`/organizations/?*`).as('orgSearch');
+      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
       cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
       cy.getBy('button[data-cy="apply-filter"]').click();
       cy.wait('@orgSearch');

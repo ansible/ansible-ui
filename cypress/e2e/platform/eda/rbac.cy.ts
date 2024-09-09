@@ -5,12 +5,12 @@ import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { gatewayAPI } from '../../../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
 import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 
 cyLabel(['aaas-unsupported'], () => {
   describe('Users: RBAC', () => {

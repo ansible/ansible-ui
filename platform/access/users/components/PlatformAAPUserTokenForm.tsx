@@ -3,21 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
+  PageForm,
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextInput,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { Token } from '../../../../frontend/awx/interfaces/Token';
+import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
-import { PageForm } from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormApplicationSelect } from '../../applications/components/PageFormApplicationSelect';
 
 export function CreateAAPUserToken(props: { onSuccessfulCreate: (newToken: Token) => void }) {

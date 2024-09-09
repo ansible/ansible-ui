@@ -1,10 +1,9 @@
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import { usePageAlertToaster } from '../../framework';
+import { usePageAlertToaster, usePageDialogs } from '../../framework';
 import { useDeleteRequest } from '../../frontend/common/crud/useDeleteRequest';
-import { usePageDialogs } from '../../framework';
-import { gatewayAPI } from '../api/gateway-api-utils';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export interface RevertAllModalProps {
   onComplete: () => void;

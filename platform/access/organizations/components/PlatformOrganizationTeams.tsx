@@ -1,27 +1,27 @@
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageTable, usePageNavigate } from '../../../../framework';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PageTable, usePageNavigate } from '../../../../framework';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
+import { LoadingState } from '../../../../framework/components/LoadingState';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
+import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
 import {
   useOrganizationTeamsRowActions,
   useOrganizationTeamsToolbarActions,
 } from '../hooks/useOrganizationTeamsActions';
-import { useTeamFilters } from '../../teams/hooks/useTeamFilters';
-import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { LoadingState } from '../../../../framework/components/LoadingState';
 
 export function PlatformOrganizationTeams() {
   const { t } = useTranslation();
@@ -33,17 +33,17 @@ export function PlatformOrganizationTeams() {
     data: organization,
     isLoading,
     error,
-  } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations`, params.id);
+  } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
 
   const view = usePlatformView<PlatformTeam>({
-    url: gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/teams/`,
+    url: gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/teams/`,
     toolbarFilters,
     tableColumns,
   });
 
   const { data: createTeamOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/teams/`);
+  >(gatewayAPI`/teams/`);
   const canCreateTeam = Boolean(
     createTeamOptions && createTeamOptions.actions && createTeamOptions.actions['POST']
   );

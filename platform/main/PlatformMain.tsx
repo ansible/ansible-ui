@@ -13,25 +13,25 @@ import { PageFramework } from '../../framework';
 import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
 import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
 import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
+import { DocsVersionProvider } from '../../frontend/awx/common/useDocsVersion';
+import { useGet } from '../../frontend/common/crud/useGet';
 import '../../frontend/common/i18n';
 import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
 import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
-import { useGet } from '../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../api/gateway-api-utils';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import {
   GatewayServicesProvider,
   useHasAwxService,
-  useHasHubService,
   useHasEdaService,
+  useHasHubService,
 } from './GatewayServices';
+import { GatewayUIAuthProvider } from './GatewayUIAuth';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
 import { PlatformSubscription } from './PlatformSubscription';
-import { GatewayUIAuthProvider } from './GatewayUIAuth';
-import { DocsVersionProvider } from '../../frontend/awx/common/useDocsVersion';
 
 // eslint-disable-next-line no-restricted-exports
 export default function PlatformMain() {

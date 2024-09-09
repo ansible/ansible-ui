@@ -18,10 +18,10 @@ import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup
 import { Organization as AwxOrganization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxRoute } from '../../../../frontend/awx/main/AwxRoutes';
 import { useGet } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 
 export function PlatformOrganizationDetails() {
@@ -31,7 +31,7 @@ export function PlatformOrganizationDetails() {
   const columns = useOrganizationColumns();
 
   const { data: platformOrganization, isLoading } = useGet<PlatformOrganization>(
-    gatewayV1API`/organizations/${id.toString()}/`
+    gatewayAPI`/organizations/${id.toString()}/`
   );
 
   const detailColumns = useMemo(

@@ -1,7 +1,7 @@
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
-import { gatewayV1API } from './formatApiPathForPlatform';
+import { gatewayAPI } from './formatApiPathForPlatform';
 
 Cypress.Commands.add('requiredVariablesAreSet', (requiredVariables: string[]) => {
   requiredVariables.forEach((variable) => {
@@ -140,7 +140,7 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
     },
     {
       validate: () => {
-        cy.request({ method: 'GET', url: gatewayV1API`/me/` });
+        cy.request({ method: 'GET', url: gatewayAPI`/me/` });
       },
       cacheAcrossSpecs: true,
     }

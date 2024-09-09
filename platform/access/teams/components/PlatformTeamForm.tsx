@@ -15,11 +15,11 @@ import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();
@@ -27,7 +27,7 @@ export function CreatePlatformTeam() {
   const navigate = useNavigate();
   const postRequest = usePostRequest<PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
-    const createdTeam = await postRequest(gatewayV1API`/teams/`, team);
+    const createdTeam = await postRequest(gatewayAPI`/teams/`, team);
     pageNavigate(PlatformRoute.TeamDetails, { params: { id: createdTeam.id } });
   };
   const getPageUrl = useGetPageUrl();
@@ -61,10 +61,10 @@ export function EditPlatformTeam() {
     data: team,
     isLoading,
     error,
-  } = useGet<PlatformTeam>(gatewayV1API`/teams/${id.toString()}/`);
+  } = useGet<PlatformTeam>(gatewayAPI`/teams/${id.toString()}/`);
   const patchRequest = usePatchRequest<PlatformTeam, PlatformTeam>();
   const onSubmit: PageFormSubmitHandler<PlatformTeam> = async (team) => {
-    await patchRequest(gatewayV1API`/teams/${id.toString()}/`, team);
+    await patchRequest(gatewayAPI`/teams/${id.toString()}/`, team);
     navigate(-1);
   };
   const getPageUrl = useGetPageUrl();

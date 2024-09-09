@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import { PageApp } from '../../framework';
 import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
 import { postRequest, requestGet } from '../../frontend/common/crud/Data';
-import { gatewayAPI } from '../api/gateway-api-utils';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
 

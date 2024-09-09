@@ -1,8 +1,8 @@
-import { gatewayAPI, gatewayV1API } from '../../../api/gateway-api-utils';
-import * as usePlatformActiveUser from '../../../main/PlatformActiveUserProvider';
-import { CreatePlatformTeam, EditPlatformTeam } from './PlatformTeamForm';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
 import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
+import * as usePlatformActiveUser from '../../../main/PlatformActiveUserProvider';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { CreatePlatformTeam, EditPlatformTeam } from './PlatformTeamForm';
 
 const mockActivePlatformUser = mockPlatformUsers.results[0];
 const mockPlatformTeam = mockPlatformTeams.results[0];
@@ -39,12 +39,12 @@ describe('PlatformTeamForm.cy.ts', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/`,
+          url: gatewayAPI`/teams/5/`,
         },
         mockPlatformTeam
       );
       cy.intercept(
-        { method: 'GET', url: gatewayV1API`/organizations/*` },
+        { method: 'GET', url: gatewayAPI`/organizations/*` },
         {
           count: 2,
           results: [

@@ -1,16 +1,16 @@
+import { Page } from '@patternfly/react-core';
 import { ReactElement, ReactNode, cloneElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { LoadingPage } from '../../../../framework';
 import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
-import { Page } from '@patternfly/react-core';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
+import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 /**
  * Component that gets the gateway/platform ID of a user from the URL params,
@@ -20,7 +20,7 @@ import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 export function PlatformAwxUserIdLookup(props: { children: ReactNode }) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { data: user } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
+  const { data: user } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);
   const awxResourceResponse = useGet<AwxItemsResponse<AwxUser>>(
     awxAPI`/users/?resource__ansible_id=${user?.summary_fields?.resource?.ansible_id ?? ''}`
   );

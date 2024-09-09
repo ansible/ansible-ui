@@ -1,8 +1,8 @@
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
 import { edaAPI } from '../../../../cypress/support/formatApiPathForEDA';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import * as GatewayServices from '../../../main/GatewayServices';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationAddUsers } from './PlatformOrganizationAddUsers';
 
 const mockPlatformOrganization = mockPlatformOrganizations.results[1];
@@ -20,14 +20,14 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: gatewayV1API`/organizations/1/`,
+        url: gatewayAPI`/organizations/1/`,
       },
       mockPlatformOrganization
     ).as('organization');
-    cy.intercept('GET', gatewayV1API`/users/?is_superuser=false*`, {
+    cy.intercept('GET', gatewayAPI`/users/?is_superuser=false*`, {
       fixture: 'platformNormalUsers.json',
     }).as('userListFilteredByNormalUsers');
-    cy.intercept('GET', gatewayV1API`/role_definitions/*`, {
+    cy.intercept('GET', gatewayAPI`/role_definitions/*`, {
       fixture: 'platformOrganizationMemberRole.json',
     });
 

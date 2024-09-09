@@ -3,8 +3,6 @@ const webpack = require('webpack');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
-const GATEWAY_API_PREFIX = process.env.GATEWAY_API_PREFIX || '/api/gateway/v1';
-
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://localhost:443';
 
 const proxyUrl = new URL(PLATFORM_SERVER);
@@ -59,11 +57,6 @@ module.exports = function (env, argv) {
     },
   };
 
-  config.plugins.push(
-    new webpack.DefinePlugin({
-      'process.env.GATEWAY_API_PREFIX': JSON.stringify(GATEWAY_API_PREFIX),
-    })
-  );
   return config;
 };
 

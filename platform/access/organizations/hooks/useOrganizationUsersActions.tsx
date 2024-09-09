@@ -22,7 +22,6 @@ import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
 import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { IPlatformView } from '../../../hooks/usePlatformView';
@@ -30,6 +29,7 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { useHasAwxService, useHasEdaService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useRemoveOrganizationUsers } from './useRemoveOrganizationUsers';
 
 export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformUser>) {
@@ -37,11 +37,11 @@ export function useOrganizationUsersToolbarActions(view: IPlatformView<PlatformU
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
-    gatewayV1API`/organizations`,
+    gatewayAPI`/organizations`,
     params.id
   );
   const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
+    gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/`
   );
 
   const canEditOrganization = useMemo(
@@ -101,7 +101,7 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
-    gatewayV1API`/organizations`,
+    gatewayAPI`/organizations`,
     params.id
   );
   const { resource: awxOrganization, error: errorRetrievingAwxOrg } = useAwxResource<Organization>(
@@ -113,7 +113,7 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
 
   const removeUsers = useRemoveOrganizationUsers(view.unselectItemsAndRefresh);
   const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
+    gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/`
   );
   const canEditOrganization = Boolean(
     organizationOptions?.actions &&

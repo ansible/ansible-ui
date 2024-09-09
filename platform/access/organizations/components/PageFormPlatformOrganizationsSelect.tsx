@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PageFormPlatformOrganizationsSelect<
   TFieldValues extends FieldValues = FieldValues,

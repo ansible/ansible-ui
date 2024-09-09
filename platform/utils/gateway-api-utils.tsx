@@ -1,8 +1,3 @@
-/**
- * This formatApiPathforPlatform file allows access to the gatewayAPI util for building
- * API endpoints within Cypress.
- */
-
 import { apiTag } from '../../frontend/hub/common/api/formatPath';
 
 export function gatewayAPI(strings: TemplateStringsArray, ...values: string[]) {

@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
+  IPageAction,
+  LoadingPage,
+  PageActionSelection,
+  PageActionType,
   PageLayout,
   PageTable,
-  usePageNavigate,
-  LoadingPage,
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
   useGetPageUrl,
+  usePageNavigate,
 } from '../../../../framework';
-import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { DetailInfo } from '../../../../framework/components/DetailInfo';
 import { Token } from '../../../../frontend/awx/interfaces/Token';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserTokensColumns } from '../hooks/useAAPUserTokensColumns';
 import { useUserTokensFilters } from '../hooks/useAAPUserTokensFilters';
 import { useDeleteUserTokens } from '../hooks/useDeleteAAPUserTokens';
-import { DetailInfo } from '../../../../framework/components/DetailInfo';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function AAPUserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();

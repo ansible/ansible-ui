@@ -2,8 +2,8 @@
 
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import * as useAwxConfig from '../../../../frontend/awx/common/useAwxConfig';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { GatewayServicesContext } from '../../../main/GatewayServices';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationDetails } from './PlatformOrganizationDetails';
 
 describe('PlatformOrganizationDetails', () => {
@@ -11,7 +11,7 @@ describe('PlatformOrganizationDetails', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: gatewayV1API`/organizations/*/`,
+        url: gatewayAPI`/organizations/*/`,
       },
       {
         id: 1,

@@ -7,20 +7,20 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
 import { useTeamColumns } from '../hooks/useTeamColumns';
 import { useTeamFilters } from '../hooks/useTeamFilters';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
 
 export function PlatformTeamList() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function PlatformTeamList() {
   usePersistentFilters('teams');
 
   const view = usePlatformView<PlatformTeam>({
-    url: gatewayV1API`/teams/`,
+    url: gatewayAPI`/teams/`,
     toolbarFilters,
     tableColumns,
   });
@@ -39,7 +39,7 @@ export function PlatformTeamList() {
     data,
     isLoading: isLoadingOptions,
     error,
-  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/teams/`);
+  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/teams/`);
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view.unselectItemsAndRefresh);

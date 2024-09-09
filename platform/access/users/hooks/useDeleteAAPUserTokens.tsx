@@ -1,10 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
-import { useBulkConfirmation } from '../../../../framework';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useUserTokensColumns } from '../../../../frontend/awx/access/users/hooks/useUserTokensColumns';
+import { Token } from '../../../../frontend/awx/interfaces/Token';
+import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
   const { t } = useTranslation();

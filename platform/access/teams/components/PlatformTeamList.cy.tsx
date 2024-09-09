@@ -9,7 +9,7 @@ Teams list test cases
 */
 
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformTeamList } from './PlatformTeamList';
 
 describe('Teams list', () => {
@@ -18,7 +18,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/*`,
+          url: gatewayAPI`/teams/*`,
         },
         {
           fixture: 'platformTeams.json',
@@ -71,7 +71,7 @@ describe('Teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/*`,
+          url: gatewayAPI`/teams/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -114,7 +114,7 @@ describe('Teams list', () => {
   });
   describe('Error retrieving list', () => {
     it('Displays error loading teams', () => {
-      cy.intercept({ method: 'GET', url: gatewayV1API`/teams/*` }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayAPI`/teams/*` }, { statusCode: 500 });
       cy.mount(<PlatformTeamList />);
       cy.contains('Error loading teams');
     });

@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { useOptions } from '../../frontend/common/crud/useOptions';
-import { gatewayAPI } from '../api/gateway-api-utils';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 
 export function GatewaySettings() {

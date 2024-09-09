@@ -1,8 +1,8 @@
+import { Checkbox, Tooltip } from '@patternfly/react-core';
 import { useCallback, useEffect, useMemo } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Controller, useFormContext } from 'react-hook-form';
-import { Checkbox, Tooltip } from '@patternfly/react-core';
 import styled from 'styled-components';
 import {
   LoadingPage,
@@ -24,22 +24,22 @@ import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSe
 import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { postRequest } from '../../../../frontend/common/crud/Data';
-import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
 import { useDeleteRequest } from '../../../../frontend/common/crud/useDeleteRequest';
+import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 import {
   useHasAwxService,
   useHasEdaService,
   useHasHubService,
 } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
 import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
 import { useGetPlatformAndServiceUsers } from '../hooks/useGetPlatformAndServiceUsers';
@@ -66,7 +66,7 @@ export function CreatePlatformUser() {
   const postUserRequest = usePostRequest<PlatformUser>();
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
-  >(gatewayV1API`/role_definitions/`, {
+  >(gatewayAPI`/role_definitions/`, {
     name: 'Platform Auditor',
   });
   const onSubmit: PageFormSubmitHandler<IUserInput> = async (
@@ -80,9 +80,9 @@ export function CreatePlatformUser() {
       setFieldError('confirmPassword', { message: t('Password does not match.') });
       return false;
     }
-    const createdUser = await postUserRequest(gatewayV1API`/users/`, user);
+    const createdUser = await postUserRequest(gatewayAPI`/users/`, user);
     if (platformAuditor) {
-      await postRequest(gatewayV1API`/role_user_assignments/`, {
+      await postRequest(gatewayAPI`/role_user_assignments/`, {
         user: createdUser.id,
         role_definition: platformAuditorRoleData?.results?.[0]?.id,
         object_id: null,
@@ -91,12 +91,9 @@ export function CreatePlatformUser() {
     if (organizations) {
       for (const orgId of organizations) {
         try {
-          await postRequest(
-            gatewayV1API`/organizations/${orgId.toString() ?? ''}/users/associate/`,
-            {
-              instances: [createdUser.id],
-            }
-          );
+          await postRequest(gatewayAPI`/organizations/${orgId.toString() ?? ''}/users/associate/`, {
+            instances: [createdUser.id],
+          });
         } catch (error) {
           const { genericErrors, fieldErrors } = awxErrorAdapter(error);
           alertToaster.addAlert({
@@ -162,7 +159,7 @@ export function EditPlatformUser() {
   const { orgIds, getAddedAndRemovedOrganizationIds } = useGetOrganizationsForUser(userId);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
-  >(gatewayV1API`/role_definitions/`, {
+  >(gatewayAPI`/role_definitions/`, {
     name: 'Platform Auditor',
   });
 
@@ -187,7 +184,7 @@ export function EditPlatformUser() {
       await updateServiceUserSuperuser({ userInput, awxUser, edaUser, hubUser });
 
       if (platformAuditor && !user.is_platform_auditor) {
-        await postRequest(gatewayV1API`/role_user_assignments/`, {
+        await postRequest(gatewayAPI`/role_user_assignments/`, {
           user: user.id,
           role_definition: platformAuditorRoleData?.results?.[0]?.id,
           object_id: null,
@@ -195,7 +192,7 @@ export function EditPlatformUser() {
       } else if (!platformAuditor && user.is_platform_auditor) {
         // Get the platform auditor role assignment
         const platformAuditorRoleAssignment = await getRequest(
-          gatewayV1API`/role_user_assignments/`,
+          gatewayAPI`/role_user_assignments/`,
           {
             user: user.id,
             role_definition: platformAuditorRoleData?.results?.[0]?.id || '',
@@ -203,7 +200,7 @@ export function EditPlatformUser() {
         );
         // Delete the platform auditor role assignment
         await deleteRequest(
-          gatewayV1API`/role_user_assignments/${platformAuditorRoleAssignment?.results?.[0].id?.toString()}/`
+          gatewayAPI`/role_user_assignments/${platformAuditorRoleAssignment?.results?.[0].id?.toString()}/`
         );
       }
       if (user.password) {
@@ -218,7 +215,7 @@ export function EditPlatformUser() {
       for (const addedOrganizationId of addedOrganizationIds) {
         try {
           await postRequest(
-            gatewayV1API`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
+            gatewayAPI`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
             {
               instances: [user.id],
             }
@@ -243,7 +240,7 @@ export function EditPlatformUser() {
       for (const removedOrganizationId of removedOrganizationIds) {
         try {
           await postRequest(
-            gatewayV1API`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
+            gatewayAPI`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
             {
               instances: [user.id],
             }
@@ -266,7 +263,7 @@ export function EditPlatformUser() {
         }
       }
       user.is_platform_auditor = platformAuditor;
-      await patchUser(gatewayV1API`/users/${userId.toString()}/`, user);
+      await patchUser(gatewayAPI`/users/${userId.toString()}/`, user);
       pageNavigate(PlatformRoute.UserDetails, { params: { id: user.id } });
     },
     [

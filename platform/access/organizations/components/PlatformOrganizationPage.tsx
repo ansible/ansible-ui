@@ -11,12 +11,12 @@ import {
 } from '../../../../framework';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useOrganizationPageActions } from '../hooks/useOrganizationActions';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useGatewayService } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useOrganizationPageActions } from '../hooks/useOrganizationActions';
 
 export function PlatformOrganizationPage() {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export function PlatformOrganizationPage() {
     error,
     data: organization,
     refresh,
-  } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations/`, params.id);
+  } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const awxService = useGatewayService('controller');

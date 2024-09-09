@@ -7,23 +7,23 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import {
   useOrganizationRowActions,
   useOrganizationToolbarActions,
 } from '../hooks/useOrganizationActions';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
 
 export function PlatformOrganizationList() {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ export function PlatformOrganizationList() {
   usePersistentFilters('organizations');
 
   const view = usePlatformView<PlatformOrganization>({
-    url: gatewayV1API`/organizations/`,
+    url: gatewayAPI`/organizations/`,
     toolbarFilters,
     tableColumns,
   });
@@ -42,7 +42,7 @@ export function PlatformOrganizationList() {
     data,
     isLoading: isLoadingOptions,
     error,
-  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations/`);
+  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/organizations/`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
   const rowActions = useOrganizationRowActions(view.unselectItemsAndRefresh);

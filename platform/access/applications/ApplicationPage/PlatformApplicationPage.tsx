@@ -8,14 +8,14 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useApplicationActions } from '../hooks/useApplicationActions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useApplicationActions } from '../hooks/useApplicationActions';
 
 export function PlatformApplicationPage() {
   const { t } = useTranslation();
@@ -24,7 +24,7 @@ export function PlatformApplicationPage() {
     error,
     data: application,
     refresh,
-  } = useGetItem<Application>(gatewayV1API`/applications/`, params.id);
+  } = useGetItem<Application>(gatewayAPI`/applications/`, params.id);
 
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();

@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useApplicationsColumns } from '../../../../frontend/awx/administration/applications/hooks/useApplicationsColumns';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useBulkConfirmation } from '../../../../framework';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function useDeleteApplications(onComplete: (applications: Application[]) => void) {
   const { t } = useTranslation();
@@ -31,7 +30,7 @@ export function useDeleteApplications(onComplete: (applications: Application[]) 
       actionColumns,
       onComplete,
       actionFn: (application: Application, signal) =>
-        requestDelete(gatewayV1API`/applications/${application.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/applications/${application.id.toString()}/`, signal),
     });
   };
   return deleteApplications;

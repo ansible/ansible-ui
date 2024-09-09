@@ -7,20 +7,20 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../../framework';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
 import { useUsersColumns } from '../hooks/useUserColumns';
 import { useUsersFilters } from '../hooks/useUsersFilters';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
 
 export function PlatformUsersList() {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export function PlatformUsersList() {
   usePersistentFilters('users');
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/users/`,
+    url: gatewayAPI`/users/`,
     toolbarFilters,
     tableColumns,
   });
@@ -39,7 +39,7 @@ export function PlatformUsersList() {
     data,
     isLoading: isLoadingOptions,
     error,
-  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/users/`);
+  } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/users/`);
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view.unselectItemsAndRefresh);
