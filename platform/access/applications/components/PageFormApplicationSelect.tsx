@@ -17,8 +17,8 @@ export function PageFormApplicationSelect<
     <PageFormSingleSelectAwxResource<Application, TFieldValues, TFieldName>
       name={props.name}
       id="application"
-      label={t('Application')}
-      placeholder={t('Select application')}
+      label={t('OAuth application')}
+      placeholder={t('Select OAuth application')}
       queryPlaceholder={t('Loading applications...')}
       queryErrorText={t('Error loading applications')}
       isRequired={props.isRequired}
