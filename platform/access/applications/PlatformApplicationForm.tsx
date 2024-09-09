@@ -158,21 +158,21 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormTextInput<Application>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a name')}
+        placeholder={t('Enter OAuth application name')}
         isRequired
         maxLength={150}
       />
       <PageFormTextInput<Application>
         name="description"
         label={t('Description')}
-        placeholder={t('Enter a description')}
+        placeholder={t('Enter description')}
       />
       <PageFormPlatformOrganizationSelect<Application> name="organization" isRequired />
       <PageFormSelect<Application>
         isReadOnly={mode === 'edit'}
         name="authorization_grant_type"
         label={t('Authorization grant type')}
-        placeholderText={t('Select a grant type')}
+        placeholderText={t('Select authorization grant type')}
         options={[
           {
             label: t('Authorization code'),
@@ -188,7 +188,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormSelect<Application>
         name="client_type"
         label={t('Client type')}
-        placeholderText={t('Select a client type')}
+        placeholderText={t('Select client type')}
         options={[
           {
             label: t('Confidential'),
@@ -204,7 +204,7 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormTextInput<Application>
         name="redirect_uris"
         label={t('Redirect URIs')}
-        placeholder={t('Enter a redriect URI')}
+        placeholder={t('Enter redirect URIs')}
         isRequired={Boolean(authorizationGrantType === 'authorization-code')}
       />
     </>

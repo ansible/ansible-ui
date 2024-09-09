@@ -101,7 +101,7 @@ function PlatformTeamInputs(props: { isEditMode?: boolean }) {
       <PageFormTextInput<PlatformTeam>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter team name')}
         isRequired
       />
       <PageFormTextInput
