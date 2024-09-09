@@ -111,11 +111,21 @@ jobs:
     with:
       directory: platform
 
+  cleanup:
+    name: Cleanup
+    needs:
+      - pr-queue
+    uses: ./.github/workflows/cleanup.yml
+    with:
+      PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+
   platform-e2e:
     name: Platform E2E
     needs:
       - packages
-      - pr-queue
+      - cleanup
     uses: ./.github/workflows/ds-platform-e2e.yml
     with:
       PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
