@@ -20,7 +20,7 @@ export function useUserTokensColumns(options?: { disableLinks?: boolean; disable
   return useMemo<ITableColumn<Token>[]>(
     () => [
       {
-        header: t('Application name'),
+        header: t('OAuth application name'),
         cell: (token) => (
           <TextCell
             text={
