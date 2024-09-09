@@ -62,7 +62,7 @@ export function useRemoveUsersFromResource() {
         isItemNonActionable: cannotRemoveUser,
         isDanger: true,
         confirmationColumns,
-        actionColumns: [{ header: 'User', cell: (user: AwxUser) => user.username }],
+        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user.username }],
         onComplete,
         actionFn: async (user: AwxUser, signal: AbortSignal) => {
           if (user.user_roles) {

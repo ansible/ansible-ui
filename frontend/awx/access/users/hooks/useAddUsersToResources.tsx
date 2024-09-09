@@ -16,7 +16,7 @@ export function useAddUsersToResources() {
         title: t('Adding users', { count: resources.length }),
         keyFn: (user: AwxUser) => user.id,
         items: users,
-        actionColumns: [{ header: 'User', cell: (user: AwxUser) => user.username }],
+        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user.username }],
         actionFn: async (user: AwxUser, signal: AbortSignal) => {
           for (const resource of resources) {
             await postRequest(

@@ -41,7 +41,7 @@ export function ManagementJobs() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading management jobs')}
-        emptyStateTitle="No management jobs yet"
+        emptyStateTitle={t('No management jobs yet')}
         {...view}
       />
     </PageLayout>
