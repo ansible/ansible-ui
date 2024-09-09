@@ -80,14 +80,14 @@ export function WebhookSubForm(props: {
         label={t('Webhook service')}
         options={webhookServices}
         isRequired={isWebhookEnabled}
-        placeholderText={t('Select a webhook service')}
+        placeholderText={t('Select webhook service')}
       />
       <PageFormTextInput<JobTemplateForm>
         name="related.webhook_receiver"
         isDisabled={!params.id || !webhookService}
         label={t('Webhook URL')}
         isReadOnly
-        placeholder={t('Select a webhook service')}
+        placeholder={t('Select webhook service')}
       />
       <PageFormTextInput<JobTemplateForm>
         name="webhook_key"

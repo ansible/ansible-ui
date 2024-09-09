@@ -74,12 +74,12 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         name="name"
         label={t('Name')}
         isRequired
-        placeholder={t('Add a name for this job template')}
+        placeholder={t('Enter job template name')}
       />
       <PageFormTextInput<JobTemplateForm>
         name="description"
         label={t('Description')}
-        placeholder={t('Add a description for this job template')}
+        placeholder={t('Enter description')}
       />
       <PageFormSelect<JobTemplateForm>
         isRequired={!askJobTypeOnLaunch}
@@ -121,7 +121,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
       {projectPath?.allow_override ? (
         <PageFormTextInput<JobTemplateForm>
           name="scm_branch"
-          placeholder={t('Add a source control branch')}
+          placeholder={t('Enter source control branch')}
           labelHelpTitle={t('Source control branch')}
           labelHelp={t(
             'Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.'
@@ -166,7 +166,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         }
       />
       <PageFormTextInput<JobTemplateForm>
-        placeholder={t('Add number of forks')}
+        placeholder={t('Enter number of forks')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_forks_on_launch" />
         }
@@ -179,7 +179,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         label={t('Forks')}
       />
       <PageFormTextInput<JobTemplateForm>
-        placeholder={t('Add a limit to reduce number of hosts.')}
+        placeholder={t('Enter limit to reduce number of hosts')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_limit_on_launch" />
         }
@@ -191,7 +191,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         label={t('Limit')}
       />
       <PageFormTextInput<JobTemplateForm>
-        placeholder={t('Select a verbosity value')}
+        placeholder={t('Enter verbosity value')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_verbosity_on_launch" />
         }
@@ -202,7 +202,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         label={t('Verbosity')}
       />
       <PageFormTextInput<JobTemplateForm>
-        placeholder={t('Add a job slicing value')}
+        placeholder={t('Enter job slicing value')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_job_slice_count_on_launch" />
         }
@@ -215,7 +215,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         label={t('Job slicing')}
       />
       <PageFormTextInput<JobTemplateForm>
-        placeholder={t('Add a timeout value')}
+        placeholder={t('Enter timeout value')}
         type="number"
         labelHelpTitle={t('Timeout')}
         labelHelp={t(
@@ -305,13 +305,13 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
             <PageFormTextInput<JobTemplateForm>
               name="related.callback"
               isDisabled
-              placeholder={t('Add a callback URL')}
+              placeholder={t('Enter callback URL')}
               label={t('Provisioning callback URL')}
             />
           ) : null}
           <PageFormTextInput<JobTemplateForm>
             name="host_config_key"
-            placeholder={t('Add a host config key')}
+            placeholder={t('Enter host config key')}
             isRequired={!!isProvisioningCallbackEnabled}
             label={t('Host config key')}
           />

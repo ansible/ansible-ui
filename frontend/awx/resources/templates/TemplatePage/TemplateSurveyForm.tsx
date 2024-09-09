@@ -260,6 +260,7 @@ function TemplateSurveyInputs() {
         name="question_name"
         type="text"
         label={t`Question`}
+        placeholder={t('Enter question')}
         isRequired
       />
       <PageFormTextInput
@@ -267,12 +268,14 @@ function TemplateSurveyInputs() {
         name="question_description"
         type="text"
         label={t`Description`}
+        placeholder={t('Enter description')}
       />
       <PageFormTextInput
         id="question-variable"
         name="variable"
         type="text"
         label={t`Answer variable name`}
+        placeholder={t('Enter answer variable name')}
         validate={(variable: string) => {
           if (/\s/.test(variable)) {
             return t`This field must not contain spaces.`;
@@ -288,7 +291,7 @@ function TemplateSurveyInputs() {
         id="question-type"
         data-cy="question-type"
         label={t('Answer type')}
-        placeholderText={t('Enter answer type')}
+        placeholderText={t('Select answer type')}
         options={[
           { value: 'text', label: t('Text') },
           { value: 'textarea', label: t('Textarea') },
@@ -334,8 +337,20 @@ function SelectedAnswerType({ answer }: { answer: string }) {
     <PageFormSection>
       {['text', 'textarea', 'password'].includes(answer) && (
         <>
-          <PageFormTextInput id="question-min" name="min" type="number" label={t`Minimum length`} />
-          <PageFormTextInput id="question-max" name="max" type="number" label={t`Maximum length`} />
+          <PageFormTextInput
+            id="question-min"
+            name="min"
+            type="number"
+            label={t`Minimum length`}
+            placeholder={t('Enter minimum length')}
+          />
+          <PageFormTextInput
+            id="question-max"
+            name="max"
+            type="number"
+            label={t`Maximum length`}
+            placeholder={t('Enter maximum legnth')}
+          />
         </>
       )}
       {['integer', 'float'].includes(answer) && (
@@ -354,6 +369,7 @@ function SelectedAnswerType({ answer }: { answer: string }) {
           minLength={min}
           type={answer === 'text' ? 'text' : 'number'}
           label={t`Default answer`}
+          placeholder={t('Enter default answer')}
           validate={(value: string) => {
             if (answer === 'integer') {
               const num = parseFloat(value);
