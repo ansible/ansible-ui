@@ -26,8 +26,7 @@ export function OrganizationDetailsStep(props: {
         <PageFormTextInput
           name="organization.name"
           label={t('Name')}
-          placeholder={t('Enter name')}
-          isDisabled={props.managed}
+          placeholder={t('Enter organization name')}
           isRequired
         />
         <PageFormTextInput
@@ -66,7 +65,7 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
       <PageFormCredentialSelect
         name="galaxyCredentials"
         label={t('Galaxy credentials')}
-        placeholder={t('Add galaxy credentials')}
+        placeholder={t('Select galaxy credentials')}
         queryParams={{
           credential_type__kind: 'galaxy',
         }}
