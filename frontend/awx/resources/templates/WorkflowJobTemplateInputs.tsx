@@ -29,12 +29,12 @@ export function WorkflowJobTemplateInputs(props: {
         name="name"
         label={t('Name')}
         isRequired
-        placeholder={t('Add a name for this workflow job template')}
+        placeholder={t('Enter workflow job template name')}
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
         name="description"
         label={t('Description')}
-        placeholder={t('Add a description for this workflow job template')}
+        placeholder={t('Enter description')}
       />
       <PageFormSelectOrganization<WorkflowJobTemplateForm> name="organization" />
       <PageFormInventorySelect<WorkflowJobTemplateForm>
@@ -44,7 +44,7 @@ export function WorkflowJobTemplateInputs(props: {
         name="inventory"
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
-        placeholder={t('Add a limit to reduce number of hosts.')}
+        placeholder={t('Enter limit to reduce number of hosts')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_limit_on_launch" />
         }
@@ -57,7 +57,7 @@ export function WorkflowJobTemplateInputs(props: {
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
         name="scm_branch"
-        placeholder={t('Add a source control branch')}
+        placeholder={t('Enter source control branch')}
         labelHelpTitle={t('Source control branch')}
         labelHelp={t(
           'Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.'
