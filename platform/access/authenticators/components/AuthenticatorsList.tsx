@@ -6,10 +6,10 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import {
   useAuthenticatorRowActions,
   useAuthenticatorToolbarActions,
@@ -24,12 +24,12 @@ export function AuthenticatorsList() {
   const pageNavigate = usePageNavigate();
 
   const view = usePlatformView<Authenticator>({
-    url: gatewayV1API`/authenticators/`,
+    url: gatewayAPI`/authenticators/`,
     toolbarFilters,
     tableColumns,
   });
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/authenticators/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useAuthenticatorToolbarActions(view);
   const rowActions = useAuthenticatorRowActions(view);

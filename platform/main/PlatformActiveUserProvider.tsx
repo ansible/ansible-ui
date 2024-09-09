@@ -1,9 +1,9 @@
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../frontend/common/crud/Data';
-import { gatewayAPI } from '../api/gateway-api-utils';
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 import { PlatformUser } from '../interfaces/PlatformUser';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 interface ActiveUserState {
   activePlatformUser?: PlatformUser | null | undefined;

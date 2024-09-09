@@ -11,17 +11,17 @@ import {
 } from '../../../../framework';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useUserRowActions } from '../hooks/useUserActions';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useUserRowActions } from '../hooks/useUserActions';
 
 export function PlatformUserPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
+  const { error, data: user, refresh } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const { activePlatformUser: activeUser } = usePlatformActiveUser();

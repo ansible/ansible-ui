@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,25 +10,24 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PlatformSelectUsersStep } from '../roles-wizard-steps/PlatformSelectUsersStep';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { AwxSelectRolesStep } from '../../../../frontend/awx/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
 import { RoleAssignmentsReviewStep } from '../../../../frontend/common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '../../../../frontend/common/crud/Data';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useGatewayService } from '../../../main/GatewayServices';
-import { useMemo } from 'react';
-import { PlatformRole } from '../../../interfaces/PlatformRole';
+import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useGatewayService } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PlatformSelectUsersStep } from '../roles-wizard-steps/PlatformSelectUsersStep';
 
 interface WizardFormValues {
   users: PlatformUser[];
@@ -57,12 +57,12 @@ export function PlatformOrganizationAddUsers() {
     UserAndAwxRole | UserAndEdaRole | UserAndPlatformRole
   >();
   const { data: organization, isLoading } = useGet<PlatformOrganization>(
-    gatewayV1API`/organizations/${params.id || ''}/`
+    gatewayAPI`/organizations/${params.id || ''}/`
   );
   const awxService = useGatewayService('controller');
   const edaService = useGatewayService('eda');
   const { data, isLoading: isLoadingOrgMemberRole } = useGet<PlatformItemsResponse<PlatformRole>>(
-    gatewayV1API`/role_definitions/`,
+    gatewayAPI`/role_definitions/`,
     {
       name: 'Organization Member',
     }
@@ -226,7 +226,7 @@ export function PlatformOrganizationAddUsers() {
         ],
         actionFn: (item) => {
           if ((item as UserAndPlatformRole).platformOrgMemberRole) {
-            return postRequest(gatewayV1API`/role_user_assignments/`, {
+            return postRequest(gatewayAPI`/role_user_assignments/`, {
               user_ansible_id: item.user.summary_fields.resource.ansible_id,
               role_definition: (item as UserAndPlatformRole).platformOrgMemberRole.id,
               content_type: 'shared.organization',

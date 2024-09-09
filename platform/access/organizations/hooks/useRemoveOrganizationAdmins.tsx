@@ -1,19 +1,19 @@
-import { useTranslation } from 'react-i18next';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, postRequest } from '../../../../frontend/common/crud/Data';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useUsersColumns } from '../../users/hooks/useUserColumns';
 
 export function useRemoveOrganizationAdmins(onComplete: (users: PlatformUser[]) => void) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: organization } = useGetItem<PlatformOrganization>(
-    gatewayV1API`/organizations`,
+    gatewayAPI`/organizations`,
     params.id
   );
   const confirmationColumns = useUsersColumns({ disableLinks: true });
@@ -47,7 +47,7 @@ export function useRemoveOrganizationAdmins(onComplete: (users: PlatformUser[]) 
       onComplete,
       actionFn: (user: PlatformUser, signal) =>
         postRequest(
-          gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/disassociate/`,
+          gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/admins/disassociate/`,
           { instances: [user.id.toString()] },
           signal
         ),

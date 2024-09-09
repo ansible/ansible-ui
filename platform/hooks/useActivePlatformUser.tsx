@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useGet } from '../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../api/gateway-api-utils';
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 import { PlatformUser } from '../interfaces/PlatformUser';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 const ActivePlatformUserContext = createContext<PlatformUser | null | undefined>(undefined);
 
@@ -16,7 +16,7 @@ export function useActivePlatformUser() {
 
 export function ActivePlatformUserProvider(props: { children?: ReactNode }) {
   const [activeUser, setActiveUser] = useState<PlatformUser | null | undefined>(undefined);
-  const userResponse = useGet<PlatformItemsResponse<PlatformUser>>(gatewayV1API`/me/`);
+  const userResponse = useGet<PlatformItemsResponse<PlatformUser>>(gatewayAPI`/me/`);
   useEffect(() => {
     if (
       userResponse.data &&

@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersColumns } from './useUserColumns';
 
 export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
@@ -55,7 +55,7 @@ export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (user: PlatformUser, signal) =>
-        requestDelete(gatewayV1API`/users/${user.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/users/${user.id.toString()}/`, signal),
     });
   };
   return deleteUsers;

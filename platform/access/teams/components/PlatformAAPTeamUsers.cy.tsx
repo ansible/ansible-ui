@@ -1,5 +1,5 @@
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
+import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformAAPTeamUsers } from './PlatformAAPTeamUsers';
 
@@ -9,7 +9,7 @@ describe('Team users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/users/?*`,
+          url: gatewayAPI`/teams/5/users/?*`,
         },
         {
           fixture: 'platformTeamAdmins.json',
@@ -18,7 +18,7 @@ describe('Team users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/`,
+          url: gatewayAPI`/teams/5/`,
         },
         mockPlatformTeams.results[0]
       ).as('team');
@@ -80,7 +80,7 @@ describe('Team users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/users/*`,
+          url: gatewayAPI`/teams/5/users/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -89,7 +89,7 @@ describe('Team users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/`,
+          url: gatewayAPI`/teams/5/`,
         },
         mockPlatformTeams.results[0]
       ).as('team');
@@ -139,14 +139,14 @@ describe('Team users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/users/*`,
+          url: gatewayAPI`/teams/5/users/*`,
         },
         { statusCode: 500 }
       ).as('error');
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/teams/5/`,
+          url: gatewayAPI`/teams/5/`,
         },
         mockPlatformTeams.results[0]
       ).as('team');

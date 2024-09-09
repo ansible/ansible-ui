@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
 import { useGet } from '../../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
-import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 
 export function useNameToolbarFilter() {
   const { t } = useTranslation();

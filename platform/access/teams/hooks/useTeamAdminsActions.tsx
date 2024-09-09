@@ -1,28 +1,28 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { IPlatformView } from '../../../hooks/usePlatformView';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useParams } from 'react-router-dom';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { useParams } from 'react-router-dom';
-import { useRemoveTeamAdmins } from './useRemoveTeamAdmins';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { IPlatformView } from '../../../hooks/usePlatformView';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useAssociateTeamAdmins } from './useAssociateTeamAdmins';
+import { useRemoveTeamAdmins } from './useRemoveTeamAdmins';
 
 export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
   const { data: teamOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`
+    gatewayAPI`/teams/${team?.id?.toString() ?? ''}/`
   );
   const canEditTeam = Boolean(
     teamOptions &&
@@ -72,10 +72,10 @@ export function useTeamAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
 export function useTeamAdminsRowActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
   const removeAdmins = useRemoveTeamAdmins(view.unselectItemsAndRefresh);
   const { data: teamOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/teams/${team?.id?.toString() ?? ''}/`
+    gatewayAPI`/teams/${team?.id?.toString() ?? ''}/`
   );
   const canEditTeam = Boolean(
     teamOptions &&

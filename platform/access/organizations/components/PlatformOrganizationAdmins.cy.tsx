@@ -1,5 +1,5 @@
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
+import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformOrganizationAdmins } from './PlatformOrganizationAdmins';
 
@@ -9,7 +9,7 @@ describe('Organization admins list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/3/admins/?*`,
+          url: gatewayAPI`/organizations/3/admins/?*`,
         },
         {
           fixture: 'platformOrganizationAdmins.json',
@@ -18,7 +18,7 @@ describe('Organization admins list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/3/`,
+          url: gatewayAPI`/organizations/3/`,
         },
         mockPlatformOrganizations.results[0]
       ).as('organization');
@@ -80,7 +80,7 @@ describe('Organization admins list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/3/admins/*`,
+          url: gatewayAPI`/organizations/3/admins/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -89,7 +89,7 @@ describe('Organization admins list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/3/`,
+          url: gatewayAPI`/organizations/3/`,
         },
         mockPlatformOrganizations.results[0]
       ).as('organization');
@@ -139,14 +139,14 @@ describe('Organization admins list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/3/admins/*`,
+          url: gatewayAPI`/organizations/3/admins/*`,
         },
         { statusCode: 500 }
       ).as('error');
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/3/`,
+          url: gatewayAPI`/organizations/3/`,
         },
         mockPlatformOrganizations.results[0]
       ).as('organization');

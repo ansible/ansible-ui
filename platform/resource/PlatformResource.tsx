@@ -5,9 +5,9 @@ import { useGetPageUrl } from '../../framework';
 import { EmptyStateCustom } from '../../framework/components/EmptyStateCustom';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
-import { gatewayAPI } from '../api/gateway-api-utils';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export function PlatformResource() {
   const { resource_type, ansible_id, route } = useParams<{

@@ -1,18 +1,18 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import { HubUser } from '../../../../frontend/hub/interfaces/expanded/HubUser';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { hubAPI } from '../../../../frontend/hub/common/api/formatPath';
+import { AwxUser } from '../../../../frontend/awx/interfaces/User';
 import { requestPatch } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
+import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
+import { hubAPI } from '../../../../frontend/hub/common/api/formatPath';
+import { HubUser } from '../../../../frontend/hub/interfaces/expanded/HubUser';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { useEdaResource } from '../../../hooks/useEdaResource';
 import { useHubResource } from '../../../hooks/useHubResource';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { IUserInput } from '../components/PlatformUserForm';
 
 interface IServiceUserInputs {
@@ -41,7 +41,7 @@ export function useGetPlatformAndServiceUsers(userId: number): IPlatformAndServi
     data: platformUser,
     isLoading,
     error,
-  } = useGet<PlatformUser>(gatewayV1API`/users/${userId.toString()}/`);
+  } = useGet<PlatformUser>(gatewayAPI`/users/${userId.toString()}/`);
 
   const { resource: awxResource, refresh: awxRefresh } = useAwxResource<AwxUser>(
     'users/',

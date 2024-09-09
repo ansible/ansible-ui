@@ -14,12 +14,12 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { AwxError } from '../../../../frontend/awx/common/AwxError';
+import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteUserTokens } from '../hooks/useDeleteAAPUserTokens';
 
 export function PlatformAAPUserTokenPage() {

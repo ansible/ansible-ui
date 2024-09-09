@@ -5,9 +5,9 @@ import { mutate } from 'swr';
 import { LoadingState } from '../../framework/components/LoadingState';
 import { AnsibleLogin } from '../../frontend/common/AnsibleLogin/AnsibleLogin';
 import { useGet } from '../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../api/gateway-api-utils';
 import AAPLogo from '../assets/aap-logo.svg';
 import { UIAuth } from '../interfaces/UIAuth';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 export function PlatformLogin(props: { children: ReactNode }) {

@@ -7,9 +7,9 @@ import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCus
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { HubError } from '../../../../frontend/hub/common/HubError';
 import { HubTeam } from '../../../../frontend/hub/interfaces/expanded/HubTeam';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useHubResource } from '../../../hooks/useHubResource';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 /**
  * Component that gets the gateway/platform ID of a team from the URL params,
@@ -19,7 +19,7 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 export function PlatformHubTeamIdLookup(props: { children: ReactNode }) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams/`, params.id);
   const { resource: hubTeam, isLoading, error } = useHubResource<HubTeam>('_ui/v2/teams', team);
 
   if (isLoading) {

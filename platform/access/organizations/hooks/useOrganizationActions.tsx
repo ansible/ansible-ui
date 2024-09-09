@@ -2,6 +2,7 @@ import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,18 +15,17 @@ import {
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteOrganizations } from './useDeleteOrganizations';
-import { useParams } from 'react-router-dom';
 
 export function useOrganizationToolbarActions(view: IPlatformView<PlatformOrganization>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/organizations/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/organizations/`);
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const deleteOrganizations = useDeleteOrganizations(view.unselectItemsAndRefresh);
 
@@ -108,7 +108,7 @@ export function useOrganizationPageActions(
   const deleteOrganizations = useDeleteOrganizations(onOrganizationsDeleted);
   const params = useParams<{ id: string }>();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${params.id ?? ''}/`
+    gatewayAPI`/organizations/${params.id ?? ''}/`
   );
 
   const canEditOrganization = Boolean(

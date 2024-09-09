@@ -1,6 +1,6 @@
-import { randomE2Ename } from '../../../../support/utils';
 import { UIAuth } from '../../../../../platform/interfaces/UIAuth';
-import { gatewayV1API } from '../../../../../platform/api/gateway-api-utils';
+import { gatewayAPI } from '../../../../support/formatApiPathForPlatform';
+import { randomE2Ename } from '../../../../support/utils';
 
 describe('Platform Basic Authentication', () => {
   it('create local authenticator in ui, enable it, log out, log in, and check the new authenticator in response', () => {
@@ -29,7 +29,7 @@ describe('Platform Basic Authentication', () => {
     });
 
     // Log out
-    cy.intercept('GET', gatewayV1API`/ui_auth/`).as('getUIAuthRequest');
+    cy.intercept('GET', gatewayAPI`/ui_auth/`).as('getUIAuthRequest');
     cy.platformLogout();
     cy.wait('@getUIAuthRequest')
       .its('response.body')

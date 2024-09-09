@@ -1,8 +1,8 @@
 import { randomString } from '../../../../framework/utils/random-string';
-import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
+import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 
 describe('Users - Create, Edit and Delete', () => {
   beforeEach(() => {
@@ -38,7 +38,7 @@ describe('Users - Create, Edit and Delete', () => {
       cy.get('[data-cy="username"]').clear().type(`edited-${createdPlatformUser.username}`);
       cy.get('[data-cy="Submit"]').click();
       cy.clickPageAction('delete-user');
-      cy.intercept('DELETE', gatewayV1API`/users/${createdPlatformUser.id.toString()}/`).as(
+      cy.intercept('DELETE', gatewayAPI`/users/${createdPlatformUser.id.toString()}/`).as(
         'deleteUser'
       );
       cy.get('#confirm').click();
@@ -71,7 +71,7 @@ describe('Users - Create, Edit and Delete', () => {
 
 describe('User Types - Creates Users of Type Normal, Platform Auditor and System Admin', () => {
   beforeEach(() => {
-    cy.intercept('GET', gatewayV1API`/users/?order_by=username&page=1&page_size=10`).as('getUsers');
+    cy.intercept('GET', gatewayAPI`/users/?order_by=username&page=1&page_size=10`).as('getUsers');
     cy.navigateTo('platform', 'users');
     cy.wait('@getUsers');
     cy.verifyPageTitle('Users');
@@ -92,7 +92,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
-    cy.intercept('POST', gatewayV1API`/users/`).as('createdUser');
+    cy.intercept('POST', gatewayAPI`/users/`).as('createdUser');
     cy.get('[data-cy="Submit"]').click();
     cy.wait('@createdUser')
       .its('response.body')
@@ -124,7 +124,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
-    cy.intercept('POST', gatewayV1API`/users/`).as('createdUser');
+    cy.intercept('POST', gatewayAPI`/users/`).as('createdUser');
     cy.get('[data-cy="Submit"]').click();
     cy.wait('@createdUser')
       .its('response.body')
@@ -156,7 +156,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
     cy.get('[data-cy="first-name"]').type(firstName);
     cy.get('[data-cy="last-name"]').type(lastName);
     cy.get('[data-cy="email"]').type(userEmail);
-    cy.intercept('POST', gatewayV1API`/users/`).as('createdUser');
+    cy.intercept('POST', gatewayAPI`/users/`).as('createdUser');
     cy.get('[data-cy="Submit"]').click();
     cy.wait('@createdUser')
       .its('response.body')
@@ -173,7 +173,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         );
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
-        cy.intercept('GET', gatewayV1API`/users/${createdNormalUser.id.toString()}/`).as(
+        cy.intercept('GET', gatewayAPI`/users/${createdNormalUser.id.toString()}/`).as(
           'normalUser'
         );
         cy.clickTableRowLink('username', createdNormalUser.username);
@@ -187,7 +187,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         cy.platformLogout();
         // log back in as admin to delete newly created user
         cy.platformLogin();
-        cy.intercept('GET', gatewayV1API`/users/?order_by=username&page=1&page_size=10`).as(
+        cy.intercept('GET', gatewayAPI`/users/?order_by=username&page=1&page_size=10`).as(
           'getUsers'
         );
         cy.navigateTo('platform', 'users');

@@ -1,4 +1,4 @@
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
+import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
 import { PlatformUserTeams } from './PlatformUserTeams';
 
 describe('User teams list', () => {
@@ -7,7 +7,7 @@ describe('User teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users/5/teams/*`,
+          url: gatewayAPI`/users/5/teams/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -31,7 +31,7 @@ describe('User teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users/5/teams/?*`,
+          url: gatewayAPI`/users/5/teams/?*`,
         },
         {
           fixture: 'platformTeams.json',
@@ -71,7 +71,7 @@ describe('User teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users/5/teams/*`,
+          url: gatewayAPI`/users/5/teams/*`,
         },
         { statusCode: 500 }
       );

@@ -3,10 +3,10 @@ import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
+import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PageFormPlatformOrganizationNameSelect<
   TFieldValues extends FieldValues = FieldValues,

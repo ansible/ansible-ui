@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { MultiSelectDialog, usePageDialog } from '../../../../framework';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersColumns } from './useUserColumns';
 import { useUsersFilters } from './useUsersFilters';
 
@@ -15,7 +15,7 @@ function SelectUsers(props: {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns({ disableLinks: true });
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/users/`,
+    url: gatewayAPI`/users/`,
     queryParams: {
       is_superuser: 'false',
     },

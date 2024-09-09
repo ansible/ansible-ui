@@ -1,7 +1,7 @@
-import { gatewayV1API } from '../../../../platform/api/gateway-api-utils';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
+import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../support/utils';
 
 describe('Platform Teams - Create, Edit and Delete', function () {
@@ -27,7 +27,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
   });
 
   it('can create a basic team in the ui', function () {
-    cy.intercept('POST', gatewayV1API`/teams/`).as('createPlatformTeam');
+    cy.intercept('POST', gatewayAPI`/teams/`).as('createPlatformTeam');
     cy.containsBy('a', 'Create team').click();
     const teamName = `Platform E2E Team ${randomE2Ename()}`;
     cy.getByDataCy('name').type(teamName);
@@ -38,7 +38,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
       .its('response.body')
       .then((platformTeam: PlatformTeam) => {
         cy.verifyPageTitle(platformTeam.name);
-        cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
+        cy.intercept('DELETE', gatewayAPI`/teams/${platformTeam.id.toString()}/`).as(
           'deletePlatformTeam'
         );
         cy.selectDetailsPageKebabAction('delete-team');
@@ -70,9 +70,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
           );
         });
         cy.clickButton(/^Clear all filters$/);
-        cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
-          'deleteTeam'
-        );
+        cy.intercept('DELETE', gatewayAPI`/teams/${platformTeam.id.toString()}/`).as('deleteTeam');
         cy.filterTableByTextFilter('name', `${platformTeam.name} edited from list page`, {
           disableFilterSelection: true,
         });
@@ -114,9 +112,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         cy.getByDataCy('Submit').click();
         cy.verifyPageTitle(platformTeam.name);
         cy.clickPageAction('delete-team');
-        cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as(
-          'deleteTeam'
-        );
+        cy.intercept('DELETE', gatewayAPI`/teams/${platformTeam.id.toString()}/`).as('deleteTeam');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete team/);
         cy.wait('@deleteTeam')
@@ -138,8 +134,8 @@ describe('Platform Teams - Create, Edit and Delete', function () {
       cy.selectTableRow(testPlatformTeam1.name);
       cy.clickToolbarKebabAction('delete-teams');
       cy.get('#confirm').click();
-      cy.intercept('DELETE', gatewayV1API`/teams/${platformTeam.id.toString()}/`).as('deleteTeam1');
-      cy.intercept('DELETE', gatewayV1API`/teams/${testPlatformTeam1.id.toString()}/`).as(
+      cy.intercept('DELETE', gatewayAPI`/teams/${platformTeam.id.toString()}/`).as('deleteTeam1');
+      cy.intercept('DELETE', gatewayAPI`/teams/${testPlatformTeam1.id.toString()}/`).as(
         'deleteTeam2'
       );
       cy.clickButton(/^Delete team/);

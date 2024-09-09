@@ -1,25 +1,25 @@
+import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
-import { useUsersColumns } from '../../users/hooks/useUserColumns';
-import { PageTable } from '../../../../framework';
-import { usePlatformView } from '../../../hooks/usePlatformView';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { PageTable } from '../../../../framework';
+import { LoadingState } from '../../../../framework/components/LoadingState';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { CubesIcon } from '@patternfly/react-icons';
+import { usePlatformView } from '../../../hooks/usePlatformView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useUsersColumns } from '../../users/hooks/useUserColumns';
+import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 import {
   useOrganizationAdminsRowActions,
   useOrganizationAdminsToolbarActions,
 } from '../hooks/useOrganizationAdminsActions';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { LoadingState } from '../../../../framework/components/LoadingState';
 
 export function PlatformOrganizationAdmins() {
   const { t } = useTranslation();
@@ -30,17 +30,17 @@ export function PlatformOrganizationAdmins() {
     data: organization,
     isLoading,
     error,
-  } = useGetItem<PlatformOrganization>(gatewayV1API`/organizations`, params.id);
+  } = useGetItem<PlatformOrganization>(gatewayAPI`/organizations`, params.id);
 
   const view = usePlatformView<PlatformUser>({
-    url: gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/admins/`,
+    url: gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/admins/`,
     toolbarFilters,
     tableColumns,
   });
 
   const { data: organizationOptions, isLoading: isLoadingOptions } = useOptions<
     OptionsResponse<ActionsResponse>
-  >(gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`);
+  >(gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/`);
   const canEditOrganization = Boolean(
     organizationOptions &&
       organizationOptions.actions &&

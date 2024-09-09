@@ -4,7 +4,7 @@ import { useApplicationsColumns } from '../../../../frontend/awx/administration/
 import { useApplicationsFilters } from '../../../../frontend/awx/administration/applications/hooks/useApplicationsFilters';
 import { PageFormSingleSelectAwxResource } from '../../../../frontend/awx/common/PageFormSingleSelectAwxResource';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PageFormApplicationSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -24,7 +24,7 @@ export function PageFormApplicationSelect<
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}
-      url={gatewayV1API`/applications/`}
+      url={gatewayAPI`/applications/`}
       tableColumns={applicationColumns}
       toolbarFilters={applicationFilters}
     />

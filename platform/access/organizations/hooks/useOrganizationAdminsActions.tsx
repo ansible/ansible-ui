@@ -1,32 +1,32 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { IPlatformView } from '../../../hooks/usePlatformView';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useParams } from 'react-router-dom';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
 import {
   ActionsResponse,
   OptionsResponse,
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { useParams } from 'react-router-dom';
-import { useRemoveOrganizationAdmins } from './useRemoveOrganizationAdmins';
-import { useAssociateOrganizationAdmins } from './useAssociateOrganizationAdmins';
+import { useOptions } from '../../../../frontend/common/crud/useOptions';
+import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useAssociateOrganizationAdmins } from './useAssociateOrganizationAdmins';
+import { useRemoveOrganizationAdmins } from './useRemoveOrganizationAdmins';
 
 export function useOrganizationAdminsToolbarActions(view: IPlatformView<PlatformUser>) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: organization } = useGetItem<PlatformOrganization>(
-    gatewayV1API`/organizations`,
+    gatewayAPI`/organizations`,
     params.id
   );
 
   const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
+    gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/`
   );
   const canEditOrganization = Boolean(
     organizationOptions &&
@@ -78,12 +78,12 @@ export function useOrganizationAdminsRowActions(view: IPlatformView<PlatformUser
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: organization } = useGetItem<PlatformOrganization>(
-    gatewayV1API`/organizations`,
+    gatewayAPI`/organizations`,
     params.id
   );
   const removeAdmins = useRemoveOrganizationAdmins(view.unselectItemsAndRefresh);
   const { data: organizationOptions } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/organizations/${organization?.id?.toString() ?? ''}/`
+    gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/`
   );
   const canEditOrganization = Boolean(
     organizationOptions &&

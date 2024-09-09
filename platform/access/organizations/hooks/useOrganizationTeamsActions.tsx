@@ -1,29 +1,29 @@
-import { useTranslation } from 'react-i18next';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
 } from '../../../../framework';
-import { ButtonVariant } from '@patternfly/react-core';
-import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useParams } from 'react-router-dom';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useGatewayService } from '../../../main/GatewayServices';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { useManageOrgRoles } from '../../../../frontend/common/access/hooks/useManageOrgRolesDialog';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
-import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Team } from '../../../../frontend/awx/interfaces/Team';
+import { useManageOrgRoles } from '../../../../frontend/common/access/hooks/useManageOrgRolesDialog';
+import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
+import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
+import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useGatewayService } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function useOrganizationTeamsToolbarActions() {
   const { t } = useTranslation();
@@ -57,7 +57,7 @@ export function useOrganizationTeamsRowActions() {
   const params = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const { data: organization } = useGetItem<PlatformOrganization>(
-    gatewayV1API`/organizations`,
+    gatewayAPI`/organizations`,
     params.id
   );
   const { resource: awxOrganization, error: errorRetrievingAwxOrg } = useAwxResource<Organization>(

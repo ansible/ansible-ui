@@ -1,6 +1,6 @@
-import { PlatformApp } from './PlatformApp';
 import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
-import { gatewayAPI } from '../api/gateway-api-utils';
+import { gatewayAPI } from '../utils/gateway-api-utils';
+import { PlatformApp } from './PlatformApp';
 
 describe('Platform Subscription and Session Validation Tests', () => {
   it('should not display a banner if AWC config or License info is not available', () => {

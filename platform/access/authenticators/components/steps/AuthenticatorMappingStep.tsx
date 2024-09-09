@@ -12,15 +12,15 @@ import { MouseEvent, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { gatewayAPI } from '../../../../api/gateway-api-utils';
-import { useGet } from '../../../../../frontend/common/crud/useGet';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RequestError } from '../../../../../frontend/common/crud/RequestError';
+import { useGet } from '../../../../../frontend/common/crud/useGet';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
-import type { AuthenticatorMapValues } from '../AuthenticatorForm';
-import { MapFields } from './MapFields';
 import { PlatformItemsResponse } from '../../../../interfaces/PlatformItemsResponse';
 import { PlatformRole } from '../../../../interfaces/PlatformRole';
+import { gatewayAPI } from '../../../../utils/gateway-api-utils';
+import type { AuthenticatorMapValues } from '../AuthenticatorForm';
+import { MapFields } from './MapFields';
 
 export function AuthenticatorMappingStep() {
   const { t } = useTranslation();

@@ -2,6 +2,7 @@ import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -17,12 +18,11 @@ import {
 } from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { requestPatch } from '../../../../frontend/common/crud/Data';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteAuthenticators } from './useDeleteAuthenticators';
-import { useParams } from 'react-router-dom';
 import { ReorderAuthenticatorsModal } from './useReorderAuthenticators';
 
 export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator>) {
@@ -31,7 +31,7 @@ export function useAuthenticatorToolbarActions(view: IPlatformView<Authenticator
   const getPageUrl = useGetPageUrl();
   const deleteAuthenticators = useDeleteAuthenticators(view.unselectItemsAndRefresh);
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/authenticators/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/authenticators/`);
   const canCreateAuthenticator = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useMemo<IPageAction<Authenticator>[]>(
     () => [
@@ -102,7 +102,7 @@ export function useAuthenticatorRowActions(view: IPlatformView<Authenticator>) {
         title: `${authenticator.name} ${enabled ? t('enabled') : t('disabled')}.`,
         timeout: 5000,
       };
-      await requestPatch(gatewayV1API`/authenticators/${authenticator.id.toString()}/`, {
+      await requestPatch(gatewayAPI`/authenticators/${authenticator.id.toString()}/`, {
         enabled: enabled,
       })
         .then(() => alertToaster.addAlert(alert))
@@ -182,7 +182,7 @@ export function useAuthenticatorPageActions(
   const deleteAuthenticators = useDeleteAuthenticators(onAuthenticatorsDeleted);
   const params = useParams<{ id: string }>();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    gatewayV1API`/authenticators/${params.id ?? ''}/`
+    gatewayAPI`/authenticators/${params.id ?? ''}/`
   );
 
   const canEditAuthenticator = Boolean(
@@ -195,7 +195,7 @@ export function useAuthenticatorPageActions(
   ) => Promise<void> = useCallback(
     async (authenticator, enabled) => {
       const patchedAuthenticator = await requestPatch<Authenticator>(
-        gatewayV1API`/authenticators/${authenticator.id.toString()}/`,
+        gatewayAPI`/authenticators/${authenticator.id.toString()}/`,
         {
           enabled,
         }

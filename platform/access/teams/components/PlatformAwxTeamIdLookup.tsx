@@ -9,8 +9,8 @@ import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 /**
  * Component that gets the gateway/platform ID of a team from the URL params,
@@ -20,7 +20,7 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 export function PlatformAwxTeamIdLookup(props: { children: ReactNode }) {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams/`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams/`, params.id);
   const awxResourceResponse = useGet<AwxItemsResponse<Team>>(
     awxAPI`/teams/?resource__ansible_id=${team?.summary_fields?.resource?.ansible_id ?? ''}`
   );

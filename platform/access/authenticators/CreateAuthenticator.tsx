@@ -1,13 +1,12 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
-import { postRequest } from '../../../frontend/common/crud/Data';
-import { requestPatch } from '../../../frontend/common/crud/Data';
+import { postRequest, requestPatch } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
-import { gatewayAPI } from '../../api/gateway-api-utils';
 import type { Authenticator } from '../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
 import { PlatformRoute } from '../../main/PlatformRoutes';
+import { gatewayAPI } from '../../utils/gateway-api-utils';
 import {
   AuthenticatorForm,
   AuthenticatorFormValues,

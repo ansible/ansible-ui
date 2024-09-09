@@ -1,19 +1,19 @@
-import { useTranslation } from 'react-i18next';
-import { useSelectUsers } from '../../users/hooks/useSelectUsers';
 import { useCallback } from 'react';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
+import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useSelectUsers } from '../../users/hooks/useSelectUsers';
 
 export function useAssociateTeamAdmins(onComplete: () => Promise<void>) {
   const { t } = useTranslation();
   const selectUsers = useSelectUsers();
   const postRequest = usePostRequest();
   const params = useParams<{ id: string }>();
-  const { data: team } = useGetItem<PlatformTeam>(gatewayV1API`/teams`, params.id);
+  const { data: team } = useGetItem<PlatformTeam>(gatewayAPI`/teams`, params.id);
 
   const associateUsers = useCallback(() => {
     selectUsers(
@@ -22,7 +22,7 @@ export function useAssociateTeamAdmins(onComplete: () => Promise<void>) {
       t('Add administrators'),
       async (users: PlatformUser[]) => {
         if (!team) return;
-        await postRequest(gatewayV1API`/teams/${team?.id?.toString() ?? ''}/admins/associate/`, {
+        await postRequest(gatewayAPI`/teams/${team?.id?.toString() ?? ''}/admins/associate/`, {
           instances: users.map((user) => user.id.toString()),
         });
         await onComplete();

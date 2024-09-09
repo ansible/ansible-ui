@@ -1,22 +1,22 @@
-import { useTranslation } from 'react-i18next';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { ITableColumn, LoadingPage, TextCell } from '../../../../framework';
 import { useMemo } from 'react';
-import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../../frontend/common/crud/useGet';
+import { ITableColumn, LoadingPage, TextCell } from '../../../../framework';
 import { PageMultiSelectList } from '../../../../framework/PageTable/PageMultiSelectList';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 
 export function PlatformSelectUsersStep() {
   const toolbarFilters = useUsersFilters();
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: organization, isLoading } = useGet<PlatformOrganization>(
-    gatewayV1API`/organizations/${params.id || ''}/`
+    gatewayAPI`/organizations/${params.id || ''}/`
   );
 
   const tableColumns: ITableColumn<PlatformUser>[] = useMemo(() => {
@@ -46,7 +46,7 @@ export function PlatformSelectUsersStep() {
 
   const view = usePlatformMultiSelectListView<PlatformUser>(
     {
-      url: gatewayV1API`/users/`,
+      url: gatewayAPI`/users/`,
       queryParams: {
         is_superuser: 'false',
       },

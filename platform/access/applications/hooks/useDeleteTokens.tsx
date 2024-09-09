@@ -1,12 +1,11 @@
-import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { useTokensColumns } from './useTokensColumns';
-import { useBulkConfirmation } from '../../../../framework';
+import { compareStrings, useBulkConfirmation } from '../../../../framework';
+import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useTokensColumns } from './useTokensColumns';
 
 export function useDeleteTokens(onComplete: (applications: Token[]) => void) {
   const { t } = useTranslation();
@@ -33,7 +32,7 @@ export function useDeleteTokens(onComplete: (applications: Token[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (token: Token, signal) =>
-        requestDelete(gatewayV1API`/tokens/${token.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/tokens/${token.id.toString()}/`, signal),
     });
   };
   return deleteTokens;

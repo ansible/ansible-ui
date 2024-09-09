@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { PageFormAsyncSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import {
   PageAsyncSelectOptionsFn,
+  PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
 } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { gatewayAPI } from '../../../api/gateway-api-utils';
-import { PageAsyncSelectQueryOptions } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { requestGet } from '../../../../frontend/common/crud/Data';
-import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformRole } from '../../../interfaces/PlatformRole';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PageFormPlatformRoleNameSelect<
   TFieldValues extends FieldValues = FieldValues,

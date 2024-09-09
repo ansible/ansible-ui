@@ -9,26 +9,26 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useUsersColumns } from '../hooks/useUserColumns';
-import { Authenticator } from '../../../interfaces/Authenticator';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useReadableAuthenticatorTypes } from '../../authenticators/hooks/useReadableAuthenticatorTypes';
+import { useUsersColumns } from '../hooks/useUserColumns';
 
 export function PlatformUserDetails() {
   const params = useParams<{ id: string }>();
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const columns = useUsersColumns({ disableLinks: true });
-  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayV1API`/users/`, params.id);
+  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayV1API`/users/${params.id ?? ''}/organizations/`
+    gatewayAPI`/users/${params.id ?? ''}/organizations/`
   );
   const { data: authenticators } = useGet<PlatformItemsResponse<Authenticator>>(
-    gatewayV1API`/users/${params.id ?? ''}/authenticators/`
+    gatewayAPI`/users/${params.id ?? ''}/authenticators/`
   );
   const readableAuthenticatorTypes = useReadableAuthenticatorTypes(authenticators?.results);
   if (isLoading) return <LoadingPage />;

@@ -9,7 +9,7 @@ Users list test cases
 */
 
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformUsersList } from './PlatformUsersList';
 
 describe('Users list', () => {
@@ -18,7 +18,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users/*`,
+          url: gatewayAPI`/users/*`,
         },
         {
           fixture: 'platformUsers.json',
@@ -67,7 +67,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users/*`,
+          url: gatewayAPI`/users/*`,
         },
         {
           results: [
@@ -128,7 +128,7 @@ describe('Users list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/users/*`,
+          url: gatewayAPI`/users/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -171,7 +171,7 @@ describe('Users list', () => {
   });
   describe('Error retrieving list', () => {
     it('Displays error loading users', () => {
-      cy.intercept({ method: 'GET', url: gatewayV1API`/users/*` }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: gatewayAPI`/users/*` }, { statusCode: 500 });
       cy.mount(<PlatformUsersList />);
       cy.contains('Error loading users');
     });

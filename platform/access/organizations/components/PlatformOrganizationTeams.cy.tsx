@@ -1,5 +1,5 @@
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
-import { gatewayV1API } from '../../../../cypress/support/formatApiPathForPlatform';
+import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
 import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformOrganizationTeams } from './PlatformOrganizationTeams';
 
@@ -11,7 +11,7 @@ describe('Organization teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/teams/?*`,
+          url: gatewayAPI`/organizations/1/teams/?*`,
         },
         {
           fixture: 'platformOrganizationTeams.json',
@@ -20,7 +20,7 @@ describe('Organization teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/`,
+          url: gatewayAPI`/organizations/1/`,
         },
         mockPlatformOrganization
       ).as('organization');
@@ -48,7 +48,7 @@ describe('Organization teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/teams/*`,
+          url: gatewayAPI`/organizations/1/teams/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -57,7 +57,7 @@ describe('Organization teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/`,
+          url: gatewayAPI`/organizations/1/`,
         },
         mockPlatformOrganization
       ).as('organization');
@@ -107,14 +107,14 @@ describe('Organization teams list', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/teams/*`,
+          url: gatewayAPI`/organizations/1/teams/*`,
         },
         { statusCode: 500 }
       ).as('error');
       cy.intercept(
         {
           method: 'GET',
-          url: gatewayV1API`/organizations/1/`,
+          url: gatewayAPI`/organizations/1/`,
         },
         mockPlatformOrganization
       ).as('organization');

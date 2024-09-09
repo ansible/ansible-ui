@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -9,23 +10,22 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { AwxSelectRolesStep } from '../../../../frontend/awx/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
 import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
 import { RoleAssignmentsReviewStep } from '../../../../frontend/common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '../../../../frontend/common/crud/Data';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
 import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { useGatewayService } from '../../../main/GatewayServices';
-import { useMemo } from 'react';
-import { PlatformSelectOrganizationTeamsStep } from '../roles-wizard-steps/PlatformSelectOrganizationTeamsStep';
+import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useGatewayService } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { PlatformSelectOrganizationTeamsStep } from '../roles-wizard-steps/PlatformSelectOrganizationTeamsStep';
 
 interface WizardFormValues {
   teams: PlatformTeam[];
@@ -49,7 +49,7 @@ export function PlatformOrganizationTeamsAddRoles() {
   const pageNavigate = usePageNavigate();
   const progressDialog = useAwxBulkActionDialog<TeamAndAwxRole | TeamAndEdaRole>();
   const { data: organization, isLoading } = useGet<PlatformOrganization>(
-    gatewayV1API`/organizations/${params.id || ''}/`
+    gatewayAPI`/organizations/${params.id || ''}/`
   );
   const awxService = useGatewayService('controller');
   const edaService = useGatewayService('eda');

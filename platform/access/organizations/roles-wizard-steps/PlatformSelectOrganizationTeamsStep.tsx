@@ -1,15 +1,15 @@
-import { useTranslation } from 'react-i18next';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { ITableColumn, IToolbarFilter, LoadingPage, TextCell } from '../../../../framework';
 import { useMemo } from 'react';
-import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../../frontend/common/crud/useGet';
+import { ITableColumn, IToolbarFilter, LoadingPage, TextCell } from '../../../../framework';
 import { PageMultiSelectList } from '../../../../framework/PageTable/PageMultiSelectList';
 import { useNameToolbarFilter } from '../../../../frontend/awx/common/awx-toolbar-filters';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PlatformSelectOrganizationTeamsStep() {
   const { t } = useTranslation();
@@ -30,12 +30,12 @@ export function PlatformSelectOrganizationTeamsStep() {
 
   const params = useParams<{ id: string }>();
   const { data: organization, isLoading } = useGet<PlatformOrganization>(
-    gatewayV1API`/organizations/${params.id || ''}/`
+    gatewayAPI`/organizations/${params.id || ''}/`
   );
 
   const view = usePlatformMultiSelectListView<PlatformTeam>(
     {
-      url: gatewayV1API`/organizations/${params.id || ''}/teams/`,
+      url: gatewayAPI`/organizations/${params.id || ''}/teams/`,
       toolbarFilters,
       tableColumns,
     },

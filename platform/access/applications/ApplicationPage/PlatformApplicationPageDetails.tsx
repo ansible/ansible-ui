@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 import { CopyCell, DateTimeCell, PageDetail, PageDetails } from '../../../../framework';
 import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PlatformApplicationPageDetails() {
   const params = useParams<{ id: string }>();
-  const { data: application } = useGetItem<Application>(gatewayV1API`/applications/`, params.id);
+  const { data: application } = useGetItem<Application>(gatewayAPI`/applications/`, params.id);
   return application ? <ApplicationDetailInner application={application} /> : null;
 }
 

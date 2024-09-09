@@ -10,20 +10,20 @@ import {
   PageTable,
   usePageNavigate,
 } from '../../../framework';
-import { useApplicationsColumns } from './hooks/useApplicationsColumns';
-import { Application } from '../../../frontend/awx/interfaces/Application';
-import { OptionsResponse, ActionsResponse } from '../../../frontend/awx/interfaces/OptionsResponse';
-import { useOptions } from '../../../frontend/common/crud/useOptions';
-import { gatewayV1API } from '../../api/gateway-api-utils';
-import { PlatformRoute } from '../../main/PlatformRoutes';
-import { useDeleteApplications } from './hooks/useDeleteApplications';
-import { usePlatformActiveUser } from '../../main/PlatformActiveUserProvider';
-import { usePlatformView } from '../../hooks/usePlatformView';
-import { usePersistentFilters } from '../../../frontend/common/PersistentFilters';
 import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
 } from '../../../frontend/awx/common/awx-toolbar-filters';
+import { Application } from '../../../frontend/awx/interfaces/Application';
+import { ActionsResponse, OptionsResponse } from '../../../frontend/awx/interfaces/OptionsResponse';
+import { useOptions } from '../../../frontend/common/crud/useOptions';
+import { usePersistentFilters } from '../../../frontend/common/PersistentFilters';
+import { usePlatformView } from '../../hooks/usePlatformView';
+import { usePlatformActiveUser } from '../../main/PlatformActiveUserProvider';
+import { PlatformRoute } from '../../main/PlatformRoutes';
+import { gatewayAPI } from '../../utils/gateway-api-utils';
+import { useApplicationsColumns } from './hooks/useApplicationsColumns';
+import { useDeleteApplications } from './hooks/useDeleteApplications';
 
 export function PlatformApplicationsTable() {
   const { t } = useTranslation();
@@ -35,14 +35,14 @@ export function PlatformApplicationsTable() {
   usePersistentFilters('applications');
 
   const view = usePlatformView<Application>({
-    url: gatewayV1API`/applications/`,
+    url: gatewayAPI`/applications/`,
     toolbarFilters,
     tableColumns,
   });
   const deleteApplications = useDeleteApplications(view.unselectItemsAndRefresh);
   const pageNavigate = usePageNavigate();
 
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayV1API`/applications/`);
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/applications/`);
   const canCreateApplication = Boolean(data && data.actions && data.actions['POST']);
 
   const toolbarActions = useMemo<IPageAction<Application>[]>(

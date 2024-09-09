@@ -1,4 +1,4 @@
-import { gatewayV1API } from '../../../api/gateway-api-utils';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { AuthenticatorPage } from './AuthenticatorPage';
 
 const authenticator = {
@@ -24,7 +24,7 @@ const authenticator = {
 
 describe('AuthenticatorPage', () => {
   beforeEach(() => {
-    cy.intercept({ method: 'GET', path: gatewayV1API`/authenticators/*` }, { body: authenticator });
+    cy.intercept({ method: 'GET', path: gatewayAPI`/authenticators/*` }, { body: authenticator });
   });
   it('Component renders and displays authenticator in breadcrumb', () => {
     cy.mount(<AuthenticatorPage />);
@@ -32,7 +32,7 @@ describe('AuthenticatorPage', () => {
   });
   it('All buttons are enabled when user has correct permissions', () => {
     cy.intercept(
-      { method: 'OPTIONS', path: gatewayV1API`/authenticators/*` },
+      { method: 'OPTIONS', path: gatewayAPI`/authenticators/*` },
       {
         body: {
           actions: {
@@ -51,7 +51,7 @@ describe('AuthenticatorPage', () => {
   });
   it('All buttons are disabled when user has incorrect permissions', () => {
     cy.intercept(
-      { method: 'OPTIONS', path: gatewayV1API`/authenticators/*` },
+      { method: 'OPTIONS', path: gatewayAPI`/authenticators/*` },
       {
         body: {
           actions: {},

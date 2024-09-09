@@ -7,17 +7,17 @@ import {
   PageFormTextArea,
   PageFormTextInput,
 } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
-import { gatewayAPI } from '../../../../api/gateway-api-utils';
 import { Authenticator } from '../../../../interfaces/Authenticator';
 import {
   AuthenticatorPlugin,
   AuthenticatorPlugins,
   PluginConfiguration,
 } from '../../../../interfaces/AuthenticatorPlugin';
+import { gatewayAPI } from '../../../../utils/gateway-api-utils';
 import { AuthenticatorFormValues, Configuration, formatConfiguration } from '../AuthenticatorForm';
 
 /* TODO: more intelligent categorization of field type to input type

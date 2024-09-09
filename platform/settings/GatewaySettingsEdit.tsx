@@ -1,19 +1,19 @@
+import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
-import { Button } from '@patternfly/react-core';
 import {
   PageForm,
+  PageFormSelect,
   PageFormTextInput,
   PageHeader,
   PageLayout,
   usePageNavigate,
-  PageFormSelect,
 } from '../../framework';
 import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
 import { requestPut } from '../../frontend/common/crud/Data';
-import { gatewayAPI } from '../api/gateway-api-utils';
 import { PlatformRoute } from '../main/PlatformRoutes';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 import { useRevertAllGatewaySettingsModal } from './useRevertAllGatewaySettingsModal';

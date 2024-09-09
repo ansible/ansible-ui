@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useContext } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../frontend/common/crud/Data';
-import { gatewayAPI } from '../api/gateway-api-utils';
 import { UIAuth } from '../interfaces/UIAuth';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export const ManagedCloudInstallContext = createContext<UIAuth | undefined>(undefined);
 
