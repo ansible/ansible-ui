@@ -77,7 +77,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         name="name"
         data-cy="name-form-field"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter credential name')}
         isRequired
         maxLength={150}
       />
