@@ -156,7 +156,7 @@ collections:
     cy.getBy('[data-cy="code-block-value"]').should('contain', Remotes.communityGeneral);
     cy.url().should('include', `remotes/${remoteName}/details`);
     cy.getBy('[data-cy="name"]').should('contain', remoteName);
-    cy.getBy('[data-cy="url"]').should('contain', Remotes.editRemoteURL);
+    cy.getBy('[data-cy="server-url"]').should('contain', Remotes.editRemoteURL);
     cy.getBy('[data-cy="proxy-url"]').should('contain', Remotes.proxyURL);
     cy.getBy('[data-cy="tls-validation"]').should('contain', Remotes.tlsValidation);
     cy.getBy('[data-cy="rate-limit"]').should('contain', Remotes.rateLimit);
