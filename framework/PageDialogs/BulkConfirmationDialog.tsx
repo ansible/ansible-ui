@@ -24,6 +24,7 @@ import {
   useBulkActionDialog,
 } from './BulkActionDialog';
 import { usePageDialog } from './PageDialog';
+import { useTranslation } from 'react-i18next';
 
 const ModalBodyDiv = styled.div`
   display: flex;
@@ -151,6 +152,7 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
   }, [isItemNonActionable, items]);
 
   const modalColumns = useVisibleModalColumns(columnsForConfirmation);
+  const { t } = useTranslation();
 
   return (
     <Modal
@@ -204,8 +206,8 @@ function BulkConfirmationDialog<T extends object>(props: BulkConfirmationDialog<
               keyFn={keyFn}
               // pagination={pagination}
               compact
-              errorStateTitle="Error"
-              emptyStateTitle="No items"
+              errorStateTitle={t('Error')}
+              emptyStateTitle={t('No items')}
               autoHidePagination={true}
               disableBodyPadding
               {...pagination}

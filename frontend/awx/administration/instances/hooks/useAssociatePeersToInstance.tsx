@@ -21,7 +21,7 @@ export function useAssociatePeersToInstance(
         title: t('Associating {{count}} peers', { count: peers.length }),
         keyFn: (peer: Peer) => peer.id,
         items: peers,
-        actionColumns: [{ header: 'Name', cell: (peer: Peer) => peer.address }],
+        actionColumns: [{ header: t('Name'), cell: (peer: Peer) => peer.address }],
         actionFn: () => {
           const peerIds = peers.map((peer) => peer.id);
           const res = requestPatch(awxAPI`/instances/${instanceId}/`, {

@@ -77,6 +77,7 @@ import {
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
 import { reportDefaultParams } from './constants';
+import { useTranslation } from 'react-i18next';
 
 type KeyValue = { key: string; value: string };
 
@@ -368,6 +369,7 @@ export function AnalyticsReportBuilder(props: AnalyticsReportBuilderProps) {
 // render the table with chart and filters
 function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const queryParams = new URLSearchParams(location.search);
 
@@ -425,8 +427,8 @@ function AnalyticsReportBuilderTable(props: AnalyticsTableProps) {
       {...props.view}
       expandedRow={(item) => renderAllTasksStatus(item, props)}
       perPageOptions={perPageOptions}
-      errorStateTitle="some error title"
-      emptyStateTitle="empty state title"
+      errorStateTitle={t('some error title')}
+      emptyStateTitle={t('empty state title')}
       tableColumns={props.tableColumns || []}
       toolbarFilters={props.toolbarFilters}
       scrollTopContent={true}

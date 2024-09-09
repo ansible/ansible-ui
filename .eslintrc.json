@@ -46,7 +46,11 @@
             "helperText",
             "description",
             "title",
-            "subtitle"
+            "subtitle",
+            "errorStateTitle",
+            "emptyStateTitle",
+            "emptyStateDescription",
+            "emptyStateButtonText"
           ]
         }
       }
