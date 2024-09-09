@@ -87,7 +87,12 @@ export function AuthenticatorDetailsStep(props: {
         <Text component={TextVariants.h2}>{t('Authentication details')}</Text>
       </TextContent>
       <PageFormSection>
-        <PageFormTextInput name="name" label={t('Name')} isRequired placeholder={t('Enter name')} />
+        <PageFormTextInput
+          name="name"
+          label={t('Name')}
+          isRequired
+          placeholder={t('Enter authentication name')}
+        />
         {textFields.map((field) =>
           field.type === 'ChoiceField' ? (
             <PageFormSelect
