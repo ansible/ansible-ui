@@ -71,8 +71,8 @@ export function useOrganizationTeamsRowActions() {
   const edaService = useGatewayService('eda');
   const manageRolesHandleClick = useCallback(
     async (team: PlatformTeam) => {
-      const awxTeam = await getAwxResource<Team>('/teams/', team);
-      const edaTeam = await getEdaResource<EdaTeam>('teams/', team);
+      const awxTeam = awxService ? await getAwxResource<Team>('/teams/', team) : null;
+      const edaTeam = edaService ? await getEdaResource<EdaTeam>('teams/', team) : null;
       const orgListOptions = [
         ...(awxService && !errorRetrievingAwxOrg && awxOrganization?.id && (awxTeam as Team)?.id
           ? [
