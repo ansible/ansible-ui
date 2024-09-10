@@ -133,11 +133,13 @@ export function CreateRemote() {
             setIsCommunityRemote={setIsCommunityRemote}
             collection_signing={collection_signing}
           />
+          <PageFormSection singleColumn>
+            <RequirementsFile isCommunityRemote={isCommunityRemote} />
+          </PageFormSection>
           <PageFormExpandableSection singleColumn>
             <ProxyAdvancedRemoteInputs />
             <CertificatesAdvancedRemoteInputs />
             <MiscAdvancedRemoteInputs />
-            <RequirementsFile isCommunityRemote={isCommunityRemote} />
           </PageFormExpandableSection>
         </>
       </HubPageForm>
@@ -325,7 +327,10 @@ export function EditRemote() {
           onClear={handleOnClear}
           setIsCommunityRemote={setIsCommunityRemote}
           shouldHideField={shouldHideField}
-        />
+        />{' '}
+        <PageFormSection singleColumn>
+          <RequirementsFile isCommunityRemote={isCommunityRemote} />
+        </PageFormSection>
         <PageFormExpandableSection singleColumn>
           <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
           <CertificatesAdvancedRemoteInputs
@@ -333,7 +338,6 @@ export function EditRemote() {
             shouldHideField={shouldHideField}
           />
           <MiscAdvancedRemoteInputs />
-          <RequirementsFile isCommunityRemote={isCommunityRemote} />
         </PageFormExpandableSection>
       </HubPageForm>
     </PageLayout>
@@ -576,7 +580,7 @@ function RemoteInputs({
 
 const TranslationLabelHelp = () => {
   return (
-    <Trans i18nKey="requirementsFileHelp">
+    <Trans>
       This uses the same{' '}
       <Link to="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-collections-with-ansible-galaxy">
         requirements.yml{' '}
