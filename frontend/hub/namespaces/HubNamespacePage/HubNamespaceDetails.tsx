@@ -9,7 +9,7 @@ import { HubNamespace } from '../HubNamespace';
 import { PageMarkdownDetail } from '../../../../framework/PageForm/Inputs/PageMarkdownDetail';
 
 function useNamespaceDetails(id: string) {
-  return useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${id}/`);
+  return useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${id}/`);
 }
 
 export function HubNamespaceDetails() {
