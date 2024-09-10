@@ -16,11 +16,11 @@ import { useGet } from '../../../common/crud/useGet';
 import { HelperText } from '../../common/HelperText';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
+import { useCanSignEE } from '../../common/utils/canSign';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { SignStatus } from './components/SignStatus';
 import { useExecutionEnvironmentPageActions } from './hooks/useExecutionEnvironmentPageActions';
-import { useCanSignEE } from '../../common/utils/canSign';
 
 export function ExecutionEnvironmentPage() {
   const { t } = useTranslation();
@@ -93,6 +93,11 @@ export function ExecutionEnvironmentPage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Execution Environments'),
+          page: HubRoute.ExecutionEnvironments,
+          persistentFilterKey: '',
+        }}
         tabs={[
           {
             label: t('Details'),

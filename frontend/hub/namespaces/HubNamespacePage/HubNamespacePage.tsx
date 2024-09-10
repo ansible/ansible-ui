@@ -65,6 +65,11 @@ export function HubNamespacePage() {
         }
       />
       <PageRoutedTabs
+        backTab={{
+          label: t('Back to Namespaces'),
+          page: HubRoute.Namespaces,
+          persistentFilterKey: 'name', // TODO add correct filters
+        }}
         tabs={[
           {
             label: t('Details'),
