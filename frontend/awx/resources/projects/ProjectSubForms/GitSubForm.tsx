@@ -75,6 +75,7 @@ export function GitSubForm() {
         <PageFormTextInput<Project>
           name="scm_url"
           label={t('Source control URL')}
+          placeholder={t('Enter source control URL')}
           labelHelpTitle={t('Source control URL')}
           labelHelp={gitSourceControlUrlHelp}
           isRequired
@@ -82,6 +83,7 @@ export function GitSubForm() {
         <PageFormTextInput<Project>
           name="scm_branch"
           label={t('Source control branch/tag/commit')}
+          placeholder={t('Enter source control branch/tag/commit')}
           labelHelpTitle={t('Source control branch/tag/commit')}
           labelHelp={t(
             'Branch to checkout. In addition to branches, you can input tags, commit hashes, and arbitrary refs. Some commit hashes and refs may not be available unless you also provide a custom refspec.'
@@ -90,6 +92,7 @@ export function GitSubForm() {
         <PageFormTextInput<Project>
           name="scm_refspec"
           label={t('Source control refspec')}
+          placeholder={t('Enter source control refspec')}
           labelHelpTitle={t('Source control refspec')}
           labelHelp={sourceControlRefspecHelp}
         />

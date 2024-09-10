@@ -68,6 +68,7 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
             )}
             label={t('Cache Timeout')}
             min="0"
+            placeholder={t('Enter cache timeout')}
           />
         </PageFormSection>
       </PageFormHidden>
