@@ -24,14 +24,10 @@ export function useManagedPlatformOverview() {
   );
 
   const resources: Resource[] = useMemo(() => {
-    const baseResources: Resource[] = [];
-
-    if (quickStarts.length > 0) {
-      baseResources.push({ id: 'quick-starts', name: t('Quick starts') });
-    }
+    const serviceResources: Resource[] = [];
 
     if (hasAwx) {
-      baseResources.push(
+      serviceResources.push(
         { id: 'counts', name: t('Resource counts') },
         { id: 'job_activity', name: t('Job activity') },
         { id: 'recent_jobs', name: t('Recent jobs') },
@@ -41,15 +37,29 @@ export function useManagedPlatformOverview() {
     }
 
     if (hasEda) {
-      baseResources.push(
+      serviceResources.push(
         { id: 'recent-rulebook-activations', name: t('Recent rulebook activations') },
         { id: 'recent-rule-audits', name: t('Recent rule audits') },
         { id: 'recent-decision-environments', name: t('Recent decision environments') }
       );
     }
 
-    return baseResources;
-  }, [t, hasAwx, hasEda, quickStarts]);
+    return serviceResources;
+  }, [t, hasAwx, hasEda]);
+
+  const quickStartResources: Resource[] = useMemo(() => {
+    return quickStarts.length > 0 ? [{ id: 'quick-starts', name: t('Quick starts') }] : [];
+  }, [t, quickStarts]);
+
+  const combinedResources = useMemo(() => {
+    return [...resources, ...quickStartResources];
+  }, [resources, quickStartResources]);
+
+  const sortedForModal = useMemo(() => {
+    const serviceResources = combinedResources.filter((item) => item.id !== 'quick-starts');
+    const quickStarts = combinedResources.filter((item) => item.id === 'quick-starts');
+    return [...serviceResources, ...quickStarts];
+  }, [combinedResources]);
 
   const { openManageItems: openManageDashboard, managedItems: managedResources } =
     useManageItems<Resource>({
@@ -58,14 +68,20 @@ export function useManagedPlatformOverview() {
       description: t(
         'Hide or show the panels you want to see on the overview page by selecting or unselecting, respectively. The panels are ordered from top to bottom on the list. Use the draggable icon :: to re-order your view.'
       ),
-      items: resources,
+      items: sortedForModal,
       keyFn: (resources) => resources.id,
       columns,
       hideColumnHeaders: true,
     });
 
+  const sortedManagedResources = useMemo(() => {
+    const serviceResources = managedResources.filter((item) => item.id !== 'quick-starts');
+    const quickStarts = managedResources.filter((item) => item.id === 'quick-starts');
+    return [...serviceResources, ...quickStarts];
+  }, [managedResources]);
+
   return {
     openManageDashboard,
-    managedResources,
+    managedResources: sortedManagedResources,
   };
 }
