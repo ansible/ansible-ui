@@ -30,6 +30,7 @@ export function ArchiveSubForm() {
         <PageFormTextInput<Project>
           name="scm_url"
           label={t('Source control URL')}
+          placeholder={t('Enter source control URL')}
           labelHelpTitle={t('Source control URL')}
           labelHelp={archiveSourceControlUrlHelp}
           isRequired

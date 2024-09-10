@@ -89,7 +89,7 @@ export function ManualSubForm(props: { localPath?: string }) {
           id="project_local_path"
           label={t('Playbook directory')}
           options={options}
-          placeholderText={t('Choose a playbook directory')}
+          placeholderText={t('Select playbook directory')}
           labelHelpTitle={t('Playbook directory')}
           labelHelp={t(
             'Select from the list of directories found in the project base path. Together the base path and the playbook directory provide the full path used to locate playbooks.'

@@ -197,7 +197,7 @@ function ProjectInputs(props: { project?: Project }) {
       <PageFormTextInput<Project>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter project name')}
         isRequired
       />
       <PageFormTextInput<Project>
@@ -229,7 +229,7 @@ function ProjectInputs(props: { project?: Project }) {
               }))
             : []
         }
-        placeholderText={t('Choose a Source Control Type')}
+        placeholderText={t('Select source control type')}
       />
       <PageFormCredentialSelect<Project>
         id="signature_validation_credential"
