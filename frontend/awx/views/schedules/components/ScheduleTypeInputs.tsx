@@ -39,7 +39,7 @@ export function ScheduleTypeInputs() {
             { label: t('Project sync'), value: 'project' },
             { label: t('Management job template'), value: 'management_job_template' },
           ]}
-          placeholderText={t('Select job type')}
+          placeholderText={t('Select resource type')}
         />
 
         {scheduleType &&
