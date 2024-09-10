@@ -1,4 +1,4 @@
-import { RRule, Weekday } from 'rrule';
+import { Weekday } from 'rrule';
 import { InventorySource } from '../../interfaces/InventorySource';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
@@ -18,7 +18,7 @@ export enum Frequency {
   SECONDLY = 6,
 }
 
-export type RuleListItemType = { id: number; rule: RRule };
+export type RuleListItemType = { id: number; rule: string };
 export type ScheduleResources =
   | InventorySource
   | SystemJobTemplate

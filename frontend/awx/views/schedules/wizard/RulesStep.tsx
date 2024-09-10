@@ -34,8 +34,8 @@ export function RulesStep() {
     });
     const { year, month, day, hour, minute } = start;
     const updatedRules = (rules || []).map(({ rule, id }) => {
-      const newRule = new RRule({
-        ...rule.options,
+      const newRule = RRule.optionsToString({
+        ...RRule.fromString(rule).origOptions,
         tzid: timezone,
         dtstart: datetime(year, month, day, hour, minute),
       });

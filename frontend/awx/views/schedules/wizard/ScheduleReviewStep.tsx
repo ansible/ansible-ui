@@ -6,7 +6,6 @@ import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardPro
 import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisualizer/wizard/PromptReviewDetails';
 import { ScheduleFormWizard } from '../types';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { RRule, RRuleSet } from 'rrule';
 import { RulesList } from '../components/RulesList';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
 import { useState } from 'react';
@@ -62,25 +61,6 @@ export function ScheduleReviewStep() {
       },
     });
   }
-  const ruleSet = new RRuleSet();
-  ruleSet.options.dtstart;
-  rules.forEach(({ rule }, i) => {
-    const {
-      options: { dtstart, tzid, ...rest },
-    } = rule;
-    if (i === 0) {
-      ruleSet.rrule(new RRule({ ...rest, dtstart, tzid }));
-      return;
-    }
-    ruleSet.rrule(new RRule({ ...rest }));
-  });
-  exceptions.length > 0 &&
-    exceptions.forEach(({ rule }) => {
-      const {
-        options: { dtstart, tzid, ...rest },
-      } = rule;
-      ruleSet.exrule(new RRule({ ...rest }));
-    });
 
   return (
     <>

@@ -64,7 +64,7 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('interval').clear().type('100');
       cy.getByDataCy('add-rule-button').click();
       cy.getByDataCy('rrule-column-cell').then(($text) => {
-        cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
+        cy.wrap($text).contains('RRULE:FREQ=HOURLY;INTERVAL=100');
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
@@ -102,7 +102,7 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('count-form-group').type('17');
       cy.getByDataCy('add-rule-button').click();
       cy.getByDataCy('rrule-column-cell').then(($text) => {
-        cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU;COUNT=17');
+        cy.wrap($text).should('contains.text', 'RRULE:FREQ=HOURLY;INTERVAL=100;COUNT=17');
       });
 
       cy.clickButton(/^Next$/);
@@ -145,7 +145,7 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('rrule-column-cell').then(($text) => {
         cy.wrap($text).should(
           'contains.text',
-          `RRULE:FREQ=MINUTELY;INTERVAL=100;WKST=SU;UNTIL=${date.replaceAll('-', '')}T`
+          `RRULE:FREQ=MINUTELY;INTERVAL=100;UNTIL=${date.replaceAll('-', '')}T`
         );
       });
       cy.clickButton(/^Next$/);
@@ -232,7 +232,7 @@ describe('Schedules - Create and Delete', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+          'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
       cy.clickButton(/^Next$/);
@@ -271,7 +271,7 @@ describe('Schedules - Create and Delete', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+          'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
       cy.clickButton(/^Next$/);
@@ -351,7 +351,7 @@ describe('Schedules - Create and Delete', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+          'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
       cy.clickButton(/^Next$/);
@@ -475,7 +475,7 @@ describe('Schedules - Create and Delete', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
+          'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -499,7 +499,7 @@ describe('Schedules - Create and Delete', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU'
+          'RRULE:FREQ=YEARLY;INTERVAL=200'
         );
       });
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
@@ -529,8 +529,8 @@ describe('Schedules - Create and Delete', () => {
         .its('response.body')
         .then((response: Schedule) => {
           expect(response.rrule).contains('DTSTART;TZID=America/Mexico_City');
-          expect(response.rrule).contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
-          expect(response.rrule).contains('EXRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU');
+          expect(response.rrule).contains('RRULE:FREQ=HOURLY;INTERVAL=100');
+          expect(response.rrule).contains('EXRULE:FREQ=YEARLY;INTERVAL=200');
           expect(response.skip_tags).contains('test_skip_tag');
           expect(response.enabled).to.be.true;
         });
@@ -546,8 +546,8 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('job-tags').should('have.text', 'test_job_tag');
       cy.getByDataCy('skip-tags').should('have.text', 'test_skip_tag');
       cy.getByDataCy('rruleset').contains('DTSTART;TZID=America/Mexico_City');
-      cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU');
-      cy.getByDataCy('rruleset').contains('EXRULE:FREQ=YEARLY;INTERVAL=200;WKST=SU');
+      cy.getByDataCy('rruleset').contains('RRULE:FREQ=HOURLY;INTERVAL=100');
+      cy.getByDataCy('rruleset').contains('EXRULE:FREQ=YEARLY;INTERVAL=200');
       cy.getByDataCy('code-block-value').should('have.text', `test: ${surveyAnswer}`);
       cy.get('[data-ouia-component-id="simple-table"]')
         .first()
@@ -736,11 +736,10 @@ describe('Schedules - Edit', () => {
     cy.getByDataCy('row-id-1').should('exist');
     cy.getByDataCy('row-id-2').should('exist');
     cy.getByDataCy('row-id-3').should('exist');
-    cy.getByDataCy('row-id-1').contains('FREQ=WEEKLY;INTERVAL=1;WKST=MO;');
-    cy.getByDataCy('row-id-2').contains('FREQ=YEARLY;INTERVAL=1;WKST=SU;COUNT=77;');
-    cy.get('[data-cy="row-id-3"] > [data-cy="rrule-column-cell"]').should(
-      'contains.text',
-      `RRULE:FREQ=MINUTELY;INTERVAL=1;WKST=SU;UNTIL=${date.replaceAll('-', '')}T`
+    cy.getByDataCy('row-id-1').contains('FREQ=WEEKLY;INTERVAL=1;BYDAY=SU');
+    cy.getByDataCy('row-id-2').contains('FREQ=YEARLY;INTERVAL=1;COUNT=77');
+    cy.getByDataCy('row-id-3').contains(
+      `RRULE:FREQ=MINUTELY;INTERVAL=1;UNTIL=${date.replaceAll('-', '')}T`
     );
     cy.get('[data-ouia-component-id="simple-table"]').within(() => {
       cy.getByDataCy('next-occurrence-timestamps-column-header')
@@ -775,11 +774,11 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Create exception$/);
     cy.getByDataCy('freq-form-group').click();
     cy.getByDataCy('freq').within(() => {
-      cy.clickButton('Yearly');
+      cy.clickButton('Hourly');
     });
     cy.clickButton(/^Save exception$/);
     cy.clickButton(/^Next$/);
-    cy.getByDataCy('row-id-1').contains('FREQ=YEARLY');
+    cy.getByDataCy('row-id-1').contains('FREQ=HOURLY');
     cy.clickButton(/^Finish$/);
     cy.verifyPageTitle(schedule.name);
   });

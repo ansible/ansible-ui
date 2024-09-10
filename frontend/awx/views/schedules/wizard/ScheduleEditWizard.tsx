@@ -14,7 +14,7 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { RulesStep } from './RulesStep';
-import { RRuleSet, rrulestr } from 'rrule';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 import { ExceptionsStep } from './ExceptionsStep';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { NodePromptsStep as PromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
@@ -181,8 +181,12 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
 
   if (!schedule) return;
   const ruleSet = rrulestr(schedule.rrule, { forceset: true }) as RRuleSet;
-  const rules = ruleSet.rrules().map((rule, i) => ({ rule, id: i + 1 }));
-  const exceptions = ruleSet.exrules().map((rule, i) => ({ rule, id: i + 1 }));
+  const rules = ruleSet
+    .rrules()
+    .map((rule, i) => ({ rule: RRule.optionsToString({ ...rule.origOptions }), id: i + 1 }));
+  const exceptions = ruleSet
+    .exrules()
+    .map((rule, i) => ({ rule: RRule.optionsToString({ ...rule.origOptions }), id: i + 1 }));
 
   const currentValues = {
     details: {
