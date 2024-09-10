@@ -59,7 +59,8 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
                   cy.getByDataCy('name').should('have.text', jobName);
                   cy.getByDataCy('type').should('have.text', 'Management job');
                   cy.intercept('DELETE', awxAPI`/system_jobs/${jobId}/`).as('deleteMgtJob');
-                  cy.clickPageAction('delete-job');
+                  cy.getByDataCy('actions-dropdown').click();
+                  cy.getBy('button[id="delete-job"]').click();
                   cy.getModal().within(() => {
                     cy.get('#confirm').click();
                     cy.clickButton(/^Delete job/);
