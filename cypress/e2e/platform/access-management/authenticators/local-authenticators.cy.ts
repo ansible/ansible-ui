@@ -13,7 +13,7 @@ describe('Authenticators - Local CRUD UI', () => {
       (createdLocalAuthenticator: Authenticator) => {
         cy.clickTableRowLink('name', createdLocalAuthenticator.name);
         cy.verifyPageTitle(localAuthenticatorName);
-        cy.clickLink('Authentication Methods');
+        cy.get('li[data-cy="Authentication Methods"]').click();
         cy.deleteLocalPlatformAuthenticator(createdLocalAuthenticator);
       }
     );
