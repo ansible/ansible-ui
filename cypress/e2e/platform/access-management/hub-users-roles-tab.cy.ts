@@ -70,10 +70,12 @@ hub_resources_roles_tab.forEach((resource) => {
               cy.get('input').clear().type(resource_object.name);
             });
           cy.contains('.pf-v5-c-chip__text', resource_object.name);
+          cy.selectTableRow(resource_object.name, false);
+        } else {
+          cy.selectTableRow(resource_object.name, true);
         }
-        cy.selectTableRow(resource_object.name, false);
         cy.clickButton(/^Next$/);
-        cy.selectTableRow(role.name, false);
+        cy.selectTableRow(role.name, true);
         cy.clickButton(/^Next$/);
         cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
         cy.clickButton(/^Finish$/);
