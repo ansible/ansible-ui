@@ -27,6 +27,8 @@ import {
   RoleDefinition,
   ContentTypeEnum,
   PermissionsEnum,
+  EventStreamIn,
+  EventStreamOut,
 } from '../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
 import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
@@ -279,6 +281,51 @@ Cypress.Commands.add('createEdaCredential', (edaOrgId: number) => {
       message: [`Created 👉  ${edaCredential.name}`],
     });
     return edaCredential;
+  });
+});
+
+Cypress.Commands.add('createBasicEventStreamCredential', (orgid: number) => {
+  cy.requestPost<EdaCredentialCreate>(edaAPI`/eda-credentials/`, {
+    name: 'E2E Basic Event Stream Credential ' + randomString(4),
+    credential_type_id: 7,
+    description: 'This is a basic event stream credential',
+    organization_id: orgid,
+    inputs: {
+      username: 'username',
+      password: 'password',
+    },
+  }).then((edaCredential) => {
+    Cypress.log({
+      displayName: 'EDA CREDENTIAL CREATION :',
+      message: [`Created 👉  ${edaCredential.name}`],
+    });
+    return edaCredential;
+  });
+});
+
+Cypress.Commands.add('createBasicEventStream', (credential: EdaCredential, orgid: number) => {
+  cy.requestPost<EventStreamIn>(edaAPI`/event-streams/`, {
+    name: 'E2E Basic Event STream ' + randomString(4),
+    event_stream_type: 'basic',
+    eda_credential_id: credential.id,
+    organization_id: orgid,
+  }).then((event_stream) => {
+    Cypress.log({
+      displayName: 'EDA EVENT STREAM CREATION :',
+      message: [`Created 👉  ${event_stream.name}`],
+    });
+    return event_stream;
+  });
+});
+
+Cypress.Commands.add('deleteEventStream', (event_stream: EventStreamOut) => {
+  cy.requestDelete(edaAPI`/event-streams/${event_stream.id.toString()}/?force=true`, {
+    failOnStatusCode: false,
+  }).then(() => {
+    Cypress.log({
+      displayName: 'EDA Event Stream DELETION :',
+      message: [`Deleted 👉  ${event_stream.name}`],
+    });
   });
 });
 

@@ -43,7 +43,7 @@ import {
 } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
 import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { RoleDefinition } from '../../frontend/eda/interfaces/generated/eda-api';
+import { EventStreamOut, RoleDefinition } from '../../frontend/eda/interfaces/generated/eda-api';
 import { Role as HubRole } from '../../frontend/hub/access/roles/Role';
 import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -1371,6 +1371,27 @@ declare global {
        * @returns {Chainable<EdaCredential>}
        */
       createEdaCredential(edaOrgId: number): Chainable<EdaCredential>;
+
+      /**
+       * Creates an EDA credential of type Basic Event Stream and returns the same.
+       *
+       * @returns {Chainable<EdaCredential>}
+       */
+      createBasicEventStreamCredential(orgid: number): Chainable<EdaCredential>;
+
+      /**
+       * Creates an Event Stream with the Basic Event Stream type credential and returns the same.
+       *
+       * @returns {Chainable<EventStreamOut>}
+       */
+      createBasicEventStream(credential: EdaCredential, orgid: number): Chainable<EventStreamOut>;
+
+      /**
+       * Deletes the Event Stream which is provided.
+       *
+       * @returns {Chainable<void>}
+       */
+      deleteEventStream(EventStream: EventStreamOut): Chainable<void>;
 
       /**
        * Some of the Eda roles (Admin, Contributor etc) have resources

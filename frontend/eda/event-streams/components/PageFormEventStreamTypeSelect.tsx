@@ -25,7 +25,7 @@ export function PageFormSelectEventStreamType<
   return (
     <PageFormSingleSelectEdaResource<EdaCredentialType, TFieldValues, TFieldName>
       name={props.name}
-      id="webhook_type_id"
+      id="event_stream_type_id"
       label={t('Event stream type')}
       placeholder={t('Select event stream type')}
       queryPlaceholder={t('Loading event stream types...')}
