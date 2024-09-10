@@ -219,36 +219,23 @@ cyLabel(['aaas-unsupported'], () => {
         cy.login();
       });
 
-      // it.skip('permissions are reflected in teams-> roles tab', () => {});
-
-      // This is not working at present due to an API bug: https://issues.redhat.com/browse/AAP-24956
-      // it.skip('user can perform that specific action', () => {
-      //   cy.platformLogout();
-      //   cy.get('[data-cy="username"]').type(edaUser1.username);
-      //   cy.get('[data-cy="password"]').type('pass');
-      //   cy.get('[data-cy="Submit"]').click();
-      //   cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser1.username}`);
-      //   cy.navigateTo('eda', 'projects');
-      //   cy.verifyPageTitle('Projects');
-      //   cy.filterTableByText(edaProject.name);
-      //   cy.contains('tr', edaProject.name);
-      // });
-
-      // it.skip('other user cannot perform that action', () => {
-      // cy.platformLogout();
-      // // login as user without permissions
-      // cy.getByDataCy('username').type(edaUser2.username);
-      // cy.get('[data-cy="password"]').type('pass');
-      // cy.get('[data-cy="Submit"]').click();
-      // cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser2.username}`);
-      // cy.navigateTo('eda', 'projects');
-      // cy.verifyPageTitle('Projects');
-      // cy.get('.pf-v5-c-empty-state').should('be.visible');
-      // // logout as normal user
-      // cy.platformLogout();
-      // // log back in as admin to delete newly created user
-      // cy.platformLogin();
-      // });
+      it('other user cannot perform that action', () => {
+        cy.platformLogout();
+        // login as user without permissions
+        cy.contains('Log in');
+        cy.get('#pf-login-username-id').type(edaUser2.username);
+        cy.get('#pf-login-password-id').type('pass');
+        cy.contains('button', 'Log in').click();
+        cy.getByDataCy('nav-toggle').should('exist');
+        cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser2.username}`);
+        cy.navigateTo('eda', 'projects');
+        cy.verifyPageTitle('Projects');
+        cy.get('.pf-v5-c-empty-state').should('be.visible');
+        // logout as normal user
+        cy.platformLogout();
+        // log back in as admin to delete newly created user
+        cy.platformLogin();
+      });
     });
   });
 });
