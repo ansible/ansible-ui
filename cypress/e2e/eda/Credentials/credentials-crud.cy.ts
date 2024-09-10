@@ -164,6 +164,32 @@ cyLabel(['aaas-unsupported'], function () {
           });
         });
       });
+
+      it('get warning while deleting a credential already in use by an event stream', () => {
+        cy.createBasicEventStreamCredential(edaOrg.id).then((credential) => {
+          cy.createBasicEventStream(credential, edaOrg.id).then((event_stream) => {
+            cy.navigateTo('eda', 'credentials');
+            cy.verifyPageTitle('Credentials');
+            cy.clickTableRow(credential.name);
+            cy.intercept('DELETE', edaAPI`/eda-credentials/${credential.id.toString()}`).as(
+              'deleted'
+            );
+            cy.verifyPageTitle(credential.name);
+            cy.clickPageAction('delete-credential');
+            cy.clickModalConfirmCheckbox();
+            cy.clickModalButton('Delete credential');
+            cy.contains(
+              `Credential ${credential.name} is being referenced by some event streams and cannot be deleted`
+            );
+            cy.wait('@deleted').then((deleted) => {
+              expect(deleted?.response?.statusCode).to.eql(409);
+            });
+            cy.clickModalButton('Close');
+            cy.deleteEventStream(event_stream);
+            cy.deleteEdaCredential(credential);
+          });
+        });
+      });
     });
   });
 });
