@@ -78,9 +78,7 @@ export function EventStreamDetails() {
         </PageDetail>
         <PageDetail
           label={t('Headers')}
-          helpText={t(
-            'A comma separated HTTP header keys that you want to include in the event payload.'
-          )}
+          helpText={t('The HTTP header keys included in the event payload.')}
         >
           {eventStream?.additional_data_headers || ''}
         </PageDetail>
