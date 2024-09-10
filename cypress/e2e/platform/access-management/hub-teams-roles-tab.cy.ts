@@ -90,9 +90,9 @@ describe(`Assign Role to a Team `, () => {
     cy.getWizard().within(() => {
       cy.selectDropdownOptionByResourceName('resourcetype', 'Repository');
       cy.clickButton(/^Next$/);
-      cy.selectTableRow(hubRepository.name, false);
+      cy.selectTableRow(hubRepository.name, true);
       cy.clickButton(/^Next$/);
-      cy.selectTableRow(repositoryRole.name, false);
+      cy.selectTableRow(repositoryRole.name, true);
       cy.clickButton(/^Next$/);
       cy.verifyReviewStepWizardDetails('resources', [hubRepository.name], '1');
       cy.clickButton(/^Finish$/);
@@ -115,9 +115,9 @@ describe(`Assign Role to a Team `, () => {
     cy.getWizard().within(() => {
       cy.selectDropdownOptionByResourceName('resourcetype', 'Remote');
       cy.clickButton(/^Next$/);
-      cy.selectTableRow(hubRemote.name, false);
+      cy.selectTableRow(hubRemote.name, true);
       cy.clickButton(/^Next$/);
-      cy.selectTableRow(remoteRole.name, false);
+      cy.selectTableRow(remoteRole.name, true);
       cy.clickButton(/^Next$/);
       cy.verifyReviewStepWizardDetails('resources', [hubRemote.name], '1');
       cy.clickButton(/^Finish$/);
@@ -160,7 +160,7 @@ describe(`Assign Role to a Team `, () => {
       cy.contains('.pf-v5-c-chip__text', hubNamespace.name);
       cy.selectTableRow(hubNamespace.name, false);
       cy.clickButton(/^Next$/);
-      cy.selectTableRow(namespaceRole.name, false);
+      cy.selectTableRow(namespaceRole.name, true);
       cy.clickButton(/^Next$/);
       cy.verifyReviewStepWizardDetails('resources', [hubNamespace.name], '1');
       cy.clickButton(/^Finish$/);
