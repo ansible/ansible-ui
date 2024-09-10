@@ -19,6 +19,7 @@ import { hubAPI } from '../../common/api/formatPath';
 import { hubAPIPut } from '../../common/api/hub-api-utils';
 import { getContainersURL } from '../../common/utils/getContainersURL';
 import { HubRoute } from '../../main/HubRoutes';
+import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 const ControlButtons = styled.div`
   display: flex;
@@ -40,6 +41,7 @@ export function ExecutionEnvironmentDetails() {
   const { id } = useParams<{ id: string }>();
   const pageNavigate = usePageNavigate();
   const alertToaster = usePageAlertToaster();
+  const { clearCacheByKey } = useClearCache();
 
   const [markdownEditing, setMarkdownEditing] = useState(false);
   const [readme, setReadme] = useState<string>('');
@@ -60,6 +62,8 @@ export function ExecutionEnvironmentDetails() {
           text: readme,
         }
       );
+
+      clearCacheByKey(hubAPI`/v3/plugin/execution-environments/repositories/`);
     } catch (error) {
       alertToaster.addAlert({
         variant: 'danger',

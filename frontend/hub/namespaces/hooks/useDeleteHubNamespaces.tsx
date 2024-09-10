@@ -6,11 +6,13 @@ import { hubAPIDelete } from '../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
+import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useHubNamespacesColumns({ disableLinks: true, disableSort: true });
   const bulkAction = useHubBulkConfirmation<HubNamespace>();
+  const { clearCacheByKey } = useClearCache();
 
   const deleteHubNamespaces = (namespaces: HubNamespace[]) => {
     bulkAction({
@@ -26,8 +28,10 @@ export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) 
       actionColumns: confirmationColumns,
       onComplete,
       alertPrompts: [t('Deleting a namespace will delete all collections in the namespace.')],
-      actionFn: async (namespace, signal) =>
-        await hubAPIDelete(hubAPI`/_ui/v1/namespaces/${namespace.name}/`, signal),
+      actionFn: async (namespace, signal) => {
+        clearCacheByKey(hubAPI`/_ui/v1/namespaces/`);
+        return await hubAPIDelete(hubAPI`/_ui/v1/namespaces/${namespace.name}/`, signal);
+      },
     });
   };
   return deleteHubNamespaces;

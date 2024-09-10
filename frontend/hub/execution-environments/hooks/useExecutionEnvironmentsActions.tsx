@@ -22,6 +22,7 @@ import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
 import { AAPDocsURL } from '../../common/constants';
 import { useCanSignEE } from '../../common/utils/canSign';
+import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();
@@ -82,6 +83,8 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<ExecutionEnvironment>();
   const pageNavigate = usePageNavigate();
+  const { clearCacheByKey } = useClearCache();
+
   return useCallback(
     (ees: ExecutionEnvironment[]) => {
       bulkAction({
@@ -103,10 +106,13 @@ export function useDeleteExecutionEnvironments(onComplete?: (ees: ExecutionEnvir
           hubAPIDelete(
             hubAPI`/v3/plugin/execution-environments/repositories/${ee.name}/`,
             signal
-          ).then(() => pageNavigate(HubRoute.ExecutionEnvironments)),
+          ).then(() => {
+            clearCacheByKey(hubAPI`/v3/plugin/execution-environments/repositories`);
+            return pageNavigate(HubRoute.ExecutionEnvironments);
+          }),
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, pageNavigate]
+    [bulkAction, t, confirmationColumns, actionColumns, onComplete, clearCacheByKey, pageNavigate]
   );
 }
 

@@ -224,6 +224,7 @@ export function EditRemote() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
+  const { clearCacheByKey } = useClearCache();
 
   const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
     pulpAPI`/remotes/ansible/collection/?name=${name}`
@@ -252,6 +253,8 @@ export function EditRemote() {
       pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href)}/`,
       updatedRemote
     );
+
+    clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
     navigate(-1);
   };
 

@@ -17,6 +17,21 @@ If a `202` response is received, the `waitForTask` function parses the task syst
 
 For this reason, when interacting with the HUB backend, leveraging these functions for the aforementioned HTTP verbs will eliminate the need to manual effort to interacting with the task system.
 
+### Note on clearing the SWR cache
+
+After a PUT/PATCH/DELETE request, the SWR cache must be explicitly cleared to ensure that the list and details UIs correctly reflect the updated value from the API endpoints.
+
+**Example:**
+
+```
+    await hubAPIPut<RemoteFormProps>(
+      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href)}/`,
+      updatedRemote
+    );
+
+    clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
+```
+
 ## GET actions
 
 For `GET` actions, it's recommended to utilize the hooks from the framework. These hooks, like `useGet`, are integrated with `swr` features. The `useGet` hook notably provides outputs such as `data`, `error`, and `refresh`, which seamlessly integrate with the existing components in the system.

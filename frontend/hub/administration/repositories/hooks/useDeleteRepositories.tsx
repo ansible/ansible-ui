@@ -8,12 +8,14 @@ import { useRepositoriesColumns } from './useRepositoriesColumns';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { nameKeyFn } from '../../../../common/utils/nameKeyFn';
 import { HubRoute } from '../../../main/HubRoutes';
+import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteRepositories(onComplete?: (collections: Repository[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRepositoriesColumns();
   const bulkAction = useHubBulkConfirmation<Repository>();
   const pageNavigate = usePageNavigate();
+  const { clearCacheByKey } = useClearCache();
 
   const deleteRepositories = (repositories: Repository[]) => {
     bulkAction({
@@ -33,7 +35,10 @@ export function useDeleteRepositories(onComplete?: (collections: Repository[]) =
         return hubAPIDelete(
           pulpAPI`/repositories/ansible/ansible/${parsePulpIDFromURL(repository.pulp_href)}/`,
           signal
-        ).then(() => pageNavigate(HubRoute.Repositories));
+        ).then(() => {
+          clearCacheByKey(pulpAPI`/repositories/ansible/ansible/`);
+          return pageNavigate(HubRoute.Repositories);
+        });
       },
     });
   };
