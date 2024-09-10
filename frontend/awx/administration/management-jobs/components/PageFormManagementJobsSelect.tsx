@@ -42,7 +42,7 @@ export function PageFormManagementJobsSelect<
         }
         return (value as SystemJobTemplate)?.name ?? '';
       }}
-      placeholder={t('Select a management job template')}
+      placeholder={t('Select management job template')}
       loadingPlaceholder={t('Loading management job templates...')}
       loadingErrorText={t('Error loading management job templates')}
       isRequired={props.isRequired}

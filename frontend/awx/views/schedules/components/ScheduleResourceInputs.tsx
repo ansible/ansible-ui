@@ -41,10 +41,15 @@ export function ScheduleResourceInputs() {
       <PageFormSection>
         <PageFormTextInput<ScheduleFormWizard>
           name={'name'}
+          placeholder={t('Enter schedule name')}
           isRequired
           label={t('Schedule name')}
         />
-        <PageFormTextInput<ScheduleFormWizard> name={'description'} label={t('Description')} />
+        <PageFormTextInput<ScheduleFormWizard>
+          name={'description'}
+          placeholder={t('Enter description')}
+          label={t('Description')}
+        />
         <PageFormDateTimePicker<ScheduleFormWizard>
           label={t('Start date/time')}
           name="startDateTime"
@@ -52,7 +57,7 @@ export function ScheduleResourceInputs() {
         />
         <PageFormSingleSelect<ScheduleFormWizard>
           name="timezone"
-          placeholder={t('Select a time zone')}
+          placeholder={t('Select time zone')}
           label={t('Time zone')}
           options={timeZones}
           helperText={timezoneMessage}
@@ -62,6 +67,7 @@ export function ScheduleResourceInputs() {
           <PageFormTextInput<ScheduleFormWizard>
             name={'schedule_days_to_keep'}
             isRequired
+            placeholder={t('Enter days of data to keep')}
             label={t('Days of data to keep')}
             type="number"
             min={1}
