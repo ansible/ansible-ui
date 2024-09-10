@@ -31,6 +31,10 @@ cyLabel(['aaas-unsupported'], function () {
           `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","type": "string","label": "Username"}]}`
         );
         cy.clickButton(/^Generate extra vars$/);
+        cy.getByDataCy('injectors-g').should(
+          'contain',
+          '{"extra_vars": { "username" : "{{username}}"}}'
+        );
         cy.clickButton(/^Create credential type$/);
         cy.hasDetail('Name', name);
         cy.hasDetail('Description', 'This is a custom Credential Type.');
