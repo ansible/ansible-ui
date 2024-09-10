@@ -128,6 +128,8 @@ export function EditRemoteRegistry() {
     hubAPI`/_ui/v1/execution-environments/registries/?name=${name}`
   );
   const getPageUrl = useGetPageUrl();
+  const { clearCacheByKey } = useClearCache();
+
   if (error) return <HubError error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
 
@@ -159,6 +161,8 @@ export function EditRemoteRegistry() {
       hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
       remoteRegistry
     );
+
+    clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
     pageNavigate(HubRoute.RemoteRegistryDetails, {
       params: { id: name },
     });

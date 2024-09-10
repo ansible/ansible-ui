@@ -9,6 +9,7 @@ import { PulpItemsResponse } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 import { HubRoute } from '../../main/HubRoutes';
+import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,
@@ -20,6 +21,7 @@ export function useDeleteCollections(
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();
   const navigate = usePageNavigate();
+  const { clearCacheByKey } = useClearCache();
 
   return useCallback(
     (collections: CollectionVersionSearch[]) => {
@@ -68,6 +70,7 @@ export function useDeleteCollections(
         onComplete,
         actionFn: (collection: CollectionVersionSearch, signal) => {
           return deleteCollection(collection, version, signal).then(() => {
+            clearCacheByKey(hubAPI`/v3/plugin/ansible/content/`);
             if (detail) {
               navigate(HubRoute.Collections);
             }
@@ -75,7 +78,17 @@ export function useDeleteCollections(
         },
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, version, detail, navigate]
+    [
+      version,
+      t,
+      bulkAction,
+      confirmationColumns,
+      actionColumns,
+      onComplete,
+      clearCacheByKey,
+      detail,
+      navigate,
+    ]
   );
 }
 

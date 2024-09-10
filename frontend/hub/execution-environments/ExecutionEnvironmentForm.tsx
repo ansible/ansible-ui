@@ -27,6 +27,7 @@ import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
 import { LoadingPage } from '../../../framework/components/LoadingPage';
 import { HubError } from '../common/HubError';
 import { hubErrorAdapter } from '../../../frontend/hub/common/adapters/hubErrorAdapter';
+import { useClearCache } from '../../common/useInvalidateCache/useInvalidateCache';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -43,6 +44,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const getPageUrl = useGetPageUrl();
   const mode = props.mode;
   const params = useParams<{ id?: string }>();
+  const { clearCacheByKey } = useClearCache();
 
   const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
   const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
@@ -118,6 +120,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           }/`,
           payload
         );
+        clearCacheByKey(hubAPI`/_ui/v1/execution-environments/remotes/`);
       }
 
       if (formData.description !== executionEnvironment.data?.description) {
@@ -127,6 +130,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           }/`,
           { description: formData.description || null }
         );
+        clearCacheByKey(pulpAPI`/distributions/container/container/`);
       }
     }
 

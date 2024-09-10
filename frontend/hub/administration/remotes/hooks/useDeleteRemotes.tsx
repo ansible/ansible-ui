@@ -7,12 +7,14 @@ import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { HubRemote } from '../Remotes';
 import { useRemoteColumns } from './useRemoteColumns';
 import { HubRoute } from '../../../main/HubRoutes';
+import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteRemotes(onComplete: (remotes: HubRemote[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRemoteColumns();
   const bulkAction = useHubBulkConfirmation<HubRemote>();
   const pageNavigate = usePageNavigate();
+  const { clearCacheByKey } = useClearCache();
 
   const deleteRemotes = (remotes: HubRemote[]) => {
     bulkAction({
@@ -32,7 +34,10 @@ export function useDeleteRemotes(onComplete: (remotes: HubRemote[]) => void) {
         hubAPIDelete(
           pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href)}/`,
           signal
-        ).then(() => pageNavigate(HubRoute.Remotes)),
+        ).then(() => {
+          clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
+          return pageNavigate(HubRoute.Remotes);
+        }),
     });
   };
   return deleteRemotes;

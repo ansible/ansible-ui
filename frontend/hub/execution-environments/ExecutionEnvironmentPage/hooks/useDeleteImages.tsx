@@ -7,6 +7,7 @@ import { hubAPI } from '../../../common/api/formatPath';
 import { hubAPIDelete } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
+import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteImages({
   id,
@@ -19,6 +20,8 @@ export function useDeleteImages({
   const confirmationColumns = useImagesColumns({ id, disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useHubBulkConfirmation<ExecutionEnvironmentImage>();
+  const { clearCacheByKey } = useClearCache();
+
   return useCallback(
     (images: ExecutionEnvironmentImage[]) => {
       bulkAction({
@@ -36,11 +39,13 @@ export function useDeleteImages({
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (image: ExecutionEnvironmentImage, signal: AbortSignal) =>
-          deleteImage(id, image, signal),
+        actionFn: (image: ExecutionEnvironmentImage, signal: AbortSignal) => {
+          clearCacheByKey(hubAPI`/v3/plugin/execution-environments/repositories/`);
+          return deleteImage(id, image, signal);
+        },
       });
     },
-    [actionColumns, bulkAction, confirmationColumns, onComplete, t, id]
+    [bulkAction, t, confirmationColumns, actionColumns, onComplete, id, clearCacheByKey]
   );
 }
 

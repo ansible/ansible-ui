@@ -7,12 +7,14 @@ import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { RemoteRegistry } from '../RemoteRegistry';
 import { useRemoteRegistriesColumns } from './useRemoteRegistriesColumns';
 import { HubRoute } from '../../../main/HubRoutes';
+import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteRegistry[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useRemoteRegistriesColumns();
   const bulkAction = useHubBulkConfirmation<RemoteRegistry>();
   const pageNavigate = usePageNavigate();
+  const { clearCacheByKey } = useClearCache();
 
   const deleteRemoteRegistry = (remoteRegistry: RemoteRegistry[]) => {
     bulkAction({
@@ -36,7 +38,10 @@ export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteReg
             remoteRegistry.pulp_href
           )}/`,
           signal
-        ).then(() => pageNavigate(HubRoute.RemoteRegistries)),
+        ).then(() => {
+          clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
+          return pageNavigate(HubRoute.RemoteRegistries);
+        }),
     });
   };
   return deleteRemoteRegistry;
