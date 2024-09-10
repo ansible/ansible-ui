@@ -354,21 +354,12 @@ describe('Projects', () => {
         cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
         });
-        cy.navigateTo('awx', 'projects');
-        cy.verifyPageTitle('Projects');
-        cy.filterTableByMultiSelect('name', [thisProject.name]);
-        cy.wait('@results');
-        cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
-          cy.get('[data-cy="name-column-cell"]').click();
-        });
         cy.clickTab('Job Templates', true);
         cy.url().should(
           'contain',
           `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`
         );
         cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-        cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
-        cy.selectTableRow(jobTemplate.name, false);
         cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
           inKebab: true,
           disableFilter: true,

@@ -58,8 +58,10 @@ cyLabel(['aaas-unsupported'], function () {
         cy.navigateTo('eda', 'projects');
         cy.clickTableRow(edaProject.name);
         cy.verifyPageTitle(edaProject.name);
+        cy.url().should('contain', '/details');
         cy.intercept('DELETE', edaAPI`/projects/${edaProject.id.toString()}/`).as('deleted');
-        cy.clickPageAction('delete-project');
+        cy.getByDataCy('actions-dropdown').click();
+        cy.getBy('button[id="delete-project"]').click();
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete projects');
         cy.wait('@deleted').then((deleted) => {

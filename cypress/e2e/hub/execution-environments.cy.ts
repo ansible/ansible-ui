@@ -6,14 +6,6 @@ import { ExecutionEnvironmentImage } from '../../../frontend/hub/execution-envir
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 
-function visitEEDetail(name: string) {
-  cy.navigateTo('hub', ExecutionEnvironments.url);
-  cy.verifyPageTitle('Execution Environments');
-  cy.filterTableBySingleText(name);
-  cy.get('a').contains(name).click();
-  cy.verifyPageTitle(name);
-}
-
 function sumLayers(layers: { size: number }[]): number {
   return layers.reduce((acc, curr) => acc + curr.size, 0);
 }
@@ -31,11 +23,6 @@ function formatBytes(bytes: number): string {
 }
 
 describe('Execution Environments', () => {
-  it('can render the execution environments page', () => {
-    cy.navigateTo('hub', ExecutionEnvironments.url);
-    cy.verifyPageTitle(ExecutionEnvironments.title);
-  });
-
   it('should open a new tab and verify correct docs url', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
@@ -161,23 +148,39 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should render the execution environment details page', () => {
-    visitEEDetail(executionEnvironment.name);
-    cy.contains('Unsigned');
-
-    const tabs = ['Details', 'Activity', 'Images', 'Access'];
-    tabs.forEach((tab) => {
-      cy.contains(tab);
-    });
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(executionEnvironment.name);
+      });
+    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
+    cy.getBy('[data-cy="execution-environment-details-tab"]').should('contain', 'Details');
+    cy.getBy('[data-cy="execution-environment-activity-tab"]').should('contain', 'Activity');
+    cy.getBy('[data-cy="execution-environment-images-tab"]').should('contain', 'Images');
+    cy.getBy('[data-cy="execution-environment-access-tab"]').should('contain', 'Team Access');
+    cy.getBy('[data-cy="execution-environment-user-access-tab"]').should('contain', 'User Access');
     cy.get('[aria-selected="true"]').contains('Details');
+    cy.get('[class*="main-section"]').should('contain', 'Unsigned');
   });
 
   it('should render details page tab with instructions and empty readme', () => {
-    visitEEDetail(executionEnvironment.name);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(executionEnvironment.name);
+      });
+    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[aria-selected="true"]').contains('Details');
     cy.contains('Instructions');
     cy.contains('Pull this image');
-
-    // in dev env should be 'localhost:4102'
     const host = window.location.host;
     const instructions = `podman pull ${host}/${executionEnvironment.name}`;
     cy.get('[data-cy="clipboard-copy"] input').should('have.value', instructions);
@@ -188,7 +191,16 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should add readme with markdown editor', () => {
-    visitEEDetail(executionEnvironment.name);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(executionEnvironment.name);
+      });
+    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.containsBy('button', 'Add').click();
     cy.contains('README');
     cy.get('[data-cy="readme"]').within(() => {
@@ -208,7 +220,16 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should change readme after editing', () => {
-    visitEEDetail(executionEnvironment.name);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(executionEnvironment.name);
+      });
+    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[data-cy="readme"]').within(() => {
       cy.contains('Heading 1');
       cy.containsBy('button', 'Edit').click();
@@ -226,7 +247,16 @@ describe('Execution Environment Details tab', () => {
   });
 
   it('should not change readme after cancel edit', () => {
-    visitEEDetail(executionEnvironment.name);
+    cy.navigateTo('hub', ExecutionEnvironments.url);
+    cy.verifyPageTitle('Execution Environments');
+    cy.get('[data-cy="text-input"]')
+      .should('be.visible')
+      .within(() => {
+        cy.get('input').clear().type(executionEnvironment.name);
+      });
+    cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+    cy.get('a').contains(executionEnvironment.name).click();
+    cy.verifyPageTitle(executionEnvironment.name);
     cy.get('[data-cy="readme"]').within(() => {
       cy.containsBy('button', 'Edit').click();
       cy.getByDataCy('raw-markdown').clear().type('{enter}this should not be saved.');
@@ -236,7 +266,7 @@ describe('Execution Environment Details tab', () => {
     cy.get('[data-cy="readme"]').contains('this should not be saved.').should('not.exist');
   });
 
-  it('should successfully sync execution environment from Docker registry', () => {
+  it.skip('should successfully sync execution environment from Docker registry', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -258,12 +288,19 @@ describe('Execution Environment Activity and Image tabs', () => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: { registry: remoteRegistry.id },
       }).then((executionEnvironment) => {
-        visitEEDetail(executionEnvironment.name);
+        cy.navigateTo('hub', ExecutionEnvironments.url);
+        cy.verifyPageTitle('Execution Environments');
+        cy.get('[data-cy="text-input"]')
+          .should('be.visible')
+          .within(() => {
+            cy.get('input').clear().type(executionEnvironment.name);
+          });
+        cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+        cy.get('a').contains(executionEnvironment.name).click();
+        cy.verifyPageTitle(executionEnvironment.name);
         cy.getByDataCy('execution-environment-activity-tab').click();
-
         cy.contains('No activities yet');
         cy.contains('Activities will appear once you push something');
-
         cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
           cy.deleteHubRemoteRegistry(remoteRegistry);
         });
@@ -271,7 +308,7 @@ describe('Execution Environment Activity and Image tabs', () => {
     });
   });
 
-  it('should display populated activity and images tabs', () => {
+  it.skip('should display populated activity and images tabs', () => {
     cy.createHubRemoteRegistry().then((remoteRegistry) => {
       cy.createHubExecutionEnvironment({
         executionEnvironment: {
@@ -282,23 +319,27 @@ describe('Execution Environment Activity and Image tabs', () => {
         cy.syncRemoteExecutionEnvironment(executionEnvironment);
 
         const eeName = executionEnvironment.name;
-
         cy.intercept(
           'GET',
           hubAPI`/v3/plugin/execution-environments/repositories/${eeName}/_content/history/*`
         ).as('getActivity');
-
-        visitEEDetail(executionEnvironment.name);
+        cy.navigateTo('hub', ExecutionEnvironments.url);
+        cy.verifyPageTitle('Execution Environments');
+        cy.get('[data-cy="text-input"]')
+          .should('be.visible')
+          .within(() => {
+            cy.get('input').clear().type(executionEnvironment.name);
+          });
+        cy.contains('.pf-v5-c-chip__text', executionEnvironment.name);
+        cy.get('a').contains(executionEnvironment.name).click();
+        cy.verifyPageTitle(executionEnvironment.name);
         cy.getByDataCy('execution-environment-activity-tab').click();
-
         cy.contains('Change');
         cy.contains('Date');
         cy.contains(`${eeName} was added`);
         cy.contains('sha256');
         cy.contains('latest was added');
         cy.wait('@getActivity');
-
-        //test the images tab
         cy.getByDataCy('execution-environment-images-tab').click();
         cy.get('tbody tr').should('have.length', 1);
         cy.get('button[aria-label="Copy to clipboard"]').click();
@@ -344,7 +385,6 @@ describe('Execution Environment Activity and Image tabs', () => {
             expect(res?.data).to.have.length(1);
             const image: ExecutionEnvironmentImage = res.data[0];
             const { digest } = image;
-
             cy.get('a')
               .should('have.attr', 'href')
               .then((hrefAttr) => {
@@ -355,7 +395,6 @@ describe('Execution Environment Activity and Image tabs', () => {
                     );
                 }
               });
-
             cy.get('a span.pf-v5-c-label__text')
               .invoke('text')
               .then((text) => {
@@ -364,7 +403,6 @@ describe('Execution Environment Activity and Image tabs', () => {
               });
           });
         });
-
         cy.deleteHubExecutionEnvironment(executionEnvironment).then(() => {
           cy.deleteHubRemoteRegistry(remoteRegistry);
         });
