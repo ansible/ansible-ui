@@ -22,9 +22,18 @@ import { AwxAddTeamRoles } from '../../frontend/awx/access/teams/AwxAddTeamRoles
 import { PlatformHubTeamIdLookup } from '../access/teams/components/PlatformHubTeamIdLookup';
 import { HubTeamRoles } from '../../frontend/hub/access/teams/TeamPage/TeamUserRole';
 import { HubAddTeamRoles } from '../../frontend/hub/access/teams/components/HubAddTeamRoles';
+import { useGatewayService } from '../main/GatewayServices';
 
 export function useGetPlatformTeamsRoutes() {
   const { t } = useTranslation();
+  const awxService = useGatewayService('controller');
+  const edaService = useGatewayService('eda');
+
+  let fallbackRoute = 'controller';
+  if (!awxService) {
+    fallbackRoute = edaService ? 'eda' : 'hub';
+  }
+
   const teamsRoutes = useMemo<PageNavigationItem>(
     () => ({
       id: PlatformRoute.Teams,
@@ -85,7 +94,7 @@ export function useGetPlatformTeamsRoutes() {
                 },
                 {
                   path: '',
-                  element: <Navigate to="controller" />,
+                  element: <Navigate to={fallbackRoute} />,
                 },
               ],
             },
@@ -155,7 +164,7 @@ export function useGetPlatformTeamsRoutes() {
         },
       ],
     }),
-    [t]
+    [t, fallbackRoute]
   );
   return teamsRoutes;
 }
