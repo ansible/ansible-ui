@@ -6,7 +6,7 @@ import { randomString } from '../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
-describe.skip('Execution Environment User Access tab', () => {
+describe('Execution Environment User Access tab', () => {
   let executionEnvironment: ExecutionEnvironment;
   let remoteRegistry: RemoteRegistry;
   let role: HubRbacRole;
@@ -15,7 +15,7 @@ describe.skip('Execution Environment User Access tab', () => {
       roleName: 'galaxy.' + `${randomString(5)}`,
       roleDescription: 'Manage EE.',
       contentType: ContentTypeEnum.ExecutionEnvironment,
-      permission: 'galaxy.view-container-namespace',
+      permission: 'galaxy.view_containernamespace',
     };
     cy.createHubRoleAPI({
       roleName: customRole.roleName,
@@ -59,8 +59,7 @@ describe.skip('Execution Environment User Access tab', () => {
     });
   }
 
-  //Creation of role for HUB EE is returning a 500 Server Error
-  it.skip('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
+  it('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
       cy.clickTab('User Access', true);
