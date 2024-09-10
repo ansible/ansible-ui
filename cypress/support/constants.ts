@@ -1,7 +1,3 @@
-import { EdaCredential } from '../../frontend/eda/interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebookActivation } from '../../frontend/eda/interfaces/EdaRulebookActivation';
 import { Repository } from '../../frontend/hub/administration/repositories/Repository';
 import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
 import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
@@ -16,14 +12,10 @@ export enum SERVER_NAME {
   GALAXY_SERVER = 'Galaxy Server',
 }
 
-type ResourceObject = EdaProject | EdaDecisionEnvironment | EdaRulebookActivation | EdaCredential;
-
 export interface AccessTabResource {
   name: string;
   roles_tab_name: string;
   content_type: string;
-  creation: ((orgId: number) => Cypress.Chainable<ResourceObject>) | null;
-  deletion: (resourceObject: ResourceObject) => Cypress.Chainable<void>;
   role: string;
 }
 export const user_team_access_tab_resources: AccessTabResource[] = [
@@ -31,37 +23,31 @@ export const user_team_access_tab_resources: AccessTabResource[] = [
     name: 'projects',
     roles_tab_name: 'Project',
     content_type: 'eda.project',
-    creation: (orgId: number) => cy.createEdaProject(orgId) as Cypress.Chainable<ResourceObject>,
-    deletion: (resourceObject) => cy.deleteEdaProject(resourceObject as EdaProject),
     role: 'Project Admin',
   },
   {
     name: 'decision-environments',
     roles_tab_name: 'Decision Environment',
     content_type: 'eda.decision-environment',
-    creation: (orgId: number) =>
-      cy.createEdaDecisionEnvironment(orgId) as Cypress.Chainable<ResourceObject>,
-    deletion: (resourceObject) =>
-      cy.deleteEdaDecisionEnvironment(resourceObject as EdaDecisionEnvironment),
     role: 'Decision Environment Admin',
   },
   {
     name: 'rulebook-activations',
     roles_tab_name: 'Activation',
     content_type: 'eda.activation',
-    creation: null,
-    deletion: (resourceObject) =>
-      cy.deleteEdaRulebookActivation(resourceObject as EdaRulebookActivation),
     role: 'Activation Admin',
   },
   {
     name: 'credentials',
     roles_tab_name: 'Eda Credential',
     content_type: 'eda.edacredential',
-    creation: (edaOrg: number) =>
-      cy.createEdaCredential(edaOrg) as Cypress.Chainable<ResourceObject>,
-    deletion: (resourceObject) => cy.deleteEdaCredential(resourceObject as EdaCredential),
     role: 'Eda Credential Admin',
+  },
+  {
+    name: 'event-streams',
+    roles_tab_name: 'Event Stream',
+    content_type: 'eda.eventstream',
+    role: 'Event Stream Use',
   },
 ];
 
