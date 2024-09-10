@@ -13,9 +13,9 @@ import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
-import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 import { useAuthenticatorPageActions } from '../hooks/useAuthenticatorActions';
 
+import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 export function AuthenticatorPage() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
@@ -39,7 +39,7 @@ export function AuthenticatorPage() {
       <PageHeader
         title={authenticator.name}
         breadcrumbs={[
-          { label: t('Authenticators'), to: getPageUrl(PlatformRoute.Authenticators) },
+          { label: t('Authentication Methods'), to: getPageUrl(PlatformRoute.Authenticators) },
           { label: authenticator.name },
         ]}
         headerActions={
@@ -50,7 +50,23 @@ export function AuthenticatorPage() {
           />
         }
       />
-      <PlatformAuthenticatorDetails />
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Authentication Methods'),
+          page: PlatformRoute.Authenticators,
+          persistentFilterKey: 'name',
+        }}
+        tabs={[
+          {
+            label: t('Details'),
+            dataCy: 'authenticator-detail-tab',
+            page: PlatformRoute.AuthenticatorDetails,
+          },
+        ]}
+        params={{
+          id: authenticator?.id,
+        }}
+      />
     </PageLayout>
   );
 }
