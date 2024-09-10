@@ -5,29 +5,22 @@ import { RuleListItemType } from '../types';
 export function useSetRRuleItemToRuleSet() {
   return useCallback((rules: RuleListItemType[], exceptions: RuleListItemType[] | []) => {
     const ruleset = new RRuleSet();
-
-    rules.forEach((r, i) => {
-      const {
-        rule: {
-          options: { dtstart, tzid, ...rest },
-        },
-      } = r;
+    rules.forEach(({ rule }, i) => {
+      const ruleObject = RRule.fromString(rule).origOptions;
+      const { dtstart, tzid, ...rest } = ruleObject;
       if (i === 0) {
         ruleset.rrule(new RRule({ ...rest, dtstart, tzid }));
-      } else {
-        ruleset.rrule(new RRule({ ...rest }));
+        return;
       }
+      ruleset.rrule(new RRule({ ...rest }));
     });
-    if (exceptions.length) {
-      exceptions?.forEach((r) => {
-        const {
-          rule: {
-            options: { dtstart, tzid, ...rest },
-          },
-        } = r;
+    exceptions.length > 0 &&
+      exceptions.forEach(({ rule }) => {
+        const exceptionObject = RRule.fromString(rule).origOptions;
+
+        const { dtstart, tzid, ...rest } = exceptionObject;
         ruleset.exrule(new RRule({ ...rest }));
       });
-    }
     return ruleset;
   }, []);
 }

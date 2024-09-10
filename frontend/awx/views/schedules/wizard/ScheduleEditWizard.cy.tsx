@@ -176,7 +176,7 @@ describe('ScheduleEditWizard', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=1;WKST=MO'
+          'RRULE:FREQ=HOURLY;INTERVAL=1'
         );
       });
 
@@ -199,7 +199,7 @@ describe('ScheduleEditWizard', () => {
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('td[data-cy="rrule-column-cell"]').should(
           'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=MO'
+          'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
 

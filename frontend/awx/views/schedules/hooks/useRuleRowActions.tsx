@@ -8,6 +8,7 @@ import { useFormContext } from 'react-hook-form';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { RULES_DEFAULT_VALUES } from '../wizard/constants';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
+import { RRule } from 'rrule';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
@@ -51,27 +52,27 @@ export function useRuleRowActions(
           const rule = rules.find((item) => item.id === r.id);
           let untilDateTime!: string[];
           if (rule === undefined || !rule.rule) return;
-          if (rule?.rule?.options?.until !== null) {
+          const ruleObject = RRule.fromString(rule.rule);
+          if (ruleObject.origOptions.until) {
             untilDateTime = dateToInputDateTime(
-              rule?.rule?.options?.until?.toISOString() ?? '',
-              rule?.rule?.options?.tzid
+              ruleObject.origOptions.until?.toISOString() ?? '',
+              ruleObject.origOptions.tzid
             );
           }
 
           const ruleData = {
-            ...rule.rule.options,
-            endType: rule.rule.options.count
+            ...ruleObject.origOptions,
+            endType: ruleObject.origOptions.count
               ? 'count'
-              : rule.rule.options.until
+              : ruleObject.origOptions.until
                 ? 'until'
                 : 'never',
             id: rule.id,
             rules: existingRules || [],
             exceptions: existingExceptions || [],
-            until:
-              rule?.rule?.options?.until !== null
-                ? { date: untilDateTime[0], time: untilDateTime[1] }
-                : null,
+            until: ruleObject.origOptions.until
+              ? { date: untilDateTime[0], time: untilDateTime[1] }
+              : null,
           };
           context.reset(ruleData);
         },

@@ -1,15 +1,16 @@
-import { Frequency, RRule } from 'rrule';
+import { Frequency } from 'rrule';
 export const INVENTORY_TYPE = 'inventory';
 export const RULES_DEFAULT_VALUES = {
   freq: Frequency.YEARLY,
   interval: 1,
-  wkst: RRule.SU,
+  wkst: null,
   byweekday: null,
   byweekno: null,
   bymonth: null,
   bymonthday: null,
   byyearday: null,
   bysetpos: null,
+  bysecond: null,
   until: { date: '', time: '' },
   count: null,
   byminute: null,

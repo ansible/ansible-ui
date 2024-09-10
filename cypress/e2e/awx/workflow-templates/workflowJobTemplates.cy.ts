@@ -752,10 +752,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
-        cy.get('td[data-cy="rrule-column-cell"]').should(
-          'contains.text',
-          'RRULE:FREQ=HOURLY;INTERVAL=100;WKST=SU'
-        );
+        cy.getByDataCy('rrule-column-cell').contains('RRULE:FREQ=HOURLY;INTERVAL=100');
       });
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
