@@ -62,10 +62,6 @@ function EventStreamInputs() {
         label={t('Name')}
         placeholder={t('Enter name')}
         isRequired
-        labelHelpTitle={t('Name')}
-        labelHelp={t(
-          'The name should match the source name defined in the rulebook. If the source name matches we will swap the event source in the rulebook with this event source.'
-        )}
         maxLength={150}
       />
       <PageFormSelectOrganization<IEdaEventStreamCreate> name="organization_id" isRequired />
@@ -99,16 +95,18 @@ function EventStreamInputs() {
         placeholder={t('Enter headers')}
         labelHelpTitle={t('Headers')}
         labelHelp={t(
-          'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
-            'To include all headers in the event payload, leave the field empty.'
+          'Enter HTTP header keys, separated by commas, that you want to include in the event payload. ' +
+            'To include all headers, leave the field empty.'
         )}
       />
       <PageFormSwitch<IEdaEventStreamCreate>
-        label={t`Forward events`}
+        label={t`Forward events to rulebook activation`}
         labelOn={t('Enabled')}
         labelOff={t('Disabled')}
+        labelHelpTitle={t('Forward events to rulebook activation')}
         labelHelp={t(
-          'Enable the event stream to forward events to the rulebook activation where it is configured. '
+          'An event stream is an HTTP POST request comprised of a header and body. The HTTP header typically stores the properties of the body. ' +
+            "The event stream's event forwarding can be disabled for testing purposes while diagnosing connections and evaluating the incoming data."
         )}
         name="enabled"
       />
@@ -150,16 +148,18 @@ function EventStreamEditInputs() {
         placeholder={t('Enter headers')}
         labelHelpTitle={t('Headers')}
         labelHelp={t(
-          'Enter comma separated HTTP header keys that you want to include in the event payload. ' +
-            'To include all headers in teh event payload, leave the field empty.'
+          'Enter HTTP header keys, separated by commas, that you want to include in the event payload. ' +
+            'To include all headers, leave the field empty.'
         )}
       />
       <PageFormSwitch<IEdaEventStreamCreate>
-        label={t`Forward events`}
+        label={t`Forward events to rulebook activation`}
         labelOn={t('Enabled')}
         labelOff={t('Disabled')}
+        labelHelpTitle={t('Forward events to rulebook activation')}
         labelHelp={t(
-          'Enable the event stream to forward events to the rulebook activation where it is configured. '
+          'An event stream is an HTTP POST request comprised of a header and body. The HTTP header typically stores the properties of the body. ' +
+            "The event stream's event forwarding can be disabled for testing purposes while diagnosing connections and evaluating the incoming data."
         )}
         name="enabled"
       />

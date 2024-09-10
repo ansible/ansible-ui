@@ -57,7 +57,7 @@ export function EventStreamPage() {
     async (eventStream) => {
       const alert: AlertProps = {
         variant: 'success',
-        title: `${eventStream.name || ''}  ${t('switched to production mode.')}`,
+        title: `${t('Enabled forwarding of events to rulebook activation for ')} ${eventStream.name}`,
         timeout: 5000,
       };
       await patchRequest(
@@ -92,11 +92,13 @@ export function EventStreamPage() {
             {
               type: PageActionType.Switch,
               ariaLabel: (isEnabled) =>
-                isEnabled ? t('Forward events ') : t('Not forwarding events'),
+                isEnabled
+                  ? t('Forward events to rulebook activation ')
+                  : t('Not Forwarding events to rulebook activation'),
               selection: PageActionSelection.Single,
               isPinned: true,
-              label: t('Forward events'),
-              labelOff: t('Forward events'),
+              label: t('Forward events to rulebook activation'),
+              labelOff: t('Forward events to rulebook activation'),
               onToggle: (eventStream: EdaEventStream, mode: boolean) => {
                 if (mode) void enableEventStream(eventStream);
                 else void disableEventStreams([eventStream]);
