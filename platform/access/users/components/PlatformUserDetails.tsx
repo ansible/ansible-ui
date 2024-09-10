@@ -37,7 +37,7 @@ export function PlatformUserDetails() {
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={user}>
         {' '}
-        {organizationsData?.results?.length ? (
+        {user?.is_superuser ? null : organizationsData?.results?.length ? (
           <PageDetail label={t('Organization', { count: organizationsData.count })}>
             <LabelsCell
               numLabels={3}
