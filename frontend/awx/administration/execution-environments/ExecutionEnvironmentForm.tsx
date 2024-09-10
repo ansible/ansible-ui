@@ -21,9 +21,9 @@ import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../main/AwxRoutes';
 
 const PullOption = {
-  Always: 'Always pull container before running.',
-  Missing: 'Only pull the image if not present before running.',
-  Never: 'Never pull container before running.',
+  Always: 'Always pull container before running',
+  Missing: 'Only pull the image if not present before running',
+  Never: 'Never pull container before running',
 };
 
 export function CreateExecutionEnvironment() {
@@ -150,7 +150,7 @@ function ExecutionEnvironmentInputs(props: {
       <PageFormTextInput<ExecutionEnvironment>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a name')}
+        placeholder={t('Enter execution environment name')}
         isRequired
         isDisabled={props?.executionEnv?.managed || false}
         maxLength={150}
@@ -181,14 +181,14 @@ function ExecutionEnvironmentInputs(props: {
           </span>
         }
         isDisabled={props?.executionEnv?.managed || false}
-        placeholder={t('Enter an image')}
+        placeholder={t('Enter image')}
         isRequired
         maxLength={150}
       />
       <PageFormSelect<ExecutionEnvironment>
         name="pull"
         label={t('Pull')}
-        placeholderText={t('---------')}
+        placeholderText={t('Select pull option')}
         options={[
           {
             label: t(`${PullOption.Always}`),
@@ -207,7 +207,7 @@ function ExecutionEnvironmentInputs(props: {
       <PageFormTextInput<ExecutionEnvironment>
         name="description"
         label={t('Description')}
-        placeholder={t('Enter a description')}
+        placeholder={t('Enter description')}
         isDisabled={props?.executionEnv?.managed || false}
       />
       {props.mode === 'edit' && isOrgGloballyAvailable ? (
