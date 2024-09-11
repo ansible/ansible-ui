@@ -46,7 +46,11 @@ export const genericErrorAdapter = (error: unknown): ErrorOutput => {
               }
             } else {
               if (typeof value === 'string') {
-                fieldErrors.push({ name, message: value });
+                if (name === 'detail') {
+                  genericErrors.push({ message: value });
+                } else {
+                  fieldErrors.push({ name, message: value });
+                }
               } else if (Array.isArray(value)) {
                 for (const message of value) {
                   if (typeof message === 'string') {
