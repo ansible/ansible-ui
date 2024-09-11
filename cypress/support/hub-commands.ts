@@ -128,8 +128,22 @@ Cypress.Commands.add('waitForAllTasks', function waitForAllTasks() {
   waitForAllTasks(100);
 });
 
+Cypress.Commands.add('isGalaxyKitInstalled', () => {
+  const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
+  return cy.exec(`${galaxykitCommand} --version`, { failOnNonZeroExit: false }).then((result) => {
+    return result.code === 0;
+  });
+});
+
 // GalaxyKit Integration: To invoke `galaxykit` commands for generating resource
 Cypress.Commands.add('galaxykit', (operation: string, ...args: string[]) => {
+  cy.isGalaxyKitInstalled().then((isInstalled) => {
+    if (!isInstalled) {
+      cy.log('Galaxykit is not installed. Skipping galaxykit command.');
+      return;
+    }
+  });
+
   const galaxykitCommand = (Cypress.env('HUB_GALAXYKIT_COMMAND') as string) ?? 'galaxykit';
   const platformServer = (Cypress.env('PLATFORM_SERVER') as string) || '';
   const upstreamServer = Cypress.env('HUB_SERVER') as string;
