@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { ButtonVariant } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { useRelaunchJob } from './useRelaunchJob';
-import { useTranslation } from 'react-i18next';
 
 export function useRelaunchOptions(): IPageAction<UnifiedJob>[] {
   const { t } = useTranslation();
@@ -28,6 +28,7 @@ export function useRelaunchOptions(): IPageAction<UnifiedJob>[] {
       {
         type: PageActionType.Dropdown,
         selection: PageActionSelection.Single,
+        variant: ButtonVariant.primary,
         isPinned: true,
         icon: RocketIcon,
         label: t(`Relaunch using host parameters`),
