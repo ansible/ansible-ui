@@ -6,6 +6,10 @@ import { useQuickStarts } from './quickstarts/useQuickStarts';
 
 type Resource = { id: string; name: string };
 
+function clearStorageKey() {
+  localStorage.removeItem('platform-dashboard');
+}
+
 export function useManagedPlatformOverview() {
   const hasAwx = useHasAwxService();
   const hasEda = useHasEdaService();
@@ -61,7 +65,7 @@ export function useManagedPlatformOverview() {
     return [...serviceResources, ...quickStarts];
   }, [combinedResources]);
 
-  const { openManageItems: openManageDashboard, managedItems: managedResources } =
+  const { openManageItems: originalOpenManageDashboard, managedItems: managedResources } =
     useManageItems<Resource>({
       id: 'platform-dashboard',
       title: t('Manage view'),
@@ -79,6 +83,11 @@ export function useManagedPlatformOverview() {
     const quickStarts = managedResources.filter((item) => item.id === 'quick-starts');
     return [...serviceResources, ...quickStarts];
   }, [managedResources]);
+
+  function openManageDashboard() {
+    clearStorageKey();
+    originalOpenManageDashboard();
+  }
 
   return {
     openManageDashboard,
