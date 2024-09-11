@@ -1653,6 +1653,7 @@ declare global {
 
       // HUB GalaxyKit Commands
       galaxykit(operation: string, ...args: string[]): Cypress.Chainable<string[]>;
+      isGalaxyKitInstalled(): Cypress.Chainable<boolean>;
 
       createApprovedCollection(
         namespaceName: string,
