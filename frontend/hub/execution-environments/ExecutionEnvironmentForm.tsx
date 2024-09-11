@@ -204,7 +204,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           <PageFormTextInput<ExecutionEnvironmentFormProps>
             name="name"
             label={t('Name')}
-            placeholder={t('Enter a execution environment name')}
+            placeholder={t('Enter execution environment name')}
             isRequired
             isDisabled={mode === 'edit' || !isRemote}
             validate={(name: string) => validateName(name, t)}
@@ -214,7 +214,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             <PageFormTextInput<ExecutionEnvironmentFormProps>
               name="namespace.name"
               label={t('Namespace')}
-              placeholder={t('Enter a namespace name')}
+              placeholder={t('Enter namespace name')}
               isDisabled
             />
           )}
@@ -223,7 +223,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
             <PageFormTextInput<ExecutionEnvironmentFormProps>
               name="description"
               label={t('Description')}
-              placeholder={t('Enter a description')}
+              placeholder={t('Enter description')}
             />
           )}
 
@@ -232,7 +232,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
               <PageFormTextInput<ExecutionEnvironmentFormProps>
                 name="upstream_name"
                 label={t('Upstream name')}
-                placeholder={t('Enter a upstream name')}
+                placeholder={t('Enter upstream name')}
                 isRequired
               />
 
