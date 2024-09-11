@@ -64,12 +64,14 @@ function EmailForm() {
         type={'text'}
         name={'notification_configuration.username'}
         label={t('Username')}
+        placeholder={t('Enter username')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.password'}
         label={t('Password')}
+        placeholder={t('Enter password')}
       />
 
       <PageFormTextInput<NotificationTemplate>
@@ -77,6 +79,7 @@ function EmailForm() {
         name={'notification_configuration.host'}
         label={t('Host')}
         isRequired
+        placeholder={t('Enter host')}
       />
 
       <PageFormTextArea<NotificationTemplate>
@@ -84,12 +87,14 @@ function EmailForm() {
         label={t('Recipient list')}
         isRequired
         labelHelp={getLabelHelp('email', 'recipients', t)}
+        placeholder={t('Enter recipient list')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.sender'}
         label={t('Sender email')}
+        placeholder={t('Enter sender email')}
         isRequired
         validate={(value) => validateEmail(value, t)}
       />
@@ -98,6 +103,7 @@ function EmailForm() {
         type={'number'}
         name={'notification_configuration.port'}
         label={t('Port')}
+        placeholder={t('Enter port')}
         isRequired
         validate={(value) => validateNumber(value, 1, 65535, t)}
       />
@@ -106,6 +112,7 @@ function EmailForm() {
         type={'number'}
         name={'notification_configuration.timeout'}
         label={t('Timeout')}
+        placeholder={t('Enter timeout')}
         isRequired
         validate={(value) => validateNumber(value, 1, 120, t)}
         labelHelp={getLabelHelp('email', 'timeout', t)}
@@ -146,12 +153,14 @@ function SlackForm() {
         type={'password'}
         name={'notification_configuration.token'}
         label={t('Token')}
+        placeholder={t('Enter token')}
         isRequired
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.channels'}
         label={t('Destination channels')}
+        placeholder={t('Enter destination channels')}
         isRequired
         labelHelp={getLabelHelp('slack', 'channels', t)}
       />
@@ -159,6 +168,7 @@ function SlackForm() {
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.hex_color'}
         label={t('Notification color')}
+        placeholder={t('Enter notification color')}
         labelHelp={getLabelHelp('slack', 'hex_color', t)}
       />
     </>
@@ -173,6 +183,7 @@ function TwilioForm() {
         type={'text'}
         name={'notification_configuration.account_sid'}
         label={t('Account SID')}
+        placeholder={t('Enter account SID')}
         isRequired
       />
 
@@ -180,6 +191,7 @@ function TwilioForm() {
         type={'password'}
         name={'notification_configuration.account_token'}
         label={t('Account token')}
+        placeholder={t('Enter account token')}
         isRequired
       />
 
@@ -187,6 +199,7 @@ function TwilioForm() {
         type={'text'}
         name={'notification_configuration.from_number'}
         label={t('Source phone number')}
+        placeholder={t('Enter source phone number')}
         validate={(value) => twilioPhoneNumber(value, t)}
         isRequired
         labelHelp={getLabelHelp('twilio', 'from_number', t)}
@@ -195,6 +208,7 @@ function TwilioForm() {
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.to_numbers'}
         label={t('Destination SMS numbers')}
+        placeholder={t('Enter destination SMS numbers')}
         validate={(value) => twilioPhoneNumber(value, t)}
         labelHelp={getLabelHelp('twilio', 'to_numbers', t)}
         isRequired
@@ -211,6 +225,7 @@ function PagerdutyForm() {
         type={'text'}
         name={'notification_configuration.subdomain'}
         label={t('Pagerduty subdomain')}
+        placeholder={t('Enter Pagerduty subdomain')}
         isRequired
       />
 
@@ -218,6 +233,7 @@ function PagerdutyForm() {
         type={'password'}
         name={'notification_configuration.token'}
         label={t('API token')}
+        placeholder={t('Enter API token')}
         isRequired
       />
 
@@ -225,6 +241,7 @@ function PagerdutyForm() {
         type={'text'}
         name={'notification_configuration.service_key'}
         label={t('API service/integration key')}
+        placeholder={t('Enter API service/integration key')}
         isRequired
       />
 
@@ -232,6 +249,7 @@ function PagerdutyForm() {
         type={'text'}
         name={'notification_configuration.client_name'}
         label={t('Client identifier')}
+        placeholder={t('Enter client identifier')}
         isRequired
       />
     </>
@@ -246,6 +264,7 @@ function GrafanaForm() {
         type={'text'}
         name={'notification_configuration.grafana_url'}
         label={t('Grafana URL')}
+        placeholder={t('Enter Grafana URL')}
         labelHelp={getLabelHelp('grafana', 'grafana_url', t)}
         isRequired
       />
@@ -254,22 +273,26 @@ function GrafanaForm() {
         type={'password'}
         name={'notification_configuration.grafana_key'}
         label={t('Grafana API key')}
+        placeholder={t('Enter Grafana API key')}
         isRequired
       />
 
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.dashboardId'}
         label={t('ID of the dashboard')}
+        placeholder={t('Enter ID of the dashboard')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         name={'notification_configuration.panelId'}
         label={t('ID of the panel')}
+        placeholder={t('Enter ID of the panel')}
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.annotation_tags'}
         label={t('Tags for the annotation')}
+        placeholder={t('Enter tags for the annotation')}
         labelHelp={getLabelHelp('grafana', 'annotation_tags', t)}
       />
 
@@ -294,18 +317,21 @@ function WebhookForm() {
         type={'text'}
         name={'notification_configuration.username'}
         label={t('Username')}
+        placeholder={t('Enter username')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'password'}
         name={'notification_configuration.password'}
         label={t('Basic auth password')}
+        placeholder={t('Enter basic auth password')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.url'}
         label={t('Target URL')}
+        placeholder={t('Enter target URL')}
         isRequired
         validate={(item) => validateUrl(item, t)}
       />
@@ -326,7 +352,7 @@ function WebhookForm() {
       <PageFormSingleSelect<NotificationTemplate>
         name={'notification_configuration.http_method'}
         label={t('HTTP method')}
-        placeholder={t('Choose an HTTP method')}
+        placeholder={t('Select HTTP method')}
         isRequired
         options={[
           { label: 'POST', value: 'POST' },
@@ -346,6 +372,7 @@ function MattermostForm() {
         type={'text'}
         name={'notification_configuration.mattermost_url'}
         label={t('Target URL')}
+        placeholder={t('Enter target URL')}
         isRequired
         validate={(item) => validateUrl(item, t)}
       />
@@ -354,18 +381,21 @@ function MattermostForm() {
         type={'text'}
         name={'notification_configuration.mattermost_username'}
         label={t('Username')}
+        placeholder={t('Enter username')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.mattermost_channel'}
         label={t('Channel')}
+        placeholder={t('Enter channel')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.mattermost_icon_url'}
         label={t('Icon URL')}
+        placeholder={t('Enter icon URL')}
         validate={(item) => validateUrl(item, t)}
       />
 
@@ -386,6 +416,7 @@ function RocketchatForm() {
         type={'text'}
         name={'notification_configuration.rocketchat_url'}
         label={t('Target URL')}
+        placeholder={t('Enter target URL')}
         isRequired
         validate={(item) => validateUrl(item, t)}
       />
@@ -394,12 +425,14 @@ function RocketchatForm() {
         type={'text'}
         name={'notification_configuration.rocketchat_username'}
         label={t('Username')}
+        placeholder={t('Enter username')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type={'text'}
         name={'notification_configuration.rocketchat_icon_url'}
         label={t('Icon URL')}
+        placeholder={t('Enter icon URL')}
         validate={(item) => validateUrl(item, t)}
       />
 
@@ -419,12 +452,14 @@ function IrcForm() {
         type={'password'}
         name={'notification_configuration.password'}
         label={t('IRC server password')}
+        placeholder={t('Enter IRC server password')}
       />
 
       <PageFormTextInput<NotificationTemplate>
         type="number"
         name={'notification_configuration.port'}
         label={t('IRC server port')}
+        placeholder={t('Enter IRC server port')}
         isRequired
       />
 
@@ -432,6 +467,7 @@ function IrcForm() {
         type={'text'}
         name={'notification_configuration.server'}
         label={t('IRC server address')}
+        placeholder={t('Enter IRC server address')}
         isRequired
         validate={(item) => validateUrl(item, t)}
       />
@@ -440,12 +476,14 @@ function IrcForm() {
         type={'text'}
         name={'notification_configuration.nickname'}
         label={t('IRC nick')}
+        placeholder={t('Enter IRC nick')}
         isRequired
       />
 
       <PageFormTextArea<NotificationTemplate>
         name={'notification_configuration.targets'}
         label={t('Destination channels or users')}
+        placeholder={t('Enter destination channels or users')}
         isRequired
         labelHelp={getLabelHelp('irc', 'targets', t)}
       />
