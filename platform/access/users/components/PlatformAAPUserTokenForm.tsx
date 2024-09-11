@@ -64,7 +64,7 @@ function CreateAAPUserTokenInternal(props: {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Create Token')}
+        title={t('Create token')}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
           {
@@ -75,6 +75,7 @@ function CreateAAPUserTokenInternal(props: {
             label: t('Tokens'),
             to: getPageUrl(PlatformRoute.AAPUserTokens, { params: { id: user.id } }),
           },
+          { label: t('Create token') },
         ]}
       />
       <PageForm<Token>
@@ -103,7 +104,7 @@ function UserTokenFormInputs() {
       <PageFormSelect<Token>
         name="scope"
         label={t('Scope')}
-        placeholderText={t('Select a scope')}
+        placeholderText={t('Select scope')}
         options={[
           {
             label: t('Read'),
