@@ -218,21 +218,21 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
           <PageFormTextInput<NotificationTemplate>
             name="name"
             label={t('Name')}
-            placeholder={t('Enter a name')}
+            placeholder={t('Enter notifier name')}
             isRequired
             maxLength={150}
           />
           <PageFormTextInput<NotificationTemplate>
             name="description"
             label={t('Description')}
-            placeholder={t('Enter a description')}
+            placeholder={t('Enter description')}
           />
           <PageFormSelectOrganization<NotificationTemplate> name="organization" isRequired />
           <PageFormSingleSelect
             name="notification_type"
             id="notification_type"
-            label={t(`Type`)}
-            placeholder={t('Choose a notification type')}
+            label={t(`Notification type`)}
+            placeholder={t('Select notification type')}
             isRequired={true}
             options={[
               { value: 'email', label: t('Email') },
