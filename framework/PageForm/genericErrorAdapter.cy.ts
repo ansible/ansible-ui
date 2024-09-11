@@ -47,4 +47,16 @@ describe('genericErrorAdapter', () => {
       fieldErrors: [{ name: 'username', message: 'Username is already taken' }],
     });
   });
+
+  it('should process "detail" key as a generic error', () => {
+    const errorBody = {
+      detail: 'This is a generic error',
+    };
+    const error = new RequestError('Error Message', undefined, 403, errorBody, errorBody);
+    const result = genericErrorAdapter(error);
+    expect(result).to.deep.equal({
+      genericErrors: [{ message: 'This is a generic error' }],
+      fieldErrors: [],
+    });
+  });
 });
