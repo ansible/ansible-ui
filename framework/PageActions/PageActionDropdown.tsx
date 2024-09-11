@@ -11,9 +11,10 @@ import {
   MenuToggleElement,
   Tooltip,
 } from '@patternfly/react-core';
-import { CircleIcon, EllipsisVIcon, CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, CircleIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { ComponentClass, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { PFColorE, getPatternflyColor } from '../components/pfcolors';
 import { getID } from '../hooks/useID';
@@ -309,7 +310,7 @@ function PageDropdownActionItem<T extends object>(props: {
       return (
         <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
           <DropdownItem
-            to={to}
+            component={(p) => <Link {...p} to={to} />}
             isAriaDisabled={Boolean(isDisabled)}
             data-cy={getID(action)?.split('.').join('-')}
             style={{
