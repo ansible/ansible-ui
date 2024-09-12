@@ -187,131 +187,129 @@ export function usePlatformNavigation() {
       element: <QuickStartsPage />,
     });
     if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
+      const settingsNav: PageNavigationItem[] = [];
+
+      if (awxService) {
+        settingsNav.push({
+          label: t('Subscription'),
+          path: 'subscription',
+          children: [
+            {
+              id: PlatformRoute.SubscriptionWizard,
+              path: 'wizard',
+              element: <SubscriptionWizard onSuccess={() => navigate('/settings/subscription')} />,
+            },
+            {
+              id: PlatformRoute.SubscriptionDetails,
+              path: '',
+              element: <SubscriptionDetails />,
+            },
+          ],
+        });
+      }
+      settingsNav.push({
+        id: PlatformRoute.GatewaySettings,
+        label: t('Platform gateway'),
+        path: 'platform-gateway',
+        element: <GatewaySettings />,
+        children: [
+          {
+            path: 'edit',
+            element: <GatewaySettingsEdit categoryId="platform" />,
+          },
+          {
+            path: '',
+            element: <GatewaySettingsDetails categoryId="platform" />,
+          },
+        ],
+      });
+      settingsNav.push({
+        id: AwxRoute.SettingsPreferences,
+        label: t('User Preferences'),
+        path: 'preferences',
+        children: [
+          {
+            path: 'edit',
+            element: <PageSettingsForm />,
+          },
+          {
+            path: '',
+            element: <PageSettingsDetails />,
+          },
+        ],
+      });
+      if (awxService) {
+        settingsNav.push({
+          id: AwxRoute.SettingsSystem,
+          label: t('System'),
+          path: 'system',
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
+            },
+          ],
+        });
+        settingsNav.push({
+          id: AwxRoute.SettingsJobs,
+          label: t('Job'),
+          path: 'job-settings',
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
+            },
+          ],
+        });
+        settingsNav.push({
+          id: AwxRoute.SettingsLogging,
+          label: t('Logging'),
+          path: 'logging',
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
+            },
+          ],
+        });
+        settingsNav.push({
+          id: AwxRoute.SettingsTroubleshooting,
+          label: t('Troubleshooting'),
+          path: 'troubleshooting',
+          children: [
+            {
+              path: 'edit',
+              element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
+            },
+            {
+              path: '',
+              element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
+            },
+          ],
+        });
+      }
+      settingsNav.push({
+        path: '',
+        element: <Navigate to=".." />,
+      });
+
       navigationItems.push({
         id: AwxRoute.Settings,
         label: t('Settings'),
         path: 'settings',
-        children: [
-          {
-            label: t('Subscription'),
-            path: 'subscription',
-            children: [
-              {
-                id: PlatformRoute.SubscriptionWizard,
-                path: 'wizard',
-                element: (
-                  <SubscriptionWizard onSuccess={() => navigate('/settings/subscription')} />
-                ),
-              },
-              {
-                id: PlatformRoute.SubscriptionDetails,
-                path: '',
-                element: <SubscriptionDetails />,
-              },
-            ],
-          },
-          {
-            id: PlatformRoute.GatewaySettings,
-            label: t('Platform gateway'),
-            path: 'platform-gateway',
-            element: <GatewaySettings />,
-            children: [
-              {
-                path: 'edit',
-                element: <GatewaySettingsEdit categoryId="platform" />,
-              },
-              {
-                path: '',
-                element: <GatewaySettingsDetails categoryId="platform" />,
-              },
-            ],
-          },
-          {
-            id: AwxRoute.SettingsPreferences,
-            label: t('User Preferences'),
-            path: 'preferences',
-            children: [
-              {
-                path: 'edit',
-                element: <PageSettingsForm />,
-              },
-              {
-                path: '',
-                element: <PageSettingsDetails />,
-              },
-            ],
-          },
-          {
-            id: AwxRoute.SettingsSystem,
-            label: t('System'),
-            path: 'system',
-            children: [
-              {
-                path: 'edit',
-                element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
-              },
-              {
-                path: '',
-                element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
-              },
-            ],
-          },
-          {
-            id: AwxRoute.SettingsJobs,
-            label: t('Job'),
-            path: 'job-settings',
-            children: [
-              {
-                path: 'edit',
-                element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
-              },
-              {
-                path: '',
-                element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
-              },
-            ],
-          },
-          {
-            id: AwxRoute.SettingsLogging,
-            label: t('Logging'),
-            path: 'logging',
-            children: [
-              {
-                path: 'edit',
-                element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
-              },
-              {
-                path: '',
-                element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
-              },
-            ],
-          },
-          // {
-          //   id: AwxRoute.SettingsCustomizeLogin,
-          //   label: t('Customize Login'),
-          //   path: 'customize-login',
-          //   element: <AwxSettingsCategory categoryId="ui" key="ui" />,
-          // },
-          {
-            id: AwxRoute.SettingsTroubleshooting,
-            label: t('Troubleshooting'),
-            path: 'troubleshooting',
-            children: [
-              {
-                path: 'edit',
-                element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
-              },
-              {
-                path: '',
-                element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
-              },
-            ],
-          },
-          {
-            path: '',
-            element: <Navigate to=".." />,
-          },
-        ],
+        children: settingsNav,
       });
     }
     navigationItems.push(resources);
