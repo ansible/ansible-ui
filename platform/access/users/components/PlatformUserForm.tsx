@@ -330,7 +330,8 @@ export function EditPlatformUser() {
 
 function PlatformUserInputs(props: { isCreate?: boolean }) {
   const { t } = useTranslation();
-  const { setValue } = useFormContext<IUserInput>();
+  const { setValue, watch } = useFormContext<IUserInput>();
+  const isPlatformAdmin = watch('platformAdmin');
 
   return (
     <>
@@ -414,9 +415,11 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         </PageFormGroup>
       </PageFormSection>
 
-      <PageFormSection singleColumn>
-        <PageFormPlatformOrganizationsSelect name="organizations" />
-      </PageFormSection>
+      {!isPlatformAdmin ? (
+        <PageFormSection singleColumn>
+          <PageFormPlatformOrganizationsSelect name="organizations" />
+        </PageFormSection>
+      ) : null}
     </>
   );
 }
