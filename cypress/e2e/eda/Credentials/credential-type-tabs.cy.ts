@@ -46,17 +46,17 @@ cyLabel(['aaas-unsupported'], function () {
     it('can view credentials in use via Credentials Tab', () => {
       cy.navigateTo('eda', 'credential-types');
       cy.verifyPageTitle('Credential Types');
-      cy.clickTableRow(credtype.name, false);
+      cy.clickTableRow(credtype.name, true);
       cy.verifyPageTitle(credtype.name);
       cy.clickTab('Credentials', true);
-      cy.clickTableRow(cred.name, false);
+      cy.clickTableRow(cred.name, true);
       cy.contains('h1', cred.name);
     });
 
     it('can remove credentials via Credentials Tab', () => {
       cy.navigateTo('eda', 'credential-types');
       cy.verifyPageTitle('Credential Types');
-      cy.clickTableRow(credtype.name, false);
+      cy.clickTableRow(credtype.name, true);
       cy.clickTab('Credentials', true);
       cy.selectTableRow(cred.name);
       cy.clickToolbarKebabAction('delete-credentials');

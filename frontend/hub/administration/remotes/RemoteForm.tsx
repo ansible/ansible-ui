@@ -532,8 +532,8 @@ function RemoteInputs({
       >
         <PageFormTextInput<RemoteFormProps>
           name="username"
-          label={t('Username')}
-          placeholder={t('Enter a username')}
+          label={t('Server username')}
+          placeholder={t('Enter server username')}
           labelHelp={t(
             'The username to be used for authentication when syncing. This is not required when using a token.'
           )}
@@ -548,8 +548,8 @@ function RemoteInputs({
         <PageFormTextInput<RemoteFormProps>
           type="password"
           name="password"
-          label={t('Password')}
-          placeholder={t('Enter a password')}
+          label={t('Server password')}
+          placeholder={t('Enter server password')}
           labelHelp={t(
             'The password to be used for authentication when syncing. This is not required when using a token.'
           )}
