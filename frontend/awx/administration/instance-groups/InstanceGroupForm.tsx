@@ -148,7 +148,7 @@ export function InstanceGroupInputs() {
       <PageFormTextInput<InstanceGroup>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a name')}
+        placeholder={t('Enter instance group name')}
         isRequired
         maxLength={150}
       />
@@ -160,6 +160,7 @@ export function InstanceGroupInputs() {
         )}
         min={0}
         label={t('Policy instance minimum')}
+        placeholder={t('Enter policy instance minimum')}
       />
       <PageFormTextInput<InstanceGroup>
         name="policy_instance_percentage"
@@ -169,6 +170,7 @@ export function InstanceGroupInputs() {
         type="number"
         min={0}
         label={t('Policy instance percentage')}
+        placeholder={t('Enter policy instance percentage')}
       />
       <PageFormTextInput<InstanceGroup>
         name="max_concurrent_jobs"
@@ -178,6 +180,7 @@ export function InstanceGroupInputs() {
         type="number"
         min={0}
         label={t('Max concurrent jobs')}
+        placeholder={t('Enter max concurrent jobs')}
       />
       <PageFormTextInput<InstanceGroup>
         labelHelp={t(
@@ -187,6 +190,7 @@ export function InstanceGroupInputs() {
         min={0}
         type="number"
         label={t('Max forks')}
+        placeholder={t('Enter max forks')}
       />
     </>
   );

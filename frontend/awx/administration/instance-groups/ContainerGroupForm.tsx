@@ -191,7 +191,7 @@ export function ContainerGroupInputs() {
       <PageFormTextInput<ContainerGroupForm>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a name')}
+        placeholder={t('Enter container group name')}
         isRequired
         maxLength={150}
       />
@@ -212,6 +212,7 @@ export function ContainerGroupInputs() {
         )}
         type="number"
         min={0}
+        placeholder={t('Enter max concurrent jobs')}
         label={t('Max concurrent jobs')}
       />
       <PageFormTextInput<ContainerGroupForm>
@@ -221,6 +222,7 @@ export function ContainerGroupInputs() {
         )}
         type="number"
         min={0}
+        placeholder={t('Enter max forks')}
         label={t('Max forks')}
       />
       <PageFormCheckbox<{ override: boolean }> label={t('Customize pod spec')} name="override" />
