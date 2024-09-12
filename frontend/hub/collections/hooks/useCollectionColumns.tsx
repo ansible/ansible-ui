@@ -1,22 +1,22 @@
 import { Label } from '@patternfly/react-core';
 import {
   AnsibleTowerIcon,
+  BanIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  ColumnCardOption,
+  ColumnTableOption,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-  ColumnTableOption,
-  ColumnCardOption,
 } from '../../../../framework';
+import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
-import { useHubContext } from '../../common/useHubContext';
-import { BanIcon } from '@patternfly/react-icons';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -32,16 +32,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         value: (collection) => collection.collection_version?.name,
         cell: (collection) => (
           <>
-            <TextCell
-              text={collection.collection_version?.name}
-              to={getPageUrl(HubRoute.CollectionPage, {
-                params: {
-                  name: collection.collection_version?.name,
-                  namespace: collection.collection_version?.namespace,
-                  repository: collection.repository?.name,
-                },
-              })}
-            />
+            <TextCell text={collection.collection_version?.name} />
             {collection.is_deprecated && (
               <Label icon={<BanIcon />} color="red" variant="outline">
                 {t('Deprecated')}
