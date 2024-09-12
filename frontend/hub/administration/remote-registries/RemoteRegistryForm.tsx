@@ -233,7 +233,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
       <PageFormTextInput<RemoteRegistryProps>
         name="proxy_url"
         label={t('Proxy URL')}
-        placeholder={t('Enter a proxy URL')}
+        placeholder={t('Enter proxy URL')}
         validate={isValidUrl}
       />
       <PageFormSecret
@@ -245,7 +245,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
         <PageFormTextInput<RemoteRegistryProps>
           name="proxy_username"
           label={t('Proxy username')}
-          placeholder={t('Enter a proxy username')}
+          placeholder={t('Enter proxy username')}
         />
       </PageFormSecret>
       <PageFormSecret
@@ -258,7 +258,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
           type="password"
           name="proxy_password"
           label={t('Proxy password')}
-          placeholder={t('Enter a proxy password')}
+          placeholder={t('Enter proxy password')}
         />
       </PageFormSecret>
     </>
@@ -338,14 +338,14 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInpu
       <PageFormTextInput<RemoteRegistryProps>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a remote registry name')}
+        placeholder={t('Enter remote registry name')}
         isRequired
         isDisabled={disableEditName}
       />
       <PageFormTextInput<RemoteRegistryProps>
         name="url"
         label={t('URL')}
-        placeholder={t('Enter a URL')}
+        placeholder={t('Enter URL')}
         labelHelp={t('The URL of an external content source.')}
         isRequired
         validate={isValidUrl}
@@ -359,7 +359,7 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInpu
         <PageFormTextInput<RemoteRegistryProps>
           name="username"
           label={t('Username')}
-          placeholder={t('Enter a username')}
+          placeholder={t('Enter username')}
           labelHelp={t('The username to be used for authentication when syncing.')}
         />
       </PageFormSecret>
@@ -373,7 +373,7 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInpu
           type="password"
           name="password"
           label={t('Password')}
-          placeholder={t('Enter a password')}
+          placeholder={t('Enter password')}
           labelHelp={t('The password to be used for authentication when syncing.')}
         />
       </PageFormSecret>
