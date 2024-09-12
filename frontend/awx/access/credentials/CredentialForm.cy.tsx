@@ -73,7 +73,7 @@ describe('Credential form', () => {
     cy.contains('Credential type is required.').should('be.visible');
   });
   it('Should render and update the static fields', () => {
-    cy.get('input[placeholder="Enter name"]').type('Test credential name');
+    cy.get('input[placeholder="Enter credential name"]').type('Test credential name');
     cy.get('input[placeholder="Enter description"]').type('Test credential description');
     cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
     cy.selectSingleSelectOption('[data-cy="credential_type"]', 'Amazon Web Services');
