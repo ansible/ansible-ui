@@ -15,9 +15,10 @@ type Field = {
   label: string;
   value: string;
 };
+
 type ObjField = {
   label: string;
-  value: { [k: string]: string } | string[];
+  value: { [k: string]: string } | string[] | null;
 };
 
 const Section = styled(TextContent)`
@@ -57,13 +58,13 @@ export function PlatformAuthenticatorDetails() {
     if (!definition) {
       return;
     }
-    if (typeof value === 'object') {
+    if (typeof value === 'object' || value === null) {
       objFields.push({
         label: definition?.ui_field_label || definition.name,
         value,
       });
     } else {
-      const val = typeof value === 'boolean' ? (value ? 'On' : 'Off') : value;
+      const val = typeof value === 'boolean' ? (value ? t('On') : t('Off')) : value;
       fields.push({
         label: definition?.ui_field_label || definition.name,
         value: val,
@@ -84,17 +85,26 @@ export function PlatformAuthenticatorDetails() {
           </PageDetail>
         ))}
       </PageDetails>
+
       {objFields.length ? (
         <PageDetails numberOfColumns="single" disableScroll>
-          {objFields.map((field) => (
-            <PageDetailCodeEditor
-              isEmpty={!Object.keys(field.value).length && !field.value.length}
-              isArray={Array.isArray(field.value)}
-              label={field.label}
-              key={field.label}
-              value={JSON.stringify(field.value, null, 2)}
-            />
-          ))}
+          {objFields.map((field) => {
+            const isValueEmpty =
+              field.value === null ||
+              (Array.isArray(field.value) && field.value.length === 0) ||
+              (typeof field.value === 'object' &&
+                !Array.isArray(field.value) &&
+                Object.keys(field.value).length === 0);
+            return (
+              <PageDetailCodeEditor
+                isEmpty={isValueEmpty}
+                isArray={Array.isArray(field.value)}
+                label={field.label}
+                key={field.label}
+                value={!isValueEmpty ? JSON.stringify(field.value, null, 2) : ''}
+              />
+            );
+          })}
         </PageDetails>
       ) : null}
       {maps && maps.length ? (
