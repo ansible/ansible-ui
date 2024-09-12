@@ -295,14 +295,14 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
       <PageFormTextInput<IHostInput>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a name')}
+        placeholder={t('Enter host name')}
         isRequired
         maxLength={150}
       />
       <PageFormTextInput<IHostInput>
         name="description"
         label={t('Description')}
-        placeholder={t('Enter a description')}
+        placeholder={t('Enter description')}
       />
       {!props.inventory_host && props.edit_mode && (
         <PageFormTextInput<IHostInput>
