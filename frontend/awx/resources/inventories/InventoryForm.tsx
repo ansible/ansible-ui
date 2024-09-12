@@ -340,7 +340,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
       <PageFormTextInput<InventoryCreate>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter inventory name')}
         isRequired
       />
       <PageFormTextInput<InventoryCreate>
@@ -386,6 +386,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             id="update_cache_timeout"
             type="number"
             label={t(`Cache timeout (seconds)`)}
+            placeholder={t('Enter cache timeout (seconds)')}
             labelHelp={inventoryFormDetailLabels.cache_timeout}
             validate={(item) =>
               Number.parseFloat(item) >= 0
@@ -397,7 +398,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             name="verbosity"
             id="verbosity"
             label={t(`Verbosity`)}
-            placeholder={''}
+            placeholder={t('Select verbosity')}
             labelHelp={inventoryFormDetailLabels.verbosity}
             options={[
               { value: 0, label: t('0 (Normal)') },
@@ -415,6 +416,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
             name="limit"
             id="limit"
             label={t(`Limit`)}
+            placeholder={t('Enter limit')}
             labelHelp={inventoryFormDetailLabels.limit}
           />
         </>

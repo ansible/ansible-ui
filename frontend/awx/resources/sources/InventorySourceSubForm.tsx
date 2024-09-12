@@ -91,6 +91,7 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               'Regular expression where only matching host names will be imported. The filter is applied as a post-processing step after any inventory plugin filters are applied.'
             )}
             label={t('Host filter')}
+            placeholder={t('Enter host filter')}
           />
           <PageFormTextInput<InventorySourceForm>
             name="enabled_var"
@@ -98,6 +99,7 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               "Retrieve the enabled state from the given dict of host variables. The enabled variable may be specified using dot notation, e.g: 'foo.bar'"
             )}
             label={t('Enabled variable')}
+            placeholder={t('Enter enabled variable')}
           />
           <PageFormTextInput<InventorySourceForm>
             name="enabled_value"
@@ -105,8 +107,9 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               'This field is ignored unless an Enabled Variable is set. If the enabled variable matches this value, the host will be enabled on import.'
             )}
             label={t('Enabled value')}
+            placeholder={t('Enter enabled value')}
           />
-          <PageFormSection title={t('Update options')}>
+          <PageFormSection title={t('Options')}>
             <PageFormCheckbox<InventorySourceForm>
               label={t('Overwrite')}
               labelHelpTitle={t('Overwrite')}
@@ -124,7 +127,7 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               name="overwrite_vars"
             />
             <PageFormCheckbox<InventorySourceForm>
-              label={t('Update on Launch')}
+              label={t('Update on launch')}
               labelHelpTitle={t('Update on launch')}
               labelHelp={t(
                 'Each time a job runs using this inventory, refresh the inventory from the selected source before executing job tasks.'
@@ -132,12 +135,14 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               name="update_on_launch"
             />
             {isUpdateOnLaunchEnabled ? (
-              <PageFormSection title={t('Cache timeout (seconds)')}>
+              <PageFormSection title={t('Option Details')}>
                 <PageFormTextInput<InventorySourceForm>
                   name="update_cache_timeout"
-                  placeholder={t('0')}
+                  label={t('Cache timeout (seconds)')}
                   isRequired
                   type="number"
+                  min="0"
+                  placeholder={t('Enter cache timeout (seconds)')}
                 />
               </PageFormSection>
             ) : null}
