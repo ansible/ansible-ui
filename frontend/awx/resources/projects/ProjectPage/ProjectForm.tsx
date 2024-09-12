@@ -235,6 +235,7 @@ function ProjectInputs(props: { project?: Project }) {
         id="signature_validation_credential"
         name="signature_validation_credential"
         label={t('Content signature validation credential')}
+        placeholder={t('Select content signature validation credential')}
         labelHelp={t(
           'Enable content signing to verify that the content has remained secure when a project is synced. If the content has been tampered with, the job will not run.'
         )}

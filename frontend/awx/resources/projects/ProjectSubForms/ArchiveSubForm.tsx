@@ -38,6 +38,7 @@ export function ArchiveSubForm() {
         <PageFormCredentialSelect<Project>
           name="credential"
           label={t('Source control credential')}
+          placeholder={t('Select source control credential')}
           queryParams={{
             credential_type__namespace: 'scm',
           }}
