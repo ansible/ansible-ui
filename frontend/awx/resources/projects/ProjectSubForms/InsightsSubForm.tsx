@@ -14,6 +14,7 @@ export function InsightsSubForm() {
         <PageFormCredentialSelect<Project>
           name="credential"
           label={t('Insights credential')}
+          placeholder={t('Select Insights credential')}
           isRequired
           queryParams={{
             credential_type__namespace: 'insights',
