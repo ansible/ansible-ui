@@ -125,7 +125,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormTextInput<Instance>
         name="hostname"
         label={t('Host name')}
-        placeholder={t('Enter a host name')}
+        placeholder={t('Enter host name')}
         isRequired
         maxLength={150}
         isDisabled={mode === 'edit'}
@@ -141,7 +141,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         name="listener_port"
         type="number"
         label={t('Listener port')}
-        placeholder={t('Enter a listener port')}
+        placeholder={t('Enter listener port')}
         isRequired={peersFromControlNodes}
         min={0}
         max={65353}
@@ -152,7 +152,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
       <PageFormSelect<Instance>
         name="node_type"
         label={t('Instance type')}
-        placeholderText={t('Select a client type')}
+        placeholderText={t('Select client type')}
         options={[
           {
             label: t('Execution'),
@@ -170,6 +170,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         <PageFormCheckbox<Instance>
           name="enabled"
           label={t('Enable instance')}
+          labelHelpTitle={t('Enable instance')}
           labelHelp={t(
             'Set the instance enabled or disabled. If disabled, jobs will not be assigned to this instance.'
           )}
@@ -177,6 +178,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         <PageFormCheckbox<Instance>
           name="managed_by_policy"
           label={t('Managed by policy')}
+          labelHelpTitle={t('Managed by policy')}
           labelHelp={t(
             'Controls whether or not this instance is managed by policy. If enabled, the instance will be available for automatic assignment to and unassignment from instance groups based on policy rules.'
           )}
@@ -184,6 +186,7 @@ function InstanceInputs(props: { mode: 'create' | 'edit' }) {
         <PageFormCheckbox<Instance>
           name="peers_from_control_nodes"
           label={t('Peers from control nodes')}
+          labelHelpTitle={t('Peers from control nodes')}
           labelHelp={t(
             'If enabled, control nodes will peer to this instance automatically. If disabled, instance will be connected only to associated peers.'
           )}
