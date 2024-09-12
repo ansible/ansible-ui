@@ -560,7 +560,7 @@ function CredentialInputs({
       <PageFormTextInput<Credential>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter credential name')}
         isRequired
       />
       <PageFormTextInput<Credential>

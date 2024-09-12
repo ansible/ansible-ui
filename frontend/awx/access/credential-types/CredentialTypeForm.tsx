@@ -114,7 +114,7 @@ function CredentialTypeInputs() {
       <PageFormTextInput<CredentialType>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter name')}
+        placeholder={t('Enter credential type name')}
         isRequired
       />
       <PageFormTextInput<CredentialType>
