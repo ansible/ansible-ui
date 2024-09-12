@@ -257,7 +257,12 @@ function InventorySourceInputs() {
 
   return (
     <>
-      <PageFormTextInput name="name" label={t('Name')} placeholder={t('Enter name')} isRequired />
+      <PageFormTextInput
+        name="name"
+        label={t('Name')}
+        placeholder={t('Enter source name')}
+        isRequired
+      />
       <PageFormTextInput
         label={t('Description')}
         name="description"
@@ -280,7 +285,7 @@ function InventorySourceInputs() {
               }))
             : []
         }
-        placeholderText={t('Select a source')}
+        placeholderText={t('Select source')}
       />
       <InventorySourceSubForm sourceTypeValues={sourceTypeValues} />
     </>
