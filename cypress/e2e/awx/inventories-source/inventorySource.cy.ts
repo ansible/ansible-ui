@@ -128,69 +128,10 @@ describe('Inventory Sources', () => {
       cy.getByDataCy('description').should('contain', 'mock description');
       cy.getByDataCy('enabled-options').should('contain', 'Overwrite');
     });
-
-    it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page, ', () => {
-      goToSourceList(inventory.name);
-      cy.getByDataCy('create-source').click();
-      cy.verifyPageTitle('Create source');
-      cy.getByDataCy('name').type('amazon ec2 source');
-      cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
-      cy.getByDataCy('host-filter').type('/^test$/');
-      cy.getByDataCy('verbosity').type('1');
-      cy.getByDataCy('enabled-var').type('foo.bar');
-      cy.getByDataCy('enabled-value').type('test');
-      cy.getByDataCy('overwrite').check();
-      cy.getByDataCy('Submit').click();
-      cy.verifyPageTitle('amazon ec2 source');
-      cy.clickButton('Edit inventory source');
-      cy.verifyPageTitle(`Edit amazon ec2 source`);
-      cy.getByDataCy('name').clear().type('updated amazon ec2 source');
-      cy.getByDataCy('overwrite_vars').check();
-      cy.getByDataCy('Submit').click();
-      cy.location('pathname').should('match', /\/details$/);
-      cy.verifyPageTitle('updated amazon ec2 source');
-      cy.clickButton('Edit inventory source');
-      cy.location('pathname').should('match', /\/edit$/);
-      cy.verifyPageTitle(`Edit updated amazon ec2 source`);
-      cy.getByDataCy('name').clear().type('new project');
-      cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
-      cy.getByDataCy('overwrite_vars').check();
-      cy.getByDataCy('update_on_launch').check();
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.get('[data-cy="filter-input"]').click();
-      });
-      cy.get('[id="filter-input-search"]').type(project.name);
-      const projName = project.name.toLowerCase().split(' ').join('-').toString();
-      cy.get(`[id="${projName}"]`).find('input').check();
-      cy.getBy('[data-cy="checkbox-column-cell"]').click();
-      cy.clickButton('Confirm');
-      cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
-      cy.getByDataCy('Submit').click();
-      cy.location('pathname').should('match', /\/details$/);
-      cy.verifyPageTitle('new project');
-      cy.getByDataCy('name').should('contain', 'new project');
-      cy.getByDataCy('organization').should('contain', organization.name);
-      cy.getByDataCy('project').should('contain', project.name);
-      cy.getByDataCy('inventory-file').should('contain', 'Dockerfile');
-      cy.getByDataCy('verbosity').should('contain', '1 (Verbose)');
-      cy.getByDataCy('cache-timeout').should('contain', '0 seconds');
-      cy.getByDataCy('host-filter').should('contain', '/^test$/');
-      cy.getByDataCy('enabled-variable').should('contain', 'foo.bar');
-      cy.getByDataCy('enabled-value').should('contain', 'test');
-      cy.getByDataCy('enabled-options').should(
-        'contain',
-        'Overwrite' && 'Overwrite variables' && 'Update on launch'
-      );
-      cy.getByDataCy('source-variables').should('contain', '');
-      cy.getByDataCy('created').should('exist');
-      cy.getByDataCy('last-modified').should('exist');
-    });
   });
 
   describe('Inventory Source Schedules List Page', () => {
-    //https://issues.redhat.com/browse/AAP-28875
+    // https://issues.redhat.com/browse/AAP-28875
     it.skip('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
       goToSourceList(inventory.name);
       cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
@@ -350,5 +291,121 @@ describe('Inventory Sources', () => {
       });
       cy.get(`input[aria-label="Click to disable failure"]`).should('exist');
     });
+  });
+});
+
+describe('Inventory Source - Source Control Type: Amazon EC2', () => {
+  let ec2Credential: Credential;
+  let organizationEC2: Organization;
+  let inventory: Inventory;
+  let project: Project;
+  let executionEnvironment: ExecutionEnvironment;
+  const credentialName = 'E2E EC2 Credential' + randomString(5);
+  const executionEnvironmentName = 'E2E Execution Environment ' + randomString(5);
+
+  before(() => {
+    // Create organization, project, inventory, execution environment, and EC2 credential
+    cy.createAwxOrganization().then((org) => {
+      organizationEC2 = org;
+
+      cy.createAwxExecutionEnvironment({ name: executionEnvironmentName }).then((ee) => {
+        executionEnvironment = ee;
+
+        cy.createAwxInventory(organizationEC2).then((inv) => {
+          inventory = inv;
+
+          cy.createAwxProject(organizationEC2).then((proj) => {
+            project = proj;
+
+            cy.createAWXCredential({
+              name: credentialName,
+              inputs: { username: 'test', password: 'test' },
+              kind: 'aws',
+              organization: organizationEC2.id,
+              credential_type: 5,
+            }).then((credential) => {
+              ec2Credential = credential;
+            });
+          });
+        });
+      });
+    });
+  });
+
+  after(() => {
+    // Clean up resources
+    cy.deleteAwxCredential(ec2Credential, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organizationEC2, { failOnStatusCode: false });
+    cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+  });
+
+  it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page', () => {
+    cy.navigateTo('awx', 'inventories');
+    cy.verifyPageTitle('Inventories');
+    cy.filterTableBySingleSelect('name', inventory.name);
+    cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
+    cy.verifyPageTitle(inventory.name);
+    cy.clickTab(/^Sources$/, true);
+
+    cy.getByDataCy('create-source').click();
+    cy.verifyPageTitle('Create source');
+    cy.getByDataCy('name').type('amazon ec2 source');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');
+    cy.singleSelectByDataCy('credential', credentialName);
+    cy.getByDataCy('host-filter').type('/^test$/');
+    cy.getByDataCy('verbosity').type('1');
+    cy.getByDataCy('enabled-var').type('foo.bar');
+    cy.getByDataCy('enabled-value').type('test');
+    cy.getByDataCy('overwrite').check();
+    cy.getByDataCy('Submit').click();
+    cy.verifyPageTitle('amazon ec2 source');
+
+    cy.clickButton('Edit inventory source');
+    cy.verifyPageTitle(`Edit amazon ec2 source`);
+    cy.getByDataCy('name').clear().type('updated amazon ec2 source');
+    cy.getByDataCy('overwrite_vars').check();
+    cy.getByDataCy('Submit').click();
+    cy.location('pathname').should('match', /\/details$/);
+    cy.verifyPageTitle('updated amazon ec2 source');
+
+    cy.clickButton('Edit inventory source');
+    cy.location('pathname').should('match', /\/edit$/);
+    cy.verifyPageTitle(`Edit updated amazon ec2 source`);
+    cy.getByDataCy('name').clear().type('new project');
+    cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
+    cy.getByDataCy('overwrite_vars').check();
+    cy.getByDataCy('update_on_launch').check();
+    cy.getBy('button[id="project"]').click();
+    cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+    cy.getModal().within(() => {
+      cy.get('[data-cy="filter-input"]').click();
+    });
+    cy.get('[id="filter-input-search"]').type(project.name);
+    const projName = project.name.toLowerCase().split(' ').join('-').toString();
+    cy.get(`[id="${projName}"]`).find('input').check();
+    cy.getBy('[data-cy="checkbox-column-cell"]').click();
+    cy.clickButton('Confirm');
+    cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+    cy.getByDataCy('Submit').click();
+    cy.location('pathname').should('match', /\/details$/);
+    cy.verifyPageTitle('new project');
+    cy.getByDataCy('name').should('contain', 'new project');
+    cy.getByDataCy('organization').should('contain', organizationEC2.name);
+    cy.getByDataCy('project').should('contain', project.name);
+    cy.getByDataCy('inventory-file').should('contain', 'Dockerfile');
+    cy.getByDataCy('verbosity').should('contain', '1 (Verbose)');
+    cy.getByDataCy('cache-timeout').should('contain', '0 seconds');
+    cy.getByDataCy('host-filter').should('contain', '/^test$/');
+    cy.getByDataCy('enabled-variable').should('contain', 'foo.bar');
+    cy.getByDataCy('enabled-value').should('contain', 'test');
+    cy.getByDataCy('enabled-options').should(
+      'contain',
+      'Overwrite' && 'Overwrite variables' && 'Update on launch'
+    );
+    cy.getByDataCy('source-variables').should('contain', '');
+    cy.getByDataCy('created').should('exist');
+    cy.getByDataCy('last-modified').should('exist');
   });
 });

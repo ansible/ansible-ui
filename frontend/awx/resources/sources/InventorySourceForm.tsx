@@ -15,6 +15,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { useOptions } from '../../../common/crud/useOptions';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
+import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Inventory } from '../../interfaces/Inventory';
@@ -26,7 +27,6 @@ import {
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { InventorySourceSubForm } from './InventorySourceSubForm';
-import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 
 export interface SourceFields extends FieldValues {
   project: Omit<InventorySource, 'source'> & {
@@ -252,6 +252,9 @@ function InventorySourceInputs() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [source]);
+
+  const sourceTypeValues = scmTypeOptions?.map(([value]) => value) ?? [];
+
   return (
     <>
       <PageFormTextInput name="name" label={t('Name')} placeholder={t('Enter name')} isRequired />
@@ -279,7 +282,7 @@ function InventorySourceInputs() {
         }
         placeholderText={t('Select a source')}
       />
-      <InventorySourceSubForm />
+      <InventorySourceSubForm sourceTypeValues={sourceTypeValues} />
     </>
   );
 }

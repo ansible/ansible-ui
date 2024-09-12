@@ -12,7 +12,7 @@ import { InventorySourceForm } from '../../interfaces/InventorySource';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';
 
-export function InventorySourceSubForm() {
+export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues: string[] }) {
   const { t } = useTranslation();
   const isUpdateOnLaunchEnabled = useWatch<InventorySourceForm>({
     name: 'update_on_launch',
@@ -20,19 +20,8 @@ export function InventorySourceSubForm() {
   const source = useWatch<InventorySourceForm>({
     name: 'source',
   }) as string;
-  const sourceTypes = [
-    'ec2',
-    'gce',
-    'azure_rm',
-    'vmware',
-    'satellite6',
-    'openstack',
-    'rhv',
-    'controller',
-    'insights',
-    'terraform',
-    'openshift_virtualization',
-  ];
+
+  const sourceTypesThatRequiresCredentials = ['ec2'];
 
   const handleQueryParams = (source: string): QueryParams => {
     switch (source) {
@@ -59,7 +48,7 @@ export function InventorySourceSubForm() {
     <>
       <PageFormHidden
         watch="source"
-        hidden={(type: string) => !sourceTypes.includes(type) && type !== 'scm'}
+        hidden={(type: string) => !sourceTypeValues.includes(type) && type !== 'scm'}
       >
         <PageFormSection title={t('Source Details')}>
           <PageFormCredentialSelect<InventorySourceForm>
@@ -68,7 +57,7 @@ export function InventorySourceSubForm() {
             labelHelp={t(
               'Select credentials for accessing the nodes this job will be ran against. You can only select one credential of each type. For machine credentials (SSH), checking "Prompt on launch" without selecting credentials will require you to select a machine credential at run time. If you select credentials and check "Prompt on launch", the selected credential(s) become the defaults that can be updated at run time.'
             )}
-            isRequired={sourceTypes.slice(1).includes(source)}
+            isRequired={sourceTypesThatRequiresCredentials.includes(source)}
             queryParams={handleQueryParams(source)}
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
