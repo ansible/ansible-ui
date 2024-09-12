@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   PageFormDataEditor,
   PageFormSelect,
@@ -108,7 +108,6 @@ export function CreateRulebookActivation() {
 
 export function RulebookActivationInputs() {
   const { t } = useTranslation();
-  const getPageUrl = useGetPageUrl();
   const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(
     undefined
   );
@@ -214,7 +213,6 @@ export function RulebookActivationInputs() {
               }))
             : []
         }
-        footer={<Link to={getPageUrl(EdaRoute.CreateProject)}>{t('Create project')}</Link>}
         labelHelp={t('A project is a logical collection of rulebooks.')}
         labelHelpTitle={t('Project')}
       />
@@ -266,11 +264,6 @@ export function RulebookActivationInputs() {
             : []
         }
         isRequired
-        footer={
-          <Link to={getPageUrl(EdaRoute.CreateDecisionEnvironment)}>
-            Create decision environment
-          </Link>
-        }
         labelHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         labelHelpTitle={t('Decision environment')}
       />
