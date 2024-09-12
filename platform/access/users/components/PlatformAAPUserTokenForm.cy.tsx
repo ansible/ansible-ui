@@ -32,8 +32,8 @@ describe('CreateAAPUserToken', () => {
     });
     cy.get('[data-cy="page-title"]').contains('Create Token');
     cy.get('[data-cy="application-form-group"]').within(() => {
-      cy.contains('Application');
-      cy.contains('Select application');
+      cy.contains('OAuth application');
+      cy.contains('Select OAuth application');
     });
     cy.get('[data-cy="description-form-group"]').within(() => {
       cy.contains('Description');
