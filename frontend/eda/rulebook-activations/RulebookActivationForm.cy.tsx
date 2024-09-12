@@ -39,6 +39,12 @@ describe('Create rulebook activation ', () => {
         fixture: 'edaOrganizations.json',
       }
     );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/event-streams/*` },
+      {
+        fixture: 'edaEventStreams.json',
+      }
+    );
   });
 
   it('Create Rulebook Activation - Displays error message on internal server error', () => {
@@ -86,8 +92,7 @@ describe('Create rulebook activation ', () => {
     });
   });
 
-  // JRT - skipping failing test - lgalis to investigate
-  it.skip('Should use kind_in filter for credentials', () => {
+  it('Should use kind_in filter for credentials', () => {
     cy.mount(<CreateRulebookActivation />);
     cy.get('[data-cy="name"]').type('Test');
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
@@ -95,7 +100,9 @@ describe('Create rulebook activation ', () => {
     cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
-    cy.get('.pf-v5-c-input-group > .pf-v5-c-button').click();
+    cy.get(
+      '[data-cy="credential-select-form-group"] > .pf-v5-c-form__group-control > .pf-v5-c-input-group > .pf-v5-c-button'
+    ).click();
 
     cy.intercept('GET', edaAPI`/eda-credentials/`, (req) => {
       expect(req.url).to.contain('credential_type__kind__in=vault%2Ccloud');
