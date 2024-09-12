@@ -30,7 +30,7 @@ describe('CreateAAPUserToken', () => {
       cy.contains('Users');
       cy.contains('Tokens');
     });
-    cy.get('[data-cy="page-title"]').contains('Create Token');
+    cy.get('[data-cy="page-title"]').contains('Create token');
     cy.get('[data-cy="application-form-group"]').within(() => {
       cy.contains('OAuth application');
       cy.contains('Select OAuth application');
@@ -44,7 +44,7 @@ describe('CreateAAPUserToken', () => {
     });
     cy.get('[data-cy="scope-form-group"]').within(() => {
       cy.contains('Scope');
-      cy.contains('Select a scope');
+      cy.contains('Select scope');
       cy.get('button').click();
       cy.contains('Read');
       cy.contains('Write');
