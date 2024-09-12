@@ -225,21 +225,21 @@ export function RepositoryForm() {
         <PageFormTextInput<RepositoryFormProps>
           name="name"
           label={t('Name')}
-          placeholder={t('Enter a repository name')}
+          placeholder={t('Enter repository name')}
           isDisabled={isEdit}
           isRequired
         />
         <PageFormTextInput<RepositoryFormProps>
           name="description"
           label={t('Description')}
-          placeholder={t('Enter a repository description')}
+          placeholder={t('Enter description')}
         />
         <PageFormTextInput<RepositoryFormProps>
           name="retain_repo_versions"
           type="number"
           min={1}
           label={t('Retained number of versions')}
-          placeholder={t('Enter a number of versions')}
+          placeholder={t('Enter number of versions')}
         />
         <PageFormGroup
           label={t('Distributions')}
@@ -253,7 +253,7 @@ export function RepositoryForm() {
               return (
                 <PageFormCheckbox<RepositoryFormProps>
                   name="createDistribution"
-                  label={t(`Create a "${name}" distribution`)}
+                  label={t(`Create "${name}" distribution`)}
                   isDisabled={isDistributionDisabled}
                 />
               );
@@ -267,7 +267,7 @@ export function RepositoryForm() {
           labelHelp={t(
             'Pipeline adds repository labels with pre-defined meanings: None - users require permissions to modify content in this repository to upload collection. Approved - collections can be moved here on approval. Publishing directly to this repository is disabled. Staging - collections uploaded here require approval before showing up on the search page. Anyone with upload permissions for a namespace can upload collections to this repository.'
           )}
-          placeholderText={t('Select a pipeline')}
+          placeholderText={t('Select pipeline')}
           isRequired
           options={[
             { value: 'none', label: t('None') },
@@ -332,7 +332,7 @@ export function RepositoryForm() {
           label={t('Remote')}
           labelHelpTitle={t('Remote')}
           labelHelp={t('Setting a remote allows a repository to sync from elsewhere.')}
-          placeholder={t('Select a remote')}
+          placeholder={t('Select remote')}
           query={query}
           loadingPlaceholder={t('Loading remote...')}
           loadingErrorText={t('Error loading remote')}
