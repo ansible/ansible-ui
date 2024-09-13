@@ -43,6 +43,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
 import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
 import { useGetPlatformAndServiceUsers } from '../hooks/useGetPlatformAndServiceUsers';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 const ServiceAdminCheckbox = styled(PageFormCheckbox)`
   margin-bottom: 8px;
@@ -167,6 +168,11 @@ export function EditPlatformUser() {
   const getRequest = useGetRequest<PlatformItemsResponse<UserAssignment>>();
   const deleteRequest = useDeleteRequest();
 
+  const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
+    gatewayAPI`/users/${userId?.toString() ?? ''}/organizations/`
+  );
+  const organizationIds = organizationsData?.results.map((organization) => organization.id) ?? [];
+
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
       const {
@@ -252,6 +258,32 @@ export function EditPlatformUser() {
               variant: 'danger',
               title: t('Failed to disassociate organization with id: {{organizationId}}.', {
                 organizationId: removedOrganizationId,
+              }),
+              timeout: 5000,
+              children: (
+                <>
+                  {genericErrors?.map((err) => err.message)}
+                  {fieldErrors?.map((err) => err.message)}
+                </>
+              ),
+            });
+          }
+        }
+      } else if (user.is_superuser && organizationIds) {
+        for (const organizationId of organizationIds) {
+          try {
+            await postRequest(
+              gatewayAPI`/organizations/${organizationId.toString() ?? ''}/users/disassociate/`,
+              {
+                instances: [user.id],
+              }
+            );
+          } catch (error) {
+            const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: t('Failed to disassociate organization with id: {{organizationId}}.', {
+                organizationId: organizationId,
               }),
               timeout: 5000,
               children: (
