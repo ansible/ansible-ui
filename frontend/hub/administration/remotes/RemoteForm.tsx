@@ -355,7 +355,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
       <PageFormTextInput<RemoteFormProps>
         name="proxy_url"
         label={t('Proxy URL')}
-        placeholder={t('Enter a proxy URL')}
+        placeholder={t('Enter proxy URL')}
         labelHelp={t('The URL of an external proxy server.')}
         validate={isValidUrl}
       />
@@ -368,7 +368,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
         <PageFormTextInput<RemoteFormProps>
           name="proxy_username"
           label={t('Proxy username')}
-          placeholder={t('Enter a proxy username')}
+          placeholder={t('Enter proxy username')}
         />
       </PageFormSecret>
       <PageFormSecret
@@ -381,7 +381,7 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
           type="password"
           name="proxy_password"
           label={t('Proxy password')}
-          placeholder={t('Enter a proxy password')}
+          placeholder={t('Enter proxy password')}
         />
       </PageFormSecret>
     </>
@@ -487,7 +487,7 @@ function RemoteInputs({
       <PageFormTextInput<RemoteFormProps>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a remote name')}
+        placeholder={t('Enter remote name')}
         isRequired
         isDisabled={disableEditName}
       />
@@ -566,14 +566,14 @@ function RemoteInputs({
           name="token"
           type="password"
           label={t('Token')}
-          placeholder={t('Enter a token')}
+          placeholder={t('Enter token')}
           labelHelp={t('Token for authenticating to the server URL.')}
         />
       </PageFormSecret>
       <PageFormTextInput<RemoteFormProps>
         name="auth_url"
         label={t('SSO URL')}
-        placeholder={t('Enter a SSO URL')}
+        placeholder={t('Enter SSO URL')}
         labelHelp={t('Single sign on URL.')}
         validate={isValidUrl}
       />
