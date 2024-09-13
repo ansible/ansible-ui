@@ -228,25 +228,25 @@ export function RuleForm(
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
-          name={`bymonth`}
-          label={t('Months of the year')}
-          options={monthOptions}
-          labelHelpTitle={t('Months of the year')}
+          name={`bymonthday`}
+          placeholder={t('Select days of the month')}
+          options={DAYS_OF_MONTH}
+          label={t('Days of the month')}
           labelHelp={
             <>
               <div>
                 {t(
-                  'This is the bymonth field. Select the months of the year that the schedule will run.'
+                  'This is the bymonthday field. Select the numerical days of each month on which the schedule will run.'
                 )}
               </div>
               <ChipGroup>
-                <Chip disabled>{t('June')}</Chip>
-                <Chip disabled>{t('August')}</Chip>
-                <Chip disabled>{t('January')}</Chip>
+                <Chip disabled>1</Chip>
+                <Chip disabled>15</Chip>
+                <Chip disabled>28</Chip>
               </ChipGroup>
             </>
           }
-          placeholder={t('Select months of the year')}
+          labelHelpTitle={t('Days of the month')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
@@ -272,25 +272,25 @@ export function RuleForm(
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
-          name={`bymonthday`}
-          placeholder={t('Select days of the month')}
-          options={DAYS_OF_MONTH}
-          label={t('Days of the month')}
+          name={`bymonth`}
+          label={t('Months of the year')}
+          options={monthOptions}
+          labelHelpTitle={t('Months of the year')}
           labelHelp={
             <>
               <div>
                 {t(
-                  'This is the bymonthday field. Select the numerical days of each month on which the schedule will run.'
+                  'This is the bymonth field. Select the months of the year that the schedule will run.'
                 )}
               </div>
               <ChipGroup>
-                <Chip disabled>1</Chip>
-                <Chip disabled>15</Chip>
-                <Chip disabled>28</Chip>
+                <Chip disabled>{t('June')}</Chip>
+                <Chip disabled>{t('August')}</Chip>
+                <Chip disabled>{t('January')}</Chip>
               </ChipGroup>
             </>
           }
-          labelHelpTitle={t('Days of the month')}
+          placeholder={t('Select months of the year')}
           disableSortOptions
         />
         <PageFormMultiSelect<RuleFields>
