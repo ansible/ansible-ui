@@ -139,9 +139,8 @@ export function RuleForm(
           isRequired
           label={t('Frequency')}
           labelHelp={[
-            t('This is the freq field. Select how often the schedule runs.'),
             t(
-              'For example; if the frequency is yearly, and the interval is 8, the schedule will run every 8 years.'
+              'This is the freq field. Select how often the schedule runs. For example; if the frequency is yearly, and the interval is 8, the schedule will run every 8 years.'
             ),
           ]}
           options={frequencyOptions}
