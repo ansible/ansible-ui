@@ -51,7 +51,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     runCommand({
       selections: 'all',
       module: 'shell',
-      verbosity: '0-(normal)',
+      verbosity: '0',
       forks: 2,
       show_changes: true,
       become_enabled: true,

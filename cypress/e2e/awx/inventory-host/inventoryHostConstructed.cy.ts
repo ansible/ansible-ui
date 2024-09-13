@@ -58,7 +58,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     runCommand({
       selections: 'all',
       module: 'shell',
-      verbosity: '0-(normal)',
+      verbosity: '0',
       forks: 2,
       show_changes: true,
       become_enabled: true,
@@ -96,7 +96,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     runCommand({
       selections: 'all',
       module: 'shell',
-      verbosity: '0-(normal)',
+      verbosity: '0',
       forks: 2,
       show_changes: true,
       become_enabled: true,

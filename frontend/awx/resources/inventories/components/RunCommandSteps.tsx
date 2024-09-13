@@ -24,42 +24,34 @@ import { Credential } from '../../../interfaces/Credential';
 import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { useOptions } from '../../../../common/crud/useOptions';
+import { LoadingState } from '../../../../../framework/components/LoadingState';
+import { AwxError } from '../../../common/AwxError';
+import { PageSelectOption } from '../../../../../framework/PageInputs/PageSelectOption';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
   const module = useWatch<RunCommandWizard>({
     name: 'module_name',
   });
-  const moduleOptions = [
-    { label: t('command'), value: 'command' },
-    { label: t('shell'), value: 'shell' },
-    { label: t('yum'), value: 'yum' },
-    { label: t('apt'), value: 'apt' },
-    { label: t('apt_key'), value: 'apt_key' },
-    { label: t('apt_repository'), value: 'apt_repository' },
-    { label: t('apt_rpm'), value: 'apt_rpm' },
-    { label: t('service'), value: 'service' },
-    { label: t('group'), value: 'group' },
-    { label: t('user'), value: 'user' },
-    { label: t('mount'), value: 'mount' },
-    { label: t('ping'), value: 'ping' },
-    { label: t('selinux'), value: 'selinux' },
-    { label: t('setup'), value: 'setup' },
-    { label: t('win_ping'), value: 'win_ping' },
-    { label: t('win_service'), value: 'win_service' },
-    { label: t('win_updates'), value: 'win_updates' },
-    { label: t('win_group'), value: 'win_group' },
-    { label: t('win_user'), value: 'win_user' },
-  ];
+  const { data, error, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/ad_hoc_commands/`
+  );
 
-  const verbosityOptions = [
-    { label: t('0 (Normal)'), value: '0' },
-    { label: t('1 (Verbose)'), value: '1' },
-    { label: t('2 (More Verbose)'), value: '2' },
-    { label: t('3 (Debug)'), value: '3' },
-    { label: t('4 (Connection Debug)'), value: '4' },
-    { label: t('5 (WinRM Debug)'), value: '5' },
-  ];
+  if (isLoading) return <LoadingState />;
+  if (error) return <AwxError error={error} />;
+
+  const moduleOptions = data?.actions?.GET?.module_name?.choices?.map(([name, label]) => ({
+    name,
+    label,
+    value: label,
+  })) as PageSelectOption<string>[];
+  const verbosityOptions = data?.actions?.GET?.verbosity?.choices?.map(([name, label]) => ({
+    name: name.toString(),
+    label,
+    value: name,
+  })) as PageSelectOption<string>[];
 
   return (
     <PageFormSection singleColumn>
