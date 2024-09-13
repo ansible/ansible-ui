@@ -23,25 +23,30 @@ export function PlatformUserDetails() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const columns = useUsersColumns({ disableLinks: true });
-  const { data: user, isLoading } = useGetItem<PlatformUser>(gatewayAPI`/users/`, params.id);
-  const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayAPI`/users/${params.id ?? ''}/organizations/`
+  const { data: user, isLoading: isUserLoading } = useGetItem<PlatformUser>(
+    gatewayAPI`/users/`,
+    params.id
   );
-  const { data: authenticators } = useGet<PlatformItemsResponse<Authenticator>>(
-    gatewayAPI`/users/${params.id ?? ''}/authenticators/`
-  );
+  const { data: organizationsData, isLoading: isOrganizationsLoading } = useGet<
+    PlatformItemsResponse<PlatformOrganization>
+  >(gatewayAPI`/users/${params.id ?? ''}/organizations/`);
+  const { data: authenticators, isLoading: isAuthenticatorsLoading } = useGet<
+    PlatformItemsResponse<Authenticator>
+  >(gatewayAPI`/users/${params.id ?? ''}/authenticators/`);
+  const organizations = isOrganizationsLoading ? null : organizationsData;
   const readableAuthenticatorTypes = useReadableAuthenticatorTypes(authenticators?.results);
+  const isLoading = isUserLoading || isOrganizationsLoading || isAuthenticatorsLoading;
   if (isLoading) return <LoadingPage />;
 
   return (
     <PageDetails>
       <PageDetailsFromColumns columns={columns} item={user}>
         {' '}
-        {user?.is_superuser ? null : organizationsData?.results?.length ? (
-          <PageDetail label={t('Organization', { count: organizationsData.count })}>
+        {user?.is_superuser ? null : organizations?.results?.length ? (
+          <PageDetail label={t('Organization', { count: organizations.count })}>
             <LabelsCell
               numLabels={3}
-              labelsWithLinks={organizationsData?.results.map((org) => ({
+              labelsWithLinks={organizations?.results.map((org) => ({
                 name: org.name,
                 link: getPageUrl(PlatformRoute.OrganizationDetails, {
                   params: { id: org.id },
