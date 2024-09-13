@@ -74,6 +74,7 @@ export function RunCommandDetailStep() {
       />
       <PageFormSelect
         name="verbosity"
+        isRequired
         label={t('Verbosity')}
         options={verbosityOptions}
         labelHelpTitle={t('Verbosity')}

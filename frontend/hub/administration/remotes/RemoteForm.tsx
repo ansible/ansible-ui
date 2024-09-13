@@ -1,28 +1,20 @@
-import { Alert } from '@patternfly/react-core';
-import { useEffect, useMemo, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
-  PageFormCheckbox,
-  PageFormDataEditor,
   PageFormSubmitHandler,
-  PageFormTextInput,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormSecret } from '../../../../framework/PageForm/Inputs/PageFormSecret';
 import { PageFormExpandableSection } from '../../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { LoadingPage } from '../../../../framework/components/LoadingPage';
 import { useGet } from '../../../common/crud/useGet';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
-import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { pulpAPI } from '../../common/api/formatPath';
@@ -31,25 +23,24 @@ import { useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubRemote } from './Remotes';
-import { REMOTE_COMMUNITY_COLLECTIONS_URL, yamlRequirementsTemplate } from './constants';
+import {
+  CommunityRemoteyamlRequirementsTemplate,
+  REMOTE_COMMUNITY_COLLECTIONS_URL,
+  yamlRequirementsTemplate,
+} from './constants';
+import { RequirementsFile } from './components/RequirementsFile';
+import { RemoteInputs } from './components/RemoteInputs';
+import { useGetParsedInputUrl } from './hooks/useGetParsedInputUrl';
+import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs';
+import { CertificatesAdvancedRemoteInputs } from './components/CertificatesAdvancedRemoteInputs';
+import { ProxyAdvancedRemoteInputs } from './components/ProxyAdvancedRemoteInputs';
 
-interface SecretInput {
+export interface SecretInput {
   onClear?: (name: string) => void;
   shouldHideField?: (name: string) => boolean;
 }
 
-interface IRemoteInputs extends SecretInput {
-  isCommunityRemote?: boolean;
-  setIsCommunityRemote?: (isCommunityRemote: boolean) => void;
-  collection_signing?: boolean;
-  disableEditName?: boolean;
-}
-
-interface IRequirementsFile {
-  isCommunityRemote: boolean;
-}
-
-interface RemoteFormProps extends HubRemote {
+export interface RemoteFormProps extends HubRemote {
   client_key?: string | null;
   password?: string | null;
   proxy_password?: string | null;
@@ -57,7 +48,7 @@ interface RemoteFormProps extends HubRemote {
   token?: string | null;
   username?: string | null;
 }
-type AllowedHiddenFields =
+export type AllowedHiddenFields =
   | 'password'
   | 'token'
   | 'username'
@@ -65,7 +56,7 @@ type AllowedHiddenFields =
   | 'proxy_username'
   | 'proxy_password';
 
-const HiddenFields: AllowedHiddenFields[] = [
+export const HiddenFields: AllowedHiddenFields[] = [
   'client_key',
   'password',
   'proxy_password',
@@ -79,12 +70,12 @@ export function CreateRemote() {
     featureFlags: { collection_signing },
   } = useHubContext();
   const { t } = useTranslation();
-  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const { clearCacheByKey } = useClearCache();
   clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubRemote>();
+
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
     if (remote?.requirements_file === yamlRequirementsTemplate) {
@@ -128,13 +119,9 @@ export function CreateRemote() {
         }}
       >
         <>
-          <RemoteInputs
-            isCommunityRemote={isCommunityRemote}
-            setIsCommunityRemote={setIsCommunityRemote}
-            collection_signing={collection_signing}
-          />
+          <RemoteInputs isCommunityRemote={false} collection_signing={collection_signing} />
           <PageFormSection singleColumn>
-            <RequirementsFile isCommunityRemote={isCommunityRemote} />
+            <RequirementsFile isCommunityRemote={false} />
           </PageFormSection>
           <PageFormExpandableSection singleColumn>
             <ProxyAdvancedRemoteInputs />
@@ -166,7 +153,6 @@ const initialRemote: Partial<RemoteFormProps> = {
   proxy_username: null,
   token: null,
   username: null,
-
   hidden_fields: HiddenFields.map((name) => ({ name, is_set: false })),
 };
 
@@ -218,7 +204,7 @@ export function EditRemote() {
     featureFlags: { collection_signing },
   } = useHubContext();
   const [clear, setClear] = useState(false);
-  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
+  const [isCommunityRemote, setIsCommunityRemote] = useState<undefined | boolean>();
   const { resetField } = useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -226,16 +212,25 @@ export function EditRemote() {
   const name = params.id;
   const { clearCacheByKey } = useClearCache();
 
-  const { data, error, refresh } = useGet<PulpItemsResponse<RemoteFormProps>>(
+  const { data, error, refresh, isLoading } = useGet<PulpItemsResponse<HubRemote>>(
     pulpAPI`/remotes/ansible/collection/?name=${name}`
   );
+  const remote = data?.results[0];
 
   const getPageUrl = useGetPageUrl();
+  const parsedInputUrl = useGetParsedInputUrl();
 
+  useEffect(() => {
+    const url = parsedInputUrl(remote);
+    if (url) {
+      const parsedCommunityCollectionsUrl = new URL(REMOTE_COMMUNITY_COLLECTIONS_URL);
+      const isCommunityRemote = url.hostname === parsedCommunityCollectionsUrl.hostname;
+      setIsCommunityRemote(isCommunityRemote);
+    }
+  }, [parsedInputUrl, remote, setIsCommunityRemote]);
   if (error) return <HubError error={error} handleRefresh={refresh} />;
-  if (!data) return <LoadingPage breadcrumbs tabs />;
-
-  const remote = data.results[0];
+  if (!data || isLoading || isCommunityRemote === undefined)
+    return <LoadingPage breadcrumbs tabs />;
 
   const handleRefresh = () => {
     // Navigate back when remote is not found
@@ -245,7 +240,7 @@ export function EditRemote() {
   };
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (modifiedRemote) => {
-    const updatedRemote = smartUpdate(modifiedRemote, remote);
+    const updatedRemote = smartUpdate(modifiedRemote, remote!);
     if (updatedRemote?.requirements_file === yamlRequirementsTemplate) {
       delete updatedRemote.requirements_file;
     }
@@ -273,18 +268,19 @@ export function EditRemote() {
   }
 
   function updateRemoteRequirements(remoteValues: RemoteFormProps) {
-    if (remote.requirements_file === '' || remote.requirements_file === null) {
+    if (remote?.requirements_file === '' || remote?.requirements_file === null) {
       return {
         ...remoteValues,
-        requirements_file: yamlRequirementsTemplate,
+        requirements_file: isCommunityRemote
+          ? CommunityRemoteyamlRequirementsTemplate
+          : yamlRequirementsTemplate,
       };
     }
     return remoteValues;
   }
-
   const remoteDefaultValues = {
     ...initialRemote,
-    ...updateRemoteRequirements(remote),
+    ...updateRemoteRequirements(remote!),
   };
 
   const handleOnClear = (name: string) => {
@@ -328,7 +324,6 @@ export function EditRemote() {
           collection_signing={collection_signing}
           isCommunityRemote={isCommunityRemote}
           onClear={handleOnClear}
-          setIsCommunityRemote={setIsCommunityRemote}
           shouldHideField={shouldHideField}
         />{' '}
         <PageFormSection singleColumn>
@@ -344,270 +339,5 @@ export function EditRemote() {
         </PageFormExpandableSection>
       </HubPageForm>
     </PageLayout>
-  );
-}
-
-function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
-  const { t } = useTranslation();
-  const isValidUrl = useIsValidUrl();
-  return (
-    <>
-      <PageFormTextInput<RemoteFormProps>
-        name="proxy_url"
-        label={t('Proxy URL')}
-        placeholder={t('Enter proxy URL')}
-        labelHelp={t('The URL of an external proxy server.')}
-        validate={isValidUrl}
-      />
-      <PageFormSecret
-        onClear={() => {
-          onClear && onClear('proxy_username');
-        }}
-        shouldHideField={shouldHideField && shouldHideField('proxy_username')}
-      >
-        <PageFormTextInput<RemoteFormProps>
-          name="proxy_username"
-          label={t('Proxy username')}
-          placeholder={t('Enter proxy username')}
-        />
-      </PageFormSecret>
-      <PageFormSecret
-        onClear={() => {
-          onClear && onClear('proxy_password');
-        }}
-        shouldHideField={shouldHideField && shouldHideField('proxy_password')}
-      >
-        <PageFormTextInput<RemoteFormProps>
-          type="password"
-          name="proxy_password"
-          label={t('Proxy password')}
-          placeholder={t('Enter proxy password')}
-        />
-      </PageFormSecret>
-    </>
-  );
-}
-
-function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormGroup
-        label={t('TLS validation')}
-        labelHelpTitle={t('TLS validation')}
-        labelHelp={t('If selected, TLS peer validation must be performed.')}
-      >
-        <PageFormCheckbox<RemoteFormProps> name="tls_validation" />
-      </PageFormGroup>
-      <PageFormSecret
-        onClear={() => {
-          onClear && onClear('client_key');
-        }}
-        shouldHideField={shouldHideField && shouldHideField('client_key')}
-      >
-        <PageFormFileUpload
-          type="text"
-          hideDefaultPreview
-          label={t('Client key')}
-          name="client_key"
-          labelHelp={t('A PEM encoded private key used for authentication.')}
-        />
-      </PageFormSecret>
-      <PageFormFileUpload
-        type="text"
-        hideDefaultPreview
-        label={t('Client certificate')}
-        name="client_cert"
-        labelHelp={t('A PEM encoded client certificate used for authentication.')}
-      />
-      <PageFormFileUpload
-        type="text"
-        hideDefaultPreview
-        label={t('CA certificate')}
-        name="ca_cert"
-        labelHelp={t('A PEM encoded client certificate used for authentication.')}
-      />
-    </>
-  );
-}
-function MiscAdvancedRemoteInputs() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageFormTextInput<RemoteFormProps>
-        name="download_concurrency"
-        label={t('Download concurrency')}
-        type="number"
-        placeholder={t('Download concurrency')}
-        labelHelp={t('Total number of simultaneous connections.')}
-      />
-      <PageFormTextInput<RemoteFormProps>
-        name="rate_limit"
-        label={t('Rate limit')}
-        type="number"
-        placeholder={t('Rate limit')}
-        labelHelp={t('Limits total download rate in requests per second.')}
-      />
-    </>
-  );
-}
-
-function RemoteInputs({
-  disableEditName,
-  collection_signing,
-  isCommunityRemote,
-  onClear,
-  setIsCommunityRemote,
-  shouldHideField,
-}: IRemoteInputs) {
-  const { t } = useTranslation();
-  const isValidUrl = useIsValidUrl();
-  const urlInput = useWatch({ name: 'url' }) as string;
-  const signedOnlyInput = useWatch({ name: 'signed_only' }) as boolean;
-
-  const parsedInputUrl = useMemo(() => {
-    if (urlInput === '') return '';
-    try {
-      return new URL(urlInput);
-    } catch {
-      return '';
-    }
-  }, [urlInput]);
-
-  useEffect(() => {
-    if (parsedInputUrl) {
-      const parsedCommunityCollectionsUrl = new URL(REMOTE_COMMUNITY_COLLECTIONS_URL);
-      const isCommunityRemote = parsedInputUrl.hostname === parsedCommunityCollectionsUrl.hostname;
-      setIsCommunityRemote && setIsCommunityRemote(isCommunityRemote);
-    }
-  }, [parsedInputUrl, setIsCommunityRemote]);
-
-  return (
-    <>
-      <PageFormTextInput<RemoteFormProps>
-        name="name"
-        label={t('Name')}
-        placeholder={t('Enter remote name')}
-        isRequired
-        isDisabled={disableEditName}
-      />
-      <PageFormTextInput<RemoteFormProps>
-        name="url"
-        label={t('Server URL')}
-        placeholder={t('Enter server URL')}
-        labelHelp={t('The URL of an external content source.')}
-        isRequired
-        validate={isValidUrl}
-      />
-      {collection_signing ? (
-        <PageFormGroup
-          label={t('Signed collections only')}
-          labelHelp={t('Download only signed collections')}
-        >
-          <>
-            <PageFormCheckbox<RemoteFormProps> name="signed_only" />
-            {isCommunityRemote && signedOnlyInput ? (
-              <Alert
-                data-cy="signed-only-warning"
-                isInline
-                variant="warning"
-                title={t`Community content will never be synced if this setting is enabled`}
-              />
-            ) : null}
-          </>
-        </PageFormGroup>
-      ) : null}
-      <PageFormGroup
-        label={t('Sync all dependencies')}
-        labelHelpTitle={t('Sync all dependencies')}
-        labelHelp={t('Include all dependencies when syncing a collection.')}
-      >
-        <PageFormCheckbox<RemoteFormProps> name="sync_dependencies" />
-      </PageFormGroup>
-      <PageFormSecret
-        onClear={() => {
-          onClear && onClear('username');
-        }}
-        shouldHideField={shouldHideField && shouldHideField('username')}
-      >
-        <PageFormTextInput<RemoteFormProps>
-          name="username"
-          label={t('Server username')}
-          placeholder={t('Enter server username')}
-          labelHelp={t(
-            'The username to be used for authentication when syncing. This is not required when using a token.'
-          )}
-        />
-      </PageFormSecret>
-      <PageFormSecret
-        onClear={() => {
-          onClear && onClear('password');
-        }}
-        shouldHideField={shouldHideField && shouldHideField('password')}
-      >
-        <PageFormTextInput<RemoteFormProps>
-          type="password"
-          name="password"
-          label={t('Server password')}
-          placeholder={t('Enter server password')}
-          labelHelp={t(
-            'The password to be used for authentication when syncing. This is not required when using a token.'
-          )}
-        />
-      </PageFormSecret>
-
-      <PageFormSecret
-        onClear={() => {
-          onClear && onClear('token');
-        }}
-        shouldHideField={shouldHideField && shouldHideField('token')}
-      >
-        <PageFormTextInput<RemoteFormProps>
-          name="token"
-          type="password"
-          label={t('Token')}
-          placeholder={t('Enter token')}
-          labelHelp={t('Token for authenticating to the server URL.')}
-        />
-      </PageFormSecret>
-      <PageFormTextInput<RemoteFormProps>
-        name="auth_url"
-        label={t('SSO URL')}
-        placeholder={t('Enter SSO URL')}
-        labelHelp={t('Single sign on URL.')}
-        validate={isValidUrl}
-      />
-    </>
-  );
-}
-
-const TranslationLabelHelp = () => {
-  return (
-    <Trans>
-      This uses the same{' '}
-      <Link to="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html#installing-collections-with-ansible-galaxy">
-        requirements.yml{' '}
-      </Link>
-      format as the ansible - galaxy CLI with the caveat that roles are not supported and the source
-      parameter is not supported.
-    </Trans>
-  );
-};
-
-function RequirementsFile({ isCommunityRemote }: IRequirementsFile) {
-  const { t } = useTranslation();
-  const isRequired = isCommunityRemote;
-
-  return (
-    <PageFormSection singleColumn>
-      <PageFormDataEditor<RemoteFormProps>
-        name="requirements_file"
-        label={t('Requirements file')}
-        format="yaml"
-        labelHelp={TranslationLabelHelp()}
-        labelHelpTitle={t('Requirements file')}
-        isRequired={isRequired}
-      />
-    </PageFormSection>
   );
 }
