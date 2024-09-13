@@ -58,6 +58,10 @@ describe('Run command wizard', () => {
         ).as('getEE');
       }
     );
+    cy.intercept(
+      { method: 'OPTIONS', url: '/api/v2/ad_hoc_commands', hostname: 'localhost' },
+      { fixture: 'ad_hoc_commands.json' }
+    );
   });
   it('review step has correct values', () => {
     cy.mount(<InventoryRunCommand />);
