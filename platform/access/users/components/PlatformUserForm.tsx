@@ -210,58 +210,61 @@ export function EditPlatformUser() {
         }
       }
       user.is_platform_auditor = platformAuditor;
-      const { addedOrganizationIds, removedOrganizationIds } =
-        getAddedAndRemovedOrganizationIds(organizations);
-      for (const addedOrganizationId of addedOrganizationIds) {
-        try {
-          await postRequest(
-            gatewayAPI`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
-            {
-              instances: [user.id],
-            }
-          );
-        } catch (error) {
-          const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-          alertToaster.addAlert({
-            variant: 'danger',
-            title: t('Failed to associate organization with id: {{organizationId}}.', {
-              organizationId: addedOrganizationId,
-            }),
-            timeout: 5000,
-            children: (
-              <>
-                {genericErrors?.map((err) => err.message)}
-                {fieldErrors?.map((err) => err.message)}
-              </>
-            ),
-          });
+      if (!user.is_superuser) {
+        const { addedOrganizationIds, removedOrganizationIds } =
+          getAddedAndRemovedOrganizationIds(organizations);
+        for (const addedOrganizationId of addedOrganizationIds) {
+          try {
+            await postRequest(
+              gatewayAPI`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
+              {
+                instances: [user.id],
+              }
+            );
+          } catch (error) {
+            const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: t('Failed to associate organization with id: {{organizationId}}.', {
+                organizationId: addedOrganizationId,
+              }),
+              timeout: 5000,
+              children: (
+                <>
+                  {genericErrors?.map((err) => err.message)}
+                  {fieldErrors?.map((err) => err.message)}
+                </>
+              ),
+            });
+          }
+        }
+        for (const removedOrganizationId of removedOrganizationIds) {
+          try {
+            await postRequest(
+              gatewayAPI`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
+              {
+                instances: [user.id],
+              }
+            );
+          } catch (error) {
+            const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+            alertToaster.addAlert({
+              variant: 'danger',
+              title: t('Failed to disassociate organization with id: {{organizationId}}.', {
+                organizationId: removedOrganizationId,
+              }),
+              timeout: 5000,
+              children: (
+                <>
+                  {genericErrors?.map((err) => err.message)}
+                  {fieldErrors?.map((err) => err.message)}
+                </>
+              ),
+            });
+          }
         }
       }
-      for (const removedOrganizationId of removedOrganizationIds) {
-        try {
-          await postRequest(
-            gatewayAPI`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
-            {
-              instances: [user.id],
-            }
-          );
-        } catch (error) {
-          const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-          alertToaster.addAlert({
-            variant: 'danger',
-            title: t('Failed to disassociate organization with id: {{organizationId}}.', {
-              organizationId: removedOrganizationId,
-            }),
-            timeout: 5000,
-            children: (
-              <>
-                {genericErrors?.map((err) => err.message)}
-                {fieldErrors?.map((err) => err.message)}
-              </>
-            ),
-          });
-        }
-      }
+
       user.is_platform_auditor = platformAuditor;
       await patchUser(gatewayAPI`/users/${userId.toString()}/`, user);
       pageNavigate(PlatformRoute.UserDetails, { params: { id: user.id } });
