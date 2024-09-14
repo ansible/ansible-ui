@@ -171,7 +171,10 @@ export function EditPlatformUser() {
   const { data: organizationsData } = useGet<PlatformItemsResponse<PlatformOrganization>>(
     gatewayAPI`/users/${userId?.toString() ?? ''}/organizations/`
   );
-  const organizationIds = organizationsData?.results.map((organization) => organization.id) ?? [];
+  const organizationIds = useMemo(
+    () => organizationsData?.results.map((organization) => organization.id) ?? [],
+    [organizationsData]
+  );
 
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
@@ -309,6 +312,7 @@ export function EditPlatformUser() {
       getAddedAndRemovedOrganizationIds,
       getRequest,
       hubUser,
+      organizationIds,
       pageNavigate,
       patchUser,
       platformAuditorRoleData?.results,
