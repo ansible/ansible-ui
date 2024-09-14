@@ -174,6 +174,33 @@ collections:
     cy.clickButton(/^Delete remotes/);
   });
 
+  it('create a remote with empty requirements file', () => {
+    cy.navigateTo('hub', 'remotes');
+    const remoteName = generateRemoteName();
+
+    // Create a remote
+    cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
+    cy.url().should('include', Remotes.urlCreate);
+    cy.getBy('[data-cy="name"]').type(remoteName);
+    cy.getBy('[data-cy="url"]').type(Remotes.remoteURL);
+    cy.getBy('[data-cy="signed_only"]').check();
+    cy.getBy('[data-cy="sync_dependencies"]').check();
+    // Handle the requirements file field
+    cy.getBy('[data-cy="requirements-file"]').click().focused().invoke('select').clear();
+    cy.getBy('[data-cy="Submit"]').click();
+
+    // Verify URL and requirements file
+    cy.url().should('include', `remotes/${remoteName}/details`);
+    cy.get('[data-cy="label-yaml-requirements"]').should('contain', 'YAML requirements');
+    cy.get('.pf-v5-c-code-block__content').should('contain', '');
+
+    // Delete the remote
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.getBy('[data-cy="delete-remote"]').click();
+    cy.getBy('#confirm').click();
+    cy.clickButton(/^Delete remotes$/);
+  });
+
   it('has all download buttons working', () => {
     const ca_cert = 'ca_cert';
     const client_cert = 'client_cert';

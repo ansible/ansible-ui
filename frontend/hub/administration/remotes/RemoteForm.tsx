@@ -22,12 +22,12 @@ import { useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubRemote } from './Remotes';
-import { CommunityRemoteyamlRequirementsTemplate, yamlRequirementsTemplate } from './constants';
-import { RequirementsFile } from './components/RequirementsFile';
-import { RemoteInputs } from './components/RemoteInputs';
-import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs';
 import { CertificatesAdvancedRemoteInputs } from './components/CertificatesAdvancedRemoteInputs';
+import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs';
 import { ProxyAdvancedRemoteInputs } from './components/ProxyAdvancedRemoteInputs';
+import { RemoteInputs } from './components/RemoteInputs';
+import { RequirementsFile } from './components/RequirementsFile';
+import { yamlRequirementsTemplate } from './constants';
 
 export type HiddenFieldsType = { name: AllowedHiddenFields; is_set: boolean }[];
 
@@ -56,6 +56,33 @@ export const HiddenFields: AllowedHiddenFields[] = [
   'username',
 ];
 
+const compareYaml = (firstYaml: string, secondYaml: string) => {
+  const processYaml = (content: string): string[] => {
+    return (
+      content
+        .split('\n')
+        .map((line) => line.trim())
+        // Remove empty lines and comments
+        .filter((line) => !line.startsWith('#') && line !== '' && line !== '---')
+    );
+  };
+
+  const firstProcessedYaml = processYaml(firstYaml);
+  const secondProcessedYaml = processYaml(secondYaml);
+
+  if (firstProcessedYaml.length !== firstProcessedYaml.length) {
+    return false;
+  }
+
+  for (let i = 0; i < firstProcessedYaml.length; i++) {
+    if (firstProcessedYaml[i] !== secondProcessedYaml[i]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 export function CreateRemote() {
   const {
     featureFlags: { collection_signing },
@@ -70,7 +97,7 @@ export function CreateRemote() {
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
-    if (remote?.requirements_file === yamlRequirementsTemplate) {
+    if (compareYaml(remote?.requirements_file ?? '', yamlRequirementsTemplate)) {
       delete remote.requirements_file;
     }
     if (remote?.proxy_username === '') {
@@ -241,9 +268,15 @@ export function EditRemote() {
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (modifiedRemote) => {
     const updatedRemote = smartUpdate(modifiedRemote, remote!);
-    if (updatedRemote?.requirements_file === yamlRequirementsTemplate) {
+
+    // If requirements_file is an empty string, set it to null
+    if (updatedRemote.requirements_file === '') {
+      updatedRemote.requirements_file = null;
+    } else if (compareYaml(updatedRemote.requirements_file ?? '', yamlRequirementsTemplate)) {
+      // If it matches the default template, delete the field
       delete updatedRemote.requirements_file;
     }
+
     await hubAPIPut<RemoteFormProps>(
       pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href)}/`,
       updatedRemote
@@ -271,9 +304,7 @@ export function EditRemote() {
     if (remote?.requirements_file === '' || remote?.requirements_file === null) {
       return {
         ...remoteValues,
-        requirements_file: isCommunityRemote
-          ? CommunityRemoteyamlRequirementsTemplate
-          : yamlRequirementsTemplate,
+        requirements_file: yamlRequirementsTemplate,
       };
     }
     return remoteValues;
