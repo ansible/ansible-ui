@@ -3,10 +3,12 @@ import useSWR from 'swr';
 import { requestGet } from '../../common/crud/Data';
 import { Config } from '../interfaces/Config';
 import { awxAPI } from './api/awx-utils';
+import { RequestError } from '../../common/crud/RequestError';
 
 const AwxConfigContext = createContext<{
   awxConfig?: Config | null | undefined;
   awxConfigError?: Error;
+  serviceDown?: boolean;
   refreshAwxConfig?: () => void;
 }>({});
 
@@ -36,13 +38,22 @@ export function AwxConfigProvider(props: { children: ReactNode; disabled?: boole
 
 export function AwxConfigProviderInternal(props: { children?: ReactNode }) {
   const response = useSWR<Config>(awxAPI`/config/`, requestGet);
+  let serviceDown = false;
+  if (
+    response.error instanceof RequestError &&
+    response.error.statusCode >= 400 &&
+    response.error.statusCode < 500
+  ) {
+    serviceDown = true;
+  }
   const value = useMemo(
     () => ({
       awxConfig: response.data,
       awxConfigError: response.error as Error,
+      serviceDown,
       refreshAwxConfig: () => response.mutate(undefined),
     }),
-    [response]
+    [response, serviceDown]
   );
   return <AwxConfigContext.Provider value={value}>{props.children}</AwxConfigContext.Provider>;
 }

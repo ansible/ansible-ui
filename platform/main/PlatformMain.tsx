@@ -75,7 +75,7 @@ export function PlatformMainInternal() {
     platformVersion = '2.5';
   }
 
-  const hasAwx = useHasAwxService();
+  const hasAwx = useHasAwxService(true);
   const hasHub = useHasHubService();
   const hasEda = useHasEdaService();
 

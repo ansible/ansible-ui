@@ -9,9 +9,9 @@ import { useHasAwxService } from './GatewayServices';
 
 export function PlatformSubscription(props: { children: ReactNode }) {
   const { t } = useTranslation();
-  const { awxConfig, awxConfigError, refreshAwxConfig } = useAwxConfigState();
+  const { awxConfig, awxConfigError, serviceDown, refreshAwxConfig } = useAwxConfigState();
 
-  const hasAwxService = useHasAwxService();
+  const hasAwxService = useHasAwxService(true);
 
   if (hasAwxService === undefined) {
     return (
@@ -21,8 +21,8 @@ export function PlatformSubscription(props: { children: ReactNode }) {
     );
   }
 
-  if (hasAwxService) {
-    if (awxConfig === undefined) {
+  if (hasAwxService && !serviceDown) {
+    if (awxConfig === undefined && !awxConfigError) {
       return (
         <Page>
           <LoadingState />
@@ -31,7 +31,11 @@ export function PlatformSubscription(props: { children: ReactNode }) {
     }
 
     if (awxConfigError) {
-      return <AwxError error={awxConfigError} handleRefresh={refreshAwxConfig} />;
+      return (
+        <Page>
+          <AwxError error={awxConfigError} handleRefresh={refreshAwxConfig} />
+        </Page>
+      );
     }
 
     if (!awxConfig) {

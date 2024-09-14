@@ -6,6 +6,7 @@ import { setAwxApiPath } from '../../frontend/awx/common/api/awx-utils';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { setEdaApiPath } from '../../frontend/eda/common/eda-utils';
 import { setHubApiPath } from '../../frontend/hub/common/api/formatPath';
+import { useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 
 interface GatewayServices {
   gateway?: string;
@@ -89,10 +90,15 @@ export function useGatewayService(serviceType?: 'gateway' | 'controller' | 'eda'
   }
 }
 
-export function useHasAwxService() {
+export function useHasAwxService(ignoreServiceDown = false) {
   const gateway = useGatewayService('gateway');
   const awxService = useGatewayService('controller');
+  const { serviceDown } = useAwxConfigState();
+
   if (gateway === undefined) return undefined;
+  if (!ignoreServiceDown && serviceDown) {
+    return undefined;
+  }
   return awxService !== undefined;
 }
 
