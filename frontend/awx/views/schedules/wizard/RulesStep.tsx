@@ -8,8 +8,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useFormContext } from 'react-hook-form';
 import { RuleListItemType, ScheduleFormWizard } from '../types';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { DateTime } from 'luxon';
-import { RRule, datetime } from 'rrule';
+import { useUpdateRules } from '../hooks/useUpdateRules';
 
 export function RulesStep() {
   const { t } = useTranslation();
@@ -17,32 +16,14 @@ export function RulesStep() {
   const { setValue, getValues } = useFormContext();
   const { wizardData } = usePageWizard();
 
+  const updateRules = useUpdateRules();
   const { timezone } = wizardData as ScheduleFormWizard;
   const rules = getValues('rules') as RuleListItemType[];
   const hasRules = rules?.length > 0;
   useEffect(() => {
-    const {
-      timezone,
-      startDateTime: { date, time },
-    } = wizardData as ScheduleFormWizard;
-
-    const [startHour, startMinute] = time.split(':');
-    const isStartPM = time.includes('PM');
-    const start = DateTime.fromISO(`${date}`).set({
-      hour: isStartPM ? parseInt(startHour, 10) + 12 : parseInt(`${startHour}`, 10),
-      minute: parseInt(startMinute, 10),
-    });
-    const { year, month, day, hour, minute } = start;
-    const updatedRules = (rules || []).map(({ rule, id }) => {
-      const newRule = RRule.optionsToString({
-        ...RRule.fromString(rule).origOptions,
-        tzid: timezone,
-        dtstart: datetime(year, month, day, hour, minute),
-      });
-      return { rule: newRule, id };
-    });
+    const updatedRules = updateRules(rules);
     setValue('rules', updatedRules);
-  }, [rules, wizardData, setValue]);
+  }, [rules, setValue, updateRules]);
   return (
     <PageFormSection singleColumn>
       {!isOpen && hasRules && (
