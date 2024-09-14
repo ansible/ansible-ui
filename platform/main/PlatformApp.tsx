@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import { PageApp } from '../../framework';
-import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
+import { useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 import { postRequest, requestGet } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformMasthead } from './PlatformMasthead';
@@ -69,7 +69,7 @@ export function PlatformApp() {
     void debouceRefreshSession();
   }, [location.pathname, debouceRefreshSession]);
 
-  const awxConfig = useAwxConfig();
+  const { awxConfig, serviceDown } = useAwxConfigState();
   const subscriptionBanner = useMemo(() => {
     if (!awxConfig || !awxConfig.license_info) return null;
     if (!awxConfig.license_info.compliant) {
@@ -104,6 +104,17 @@ export function PlatformApp() {
     return null;
   }, [awxConfig]);
 
+  const controllerDownBanner = useMemo(() => {
+    if (serviceDown) {
+      return (
+        <Banner data-cy="controller-down-banner" variant="red">
+          {t('Error connecting to Controller API')}
+        </Banner>
+      );
+    }
+    return null;
+  }, [serviceDown]);
+
   return (
     <PageApp
       masthead={<PlatformMasthead />}
@@ -112,6 +123,7 @@ export function PlatformApp() {
       defaultRefreshInterval={10}
       banner={
         <>
+          {controllerDownBanner}
           {subscriptionBanner}
           {sessionBanner}
         </>
