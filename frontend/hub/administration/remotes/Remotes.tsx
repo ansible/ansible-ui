@@ -21,7 +21,7 @@ export interface HubRemote {
   pulp_href: string;
   pulp_created: string;
   rate_limit: number | null;
-  requirements_file?: string;
+  requirements_file?: string | null;
   tls_validation: boolean;
   url: string;
   signed_only: boolean;
