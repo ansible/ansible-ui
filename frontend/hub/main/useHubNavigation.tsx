@@ -550,6 +550,12 @@ export function useHubNavigation() {
       ],
     },
     {
+      id: HubRoute.APIToken,
+      label: t('API Token'),
+      path: 'api-token',
+      element: <Token />,
+    },
+    {
       id: HubRoute.Access,
       label: t('Access Management'),
       path: 'access',
