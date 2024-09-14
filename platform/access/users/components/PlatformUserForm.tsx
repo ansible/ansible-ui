@@ -454,11 +454,11 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
         </PageFormGroup>
       </PageFormSection>
 
-      {!isPlatformAdmin ? (
-        <PageFormSection singleColumn>
+      <PageFormSection singleColumn>
+        <div style={{ visibility: isPlatformAdmin ? 'hidden' : 'visible' }}>
           <PageFormPlatformOrganizationsSelect name="organizations" />
-        </PageFormSection>
-      ) : null}
+        </div>
+      </PageFormSection>
     </>
   );
 }
