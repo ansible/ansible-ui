@@ -8,8 +8,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useFormContext } from 'react-hook-form';
 import { RuleListItemType, ScheduleFormWizard } from '../types';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { DateTime } from 'luxon';
-import { RRule, datetime } from 'rrule';
+import { useUpdateRules } from '../hooks/useUpdateRules';
 
 export function ExceptionsStep() {
   const { t } = useTranslation();
@@ -17,33 +16,15 @@ export function ExceptionsStep() {
   const { getValues, setValue } = useFormContext();
   const exceptions = getValues('exceptions') as RuleListItemType[];
   const hasExceptions = exceptions?.length > 0;
-  const { setStepData, wizardData } = usePageWizard();
+  const { wizardData } = usePageWizard();
+  const updateRules = useUpdateRules();
   const { rules, timezone } = wizardData as ScheduleFormWizard;
 
   useEffect(() => {
     setValue('rules', rules);
-    const {
-      startDateTime: { date, time },
-    } = wizardData as ScheduleFormWizard;
-
-    const [startHour, startMinute] = time.split(':');
-    const isStartPM = time.includes('PM');
-    const start = DateTime.fromISO(`${date}`).set({
-      hour: isStartPM ? parseInt(startHour, 10) + 12 : parseInt(`${startHour}`, 10),
-      minute: parseInt(startMinute, 10),
-    });
-    const { year, month, day, hour, minute } = start;
-    const updatedExceptions = (exceptions || []).map(({ rule, id }) => {
-      const newRule = RRule.optionsToString({
-        ...RRule.fromString(rule).origOptions,
-        tzid: timezone,
-        dtstart: datetime(year, month, day, hour, minute),
-      });
-      return { rule: newRule, id };
-    });
-
+    const updatedExceptions = updateRules(exceptions);
     setValue('exceptions', updatedExceptions);
-  }, [setStepData, setValue, exceptions, timezone, rules, wizardData]);
+  }, [updateRules, setValue, exceptions, rules]);
 
   return (
     <PageFormSection singleColumn>
