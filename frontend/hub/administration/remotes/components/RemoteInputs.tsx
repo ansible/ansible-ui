@@ -1,14 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { useIsValidUrl } from '../../../../common/validation/useIsValidUrl';
-import { useWatch } from 'react-hook-form';
-import { RemoteFormProps, SecretInput } from '../RemoteForm';
+import { useWatch, useFormContext, useForm } from 'react-hook-form';
+import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
 import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
 import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { Alert } from '@patternfly/react-core';
 import { PageFormSecret } from '../../../../../framework/PageForm/Inputs/PageFormSecret';
+import { useEffect, useMemo, useState } from 'react';
+import { REMOTE_COMMUNITY_COLLECTIONS_URL } from '../constants';
 
-interface IRemoteInputs extends SecretInput {
+interface IRemoteInputs {
   isCommunityRemote?: boolean;
+  setIsCommunityRemote?: (isCommunityRemote: boolean) => void;
   collection_signing?: boolean;
   disableEditName?: boolean;
 }
@@ -16,12 +19,53 @@ export function RemoteInputs({
   disableEditName,
   collection_signing,
   isCommunityRemote,
-  onClear,
-  shouldHideField,
+  setIsCommunityRemote,
 }: IRemoteInputs) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
+  const [clear, setClear] = useState(false);
   const signedOnlyInput = useWatch({ name: 'signed_only' }) as boolean;
+  const urlInput = useWatch({ name: 'url' }) as string;
+  const { getValues, setValue } = useFormContext();
+  const { resetField } = useForm();
+
+  const parsedInputUrl = useMemo(() => {
+    if (urlInput === '') return '';
+    try {
+      return new URL(urlInput);
+    } catch {
+      return '';
+    }
+  }, [urlInput]);
+
+  useEffect(() => {
+    if (parsedInputUrl) {
+      const parsedCommunityCollectionsUrl = new URL(REMOTE_COMMUNITY_COLLECTIONS_URL);
+      const isCommunityRemote = parsedInputUrl.hostname === parsedCommunityCollectionsUrl.hostname;
+      setIsCommunityRemote && setIsCommunityRemote(isCommunityRemote);
+    }
+  }, [parsedInputUrl, setIsCommunityRemote]);
+
+  const handleOnClear = (name: string) => {
+    resetField(name, { defaultValue: null });
+    setClear(!clear);
+    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
+
+    if (!hiddenFields) return;
+    const index = hiddenFields.findIndex((field) => field.name === name);
+    if (index !== undefined && index > -1) {
+      hiddenFields[index].is_set = false;
+      setValue('hidden_fields', hiddenFields);
+    }
+  };
+
+  const shouldHideField = (name: string) => {
+    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
+    if (!hiddenFields) {
+      return false;
+    }
+    return !!hiddenFields.find((field) => field.name === name)?.is_set;
+  };
 
   return (
     <>
@@ -67,7 +111,7 @@ export function RemoteInputs({
       </PageFormGroup>
       <PageFormSecret
         onClear={() => {
-          onClear && onClear('username');
+          handleOnClear('username');
         }}
         shouldHideField={shouldHideField && shouldHideField('username')}
       >
@@ -82,7 +126,7 @@ export function RemoteInputs({
       </PageFormSecret>
       <PageFormSecret
         onClear={() => {
-          onClear && onClear('password');
+          handleOnClear('password');
         }}
         shouldHideField={shouldHideField && shouldHideField('password')}
       >
@@ -99,7 +143,7 @@ export function RemoteInputs({
 
       <PageFormSecret
         onClear={() => {
-          onClear && onClear('token');
+          handleOnClear('token');
         }}
         shouldHideField={shouldHideField && shouldHideField('token')}
       >

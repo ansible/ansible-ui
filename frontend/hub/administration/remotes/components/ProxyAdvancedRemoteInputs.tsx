@@ -1,12 +1,37 @@
 import { useTranslation } from 'react-i18next';
-import { RemoteFormProps, SecretInput } from '../RemoteForm';
+import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
 import { useIsValidUrl } from '../../../../common/validation/useIsValidUrl';
 import { PageFormTextInput } from '../../../../../framework';
 import { PageFormSecret } from '../../../../../framework/PageForm/Inputs/PageFormSecret';
+import { useFormContext } from 'react-hook-form';
+import { useState } from 'react';
 
-export function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
+export function ProxyAdvancedRemoteInputs() {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
+  const [clear, setClear] = useState(false);
+  const { resetField, getValues, setValue } = useFormContext();
+
+  const handleOnClear = (name: string) => {
+    resetField(name);
+    setClear(!clear);
+    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
+
+    if (!hiddenFields) return;
+    const index = hiddenFields.findIndex((field) => field.name === name);
+    if (index !== undefined && index > -1) {
+      hiddenFields[index].is_set = false;
+      setValue('hidden_fields', hiddenFields);
+    }
+  };
+
+  const shouldHideField = (name: string) => {
+    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
+    if (!hiddenFields) {
+      return false;
+    }
+    return !!hiddenFields.find((field) => field.name === name)?.is_set;
+  };
   return (
     <>
       <PageFormTextInput<RemoteFormProps>
@@ -18,7 +43,7 @@ export function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretIn
       />
       <PageFormSecret
         onClear={() => {
-          onClear && onClear('proxy_username');
+          handleOnClear('proxy_username');
         }}
         shouldHideField={shouldHideField && shouldHideField('proxy_username')}
       >
@@ -30,7 +55,7 @@ export function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretIn
       </PageFormSecret>
       <PageFormSecret
         onClear={() => {
-          onClear && onClear('proxy_password');
+          handleOnClear('proxy_password');
         }}
         shouldHideField={shouldHideField && shouldHideField('proxy_password')}
       >

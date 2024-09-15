@@ -44,13 +44,24 @@ interface RemoteRegistryProps extends RemoteRegistry {
   proxy_username?: string | null;
   username?: string | null;
 }
-const WriteOnlyFields: (
+type AllowedWriteOnlyFields =
   | 'client_key'
   | 'password'
   | 'proxy_password'
   | 'proxy_username'
-  | 'username'
-)[] = ['client_key', 'password', 'proxy_password', 'proxy_username', 'username'];
+  | 'username';
+const WriteOnlyFields: AllowedWriteOnlyFields[] = [
+  'client_key',
+  'password',
+  'proxy_password',
+  'proxy_username',
+  'username',
+];
+type RemoteRegistryPropsKey = keyof RemoteRegistryProps;
+
+function isWriteOnlyField(key: keyof RemoteRegistryProps): key is AllowedWriteOnlyFields {
+  return WriteOnlyFields.includes(key as AllowedWriteOnlyFields);
+}
 
 export function CreateRemoteRegistry() {
   const { t } = useTranslation();
@@ -116,6 +127,46 @@ const initialRemoteRegistry: Partial<RemoteRegistryProps> = {
   })),
 };
 
+function smartUpdate(
+  modifiedRemoteRegistry: RemoteRegistryProps,
+  unmodifiedRemoteRegistry: RemoteRegistryProps
+) {
+  /**
+   * When a field is clear ('' or null):
+   * - If it has been explicitly cleared in the edit, record the null or '' value in the response
+   * - If it was unchanged, delete it from the response
+   */
+  Object.keys(modifiedRemoteRegistry).forEach((key) => {
+    const propKey = key as RemoteRegistryPropsKey;
+
+    if (modifiedRemoteRegistry[propKey] === '' || modifiedRemoteRegistry[propKey] === null) {
+      if (isWriteOnlyField(propKey)) {
+        if (
+          unmodifiedRemoteRegistry?.write_only_fields?.find((field) => field.name === propKey)
+            ?.is_set ===
+          modifiedRemoteRegistry?.write_only_fields?.find((field) => field.name === propKey)?.is_set
+        ) {
+          delete modifiedRemoteRegistry[propKey];
+        } else {
+          modifiedRemoteRegistry[propKey] = null;
+        }
+      } else {
+        if (
+          unmodifiedRemoteRegistry[propKey] === '' ||
+          unmodifiedRemoteRegistry[propKey] === null
+        ) {
+          delete modifiedRemoteRegistry[propKey];
+        } else if (modifiedRemoteRegistry[propKey] === '') {
+          // @ts-expect-error Unable to override error Type 'null' is not assignable to type 'never'.
+          modifiedRemoteRegistry[propKey] = null;
+        }
+      }
+    }
+  });
+
+  return modifiedRemoteRegistry;
+}
+
 export function EditRemoteRegistry() {
   const [clear, setClear] = useState(false);
   const { resetField } = useForm();
@@ -155,11 +206,12 @@ export function EditRemoteRegistry() {
     );
   }
 
-  const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remoteRegistry) => {
-    const remoteRegistryId = parsePulpIDFromURL(remoteRegistry.pulp_href) as string;
+  const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (modifiedRemoteRegistry) => {
+    smartUpdate(modifiedRemoteRegistry, remoteRegistry);
+    const remoteRegistryId = parsePulpIDFromURL(modifiedRemoteRegistry.pulp_href) as string;
     await hubAPIPut<RemoteRegistryProps>(
       hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
-      remoteRegistry
+      modifiedRemoteRegistry
     );
 
     clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);

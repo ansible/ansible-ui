@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -23,22 +22,14 @@ import { useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubRemote } from './Remotes';
-import {
-  CommunityRemoteyamlRequirementsTemplate,
-  REMOTE_COMMUNITY_COLLECTIONS_URL,
-  yamlRequirementsTemplate,
-} from './constants';
+import { CommunityRemoteyamlRequirementsTemplate, yamlRequirementsTemplate } from './constants';
 import { RequirementsFile } from './components/RequirementsFile';
 import { RemoteInputs } from './components/RemoteInputs';
-import { useGetParsedInputUrl } from './hooks/useGetParsedInputUrl';
 import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs';
 import { CertificatesAdvancedRemoteInputs } from './components/CertificatesAdvancedRemoteInputs';
 import { ProxyAdvancedRemoteInputs } from './components/ProxyAdvancedRemoteInputs';
 
-export interface SecretInput {
-  onClear?: (name: string) => void;
-  shouldHideField?: (name: string) => boolean;
-}
+export type HiddenFieldsType = { name: AllowedHiddenFields; is_set: boolean }[];
 
 export interface RemoteFormProps extends HubRemote {
   client_key?: string | null;
@@ -75,6 +66,7 @@ export function CreateRemote() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubRemote>();
+  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
@@ -119,7 +111,11 @@ export function CreateRemote() {
         }}
       >
         <>
-          <RemoteInputs isCommunityRemote={false} collection_signing={collection_signing} />
+          <RemoteInputs
+            isCommunityRemote={isCommunityRemote}
+            collection_signing={collection_signing}
+            setIsCommunityRemote={setIsCommunityRemote}
+          />
           <PageFormSection singleColumn>
             <RequirementsFile isCommunityRemote={false} />
           </PageFormSection>
@@ -156,30 +152,45 @@ const initialRemote: Partial<RemoteFormProps> = {
   hidden_fields: HiddenFields.map((name) => ({ name, is_set: false })),
 };
 
-function isAllowedHiddenField(key: keyof RemoteFormProps): key is AllowedHiddenFields {
-  return !HiddenFields.includes(key as AllowedHiddenFields);
+function isHiddenField(key: keyof RemoteFormProps): key is AllowedHiddenFields {
+  return HiddenFields.includes(key as AllowedHiddenFields);
 }
 
 type RemoteFormPropsKey = keyof RemoteFormProps;
 function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFormProps) {
   // Adapted from https://github.com/ansible/ansible-hub-ui/blob/625157662113cd68c3b121508fa8f64613339a71/src/api/ansible-remote.ts#L5
-  if (modifiedRemote.hidden_fields) {
-    delete modifiedRemote.hidden_fields;
-  }
-
   if (modifiedRemote.my_permissions) {
     delete modifiedRemote.my_permissions;
   }
 
+  /**
+   * When a field is clear ('' or null):
+   * - If it has been explicitly cleared in the edit, record the null or '' value in the response
+   * - If it was unchanged, delete it from the response
+   */
   Object.keys(modifiedRemote).forEach((key) => {
     const propKey = key as RemoteFormPropsKey;
-    if (isAllowedHiddenField(propKey)) {
-      if (modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null) {
-        delete modifiedRemote[propKey];
+
+    if (modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null) {
+      if (isHiddenField(propKey)) {
+        if (
+          unmodifiedRemote?.hidden_fields?.find((field) => field.name === propKey)?.is_set ===
+          modifiedRemote?.hidden_fields?.find((field) => field.name === propKey)?.is_set
+        ) {
+          delete modifiedRemote[propKey];
+        } else {
+          modifiedRemote[propKey] = null;
+        }
+      } else {
+        if (unmodifiedRemote[propKey] === '' || unmodifiedRemote[propKey] === null) {
+          delete modifiedRemote[propKey];
+        } else if (modifiedRemote[propKey] === '') {
+          // @ts-expect-error Unable to override error Type 'null' is not assignable to type 'never'.
+          modifiedRemote[propKey] = null;
+        }
       }
     }
   });
-
   // Pulp complains if auth_url gets sent with a request that doesn't include a
   // valid token, even if the token exists in the database and isn't being changed.
   // To solve this issue, simply delete auth_url from the request if it hasn't
@@ -189,7 +200,7 @@ function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFo
   }
   const keys = Object.keys(modifiedRemote) as RemoteFormPropsKey[];
   for (const field of keys) {
-    if (isAllowedHiddenField(field)) {
+    if (!isHiddenField(field)) {
       if (modifiedRemote[field] === null && unmodifiedRemote[field] === null) {
         // API returns headers:null but doesn't accept it .. and we don't edit headers
         delete modifiedRemote[field];
@@ -203,9 +214,7 @@ export function EditRemote() {
   const {
     featureFlags: { collection_signing },
   } = useHubContext();
-  const [clear, setClear] = useState(false);
-  const [isCommunityRemote, setIsCommunityRemote] = useState<undefined | boolean>();
-  const { resetField } = useForm();
+  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
@@ -218,16 +227,7 @@ export function EditRemote() {
   const remote = data?.results[0];
 
   const getPageUrl = useGetPageUrl();
-  const parsedInputUrl = useGetParsedInputUrl();
 
-  useEffect(() => {
-    const url = parsedInputUrl(remote);
-    if (url) {
-      const parsedCommunityCollectionsUrl = new URL(REMOTE_COMMUNITY_COLLECTIONS_URL);
-      const isCommunityRemote = url.hostname === parsedCommunityCollectionsUrl.hostname;
-      setIsCommunityRemote(isCommunityRemote);
-    }
-  }, [parsedInputUrl, remote, setIsCommunityRemote]);
   if (error) return <HubError error={error} handleRefresh={refresh} />;
   if (!data || isLoading || isCommunityRemote === undefined)
     return <LoadingPage breadcrumbs tabs />;
@@ -283,23 +283,6 @@ export function EditRemote() {
     ...updateRemoteRequirements(remote!),
   };
 
-  const handleOnClear = (name: string) => {
-    resetField(name);
-    setClear(!clear);
-    if (!remoteDefaultValues.hidden_fields) return;
-    const index = remoteDefaultValues.hidden_fields?.findIndex((field) => field.name === name);
-    if (index !== undefined && index > -1) {
-      remoteDefaultValues.hidden_fields[index].is_set = false;
-    }
-  };
-
-  const shouldHideField = (name: string) => {
-    if (!remoteDefaultValues.hidden_fields) {
-      return false;
-    }
-    return !!remoteDefaultValues.hidden_fields.find((field) => field.name === name)?.is_set;
-  };
-
   return (
     <PageLayout>
       <PageHeader
@@ -323,18 +306,14 @@ export function EditRemote() {
           disableEditName
           collection_signing={collection_signing}
           isCommunityRemote={isCommunityRemote}
-          onClear={handleOnClear}
-          shouldHideField={shouldHideField}
+          setIsCommunityRemote={setIsCommunityRemote}
         />{' '}
         <PageFormSection singleColumn>
           <RequirementsFile isCommunityRemote={isCommunityRemote} />
         </PageFormSection>
         <PageFormExpandableSection singleColumn>
-          <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
-          <CertificatesAdvancedRemoteInputs
-            onClear={handleOnClear}
-            shouldHideField={shouldHideField}
-          />
+          <ProxyAdvancedRemoteInputs />
+          <CertificatesAdvancedRemoteInputs />
           <MiscAdvancedRemoteInputs />
         </PageFormExpandableSection>
       </HubPageForm>
