@@ -150,8 +150,7 @@ collections:
       .clear()
       .type(communityCollection);
     cy.clickButton(/^Save remote$/);
-    cy.clickButton(/^Clear all filters$/);
-    cy.contains(remoteName).click();
+    cy.url().should('include', `remotes/${remoteName}/details`);
     cy.getBy('[data-cy="yaml-requirements"]');
     cy.getBy('[data-cy="code-block-value"]').should('contain', Remotes.communityGeneral);
     cy.url().should('include', `remotes/${remoteName}/details`);
