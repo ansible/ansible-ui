@@ -64,7 +64,7 @@ export function PageFormCheckbox<
               aria-label={props.label}
               className={props.className}
               label={
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'inline-flex' }}>
                   <div>
                     {props.label}
                     {props.labelHelp && (
