@@ -71,8 +71,7 @@ export function useOrganizationRowActions(
   const rowActions = useMemo<IPageAction<PlatformOrganization>[]>(() => {
     const cannotDeleteOrganization = (organization: PlatformOrganization) =>
       organization.managed ? t(`System managed organizations cannot be deleted.`) : '';
-    const cannotEditOrganization = (organization: PlatformOrganization) =>
-      organization.managed ? t(`System managed organizations cannot be edited.`) : '';
+
     return [
       {
         type: PageActionType.Button,
@@ -80,7 +79,6 @@ export function useOrganizationRowActions(
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit organization'),
-        isDisabled: cannotEditOrganization,
         onClick: (organization: PlatformOrganization) =>
           pageNavigate(PlatformRoute.EditOrganization, { params: { id: organization.id } }),
       },
@@ -122,12 +120,6 @@ export function useOrganizationPageActions(
           ? t(`System managed organizations cannot be deleted.`)
           : ''
         : t(`The organization cannot be deleted due to insufficient permissions.`);
-    const cannotEditOrganization = (organization: PlatformOrganization) =>
-      canEditOrganization
-        ? organization.managed
-          ? t(`System managed organizations cannot be edited.`)
-          : ''
-        : t(`The organization cannot be edited due to insufficient permissions.`);
 
     return [
       {
@@ -137,7 +129,6 @@ export function useOrganizationPageActions(
         icon: PencilAltIcon,
         variant: ButtonVariant.primary,
         label: t('Edit organization'),
-        isDisabled: cannotEditOrganization,
         onClick: (organization: PlatformOrganization) =>
           pageNavigate(PlatformRoute.EditOrganization, { params: { id: organization.id } }),
       },

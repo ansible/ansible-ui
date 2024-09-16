@@ -11,6 +11,7 @@ import { useHasAwxService } from '../../../../main/GatewayServices';
 
 export function OrganizationDetailsStep(props: {
   controllerOrganization?: ControllerOrganization;
+  managed: boolean;
 }) {
   const { t } = useTranslation();
   const awxService = useHasAwxService();
@@ -26,6 +27,7 @@ export function OrganizationDetailsStep(props: {
           name="organization.name"
           label={t('Name')}
           placeholder={t('Enter name')}
+          isDisabled={props.managed}
           isRequired
         />
         <PageFormTextInput
