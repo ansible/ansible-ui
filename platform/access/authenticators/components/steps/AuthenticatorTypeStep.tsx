@@ -8,12 +8,18 @@ import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) {
   const { t } = useTranslation();
 
-  const options = props.plugins.authenticators.map((plugin) => {
-    return {
+  // Users cannot create new authenticators using legacy plugins, but can modify those created by the system.
+  const excludedPlugins = [
+    'aap_gateway_api.authentication.authenticator_plugins.legacy_sso',
+    'aap_gateway_api.authentication.authenticator_plugins.legacy_password',
+  ];
+
+  const options = props.plugins.authenticators
+    .filter((plugin) => !excludedPlugins.includes(plugin.type))
+    .map((plugin) => ({
       value: plugin.type,
       label: getAuthenticatorTypeLabel(plugin.type, t),
-    };
-  });
+    }));
 
   return (
     <>
