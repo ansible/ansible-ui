@@ -141,7 +141,10 @@ export function CreatePlatformUser() {
         onCancel={() => navigate(-1)}
         defaultValue={defaultValue}
       >
-        <PlatformUserInputs isCreate />
+        <PlatformUserInputs
+          isCreate
+          initialValue={{ awxAdmin: false, edaAdmin: false, hubAdmin: false }}
+        />
       </PageForm>
     </PageLayout>
   );
@@ -157,6 +160,7 @@ export function EditPlatformUser() {
 
   const { awxUser, edaUser, hubUser, platformUser, isLoading, error, updateServiceUserSuperuser } =
     useGetPlatformAndServiceUsers(userId);
+
   const { orgIds, getAddedAndRemovedOrganizationIds } = useGetOrganizationsForUser(userId);
   const { data: platformAuditorRoleData, isLoading: isLoadingPlatformAuditorRole } = useGet<
     PlatformItemsResponse<PlatformRole>
@@ -337,7 +341,6 @@ export function EditPlatformUser() {
     edaAdmin: Boolean(edaUser?.is_superuser) || Boolean(platformUser?.is_superuser),
     hubAdmin: Boolean(hubUser?.is_superuser) || Boolean(platformUser?.is_superuser),
   };
-
   return (
     <PageLayout>
       <PageHeader
@@ -361,13 +364,22 @@ export function EditPlatformUser() {
         onCancel={() => navigate(-1)}
         defaultValue={defaultValue}
       >
-        <PlatformUserInputs />
+        <PlatformUserInputs
+          initialValue={{
+            awxAdmin: !!defaultValue.awxAdmin,
+            edaAdmin: !!defaultValue.edaAdmin,
+            hubAdmin: !!defaultValue.hubAdmin,
+          }}
+        />
       </PageForm>
     </PageLayout>
   );
 }
 
-function PlatformUserInputs(props: { isCreate?: boolean }) {
+function PlatformUserInputs(props: {
+  isCreate?: boolean;
+  initialValue: { awxAdmin: boolean; edaAdmin: boolean; hubAdmin: boolean };
+}) {
   const { t } = useTranslation();
   const { setValue, watch } = useFormContext<IUserInput>();
   const isPlatformAdmin = watch('platformAdmin');
@@ -425,7 +437,7 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
               name="platformAdmin"
             />
           ) : (
-            <AdminCheckboxes />
+            <AdminCheckboxes initialValue={props.initialValue} />
           )}
           <PageFormWatch watch="platformAdmin">
             {(platformAdmin) => {
@@ -463,9 +475,22 @@ function PlatformUserInputs(props: { isCreate?: boolean }) {
   );
 }
 
-function AdminCheckboxes() {
+function AdminCheckboxes(props: {
+  initialValue: { awxAdmin: boolean; edaAdmin: boolean; hubAdmin: boolean };
+}) {
   const { t } = useTranslation();
   const { control, setValue, watch } = useFormContext<IUserInput>();
+
+  useEffect(() => {
+    setValue('awxAdmin', props.initialValue.awxAdmin);
+    setValue('edaAdmin', props.initialValue.edaAdmin);
+    setValue('hubAdmin', props.initialValue.hubAdmin);
+  }, [
+    props.initialValue.awxAdmin,
+    props.initialValue.edaAdmin,
+    props.initialValue.hubAdmin,
+    setValue,
+  ]);
 
   const hasAwxService = useHasAwxService();
   const hasEdaService = useHasEdaService();
