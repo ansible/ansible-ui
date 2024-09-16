@@ -43,7 +43,12 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
     {
       id: 'details',
       label: t('Organization details'),
-      inputs: <OrganizationDetailsStep controllerOrganization={controllerOrganization} />,
+      inputs: (
+        <OrganizationDetailsStep
+          controllerOrganization={controllerOrganization}
+          managed={organization?.managed || false}
+        />
+      ),
     },
     {
       id: 'instance_groups_order',
