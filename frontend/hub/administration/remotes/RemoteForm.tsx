@@ -244,6 +244,7 @@ export function EditRemote() {
   const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
   const { clearCacheByKey } = useClearCache();
@@ -283,7 +284,9 @@ export function EditRemote() {
     );
 
     clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
-    navigate(-1);
+    pageNavigate(HubRoute.RemoteDetails, {
+      params: { id: name },
+    });
   };
 
   if (data && data.count === 0 && !error && !remote) {
