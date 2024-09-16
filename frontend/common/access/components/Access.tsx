@@ -239,7 +239,15 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
           : t('There are currently no teams assigned to this resource.');
         break;
       case 'user-roles':
-        title = t('There are currently no roles assigned to this user.');
+        //props.service === 'eda' ?
+        title =
+          props.service === 'eda'
+            ? t('There are currently no Automation Decisions roles assigned to this user.')
+            : props.service === 'hub'
+              ? t('There are currently no Automation Content roles assigned to this user.')
+              : props.service === 'awx'
+                ? t('There are currently no Automation Execution roles assigned to this user.')
+                : t('There are currently no roles assigned to this user.');
         break;
       case 'team-roles':
         title = t('There are currently no roles assigned to this team.');
@@ -248,7 +256,7 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
         title = t('There are currently no roles assigned to this resource.');
     }
     return title;
-  }, [getDisplayName, props.accessListType, props.content_type_model, t]);
+  }, [getDisplayName, props.accessListType, props.content_type_model, props.service, t]);
   return (
     <PageTable
       id={
