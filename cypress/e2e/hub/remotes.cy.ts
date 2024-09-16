@@ -201,6 +201,31 @@ collections:
     cy.clickButton(/^Delete remotes$/);
   });
 
+  it('edit a remote - save without changes', () => {
+    /** Verification that touching a form field (typing something and then clearing it out) does not
+     * cause the Save to fail with a "This field may not be blank." error.
+     */
+    const remoteName = generateRemoteName();
+    cy.createRemote(remoteName).then((remote: HubRemote) => {
+      cy.navigateTo('hub', 'remotes');
+      cy.setTablePageSize('50');
+      cy.filterTableBySingleText(remote.name);
+      cy.getByDataCy('edit-remote').click();
+      cy.getBy('[data-cy="username"]').type('abc');
+      cy.getBy('[data-cy="username"]').type('{backspace}{backspace}{backspace}');
+      cy.clickButton(/^Save remote$/);
+
+      cy.setTablePageSize('50');
+      cy.clickTableRowLink('name', remote.name, { disableFilter: true });
+
+      // Delete the edited remote
+      cy.getBy('[data-cy="actions-dropdown"]').click();
+      cy.getBy('[data-cy="delete-remote"]').click();
+      cy.getBy('#confirm').click();
+      cy.clickButton(/^Delete remotes/);
+    });
+  });
+
   it('has all download buttons working', () => {
     const ca_cert = 'ca_cert';
     const client_cert = 'client_cert';
