@@ -68,7 +68,7 @@ describe('AWX user roles', () => {
       cy.mount(component, params);
     });
     it('Empty state is displayed correctly', () => {
-      cy.contains(/^There are currently no roles assigned to this user.$/);
+      cy.contains(/^There are currently no Automation Execution roles assigned to this user.$/);
       cy.contains(/^Add a role by clicking the button below.$/);
       cy.contains('a[data-cy="add-roles"]', /^Add roles$/).should('be.visible');
     });
