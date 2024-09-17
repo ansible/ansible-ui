@@ -705,6 +705,41 @@ Cypress.Commands.add('waitForProjectToFinishSyncing', (projectId: number) => {
   });
 });
 
+Cypress.Commands.add('waitForInventoryToFinishSyncing', (inventorySourceId: number) => {
+  //waits for sync to finish even if it ends in an error
+  let requestCount = 1;
+  let initialWaitTime = 1000;
+  const maxRequestCount = 300;
+
+  cy.requestGet<InventorySource>(awxAPI`/inventory_sources/${inventorySourceId.toString()}/`).then(
+    (inventorySync) => {
+      if (
+        inventorySync.status === 'successful' ||
+        inventorySync.status === 'failed' ||
+        requestCount > maxRequestCount
+      ) {
+        if (requestCount > maxRequestCount) {
+          cy.log('Reached maximum number of requests for reading inventory sync status');
+        }
+        requestCount = 1;
+        return;
+      }
+      Cypress.log({
+        displayName: `INVENTORY SYNC: ${inventorySync.name} status ${inventorySync.status}`,
+        message: [`🕓WAITING FOR INVENTORY TO SYNC...🕓`],
+      });
+      requestCount++;
+      if (requestCount <= 5) {
+        initialWaitTime = initialWaitTime * 2;
+      } else {
+        initialWaitTime = 1000;
+      }
+      cy.wait(initialWaitTime);
+      cy.waitForInventoryToFinishSyncing(inventorySourceId);
+    }
+  );
+});
+
 Cypress.Commands.add(
   'createAwxExecutionEnvironment',
   (execution_environment?: Partial<Omit<ExecutionEnvironment, 'id'>>) => {
