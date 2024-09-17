@@ -70,7 +70,6 @@ function DecisionEnvironmentInputs() {
         name="image_url"
         label={t('Image')}
         placeholder={t('Enter image name')}
-        maxLength={150}
         isRequired
         labelHelpTitle={t('Image')}
         labelHelp={imageHelpBlock}
