@@ -36,7 +36,9 @@ describe('Create decision environment ', () => {
   it('Should update fields properly', () => {
     cy.mount(<CreateDecisionEnvironment />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.get('[data-cy="image-url"]').type('test.example.com');
+    cy.get('[data-cy="image-url"]').type(
+      'ThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageName'
+    );
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.clickButton('Create decision environment');
@@ -45,7 +47,10 @@ describe('Create decision environment ', () => {
       expect(req.body).to.contain({
         name: 'Test',
         organization_id: 2,
-        inputs: { image_url: 'test.example.com' },
+        inputs: {
+          image_url:
+            'hisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageNameThisIsAVeryLargeimageName',
+        },
       });
     });
   });
