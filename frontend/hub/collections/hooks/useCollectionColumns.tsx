@@ -190,6 +190,6 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         table: display_signatures ? undefined : ColumnTableOption.hidden,
       },
     ],
-    [getPageUrl, t, display_signatures]
+    [getPageUrl, t, display_signatures, name, namespace, repository]
   );
 }
