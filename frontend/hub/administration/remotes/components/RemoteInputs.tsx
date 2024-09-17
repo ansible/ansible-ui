@@ -41,8 +41,11 @@ export function RemoteInputs({
   useEffect(() => {
     if (parsedInputUrl) {
       const parsedCommunityCollectionsUrl = new URL(REMOTE_COMMUNITY_COLLECTIONS_URL);
-      const isCommunityRemote = parsedInputUrl.hostname === parsedCommunityCollectionsUrl.hostname;
-      setIsCommunityRemote && setIsCommunityRemote(isCommunityRemote);
+      const isCommunityHostName =
+        parsedInputUrl.hostname === parsedCommunityCollectionsUrl.hostname;
+      setIsCommunityRemote && setIsCommunityRemote(isCommunityHostName);
+    } else {
+      setIsCommunityRemote && setIsCommunityRemote(false);
     }
   }, [parsedInputUrl, setIsCommunityRemote]);
 

@@ -144,7 +144,7 @@ export function CreateRemote() {
             setIsCommunityRemote={setIsCommunityRemote}
           />
           <PageFormSection singleColumn>
-            <RequirementsFile isCommunityRemote={false} />
+            <RequirementsFile isCommunityRemote={isCommunityRemote} />
           </PageFormSection>
           <PageFormExpandableSection singleColumn>
             <ProxyAdvancedRemoteInputs />

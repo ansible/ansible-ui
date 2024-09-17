@@ -214,9 +214,6 @@ collections:
       cy.getBy('[data-cy="username"]').type('{backspace}{backspace}{backspace}');
       cy.clickButton(/^Save remote$/);
 
-      cy.setTablePageSize('50');
-      cy.clickTableRowLink('name', remote.name, { disableFilter: true });
-
       // Delete the edited remote
       cy.getBy('[data-cy="actions-dropdown"]').click();
       cy.getBy('[data-cy="delete-remote"]').click();
