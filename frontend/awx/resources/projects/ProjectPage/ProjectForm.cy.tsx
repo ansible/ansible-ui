@@ -143,8 +143,11 @@ describe('ProjectForm.cy.ts', () => {
     cy.verifyPageTitle('Edit Demo Project @ 10:44:51');
     cy.getByDataCy('name').should('have.value', 'Demo Project @ 10:44:51');
     cy.getByDataCy('organization').should('have.text', 'Default');
-    cy.getByDataCy('signature_validation_credential').should('have.text', 'Select credential');
-    cy.getByDataCy('credential').should('have.text', 'Select credential');
+    cy.getByDataCy('signature_validation_credential').should(
+      'have.text',
+      'Select content signature validation credential'
+    );
+    cy.getByDataCy('credential').should('have.text', 'Select source control credential');
     cy.getByDataCy('scm-url').should(
       'have.value',
       'https://github.com/ansible/ansible-tower-samples'
