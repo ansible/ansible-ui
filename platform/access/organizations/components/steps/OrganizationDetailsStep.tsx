@@ -27,6 +27,7 @@ export function OrganizationDetailsStep(props: {
           name="organization.name"
           label={t('Name')}
           placeholder={t('Enter organization name')}
+          isDisabled={props.managed}
           isRequired
         />
         <PageFormTextInput
