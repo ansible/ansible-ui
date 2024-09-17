@@ -691,6 +691,8 @@ declare global {
 
       waitForProjectToFinishSyncing(projectId: number): Chainable<Project>;
 
+      waitForInventoryToFinishSyncing(inventorySourceId: number): Chainable<InventorySource>;
+
       /** Create an execution environment in AWX */
       createAwxExecutionEnvironment(
         executionEnvironment: Partial<Omit<ExecutionEnvironment, 'id'>>

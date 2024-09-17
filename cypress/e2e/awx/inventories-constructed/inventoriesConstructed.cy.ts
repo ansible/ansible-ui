@@ -144,11 +144,9 @@ describe('Constructed Inventories CRUD Tests', () => {
     cy.intercept('POST', awxAPI`/inventory_sources/*/update`).as('syncInventory');
     cy.clickButton('Sync inventory');
     cy.wait('@syncInventory')
-      .then((response) => {
-        expect(response.response?.statusCode).to.be.equal(202);
-      })
-      .its('response.body.id')
-      .then(() => {
+      .its('response.body')
+      .then((newSync: { inventory_source: number; name: string }) => {
+        cy.waitForInventoryToFinishSyncing(newSync.inventory_source);
         cy.verifyPageTitle(newInventory.name);
         cy.getByDataCy('last-job-status').contains('Failed');
         cy.getByDataCy('last-job-status').click();
