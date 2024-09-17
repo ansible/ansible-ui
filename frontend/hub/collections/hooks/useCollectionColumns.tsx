@@ -17,29 +17,49 @@ import {
 import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
+import { useParams } from 'react-router-dom';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const { namespace, name, repository } = useParams<{
+    namespace?: string;
+    name?: string;
+    repository?: string;
+  }>();
 
   const context = useHubContext();
   const { display_signatures } = context.featureFlags;
-
   return useMemo<ITableColumn<CollectionVersionSearch>[]>(
     () => [
       {
         header: t('Name'),
         value: (collection) => collection.collection_version?.name,
-        cell: (collection) => (
-          <>
-            <TextCell text={collection.collection_version?.name} />
-            {collection.is_deprecated && (
-              <Label icon={<BanIcon />} color="red" variant="outline">
-                {t('Deprecated')}
-              </Label>
-            )}
-          </>
-        ),
+        cell: (collection) => {
+          return (
+            <>
+              <TextCell
+                text={collection.collection_version?.name}
+                to={
+                  name || namespace || repository
+                    ? undefined
+                    : getPageUrl(HubRoute.CollectionPage, {
+                        params: {
+                          name: collection.collection_version?.name,
+                          namespace: collection.collection_version?.namespace,
+                          repository: collection.repository?.name,
+                        },
+                      })
+                }
+              />
+              {collection.is_deprecated && (
+                <Label icon={<BanIcon />} color="red" variant="outline">
+                  {t('Deprecated')}
+                </Label>
+              )}
+            </>
+          );
+        },
         card: 'name',
         list: 'name',
         icon: () => <AnsibleTowerIcon />,
