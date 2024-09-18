@@ -239,7 +239,6 @@ export function Access<T extends Assignment>(props: AccessProps<T>) {
           : t('There are currently no teams assigned to this resource.');
         break;
       case 'user-roles':
-        //props.service === 'eda' ?
         title =
           props.service === 'eda'
             ? t('There are currently no Automation Decisions roles assigned to this user.')
