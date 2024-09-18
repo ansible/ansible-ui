@@ -137,6 +137,11 @@ describe('Execution Environments: User/Team access', () => {
     cy.getModal().should('not.exist');
     cy.verifyPageTitle(execEnvName);
 
+    // This is a workaround for the issue:
+    // https://issues.redhat.com/browse/AAP-31401
+    cy.clickTab(/^Details$/, true);
+    cy.clickTab(/^Team Access$/, true);
+
     cy.getByDataCy('select-all').click();
     cy.clickToolbarKebabAction('remove-roles');
     cy.contains('Remove role');
