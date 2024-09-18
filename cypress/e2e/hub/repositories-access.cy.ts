@@ -38,7 +38,9 @@ describe('Repositories user and team access tests', () => {
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.selectTableRow(hubUser.username);
+        cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
+        cy.wait('@roleDefinitions');
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', 'galaxy.ansible_repository_owner', {
           disableFilterSelection: true,
