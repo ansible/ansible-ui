@@ -126,7 +126,7 @@ jobs:
     needs:
       - packages
       - cleanup
-    uses: ./.github/workflows/ds-platform-e2e.yml
+    uses: ./.github/workflows/e2e.yml
     with:
       PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
     secrets:
