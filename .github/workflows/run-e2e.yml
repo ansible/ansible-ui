@@ -1,4 +1,4 @@
-name: Platform Update E2E Server
+name: Run E2E
 
 on:
   workflow_dispatch:
@@ -13,11 +13,10 @@ on:
         default: false
         description: 'Update server on success'
 
-
 jobs:
   platform-e2e:
     name: Platform E2E
-    uses: ./.github/workflows/ds-platform-e2e.yml
+    uses: ./.github/workflows/e2e.yml
     with:
       PLATFORM_SERVER: ${{ github.event.inputs.PLATFORM_SERVER }}
     secrets:
