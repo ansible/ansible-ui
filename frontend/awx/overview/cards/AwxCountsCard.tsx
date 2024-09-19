@@ -28,7 +28,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Failed'),
                   count: data.hosts.failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Projects) + '?status=failed,error,canceled,missing',
+                  link: getPageUrl(AwxRoute.Hosts) + '?status=failed,error,canceled,missing',
                 },
               ]
             : undefined,
@@ -68,7 +68,7 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Synced failures'),
                   count: data.inventories.inventory_failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Projects) + '?status=failed,error,canceled,missing',
+                  link: getPageUrl(AwxRoute.Inventories) + '?status=failed,error,canceled,missing',
                 },
               ]
             : undefined,
