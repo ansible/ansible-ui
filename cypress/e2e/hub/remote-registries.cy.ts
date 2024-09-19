@@ -75,10 +75,14 @@ describe('Remote Registry', () => {
         cy.navigateTo('hub', RemoteRegistry.url);
         cy.url().should('include', 'remote-registries');
         cy.filterTableBySingleText(remoteRegistry.name);
+        cy.intercept('POST', hubAPI`/_ui/v1/execution-environments/registries/*/index/`).as(
+          'indexed'
+        );
         cy.clickTableRowAction('name', remoteRegistry.name, 'index-execution-environments', {
           disableFilter: true,
           inKebab: true,
         });
+        cy.wait('@indexed');
         cy.hasAlert(`Indexing remote registry ${remoteRegistry.name}`);
         cy.clickTableRowAction('name', remoteRegistry.name, 'delete-remote-registry', {
           disableFilter: true,
