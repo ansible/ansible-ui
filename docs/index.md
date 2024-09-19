@@ -8,6 +8,7 @@ Documentation for the [Ansible Automation Platform UI](https://github.com/ansibl
 - [Capitalization](dev/capitalization.md)
 - [Translations](dev/translations.md)
 - [PR Checklist](dev/pr-checklist.md)
+- [Branching](dev/branching.md)
 
 ## Testing
 
