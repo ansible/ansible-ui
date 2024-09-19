@@ -35,6 +35,7 @@ jobs:
           tags: |
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value={{branch}}
 
       - name: Docker Build and Push EDA UI Image
         uses: docker/build-push-action@v6

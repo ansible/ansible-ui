@@ -54,8 +54,8 @@ jobs:
           images: quay.io/ansible/platform-ui
           tags: |
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}.{{minor}}.{{patch}}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value={{branch}}
 
       - name: Docker Build and Push Platform UI Image
         uses: docker/build-push-action@v4
