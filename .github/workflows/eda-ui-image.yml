@@ -53,8 +53,6 @@ jobs:
           images: quay.io/ansible/eda-ui
           tags: |
             type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=raw,value=${{ github.ref_name }}
 
       - name: Docker Build and Push EDA UI Image
         uses: docker/build-push-action@v4
