@@ -52,7 +52,7 @@ jobs:
         with:
           images: quay.io/ansible/eda-ui
           tags: |
-            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
@@ -64,5 +64,5 @@ jobs:
           target: eda-ui
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          tags: ${{ steps.meta.outputs.tags }},quay.io/ansible/eda-ui:main
+          tags: ${{ steps.meta.outputs.tags }},quay.io/ansible/eda-ui:main,quay.io/ansible/eda-ui:latest
           labels: ${{ steps.meta.outputs.labels }}

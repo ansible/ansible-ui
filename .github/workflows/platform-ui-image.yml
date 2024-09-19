@@ -53,7 +53,7 @@ jobs:
         with:
           images: quay.io/ansible/platform-ui
           tags: |
-            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
@@ -66,7 +66,7 @@ jobs:
           target: platform-ui
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          tags: ${{ steps.meta.outputs.tags }},quay.io/ansible/platform-ui:main
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Archive Platform UI Build
