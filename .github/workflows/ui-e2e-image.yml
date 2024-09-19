@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - '*'
+    branches:
+      - main
+      - release/*
 
 jobs:
   ui-e2e-image:
@@ -33,7 +36,10 @@ jobs:
         with:
           images: quay.io/ansible/ui-e2e
           tags: |
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}.{{minor}},event=tag
+            type=raw,value=latest,event=branch
+            type=raw,value={{branch}},event=branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Docker Build and Push EDA UI Image
         uses: docker/build-push-action@v6
