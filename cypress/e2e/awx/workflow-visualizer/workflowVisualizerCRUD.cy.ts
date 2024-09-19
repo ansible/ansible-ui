@@ -130,7 +130,9 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.getBy('button[id="job-template-select"]').click();
-          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+          cy.get('button[data-cy="browse-button"]').scrollIntoView().click({
+            force: true,
+          });
           cy.getModal().within(() => {
             cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
             cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
