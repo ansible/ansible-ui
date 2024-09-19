@@ -46,14 +46,33 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_TOKEN }}
 
+      - name: Extract version from tag
+        id: extract_version
+        run: |
+          TAG_NAME=$(echo "${GITHUB_REF#refs/tags/}")
+          echo "Tag name: $TAG_NAME"
+          
+          # Assuming tags are in the format vX.Y.Z[-pre-release]
+          MAJOR=$(echo "$TAG_NAME" | cut -d. -f1 | sed 's/v//')
+          MINOR=$(echo "$TAG_NAME" | cut -d. -f2)
+          PATCH=$(echo "$TAG_NAME" | cut -d. -f3 | cut -d'-' -f1)
+          
+          echo "Major version: $MAJOR"
+          echo "Minor version: $MINOR"
+          echo "Patch version: $PATCH"
+          
+          echo "MAJOR=$MAJOR" >> $GITHUB_ENV
+          echo "MINOR=$MINOR" >> $GITHUB_ENV
+          echo "PATCH=$PATCH" >> $GITHUB_ENV
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: quay.io/ansible/eda-ui
           tags: |
-            type=raw,value={{major}}.{{minor}}
-            type=raw,value={{major}}.{{minor}}.{{patch}}
+            type=raw,value=${{ env.MAJOR }}.${{ env.MINOR }}
+            type=raw,value=${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
             type=raw,value=main,enable=${{ startsWith(github.ref, 'refs/tags/v1.0.') }}
             type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v1.0.') }}
 
