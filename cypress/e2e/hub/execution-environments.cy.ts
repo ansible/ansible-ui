@@ -57,7 +57,7 @@ describe('Execution Environments', () => {
         .then((count) => {
           cy.getByDataCy('name').type(eeName);
           cy.getByDataCy('upstream-name').type(upstreamName);
-          cy.contains('[data-ouia-component-id="menu-select"]', 'Select registry')
+          cy.getBy('#registry')
             .click()
             .then(() => {
               //This element renders differently depending on how many registries the API returns
