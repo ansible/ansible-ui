@@ -71,6 +71,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Archive Platform UI Build
-        run: tar -czvf platform-ui.tar.gz build/platform
