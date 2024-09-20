@@ -16,7 +16,6 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/awx/access/tokens/*.cy.ts',
   'cypress/e2e/awx/access/users/*.cy.ts',
   'cypress/e2e/awx/cleanup/*.cy.ts',
-  'cypress/e2e/awx/administration/settings/settings.cy.ts',
   'cypress/e2e/awx/overview/*.cy.ts',
   'cypress/e2e/eda/admin-user/*.cy.ts',
   'cypress/e2e/eda/cleanup/*.cy.ts',
