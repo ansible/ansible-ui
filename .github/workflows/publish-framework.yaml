@@ -2,8 +2,8 @@ name: Publish Framework
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 
 jobs:
   publish-framework:
