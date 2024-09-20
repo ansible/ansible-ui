@@ -28,7 +28,7 @@ describe('Platform Header Toolbar - Help Menu', () => {
       cy.get('dt').contains('Automation Controller Version').next().should('have.text', '4.6.0');
 
       // Check the Automation Hub Version
-      cy.get('dt').contains('Automation Hub Version').next().should('have.text', '4.10.0dev');
+      cy.get('dt').contains('Automation Hub Version').next().should('have.text', '4.10.0');
       cy.get('.pf-v5-c-button').click();
     });
   });
