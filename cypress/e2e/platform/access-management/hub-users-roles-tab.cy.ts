@@ -7,6 +7,7 @@ import { HubNamespace } from '../../../../frontend/hub/namespaces/HubNamespace';
 import { randomString } from '../../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { hubAPI } from '../../../support/formatApiPathForHub';
 
 hub_resources_roles_tab.forEach((resource) => {
   describe(`Assign Role to a User `, () => {
@@ -74,7 +75,9 @@ hub_resources_roles_tab.forEach((resource) => {
         } else {
           cy.selectTableRow(resource_object.name, true);
         }
-        cy.clickButton(/^Next$/);
+        cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
+        cy.clickButton(/^Next/);
+        cy.wait('@roleDefinitions');
         cy.selectTableRow(role.name, true);
         cy.clickButton(/^Next$/);
         cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
@@ -140,7 +143,9 @@ describe(`Roles Tab for Users - actions`, () => {
               cy.get('input').clear().type(namespace.name);
             });
           cy.selectTableRow(namespace.name, false);
-          cy.clickButton(/^Next$/);
+          cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
+          cy.clickButton(/^Next/);
+          cy.wait('@roleDefinitions');
           cy.selectTableRow(role1.name, true);
           cy.selectTableRow(role2.name, true);
           cy.selectTableRow(role3.name, true);

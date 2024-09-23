@@ -7,6 +7,7 @@ import { HubNamespace } from '../../../../frontend/hub/namespaces/HubNamespace';
 import { randomString } from '../../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { hubAPI } from '../../../support/formatApiPathForHub';
 
 describe(`Assign Role to a Team `, () => {
   let PlatformUser: PlatformUser;
@@ -91,7 +92,9 @@ describe(`Assign Role to a Team `, () => {
       cy.selectDropdownOptionByResourceName('resourcetype', 'Repository');
       cy.clickButton(/^Next$/);
       cy.selectTableRow(hubRepository.name, true);
+      cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
       cy.clickButton(/^Next$/);
+      cy.wait('@roleDefinitions');
       cy.selectTableRow(repositoryRole.name, true);
       cy.clickButton(/^Next$/);
       cy.verifyReviewStepWizardDetails('resources', [hubRepository.name], '1');
@@ -116,7 +119,9 @@ describe(`Assign Role to a Team `, () => {
       cy.selectDropdownOptionByResourceName('resourcetype', 'Remote');
       cy.clickButton(/^Next$/);
       cy.selectTableRow(hubRemote.name, true);
+      cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
       cy.clickButton(/^Next$/);
+      cy.wait('@roleDefinitions');
       cy.selectTableRow(remoteRole.name, true);
       cy.clickButton(/^Next$/);
       cy.verifyReviewStepWizardDetails('resources', [hubRemote.name], '1');
@@ -159,7 +164,9 @@ describe(`Assign Role to a Team `, () => {
         });
       cy.contains('.pf-v5-c-chip__text', hubNamespace.name);
       cy.selectTableRow(hubNamespace.name, false);
+      cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
       cy.clickButton(/^Next$/);
+      cy.wait('@roleDefinitions');
       cy.selectTableRow(namespaceRole.name, true);
       cy.clickButton(/^Next$/);
       cy.verifyReviewStepWizardDetails('resources', [hubNamespace.name], '1');

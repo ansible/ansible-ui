@@ -147,10 +147,12 @@ describe('Team Access Tab - Add Team', () => {
           cy.clickTableRow(resource_object.name, true);
         }
         cy.contains('h1', resource_object.name).should('be.visible');
-        cy.contains('li', 'Team Access').click();
+        cy.clickTab('Team Access', true);
         cy.get('a[data-cy="add-roles"]').click();
         cy.selectTableRow(edaTeam1.name, true);
+        cy.intercept('GET', edaAPI`/role_definitions/?*`).as('edaRoles');
         cy.clickButton(/^Next$/);
+        cy.wait('@edaRoles');
         cy.selectTableRow(resource.role, false);
         cy.clickButton(/^Next$/);
         cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
@@ -177,7 +179,7 @@ describe('Team Access Tab - Add Team', () => {
           cy.clickTableRow(resource_object.name, true);
         }
         cy.contains('h1', resource_object.name).should('be.visible');
-        cy.contains('li', 'Team Access').click();
+        cy.clickTab('Team Access', true);
         cy.getTableRowByText(`${edaTeam1.name}`, false).within(() => {
           cy.get('[data-cy="remove-role"]').click();
         });
@@ -201,7 +203,7 @@ describe('Team Access Tab - Add Team', () => {
           cy.clickTableRow(resource_object.name, true);
         }
         cy.contains('h1', resource_object.name).should('be.visible');
-        cy.contains('li', 'Team Access').click();
+        cy.clickTab('Team Access', true);
         cy.selectTableRow(`${edaTeam2.name}`, false);
         cy.selectTableRow(`${edaTeam3.name}`, false);
         cy.clickToolbarKebabAction('remove-roles');

@@ -190,9 +190,12 @@ cyLabel(['aaas-unsupported'], () => {
         cy.getBy('button[data-cy="apply-filter"]').click();
         cy.get('tr [data-cy="name-column-cell"]').contains(edaProject.name).click();
         cy.verifyPageTitle(edaProject.name);
-        cy.contains('li', 'Team Access').click();
+        cy.clickTab('Team Access', true);
         cy.get('a[data-cy="add-roles"]').click();
         cy.selectTableRow(edaTeam.name, true);
+        cy.intercept('GET', edaAPI`/role_definitions/?*`).as('edaRoles');
+        cy.clickButton(/^Next$/);
+        cy.wait('@edaRoles');
         cy.clickButton(/^Next$/);
         cy.selectTableRow('Project Admin', false);
         cy.clickButton(/^Next$/);
