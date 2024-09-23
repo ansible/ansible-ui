@@ -22,13 +22,17 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Ready'),
                   count: data.hosts.total - data.hosts.failed,
                   color: successfulColor,
-                  link: getPageUrl(AwxRoute.Hosts) + '?status=successful',
+                  link: getPageUrl(AwxRoute.Hosts, {
+                    query: { status: ['successful'] },
+                  }),
                 },
                 {
                   label: t('Failed'),
                   count: data.hosts.failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Hosts) + '?status=failed,error,canceled,missing',
+                  link: getPageUrl(AwxRoute.Hosts, {
+                    query: { status: ['failed', 'error', 'canceled', 'missing'] },
+                  }),
                 },
               ]
             : undefined,
@@ -42,13 +46,17 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Ready'),
                   count: data.projects.total - data.projects.failed,
                   color: successfulColor,
-                  link: getPageUrl(AwxRoute.Projects) + '?status=successful',
+                  link: getPageUrl(AwxRoute.Projects, {
+                    query: { status: ['successful'] },
+                  }),
                 },
                 {
                   label: t('Failed'),
                   count: data.projects.failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Projects) + '?status=failed,error,canceled,missing',
+                  link: getPageUrl(AwxRoute.Projects, {
+                    query: { status: ['failed', 'error', 'canceled', 'missing'] },
+                  }),
                 },
               ]
             : undefined,
@@ -62,13 +70,17 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Synced'),
                   count: data.inventories.total - data.inventories.inventory_failed,
                   color: successfulColor,
-                  link: getPageUrl(AwxRoute.Inventories) + '?status=successful',
+                  link: getPageUrl(AwxRoute.Inventories, {
+                    query: { status: ['successful'] },
+                  }),
                 },
                 {
                   label: t('Synced failures'),
                   count: data.inventories.inventory_failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Inventories) + '?status=failed,error,canceled,missing',
+                  link: getPageUrl(AwxRoute.Inventories, {
+                    query: { status: ['failed', 'error', 'canceled', 'missing'] },
+                  }),
                 },
               ]
             : undefined,
