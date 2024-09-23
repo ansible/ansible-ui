@@ -18,6 +18,7 @@ export enum PlatformRoute {
   UserDetails = 'platform-user-details',
   CreateUser = 'platform-create-user',
   EditUser = 'platform-edit-user',
+  LinkUserAccounts = 'platform-link-user-accounts',
   UserTeams = 'platform-user-teams',
   UserRoles = 'platform-user-roles',
   AAPUserTokens = 'platform-user-tokens',
@@ -82,4 +83,6 @@ export enum PlatformRoute {
   SubscriptionWizard = 'platform-subscription-wizard',
   SubscriptionDetails = 'platform-subscription-details',
   GatewaySettings = 'platform-gateway-settings',
+  MigrateUser = 'platform-migrate-user',
+  MigrateRenameUser = 'platform-migrate-rename-user',
 }

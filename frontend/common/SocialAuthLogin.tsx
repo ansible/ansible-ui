@@ -1,4 +1,4 @@
-import { Button as PFButton, Stack, Title } from '@patternfly/react-core';
+import { Button as PFButton, Stack } from '@patternfly/react-core';
 import { AzureIcon, GithubIcon, GoogleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -28,8 +28,8 @@ export function SocialAuthLogin(props: SocialAuthLoginProps) {
 
   return (
     <>
-      <Title headingLevel="h3">{t`Log in with`}</Title>
       <Stack style={{ width: '100%' }} hasGutter>
+        {t('Log in with:')}
         {options.map((option) => (
           <SocialAuthLink key={option.login_url} option={option} />
         ))}
@@ -66,6 +66,7 @@ function SocialAuthLink(props: { option: AuthOption }) {
     'google-oauth2': t('Google'),
     oidc: t('OIDC'),
     saml: t('SAML'),
+    'saml:Keycloak': t('SAML Keycloak'),
   };
 
   const Icon = icons[option.type] ?? UserCircleIcon;

@@ -2,32 +2,33 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { PageNavigationItem } from '../../framework';
-import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
-import { CreatePlatformUser, EditPlatformUser } from '../access/users/components/PlatformUserForm';
-import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
-import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
-import { PlatformUserTeams } from '../access/users/components/PlatformUserTeams';
-import { PlatformRoute } from '../main/PlatformRoutes';
-import { PlatformUserRoles } from '../access/users/components/PlatformUserRoles';
 import { UserRoles } from '../../frontend/awx/access/users/UserPage/UserRoles';
-import { PlatformAwxUserIdLookup } from '../access/users/components/PlatformAwxUserIdLookup';
-import { EdaUserRoles } from '../../frontend/eda/access/users/UserPage/EdaUserRoles';
-import { PlatformEdaUserIdLookup } from '../access/users/components/PlatformEdaUserIdLookup';
-import { AddRolesToUser } from '../../frontend/awx/access/users/components/AddRolesToUser';
-import { EdaAddUserRoles } from '../../frontend/eda/access/users/EdaAddUserRoles';
-import { Token } from '../../frontend/awx/interfaces/Token';
-import { CreateUserToken } from '../../frontend/awx/access/users/UserTokenForm';
-import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
+import { UserTokenDetails } from '../../frontend/awx/access/users/UserPage/UserTokenDetails';
 import { UserTokenPage } from '../../frontend/awx/access/users/UserPage/UserTokenPage';
 import { UserTokenSecretsModal } from '../../frontend/awx/access/users/UserPage/UserTokenSecretsModal';
-import { UserTokenDetails } from '../../frontend/awx/access/users/UserPage/UserTokenDetails';
-import { AAPUserTokens } from '../access/users/components/PlatformAAPUserTokens';
-import { CreateAAPUserToken } from '../access/users/components/PlatformAAPUserTokenForm';
-import { PlatformAAPUserTokenDetails } from '../access/users/components/PlatformAAPUserTokenDetails';
-import { PlatformAAPUserTokenPage } from '../access/users/components/PlatformAAPUserTokenPage';
-import { PlatformHubUserIdLookup } from '../access/users/components/PlatformHubUserIdLookup';
+import { CreateUserToken } from '../../frontend/awx/access/users/UserTokenForm';
+import { AddRolesToUser } from '../../frontend/awx/access/users/components/AddRolesToUser';
+import { Token } from '../../frontend/awx/interfaces/Token';
+import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
+import { EdaAddUserRoles } from '../../frontend/eda/access/users/EdaAddUserRoles';
+import { EdaUserRoles } from '../../frontend/eda/access/users/UserPage/EdaUserRoles';
 import { HubUserRoles } from '../../frontend/hub/access/users/UserPage/HubUserRoles';
 import { HubAddUserRoles } from '../../frontend/hub/access/users/components/HubAddUserRoles';
+import { PlatformAAPUserTokenDetails } from '../access/users/components/PlatformAAPUserTokenDetails';
+import { CreateAAPUserToken } from '../access/users/components/PlatformAAPUserTokenForm';
+import { PlatformAAPUserTokenPage } from '../access/users/components/PlatformAAPUserTokenPage';
+import { AAPUserTokens } from '../access/users/components/PlatformAAPUserTokens';
+import { PlatformAwxUserIdLookup } from '../access/users/components/PlatformAwxUserIdLookup';
+import { PlatformEdaUserIdLookup } from '../access/users/components/PlatformEdaUserIdLookup';
+import { PlatformHubUserIdLookup } from '../access/users/components/PlatformHubUserIdLookup';
+import { PlatformUserDetails } from '../access/users/components/PlatformUserDetails';
+import { CreatePlatformUser, EditPlatformUser } from '../access/users/components/PlatformUserForm';
+import { PlatformUserPage } from '../access/users/components/PlatformUserPage';
+import { PlatformUserRoles } from '../access/users/components/PlatformUserRoles';
+import { PlatformUserTeams } from '../access/users/components/PlatformUserTeams';
+import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
+import { LinkUserAccounts } from '../main/LinkUserAccounts';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformUsersRoutes() {
   const { t } = useTranslation();
@@ -48,6 +49,11 @@ export function useGetPlatformUsersRoutes() {
           id: PlatformRoute.EditUser,
           path: ':id/edit',
           element: <EditPlatformUser />,
+        },
+        {
+          id: PlatformRoute.LinkUserAccounts,
+          path: ':id/link-user-accounts',
+          element: <LinkUserAccounts />,
         },
         {
           id: PlatformRoute.UserPage,
