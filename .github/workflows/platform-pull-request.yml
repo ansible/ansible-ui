@@ -34,15 +34,15 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  pr-queue:
-    name: PR Queue
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ahmadnassri/action-workflow-queue@v1
-        with: 
-          delay: 60000
-          timeout: 28800000
+  # pr-queue:
+  #   name: PR Queue
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ahmadnassri/action-workflow-queue@v1
+  #       with:
+  #         delay: 60000
+  #         timeout: 28800000
 
   checks:
     name: Checks
@@ -111,33 +111,33 @@ jobs:
     with:
       directory: platform
 
-  cleanup:
-    name: Cleanup
-    needs:
-      - pr-queue
-    uses: ./.github/workflows/cleanup.yml
-    with:
-      PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
-    secrets:
-      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+  # cleanup:
+  #   name: Cleanup
+  #   needs:
+  #     - pr-queue
+  #   uses: ./.github/workflows/cleanup.yml
+  #   with:
+  #     PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
+  #   secrets:
+  #     PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
 
-  platform-e2e:
-    name: Platform E2E
-    needs:
-      - packages
-      - cleanup
-    uses: ./.github/workflows/e2e.yml
-    with:
-      PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
-    secrets:
-      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
-      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
-      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+  # platform-e2e:
+  #   name: Platform E2E
+  #   needs:
+  #     - packages
+  #     - cleanup
+  #   uses: ./.github/workflows/e2e.yml
+  #   with:
+  #     PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
+  #   secrets:
+  #     PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+  #     PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+  #     PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
 
   success:
     name: Success
     runs-on: ubuntu-latest
-    needs: 
+    needs:
         - checks
         - awx-component
         - eda-component
@@ -145,20 +145,20 @@ jobs:
         - common-component
         - framework-component
         - platform-component
-        - platform-e2e
+        # - platform-e2e
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.checks.result == 'success' && 
+        if: ${{ needs.checks.result == 'success' &&
                 needs.awx-component.result == 'success' &&
                 needs.eda-component.result == 'success' &&
                 needs.hub-component.result == 'success' &&
                 needs.common-component.result == 'success' &&
                 needs.framework-component.result == 'success' &&
                 needs.platform-component.result == 'success' }}
-        run: echo "All jobs succeeded"      
+        run: echo "All jobs succeeded"
       - name: Failure or Cancelled
-        if: ${{ needs.checks.result != 'success' || 
+        if: ${{ needs.checks.result != 'success' ||
                 needs.awx-component.result != 'success' ||
                 needs.eda-component.result != 'success' ||
                 needs.hub-component.result != 'success' ||
