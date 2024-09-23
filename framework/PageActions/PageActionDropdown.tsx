@@ -102,7 +102,8 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
 
   if (actions.length === 0) return <></>;
   const isPrimary =
-    variant === ButtonVariant.primary || (hasBulkActions && !!selectedItems?.length);
+    !props.iconOnly &&
+    (variant === ButtonVariant.primary || (hasBulkActions && !!selectedItems?.length));
   /** Turn primary button to secondary if there are items selected */
   const isSecondary =
     variant === ButtonVariant.primary && !hasBulkActions && !!selectedItems?.length;
