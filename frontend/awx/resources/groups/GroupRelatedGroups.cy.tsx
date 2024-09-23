@@ -1,5 +1,6 @@
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { GroupRelatedGroups } from './GroupRelatedGroups';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 const inventories = ['inventory', 'constructed_inventory'];
 
@@ -12,7 +13,7 @@ inventories.forEach((inventory) => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/groups/**',
+          url: awxAPI`/groups/**`,
           hostname: 'localhost',
         },
         {
@@ -22,7 +23,7 @@ inventories.forEach((inventory) => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/**/ad_hoc_commands',
+          url: awxAPI`/inventories/**/ad_hoc_commands`,
           hostname: 'localhost',
         },
         {
@@ -67,7 +68,7 @@ inventories.forEach((inventory) => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/groups/176/children/',
+          url: awxAPI`/groups/176/children/`,
           hostname: 'localhost',
         },
         {
@@ -77,14 +78,14 @@ inventories.forEach((inventory) => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/groups/176/children/*',
+          url: awxAPI`/groups/176/children/*`,
           hostname: 'localhost',
         },
         {
           fixture: 'groups.json',
         }
       ).as('getGroups');
-      cy.intercept('/api/v2/groups/176/children/?name=*').as('nameFilterRequest');
+      cy.intercept(awxAPI`/groups/176/children/?name=*`).as('nameFilterRequest');
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
@@ -98,14 +99,14 @@ inventories.forEach((inventory) => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/groups/176/children/',
+          url: awxAPI`/groups/176/children/`,
           hostname: 'localhost',
         },
         {
           fixture: 'mock_options.json',
         }
       ).as('getFilterOptions');
-      cy.intercept('/api/v2/groups/176/children/?created_by__username__icontains=*').as(
+      cy.intercept(awxAPI`/groups/176/children/?created_by__username__icontains=*`).as(
         'createdByFilterRequest'
       );
       cy.mount(<GroupRelatedGroups />, {
@@ -121,14 +122,14 @@ inventories.forEach((inventory) => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/groups/176/children/',
+          url: awxAPI`/groups/176/children/`,
           hostname: 'localhost',
         },
         {
           fixture: 'mock_options.json',
         }
       ).as('getFilterOptions');
-      cy.intercept('/api/v2/groups/176/children/?modified_by__username__icontains=*').as(
+      cy.intercept(awxAPI`/groups/176/children/?modified_by__username__icontains=*`).as(
         'modifiedByFilterRequest'
       );
       cy.mount(<GroupRelatedGroups />, {
@@ -162,7 +163,6 @@ inventories.forEach((inventory) => {
           path,
           initialEntries,
         });
-
         cy.get(`[data-cy="run-command"]`);
         cy.get(`[data-cy="add-group"]`).should('not.exist');
         cy.get(`[data-cy="actions-dropdown"]`).should('not.exist');
@@ -175,7 +175,6 @@ inventories.forEach((inventory) => {
           path,
           initialEntries,
         });
-
         cy.get(`[data-cy="run-command"]`);
         cy.get(`[data-cy="add-group"]`);
         cy.get(`[data-cy="actions-dropdown"]`).click();

@@ -1,5 +1,5 @@
 import { TemplateTeamAccess } from './TemplateTeamAccess';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplateTeamAccess', () => {
   beforeEach(() => {
@@ -15,12 +15,12 @@ describe('TemplateTeamAccess', () => {
         results: [
           {
             id: 4,
-            url: '/api/v2/role_team_assignments/4/',
+            url: awxAPI`/role_team_assignments/4/`,
             related: {
-              created_by: '/api/v2/users/3/',
-              role_definition: '/api/v2/role_definitions/25/',
-              team: '/api/v2/teams/1/',
-              content_object: '/api/v2/job_templates/108/',
+              created_by: awxAPI`/users/3/`,
+              role_definition: awxAPI`/role_definitions/25/`,
+              team: awxAPI`/teams/1/`,
+              content_object: awxAPI`/job_templates/108/`,
             },
             summary_fields: {
               created_by: { id: 3, username: 'dev', first_name: '', last_name: '' },
@@ -52,9 +52,7 @@ describe('TemplateTeamAccess', () => {
       path,
       initialEntries,
     };
-
     cy.mount(<TemplateTeamAccess />, params);
-
     cy.get('tbody tr').should('have.length', 1);
     cy.getByDataCy('team-name-column-cell').contains('test team');
     cy.getByDataCy('role-column-cell').contains('JobTemplate Execute');

@@ -1,11 +1,12 @@
 import { AwxRoles } from './AwxRoles';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxRoles', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/role_definitions/*',
+        url: awxAPI`/role_definitions/*`,
       },
       {
         fixture: 'awxRoleDefinitions.json',
@@ -91,7 +92,7 @@ describe('AwxRoles', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/role_definitions/*',
+        url: awxAPI`/role_definitions/*`,
       },
       {
         statusCode: 500,

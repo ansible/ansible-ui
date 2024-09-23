@@ -1,11 +1,12 @@
 import { CreateCredential, EditCredential } from '../CredentialForm';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CredentialsExternalTestModal.tsx', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credential_types/*',
+        url: awxAPI`/credential_types/*`,
       },
       {
         fixture: 'externalCredentialTypes.json',
@@ -26,7 +27,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
   });
 
   it('External test modal opens when test button is selected in edit credential form', () => {
-    cy.intercept('GET', '/api/v2/credentials/35/', { fixture: 'externalCredential.json' }).as(
+    cy.intercept('GET', awxAPI`/credentials/35/`, { fixture: 'externalCredential.json' }).as(
       'getCredential'
     );
     cy.mount(<EditCredential />, {
@@ -49,7 +50,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
   });
 
   it('Test button is disabled when required fields are not completed when editing an existing credential', () => {
-    cy.intercept('GET', '/api/v2/credentials/35/', { fixture: 'externalCredential.json' }).as(
+    cy.intercept('GET', awxAPI`/credentials/35/`, { fixture: 'externalCredential.json' }).as(
       'getCredential'
     );
     cy.mount(<EditCredential />, {

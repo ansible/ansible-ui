@@ -3,6 +3,7 @@ import {
   InventoryHostGroupsAddModal,
   InventoryHostGroupsAddModalProps,
 } from './InventoryHostGroupsModal';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Inventory Host Groups List', () => {
   const props: InventoryHostGroupsAddModalProps = {
@@ -12,28 +13,26 @@ describe('Inventory Host Groups List', () => {
     inventoryId: '1',
     hostId: '1',
   };
+
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*/groups/?not__hosts*',
+          url: awxAPI`/inventories/*/groups/?not__hosts*`,
         },
         {
           fixture: 'groups.json',
         }
       ).as('getGroupResults');
-      cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/groups' },
-        { fixture: 'groups_options.json' }
-      );
+      cy.intercept({ method: 'OPTIONS', url: awxAPI`/groups` }, { fixture: 'groups_options.json' });
     });
 
     it('Inventory Groups Add Modal Renders', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
@@ -56,7 +55,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
@@ -66,14 +65,14 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/1/groups/*',
+          url: awxAPI`/inventories/1/groups/*`,
           hostname: 'localhost',
         },
         {
           fixture: 'groups.json',
         }
       ).as('getGroups');
-      cy.intercept('/api/v2/inventories/1/groups/?not__hosts=1&name=*').as('nameFilterRequest');
+      cy.intercept(awxAPI`/inventories/1/groups/?not__hosts=1&name=*`).as('nameFilterRequest');
       cy.mount(<InventoryHostGroupsAddModal {...props} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
         initialEntries: ['/inventories/inventory/1/hosts/1/groups'],
@@ -87,7 +86,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
@@ -95,7 +94,7 @@ describe('Inventory Host Groups List', () => {
         }
       ).as('getFilterOptions');
       cy.intercept(
-        '/api/v2/inventories/1/groups/?not__hosts=1&created_by__username__icontains=*'
+        awxAPI`/inventories/1/groups/?not__hosts=1&created_by__username__icontains=*`
       ).as('createdByFilterRequest');
       cy.mount(<InventoryHostGroupsAddModal {...props} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
@@ -110,7 +109,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
@@ -118,7 +117,7 @@ describe('Inventory Host Groups List', () => {
         }
       ).as('getFilterOptions');
       cy.intercept(
-        '/api/v2/inventories/1/groups/?not__hosts=1&modified_by__username__icontains=*'
+        awxAPI`/inventories/1/groups/?not__hosts=1&modified_by__username__icontains=*`
       ).as('modifiedByFilterRequest');
       cy.mount(<InventoryHostGroupsAddModal {...props} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',
@@ -133,7 +132,7 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*/groups/?not__hosts*',
+          url: awxAPI`/inventories/*/groups/?not__hosts*`,
         },
         {
           statusCode: 500,
@@ -152,13 +151,14 @@ describe('Inventory Host Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*/groups/?not__hosts*',
+          url: awxAPI`/inventories/*/groups/?not__hosts*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly', () => {
       cy.mount(<InventoryHostGroupsAddModal {...props} />, {
         path: '/inventories/:inventory_type/:id/hosts/:host_id/*',

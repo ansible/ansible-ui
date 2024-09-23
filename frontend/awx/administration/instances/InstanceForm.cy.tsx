@@ -1,5 +1,6 @@
 import { Instance } from '../../interfaces/Instance';
 import { AddInstance, EditInstance } from './InstanceForm';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Add instance Form', () => {
   it('should validate required fields on save', () => {
@@ -11,7 +12,7 @@ describe('Add instance Form', () => {
 
   it('should validate regex fields on save', () => {
     cy.mount(<AddInstance />);
-    cy.intercept('POST', '/api/v2/instances/', {
+    cy.intercept('POST', awxAPI`/instances/`, {
       statusCode: 400,
       body: { hostname: ['whitespaces in hostnames are illegal'] },
     }).as('postInstance');
@@ -23,7 +24,7 @@ describe('Add instance Form', () => {
 
   it('should add instance', () => {
     cy.mount(<AddInstance />);
-    cy.intercept('POST', '/api/v2/instances/', {
+    cy.intercept('POST', awxAPI`/instances/`, {
       statusCode: 201,
       body: {
         node_type: 'execution',
@@ -50,7 +51,7 @@ describe('Add instance Form', () => {
   });
 
   it('should add instance with complete form', () => {
-    cy.intercept('POST', '/api/v2/instances/', {
+    cy.intercept('POST', awxAPI`/instances/`, {
       statusCode: 201,
       body: {
         node_type: 'hop',
@@ -70,17 +71,15 @@ describe('Add instance Form', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/instances/?not__node_type=control&order_by=hostname&page=1&page_size=10',
+        url: awxAPI`/instances/?not__node_type=control&order_by=hostname&page=1&page_size=10`,
       },
       {
         statusCode: 200,
         fixture: 'instance_with_peer.json',
       }
     );
-
     cy.get('[data-cy="managed_by_policy"]').click();
     cy.get('[data-cy="peers_from_control_nodes"]').click();
-
     cy.clickButton(/^Create instance$/);
     cy.wait('@addInstanceWithPeers')
       .its('request.body')
@@ -100,7 +99,7 @@ describe('Add instance Form', () => {
 
 describe('Edit instance Form', () => {
   it('Edit instance form should render', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/*' }, { fixture: 'instance.json' }).as(
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/*` }, { fixture: 'instance.json' }).as(
       'getInstance'
     );
     cy.mount(<EditInstance />);
@@ -116,7 +115,6 @@ describe('Edit instance Form', () => {
     cy.get('[data-cy="enabled"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="managed_by_policy"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="peers_from_control_nodes"]').should('be.visible').should('not.be.disabled');
-
     cy.get('[data-cy="Submit"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="Cancel"]').should('be.visible').should('not.be.disabled');
   });

@@ -1,5 +1,5 @@
 import { InstanceGroupUserAccess } from './InstanceGroupUserAccess';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InstanceGroupUserAccess', () => {
   beforeEach(() => {
@@ -15,12 +15,12 @@ describe('InstanceGroupUserAccess', () => {
         results: [
           {
             id: 95,
-            url: '/api/v2/role_user_assignments/95/',
+            url: awxAPI`/role_user_assignments/95/`,
             related: {
-              created_by: '/api/v2/users/3/',
-              role_definition: '/api/v2/role_definitions/3/',
-              user: '/api/v2/users/3/',
-              content_object: '/api/v2/instance_groups/2/',
+              created_by: awxAPI`/users/3/`,
+              role_definition: awxAPI`/role_definitions/3/`,
+              user: awxAPI`/users/3/`,
+              content_object: awxAPI`/instance_groups/2/`,
             },
             summary_fields: {
               created_by: { id: 3, username: 'dev', first_name: '', last_name: '' },
@@ -52,9 +52,7 @@ describe('InstanceGroupUserAccess', () => {
       path,
       initialEntries,
     };
-
     cy.mount(<InstanceGroupUserAccess />, params);
-
     cy.get('tbody tr').should('have.length', 1);
     cy.getByDataCy('username-column-cell').contains('dev');
     cy.getByDataCy('role-column-cell').contains('InstanceGroup Admin');

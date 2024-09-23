@@ -2,6 +2,7 @@ import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Inventory } from '../../interfaces/Inventory';
 import { Inventories } from './Inventories';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Inventories', () => {
   describe('Non-empty list', () => {
@@ -9,7 +10,7 @@ describe('Inventories', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*',
+          url: awxAPI`/inventories/*`,
         },
         {
           fixture: 'inventories.json',
@@ -33,7 +34,7 @@ describe('Inventories', () => {
 
     it('should have filters for Name, Description, Created By and Modified By', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/inventories/' },
+        { method: 'OPTIONS', url: awxAPI`/inventories/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<Inventories />);
@@ -73,7 +74,6 @@ describe('Inventories', () => {
         .should('be.an', 'array')
         .then((results: Inventory[]) => {
           const inventory = results.find((i) => i.id === 7);
-
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
           });
@@ -109,7 +109,6 @@ describe('Inventories', () => {
         .should('be.an', 'array')
         .then((results: Inventory[]) => {
           const inventory = results.find((i) => i.id === 7);
-
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
           });
@@ -145,7 +144,7 @@ describe('Inventories', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*',
+          url: awxAPI`/inventories/*`,
         },
         {
           fixture: 'emptyList.json',

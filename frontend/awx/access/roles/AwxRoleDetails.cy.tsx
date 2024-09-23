@@ -2,10 +2,11 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import mockBuiltInRole from '../../../../cypress/fixtures/awxBuiltInRoleDefinition.json';
 import mockCustomRole from '../../../../cypress/fixtures/awxCustomRoleDefinition.json';
 import { AwxRoleDetails } from './AwxRoleDetails';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxRoleDetails', () => {
   it('should display team details for built in roles', () => {
-    cy.intercept('/api/v2/role_definitions/*', { fixture: 'awxBuiltInRoleDefinition.json' });
+    cy.intercept(awxAPI`/role_definitions/*`, { fixture: 'awxBuiltInRoleDefinition.json' });
     cy.mount(<AwxRoleDetails />);
     cy.get('[data-cy="name"]').should('have.text', mockBuiltInRole.name);
     cy.get('[data-cy="description"]').should('have.text', mockBuiltInRole.description);
@@ -17,7 +18,7 @@ describe('AwxRoleDetails', () => {
   });
 
   it('should display team details for custom roles', () => {
-    cy.intercept('/api/v2/role_definitions/*', { fixture: 'awxCustomRoleDefinition.json' });
+    cy.intercept(awxAPI`/role_definitions/*`, { fixture: 'awxCustomRoleDefinition.json' });
     cy.mount(<AwxRoleDetails />);
     cy.get('[data-cy="name"]').should('have.text', mockCustomRole.name);
     cy.get('[data-cy="description"]').should('have.text', mockCustomRole.description);

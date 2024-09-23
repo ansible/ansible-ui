@@ -2,10 +2,11 @@
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { AwxTeamDetails } from './AwxTeamDetails';
 import mockAwxTeam from '../../../../../cypress/fixtures/team.json';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TeamDetails', () => {
   it('Component renders and displays team details', () => {
-    cy.intercept('/api/v2/teams/*', { fixture: 'team.json' });
+    cy.intercept(awxAPI`/teams/*`, { fixture: 'team.json' });
     cy.mount(<AwxTeamDetails />);
     cy.get('[data-cy="name"]').should('have.text', 'Team 2 Org 0');
     cy.get('[data-cy="description"]').should('have.text', 'This is a description');

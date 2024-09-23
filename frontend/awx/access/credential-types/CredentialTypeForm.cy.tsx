@@ -1,3 +1,4 @@
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { CredentialType } from '../../interfaces/CredentialType';
 import { CreateCredentialType, EditCredentialType } from './CredentialTypeForm';
 
@@ -28,7 +29,7 @@ describe('CredentialTypeForm.cy.ts', () => {
     });
 
     it('should create credential type', () => {
-      cy.intercept('POST', '/api/v2/credential_types/', {
+      cy.intercept('POST', awxAPI`/credential_types/`, {
         statusCode: 201,
         body: credentialType,
       }).as('createCredentialType');
@@ -53,7 +54,7 @@ describe('CredentialTypeForm.cy.ts', () => {
   describe('Edit Credential Type', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/credential_types/*' },
+        { method: 'GET', url: awxAPI`/credential_types/*` },
         { statusCode: 200, body: credentialType }
       );
     });
@@ -68,7 +69,7 @@ describe('CredentialTypeForm.cy.ts', () => {
     });
 
     it('should edit credential type', () => {
-      cy.intercept('PATCH', '/api/v2/credential_types/*', {
+      cy.intercept('PATCH', awxAPI`/credential_types/*`, {
         statusCode: 201,
         body: credentialType,
       }).as('editCredentialType');
@@ -92,7 +93,6 @@ describe('CredentialTypeForm.cy.ts', () => {
             ],
             required: ['username'],
           });
-          // expect(editedCredentialType.injectors).to.deep.equal({});
         });
     });
   });

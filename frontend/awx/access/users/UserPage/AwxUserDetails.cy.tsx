@@ -1,11 +1,12 @@
 import { AwxUserDetails } from './AwxUserDetails';
 import mockAwxUser from '../../../../../cypress/fixtures/awxUser.json';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('User details', () => {
   it('Renders first & last name, username, email, orgs, last login, auth type, created & modified timestamps', () => {
-    cy.intercept('/api/v2/users/*', { fixture: 'awxUser.json' });
-    cy.intercept('/api/v2/users/*/organizations/', { fixture: 'organizations.json' });
+    cy.intercept(awxAPI`/users/*`, { fixture: 'awxUser.json' });
+    cy.intercept(awxAPI`/users/*/organizations/`, { fixture: 'organizations.json' });
     cy.mount(<AwxUserDetails />);
     cy.get('[data-cy="first-name"]').should('have.text', 'Org');
     cy.get('[data-cy="last-name"]').should('have.text', 'Admin');

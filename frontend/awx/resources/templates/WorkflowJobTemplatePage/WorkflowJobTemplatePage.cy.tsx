@@ -3,11 +3,12 @@
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('WorflowJobTemplatePage', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*`, hostname: 'localhost' },
       { fixture: 'workflowJobTemplate.json' }
     );
 
@@ -21,7 +22,7 @@ describe('WorflowJobTemplatePage', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/workflow_job_templates/1/instance_groups',
+        url: awxAPI`/workflow_job_templates/1/instance_groups`,
         hostname: 'localhost',
       },
       { fixture: 'instance_groups.json' }
@@ -37,58 +38,52 @@ describe('WorflowJobTemplatePage', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations/?role_level=notification_admin_role',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'workflowJobTemplateLaunch.json' }
     ).as('getLaunchConfig');
-
-    cy.intercept('POST', '/api/v2/workflow_job_templates/*/launch/', (req) => {
+    cy.intercept('POST', awxAPI`/workflow_job_templates/*/launch/`, (req) => {
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
     }).as('launchJob');
-
     cy.mount(<WorkflowJobTemplatePage />);
-
     cy.clickButton(/^Launch template$/);
-
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
   });
+
   it('Handles HTTP errors properly', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations/?role_level=notification_admin_role',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'workflowJobTemplateLaunch.json' }
     ).as('getLaunchConfig');
-
-    cy.intercept('POST', '/api/v2/workflow_job_templates/*/launch/', (req) => {
+    cy.intercept('POST', awxAPI`/workflow_job_templates/*/launch/`, (req) => {
       return req.reply({ statusCode: 404, body: { message: 'Could not launch job' } });
     }).as('launchJob');
-
     cy.mount(<WorkflowJobTemplatePage />);
-
     cy.clickButton(/^Launch template$/);
-
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
     cy.get('.pf-v5-c-alert__title').contains('Failed to launch template');
   });
+
   it('Should render the proper tabs for a super user', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations/?role_level=notification_admin_role',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
@@ -104,7 +99,6 @@ describe('WorflowJobTemplatePage', () => {
       'Notifications',
     ];
     cy.mount(<WorkflowJobTemplatePage />);
-
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
@@ -112,14 +106,14 @@ describe('WorflowJobTemplatePage', () => {
       });
     });
   });
+
   it('Should show all tabs because user is system auditor', () => {
     cy.fixture('organizations.json').then((organizations: { count: number; results: [] }) => {
       organizations.count = 0;
       organizations.results = [];
-
       cy.intercept(
         'GET',
-        '/api/v2/organizations/?role_level=notification_admin_role',
+        awxAPI`/organizations/?role_level=notification_admin_role`,
         organizations
       ).as('getOrganizations');
     });
@@ -141,18 +135,17 @@ describe('WorflowJobTemplatePage', () => {
       });
     });
   });
+
   it('Should not show notifications tab', () => {
     cy.fixture('organizations.json').then((organizations: { count: number; results: [] }) => {
       organizations.count = 0;
       organizations.results = [];
-
       cy.intercept(
         'GET',
-        '/api/v2/organizations/?role_level=notification_admin_role',
+        awxAPI`/organizations/?role_level=notification_admin_role`,
         organizations
       ).as('getOrganizations');
     });
-
     const tabNames: string[] = [
       'Back to Templates',
       'Details',
@@ -162,10 +155,8 @@ describe('WorflowJobTemplatePage', () => {
       'Jobs',
       'Survey',
     ];
-
     cy.mount(<WorkflowJobTemplatePage />);
     cy.wait('@getOrganizations');
-
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {

@@ -1,21 +1,23 @@
 import { InstanceGroup as ContainerGroup } from '../../interfaces/InstanceGroup';
 import { CreateContainerGroup, EditContainerGroup } from './ContainerGroupForm';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Container Group Form', () => {
   describe('Create container group', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/instance_groups' },
+        { method: 'OPTIONS', url: awxAPI`/instance_groups` },
         {
           fixture: 'instanceGroupOptions.json',
         }
       ).as('options');
-      cy.intercept({ method: 'GET', url: '/api/v2/credentials' }, { fixture: 'credentials.json' });
-      cy.intercept('POST', '/api/v2/instance_groups/', {
+      cy.intercept({ method: 'GET', url: awxAPI`/credentials` }, { fixture: 'credentials.json' });
+      cy.intercept('POST', awxAPI`/instance_groups/`, {
         statusCode: 201,
         fixture: 'container_group.json',
       }).as('createIG');
     });
+
     it('should validate required fields on save', () => {
       cy.mount(<CreateContainerGroup />);
       cy.clickButton(/^Create container group$/);
@@ -23,10 +25,7 @@ describe('Create Edit Container Group Form', () => {
     });
 
     it('should create container group with only required values passed', () => {
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/credentials/*' },
-        { fixture: 'credentials.json' }
-      );
+      cy.intercept({ method: 'GET', url: awxAPI`/credentials/*` }, { fixture: 'credentials.json' });
       cy.mount(<CreateContainerGroup />, {
         path: '/instance-groups/container-group/create',
         initialEntries: [`/instance-groups/container-group/create`],
@@ -54,10 +53,11 @@ describe('Create Edit Container Group Form', () => {
         });
     });
   });
+
   describe('Edit Container Group', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/instance_groups' },
+        { method: 'OPTIONS', url: awxAPI`/instance_groups` },
         {
           fixture: 'instanceGroupOptions.json',
         }
@@ -65,11 +65,8 @@ describe('Create Edit Container Group Form', () => {
       cy.intercept('GET', `api/v2/instance_groups/*`, {
         fixture: 'container_group.json',
       });
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/credentials/*' },
-        { fixture: 'credentials.json' }
-      );
-      cy.intercept('PATCH', '/api/v2/instance_groups/*', {}).as('editCg');
+      cy.intercept({ method: 'GET', url: awxAPI`/credentials/*` }, { fixture: 'credentials.json' });
+      cy.intercept('PATCH', awxAPI`/instance_groups/*`, {}).as('editCg');
     });
 
     it('should preload the form with current values', () => {
@@ -90,13 +87,10 @@ describe('Create Edit Container Group Form', () => {
       });
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type('Test name- edited');
-
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
-
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
-
       cy.clickButton(/^Save container group$/);
       cy.wait('@editCg')
         .its('request.body')

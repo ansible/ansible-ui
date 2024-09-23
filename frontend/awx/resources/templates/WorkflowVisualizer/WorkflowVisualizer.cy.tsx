@@ -1,22 +1,23 @@
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizer } from './WorkflowVisualizer';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('WorkflowVisualizer', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
+        url: awxAPI`/workflow_job_templates/*/workflow_nodes/*`,
       },
       { fixture: 'workflow_nodes.json' }
     ).as('getWorkflowNodes');
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*` },
       { fixture: 'workflowJobTemplate.json' }
     );
-    cy.intercept('/api/v2/job_templates/*', { fixture: 'jobTemplate.json' });
-    cy.intercept('/api/v2/job_templates/*/instance_groups', { fixture: 'instance_groups.json' });
+    cy.intercept(awxAPI`/job_templates/*`, { fixture: 'jobTemplate.json' });
+    cy.intercept(awxAPI`/job_templates/*/instance_groups`, { fixture: 'instance_groups.json' });
   });
 
   it('Should render nodes and labels', () => {
@@ -131,11 +132,10 @@ describe('WorkflowVisualizer', () => {
     cy.fixture('workflow_nodes.json').then((workflowNodes: AwxItemsResponse<WorkflowNode>) => {
       workflowNodes.count = 3;
       cy.intercept(
-        { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/*' },
+        { method: 'GET', url: awxAPI`/workflow_job_templates/*/workflow_nodes/*` },
         workflowNodes
       );
     });
-
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-cy="workflow-visualizer"]').should('be.visible');
     cy.get('[data-cy="workflow-visualizer-toolbar-total-nodes"]').should(
@@ -146,10 +146,9 @@ describe('WorkflowVisualizer', () => {
 
   it('Should show Delete all nodes button', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*/workflow_nodes/*' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*/workflow_nodes/*` },
       { fixture: 'workflow_nodes.json' }
     );
-
     cy.mount(<WorkflowVisualizer />);
     cy.get('.toggle-kebab')
       .click()
@@ -170,6 +169,7 @@ describe('WorkflowVisualizer', () => {
       .contains('Launch workflow')
       .should('be.visible');
   });
+
   it('Show confirmation modal when removing a link, then cancel removal, then actually remove ', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-id="1356-1511"]').within(() => {
@@ -207,9 +207,10 @@ describe('WorkflowVisualizer', () => {
     cy.clickModalButton('Close');
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('not.exist');
   });
+
   it('Adds a new node linked to an existing node with success status', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*' },
+      { method: 'GET', url: awxAPI`/job_templates/*` },
       { fixture: 'jobTemplates.json' }
     );
     cy.mount(<WorkflowVisualizer />);
@@ -217,7 +218,6 @@ describe('WorkflowVisualizer', () => {
     cy.get('li[data-cy="add-node-and-link"]').within(() => {
       cy.get('button').click({ force: true });
     });
-
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
     cy.selectDropdownOptionByResourceName('node-status-type', 'success');
     cy.selectDropdownOptionByResourceName('node-convergence', 'All');
@@ -232,7 +232,7 @@ describe('WorkflowVisualizer', () => {
 describe('Empty state', () => {
   it('Should show empty state view', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/123/workflow_nodes/?*' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/123/workflow_nodes/?*` },
       {
         statusCode: 200,
         body: {
@@ -244,7 +244,7 @@ describe('Empty state', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/123' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/123` },
       { fixture: 'workflowJobTemplate.json' }
     );
     cy.mount(<WorkflowVisualizer />, {
@@ -259,9 +259,10 @@ describe('Empty state', () => {
       cy.get('[data-cy="add-node-button"]').should('be.visible');
     });
   });
+
   it('Should add a node to an empty workflow visualizer', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/123/workflow_nodes/?*' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/123/workflow_nodes/?*` },
       {
         statusCode: 200,
         body: {
@@ -273,11 +274,11 @@ describe('Empty state', () => {
       }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/123' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/123` },
       { fixture: 'workflowJobTemplate.json' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*' },
+      { method: 'GET', url: awxAPI`/job_templates/*` },
       { fixture: 'jobTemplates.json' }
     );
     cy.mount(<WorkflowVisualizer />, {
@@ -298,17 +299,18 @@ describe('Should show unsaved changes modal', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/workflow_job_templates/*/workflow_nodes/*',
+        url: awxAPI`/workflow_job_templates/*/workflow_nodes/*`,
       },
       { fixture: 'workflow_nodes.json' }
     ).as('getWorkflowNodes');
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*` },
       { fixture: 'workflowJobTemplate.json' }
     );
-    cy.intercept('/api/v2/job_templates/*', { fixture: 'jobTemplate.json' });
-    cy.intercept('/api/v2/job_templates/*/instance_groups', { fixture: 'instance_groups.json' });
+    cy.intercept(awxAPI`/job_templates/*`, { fixture: 'jobTemplate.json' });
+    cy.intercept(awxAPI`/job_templates/*/instance_groups`, { fixture: 'instance_groups.json' });
   });
+
   it('Click on edge context menu option to change link type', () => {
     cy.mount(<WorkflowVisualizer />);
     cy.get('[data-id="1356-1511"]').within(() => {

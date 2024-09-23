@@ -1,13 +1,14 @@
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { GroupDetails } from './GroupDetails';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('GroupDetails', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/groups/**',
+        url: awxAPI`/groups/**`,
         hostname: 'localhost',
       },
       {

@@ -1,6 +1,6 @@
 import { NodeEditWizard } from './NodeEditWizard';
 import { VisualizationProvider, BaseNode } from '@patternfly/react-topology';
-import { awxAPI } from '../../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../../cypress/support/formatApiPathForAwx';
 
 describe('NodeEditWizard', () => {
   describe('Prompted node', () => {
@@ -22,8 +22,8 @@ describe('NodeEditWizard', () => {
 
     beforeEach(() => {
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
-      cy.intercept('/api/v2/job_templates/100/', { id: 100, name: 'Mock Job Template' });
-      cy.intercept('/api/v2/job_templates/100/launch/', {
+      cy.intercept(awxAPI`/job_templates/100/`, { id: 100, name: 'Mock Job Template' });
+      cy.intercept(awxAPI`/job_templates/100/launch/`, {
         ask_credential_on_launch: true,
         defaults: {
           credentials: [
@@ -37,15 +37,15 @@ describe('NodeEditWizard', () => {
           skip_tags: '',
         },
       });
-      cy.intercept('/api/v2/job_templates/100/credentials/', {
+      cy.intercept(awxAPI`/job_templates/100/credentials/`, {
         count: 1,
         results: [mockTemplateCredential],
       });
-      cy.intercept('/api/v2/workflow_job_template_nodes/1/labels/', {
+      cy.intercept(awxAPI`/workflow_job_template_nodes/1/labels/`, {
         count: 0,
         results: [],
       });
-      cy.intercept('/api/v2/workflow_job_template_nodes/1/credentials/', {
+      cy.intercept(awxAPI`/workflow_job_template_nodes/1/credentials/`, {
         count: 0,
         results: [
           {
@@ -79,7 +79,6 @@ describe('NodeEditWizard', () => {
           <NodeEditWizard node={mockNode} />
         </VisualizationProvider>
       );
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 3);
         ['Node details', 'Prompts', 'Review'].forEach((text, index) => {
@@ -88,7 +87,6 @@ describe('NodeEditWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.get('[data-cy="node-type-form-group"]').within(() => {
         cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
       });

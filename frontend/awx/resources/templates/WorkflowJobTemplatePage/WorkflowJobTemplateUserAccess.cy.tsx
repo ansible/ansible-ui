@@ -1,5 +1,5 @@
 import { WorkflowJobTemplateUserAccess } from './WorkflowJobTemplateUserAccess';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('WorkflowJobTemplateUserAccess', () => {
   beforeEach(() => {
@@ -15,12 +15,12 @@ describe('WorkflowJobTemplateUserAccess', () => {
         results: [
           {
             id: 45,
-            url: '/api/v2/role_user_assignments/45/',
+            url: awxAPI`/role_user_assignments/45/`,
             related: {
-              created_by: '/api/v2/users/3/',
-              role_definition: '/api/v2/role_definitions/25/',
-              user: '/api/v2/users/3/',
-              content_object: '/api/v2/workflow_job_templates/1/',
+              created_by: awxAPI`/users/3/`,
+              role_definition: awxAPI`/role_definitions/25/`,
+              user: awxAPI`/users/3/`,
+              content_object: awxAPI`/workflow_job_templates/1/`,
             },
             summary_fields: {
               created_by: { id: 3, username: 'dev', first_name: '', last_name: '' },
@@ -52,9 +52,7 @@ describe('WorkflowJobTemplateUserAccess', () => {
       path,
       initialEntries,
     };
-
     cy.mount(<WorkflowJobTemplateUserAccess />, params);
-
     cy.get('tbody tr').should('have.length', 1);
     cy.getByDataCy('username-column-cell').contains('dev');
     cy.getByDataCy('role-column-cell').contains('WorkflowJobTemplate Execute');

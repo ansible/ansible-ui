@@ -412,7 +412,6 @@ describe('PlatformOrganizationForm', () => {
         />
       </GatewayServicesContext.Provider>
     );
-
     cy.get('[data-cy="organization-name"]').should('have.value', platformOrganization.name);
     cy.get('[data-cy="organization-description"]').should(
       'have.value',
@@ -446,7 +445,6 @@ describe('PlatformOrganizationForm', () => {
         license_type: 'open',
       },
     }));
-
     cy.mount(
       <GatewayServicesContext.Provider value={{ gateway: '', controller: '' }}>
         <PlatformOrganizationForm
@@ -456,7 +454,6 @@ describe('PlatformOrganizationForm', () => {
         />
       </GatewayServicesContext.Provider>
     );
-
     cy.get('[data-cy="organization-name"]').should('have.value', platformOrganization.name);
     cy.get('[data-cy="organization-description"]').should(
       'have.value',

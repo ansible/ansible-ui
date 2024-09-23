@@ -1,13 +1,14 @@
 import { InventoryRunCommand } from './InventoryRunCommand';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Run command wizard', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credential_types/*',
+        url: awxAPI`/credential_types/*`,
       },
       {
         fixture: 'machine_credential_type.json',
@@ -16,7 +17,7 @@ describe('Run command wizard', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credentials/*',
+        url: awxAPI`/credentials/*`,
         hostname: 'localhost',
       },
       {
@@ -26,7 +27,7 @@ describe('Run command wizard', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credentials/1/',
+        url: awxAPI`/credentials/1/`,
       },
       {
         id: 1,
@@ -36,7 +37,7 @@ describe('Run command wizard', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/execution_environments/*',
+        url: awxAPI`/execution_environments/*`,
         hostname: 'localhost',
       },
       {
@@ -59,10 +60,11 @@ describe('Run command wizard', () => {
       }
     );
     cy.intercept(
-      { method: 'OPTIONS', url: '/api/v2/ad_hoc_commands', hostname: 'localhost' },
+      { method: 'OPTIONS', url: awxAPI`/ad_hoc_commands`, hostname: 'localhost' },
       { fixture: 'ad_hoc_commands.json' }
     );
   });
+
   it('review step has correct values', () => {
     cy.mount(<InventoryRunCommand />);
     cy.selectDropdownOptionByResourceName('module-name', 'shell');
@@ -83,7 +85,6 @@ describe('Run command wizard', () => {
     cy.singleSelectByDataCy('executionEnvironment', 'AWX EE (latest)');
     cy.clickButton(/^Next$/);
     cy.selectSingleSelectOption('[data-cy="credential"]', 'Demo Credential');
-
     cy.clickButton(/^Next$/);
     cy.wait('@getCredential');
     cy.wait('@getEE');

@@ -4,8 +4,8 @@ import mockEdaUser from '../../../../cypress/fixtures/edaUser.json';
 import mockAwxOrg from '../../../../cypress/fixtures/organization.json';
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
 import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { edaAPI } from '../../../../cypress/support/formatApiPathForEDA';
 import * as GatewayServices from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationManageUserRoles } from './PlatformOrganizationManageUserRoles';
@@ -74,6 +74,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
       fixture: 'edaUserOrgRoleAssignments.json',
     });
   });
+
   it('renders with correct steps when controller and EDA services are enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -91,6 +92,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
   });
+
   it('renders with correct steps when only one service is enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -105,6 +107,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
+
   it('indicates selected controller and EDA roles for the user ', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -129,6 +132,7 @@ describe('PlatformOrganizationManageUserRoles', () => {
       cy.get('input').should('have.attr', 'checked');
     });
   });
+
   it('displays user and selected roles in the Review step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -139,15 +143,12 @@ describe('PlatformOrganizationManageUserRoles', () => {
       return undefined;
     });
     cy.mount(component, params);
-
     cy.contains('Select Automation Execution roles');
     // Uncheck existing selection of AWX roles
     cy.selectTableRowByCheckbox('name', 'Organization Project Admin', { disableFilter: true });
     // Make new selection of AWX role
     cy.selectTableRowByCheckbox('name', 'Organization Inventory Admin', { disableFilter: true });
-
     cy.clickButton(/^Next$/);
-
     cy.get('[data-cy="wizard-nav-item-edaRoles"] button').should('have.class', 'pf-m-current');
     cy.contains('Select Automation Decisions roles');
     // Make new selection of EDA role

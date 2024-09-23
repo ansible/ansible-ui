@@ -1,4 +1,4 @@
-import { awxAPI } from '../../common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { AwxAddTeamRoles } from './AwxAddTeamRoles';
 
 describe('AWX team: Add roles', () => {
@@ -9,6 +9,7 @@ describe('AWX team: Add roles', () => {
     path,
     initialEntries,
   };
+
   beforeEach(() => {
     cy.intercept('GET', awxAPI`/teams/*`, { fixture: 'awxUser.json' });
     cy.intercept('GET', awxAPI`/role_team_assignments/*`, {
@@ -23,6 +24,7 @@ describe('AWX team: Add roles', () => {
     cy.intercept('GET', awxAPI`/projects/*`, { fixture: 'projects.json' });
     cy.mount(component, params);
   });
+
   it('should render with correct steps', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select a resource type');
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select resources');
@@ -30,6 +32,7 @@ describe('AWX team: Add roles', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a resource type is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.clickButton(/^Next$/);
@@ -44,6 +47,7 @@ describe('AWX team: Add roles', () => {
     );
     cy.get('[data-cy="wizard-nav-item-resources"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a resource is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
@@ -59,6 +63,7 @@ describe('AWX team: Add roles', () => {
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a role is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
@@ -76,6 +81,7 @@ describe('AWX team: Add roles', () => {
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
+
   it('should display selected resources and roles in the Review step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();

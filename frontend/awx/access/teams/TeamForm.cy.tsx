@@ -1,16 +1,17 @@
 import { CreateTeam } from './TeamForm';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('TeamForm.cy.ts', () => {
   it('Create Team - Submit error message on internal server error', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/organizations/*' },
+      { method: 'GET', url: awxAPI`/organizations/*` },
       { count: 1, results: [{ id: 0, name: 'Default' }] }
     );
     cy.mount(<CreateTeam />);
     cy.get('[data-cy="name"]').type('Test');
     cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
     cy.intercept(
-      { method: 'POST', url: '/api/v2/teams' },
+      { method: 'POST', url: awxAPI`/teams` },
       { statusCode: 500, message: 'Internal Server Error' }
     );
     cy.clickButton(/^Create team$/);
@@ -19,7 +20,7 @@ describe('TeamForm.cy.ts', () => {
 
   it('Create Team - Validation on name and organization', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/organizations/*' },
+      { method: 'GET', url: awxAPI`/organizations/*` },
       {
         count: 2,
         results: [

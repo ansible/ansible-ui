@@ -2,6 +2,7 @@ import * as useOptions from '../../../common/crud/useOptions';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { ExecutionEnvironments } from './ExecutionEnvironments';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Execution Environments List', () => {
   //Missing component tests:
@@ -17,7 +18,7 @@ describe('Execution Environments List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/execution_environments/*',
+          url: awxAPI`/execution_environments/*`,
         },
         {
           fixture: 'execution_environments.json',
@@ -33,7 +34,7 @@ describe('Execution Environments List', () => {
 
     it('Filter execution environments by name', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/execution_environments/' },
+        { method: 'OPTIONS', url: awxAPI`/execution_environments/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<ExecutionEnvironments />);
@@ -45,7 +46,7 @@ describe('Execution Environments List', () => {
 
     it('Filter execution environments by image', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/execution_environments/' },
+        { method: 'OPTIONS', url: awxAPI`/execution_environments/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<ExecutionEnvironments />);
@@ -76,7 +77,7 @@ describe('Execution Environments List', () => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/execution_environments/*',
+              url: awxAPI`/execution_environments/*`,
             },
             { body: eeBodyNoDeletePerms }
           );
@@ -108,7 +109,7 @@ describe('Execution Environments List', () => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/execution_environments/*',
+              url: awxAPI`/execution_environments/*`,
             },
             { body: eeBodyNoDeletePerms }
           );
@@ -167,7 +168,7 @@ describe('Execution Environments List', () => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/execution_environments/*',
+              url: awxAPI`/execution_environments/*`,
             },
             { body: eeBodyNoDeletePerms }
           );
@@ -191,7 +192,7 @@ describe('Execution Environments List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/execution_environments/*',
+          url: awxAPI`/execution_environments/*`,
         },
         {
           fixture: 'execution_environments.json',
@@ -220,7 +221,7 @@ describe('Execution Environments List', () => {
           cy.intercept(
             {
               method: 'GET',
-              url: '/api/v2/execution_environments/*',
+              url: awxAPI`/execution_environments/*`,
             },
             { body: eeBodyNoDeletePerms }
           );
@@ -245,7 +246,7 @@ describe('Execution Environments List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/execution_environments/*',
+          url: awxAPI`/execution_environments/*`,
         },
         {
           statusCode: 500,
@@ -264,13 +265,14 @@ describe('Execution Environments List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/execution_environments/*',
+          url: awxAPI`/execution_environments/*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly for user with permission to create execution environments', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -293,6 +295,7 @@ describe('Execution Environments List', () => {
       cy.contains(/^To get started, create an execution environment.$/);
       cy.contains('button', /^Create execution environment$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create execution environments', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {

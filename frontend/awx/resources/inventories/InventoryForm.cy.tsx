@@ -1,5 +1,6 @@
 import { CyHttpMessages } from 'cypress/types/net-stubbing';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
@@ -51,23 +52,20 @@ describe('Create Edit Inventory Form', () => {
   describe('Create Inventory', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
+        { method: 'GET', url: awxAPI`/organizations/*` },
         { fixture: 'organizations.json' }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/instance_groups/*' },
+        { method: 'GET', url: awxAPI`/instance_groups/*` },
         { fixture: 'instance_groups.json' }
       );
-      cy.intercept({ method: 'GET', url: '/api/v2/labels/*' }, { fixture: 'labels.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/labels/*` }, { fixture: 'labels.json' });
     });
     kinds.forEach((kind) => {
       const path = '/inventories/:inventory_type/create';
-
       const initialEntries =
         kind === '' ? [`/inventories/inventory/create`] : [`/inventories/smart_inventory/create`];
-
       const payload: RegularPayload | SmartPayload = kind === '' ? regularPayload : smartPayload;
-
       const kindLabel = kind === '' ? 'regular' : kind;
 
       it(`Validate required fields on create (${kindLabel})`, () => {
@@ -85,33 +83,29 @@ describe('Create Edit Inventory Form', () => {
 
       it(`Create inventory using correct field values (${kindLabel})`, () => {
         cy.intercept(
-          { method: 'OPTIONS', url: '/api/v2/instance_groups/' },
+          { method: 'OPTIONS', url: awxAPI`/instance_groups/` },
           { fixture: 'mock_options.json' }
         );
         cy.fixture('inventory').then((inventory: Inventory) => {
           inventory.summary_fields.labels.count = 0;
           inventory.summary_fields.labels.results = [];
-          cy.intercept('POST', '/api/v2/inventories/', {
+          cy.intercept('POST', awxAPI`/inventories/`, {
             statusCode: 201,
             body: inventory,
           }).as('createInventory');
         });
-
-        cy.intercept('POST', '/api/v2/inventories/*/instance_groups/', {
+        cy.intercept('POST', awxAPI`/inventories/*/instance_groups/`, {
           statusCode: 204,
         }).as('submitInstanceGroup');
-
         if (kind === '') {
-          cy.intercept('POST', '/api/v2/inventories/*/labels/', {
+          cy.intercept('POST', awxAPI`/inventories/*/labels/`, {
             statusCode: 204,
           }).as('submitLabels');
         }
-
         cy.mount(<CreateInventory inventoryKind={kind} />, {
           path,
           initialEntries,
         });
-
         cy.get('[data-cy="name"]').type(payload.name);
         cy.get('[data-cy="description"]').type(payload.description);
         cy.get('[data-cy="variables"]').type(payload.variables);
@@ -123,7 +117,6 @@ describe('Create Edit Inventory Form', () => {
             ig_response?.results[0]?.name,
           ])
         );
-
         if (kind === '') {
           cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
             (payload as RegularPayload).labels[0].name
@@ -133,9 +126,7 @@ describe('Create Edit Inventory Form', () => {
         if (kind === 'smart') {
           cy.get('[data-cy="host-filter"]').type((payload as SmartPayload).host_filter);
         }
-
         cy.clickButton(/^Create inventory$/);
-
         cy.wait('@createInventory')
           .its('request.body')
           .then((createdInventory) => {
@@ -163,24 +154,22 @@ describe('Create Edit Inventory Form', () => {
   describe('Edit Inventory', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'PATCH', url: '/api/v2/inventories/*/' },
+        { method: 'PATCH', url: awxAPI`/inventories/*/` },
         { fixture: 'inventory.json' }
       ).as('EditInvReq');
       cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
+        { method: 'GET', url: awxAPI`/organizations/*` },
         { fixture: 'organizations.json' }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*/' },
+        { method: 'GET', url: awxAPI`/organizations/*/` },
         { fixture: 'organization.json' }
       );
-
-      cy.intercept({ method: 'GET', url: '/api/v2/labels/*' }, { fixture: 'labels.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/labels/*` }, { fixture: 'labels.json' });
 
       /** Fetch instance groups that are attached to the inventory */
-
       cy.intercept(
-        { method: 'GET', url: '/api/v2/inventories/*/instance_groups/' },
+        { method: 'GET', url: awxAPI`/inventories/*/instance_groups/` },
         { ...instanceGroupsResponse, results: [instanceGroupsResponse.results[1]] }
       ).as('loadIG');
 
@@ -188,7 +177,7 @@ describe('Create Edit Inventory Form', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/instance_groups/*',
+          url: awxAPI`/instance_groups/*`,
         },
         { ...instanceGroupsResponse }
       );
@@ -202,18 +191,15 @@ describe('Create Edit Inventory Form', () => {
       );
       /** Fetch instance groups options. Also a request handled by a framework component */
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/instance_groups/*' },
+        { method: 'OPTIONS', url: awxAPI`/instance_groups/*` },
         { fixture: 'mock_options.json' }
       );
     });
     kinds.forEach((kind) => {
       const path = '/inventories/:inventory_type/:id/edit';
-
       const initialEntries =
         kind === '' ? [`/inventories/inventory/1/edit`] : [`/inventories/smart_inventory/2/edit`];
-
       const payload: RegularPayload | SmartPayload = kind === '' ? regularPayload : smartPayload;
-
       const kindLabel = kind === '' ? 'regular' : kind;
 
       it(`Preload the form with correct values (${kindLabel})`, () => {
@@ -236,7 +222,7 @@ describe('Create Edit Inventory Form', () => {
             }
           })
           .then((inventory: Inventory) => {
-            cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
+            cy.intercept({ method: 'GET', url: awxAPI`/inventories/*/` }, { body: inventory });
           });
         cy.mount(<EditInventory />, {
           path,
@@ -284,7 +270,7 @@ describe('Create Edit Inventory Form', () => {
             }
           })
           .then((inventory: Inventory) => {
-            cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
+            cy.intercept({ method: 'GET', url: awxAPI`/inventories/*/` }, { body: inventory });
           });
         cy.mount(<EditInventory />, {
           path,
@@ -294,11 +280,9 @@ describe('Create Edit Inventory Form', () => {
         cy.get('[data-cy="name"]').type('Edited name');
         cy.get('[data-cy="description"]').clear();
         cy.get('[data-cy="description"]').type('Edited description');
-        // cy.get('[data-cy="variables"]').type('s');
         cy.fixture('organizations').then((orgResponse: AwxItemsResponse<Organization>) => {
           cy.singleSelectByDataCy('organization', orgResponse.results[1].name);
         });
-
         cy.multiSelectByDataCy('instance-group-select-form-group', [
           instanceGroupsResponse.results[2].name,
           instanceGroupsResponse.results[1].name,
@@ -329,10 +313,9 @@ describe('Create Edit Inventory Form', () => {
               expect(editedInventory.host_filter).to.equal('name__icontains=edited-local');
             }
           });
-
         cy.intercept(
           'POST',
-          '/api/v2/inventories/*/instance_groups/',
+          awxAPI`/inventories/*/instance_groups/`,
           (req: CyHttpMessages.IncomingHttpRequest) => {
             const editedIG: { disassociate?: boolean; id: number } = req.body as {
               disassociate?: boolean;
@@ -350,9 +333,8 @@ describe('Create Edit Inventory Form', () => {
             }
           }
         );
-
         cy.intercept(
-          { method: 'POST', url: '/api/v2/inventories/*/labels/' },
+          { method: 'POST', url: awxAPI`/inventories/*/labels/` },
           (req: CyHttpMessages.IncomingHttpRequest) => {
             const editedLabel: { disassociate?: boolean; id?: number; name: string } = req.body as {
               disassociate?: boolean;
@@ -389,7 +371,7 @@ describe('Create Edit Inventory Form', () => {
             }
           })
           .then((inventory: Inventory) => {
-            cy.intercept({ method: 'GET', url: '/api/v2/inventories/*/' }, { body: inventory });
+            cy.intercept({ method: 'GET', url: awxAPI`/inventories/*/` }, { body: inventory });
           });
         cy.mount(<EditInventory />, {
           path,

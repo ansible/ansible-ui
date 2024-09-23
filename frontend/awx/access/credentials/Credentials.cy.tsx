@@ -1,12 +1,13 @@
 import { Credential } from '../../interfaces/Credential';
 import { Credentials } from './Credentials';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credentials/*',
+        url: awxAPI`/credentials/*`,
         hostname: 'localhost',
       },
       {
@@ -14,11 +15,13 @@ describe('Credentials.cy.ts', () => {
       }
     ).as('getCredentials');
   });
+
   it('renders credentials list', () => {
     cy.mount(<Credentials />);
     cy.verifyPageTitle('Credentials');
     cy.get('table').find('tr').should('have.length.greaterThan', 0);
   });
+
   it('deletes credential from toolbar menu', () => {
     cy.mount(<Credentials />);
     cy.fixture('credentials.json')
@@ -31,6 +34,7 @@ describe('Credentials.cy.ts', () => {
         cy.contains('Permanently delete credentials').should('be.visible');
       });
   });
+
   it('row action to delete credential is disabled if the user does not have permissions', () => {
     cy.mount(<Credentials />);
     cy.fixture('credentials.json')

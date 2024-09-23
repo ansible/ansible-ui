@@ -1,12 +1,13 @@
 import { UserTokenDetails } from './UserTokenDetails';
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('UserTokenDetails', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/users/*',
+        url: awxAPI`/users/*`,
         hostname: 'localhost',
       },
       {
@@ -14,11 +15,12 @@ describe('UserTokenDetails', () => {
       }
     );
   });
+
   it('renders personal access token when token does not reference application', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/tokens/*',
+        url: awxAPI`/tokens/*`,
         hostname: 'localhost',
       },
       {
@@ -51,7 +53,7 @@ describe('UserTokenDetails', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/tokens/*',
+        url: awxAPI`/tokens/*`,
         hostname: 'localhost',
       },
       {
@@ -78,11 +80,12 @@ describe('UserTokenDetails', () => {
       formatDateString('2024-04-29T18:58:25.223488Z')
     );
   });
+
   it('renders error page when requesting non existing user', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/users/*',
+        url: awxAPI`/users/*`,
         hostname: 'localhost',
       },
       {
@@ -93,7 +96,7 @@ describe('UserTokenDetails', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/tokens/*',
+        url: awxAPI`/tokens/*`,
         hostname: 'localhost',
       },
       {
@@ -106,11 +109,12 @@ describe('UserTokenDetails', () => {
     });
     cy.contains('Not Found');
   });
+
   it('renders error page when requesting non existing token', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/tokens/30/',
+        url: awxAPI`/tokens/30/`,
         hostname: 'localhost',
       },
       {

@@ -2,23 +2,22 @@ import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { Organization } from '../../interfaces/Organization';
 import { CreateExecutionEnvironment, EditExecutionEnvironment } from './ExecutionEnvironmentForm';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Execution Environment Form', () => {
   describe('Create Execution Environment', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
+        { method: 'GET', url: awxAPI`/organizations/*` },
         { fixture: 'organizations.json' }
       );
-      cy.intercept('POST', '/api/v2/execution_environments/', {
+      cy.intercept('POST', awxAPI`/execution_environments/`, {
         statusCode: 201,
         fixture: 'execution_environment.json',
       }).as('createEE');
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/credentials/*' },
-        { fixture: 'credentials.json' }
-      );
+      cy.intercept({ method: 'GET', url: awxAPI`/credentials/*` }, { fixture: 'credentials.json' });
     });
+
     it('should validate required fields on save', () => {
       cy.mount(<CreateExecutionEnvironment />);
       cy.clickButton(/^Create execution environment$/);
@@ -80,23 +79,17 @@ describe('Create Edit Execution Environment Form', () => {
           return ee;
         })
         .then((ee) => {
-          cy.intercept(
-            { method: 'GET', url: '/api/v2/execution_environments/*/' },
-            { body: ee }
-          ).as('getEE');
-          cy.intercept('PATCH', '/api/v2/execution_environments/*', {
+          cy.intercept({ method: 'GET', url: awxAPI`/execution_environments/*/` }, { body: ee }).as(
+            'getEE'
+          );
+          cy.intercept('PATCH', awxAPI`/execution_environments/*`, {
             statusCode: 201,
             body: ee,
           }).as('editEE');
         });
-
-      cy.intercept(
-        { method: 'GET', url: '/api/v2/credentials/*' },
-        { fixture: 'credentials.json' }
-      );
-
+      cy.intercept({ method: 'GET', url: awxAPI`/credentials/*` }, { fixture: 'credentials.json' });
       cy.fixture('organizations').then((organizations: AwxItemsResponse<Organization>) => {
-        cy.intercept({ method: 'GET', url: '/api/v2/organizations/*' }, { body: organizations });
+        cy.intercept({ method: 'GET', url: awxAPI`/organizations/*` }, { body: organizations });
         for (const organization of organizations.results) {
           cy.intercept(
             { method: 'GET', url: `/api/v2/organizations/${organization.id}` },

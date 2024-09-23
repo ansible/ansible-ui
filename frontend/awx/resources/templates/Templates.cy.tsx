@@ -1,9 +1,10 @@
 import { Templates } from './Templates';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Templates', () => {
   describe('Error list', () => {
     it('Displays error if templates are not successfully loaded', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/unified_job_templates/*' }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: awxAPI`/unified_job_templates/*` }, { statusCode: 500 });
       cy.mount(<Templates />);
       cy.contains('Error loading templates');
     });
@@ -14,7 +15,7 @@ describe('Templates', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/unified_job_templates/*',
+          url: awxAPI`/unified_job_templates/*`,
         },
         {
           fixture: 'unifiedJobTemplates.json',
@@ -23,7 +24,7 @@ describe('Templates', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/unified_job_templates/',
+          url: awxAPI`/unified_job_templates/`,
         },
         {
           fixture: 'mock_options.json',
@@ -39,7 +40,7 @@ describe('Templates', () => {
 
     it('Launch action item should call API /launch endpoint', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/7/launch/' },
+        { method: 'GET', url: awxAPI`/job_templates/7/launch/` },
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<Templates />);

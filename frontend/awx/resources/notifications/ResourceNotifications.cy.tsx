@@ -1,12 +1,13 @@
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { ResourceNotifications } from './ResourceNotifications';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('ResourceNotifications', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/notification_templates/**',
+        url: awxAPI`/notification_templates/**`,
         hostname: 'localhost',
       },
       {
@@ -30,7 +31,7 @@ describe('ResourceNotifications', () => {
     cy.intercept(
       {
         method: 'POST',
-        url: '/api/v2/inventory_sources/1/notification_templates_started/',
+        url: awxAPI`/inventory_sources/1/notification_templates_started/`,
         hostname: 'localhost',
       },
       (req) => {
@@ -42,7 +43,7 @@ describe('ResourceNotifications', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventory_sources/1/notification_templates_started/',
+        url: awxAPI`/inventory_sources/1/notification_templates_started/`,
         hostname: 'localhost',
       },
       { fixture: 'notification_toggle.json' }
@@ -63,7 +64,7 @@ describe('ResourceNotifications', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/notification_templates/?name__icontains=csantiago**',
+            url: awxAPI`/notification_templates/?name__icontains=csantiago**`,
           },
           {
             fixture: 'notification_templates.json',
@@ -84,7 +85,7 @@ describe('ResourceNotifications', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/notification_templates/?created_by__username__icontains=dev**',
+            url: awxAPI`/notification_templates/?created_by__username__icontains=dev**`,
           },
           {
             fixture: 'notification_templates.json',
@@ -105,7 +106,7 @@ describe('ResourceNotifications', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/notification_templates/?modified_by__username__icontains=dev**',
+            url: awxAPI`/notification_templates/?modified_by__username__icontains=dev**`,
           },
           {
             fixture: 'notification_templates.json',

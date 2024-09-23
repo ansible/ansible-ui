@@ -1,9 +1,10 @@
 import { CredentialTypeCredentials } from './CredentialTypeCredentials';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CredentialTypeCredentials', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/credential_types/*' },
+      { method: 'GET', url: awxAPI`/credential_types/*` },
       { fixture: 'credentialType' }
     );
   });
@@ -12,7 +13,7 @@ describe('CredentialTypeCredentials', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credential_types/1/credentials/*',
+        url: awxAPI`/credential_types/1/credentials/*`,
       },
       {
         fixture: 'credentials.json',

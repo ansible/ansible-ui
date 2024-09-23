@@ -2,24 +2,25 @@
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPage } from './CredentialPage';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CredentialPage', () => {
   beforeEach(() => {
     cy.fixture('credential').then((credential: Credential) => {
-      cy.intercept('GET', '/api/v2/credential/1/*', credential);
+      cy.intercept('GET', awxAPI`/credential/1/*`, credential);
     });
     cy.fixture('credentialType').then((credentialType: CredentialType) => {
-      cy.intercept('GET', '/api/v2/credential_types*', credentialType);
+      cy.intercept('GET', awxAPI`/credential_types*`, credentialType);
     });
 
     cy.fixture('credentialType').then((credentialType: CredentialType) => {
-      cy.intercept('GET', '/api/v2/credentials/2/input_sources/*', credentialType);
+      cy.intercept('GET', awxAPI`/credentials/2/input_sources/*`, credentialType);
     });
   });
   it('Should show disabled delete button', () => {
     cy.fixture('credential').then((credential: Credential) => {
       credential.summary_fields.user_capabilities.delete = false;
-      cy.intercept('GET', '/api/v2/credentials/*', credential);
+      cy.intercept('GET', awxAPI`/credentials/*`, credential);
     });
     cy.mount(<CredentialPage />);
     cy.getByDataCy('actions-dropdown').click();
@@ -33,7 +34,7 @@ describe('CredentialPage', () => {
   it('Should disable edit button', () => {
     cy.fixture('credential').then((credential: Credential) => {
       credential.summary_fields.user_capabilities.edit = false;
-      cy.intercept('GET', '/api/v2/credentials/*', credential);
+      cy.intercept('GET', awxAPI`/credentials/*`, credential);
     });
     cy.mount(<CredentialPage />);
     cy.contains('#edit-credential', /^Edit credential$/).should(

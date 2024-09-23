@@ -1,41 +1,45 @@
 import { ActivityStreams } from './ActivityStream';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 beforeEach(() => {
   cy.intercept(
     {
       method: 'OPTIONS',
-      url: '/api/v2/activity_stream/',
+      url: awxAPI`/activity_stream/`,
     },
     {
       fixture: 'mock_activity_stream_options.json',
     }
   );
 });
+
 describe('Activity Stream Tests', () => {
   describe('Error list', () => {
     it('Displays error if activity stream is not successfully loaded', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/activity_stream/*' }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: awxAPI`/activity_stream/*` }, { statusCode: 500 });
       cy.mount(<ActivityStreams />);
       cy.contains('Error loading activity stream');
     });
   });
+
   describe('Basic Navigation', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           fixture: 'activity_stream.json',
         }
       );
     });
+
     it('Activity Stream empty list page', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -45,11 +49,12 @@ describe('Activity Stream Tests', () => {
       cy.verifyPageTitle('Activity Stream');
       cy.contains(/^There are currently no activity streams$/);
     });
+
     it('Activity Stream error list page', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           statusCode: 500,
@@ -59,24 +64,27 @@ describe('Activity Stream Tests', () => {
       cy.verifyPageTitle('Activity Stream');
       cy.contains(/^Error loading activity stream$/);
     });
+
     it('Visit Activity Stream list page', () => {
       cy.mount(<ActivityStreams />);
       cy.verifyPageTitle('Activity Stream');
       cy.get('tbody').find('tr').should('have.length', 10);
     });
   });
+
   describe('Filter', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           fixture: 'activity_stream.json',
         }
       );
     });
+
     it('visit the Activity Stream list page filtered by jobs', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=job&or__object2__in=job*').as(
@@ -89,6 +97,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@jobFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by schedules', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=schedule&or__object2__in=schedule*').as(
@@ -101,6 +110,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@scheduleFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by workflow approvals', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -113,6 +123,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@workflowApprovalFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by templates', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -125,6 +136,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@templateFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by credentials', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -137,6 +149,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@credentialFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by projects', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=project&or__object2__in=project*').as(
@@ -149,6 +162,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@projectFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by inventories', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -161,6 +175,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@inventoryFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by hosts', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=host&or__object2__in=host*').as(
@@ -173,6 +188,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@hostFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by organizations', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -185,6 +201,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@organizationFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by users', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=user&or__object2__in=user*').as(
@@ -197,6 +214,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@userFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by teams', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=team&or__object2__in=team*').as(
@@ -209,6 +227,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@teamFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by credential types', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -221,6 +240,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@credentialTypeFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by notification templates', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -233,6 +253,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@notificationTemplateTypeFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by instances', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=instance&or__object2__in=instance*').as(
@@ -245,6 +266,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@instanceTypeFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by instance groups', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -257,6 +279,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@instanceGroupTypeFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by applications and tokens', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -269,6 +292,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@applicationTypeFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by execution environments', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
@@ -281,6 +305,7 @@ describe('Activity Stream Tests', () => {
         });
       cy.wait('@executionEnvironmentTypeFilterRequest');
     });
+
     it('visit the Activity Stream list page filtered by settings', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?or__object1__in=setting&or__object2__in=setting*').as(
@@ -299,24 +324,27 @@ describe('Activity Stream Tests', () => {
         });
     });
   });
+
   describe('List Page', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           fixture: 'activity_stream.json',
         }
       );
     });
+
     it('See a list of activity streams broken down by time, initiator, and event description', () => {
       cy.mount(<ActivityStreams />);
       cy.get('thead').find('th').contains('Time').should('exist');
       cy.get('thead').find('th').contains('Initiated by').should('exist');
       cy.get('thead').find('th').contains('Event').should('exist');
     });
+
     it('Clicking time table header sorts activity stream by timestamp', () => {
       cy.intercept('api/v2/activity_stream/?order_by=-timestamp*').as('timeDescSortRequest');
       cy.mount(<ActivityStreams />);
@@ -326,6 +354,7 @@ describe('Activity Stream Tests', () => {
       cy.wait('@timeAscSortRequest');
       cy.clearAllFilters();
     });
+
     it('Clicking initiated by table header sorts activity stream by initiator', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?order_by=actor__username*').as(
@@ -335,12 +364,14 @@ describe('Activity Stream Tests', () => {
       cy.wait('@initiatorAscSortRequest');
       cy.clearAllFilters();
     });
+
     it('Click on the inspect/magnify icon to see stream event details modal', () => {
       cy.mount(<ActivityStreams />);
       cy.get('button[data-cy="view-event-details"]').first().click();
       cy.get('[aria-label="Event details"]').should('contain', 'Event details');
       cy.get('[aria-label="Close"]').click();
     });
+
     it('Event details modal should not contain setting name and setting category fields by default', () => {
       cy.mount(<ActivityStreams />);
       cy.get('button[data-cy="view-event-details"]').first().click();
@@ -348,11 +379,12 @@ describe('Activity Stream Tests', () => {
       cy.get('#setting-category').should('not.exist');
       cy.get('[aria-label="Close"]').click();
     });
+
     it('Event details modal should contain setting name and setting category fields if event resource is Setting', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           fixture: 'activity_stream_setting.json',
@@ -369,18 +401,20 @@ describe('Activity Stream Tests', () => {
       });
     });
   });
+
   describe('Search', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/activity_stream/*',
+          url: awxAPI`/activity_stream/*`,
         },
         {
           fixture: 'activity_stream.json',
         }
       );
     });
+
     it('See a list of events filtered by keyword', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?search=associate*').as('keywordFilterRequest');
@@ -388,6 +422,7 @@ describe('Activity Stream Tests', () => {
       cy.wait('@keywordFilterRequest');
       cy.clearAllFilters();
     });
+
     it('See a list of events filtered by initiator', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?actor__username__icontains=admin*').as(

@@ -1,4 +1,4 @@
-import { awxAPI } from '../../common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import type { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { CreateJobTemplate } from './TemplateForm';
 
@@ -8,7 +8,7 @@ describe('Create job template ', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/labels/*',
+        url: awxAPI`/labels/*`,
         hostname: 'localhost',
       },
       {
@@ -18,7 +18,7 @@ describe('Create job template ', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/projects/*',
+        url: awxAPI`/projects/*`,
         hostname: 'localhost',
       },
       {
@@ -28,7 +28,7 @@ describe('Create job template ', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credential_types/*',
+        url: awxAPI`/credential_types/*`,
         hostname: 'localhost',
       },
       {
@@ -38,7 +38,7 @@ describe('Create job template ', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credentials/*',
+        url: awxAPI`/credentials/*`,
         hostname: 'localhost',
       },
       {
@@ -48,45 +48,42 @@ describe('Create job template ', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/instance_groups/*',
+        url: awxAPI`/instance_groups/*`,
       },
       { count: 1, results: instanceGroups }
     ).as('getInstanceGroups');
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/projects/6/playbooks/',
+        url: awxAPI`/projects/6/playbooks/`,
         hostname: 'localhost',
       },
       {
         fixture: 'playbooks.json',
       }
     );
-
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventories/*',
+        url: awxAPI`/inventories/*`,
         hostname: 'localhost',
       },
       {
         fixture: 'inventories.json',
       }
     );
-
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/execution_environments/*',
+        url: awxAPI`/execution_environments/*`,
         hostname: 'localhost',
       },
       {
         fixture: 'execution_environments.json',
       }
     );
-
     cy.intercept(
-      { method: 'POST', url: '/api/v2/projects/*', hostname: 'localhost' },
+      { method: 'POST', url: awxAPI`/projects/*`, hostname: 'localhost' },
       { fixture: 'project.json' }
     ).as('selectedProject');
   });
@@ -98,11 +95,11 @@ describe('Create job template ', () => {
 
   it('Should display field error messages on internal server error', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/inventories/*' },
+      { method: 'GET', url: awxAPI`/inventories/*` },
       { statusCode: 500, message: 'Internal Server Error' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/projects/*' },
+      { method: 'GET', url: awxAPI`/projects/*` },
       { statusCode: 500, message: 'Internal Server Error' }
     );
     cy.mount(<CreateJobTemplate />);
@@ -119,7 +116,7 @@ describe('Create job template ', () => {
   });
 
   it('Should send expected form data to API on save', () => {
-    cy.intercept('POST', '/api/v2/job_templates/', (req) => {
+    cy.intercept('POST', awxAPI`/job_templates/`, (req) => {
       expect(req.body).to.contain({
         inventory: 1,
         job_type: 'check',
@@ -139,7 +136,6 @@ describe('Create job template ', () => {
       });
       return req.reply({ statusCode: 204 });
     });
-
     cy.mount(<CreateJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
     cy.get('button[aria-describedby="job_type-form-group"]').click();

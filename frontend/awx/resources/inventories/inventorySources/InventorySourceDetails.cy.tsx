@@ -1,18 +1,20 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { InventorySourceDetails } from './InventorySourceDetails';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventorySourceDetails', () => {
   before(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/inventory_sources/*' },
+      { method: 'GET', url: awxAPI`/inventory_sources/*` },
       { fixture: 'inventory_source.json' }
     );
     cy.intercept(
-      { method: 'OPTIONS', url: '/api/v2/inventory_sources' },
+      { method: 'OPTIONS', url: awxAPI`/inventory_sources` },
       { fixture: 'inventory_source_options.json' }
     );
   });
+
   it('Component renders and displays project', () => {
     cy.mount(<InventorySourceDetails />, {
       path: '/inventories/:id/sources/:source_id/details',
@@ -25,7 +27,6 @@ describe('InventorySourceDetails', () => {
     cy.get('#project').should('have.text', 'Demo Project');
     cy.get('#inventory-file').should('have.text', '/ (project root)');
     cy.get('#verbosity').should('have.text', '1 (Verbose)');
-
     cy.get('#cache-timeout').should('have.text', '0 seconds');
     cy.get('[data-cy="code-block-value"]').should('have.text', '');
     cy.get('#created > .pf-v5-c-description-list__text > .date-time > .pf-v5-c-button').should(

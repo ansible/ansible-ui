@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { AwxTeamRoles } from './AwxTeamRoles';
 
 describe('AWX team roles', () => {
@@ -19,15 +19,18 @@ describe('AWX team roles', () => {
       });
       cy.mount(component, params);
     });
+
     it('Renders the list of role assignments for the team', () => {
       cy.get('table tbody').find('tr').should('have.length', 3);
     });
+
     it('Renders the correct columns and action buttons', () => {
       cy.get('a[data-cy="add-roles"]').should('contain', 'Add roles');
       cy.contains('th', 'Resource name');
       cy.contains('th', 'Role');
       cy.contains('th', 'Type');
     });
+
     it('Can remove role', () => {
       cy.intercept(
         { method: 'DELETE', url: awxAPI`/role_team_assignments/10/` },
@@ -48,6 +51,7 @@ describe('AWX team roles', () => {
       cy.clickButton(/^Close$/);
     });
   });
+
   describe('AWX team roles - empty list', () => {
     beforeEach(() => {
       cy.intercept('GET', awxAPI`/role_team_assignments/*`, {
@@ -58,6 +62,7 @@ describe('AWX team roles', () => {
       });
       cy.mount(component, params);
     });
+
     it('Empty state is displayed correctly', () => {
       cy.contains(/^There are currently no roles assigned to this team.$/);
       cy.contains(/^Add a role by clicking the button below.$/);

@@ -1,11 +1,12 @@
 import { UserTokens } from './UserTokens';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('UserTokens', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/users/*/tokens/*',
+        url: awxAPI`/users/*/tokens/*`,
         hostname: 'localhost',
       },
       {
@@ -15,7 +16,7 @@ describe('UserTokens', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/users/*/tokens/',
+        url: awxAPI`/users/*/tokens/`,
       },
       {
         fixture: 'userTokens_options.json',
@@ -28,7 +29,6 @@ describe('UserTokens', () => {
       path: '/users/:id/tokens',
       initialEntries: ['/users/20/tokens'],
     });
-    //
     cy.get('div.pf-v5-c-alert').should('not.exist');
   });
 
@@ -37,7 +37,6 @@ describe('UserTokens', () => {
       path: '/users/:id/tokens',
       initialEntries: ['/users/20/tokens'],
     });
-    //
     cy.get('div.pf-v5-c-alert').within(() => {
       cy.contains('Automation Execution tokens');
     });
@@ -59,7 +58,6 @@ describe('UserTokens', () => {
       path: '/users/:id/tokens',
       initialEntries: ['/users/1/tokens'],
     });
-    // in this test the output is actually empty so any text would do here
     cy.contains('Automation Execution tokens').should('not.exist');
   });
 });

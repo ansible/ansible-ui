@@ -3,11 +3,12 @@
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { TemplatePage } from './TemplatePage';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplatePage', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/*`, hostname: 'localhost' },
       { fixture: 'jobTemplate.json' }
     );
     cy.fixture('organizations').then((organizations: AwxItemsResponse<Organization[]>) => {
@@ -18,7 +19,7 @@ describe('TemplatePage', () => {
       );
     });
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/1/instance_groups', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/1/instance_groups`, hostname: 'localhost' },
       { fixture: 'instance_groups.json' }
     );
   });
@@ -32,24 +33,20 @@ describe('TemplatePage', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations/?role_level=notification_admin_role',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'jobTemplateLaunch.json' }
     ).as('getLaunchConfig');
-
-    cy.intercept('POST', '/api/v2/job_templates/*/launch/', (req) => {
+    cy.intercept('POST', awxAPI`/job_templates/*/launch/`, (req) => {
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
     }).as('launchJob');
-
     cy.mount(<TemplatePage />);
-
     cy.clickButton(/^Launch template$/);
-
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
   });
@@ -58,38 +55,36 @@ describe('TemplatePage', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations/?role_level=notification_admin_role',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'jobTemplateLaunch.json' }
     ).as('getLaunchConfig');
-
-    cy.intercept('POST', '/api/v2/job_templates/*/launch/', (req) => {
+    cy.intercept('POST', awxAPI`/job_templates/*/launch/`, (req) => {
       return req.reply({ statusCode: 400, body: { message: 'Could not launch job' } });
     }).as('launchJob');
     cy.mount(<TemplatePage />);
-
     cy.clickButton(/^Launch template$/);
-
     cy.wait('@getLaunchConfig');
     cy.wait('@launchJob');
     cy.get('.pf-v5-c-alert__title').contains('Failed to launch template');
   });
+
   it('Should render the proper tabs for a super user', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/organizations/?role_level=notification_admin_role',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
         hostname: 'localhost',
       },
       { fixture: 'organizations.json' }
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'jobTemplateLaunch.json' }
     ).as('getLaunchConfig');
     const tabNames: string[] = [
@@ -103,7 +98,6 @@ describe('TemplatePage', () => {
       'Notifications',
     ];
     cy.mount(<TemplatePage />);
-
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
@@ -118,12 +112,12 @@ describe('TemplatePage', () => {
       organizations.results = [];
       cy.intercept(
         'GET',
-        '/api/v2/organizations/?role_level=notification_admin_role',
+        awxAPI`/organizations/?role_level=notification_admin_role`,
         organizations
       ).as('getOrganizations');
     });
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'jobTemplateLaunch.json' }
     ).as('getLaunchConfig');
     const tabNames: string[] = [
@@ -137,7 +131,6 @@ describe('TemplatePage', () => {
       'Notifications',
     ];
     cy.mount(<TemplatePage />, undefined, 'activeUserSysAuditor');
-
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {
@@ -150,15 +143,14 @@ describe('TemplatePage', () => {
     cy.fixture('organizations.json').then((organizations: { count: number; results: [] }) => {
       organizations.count = 0;
       organizations.results = [];
-
       cy.intercept(
         'GET',
-        '/api/v2/organizations/?role_level=notification_admin_role',
+        awxAPI`/organizations/?role_level=notification_admin_role`,
         organizations
       ).as('getOrganizations');
     });
     cy.intercept(
-      { method: 'GET', url: '/api/v2/job_templates/*/launch/', hostname: 'localhost' },
+      { method: 'GET', url: awxAPI`/job_templates/*/launch/`, hostname: 'localhost' },
       { fixture: 'jobTemplateLaunch.json' }
     ).as('getLaunchConfig');
     const tabNames: string[] = [
@@ -170,10 +162,8 @@ describe('TemplatePage', () => {
       'Jobs',
       'Survey',
     ];
-
     cy.mount(<TemplatePage />);
     cy.wait('@getOrganizations');
-
     cy.get('.pf-v5-c-tabs__list').within(() => {
       cy.get('.pf-v5-c-tabs__item').should('have.length', tabNames.length);
       cy.get('.pf-v5-c-tabs__item').each((tab, index) => {

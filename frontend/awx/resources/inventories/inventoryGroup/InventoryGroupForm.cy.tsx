@@ -1,12 +1,13 @@
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { CreateGroup, EditGroup } from './InventoryGroupForm';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CreateGroup', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventories/**',
+        url: awxAPI`/inventories/**`,
         hostname: 'localhost',
       },
       {
@@ -43,7 +44,7 @@ describe('EditGroup', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/groups/**',
+        url: awxAPI`/groups/**`,
         hostname: 'localhost',
       },
       {

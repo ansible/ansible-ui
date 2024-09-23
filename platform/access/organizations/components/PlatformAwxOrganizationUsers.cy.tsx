@@ -17,12 +17,12 @@ describe('Platform organization users controller list', () => {
           results: [
             {
               id: 4,
-              url: '/api/v2/role_user_assignments/4/',
+              url: awxAPI`/role_user_assignments/4/`,
               related: {
-                created_by: '/api/v2/users/1/',
-                role_definition: '/api/v2/role_definitions/31/',
-                user: '/api/v2/users/40/',
-                content_object: '/api/v2/organizations/1/',
+                created_by: awxAPI`/users/1/`,
+                role_definition: awxAPI`/role_definitions/31/`,
+                user: awxAPI`/users/40/`,
+                content_object: awxAPI`/organizations/1/`,
               },
               summary_fields: {
                 created_by: {
@@ -84,6 +84,7 @@ describe('Platform organization users controller list', () => {
       });
     });
   });
+
   describe('Empty list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -96,11 +97,13 @@ describe('Platform organization users controller list', () => {
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly', () => {
       cy.mount(<PlatformAwxOrganizationUsers />);
       cy.contains(/^There are currently no users added to this organization.$/);
     });
   });
+
   describe('Error retrieving list', () => {
     it('Displays error loading users', () => {
       cy.intercept(

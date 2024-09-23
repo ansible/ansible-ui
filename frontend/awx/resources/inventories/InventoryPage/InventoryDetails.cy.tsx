@@ -1,6 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { Inventory } from '../../../interfaces/Inventory';
 import { InventoryDetailsInner as InventoryDetails } from './InventoryDetails';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventoryDetails', () => {
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];
@@ -10,7 +11,7 @@ describe('InventoryDetails', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*/instance_groups*',
+          url: awxAPI`/inventories/*/instance_groups*`,
         },
         {
           fixture: 'instance_groups.json',

@@ -2,6 +2,7 @@ import * as useOptions from '../../../../common/crud/useOptions';
 import * as useAwxConfig from '../../../common/useAwxConfig';
 import { CreateProject, EditProject } from './ProjectForm';
 import { Project } from '../../../interfaces/Project';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('ProjectForm.cy.ts', () => {
   beforeEach(() => {
@@ -28,10 +29,10 @@ describe('ProjectForm.cy.ts', () => {
     }));
     cy.stub(useAwxConfig, 'useAwxConfig').callsFake(() => null);
     cy.intercept(
-      { method: 'GET', url: '/api/v2/organizations/*' },
+      { method: 'GET', url: awxAPI`/organizations/*` },
       { fixture: 'organizations.json' }
     );
-    cy.intercept({ method: 'GET', url: '/api/v2/credentials/*' }, { fixture: 'credentials.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/credentials/*` }, { fixture: 'credentials.json' });
   });
 
   describe('validates fields', () => {
@@ -48,22 +49,18 @@ describe('ProjectForm.cy.ts', () => {
       cy.mount(<CreateProject />);
       cy.get('[data-cy="name"]').type('Test Project');
       cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
-
       // Git
       cy.selectDropdownOptionByResourceName('source_control_type', 'Git');
       cy.clickButton(/^Create project$/);
       cy.contains('Source control url is required.').should('be.visible');
-
       // Insights
       cy.selectDropdownOptionByResourceName('source_control_type', 'Red Hat Insights');
       cy.clickButton(/^Create project$/);
       cy.contains('Insights credential is required.').should('be.visible');
-
       // Remote Archive
       cy.selectDropdownOptionByResourceName('source_control_type', 'Remote Archive');
       cy.clickButton(/^Create project$/);
       cy.contains('Source control url is required.').should('be.visible');
-
       // SVN
       cy.selectDropdownOptionByResourceName('source_control_type', 'Subversion');
       cy.clickButton(/^Create project$/);
@@ -81,17 +78,17 @@ describe('ProjectForm.cy.ts', () => {
   });
 
   it('should pass correct request body after editing project credentials ', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'project.json' }).as(
+    cy.intercept({ method: 'GET', url: awxAPI`/projects/*` }, { fixture: 'project.json' }).as(
       'getProject'
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/organizations/1/' },
+      { method: 'GET', url: awxAPI`/organizations/1/` },
       { fixture: 'organization.json' }
     );
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credentials/*',
+        url: awxAPI`/credentials/*`,
         query: {
           credential_type__namespace: 'gpg_public_key',
         },
@@ -116,7 +113,7 @@ describe('ProjectForm.cy.ts', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/credentials/*',
+        url: awxAPI`/credentials/*`,
         query: {
           credential_type__namespace: 'scm',
         },
@@ -156,7 +153,6 @@ describe('ProjectForm.cy.ts', () => {
     cy.selectSingleSelectOption('[data-cy="credential"]', 'scm credential');
     cy.getByDataCy('signature_validation_credential').should('have.text', 'gpg credential');
     cy.getByDataCy('credential').should('have.text', 'scm credential');
-
     cy.clickButton(/^Save project$/);
     cy.wait('@editProject')
       .its('request.body')

@@ -7,25 +7,23 @@ describe('Instances list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/instances/*',
+        url: awxAPI`/instances/*`,
       },
       {
         fixture: 'instances.json',
       }
     );
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
   });
 
   it('Instances list renders with k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
-
     cy.mount(<Instances />);
     cy.wait('@isK8s');
-
     cy.verifyPageTitle('Instances');
     cy.get('[data-cy="app-description"]').should(
       'contain',
@@ -39,13 +37,11 @@ describe('Instances list', () => {
   });
 
   it('Instances list renders with non k8s system', () => {
-    cy.intercept('GET', '/api/v2/settings/system*', {
+    cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: false,
     }).as('isK8s');
-
     cy.mount(<Instances />);
     cy.wait('@isK8s');
-
     cy.verifyPageTitle('Instances');
     cy.get('[data-cy="app-description"]').should(
       'contain',
@@ -58,10 +54,7 @@ describe('Instances list', () => {
   });
 
   it('Filter instances by name', () => {
-    cy.intercept(
-      { method: 'OPTIONS', url: '/api/v2/instances/' },
-      { fixture: 'mock_options.json' }
-    );
+    cy.intercept({ method: 'OPTIONS', url: awxAPI`/instances/` }, { fixture: 'mock_options.json' });
     cy.mount(<Instances />);
     cy.filterTableBySingleSelect('hostname', 'test');
     cy.get('tr').should('have.length.greaterThan', 0);
@@ -70,10 +63,7 @@ describe('Instances list', () => {
   });
 
   it('Filter instances by node', () => {
-    cy.intercept(
-      { method: 'OPTIONS', url: '/api/v2/instances/' },
-      { fixture: 'mock_options.json' }
-    );
+    cy.intercept({ method: 'OPTIONS', url: awxAPI`/instances/` }, { fixture: 'mock_options.json' });
     cy.mount(<Instances />);
     cy.filterTableBySingleSelect('node-type', 'Control plane node');
     cy.getByDataCy('filter-input').click();
@@ -150,7 +140,7 @@ describe('Instance Empty list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/instances/*',
+        url: awxAPI`/instances/*`,
       },
       {
         fixture: 'emptyList.json',

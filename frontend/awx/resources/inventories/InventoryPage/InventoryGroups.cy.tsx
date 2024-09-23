@@ -1,5 +1,6 @@
 import { InventoryGroups } from './InventoryGroups';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 const inventory = 'inventory';
 const constructed_inventory = 'constructed_inventory';
@@ -18,7 +19,7 @@ types.forEach((type) => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/**/?*',
+          url: awxAPI`/inventories/**/?*`,
           hostname: 'localhost',
         },
         {
@@ -28,7 +29,7 @@ types.forEach((type) => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/**/ad_hoc_commands/',
+          url: awxAPI`/inventories/**/ad_hoc_commands/`,
           hostname: 'localhost',
         },
         {
@@ -79,7 +80,7 @@ types.forEach((type) => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
@@ -89,32 +90,32 @@ types.forEach((type) => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/1/groups/*',
+          url: awxAPI`/inventories/1/groups/*`,
           hostname: 'localhost',
         },
         {
           fixture: 'groups.json',
         }
       ).as('getGroups');
-      cy.intercept('/api/v2/inventories/1/groups/?name=*').as('nameFilterRequest');
+      cy.intercept(awxAPI`/inventories/1/groups/?name=*`).as('nameFilterRequest');
       cy.mount(<InventoryGroups />, params);
       cy.filterTableByMultiSelect('name', ['Related to group 1']);
       cy.wait('@nameFilterRequest');
-
       cy.clearAllFilters();
     });
+
     it('filter by created by', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
           fixture: 'mock_options.json',
         }
       ).as('getFilterOptions');
-      cy.intercept('/api/v2/inventories/1/groups/?created_by__username__icontains=*').as(
+      cy.intercept(awxAPI`/inventories/1/groups/?created_by__username__icontains=*`).as(
         'createdByFilterRequest'
       );
       cy.mount(<InventoryGroups />, params);
@@ -122,18 +123,19 @@ types.forEach((type) => {
       cy.wait('@createdByFilterRequest');
       cy.clearAllFilters();
     });
+
     it('filter by modified by', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/inventories/1/groups/',
+          url: awxAPI`/inventories/1/groups/`,
           hostname: 'localhost',
         },
         {
           fixture: 'mock_options.json',
         }
       ).as('getFilterOptions');
-      cy.intercept('/api/v2/inventories/1/groups/?modified_by__username__icontains=*').as(
+      cy.intercept(awxAPI`/inventories/1/groups/?modified_by__username__icontains=*`).as(
         'modifiedByFilterRequest'
       );
       cy.mount(<InventoryGroups />, params);

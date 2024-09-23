@@ -1,6 +1,6 @@
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
 import { edaAPI } from '../../../../cypress/support/formatApiPathForEDA';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import * as GatewayServices from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationAddUsers } from './PlatformOrganizationAddUsers';
@@ -30,7 +30,6 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.intercept('GET', gatewayAPI`/role_definitions/*`, {
       fixture: 'platformOrganizationMemberRole.json',
     });
-
     // AWX
     cy.intercept('GET', awxAPI`/role_definitions/?content_type__model=organization*`, {
       fixture: 'platformAwxOrganizationRoles.json',
@@ -40,6 +39,7 @@ describe('PlatformOrganizationAddUsers', () => {
       fixture: 'platformEdaOrganizationRoles.json',
     });
   });
+
   it('should render with correct steps when controller and EDA services are enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -58,6 +58,7 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
     cy.wait('@userListFilteredByNormalUsers');
   });
+
   it('should render with correct steps when only one service is enabled', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -73,6 +74,7 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(2).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a user is selected for moving to the next step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -91,6 +93,7 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-users"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('have.class', 'pf-m-current');
   });
+
   it('selection of service-specific roles is optional', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {
@@ -110,6 +113,7 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
+
   it('should display selected users and roles in the Review step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {

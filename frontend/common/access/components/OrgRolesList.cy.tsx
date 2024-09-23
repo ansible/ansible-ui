@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../awx/common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { OrgRolesList } from './OrgRolesList';
 
 describe('OrgRolesList', () => {
@@ -11,6 +11,7 @@ describe('OrgRolesList', () => {
     listId: 1,
     setOrgListIsEmpty: () => {},
   };
+
   beforeEach(() => {
     cy.intercept(
       {
@@ -22,17 +23,20 @@ describe('OrgRolesList', () => {
       }
     );
   });
+
   it('Renders list of organization roles for a user', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
     cy.get('table tbody').find('tr').should('have.length', 1);
     cy.contains('Organization Project Admin');
   });
+
   it('Renders the correct columns', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
     cy.get('.pf-v5-c-table__th').should('have.length', 2);
     cy.contains('th', 'Name');
     cy.contains('th', 'Description');
   });
+
   it('Renders expandable list', () => {
     cy.mount(<OrgRolesList {...orgListProps} />);
     cy.get('button.pf-v5-c-expandable-section__toggle').should('be.visible');
@@ -40,6 +44,7 @@ describe('OrgRolesList', () => {
     cy.get('button.pf-v5-c-expandable-section__toggle').click();
     cy.contains('Organization Project Admin').should('not.be.visible');
   });
+
   it('Renders non-expandable list', () => {
     cy.mount(<OrgRolesList {...{ ...orgListProps, isExpandable: false }} />);
     cy.get('button.pf-v5-c-expandable-section__toggle').should('not.exist');
