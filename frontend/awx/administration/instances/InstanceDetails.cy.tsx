@@ -2,14 +2,15 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceDetails } from './InstanceDetails';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Instance Details', () => {
   beforeEach(() => {
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/*' }, { fixture: 'instance.json' }).as(
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/*` }, { fixture: 'instance.json' }).as(
       'getInstance'
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instances/*/instance_groups/' },
+      { method: 'GET', url: awxAPI`/instances/*/instance_groups/` },
       { fixture: 'instance_groups.json' }
     ).as('getInstanceGroups');
   });
@@ -56,7 +57,7 @@ describe('Instance Details', () => {
 
   it('Does not render install bundle if an instance has no assoicated install bundle', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instances/*' },
+      { method: 'GET', url: awxAPI`/instances/*` },
       { fixture: 'instance_without_install_bundle.json' }
     ).as('getInstance');
     cy.mount(<InstanceDetails />);
@@ -65,7 +66,7 @@ describe('Instance Details', () => {
 
   it('Does not render instance groups if an instance has no associated instance groups', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instances/*/instance_groups/' },
+      { method: 'GET', url: awxAPI`/instances/*/instance_groups/` },
       { fixture: 'emptyList.json' }
     ).as('getInstanceGroups');
     cy.mount(<InstanceDetails />);

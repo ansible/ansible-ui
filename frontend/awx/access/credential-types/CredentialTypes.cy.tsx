@@ -1,5 +1,6 @@
 import * as useOptions from '../../../common/crud/useOptions';
 import { CredentialTypes } from './CredentialTypes';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Credential Types List', () => {
   describe('Non-empty list', () => {
@@ -7,7 +8,7 @@ describe('Credential Types List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/credential_types/*',
+          url: awxAPI`/credential_types/*`,
         },
         {
           fixture: 'credentialTypes.json',
@@ -95,7 +96,7 @@ describe('Credential Types List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/credential_types/*',
+          url: awxAPI`/credential_types/*`,
         },
         {
           statusCode: 500,
@@ -111,13 +112,14 @@ describe('Credential Types List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/credential_types/*',
+          url: awxAPI`/credential_types/*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly for user with permission to create credential types', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -140,6 +142,7 @@ describe('Credential Types List', () => {
       cy.contains(/^Please create a credential type by using the button below.$/);
       cy.contains('button', /^Create credential type$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create credential types', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {

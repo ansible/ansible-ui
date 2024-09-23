@@ -1,12 +1,13 @@
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { InventorySources } from './InventorySources';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventorySources.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventories/**',
+        url: awxAPI`/inventories/**`,
         hostname: 'localhost',
       },
       {

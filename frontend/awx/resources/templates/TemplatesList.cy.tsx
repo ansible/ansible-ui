@@ -1,11 +1,12 @@
 import { TemplatesList } from './TemplatesList';
 import * as useOptions from '../../../common/crud/useOptions';
 import { ToolbarFilterType } from '../../../../framework';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplatesList', () => {
   describe('ErrorList', () => {
     it('displays error if templates list is not successfully loaded', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/unified_job_templates/*' }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: awxAPI`/unified_job_templates/*` }, { statusCode: 500 });
       cy.mount(<TemplatesList />);
       cy.contains('Error loading templates');
     });
@@ -16,13 +17,14 @@ describe('TemplatesList', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/unified_job_templates/*',
+          url: awxAPI`/unified_job_templates/*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly for user with permission to create templates', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -45,6 +47,7 @@ describe('TemplatesList', () => {
       cy.contains(/^Please create a template by using the button below.$/);
       cy.contains('button', /^Create template$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create template', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -65,7 +68,7 @@ describe('TemplatesList', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/unified_job_templates/*',
+          url: awxAPI`/unified_job_templates/*`,
         },
         {
           fixture: 'templateList.json',
@@ -74,7 +77,7 @@ describe('TemplatesList', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/unified_job_templates/',
+          url: awxAPI`/unified_job_templates/`,
         },
         {
           fixture: 'mock_options.json',
@@ -89,7 +92,7 @@ describe('TemplatesList', () => {
 
     it('Launch action item should call API /launch endpoint', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/7/launch/' },
+        { method: 'GET', url: awxAPI`/job_templates/7/launch/` },
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<TemplatesList />);

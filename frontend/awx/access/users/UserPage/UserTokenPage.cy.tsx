@@ -1,11 +1,12 @@
 import { UserTokenPage } from './UserTokenPage';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('UserTokenPage', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/tokens/*',
+        url: awxAPI`/tokens/*`,
         hostname: 'localhost',
       },
       {
@@ -13,6 +14,7 @@ describe('UserTokenPage', () => {
       }
     );
   });
+
   it('Renders page with label, breadcrumbs and delete button on top', () => {
     cy.mount(<UserTokenPage />, {
       path: '/users/:id/tokens/:tokenid/details',

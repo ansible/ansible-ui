@@ -1,5 +1,5 @@
 import { NodeAddWizard } from './NodeAddWizard';
-import { awxAPI } from '../../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../../cypress/support/formatApiPathForAwx';
 import { VisualizationProvider } from '@patternfly/react-topology';
 
 describe('NodeAddWizard', () => {
@@ -62,7 +62,7 @@ describe('NodeAddWizard', () => {
 
   it('Should render the correct fields for a workflow job template node', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/workflow_job_templates/*' },
+      { method: 'GET', url: awxAPI`/workflow_job_templates/*` },
       { fixture: 'workflowJobTemplates.json' }
     );
     cy.mount(
@@ -96,7 +96,7 @@ describe('NodeAddWizard', () => {
   });
 
   it('Should render the correct fields for a project sync node', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'projects.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/projects/*` }, { fixture: 'projects.json' });
     cy.mount(
       <VisualizationProvider>
         <NodeAddWizard />
@@ -112,7 +112,7 @@ describe('NodeAddWizard', () => {
   });
 
   it('Should render the correct fields for an inventory source node', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/inventory_sources/*' }, mockResults);
+    cy.intercept({ method: 'GET', url: awxAPI`/inventory_sources/*` }, mockResults);
     cy.mount(
       <VisualizationProvider>
         <NodeAddWizard />
@@ -128,7 +128,7 @@ describe('NodeAddWizard', () => {
   });
 
   it('Should render the correct fields for a management job node', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/system_job_templates/' }, mockResults);
+    cy.intercept({ method: 'GET', url: awxAPI`/system_job_templates/` }, mockResults);
     cy.mount(
       <VisualizationProvider>
         <NodeAddWizard />

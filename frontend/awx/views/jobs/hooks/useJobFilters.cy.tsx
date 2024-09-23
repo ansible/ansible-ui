@@ -1,5 +1,6 @@
 import { IToolbarFilter } from '../../../../../framework';
 import { useJobsFilters } from './useJobsFilters';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TestInner(props: { filters: IToolbarFilter[] }) {
@@ -7,7 +8,7 @@ function TestInner(props: { filters: IToolbarFilter[] }) {
 }
 
 before(() => {
-  cy.intercept('OPTIONS', '/api/v2/unified_jobs/', { fixture: 'mock_options.json' }).as(
+  cy.intercept('OPTIONS', awxAPI`/unified_jobs/`, { fixture: 'mock_options.json' }).as(
     'getOptions'
   );
 });

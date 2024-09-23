@@ -1,12 +1,13 @@
 import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Teams } from './Teams';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 beforeEach(() => {
   cy.intercept(
     {
       method: 'OPTIONS',
-      url: '/api/v2/teams/',
+      url: awxAPI`/teams/`,
     },
     {
       fixture: 'mock_options.json',
@@ -17,7 +18,7 @@ beforeEach(() => {
 describe('Teams.cy.ts', () => {
   describe('Error list', () => {
     it('Displays error if teams are not successfully loaded', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { statusCode: 500 });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { statusCode: 500 });
       cy.mount(<Teams />);
       cy.contains('Error loading teams');
     });
@@ -25,20 +26,20 @@ describe('Teams.cy.ts', () => {
 
   describe('Non-empty list', () => {
     it('Component renders', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.verifyPageTitle('Teams');
       cy.get('table').find('tr').should('have.length', 4);
     });
 
     it('List has filters for Name, Organization, Created By and Modified By', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.intercept(
-        { method: 'GET', url: '/api/v2/organizations/*' },
+        { method: 'GET', url: awxAPI`/organizations/*` },
         { fixture: 'organizations.json' }
       );
       cy.mount(<Teams />);
-      cy.intercept('/api/v2/teams/?organization=*').as('orgFilterRequest');
+      cy.intercept(awxAPI`/teams/?organization=*`).as('orgFilterRequest');
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Name$/).should('be.visible');
         cy.contains(/^Organization$/).should('be.visible');
@@ -55,7 +56,7 @@ describe('Teams.cy.ts', () => {
 
     it('Bulk deletion confirmation contains message about selected teams that cannot be deleted', () => {
       // The team with id: 29 in the teams.json fixture has user_capabilities.delete set to false
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.get('[type="checkbox"][id="select-all"]').check();
       cy.clickToolbarKebabAction('delete-teams');
@@ -65,7 +66,7 @@ describe('Teams.cy.ts', () => {
     });
 
     it('Create Team button is disabled if the user does not have permission to create teams', () => {
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'true');
     });
@@ -87,7 +88,7 @@ describe('Teams.cy.ts', () => {
           },
         },
       }));
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'teams.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
       cy.contains('a', /^Create team$/).should('have.attr', 'aria-disabled', 'false');
     });
@@ -111,7 +112,7 @@ describe('Teams.cy.ts', () => {
           },
         },
       }));
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'emptyList.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
       cy.contains(/^There are currently no teams added to your organization.$/);
       cy.contains(/^Please create a team by using the button below.$/);
@@ -120,7 +121,7 @@ describe('Teams.cy.ts', () => {
 
     it('Empty state is displayed correctly for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({ data: { actions: {} } }));
-      cy.intercept({ method: 'GET', url: '/api/v2/teams/*' }, { fixture: 'emptyList.json' });
+      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
       cy.contains(/^You do not have permission to create a team$/);
       cy.contains(

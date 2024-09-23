@@ -1,6 +1,7 @@
 import { AwxHost } from '../../../interfaces/AwxHost';
 import type { IHostInput } from './InventoryHostForm';
 import { CreateHost, EditHost } from './InventoryHostForm';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Inventory/Standalone Host Form', () => {
   const payload = {
@@ -9,12 +10,13 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
     description: 'mock host description',
     inventory: 1,
   };
+
   describe('Create Host', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*',
+          url: awxAPI`/inventories/*`,
         },
         {
           fixture: 'inventories.json',
@@ -24,19 +26,16 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*/',
+          url: awxAPI`/inventories/*/`,
         },
         {
           fixture: 'inventory.json',
         }
       );
     });
-
     const types = ['inventory host', 'host'];
-
     types.forEach((type) => {
       const path = type === 'inventory host' ? '/inventories/inventory/:id/add' : '/hosts/create';
-
       const initialEntries =
         type === 'inventory host' ? [`/inventories/inventory/1/add`] : [`/hosts/create`];
 
@@ -50,7 +49,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
       });
 
       it(`Create host using correct field values (${type})`, () => {
-        cy.intercept('POST', '/api/v2/hosts/', {
+        cy.intercept('POST', awxAPI`/hosts/`, {
           statusCode: 201,
           body: payload,
         }).as('createHost');
@@ -61,12 +60,10 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         cy.get('[data-cy="name"]').type(payload.name);
         cy.get('[data-cy="description"]').type(payload.description);
         cy.get('[data-cy="variables"]').type('hello: world');
-
         if (type === 'host') {
           cy.get(`[data-cy='inventory']`).click();
           cy.get(`[id='demo-inventory']`).click();
         }
-
         cy.clickButton(/^Create host$/);
         cy.wait('@createHost')
           .its('request.body')
@@ -89,13 +86,11 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
           host.name = payload.name;
           host.variables = payload.variables;
           host.description = payload.description;
-
           return host;
         })
         .then((host) => {
-          cy.intercept('PATCH', '/api/v2/hosts/*', { statusCode: 201, body: host }).as('editHost');
+          cy.intercept('PATCH', awxAPI`/hosts/*`, { statusCode: 201, body: host }).as('editHost');
         });
-
       cy.fixture('awxHost')
         .then((host: AwxHost) => {
           host.name = payload.name;
@@ -106,13 +101,12 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
           return host;
         })
         .then((host) => {
-          cy.intercept({ method: 'GET', url: '/api/v2/hosts/*/' }, { body: host }).as('getHost');
+          cy.intercept({ method: 'GET', url: awxAPI`/hosts/*/` }, { body: host }).as('getHost');
         });
-
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/inventories/*/',
+          url: awxAPI`/inventories/*/`,
         },
         {
           fixture: 'inventory.json',
@@ -121,13 +115,11 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
     });
 
     const types = ['inventory host', 'host'];
-
     types.forEach((type) => {
       const path =
         type === 'inventory host'
           ? '/inventories/inventory/:id/host/:host_id/edit'
           : '/hosts/:id/edit';
-
       const initialEntries =
         type === 'inventory host'
           ? [`/inventories/inventory/1/host/435/edit`]
@@ -140,7 +132,6 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         });
         cy.get('[data-cy="name"]').should('have.value', payload.name);
         cy.get('[data-cy="description"]').should('have.value', payload.description);
-
         if (type === 'host') {
           cy.get('[data-cy="inventory-name"]').should('have.value', 'test inventory');
         }
@@ -157,14 +148,12 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         cy.get('[data-cy="name"]').type('Edited Host');
         cy.get('[data-cy="description"]').clear();
         cy.get('[data-cy="description"]').type('Edited Descriptions');
-        // cy.getBy('[data-cy="variables"]').type('s');
         cy.clickButton(/^Save host$/);
         cy.wait('@editHost')
           .its('request.body')
           .then((editedHost: IHostInput) => {
             expect(editedHost.name).to.equal('Edited Host');
             expect(editedHost.description).to.equal('Edited Descriptions');
-            // expect(editedHost.variables).to.equal(`${payload.variables}s`);
           });
       });
 

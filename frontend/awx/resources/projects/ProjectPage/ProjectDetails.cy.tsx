@@ -1,11 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { ProjectDetails } from './ProjectDetails';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('ProjectDetails', () => {
   it('Component renders and displays project', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/projects/*' }, { fixture: 'project.json' });
-
+    cy.intercept({ method: 'GET', url: awxAPI`/projects/*` }, { fixture: 'project.json' });
     cy.mount(<ProjectDetails />);
     cy.get('#name').should('have.text', 'Demo Project @ 10:44:51');
     cy.get('#organization').should('have.text', 'Default');

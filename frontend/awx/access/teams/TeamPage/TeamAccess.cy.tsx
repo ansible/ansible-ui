@@ -1,5 +1,5 @@
 import { Team } from '../../../interfaces/Team';
-
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { TeamAccess } from './TeamAccess';
 
 describe('TeamAccess', () => {
@@ -7,7 +7,7 @@ describe('TeamAccess', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/role_user_assignments/*',
+        url: awxAPI`/role_user_assignments/*`,
         hostname: 'localhost',
       },
       {
@@ -17,7 +17,7 @@ describe('TeamAccess', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/role_definitions/*',
+        url: awxAPI`/role_definitions/*`,
         hostname: 'localhost',
       },
       {
@@ -27,7 +27,7 @@ describe('TeamAccess', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/role_team_assignments/*',
+        url: awxAPI`/role_team_assignments/*`,
         hostname: 'localhost',
       },
       {
@@ -54,6 +54,7 @@ describe('TeamAccess', () => {
   //       });
   //   });
   // });
+
   it('Attempting to delete member access brings up confirmation modal', () => {
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
@@ -64,6 +65,7 @@ describe('TeamAccess', () => {
       cy.contains('Remove users').should('exist');
     });
   });
+
   it('Attempting to delete a team role brings up confirmation modal with a warning', () => {
     cy.fixture('team').then((team: Team) => {
       team.summary_fields.user_capabilities.edit = false;
@@ -72,13 +74,12 @@ describe('TeamAccess', () => {
       cy.getTableRow('username', 'dev').within(() => {
         cy.get(`button[data-cy="remove-role"]`).click();
       });
-
       cy.contains('Remove users').should('exist');
     });
   });
-  it.skip('If one/more selected users cannot be deleted, bulk confirmation dialog highlights this with a warning', () => {
-    cy.intercept('POST', '/api/v2/users/**/roles/', cy.spy().as('removeUser'));
 
+  it.skip('If one/more selected users cannot be deleted, bulk confirmation dialog highlights this with a warning', () => {
+    cy.intercept('POST', awxAPI`/users/**/roles/`, cy.spy().as('removeUser'));
     cy.fixture('team').then(() => {
       cy.mount(<TeamAccess />);
       // Remove users

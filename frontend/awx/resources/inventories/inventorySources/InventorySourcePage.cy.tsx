@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
 import { InventorySourcePage } from './InventorySourcePage';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventorySourcePage', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/inventory_sources/*' },
+      { method: 'GET', url: awxAPI`/inventory_sources/*` },
       { fixture: 'inventory_source.json' }
     );
     cy.intercept(
-      { method: 'OPTIONS', url: '/api/v2/inventory_sources' },
+      { method: 'OPTIONS', url: awxAPI`/inventory_sources` },
       { fixture: 'inventory_source_options.json' }
     );
   });
@@ -23,7 +24,7 @@ describe('InventorySourcePage', () => {
   });
 
   it('Launches a inventory update', () => {
-    cy.intercept('POST', '/api/v2/inventory_sources/*/update/', (req) => {
+    cy.intercept('POST', awxAPI`/inventory_sources/*/update/`, (req) => {
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
     }).as('inventorySourceUpdate');
     cy.mount(<InventorySourcePage />, {
@@ -35,30 +36,30 @@ describe('InventorySourcePage', () => {
   });
 
   it('Handles HTTP errors properly', () => {
-    cy.intercept('POST', '/api/v2/inventory_sources/*/update/', (req) => {
+    cy.intercept('POST', awxAPI`/inventory_sources/*/update/`, (req) => {
       return req.reply({ statusCode: 400, body: { id: 1000, type: 'job' } });
     }).as('inventorySourceUpdate');
     cy.mount(<InventorySourcePage />, {
       path: '/inventories/:id/sources/:source_id',
       initialEntries: ['/inventories/1/sources/1'],
     });
-
     cy.clickButton(/^Launch inventory update$/);
-
     cy.get('.pf-v5-c-alert__title').contains('Failed to update inventory source');
   });
 });
+
 describe('InventorySourcePage RBAC', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/inventory_sources/*' },
+      { method: 'GET', url: awxAPI`/inventory_sources/*` },
       { fixture: 'inventory_source.json' }
     );
     cy.intercept(
-      { method: 'OPTIONS', url: '/api/v2/inventory_sources' },
+      { method: 'OPTIONS', url: awxAPI`/inventory_sources` },
       { fixture: 'inventory_source_options.json' }
     );
   });
+
   it('Disables the launch buttons for sys auditors', () => {
     cy.mount(
       <InventorySourcePage />,

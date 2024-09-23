@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { UserRoles } from './UserRoles';
 
 describe('AWX user roles', () => {
@@ -9,6 +9,7 @@ describe('AWX user roles', () => {
     path,
     initialEntries,
   };
+
   describe('Roles', () => {
     beforeEach(() => {
       cy.intercept('GET', awxAPI`/role_user_assignments/*`, {
@@ -19,15 +20,18 @@ describe('AWX user roles', () => {
       });
       cy.mount(component, params);
     });
+
     it('Renders the list of role assignments for the user', () => {
       cy.get('table tbody').find('tr').should('have.length', 3);
     });
+
     it('Renders the correct columns and action buttons', () => {
       cy.get('a[data-cy="add-roles"]').should('contain', 'Add roles');
       cy.contains('th', 'Resource name');
       cy.contains('th', 'Role');
       cy.contains('th', 'Type');
     });
+
     it('should have filters for Role Name and Resource Type', () => {
       cy.openToolbarFilterTypeSelect().within(() => {
         cy.contains(/^Role name$/).should('be.visible');
@@ -37,6 +41,7 @@ describe('AWX user roles', () => {
       cy.get('[data-cy="filter-input"]').click();
       cy.contains(/^Credential$/).should('be.visible');
     });
+
     it('Can remove role', () => {
       cy.intercept(
         { method: 'DELETE', url: awxAPI`/role_user_assignments/249/` },
@@ -57,6 +62,7 @@ describe('AWX user roles', () => {
       cy.clickButton(/^Close$/);
     });
   });
+
   describe('AWX user roles - empty list', () => {
     beforeEach(() => {
       cy.intercept('GET', awxAPI`/role_user_assignments/*`, {
@@ -67,6 +73,7 @@ describe('AWX user roles', () => {
       });
       cy.mount(component, params);
     });
+
     it('Empty state is displayed correctly', () => {
       cy.contains(/^There are currently no Automation Execution roles assigned to this user.$/);
       cy.contains(/^Add a role by clicking the button below.$/);

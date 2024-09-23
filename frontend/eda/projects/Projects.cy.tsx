@@ -1,12 +1,12 @@
-import { edaAPI } from '../common/eda-utils';
 import { Projects } from './Projects';
+import { edaAPI } from '../../../cypress/support/formatApiPathForEDA';
 
 describe('Projects.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/projects/',
+        url: edaAPI`/projects/`,
       },
       {
         fixture: 'edaProjectsOptions.json',
@@ -81,6 +81,7 @@ describe('Empty list without POST permission', () => {
       }
     ).as('emptyList');
   });
+
   it('Empty state is displayed correctly', () => {
     cy.mount(<Projects />);
     cy.contains(/^You do not have permission to create a project.$/);
@@ -111,6 +112,7 @@ describe('Empty list with POST permission', () => {
       }
     ).as('emptyList');
   });
+
   it('Empty state is displayed correctly', () => {
     cy.mount(<Projects />);
     cy.contains(/^There are currently no projects created for your organization.$/);

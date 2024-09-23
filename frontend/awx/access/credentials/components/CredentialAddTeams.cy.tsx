@@ -1,5 +1,5 @@
 import { CredentialAddTeams } from './CredentialAddTeams';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxCredentialAddTeams', () => {
   const component = <CredentialAddTeams />;
@@ -14,7 +14,7 @@ describe('AwxCredentialAddTeams', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/teams/',
+        url: awxAPI`/teams/`,
       },
       {
         fixture: 'awx_teams_options.json',
@@ -29,6 +29,7 @@ describe('AwxCredentialAddTeams', () => {
     });
     cy.mount(component, params);
   });
+
   it('should render with correct steps', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select team(s)');
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
@@ -36,12 +37,14 @@ describe('AwxCredentialAddTeams', () => {
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('have.class', 'pf-m-current');
     cy.get('table tbody').find('tr').should('have.length', 3);
   });
+
   it('can filter teams by name', () => {
     cy.intercept(awxAPI`/teams/?name=Sample*`, { fixtures: 'teams.json' }).as('nameFilterRequest');
     cy.filterTableByMultiSelect('name', ['Sample']);
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
   });
+
   it('should validate that at least one team is selected for moving to next step', () => {
     cy.get('table tbody').find('tr').should('have.length', 3);
     cy.clickButton(/^Next$/);
@@ -51,6 +54,7 @@ describe('AwxCredentialAddTeams', () => {
     cy.get('[data-cy="wizard-nav-item-teams"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that at least one role is selected for moving to Review step', () => {
     cy.selectTableRowByCheckbox('name', 'Sample', { disableFilter: true });
     cy.clickButton(/^Next$/);
@@ -62,6 +66,7 @@ describe('AwxCredentialAddTeams', () => {
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
+
   it('should display selected team and role in the Review step', () => {
     cy.selectTableRowByCheckbox('name', 'Sample', { disableFilter: true });
     cy.clickButton(/^Next$/);
@@ -81,6 +86,7 @@ describe('AwxCredentialAddTeams', () => {
       );
     });
   });
+
   it('should trigger bulk action dialog on submit', () => {
     cy.intercept('POST', awxAPI`/role_team_assignments/`, {
       statusCode: 201,

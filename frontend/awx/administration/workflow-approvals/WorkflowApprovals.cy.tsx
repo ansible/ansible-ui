@@ -1,4 +1,5 @@
 import { WorkflowApprovals } from './WorkflowApprovals';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Workflow Approvals List', () => {
   describe('Empty list', () => {
@@ -6,7 +7,7 @@ describe('Workflow Approvals List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/workflow_approvals/*',
+          url: awxAPI`/workflow_approvals/*`,
         },
         {
           fixture: 'emptyList.json',
@@ -26,7 +27,7 @@ describe('Workflow Approvals List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/workflow_approvals/*',
+          url: awxAPI`/workflow_approvals/*`,
         },
         {
           fixture: 'workflowApprovals.json',
@@ -42,7 +43,7 @@ describe('Workflow Approvals List', () => {
 
     it('Workflow approvals list has filters for Name and ID', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { method: 'OPTIONS', url: awxAPI`/workflow_approvals/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
@@ -54,7 +55,7 @@ describe('Workflow Approvals List', () => {
 
     it('Filter workflow approvals by name', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { method: 'OPTIONS', url: awxAPI`/workflow_approvals/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
@@ -66,7 +67,7 @@ describe('Workflow Approvals List', () => {
 
     it('Filter workflow approvals by id', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { method: 'OPTIONS', url: awxAPI`/workflow_approvals/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
@@ -174,7 +175,7 @@ describe('Workflow Approvals List', () => {
 
     it('Approve row action calls correct API endpoint', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { method: 'OPTIONS', url: awxAPI`/workflow_approvals/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
@@ -194,7 +195,7 @@ describe('Workflow Approvals List', () => {
 
     it('Deny row action calls correct API endpoint', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { method: 'OPTIONS', url: awxAPI`/workflow_approvals/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
@@ -214,7 +215,7 @@ describe('Workflow Approvals List', () => {
 
     it('Delete row action calls correct API endpoint', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/workflow_approvals/' },
+        { method: 'OPTIONS', url: awxAPI`/workflow_approvals/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
@@ -237,7 +238,7 @@ describe('Workflow Approvals List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/workflow_approvals/*',
+          url: awxAPI`/workflow_approvals/*`,
         },
         {
           statusCode: 500,

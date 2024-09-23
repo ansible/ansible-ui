@@ -1,5 +1,5 @@
 import { InstanceGroupTeamAccess } from './InstanceGroupTeamAccess';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InstanceGroupTeamAccess', () => {
   beforeEach(() => {
@@ -15,12 +15,12 @@ describe('InstanceGroupTeamAccess', () => {
         results: [
           {
             id: 31,
-            url: '/api/v2/role_team_assignments/31/',
+            url: awxAPI`/role_team_assignments/31/`,
             related: {
-              created_by: '/api/v2/users/3/',
-              role_definition: '/api/v2/role_definitions/5/',
-              team: '/api/v2/teams/4/',
-              content_object: '/api/v2/instance_groups/2/',
+              created_by: awxAPI`/users/3/`,
+              role_definition: awxAPI`/role_definitions/5/`,
+              team: awxAPI`/teams/4/`,
+              content_object: awxAPI`/instance_groups/2/`,
             },
             summary_fields: {
               created_by: { id: 3, username: 'dev', first_name: '', last_name: '' },
@@ -52,9 +52,7 @@ describe('InstanceGroupTeamAccess', () => {
       path,
       initialEntries,
     };
-
     cy.mount(<InstanceGroupTeamAccess />, params);
-
     cy.get('tbody tr').should('have.length', 1);
     cy.getByDataCy('team-name-column-cell').contains('test team');
     cy.getByDataCy('role-column-cell').contains('InstanceGroup Use');

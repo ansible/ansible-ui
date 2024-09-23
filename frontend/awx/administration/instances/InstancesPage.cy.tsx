@@ -1,9 +1,9 @@
-import { awxAPI } from '../../common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { InstancePage } from './InstancesPage';
 
 describe('Instances Page', () => {
   beforeEach(() => {
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/*' }, { fixture: 'instance.json' }).as(
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/*` }, { fixture: 'instance.json' }).as(
       'getInstance'
     );
   });
@@ -65,7 +65,7 @@ describe('Instances Page', () => {
     cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
-    cy.intercept('GET', '/api/v2/instances/*', {
+    cy.intercept('GET', awxAPI`/instances/*`, {
       fixture: 'instance_control.json',
     }).as('getInstance');
     cy.mount(<InstancePage />);
@@ -125,7 +125,7 @@ describe('Instances Page', () => {
     cy.intercept('GET', awxAPI`/settings/system*`, {
       IS_K8S: true,
     }).as('isK8s');
-    cy.intercept('GET', '/api/v2/instances/*', {
+    cy.intercept('GET', awxAPI`/instances/*`, {
       fixture: 'instance_control.json',
     }).as('getInstance');
     cy.mount(<InstancePage />);

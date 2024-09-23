@@ -1,14 +1,16 @@
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { CreateInstanceGroup, EditInstanceGroup } from './InstanceGroupForm';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Instance Group Form', () => {
   describe('Create instance group', () => {
     beforeEach(() => {
-      cy.intercept('POST', '/api/v2/instance_groups/', {
+      cy.intercept('POST', awxAPI`/instance_groups/`, {
         statusCode: 201,
         fixture: 'execution_environment.json',
       }).as('createIG');
     });
+
     it('should validate required fields on save', () => {
       cy.mount(<CreateInstanceGroup />);
       cy.clickButton(/^Create instance group$/);
@@ -18,16 +20,12 @@ describe('Create Edit Instance Group Form', () => {
     it('should create instance group with only required values passed', () => {
       cy.mount(<CreateInstanceGroup />);
       cy.get('[data-cy="name"]').type('Test name');
-
       cy.get('[data-cy="policy-instance-minimum"]').clear();
       cy.get('[data-cy="policy-instance-minimum"]').type('1');
-
       cy.get('[data-cy="policy-instance-percentage"]').clear();
       cy.get('[data-cy="policy-instance-percentage"]').type('2');
-
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
-
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
       cy.clickButton(/^Create instance group$/);
@@ -44,12 +42,13 @@ describe('Create Edit Instance Group Form', () => {
         });
     });
   });
+
   describe('Edit Instance Group', () => {
     beforeEach(() => {
       cy.intercept('GET', `api/v2/instance_groups/*`, {
         fixture: 'instance_group.json',
       });
-      cy.intercept('PATCH', '/api/v2/instance_groups/*', {}).as('editIg');
+      cy.intercept('PATCH', awxAPI`/instance_groups/*`, {}).as('editIg');
     });
 
     it('should preload the form with current values', () => {
@@ -72,19 +71,14 @@ describe('Create Edit Instance Group Form', () => {
       });
       cy.get('[data-cy="name"]').clear();
       cy.get('[data-cy="name"]').type('Test name- edited');
-
       cy.get('[data-cy="policy-instance-minimum"]').clear();
       cy.get('[data-cy="policy-instance-minimum"]').type('1');
-
       cy.get('[data-cy="policy-instance-percentage"]').clear();
       cy.get('[data-cy="policy-instance-percentage"]').type('2');
-
       cy.get('[data-cy="max-concurrent-jobs"]').clear();
       cy.get('[data-cy="max-concurrent-jobs"]').type('3');
-
       cy.get('[data-cy="max-forks"]').clear();
       cy.get('[data-cy="max-forks"]').type('4');
-
       cy.getByDataCy('Submit').click();
       cy.wait('@editIg')
         .its('request.body')

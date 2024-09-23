@@ -1,4 +1,4 @@
-import { awxAPI } from '../../common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { Jobs } from './Jobs';
 
@@ -7,7 +7,7 @@ describe('Jobs.cy.ts', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/unified_jobs/*',
+        url: awxAPI`/unified_jobs/*`,
         hostname: 'localhost',
       },
       {
@@ -15,6 +15,7 @@ describe('Jobs.cy.ts', () => {
       }
     ).as('getJobs');
   });
+
   it('renders job list', () => {
     cy.mount(<Jobs />);
     cy.verifyPageTitle('Jobs');
@@ -41,6 +42,7 @@ describe('Jobs.cy.ts', () => {
         cy.get('div[aria-label="Permanently delete jobs"]').should('not.exist');
       });
   });
+
   it('can delete a job from the jobs list row', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
@@ -78,6 +80,7 @@ describe('Jobs.cy.ts', () => {
         cy.contains('#delete-job', /^Delete job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
+
   it('row action to delete job is disabled if the user does not have permissions', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
@@ -91,6 +94,7 @@ describe('Jobs.cy.ts', () => {
         cy.contains('#delete-job', /^Delete job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
+
   it('bulk deletion confirmation contains message about selected jobs that cannot be deleted', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
@@ -105,6 +109,7 @@ describe('Jobs.cy.ts', () => {
         ).should('be.visible');
       });
   });
+
   it('row action to cancel job  is disabled if the selected job is not running', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')
@@ -118,6 +123,7 @@ describe('Jobs.cy.ts', () => {
         cy.contains('#cancel-job', /^Cancel job$/).should('have.attr', 'aria-disabled', 'true');
       });
   });
+
   it('row action to cancel job  is disabled if the user does not have permissions', () => {
     cy.mount(<Jobs />);
     cy.fixture('jobs.json')

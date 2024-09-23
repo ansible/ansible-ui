@@ -1,6 +1,7 @@
 import { ToolbarFilterType } from '../../../../framework';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Projects } from './Projects';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 /*
 Projects list test cases
@@ -18,7 +19,7 @@ describe('projects.cy.ts', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/projects/*',
+          url: awxAPI`/projects/*`,
         },
         {
           fixture: 'projects.json',
@@ -27,7 +28,7 @@ describe('projects.cy.ts', () => {
       cy.intercept(
         {
           method: 'OPTIONS',
-          url: '/api/v2/projects/',
+          url: awxAPI`/projects/`,
         },
         {
           fixture: 'mock_options.json',
@@ -281,7 +282,7 @@ describe('projects.cy.ts', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/projects/*',
+          url: awxAPI`/projects/*`,
         },
         {
           statusCode: 500,
@@ -297,13 +298,14 @@ describe('projects.cy.ts', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/projects/*',
+          url: awxAPI`/projects/*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly for user with permission to create projects', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -326,6 +328,7 @@ describe('projects.cy.ts', () => {
       cy.contains(/^Please create a project by using the button below.$/);
       cy.contains('button', /^Create project$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create projects', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {

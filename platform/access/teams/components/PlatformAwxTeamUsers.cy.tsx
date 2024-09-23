@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { PlatformAwxTeamUsers } from './PlatformAwxTeamUsers';
 
 describe('Team users list', () => {
@@ -17,12 +17,12 @@ describe('Team users list', () => {
           results: [
             {
               id: 12,
-              url: '/api/v2/role_user_assignments/12/',
+              url: awxAPI`/role_user_assignments/12/`,
               related: {
-                created_by: '/api/v2/users/1/',
-                role_definition: '/api/v2/role_definitions/24/',
-                user: '/api/v2/users/40/',
-                content_object: '/api/v2/teams/1/',
+                created_by: awxAPI`/users/1/`,
+                role_definition: awxAPI`/role_definitions/24/`,
+                user: awxAPI`/users/40/`,
+                content_object: awxAPI`/teams/1/`,
               },
               summary_fields: {
                 created_by: {
@@ -84,6 +84,7 @@ describe('Team users list', () => {
       });
     });
   });
+
   describe('Empty list', () => {
     beforeEach(() => {
       cy.intercept(
@@ -96,6 +97,7 @@ describe('Team users list', () => {
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly', () => {
       cy.mount(<PlatformAwxTeamUsers />, {
         path: '/access/teams/:id/users/controller*',
@@ -104,6 +106,7 @@ describe('Team users list', () => {
       cy.contains(/^There are currently no users added to this team.$/);
     });
   });
+
   describe('Error retrieving list', () => {
     it('Displays error loading users', () => {
       cy.intercept(

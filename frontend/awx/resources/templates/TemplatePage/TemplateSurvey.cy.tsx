@@ -1,14 +1,15 @@
 import { TemplateSurvey } from './TemplateSurvey';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplateSurvey', () => {
   describe('Non-empty survey', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*' },
+        { method: 'GET', url: awxAPI`/job_templates/*` },
         { fixture: 'jobTemplate.json' }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*/survey_spec/' },
+        { method: 'GET', url: awxAPI`/job_templates/*/survey_spec/` },
         { fixture: 'survey.json' }
       );
     });
@@ -30,7 +31,7 @@ describe('TemplateSurvey', () => {
 
     it('Survey toggle should be enabled when survey_enabled is true', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*' },
+        { method: 'GET', url: awxAPI`/job_templates/*` },
         {
           statusCode: 200,
           body: {
@@ -52,7 +53,7 @@ describe('TemplateSurvey', () => {
 
     it('Survey list row actions are disabled due to lack of permissions', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*' },
+        { method: 'GET', url: awxAPI`/job_templates/*` },
         {
           statusCode: 200,
           body: {
@@ -99,11 +100,11 @@ describe('TemplateSurvey', () => {
 
     it('Empty state is displayed correctly for user with permission to create survey', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*' },
+        { method: 'GET', url: awxAPI`/job_templates/*` },
         { fixture: 'jobTemplate.json' }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*/survey_spec' },
+        { method: 'GET', url: awxAPI`/job_templates/*/survey_spec` },
         {
           statusCode: 200,
           body: emptySpec,
@@ -117,7 +118,7 @@ describe('TemplateSurvey', () => {
 
     it('Empty state is displayed correctly for user without permission to create survey', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*' },
+        { method: 'GET', url: awxAPI`/job_templates/*` },
         {
           statusCode: 200,
           body: {
@@ -133,7 +134,7 @@ describe('TemplateSurvey', () => {
         }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*/survey_spec' },
+        { method: 'GET', url: awxAPI`/job_templates/*/survey_spec` },
         {
           statusCode: 200,
           body: emptySpec,
@@ -150,11 +151,11 @@ describe('TemplateSurvey', () => {
   describe('Error survey', () => {
     it('Displays error if survey questions are not successfully loaded', () => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*' },
+        { method: 'GET', url: awxAPI`/job_templates/*` },
         { fixture: 'jobTemplate.json' }
       );
       cy.intercept(
-        { method: 'GET', url: '/api/v2/job_templates/*/survey_spec' },
+        { method: 'GET', url: awxAPI`/job_templates/*/survey_spec` },
         { statusCode: 500 }
       );
       cy.mount(<TemplateSurvey resourceType="job_templates" />);

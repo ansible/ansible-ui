@@ -1,32 +1,36 @@
 import { JobHeader } from './JobHeader';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Job Page', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/workflow_jobs/*',
+        url: awxAPI`/workflow_jobs/*`,
       },
       {
         fixture: 'running_job.json',
       }
     );
   });
+
   it('Relaunch and cancel buttons are visible on a running job', () => {
     cy.mount(<JobHeader />, { path: ':job_type/:id', initialEntries: ['/workflow/1'] });
     cy.get('[data-cy="relaunch-job"]').should('contain', 'Relaunch job');
     cy.get('[data-cy="cancel-job"]').should('contain', 'Cancel job');
   });
+
   it('Delete button is disabled on a running job', () => {
     cy.mount(<JobHeader />, { path: ':job_type/:id', initialEntries: ['/workflow/1'] });
     cy.getByDataCy('actions-dropdown').click();
     cy.contains('#delete-job', /^Delete job$/).should('have.attr', 'aria-disabled', 'true');
   });
+
   it('Delete button is enabled on a finished job', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/workflow_jobs/*',
+        url: awxAPI`/workflow_jobs/*`,
       },
       {
         fixture: 'workflow_job.json',
@@ -36,11 +40,12 @@ describe('Job Page', () => {
     cy.getByDataCy('actions-dropdown').click();
     cy.contains('#delete-job', /^Delete job$/).should('not.have.attr', 'aria-disabled', 'true');
   });
+
   it('Cancel button is disabled on a finished job', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/workflow_jobs/*',
+        url: awxAPI`/workflow_jobs/*`,
       },
       {
         fixture: 'workflow_job.json',

@@ -1,12 +1,13 @@
 import { AwxHost } from '../../interfaces/AwxHost';
 import { GroupHosts } from './GroupHosts';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('GroupHosts', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/groups/**/all_hosts/**',
+        url: awxAPI`/groups/**/all_hosts/**`,
         hostname: 'localhost',
       },
       {
@@ -16,7 +17,7 @@ describe('GroupHosts', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/inventories/**/ad_hoc_commands',
+        url: awxAPI`/inventories/**/ad_hoc_commands`,
         hostname: 'localhost',
       },
       {

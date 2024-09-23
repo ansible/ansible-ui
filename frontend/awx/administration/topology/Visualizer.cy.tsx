@@ -1,19 +1,19 @@
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { Instance } from '../../interfaces/Instance';
-import { awxAPI } from '../../common/api/awx-utils';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Topology } from './Topology';
 
 describe('Mesh Visualizer', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/mesh_visualizer/' },
+      { method: 'GET', url: awxAPI`/mesh_visualizer/` },
       { fixture: 'mesh_visualizer.json' }
     ).as('getMeshVisualizer');
-    cy.intercept({ method: 'GET', url: '/api/v2/instances/*' }, { fixture: 'instance.json' }).as(
+    cy.intercept({ method: 'GET', url: awxAPI`/instances/*` }, { fixture: 'instance.json' }).as(
       'getInstance'
     );
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instances/*/instance_groups/' },
+      { method: 'GET', url: awxAPI`/instances/*/instance_groups/` },
       { fixture: 'instance_groups.json' }
     ).as('getInstanceGroups');
     cy.intercept(
@@ -36,11 +36,13 @@ describe('Mesh Visualizer', () => {
         });
       });
   });
+
   it('should show sidebar details when a node is selected', () => {
     cy.mount(<Topology />);
     cy.get('[data-id="1"]').click();
     cy.get('[data-cy="mesh-viz-sidebar"]').should('be.visible');
   });
+
   it('should toggle legend when legend button is clicked', () => {
     cy.mount(<Topology />);
     cy.get('#legend').click();
@@ -48,6 +50,7 @@ describe('Mesh Visualizer', () => {
     cy.get('#legend').click();
     cy.get('[data-cy="mesh-viz-legend"]').should('not.exist');
   });
+
   it('should show adjust instance forks when instance forks slider is adjusted', () => {
     // Adjusting instance capacity while other concurrent tests are running could have unwanted
     // side-effects affecting job runs. We should mock the response data in this scenario.
@@ -77,6 +80,7 @@ describe('Mesh Visualizer', () => {
         cy.get('button[aria-label="Close"]').click();
       });
   });
+
   it('should show no forks slider when instance has 0 cpu and memory capacity', () => {
     // Adjusting instance capacity while other concurrent tests are running could have
     // unwanted side-effects affecting job runs. We should mock the response data in this scenario.
@@ -100,6 +104,7 @@ describe('Mesh Visualizer', () => {
         cy.get('button[aria-label="Close"]').click();
       });
   });
+
   it('should render download icon for instance that has an install bundle', () => {
     /**
      Only certain node types have install bundles, however creating an instance via the
@@ -129,6 +134,7 @@ describe('Mesh Visualizer', () => {
         cy.get('button[aria-label="Close"]').click();
       });
   });
+
   it('should zoom in', () => {
     cy.mount(<Topology />);
     cy.get('#zoom-in').click();
@@ -138,6 +144,7 @@ describe('Mesh Visualizer', () => {
         .contain(`scale(${4 / 3})`);
     });
   });
+
   it('should zoom out', () => {
     cy.mount(<Topology />);
     cy.get('#zoom-out').click();
@@ -145,6 +152,7 @@ describe('Mesh Visualizer', () => {
       expect(g).to.have.attr('transform').contain('scale(0.75)');
     });
   });
+
   it('should zoom fit to screen', () => {
     cy.mount(<Topology />);
     cy.get('#fit-to-screen').click();
@@ -152,6 +160,7 @@ describe('Mesh Visualizer', () => {
       expect(g).to.have.attr('transform').contain('scale(1)');
     });
   });
+
   it('should reset zoom', () => {
     cy.mount(<Topology />);
     cy.get('#reset-view').click();

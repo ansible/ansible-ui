@@ -1,5 +1,6 @@
 import { IToolbarFilter } from '../../../../../framework';
 import { useCredentialTypesFilters } from './useCredentialTypesFilters';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TestInner(props: { filters: IToolbarFilter[] }) {
@@ -7,7 +8,7 @@ function TestInner(props: { filters: IToolbarFilter[] }) {
 }
 
 before(() => {
-  cy.intercept('OPTIONS', '/api/v2/credential_types', { fixture: 'mock_options.json' }).as(
+  cy.intercept('OPTIONS', awxAPI`/credential_types`, { fixture: 'mock_options.json' }).as(
     'getOptions'
   );
 });

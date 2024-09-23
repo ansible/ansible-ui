@@ -4,17 +4,18 @@ import * as useOptions from '../../../common/crud/useOptions';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Schedule } from '../../interfaces/Schedule';
 import { Schedules } from './Schedules';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('schedules .cy.ts', () => {
   describe('Non-empty list', () => {
     beforeEach(() => {
       cy.intercept(
-        { method: 'GET', url: '/api/v2/schedules/*' },
+        { method: 'GET', url: awxAPI`/schedules/*` },
         {
           fixture: 'schedules.json',
         }
       ).as('schedulesList');
-      cy.intercept('OPTIONS', '/api/v2/schedules/*', {
+      cy.intercept('OPTIONS', awxAPI`/schedules/*`, {
         actions: {
           GET: {
             created: {
@@ -45,7 +46,7 @@ describe('schedules .cy.ts', () => {
 
     it('Filter schedules by name', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/schedules/' },
+        { method: 'OPTIONS', url: awxAPI`/schedules/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<Schedules />);
@@ -54,9 +55,10 @@ describe('schedules .cy.ts', () => {
       cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Filter schedules by description', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/schedules/' },
+        { method: 'OPTIONS', url: awxAPI`/schedules/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<Schedules />);
@@ -65,10 +67,11 @@ describe('schedules .cy.ts', () => {
       cy.get('tbody').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Disabled schedule renders switch properly, with proper aria-label', () => {
       cy.fixture('schedules.json').then((mockSchedulesList: AwxItemsResponse<Schedule>) => {
         mockSchedulesList.results[2].enabled = false;
-        cy.intercept('GET', '/api/v2/schedules/*', {
+        cy.intercept('GET', awxAPI`/schedules/*`, {
           statusCode: 200,
           body: mockSchedulesList,
         }).as('scheduleList');
@@ -83,6 +86,7 @@ describe('schedules .cy.ts', () => {
             );
           });
       });
+
       it('Create Schedule button is disabled if the user does not have permission to create schedules ', () => {
         cy.stub(useOptions, 'useOptions').callsFake(() => ({
           data: {
@@ -105,17 +109,18 @@ describe('schedules .cy.ts', () => {
         cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'true');
       });
     });
+
     it('Delete Schedule button is disabled if the user does not have permission(s)', () => {
       cy.fixture('schedules.json').then((mockSchedulesList: AwxItemsResponse<Schedule>) => {
         mockSchedulesList.results[1].summary_fields.user_capabilities.edit = false;
         mockSchedulesList.results[1].summary_fields.user_capabilities.delete = false;
         mockSchedulesList.results[2].enabled = true;
 
-        cy.intercept('GET', '/api/v2/schedules/*', {
+        cy.intercept('GET', awxAPI`/schedules/*`, {
           statusCode: 200,
           body: mockSchedulesList,
         }).as('scheduleList');
-        cy.intercept('OPTIONS', '/api/v2/schedules/*', {
+        cy.intercept('OPTIONS', awxAPI`/schedules/*`, {
           actions: {
             GET: {},
             POST: {},
@@ -156,11 +161,12 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.contains('a', /^Create schedule$/).should('have.attr', 'aria-disabled', 'false');
     });
+
     it('Displays error if schedules are not successfully loaded', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/schedules/*',
+          url: awxAPI`/schedules/*`,
         },
         {
           statusCode: 500,
@@ -170,18 +176,20 @@ describe('schedules .cy.ts', () => {
       cy.contains('Error loading schedules');
     });
   });
+
   describe('Empty list', () => {
     beforeEach(() => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/schedules/*',
+          url: awxAPI`/schedules/*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly for user with permission to create schedules ', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -204,6 +212,7 @@ describe('schedules .cy.ts', () => {
       cy.contains(/^Please create a schedule by using the button below.$/);
       cy.contains('button', /^Create schedule$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create schedules ', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {

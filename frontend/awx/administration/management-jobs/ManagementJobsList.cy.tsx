@@ -1,12 +1,13 @@
 import { ManagementJobs } from './ManagementJobsList';
 import * as useOptions from '../../../common/crud/useOptions';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('ManagementJobs Empty State test', () => {
   before(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/system_job_templates/*',
+        url: awxAPI`/system_job_templates/*`,
       },
       {
         fixture: 'emptyList.json',
@@ -40,7 +41,7 @@ describe('Non-empty ManagementJobs list', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/system_job_templates/*',
+        url: awxAPI`/system_job_templates/*`,
       },
       {
         fixture: 'managementJobs.json',

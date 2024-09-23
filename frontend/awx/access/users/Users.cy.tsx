@@ -1,13 +1,14 @@
 import { AwxUser } from '../../interfaces/User';
 import * as useOptions from '../../../common/crud/useOptions';
 import { Users } from './Users';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Users.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/users/*',
+        url: awxAPI`/users/*`,
         hostname: 'localhost',
       },
       {
@@ -17,7 +18,7 @@ describe('Users.cy.ts', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/users/',
+        url: awxAPI`/users/`,
       },
       {
         fixture: 'mock_options.json',
@@ -32,7 +33,7 @@ describe('Users.cy.ts', () => {
   });
 
   it('Create User button is disabled if the user does not have permission to create users', () => {
-    cy.intercept({ method: 'GET', url: '/api/v2/users/*' }, { fixture: 'users.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/users/*` }, { fixture: 'users.json' });
     cy.mount(<Users />);
     cy.contains('a', /^Create user$/).should('have.attr', 'aria-disabled', 'true');
   });
@@ -53,7 +54,7 @@ describe('Users.cy.ts', () => {
         },
       },
     }));
-    cy.intercept({ method: 'GET', url: '/api/v2/users/*' }, { fixture: 'users.json' });
+    cy.intercept({ method: 'GET', url: awxAPI`/users/*` }, { fixture: 'users.json' });
     cy.mount(<Users />);
     cy.contains('a', /^Create user$/).should('have.attr', 'aria-disabled', 'false');
   });

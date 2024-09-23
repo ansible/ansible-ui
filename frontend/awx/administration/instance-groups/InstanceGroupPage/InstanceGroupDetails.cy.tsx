@@ -1,11 +1,12 @@
 import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { InstanceGroupDetails } from './InstanceGroupDetails';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Instance Group Details', () => {
   it('Render instance group details', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instance_groups/*' },
+      { method: 'GET', url: awxAPI`/instance_groups/*` },
       { fixture: 'instance_group.json' }
     );
     cy.mount(<InstanceGroupDetails />, {
@@ -39,9 +40,10 @@ describe('Instance Group Details', () => {
       );
     });
   });
+
   it('Render container group details', () => {
     cy.intercept(
-      { method: 'GET', url: '/api/v2/instance_groups/*' },
+      { method: 'GET', url: awxAPI`/instance_groups/*` },
       { fixture: 'container_group.json' }
     );
     cy.mount(<InstanceGroupDetails />, {

@@ -1,11 +1,12 @@
 import { CreateUserToken } from './UserTokenForm';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('CreateUserToken', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/applications/*',
+        url: awxAPI`/applications/*`,
         hostname: 'localhost',
       },
       {

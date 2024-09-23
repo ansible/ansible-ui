@@ -1,5 +1,5 @@
 import { InventoryAddUsers } from './InventoryAddUsers';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventoryAddUsers', () => {
   const component = <InventoryAddUsers />;
@@ -17,7 +17,7 @@ describe('InventoryAddUsers', () => {
     cy.intercept(
       {
         method: 'OPTIONS',
-        url: '/api/v2/users/',
+        url: awxAPI`/users/`,
       },
       {
         fixture: 'awx_users_options.json',
@@ -29,6 +29,7 @@ describe('InventoryAddUsers', () => {
     });
     cy.mount(component, params);
   });
+
   it('should render with correct steps', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select user(s)');
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select roles to apply');
@@ -36,6 +37,7 @@ describe('InventoryAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-users"] button').should('have.class', 'pf-m-current');
     cy.get('table tbody').find('tr').should('have.length', 2);
   });
+
   it('can filter users by username', () => {
     cy.intercept(awxAPI`/users/?is_superuser=false&username__icontains=e2e-user-avAE*`, {
       fixture: 'users.json',
@@ -66,6 +68,7 @@ describe('InventoryAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-awxRoles"] button').should('not.have.class', 'pf-m-current');
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
+
   it('should display selected user and role in the Review step', () => {
     cy.selectTableRowByCheckbox('username', 'demo-user', { disableFilter: true });
     cy.clickButton(/^Next$/);
@@ -85,6 +88,7 @@ describe('InventoryAddUsers', () => {
       );
     });
   });
+
   it('should trigger bulk action dialog on submit', () => {
     cy.intercept('POST', awxAPI`/role_user_assignments/`, {
       statusCode: 201,

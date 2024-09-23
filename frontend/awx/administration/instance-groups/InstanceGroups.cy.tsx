@@ -1,5 +1,6 @@
 import * as useOptions from '../../../common/crud/useOptions';
 import { InstanceGroups } from './InstanceGroups';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Instance Groups List', () => {
   describe('Non-empty list', () => {
@@ -7,21 +8,23 @@ describe('Instance Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/instance_groups/*',
+          url: awxAPI`/instance_groups/*`,
         },
         {
           fixture: 'instance_groups.json',
         }
       );
     });
+
     it('Instance groups list renders', () => {
       cy.mount(<InstanceGroups />);
       cy.verifyPageTitle('Instance Groups');
       cy.get('tbody').find('tr').should('have.length', 3);
     });
+
     it('Filter instance groups by name', () => {
       cy.intercept(
-        { method: 'OPTIONS', url: '/api/v2/instance_groups/' },
+        { method: 'OPTIONS', url: awxAPI`/instance_groups/` },
         { fixture: 'mock_options.json' }
       );
       cy.mount(<InstanceGroups />);
@@ -30,10 +33,12 @@ describe('Instance Groups List', () => {
       cy.getByDataCy('filter-input').click();
       cy.clickButton(/^Clear all filters$/);
     });
+
     it('Create group button is disabled if the user does not have permission to create instance groups', () => {
       cy.mount(<InstanceGroups />);
       cy.get('button[data-cy="create-group"]').should('have.attr', 'aria-disabled', 'true');
     });
+
     it('Delete instance group row action is disabled if the user does not have permission to edit instance groups', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
@@ -45,6 +50,7 @@ describe('Instance Groups List', () => {
         'true'
       );
     });
+
     it('Edit instance group row action is disabled if the user does not have permission to edit instance groups', () => {
       cy.mount(<InstanceGroups />);
       cy.contains('tr', 'Container Group 01').within(() => {
@@ -53,6 +59,7 @@ describe('Instance Groups List', () => {
         });
       });
     });
+
     it('Create Group button is enabled if the user has permission to create instance groups', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -73,11 +80,12 @@ describe('Instance Groups List', () => {
       cy.mount(<InstanceGroups />);
       cy.get('button[data-cy="create-group"]').should('not.have.attr', 'disabled');
     });
+
     it('Displays error if instance groups are not successfully loaded', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/instance_groups/*',
+          url: awxAPI`/instance_groups/*`,
         },
         {
           statusCode: 500,
@@ -93,13 +101,14 @@ describe('Instance Groups List', () => {
       cy.intercept(
         {
           method: 'GET',
-          url: '/api/v2/instance_groups/*',
+          url: awxAPI`/instance_groups/*`,
         },
         {
           fixture: 'emptyList.json',
         }
       ).as('emptyList');
     });
+
     it('Empty state is displayed correctly for user with permission to create instance groups', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {
@@ -122,6 +131,7 @@ describe('Instance Groups List', () => {
       cy.contains(/^Please create an instance group by using the button below.$/);
       cy.contains('button', /^Create group$/).should('be.visible');
     });
+
     it('Empty state is displayed correctly for user without permission to create instance groups', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({
         data: {

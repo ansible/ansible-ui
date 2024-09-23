@@ -3,6 +3,7 @@ import * as useOptions from '../../../common/crud/useOptions';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { Hosts } from './Hosts';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { InventoryHosts } from '../inventories/InventoryPage/InventoryHosts';
 
 const hosts = 'hosts';
@@ -27,6 +28,41 @@ describe('Hosts.cy.ts', () => {
         nonEmptyListBeforeEach(type);
       });
 
+      it('disable delete row action if the user does not have permissions', () => {
+        cy.mount(<Hosts />, {
+          path,
+          initialEntries,
+        });
+        cy.fixture('hosts')
+          .then((hosts: AwxItemsResponse<AwxHost>) => {
+            for (let i = 0; i < hosts.results.length; i++) {
+              hosts.results[i].summary_fields.user_capabilities.delete = false;
+              hosts.results[i].name = 'test';
+            }
+            return hosts;
+          })
+          .then((hostsList) => {
+            cy.intercept(
+              {
+                method: 'GET',
+                url: awxAPI`/hosts/*`,
+              },
+              { body: hostsList }
+            );
+          })
+          .then(() => {
+            cy.mount(<Hosts />, {
+              path,
+              initialEntries,
+            });
+            cy.get(`tr [data-cy="actions-dropdown"]`).click();
+            cy.get('#delete-host').as('deleteButton');
+            cy.get('@deleteButton').should('have.attr', 'aria-disabled', 'true');
+            cy.get('@deleteButton').click();
+            cy.hasTooltip('This cannot be deleted due to insufficient permission');
+          });
+      });
+
       it('should render inventory list', () => {
         cy.mount(component, params);
         if (type === hosts) {
@@ -36,19 +72,12 @@ describe('Hosts.cy.ts', () => {
       });
 
       it('should have filters for Name, Description, Created By and Modified By', () => {
-        cy.intercept(
-          { method: 'OPTIONS', url: '/api/v2/hosts/' },
-          { fixture: 'mock_options.json' }
-        );
+        cy.intercept({ method: 'OPTIONS', url: awxAPI`/hosts/` }, { fixture: 'mock_options.json' });
         testFilters(component, params, type, dynamic);
       });
 
       it('disable "create host" toolbar action if the user does not have permissions', () => {
         disableCreateRowAction(component, params, type);
-      });
-
-      it('disable delete row action if the user does not have permissions', () => {
-        disableDeleteRowAction(component, params, type);
       });
 
       it('disable edit row action if the user does not have permissions', () => {
@@ -61,7 +90,7 @@ describe('Hosts.cy.ts', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+            url: type === hosts ? awxAPI`/hosts/*` : awxAPI`/inventories/1/hosts/*`,
           },
           {
             fixture: 'emptyList.json',
@@ -107,10 +136,7 @@ describe('Hosts.cy.ts', () => {
       });
 
       it('should have filters for Name, Description, Created By and Modified By', () => {
-        cy.intercept(
-          { method: 'OPTIONS', url: '/api/v2/hosts/' },
-          { fixture: 'mock_options.json' }
-        );
+        cy.intercept({ method: 'OPTIONS', url: awxAPI`/hosts/` }, { fixture: 'mock_options.json' });
         testFilters(component, params, type, dynamic);
       });
 
@@ -132,7 +158,7 @@ describe('Hosts.cy.ts', () => {
         cy.intercept(
           {
             method: 'GET',
-            url: '/api/v2/inventories/1/hosts/*',
+            url: awxAPI`/inventories/1/hosts/*`,
           },
           {
             fixture: 'emptyList.json',
@@ -196,7 +222,7 @@ describe('Hosts.cy.ts', () => {
 
         it('should have filters for Name, Created By and Modified By', () => {
           cy.intercept(
-            { method: 'OPTIONS', url: '/api/v2/hosts/' },
+            { method: 'OPTIONS', url: awxAPI`/hosts/` },
             { fixture: 'mock_options.json' }
           );
           testFilters(component, params, type, false);
@@ -208,7 +234,7 @@ describe('Hosts.cy.ts', () => {
           cy.intercept(
             {
               method: 'GET',
-              url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+              url: type === hosts ? awxAPI`/hosts/*` : awxAPI`/inventories/1/${hosts}/*`,
             },
             {
               fixture: 'emptyList.json',
@@ -230,7 +256,7 @@ function nonEmptyListBeforeEach(type: string) {
   cy.intercept(
     {
       method: 'GET',
-      url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+      url: type === hosts ? awxAPI`/hosts/*` : awxAPI`/inventories/1/${hosts}/*`,
     },
     {
       fixture: 'hosts.json',
@@ -241,7 +267,7 @@ function nonEmptyListBeforeEach(type: string) {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/inventories/1/*',
+        url: awxAPI`/inventories/1/*`,
       },
       {
         fixture: 'inventories.json',
@@ -267,11 +293,11 @@ function testFilters(
   cy.mount(component, params);
 
   if (type === hosts) {
-    cy.intercept('/api/v2/hosts/?description__icontains=Description*').as(
+    cy.intercept(awxAPI`/hosts/?description__icontains=Description*`).as(
       'descriptionFilterRequest'
     );
   } else {
-    cy.intercept('/api/v2/inventories/1/hosts/?description__icontains=Description*').as(
+    cy.intercept(awxAPI`/inventories/1/hosts/?description__icontains=Description*`).as(
       'descriptionFilterRequest'
     );
   }
@@ -341,7 +367,7 @@ function disableEditRowAction(component: React.ReactElement, params: paramsType,
       cy.intercept(
         {
           method: 'GET',
-          url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+          url: type === hosts ? awxAPI`/hosts/*` : awxAPI`/inventories/1/hosts/*`,
         },
         { body: hostsList }
       );
@@ -373,7 +399,7 @@ function disableDeleteRowAction(component: React.ReactElement, params: paramsTyp
       cy.intercept(
         {
           method: 'GET',
-          url: type === hosts ? '/api/v2/hosts/*' : '/api/v2/inventories/1/hosts/*',
+          url: type === hosts ? awxAPI`/hosts/*` : awxAPI`/inventories/1/hosts/*`,
         },
         { body: hostsList }
       );

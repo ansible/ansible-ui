@@ -1,5 +1,5 @@
 import { ScheduleAddWizard } from './ScheduleAddWizard';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('ScheduleAddWizard', () => {
   const zones = {
@@ -59,7 +59,6 @@ describe('ScheduleAddWizard', () => {
         { method: 'OPTIONS', url: awxAPI`/credentials/*` },
         { fixture: 'credentials.json' }
       );
-
       cy.intercept(
         { method: 'GET', url: awxAPI`/credential_types/*` },
         { fixture: 'credentialTypes.json' }
@@ -69,7 +68,7 @@ describe('ScheduleAddWizard', () => {
     it('job template should render the correct steps initially', () => {
       cy.intercept(awxAPI`/job_templates/266/`, mockTemplate);
       cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
-      cy.intercept('/api/v2/job_templates/*/credentials/', {
+      cy.intercept(awxAPI`/job_templates/*/credentials/`, {
         count: 1,
         results: [mockTemplateCredential],
       });
@@ -77,7 +76,6 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/templates/job-templates/266/schedules/create'],
         path: '/templates/job-templates/:id/schedules/create',
       });
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -86,10 +84,8 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -100,19 +96,17 @@ describe('ScheduleAddWizard', () => {
     });
 
     it('workflow job template should render the correct steps initially', () => {
-      cy.intercept('/api/v2/workflow_job_templates/*/credentials/', {
+      cy.intercept(awxAPI`/workflow_job_templates/*/credentials/`, {
         count: 1,
         results: [mockTemplateCredential],
       });
-      cy.intercept('/api/v2/workflow_job_templates/*/launch/', launchConfig);
+      cy.intercept(awxAPI`/workflow_job_templates/*/launch/`, launchConfig);
       cy.intercept(awxAPI`/workflow_job_templates/*/`, mockTemplate);
       cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
-
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />, {
         initialEntries: ['/templates/workflow-job-templates/266/schedules/create'],
         path: '/templates/workflow-job-templates/:id/schedules/create',
       });
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -121,10 +115,8 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -149,12 +141,10 @@ describe('ScheduleAddWizard', () => {
           ],
         }
       );
-
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/projects/`} />, {
         initialEntries: ['/projects/6/schedules/create'],
         path: '/projects/:id/schedules/create',
       });
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -163,10 +153,8 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -185,12 +173,10 @@ describe('ScheduleAddWizard', () => {
           name: 'Cleanup Job Details',
         }
       );
-
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
         initialEntries: ['/administration/management-jobs/2/schedules/create'],
         path: '/administration/management-jobs/:id/schedules/create',
       });
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -199,11 +185,9 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.get('[data-cy="schedule-days-to-keep"]').type('77');
       cy.clickButton(/^Next$/);
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -235,7 +219,6 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/infrastructure/inventories/inventory/1/sources/1/schedules/create'],
         path: '/infrastructure/inventories/inventory/:id/sources/:source_id/schedules/create',
       });
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         cy.get('li').should('have.length', 4);
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
@@ -244,10 +227,8 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.clickButton(/^Next$/);
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -307,6 +288,7 @@ describe('ScheduleAddWizard', () => {
       });
     });
   });
+
   describe('Rules step', () => {
     beforeEach(() => {
       cy.intercept({ method: 'GET', url: awxAPI`/schedules/zoneinfo` }, zones);
@@ -315,12 +297,12 @@ describe('ScheduleAddWizard', () => {
         ask_credential_on_launch: false,
         survey_enabled: false,
       });
-      cy.intercept('/api/v2/job_templates/*/credentials/', {
+      cy.intercept(awxAPI`/job_templates/*/credentials/`, {
         count: 1,
         results: [mockTemplateCredential],
       });
       cy.intercept({ method: 'GET', url: awxAPI`/job_templates/*` }, mockTemplates);
-      cy.intercept('/api/v2/job_templates/*/', {
+      cy.intercept(awxAPI`/job_templates/*/`, {
         ...mockTemplates.results[0],
         ask_credential_on_launch: false,
         survey_enabled: false,
@@ -329,7 +311,6 @@ describe('ScheduleAddWizard', () => {
         initialEntries: ['/schedules/add'],
         path: '/schedules/add',
       });
-
       cy.get('[data-cy="wizard-nav"]').within(() => {
         ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -337,21 +318,21 @@ describe('ScheduleAddWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);
     });
+
     it('Should create a very basic rule.', () => {
       cy.get('[data-cy="interval-form-group"]').type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.get('[data-cy="add-rule-button"]').click();
-
       cy.get('tr[data-cy="row-id-1"]').should('be.visible');
       cy.get('[data-cy="page-title"]').should('contain.text', 'Rules');
     });
+
     it('Should be able to edit an existing rule without creating an additional rule', () => {
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -362,7 +343,6 @@ describe('ScheduleAddWizard', () => {
           'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
-
       cy.get('[data-cy="page-title"]').should('contain.text', 'Rules');
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('button[data-cy="edit-rule"]').click();
@@ -372,6 +352,7 @@ describe('ScheduleAddWizard', () => {
       cy.get('[data-cy="update-rule-button"]').click();
       cy.get('tr[data-cy="row-id-1"]').should('contain.text', 'INTERVAL=44400');
     });
+
     it('Should be able to discard editing a rule without adding 1 to the list', () => {
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -382,7 +363,6 @@ describe('ScheduleAddWizard', () => {
           'RRULE:FREQ=HOURLY;INTERVAL=100'
         );
       });
-
       cy.get('[data-cy="page-title"]').should('contain.text', 'Rules');
       cy.get('tr[data-cy="row-id-1"]').within(() => {
         cy.get('button[data-cy="edit-rule"]').click();
@@ -405,7 +385,6 @@ describe('ScheduleAddWizard', () => {
       cy.get('[data-cy="interval"]').clear().type('100');
       cy.selectDropdownOptionByResourceName('freq', 'Hourly');
       cy.get('[data-cy="add-rule-button"]').click();
-
       cy.getByDataCy('row-id-2').within(() => {
         cy.get('button[data-cy="delete-rule"]').click();
         cy.get('tr[data-cy="row-id-2"]').should('not.exist');

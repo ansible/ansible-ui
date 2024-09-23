@@ -1,13 +1,14 @@
 import job from '../../../../../cypress/fixtures/job.json';
 import type { Job } from '../../../interfaces/Job';
 import { JobOutputInner as JobOutput } from './JobOutput';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('JobOutput.cy.tsx', () => {
   beforeEach(() => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/jobs/26/job_events/?order_by=counter&page=1&page_size=50',
+        url: awxAPI`/jobs/26/job_events/?order_by=counter&page=1&page_size=50`,
         hostname: 'localhost',
       },
       {
@@ -17,7 +18,7 @@ describe('JobOutput.cy.tsx', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/v2/jobs/26/job_events/children_summary/',
+        url: awxAPI`/jobs/26/job_events/children_summary/`,
         hostname: 'localhost',
       },
       {
