@@ -8,11 +8,13 @@ import {
   LoginMainBody,
   LoginMainFooter,
   LoginMainHeader,
+  Stack,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useFrameworkTranslations } from '../../../framework';
 import { ErrorBoundary } from '../../../framework/components/ErrorBoundary';
@@ -47,6 +49,8 @@ export function AnsibleLogin(props: {
 
   /** Callback function that is called when the user successfully logs in */
   onSuccess: () => void;
+
+  otherOptions?: { label: string; onClick: () => void }[];
 }) {
   const { t } = useTranslation();
   const [translations] = useFrameworkTranslations();
@@ -95,7 +99,7 @@ export function AnsibleLogin(props: {
         if (!(err instanceof RequestError)) {
           throw err;
         }
-        if (err.statusCode === 401 || err.statusCode === 403) {
+        if (err.statusCode === 400 || err.statusCode === 401 || err.statusCode === 403) {
           throw new Error(t('Invalid username or password. Please try again.'));
         } else if (err.statusCode !== 0) {
           throw err;
@@ -196,6 +200,20 @@ export function AnsibleLogin(props: {
           <LoginMainFooter
             socialMediaLoginContent={
               props.authOptions ? <SocialAuthLogin options={props.authOptions} /> : undefined
+            }
+            socialMediaLoginAriaLabel={t('Log in with authentication provider')}
+          />
+        )}
+        {props.otherOptions && (
+          <LoginMainFooter
+            socialMediaLoginContent={
+              <Stack hasGutter style={{ width: '100%' }}>
+                {props.otherOptions?.map((option) => (
+                  <Link key={option.label} to="#" onClick={option.onClick}>
+                    {option.label}
+                  </Link>
+                ))}
+              </Stack>
             }
             socialMediaLoginAriaLabel={t('Log in with authentication provider')}
           />

@@ -16,12 +16,23 @@ type AwxAuthOptions = {
   };
 };
 
-export function AwxLogin(props: { children: React.ReactNode }) {
+export function AwxLogin(props: {
+  children: React.ReactNode;
+  loginTitle?: string;
+  loginApiUrl?: string;
+  baseLoginUrl?: string;
+  otherOptions?: { label: string; onClick: () => void }[];
+}) {
   const { data: options } = useSWR<AwxAuthOptions>(awxAPI`/auth/`, requestGet);
   const authOptions: AuthOption[] = [];
   if (options && typeof options === 'object') {
     Object.keys(options).forEach((key) => {
-      authOptions.push({ login_url: options[key].login_url, type: key });
+      authOptions.push({
+        login_url: props.baseLoginUrl
+          ? `${props.baseLoginUrl}${options[key].login_url}`
+          : options[key].login_url,
+        type: key,
+      });
     });
   }
 
@@ -38,14 +49,16 @@ export function AwxLogin(props: { children: React.ReactNode }) {
   if (!activeAwxUser) {
     return (
       <AnsibleLogin
+        loginTitle={props.loginTitle}
         authOptions={authOptions}
-        loginApiUrl="/api/login/"
+        loginApiUrl={props.loginApiUrl ? props.loginApiUrl : '/api/login/'}
         onSuccess={() => {
           refreshActiveAwxUser?.();
           void mutate(() => true);
         }}
         brandImg="/assets/awx-logo.svg"
         brandImgAlt={process.env.PRODUCT}
+        otherOptions={props.otherOptions}
       />
     );
   }

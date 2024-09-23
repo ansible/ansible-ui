@@ -26,5 +26,16 @@
   "GALAXY_AUTH_LDAP_ENABLED": null,
   "GALAXY_CONTAINER_SIGNING_SERVICE": "container-default",
   "GALAXY_LDAP_MIRROR_ONLY_EXISTING_GROUPS": false,
-  "GALAXY_LDAP_DISABLE_REFERRALS": null
+  "GALAXY_LDAP_DISABLE_REFERRALS": null,
+  "KEYCLOAK_URL": "https://localhost:4100/sso/login/keycloak/",
+  "ANSIBLE_BASE_JWT_VALIDATE_CERT": true,
+  "ANSIBLE_BASE_JWT_KEY": "https://0.0.0.0/",
+  "ALLOW_LOCAL_RESOURCE_MANAGEMENT": true,
+  "ANSIBLE_BASE_ROLES_REQUIRE_VIEW": false,
+  "DYNACONF_AFTER_GET_HOOKS": ["read_settings_from_cache_or_db", "alter_hostname_settings"],
+  "ANSIBLE_API_HOSTNAME": "https://0.0.0.0/",
+  "ANSIBLE_CONTENT_HOSTNAME": "https://automationhub-0.testing.com",
+  "CONTENT_ORIGIN": "https://0.0.0.0/",
+  "TOKEN_SERVER": "https://0.0.0.0/token/",
+  "TOKEN_AUTH_DISABLED": null
 }

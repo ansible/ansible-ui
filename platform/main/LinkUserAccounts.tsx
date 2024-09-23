@@ -1,0 +1,43 @@
+import { Button, PageSection } from '@patternfly/react-core';
+import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageHeader, PageLayout, useGetPageUrl } from '../../framework';
+import { LoadingState } from '../../framework/components/LoadingState';
+import { useLegacyAuth } from './LegacyAuthProvider';
+import { LegacyMigrationForm } from './LegacyMigrationForm';
+import { PlatformRoute } from './PlatformRoutes';
+
+export function LinkUserAccounts() {
+  const { legacyAuth } = useLegacyAuth();
+  const navigate = useNavigate();
+  const getPageUrl = useGetPageUrl();
+
+  if (legacyAuth?.is_migrated && legacyAuth?.linked_accounts.length <= 3) {
+    return (
+      <PageLayout>
+        <PageHeader
+          title={t('Link user accounts')}
+          breadcrumbs={[
+            { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
+            {
+              label: legacyAuth?.username,
+              to: getPageUrl(PlatformRoute.UserPage, {
+                params: { id: legacyAuth?.id },
+              }),
+            },
+            { label: t('Link user accounts') },
+          ]}
+        />
+        <LegacyMigrationForm
+          legacyAuth={legacyAuth}
+          footer={
+            <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
+              <Button onClick={() => navigate(-1)}>{t('Close')}</Button>
+            </PageSection>
+          }
+        />
+      </PageLayout>
+    );
+  }
+  return <LoadingState />;
+}

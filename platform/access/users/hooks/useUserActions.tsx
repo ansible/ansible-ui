@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CogIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -17,6 +17,8 @@ import {
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useLegacyAuth } from '../../../main/LegacyAuthProvider';
+import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteUsers } from './useDeleteUsers';
@@ -108,6 +110,7 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
 }
 
 export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => void) {
+  const { activePlatformUser } = usePlatformActiveUser();
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteUsers = useDeleteUsers(onUsersDeleted);
@@ -115,6 +118,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/users/${params.id ?? ''}/`
   );
+  const { legacyAuth } = useLegacyAuth();
 
   const canEditUser = Boolean(
     data && data.actions && (data.actions['PUT'] || data.actions['PATCH'])
@@ -126,17 +130,31 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
     const cannotEditUser = () =>
       canEditUser ? '' : t(`The user cannot be edited due to insufficient permissions.`);
 
+    const isLoggedInUser = activePlatformUser?.id.toString() === params.id;
+    const canLinkAdditionalAccounts =
+      legacyAuth?.is_migrated && legacyAuth?.linked_accounts.length < 3;
+
     return [
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         isPinned: true,
         icon: PencilAltIcon,
+        variant: ButtonVariant.primary,
         label: t('Edit user'),
         isDisabled: cannotEditUser,
         onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
       },
       { type: PageActionType.Seperator },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: CogIcon,
+        label: t('Link user accounts'),
+        isHidden: () => !isLoggedInUser || !canLinkAdditionalAccounts,
+        onClick: (user) =>
+          pageNavigate(PlatformRoute.LinkUserAccounts, { params: { id: user.id } }),
+      },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
@@ -147,7 +165,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
         isDanger: true,
       },
     ];
-  }, [deleteUsers, pageNavigate, canEditUser, t]);
+  }, [deleteUsers, pageNavigate, canEditUser, activePlatformUser, params, legacyAuth, t]);
 
   return pageActions;
 }

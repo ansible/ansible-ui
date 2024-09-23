@@ -6,6 +6,8 @@ import {
   findNavigationItemById,
   removeNavigationItemById,
 } from '../../framework';
+import { PageSettingsDetails } from '../../framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '../../framework/PageSettings/PageSettingsForm';
 import { AwxSettingsCategoryDetailsPage } from '../../frontend/awx/administration/settings/AwxSettingsCategoryDetails';
 import { AwxSettingsCategoryForm } from '../../frontend/awx/administration/settings/AwxSettingsCategoryForm';
 import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
@@ -34,8 +36,6 @@ import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
-import { PageSettingsForm } from '../../framework/PageSettings/PageSettingsForm';
-import { PageSettingsDetails } from '../../framework/PageSettings/PageSettingsDetails';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();

@@ -1,4 +1,4 @@
-import { ReactNode, CSSProperties } from 'react';
+import { ReactNode, CSSProperties, useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useForm, useFormState } from 'react-hook-form';
 
@@ -31,8 +31,21 @@ export function PageFormSubmitButton(props: { children: ReactNode; style?: CSSPr
 }
 
 export function PageFormCancelButton(props: { onCancel: () => void; children: ReactNode }) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = () => {
+    setIsLoading(true);
+    props.onCancel();
+  };
+
   return (
-    <Button data-cy={'Cancel'} type="button" variant="link" onClick={props.onCancel}>
+    <Button
+      data-cy={'Cancel'}
+      type="button"
+      variant="link"
+      onClick={handleClick}
+      isLoading={isLoading}
+    >
       {props.children}
     </Button>
   );

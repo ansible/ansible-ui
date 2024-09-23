@@ -28,6 +28,8 @@ import {
   useHasHubService,
 } from './GatewayServices';
 import { GatewayUIAuthProvider } from './GatewayUIAuth';
+import { LegacyAuthProvider } from './LegacyAuthProvider';
+import { LegacyMigration } from './LegacyMigration';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformApp } from './PlatformApp';
 import { PlatformLogin } from './PlatformLogin';
@@ -48,13 +50,21 @@ export default function PlatformMain() {
       >
         <PageFramework defaultRefreshInterval={10}>
           <PlatformActiveUserProvider>
-            <PlatformLogin>
-              <GatewayUIAuthProvider>
-                <GatewayServicesProvider>
-                  <PlatformMainInternal />
-                </GatewayServicesProvider>
-              </GatewayUIAuthProvider>
-            </PlatformLogin>
+            <AwxActiveUserProvider>
+              <HubActiveUserProvider>
+                <LegacyAuthProvider>
+                  <LegacyMigration>
+                    <PlatformLogin>
+                      <GatewayUIAuthProvider>
+                        <GatewayServicesProvider>
+                          <PlatformMainInternal />
+                        </GatewayServicesProvider>
+                      </GatewayUIAuthProvider>
+                    </PlatformLogin>
+                  </LegacyMigration>
+                </LegacyAuthProvider>
+              </HubActiveUserProvider>
+            </AwxActiveUserProvider>
           </PlatformActiveUserProvider>
         </PageFramework>
       </Suspense>
@@ -63,13 +73,7 @@ export default function PlatformMain() {
 }
 
 export function PlatformMainInternal() {
-  const platformInfo = useGet<{ version: string }>(
-    gatewayAPI`/ping/`,
-    {},
-    {
-      refreshInterval: 0,
-    }
-  );
+  const platformInfo = useGet<{ version: string }>(gatewayAPI`/ping/`, {}, { refreshInterval: 0 });
   let platformVersion = platformInfo.data?.version;
   if (!platformVersion || platformVersion === 'development') {
     platformVersion = '2.5';
@@ -81,23 +85,19 @@ export function PlatformMainInternal() {
 
   return (
     <QuickStartProvider>
-      <AwxActiveUserProvider disabled={!hasAwx}>
-        <EdaActiveUserProvider disabled={!hasEda}>
-          <HubActiveUserProvider disabled={!hasHub}>
-            <DocsVersionProvider version={platformVersion}>
-              <WebSocketProvider>
-                <AwxConfigProvider disabled={!hasAwx}>
-                  <HubContextProvider disabled={!hasHub}>
-                    <PlatformSubscription>
-                      <PlatformApp />
-                    </PlatformSubscription>
-                  </HubContextProvider>
-                </AwxConfigProvider>
-              </WebSocketProvider>
-            </DocsVersionProvider>
-          </HubActiveUserProvider>
-        </EdaActiveUserProvider>
-      </AwxActiveUserProvider>
+      <EdaActiveUserProvider disabled={!hasEda}>
+        <DocsVersionProvider version={platformVersion}>
+          <WebSocketProvider>
+            <AwxConfigProvider disabled={!hasAwx}>
+              <HubContextProvider disabled={!hasHub}>
+                <PlatformSubscription>
+                  <PlatformApp />
+                </PlatformSubscription>
+              </HubContextProvider>
+            </AwxConfigProvider>
+          </WebSocketProvider>
+        </DocsVersionProvider>
+      </EdaActiveUserProvider>
     </QuickStartProvider>
   );
 }
