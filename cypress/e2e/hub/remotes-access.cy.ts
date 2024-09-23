@@ -55,14 +55,18 @@ describe('Remotes User Access tab', () => {
   it('create a new remote, from the user access tab assign a user and apply role(s) to the user of the remote', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
+      cy.intercept('GET', hubAPI`/_ui/v2/role_user_assignments/*`).as('userRoleAssignments');
       cy.clickTab('User Access', true);
+      cy.wait('@userRoleAssignments');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
         cy.selectTableRow(hubUser.username);
+        cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
+        cy.wait('@roleDefinitions');
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', role.name, {
           disableFilterSelection: true,
@@ -98,14 +102,18 @@ describe('Remotes User Access tab', () => {
   it('create a new remote, from the team access tab assign a user and apply role(s) to the team of the remote', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
+      cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teamRoleAssignment');
       cy.clickTab('Team Access', true);
+      cy.wait('@teamRoleAssignment');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
         cy.selectTableRow(hubTeam.name);
+        cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
+        cy.wait('@roleDefinitions');
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', role.name, {
           disableFilterSelection: true,

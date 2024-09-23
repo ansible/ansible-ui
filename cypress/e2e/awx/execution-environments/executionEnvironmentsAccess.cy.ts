@@ -54,7 +54,9 @@ describe('Execution Environments: User/Team access', () => {
     cy.getWizard().within(() => {
       cy.contains('h1', 'Select user(s)').should('be.visible');
       cy.selectTableRowByCheckbox('username', user.username);
+      cy.intercept('GET', awxAPI`/role_definitions/*`).as('roleDefinitions');
       cy.clickButton(/^Next/);
+      cy.wait('@roleDefinitions');
       cy.contains('h1', 'Select roles to apply').should('be.visible');
       cy.filterTableByTextFilter('name', 'ExecutionEnvironment Admin', {
         disableFilterSelection: true,
@@ -108,7 +110,9 @@ describe('Execution Environments: User/Team access', () => {
       cy.contains('h1', 'Select team(s)').should('be.visible');
       cy.filterTableByMultiSelect('name', [team.name]);
       cy.selectTableRowByCheckbox('name', team.name, { disableFilter: true });
+      cy.intercept('GET', awxAPI`/role_definitions/*`).as('roleDefinitions');
       cy.clickButton(/^Next/);
+      cy.wait('@roleDefinitions');
       cy.contains('h1', 'Select roles to apply').should('be.visible');
       cy.filterTableByTextFilter('name', 'ExecutionEnvironment Admin', {
         disableFilterSelection: true,

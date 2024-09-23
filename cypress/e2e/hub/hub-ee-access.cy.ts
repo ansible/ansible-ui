@@ -66,7 +66,9 @@ describe('Execution Environment User Access tab', () => {
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.selectTableRow(hubUser.username);
+        cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
+        cy.wait('@roleDefinitions');
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', role.name, {
           disableFilterSelection: true,
@@ -108,7 +110,9 @@ describe('Execution Environment User Access tab', () => {
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
         cy.selectTableRow(hubTeam.name);
+        cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
+        cy.wait('@roleDefinitions');
         cy.contains('h1', 'Select roles to apply').should('be.visible');
         cy.filterTableByTextFilter('name', role.name, {
           disableFilterSelection: true,

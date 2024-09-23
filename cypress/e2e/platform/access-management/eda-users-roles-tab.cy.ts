@@ -110,7 +110,9 @@ describe('Assign Role to a User', () => {
           // due to filtering bug
           cy.setTablePageSize('100');
           cy.selectTableRow(resource_object.name, false);
+          cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
           cy.clickButton(/^Next$/);
+          cy.wait('@roleDefinitions');
           cy.selectTableRow(resource.role, true);
           cy.clickButton(/^Next$/);
           cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
