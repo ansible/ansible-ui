@@ -31,6 +31,7 @@ describe('Platform Basic Authentication', () => {
     // Log out
     cy.intercept('GET', gatewayAPI`/ui_auth/`).as('getUIAuthRequest');
     cy.platformLogout();
+    cy.get('.pf-v5-c-login').should('be.visible');
     cy.wait('@getUIAuthRequest')
       .its('response.body')
       .then((responseBody: UIAuth) => {
