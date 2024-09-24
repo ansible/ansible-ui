@@ -37,7 +37,7 @@ export function ProxyAdvancedRemoteInputs() {
       <PageFormTextInput<RemoteFormProps>
         name="proxy_url"
         label={t('Proxy URL')}
-        placeholder={t('Enter a proxy URL')}
+        placeholder={t('Enter proxy URL')}
         labelHelp={t('The URL of an external proxy server.')}
         validate={isValidUrl}
       />
@@ -50,7 +50,7 @@ export function ProxyAdvancedRemoteInputs() {
         <PageFormTextInput<RemoteFormProps>
           name="proxy_username"
           label={t('Proxy username')}
-          placeholder={t('Enter a proxy username')}
+          placeholder={t('Enter proxy username')}
         />
       </PageFormSecret>
       <PageFormSecret
@@ -63,7 +63,7 @@ export function ProxyAdvancedRemoteInputs() {
           type="password"
           name="proxy_password"
           label={t('Proxy password')}
-          placeholder={t('Enter a proxy password')}
+          placeholder={t('Enter proxy password')}
         />
       </PageFormSecret>
     </>
