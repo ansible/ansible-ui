@@ -75,14 +75,14 @@ export function RemoteInputs({
       <PageFormTextInput<RemoteFormProps>
         name="name"
         label={t('Name')}
-        placeholder={t('Enter a remote name')}
+        placeholder={t('Enter remote name')}
         isRequired
         isDisabled={disableEditName}
       />
       <PageFormTextInput<RemoteFormProps>
         name="url"
-        label={t('URL')}
-        placeholder={t('Enter a URL')}
+        label={t('Server URL')}
+        placeholder={t('Enter server URL')}
         labelHelp={t('The URL of an external content source.')}
         isRequired
         validate={isValidUrl}
@@ -120,8 +120,8 @@ export function RemoteInputs({
       >
         <PageFormTextInput<RemoteFormProps>
           name="username"
-          label={t('Username')}
-          placeholder={t('Enter a username')}
+          label={t('Server username')}
+          placeholder={t('Enter server username')}
           labelHelp={t(
             'The username to be used for authentication when syncing. This is not required when using a token.'
           )}
@@ -136,8 +136,8 @@ export function RemoteInputs({
         <PageFormTextInput<RemoteFormProps>
           type="password"
           name="password"
-          label={t('Password')}
-          placeholder={t('Enter a password')}
+          label={t('Server password')}
+          placeholder={t('Enter server password')}
           labelHelp={t(
             'The password to be used for authentication when syncing. This is not required when using a token.'
           )}
@@ -154,14 +154,14 @@ export function RemoteInputs({
           name="token"
           type="password"
           label={t('Token')}
-          placeholder={t('Enter a token')}
+          placeholder={t('Enter token')}
           labelHelp={t('Token for authenticating to the server URL.')}
         />
       </PageFormSecret>
       <PageFormTextInput<RemoteFormProps>
         name="auth_url"
         label={t('SSO URL')}
-        placeholder={t('Enter a SSO URL')}
+        placeholder={t('Enter SSO URL')}
         labelHelp={t('Single sign on URL.')}
         validate={isValidUrl}
       />
