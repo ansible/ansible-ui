@@ -34,7 +34,8 @@ describe('Repositories user and team access tests', () => {
   it('create a new repository, from the user access tab assign a user and apply role(s) to the user of the repository', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
-      cy.clickTab('User Access', true);
+      cy.clickTab(/^Details$/, true);
+      cy.clickTab(/^User Access$/, true);
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.selectTableRow(hubUser.username);
@@ -81,7 +82,8 @@ describe('Repositories user and team access tests', () => {
   it('create a new repository, from the team access tab assign a user and apply role(s) to the team of the repository', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
-      cy.clickTab('Team Access', true);
+      cy.clickTab(/^Details$/, true);
+      cy.clickTab(/^Team Access$/, true);
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
