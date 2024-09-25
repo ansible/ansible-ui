@@ -16,9 +16,3 @@
 
 - Run the same end-to-end tests with a mock API to validate code changes.
 - Ensure quick feedback to maintain fast development cycles.
-
-## Key Considerations
-
-- Optimize test execution times for pull requests by focusing on critical paths.
-- Use a mock API for PR tests to isolate frontend logic and avoid dependencies on external services.
-- Maintain test stability and consistency across environments.
