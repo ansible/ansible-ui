@@ -64,7 +64,6 @@ describe('Execution Environment User Access tab', () => {
     cy.createHubUser().then((hubUser) => {
       cy.wait(1000);
       cy.clickTab('User Access', true);
-
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.selectTableRow(hubUser.username);
@@ -89,11 +88,9 @@ describe('Execution Environment User Access tab', () => {
             expect(response?.statusCode).to.eql(201);
           });
       });
-
       cy.getModal().within(() => {
         cy.clickButton(/^Close$/);
       });
-
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(executionEnvironment.name);
       cy.selectTableRowByCheckbox('username', hubUser.username, {
