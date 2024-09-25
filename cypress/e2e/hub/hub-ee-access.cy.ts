@@ -1,10 +1,10 @@
+import { randomString } from '../../../framework/utils/random-string';
 import { RemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
 import { ExecutionEnvironment } from '../../../frontend/hub/execution-environments/ExecutionEnvironment';
-import { hubAPI } from '../../support/formatApiPathForHub';
-import { ExecutionEnvironments } from './constants';
-import { randomString } from '../../../framework/utils/random-string';
 import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { hubAPI } from '../../support/formatApiPathForHub';
+import { ExecutionEnvironments } from './constants';
 
 describe('Execution Environment User Access tab', () => {
   let executionEnvironment: ExecutionEnvironment;
@@ -62,7 +62,22 @@ describe('Execution Environment User Access tab', () => {
   it('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '**/api/galaxy/_ui/v2/role_user_assignments/**',
+        },
+        (req) => {
+          if (req.query.order_by === 'name') {
+            req.query.order_by = 'user__username';
+          }
+          req.continue();
+        }
+      ).as('getRoleUserAssignments');
       cy.clickTab('User Access', true);
+      cy.wait('@getRoleUserAssignments')
+        .its('request.url')
+        .should('include', 'order_by=user__username');
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.selectTableRow(hubUser.username);
