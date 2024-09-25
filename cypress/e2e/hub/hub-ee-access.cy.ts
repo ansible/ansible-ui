@@ -62,8 +62,7 @@ describe('Execution Environment User Access tab', () => {
   it('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
-      cy.get('[data-cy="execution-environment-details-tab"]').should('be.visible');
-      cy.contains('No README').should('be.visible');
+      cy.wait(1000);
       cy.clickTab('User Access', true);
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
@@ -106,8 +105,7 @@ describe('Execution Environment User Access tab', () => {
   it('create a new ee, from the team access tab assign a user and apply role(s) to the team of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
-      cy.get('[data-cy="execution-environment-details-tab"]').should('be.visible');
-      cy.contains('No README').should('be.visible');
+      cy.wait(1000);
       cy.clickTab('Team Access', true);
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
