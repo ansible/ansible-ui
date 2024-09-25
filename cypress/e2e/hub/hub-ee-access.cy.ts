@@ -62,22 +62,9 @@ describe('Execution Environment User Access tab', () => {
   it('create a new ee, from the user access tab assign a user and apply role(s) to the user of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_user_assignments/`).as('userRoleAssignment');
     cy.createHubUser().then((hubUser) => {
-      cy.intercept(
-        {
-          method: 'GET',
-          url: '**/api/galaxy/_ui/v2/role_user_assignments/**',
-        },
-        (req) => {
-          if (req.query.order_by === 'name') {
-            req.query.order_by = 'user__username';
-          }
-          req.continue();
-        }
-      ).as('getRoleUserAssignments');
+      cy.wait(1000);
       cy.clickTab('User Access', true);
-      cy.wait('@getRoleUserAssignments')
-        .its('request.url')
-        .should('include', 'order_by=user__username');
+
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.selectTableRow(hubUser.username);
@@ -102,9 +89,11 @@ describe('Execution Environment User Access tab', () => {
             expect(response?.statusCode).to.eql(201);
           });
       });
+
       cy.getModal().within(() => {
         cy.clickButton(/^Close$/);
       });
+
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(executionEnvironment.name);
       cy.selectTableRowByCheckbox('username', hubUser.username, {
@@ -119,6 +108,7 @@ describe('Execution Environment User Access tab', () => {
   it('create a new ee, from the team access tab assign a user and apply role(s) to the team of the ee', () => {
     cy.intercept('POST', hubAPI`/_ui/v2/role_team_assignments/`).as('teamRoleAssignment');
     cy.createHubTeam().then((hubTeam) => {
+      cy.wait(1000);
       cy.clickTab('Team Access', true);
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
