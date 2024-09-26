@@ -6,7 +6,12 @@ on:
       - main
       - release/*
     tags:
-      - '*'
+      - '*'  # Trigger on any tag
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to use for the image'
+        required: false  # Set to false because we can use default behavior if no input is provided
 
 jobs:
   eda-ui-image:
@@ -15,7 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}  # Use the input tag or fall back to the default GITHUB_REF
 
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
@@ -58,6 +66,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
             type=raw,value={{branch}}
+            type=raw,value=${{ github.event.inputs.tag }}
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Docker Build and Push EDA UI Image
