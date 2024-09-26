@@ -46,7 +46,7 @@ export function EdaAddTeamRoles(props: { id?: string; teamRolesRoute?: string })
         type={'team'}
         onClose={() => {
           pageNavigate(props.teamRolesRoute || EdaRoute.TeamRoles, {
-            params: { id: team.id },
+            params: { id: params.id },
           });
         }}
       />
