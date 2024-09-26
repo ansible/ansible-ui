@@ -45,7 +45,6 @@ jobs:
         run: |
           rm -rf node_modules
           npm i --force
-          npm audit fix --force
 
       - name: NPM Build
         run: npm run build:eda
