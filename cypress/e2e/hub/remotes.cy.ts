@@ -207,7 +207,6 @@ collections:
     const remoteName = generateRemoteName();
     cy.createRemote(remoteName).then((remote: HubRemote) => {
       cy.navigateTo('hub', 'remotes');
-      cy.setTablePageSize('50');
       cy.filterTableBySingleText(remote.name);
       cy.getByDataCy('edit-remote').click();
       cy.getBy('[data-cy="username"]').type('abc');
