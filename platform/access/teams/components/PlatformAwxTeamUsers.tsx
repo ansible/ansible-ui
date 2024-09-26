@@ -18,7 +18,7 @@ import { UserAssignment } from '../../../../frontend/common/access/interfaces/Us
 import { useAwxBulkConfirmation } from '../../../../frontend/awx/common/useAwxBulkConfirmation';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
-export function PlatformAwxTeamUsers() {
+export function PlatformAwxTeamUsers(props: { id?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const bulkAction = useAwxBulkConfirmation<UserAssignment>();
@@ -80,7 +80,7 @@ export function PlatformAwxTeamUsers() {
     url: awxAPI`/role_user_assignments/`,
     queryParams: {
       role_definition__name: 'Controller Team Member',
-      object_id: params?.id?.toString() || '',
+      object_id: props?.id || params?.id?.toString() || '',
     },
     toolbarFilters,
     tableColumns,

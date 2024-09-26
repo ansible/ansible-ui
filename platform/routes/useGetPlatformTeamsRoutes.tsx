@@ -111,12 +111,20 @@ export function useGetPlatformTeamsRoutes() {
                 {
                   id: PlatformRoute.AwxTeamUsers,
                   path: 'controller',
-                  element: <PlatformAwxTeamUsers />,
+                  element: (
+                    <PlatformAwxTeamIdLookup>
+                      <PlatformAwxTeamUsers />
+                    </PlatformAwxTeamIdLookup>
+                  ),
                 },
                 {
                   id: PlatformRoute.HubTeamUsers,
                   path: 'hub',
-                  element: <PlatformHubTeamUsers />,
+                  element: (
+                    <PlatformHubTeamIdLookup>
+                      <PlatformHubTeamUsers />
+                    </PlatformHubTeamIdLookup>
+                  ),
                 },
                 {
                   path: '',
