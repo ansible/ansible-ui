@@ -18,7 +18,7 @@ import { UserAssignment } from '../../../../frontend/common/access/interfaces/Us
 import { useHubBulkConfirmation } from '../../../../frontend/hub/common/useHubBulkConfirmation';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
-export function PlatformHubTeamUsers() {
+export function PlatformHubTeamUsers(props: { id?: string }) {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const bulkAction = useHubBulkConfirmation<UserAssignment>();
@@ -80,7 +80,7 @@ export function PlatformHubTeamUsers() {
     url: hubAPI`/_ui/v2/role_user_assignments/`,
     queryParams: {
       role_definition__name: 'Galaxy Team Member',
-      object_id: params?.id?.toString() || '',
+      object_id: props?.id || params?.id?.toString() || '',
     },
     toolbarFilters,
     tableColumns,
