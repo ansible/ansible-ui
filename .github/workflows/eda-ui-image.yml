@@ -42,7 +42,9 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci --force
+        run: |
+          rm -rf node_modules
+          npm i --force
 
       - name: NPM Build
         run: npm run build:eda
