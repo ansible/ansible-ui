@@ -25,4 +25,4 @@
 - PDE team has stories for delivering infrastructure and we are working with the PDE team.
 - We are currently using the YOLO infrastructure provided by the QE team.
 - Backend teams have stories around API contracts. We are working with those teams.
-- Feature falgs will be needed and we are following and updating the JIRA iniative around that.
+- Feature flags will be needed and we are following the JIRA iniative around that.
