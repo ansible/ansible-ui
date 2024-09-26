@@ -121,7 +121,7 @@ describe('Create job template ', () => {
         inventory: 1,
         job_type: 'check',
         name: 'Test',
-        playbook: 'hello_world',
+        playbook: 'hello_world.yml',
         project: 6,
       });
       return req.reply({ statusCode: 200, body: { id: 1000, type: 'job' } });
