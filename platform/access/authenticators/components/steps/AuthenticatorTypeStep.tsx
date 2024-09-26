@@ -12,6 +12,7 @@ export function AuthenticatorTypeStep(props: { plugins: AuthenticatorPlugins }) 
   const excludedPlugins = [
     'aap_gateway_api.authentication.authenticator_plugins.legacy_sso',
     'aap_gateway_api.authentication.authenticator_plugins.legacy_password',
+    'aap_gateway_api.authentication.authenticator_plugins.legacy_external_password',
   ];
 
   const options = props.plugins.authenticators
