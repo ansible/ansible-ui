@@ -28,21 +28,21 @@ jobs:
         with:
           ref: ${{ github.event.inputs.git_tag || github.ref }}  # Use input Git tag or fall back to GITHUB_REF for push events
 
-      # - name: PreCache
-      #   run: npm version 0.0.0 --no-git-tag-version
+      - name: PreCache
+        run: npm version 0.0.0 --no-git-tag-version
 
-      # - name: Cache dependencies
-      #   id: cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       ./node_modules
-      #       /home/runner/.cache/Cypress
-      #     key: modules-${{ hashFiles('package-lock.json') }}
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./node_modules
+            /home/runner/.cache/Cypress
+          key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        # if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci --force
 
       - name: NPM Build
         run: npm run build:eda
