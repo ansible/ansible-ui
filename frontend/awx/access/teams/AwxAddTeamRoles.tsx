@@ -45,7 +45,7 @@ export function AwxAddTeamRoles(props: { id?: string; teamRolesRoute?: string })
         type={'team'}
         onClose={() => {
           pageNavigate(props.teamRolesRoute || AwxRoute.TeamRoles, {
-            params: { id: team.id },
+            params: { id: params.id },
           });
         }}
       />
