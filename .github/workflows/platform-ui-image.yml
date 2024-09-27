@@ -13,6 +13,7 @@ jobs:
     uses: ./.github/workflows/image.yml
     with:
       build-directory: platform
+      build-script: build
       docker-file: platform/Dockerfile
       docker-target: platform-ui
       docker-image: quay.io/ansible/platform-ui
