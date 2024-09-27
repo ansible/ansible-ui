@@ -13,6 +13,9 @@ on:
       TAGS:
         type: string
         required: false
+      PARALLEL_TESTS:
+        type: number
+        required: true
     secrets:
       PLATFORM_PASSWORD:
         required: true
@@ -40,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        containers: ${{ toJSON(range(1, inputs.PARALLEL_TESTS + 1)) }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
@@ -94,7 +97,6 @@ jobs:
           wait-on: 'https://localhost:4100'
           record: true
           parallel: true
-          # auto-cancel-after-failures: 1
           config-file: cypress.platform.config.ts
           tag: ${{ inputs.TAGS }}
         env:
