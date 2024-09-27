@@ -22,9 +22,11 @@ export function DataEditor(props: {
   isReadOnly?: boolean;
   className?: string;
   lineNumbers?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }) {
   const id = useID(props);
-  const { language, value, onChange, setError, isReadOnly } = props;
+  const { onFocus, onBlur, language, value, onChange, setError, isReadOnly } = props;
 
   const [ready, setReady] = useState(false);
 
@@ -63,6 +65,13 @@ export function DataEditor(props: {
       return () => editor.dispose();
     }
   }, [props.lineNumbers]);
+
+  useEffect(() => {
+    const editor = editorRef?.current?.editor;
+    if (!editor) return;
+    editor.onDidFocusEditorText(() => onFocus?.());
+    editor.onDidBlurEditorText(() => onBlur?.());
+  }, [onFocus, onBlur]);
 
   // Hook up editor change event to call onChange
   useEffect(() => {

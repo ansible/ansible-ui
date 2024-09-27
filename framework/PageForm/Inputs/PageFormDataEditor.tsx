@@ -4,7 +4,7 @@ import { CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
 import isDeepEqual from 'fast-deep-equal';
 import getValue from 'get-value';
 import jsyaml, { YAMLException } from 'js-yaml';
-import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -13,6 +13,7 @@ import {
   PathValue,
   Validate,
   useFormContext,
+  useWatch,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
@@ -147,6 +148,16 @@ export function PageFormDataEditor<
     setDataEditorValue(value);
   }, [getValues, isArray, language, name]);
 
+  const [hasFocus, setHasFocus] = useState(false);
+
+  // This will update the data editor value when the value changes
+  // in react-hook-form, but only if the data editor does not have focus
+  const watchValue = useWatch({ name });
+  useEffect(() => {
+    if (hasFocus) return;
+    setDataEditorValue(objectToString(valueToObject(watchValue, isArray), language));
+  }, [hasFocus, watchValue, isArray, language]);
+
   const {
     setValue,
     formState: { defaultValues },
@@ -232,6 +243,8 @@ export function PageFormDataEditor<
                         ? `pf-v5-c-form-control pf-m-disabled`
                         : `pf-v5-c-form-control`
                     }
+                    onFocus={() => setHasFocus(true)}
+                    onBlur={() => setHasFocus(false)}
                   />
                 </DropZone>
                 <PageActions
