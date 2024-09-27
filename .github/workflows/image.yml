@@ -121,7 +121,7 @@ jobs:
 
       - name: Save Image
         if: ${{ inputs.upload-image }}
-        run: docker save -o ${{ inputs.docker-image }}.tar ${{ inputs.docker-image }}
+        run: docker save ${{ inputs.docker-image }} > ${{ inputs.docker-image }}.tar
 
       - name: Upload Image
         if: ${{ inputs.upload-image }}
