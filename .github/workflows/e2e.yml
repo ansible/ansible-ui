@@ -14,7 +14,7 @@ on:
         type: string
         required: false
       PARALLEL_TESTS:
-        type: number
+        type: string
         required: true
     secrets:
       PLATFORM_PASSWORD:
