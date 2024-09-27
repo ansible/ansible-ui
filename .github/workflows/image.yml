@@ -17,7 +17,6 @@ on:
       docker-file:
         description: 'Dockerfile'
         type: string
-        required: true
         default: Dockerfile
       docker-target:
         description: 'Docker Target'
