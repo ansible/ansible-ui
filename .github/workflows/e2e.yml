@@ -36,29 +36,29 @@ jobs:
       docker-image: platform-ui
       upload-image: true
 
-  calculate-matrix:
-    name: Calculate Matrix
+  matrix-containers:
+    name: Matrix Containers
     runs-on: ubuntu-latest
     outputs:
-      container-matrix: ${{ steps.set-matrix.outputs.matrix }}
+      CONTAINERS: ${{ steps.set-matrix.outputs.CONTAINERS }}
     steps:
-      - name: Calculate matrix
+      - name: Matrix Containers
         id: set-matrix
         run: |
-          CONTAINERS=$(seq 1 ${{ inputs.PARALLEL_TESTS }} | tr '\n' ' ' | sed 's/ *$//')
-          MATRIX=$(jq -n --arg containers "$CONTAINERS" '{containers: $containers | split(" ") | map(select(. != ""))}')
-          echo "Matrix: $MATRIX"
-          echo "matrix=$(echo "$MATRIX" | jq -c .)" >> $GITHUB_OUTPUT
+          CONTAINERS=$(seq 1 16 | jq --slurp -c)
+          echo "CONTAINERS: $CONTAINERS"
+          echo "CONTAINERS=$CONTAINERS" >> $GITHUB_OUTPUT
 
   platform-e2e:
     name: Platform E2E
     runs-on: ubuntu-latest
     needs:
       - platform-ui-image
-      - calculate-matrix
+      - matrix-containers
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.calculate-matrix.outputs.container-matrix) }}
+      matrix: 
+        containers: ${{ fromJson(needs.matrix-containers.outputs.CONTAINERS) }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
