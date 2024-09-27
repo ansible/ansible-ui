@@ -23,8 +23,8 @@ jobs:
     name: Platform E2E
     uses: ./.github/workflows/e2e.yml
     with:
-      PLATFORM_SERVER: ${{ github.event.inputs.PLATFORM_SERVER }}
-      PARALLEL_TESTS: 16
+      PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
@@ -32,7 +32,7 @@ jobs:
 
   platform-update-server:
     name: Platform Update Server
-    if: ${{ github.event.inputs.UPDATE_SERVER == 'true' }}
+    if: ${{ inputs.UPDATE_SERVER == 'true' }}
     needs:
       - platform-e2e
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/repos/${{ github.repository }}/actions/variables/PLATFORM_SERVER" \
-          -d '{"name":"PLATFORM_SERVER","value":"${{ github.event.inputs.PLATFORM_SERVER }}"}'
+          -d '{"name":"PLATFORM_SERVER","value":"${{ inputs.PLATFORM_SERVER }}"}'
       - name: Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -60,7 +60,7 @@ jobs:
                           "text":
                             {
                               "type": "mrkdwn",
-                              "text": "*AAP-UI E2E Server Updated* - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ github.event.inputs.PLATFORM_SERVER }}|Server>"
+                              "text": "*AAP-UI E2E Server Updated* - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ inputs.PLATFORM_SERVER }}|Server>"
                             }
                         }
                       ]
@@ -73,7 +73,7 @@ jobs:
 
   slack-failure-notification:
     name: Slack Failure Notification
-    if: ${{ failure() && github.event.inputs.UPDATE_SERVER == 'true' }}
+    if: ${{ failure() && inputs.UPDATE_SERVER == 'true' }}
     needs:
       - platform-update-server
     runs-on: ubuntu-latest
@@ -92,7 +92,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*AAP-UI E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{ github.event.inputs.PLATFORM_SERVER }}|Server>"
+                          "text": "*AAP-UI E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{inputs.PLATFORM_SERVER }}|Server>"
                         }
                       }
                     ]
