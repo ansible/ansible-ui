@@ -45,10 +45,10 @@ jobs:
       - name: Calculate matrix
         id: set-matrix
         run: |
-          CONTAINERS=$(seq 1 ${{ inputs.PARALLEL_TESTS }} | tr '\n' ' ')
-          MATRIX=$(jq -n --arg containers "$CONTAINERS" '{containers: $containers | split(" ")}')
+          CONTAINERS=$(seq 1 ${{ inputs.PARALLEL_TESTS }} | tr '\n' ' ' | sed 's/ *$//')
+          MATRIX=$(jq -n --arg containers "$CONTAINERS" '{containers: $containers | split(" ") | map(select(. != ""))}')
           echo "Matrix: $MATRIX"
-          echo "::set-output name=matrix::$MATRIX"
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
   platform-e2e:
     name: Platform E2E
@@ -58,8 +58,7 @@ jobs:
       - calculate-matrix
     strategy:
       fail-fast: false
-      matrix:
-        containers: ${{ fromJSON(needs.calculate-matrix.outputs.container-matrix) }}
+      matrix: ${{ fromJson(needs.calculate-matrix.outputs.container-matrix) }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
