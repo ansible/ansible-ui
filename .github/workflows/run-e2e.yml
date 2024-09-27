@@ -24,7 +24,7 @@ jobs:
     uses: ./.github/workflows/e2e.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
-      PARALLEL_TESTS: ${{ fromJson(inputs.PARALLEL_TESTS) }}
+      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
