@@ -45,7 +45,7 @@ jobs:
       - name: Matrix Containers
         id: set-matrix
         run: |
-          CONTAINERS=$(seq 1 16 | jq --slurp -c)
+          CONTAINERS=$(seq 1 ${{ inputs.PARALLEL_TESTS }} | jq --slurp -c)
           echo "CONTAINERS: $CONTAINERS"
           echo "CONTAINERS=$CONTAINERS" >> $GITHUB_OUTPUT
 
