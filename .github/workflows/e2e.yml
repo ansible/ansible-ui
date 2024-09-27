@@ -36,6 +36,20 @@ jobs:
       docker-image: platform-ui
       upload-image: true
 
+  calculate-matrix:
+    name: Calculate Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      containers: ${{ steps.set-matrix.outputs.containers }}
+    steps:
+      - name: Calculate matrix
+        id: set-matrix
+        run: |
+          CONTAINERS=$(seq 1 ${{ inputs.PARALLEL_TESTS }})
+          MATRIX=$(echo $CONTAINERS | jq -R 'split(" ") | {containers: .}')
+          echo "Matrix: $MATRIX"
+          echo "::set-output name=containers::$MATRIX"
+
   platform-e2e:
     name: Platform E2E
     runs-on: ubuntu-latest
@@ -43,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ fromJSON('["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]')[:inputs.PARALLEL_TESTS] }}
+        containers: ${{ fromJSON(needs.calculate-matrix.outputs.containers) }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
