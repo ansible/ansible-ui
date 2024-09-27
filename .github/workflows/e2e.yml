@@ -48,7 +48,7 @@ jobs:
           CONTAINERS=$(seq 1 ${{ inputs.PARALLEL_TESTS }} | tr '\n' ' ' | sed 's/ *$//')
           MATRIX=$(jq -n --arg containers "$CONTAINERS" '{containers: $containers | split(" ") | map(select(. != ""))}')
           echo "Matrix: $MATRIX"
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "matrix=$(echo "$MATRIX" | jq -c .)" >> $GITHUB_OUTPUT
 
   platform-e2e:
     name: Platform E2E
