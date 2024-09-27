@@ -31,9 +31,9 @@ on:
         default: false
     secrets:
       QUAY_USERNAME:
-        required: true
+        required: false
       QUAY_TOKEN:
-        required: true
+        required: false
 
 jobs:
   image:
