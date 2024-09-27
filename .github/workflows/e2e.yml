@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: ${{ toJSON(range(1, inputs.PARALLEL_TESTS + 1)) }}
+        containers: ${{ fromJSON('["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]')[:inputs.PARALLEL_TESTS] }}
     steps:
       - name: Download container image
         if: ${{ !inputs.SKIP_JOB }}
@@ -78,15 +78,12 @@ jobs:
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
         run: npm ci
-      # galaxykit needs pip 23+, Ubuntu 22.04's default Python uses pip 22
       - name: "Install python 3.11"
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Install galaxykit
         run: |
-          # pip3 install ansible galaxykit
-          # pending a release with https://github.com/ansible/galaxykit/pull/116
           pip3 install ansible git+https://github.com/ansible/galaxykit.git@main
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
