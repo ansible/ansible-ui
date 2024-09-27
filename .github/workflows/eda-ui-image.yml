@@ -17,3 +17,6 @@ jobs:
       docker-target: eda-ui
       docker-image: quay.io/ansible/eda-ui
       docker-publish: true
+    secrets:
+      QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+      QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}

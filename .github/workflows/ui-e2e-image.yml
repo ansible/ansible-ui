@@ -16,3 +16,6 @@ jobs:
       docker-target: ui-e2e
       docker-image: quay.io/ansible/ui-e2e
       docker-publish: true
+    secrets:
+      QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+      QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
