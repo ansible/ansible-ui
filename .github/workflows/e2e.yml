@@ -24,47 +24,13 @@ on:
 jobs:
   platform-ui-image:
     name: Platform UI Image
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      DOCKER_BUILDKIT: 1
-    steps:
-      - uses: actions/checkout@v4
-        if: ${{ !inputs.SKIP_JOB }}
-        with:
-          fetch-depth: 1
-      - name: PreCache
-        if: ${{ !inputs.SKIP_JOB }}
-        run: npm version 0.0.0 --no-git-tag-version
-      - name: Cache dependencies
-        if: ${{ !inputs.SKIP_JOB }}
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' && !inputs.SKIP_JOB
-        run: npm ci
-      - name: NPM Build
-        if: ${{ !inputs.SKIP_JOB }}
-        run: npm run build
-        working-directory: ./platform
-      - name: Build Image
-        if: ${{ !inputs.SKIP_JOB }}
-        run: npm run docker:build
-        working-directory: ./platform
-      - name: Save Image
-        if: ${{ !inputs.SKIP_JOB }}
-        run: docker save platform-ui > platform-ui.tar
-      - name: Upload Image
-        if: ${{ !inputs.SKIP_JOB }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: platform-ui.tar
-          path: platform-ui.tar
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-image: true
 
   platform-e2e:
     name: Platform E2E
