@@ -6,79 +6,14 @@ on:
       - main
       - release/*
     tags:
-      - '*'  # Trigger on any tag
-  workflow_dispatch:
-    inputs:
-      git_tag:
-        description: 'Git tag to check out'
-        required: true
-      image_tag:
-        description: 'Docker image tag'
-        required: true
+      - '*'
 
 jobs:
   eda-ui-image:
-    name: Build and Push EDA UI Image
-    if: github.repository == 'ansible/aap-ui'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.git_tag || github.ref }}  # Use input Git tag or fall back to GITHUB_REF for push events
-
-      - name: PreCache
-        run: npm version 0.0.0 --no-git-tag-version
-
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./node_modules
-            /home/runner/.cache/Cypress
-          key: modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          rm -rf node_modules
-          npm i --force
-
-      - name: NPM Build
-        run: npm run build:eda
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Quay
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: quay.io/ansible/eda-ui
-          tags: |
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}.{{minor}}.{{patch}}
-            type=raw,value=${{ github.event.inputs.image_tag }}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-
-      - name: Docker Build and Push EDA UI Image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          target: eda-ui
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+    name: EDA UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-script: build:eda
+      docker-target: eda-ui
+      docker-image: quay.io/ansible/eda-ui
+      docker-publish: true
