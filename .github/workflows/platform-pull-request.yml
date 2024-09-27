@@ -129,6 +129,7 @@ jobs:
   #   uses: ./.github/workflows/e2e.yml
   #   with:
   #     PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
+  #     PARALLEL_TESTS: 16
   #   secrets:
   #     PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
   #     PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}

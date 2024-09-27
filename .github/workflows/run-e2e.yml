@@ -7,6 +7,10 @@ on:
         type: string
         required: true
         description: 'Platform Server'
+      PARALLEL_TESTS:
+        description: 'Number of parallel test runners'
+        type: number
+        required: true
       UPDATE_SERVER:
         type: boolean
         required: true
@@ -19,6 +23,7 @@ jobs:
     uses: ./.github/workflows/e2e.yml
     with:
       PLATFORM_SERVER: ${{ github.event.inputs.PLATFORM_SERVER }}
+      PARALLEL_TESTS: 16
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
