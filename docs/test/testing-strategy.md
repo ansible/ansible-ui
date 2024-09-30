@@ -1,9 +1,13 @@
 # Testing Strategy
 
-## Objectives
+We have two main objectives:
 
-- Ensure the platform functions as expected across all supported configurations.
+- Validate the Platform UI against all supported configurations.
 - Validate pull requests to prevent regressions and breakages.
+
+To address those objectives:
+
+- Nightly end-to-end tests 
 
 ## Approach
 
@@ -26,3 +30,12 @@
 - We are currently using the YOLO infrastructure provided by the QE team.
 - Backend teams have stories around API contracts. We are working with those teams.
 - Feature flags will be needed and we are following the JIRA iniative around that.
+
+### Supported Configurations
+
+| Configuration    | Deployments             |
+| ---------------- | ----------------------- |
+| VM Containerized | `Enterprise` `Single`   |
+| VM RPM           | `Enterprise` `Single`   |
+| AaaS             | `Enterprise`            |
+| Openshift        | `Enterprise` `Standard` |
