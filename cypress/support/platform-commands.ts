@@ -18,6 +18,7 @@ import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsRe
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { UpgradeUserType, usersForMigration } from './constants';
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
@@ -157,6 +158,42 @@ Cypress.Commands.add('createPlatformUser', (user?: Partial<PlatformUser>) => {
     password: 'pw',
     ...user,
   });
+});
+
+/**
+ * Returns the credentials (object containing username and password) of an unmigrated user for testing upgrades
+ * Note: Must be logged in as a system administrator
+ * Usage:
+ *     cy.getUserForMigration(UpgradeUserType.controllerLdap).then((user) => {
+ *        // Test with user.username and user.password
+ *     });
+ */
+Cypress.Commands.add('getUserForMigration', (userType: UpgradeUserType) => {
+  const users = usersForMigration[userType];
+
+  if (!users?.length) {
+    throw new Error('There are no unlinked users available for testing!');
+  }
+
+  function getAvailableUser(index: number) {
+    if (index === users.length) {
+      throw new Error('There are no unlinked users available for testing!');
+    }
+    cy.wait(200);
+    cy.requestGet<PlatformItemsResponse<PlatformUser>>(
+      gatewayAPI`/users?username=${users[index]?.username}`
+    ).then((result) => {
+      const platformUser = result.results?.[0];
+      if (platformUser.last_login === null) {
+        // This user has not been migrated yet and is available for testing upgrades
+        return new Promise((resolve, _reject) => resolve(users[index]));
+      } else {
+        getAvailableUser(index + 1);
+      }
+    });
+  }
+
+  getAvailableUser(0);
 });
 
 /* This `Cypress.Commands.add('deletePlatformUser', ...)` function is a custom Cypress command that is

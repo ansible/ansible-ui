@@ -92,6 +92,7 @@ import { Token } from '../../frontend/awx/interfaces/Token';
 import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../platform/interfaces/PlatformUser';
+import { UpgradeUserType } from './constants';
 
 declare global {
   namespace Cypress {
@@ -1853,6 +1854,9 @@ declare global {
       getHubTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<HubTeam>;
 
       createPlatformUser(user?: Partial<PlatformUser>): Chainable<PlatformUser>;
+      getUserForMigration(
+        userType: UpgradeUserType
+      ): Chainable<{ username: string; password: string }>;
       deletePlatformUser(
         user: PlatformUser,
         options?: {
