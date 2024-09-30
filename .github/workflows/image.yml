@@ -85,6 +85,7 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Image
+        if: ${{ inputs.docker-publish }}
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -115,8 +116,7 @@ jobs:
           file: ${{ inputs.docker-file }}
           target: ${{ inputs.docker-target }}
           platforms: linux/amd64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ inputs.docker-image }}:latest
           load: true
 
       - name: Save Image
