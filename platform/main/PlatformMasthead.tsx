@@ -21,7 +21,11 @@ import RedHatIcon from '../assets/redhat-icon.svg';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformAbout } from './PlatformAbout';
+import { useAwxActiveUser } from '../../frontend/awx/common/useAwxActiveUser';
+import { useEdaActiveUser } from '../../frontend/eda/common/useEdaActiveUser';
+import { useHubActiveUser } from '../../frontend/hub/common/useHubActiveUser';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
+import { useLegacyAuth } from './LegacyAuthProvider';
 import { PlatformRoute } from './PlatformRoutes';
 
 export function PlatformMasthead() {
@@ -32,6 +36,10 @@ export function PlatformMasthead() {
   const isSmOrLarger = useBreakpoint('sm');
   const [_dialog, setDialog] = usePageDialog();
   const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
+  const { refreshActiveAwxUser } = useAwxActiveUser();
+  const { refreshActiveEdaUser } = useEdaActiveUser();
+  const { refreshActiveHubUser } = useHubActiveUser();
+  const { refreshLegacyAuth } = useLegacyAuth();
   const quickStarts = useQuickStarts();
 
   const logout = useCallback(async () => {
@@ -40,8 +48,18 @@ export function PlatformMasthead() {
     } catch (e) {
       // do nothing
     }
+    void refreshActiveAwxUser?.();
+    void refreshActiveEdaUser?.();
+    void refreshActiveHubUser?.();
     void refreshActivePlatformUser?.();
-  }, [refreshActivePlatformUser]);
+    void refreshLegacyAuth?.();
+  }, [
+    refreshActiveEdaUser,
+    refreshActiveAwxUser,
+    refreshActiveHubUser,
+    refreshActivePlatformUser,
+    refreshLegacyAuth,
+  ]);
 
   return (
     <PageMasthead
