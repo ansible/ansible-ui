@@ -1,6 +1,7 @@
+import { useEffect, useCallback } from 'react';
 import { Button, FormFieldGroup, FormFieldGroupHeader } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch, useFieldArray } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
@@ -158,36 +159,7 @@ export function MapFields(props: {
             ]}
             isRequired
           />
-          <PageFormSection>
-            <PageFormTextInput
-              id={`mappings-${index}-attributes-criteria`}
-              name={`mappings.${index}.criteria`}
-              label={t('Attribute')}
-              isRequired
-              placeholder={t('Enter attribute')}
-            />
-            <PageFormSelect
-              id={`mappings-${index}-attributes-criteria-conditional`}
-              name={`mappings.${index}.criteria_conditional`}
-              label={t('Comparison')}
-              placeholderText={t('Select comparison')}
-              options={[
-                { value: 'contains', label: t('contains') },
-                { value: 'matches', label: t('matches') },
-                { value: 'ends_with', label: t('ends with') },
-                { value: 'equals', label: t('equals') },
-                { value: 'in', label: t('in') },
-              ]}
-              isRequired
-            />
-            <PageFormTextInput
-              id={`mappings-${index}-attributes-value`}
-              name={`mappings.${index}.criteria_value`}
-              label={t('Value')}
-              placeholder={t('Enter value')}
-              isRequired
-            />
-          </PageFormSection>
+          <AttributesSubform mappingIndex={index} />
         </PageFormHidden>
       </PageFormSection>
       <PageFormSection>
@@ -218,5 +190,88 @@ export function MapFields(props: {
         </PageFormHidden>
       </PageFormSection>
     </FormFieldGroup>
+  );
+}
+
+function AttributesSubform(props: { mappingIndex: number }) {
+  const { mappingIndex } = props;
+  const { control } = useFormContext();
+  const {
+    fields: attributes,
+    append,
+    remove: deleteAttribute,
+  } = useFieldArray({
+    control,
+    name: `mappings.${mappingIndex}.attributes`,
+  });
+
+  const addAttribute = useCallback(() => {
+    append({
+      attribute: '',
+      comparison: 'contains',
+      value: '',
+    });
+  }, [append]);
+
+  useEffect(() => {
+    if (!attributes.length) {
+      addAttribute();
+    }
+  }, [attributes.length, addAttribute]);
+
+  return attributes.map((attribute, index) => (
+    <AttributeFields
+      key={attribute.id}
+      mapIndex={mappingIndex}
+      index={index}
+      addAttribute={index + 1 === attributes.length ? addAttribute : undefined}
+      deleteAttribute={attributes.length > 1 ? () => deleteAttribute(index) : undefined}
+    />
+  ));
+}
+
+interface AttributeFieldsProps {
+  mapIndex: number;
+  index: number;
+  addAttribute?: () => void;
+  deleteAttribute?: () => void;
+}
+function AttributeFields(props: AttributeFieldsProps) {
+  const { mapIndex, index, deleteAttribute, addAttribute } = props;
+  const { t } = useTranslation();
+  // TODO: validate against duplicate criteria
+  return (
+    <PageFormSection>
+      <PageFormTextInput
+        id={`mappings-${mapIndex}-attributes-${index}-attribute`}
+        name={`mappings.${mapIndex}.attributes.${index}.attribute`}
+        label={t('Attribute')}
+        isRequired
+        placeholder={t('Enter attribute')}
+      />
+      <PageFormSelect
+        id={`mappings-${mapIndex}-attributes-${index}-comparison`}
+        name={`mappings.${mapIndex}.attributes.${index}.comparison`}
+        label={t('Comparison')}
+        placeholderText={t('Select comparison')}
+        options={[
+          { value: 'contains', label: t('contains') },
+          { value: 'matches', label: t('matches') },
+          { value: 'ends_with', label: t('ends with') },
+          { value: 'equals', label: t('equals') },
+          { value: 'in', label: t('in') },
+        ]}
+        isRequired
+      />
+      <PageFormTextInput
+        id={`mappings-${mapIndex}-attributes-${index}-value`}
+        name={`mappings.${mapIndex}.attributes.${index}.value`}
+        label={t('Value')}
+        placeholder={t('Enter value')}
+        isRequired
+      />
+      {deleteAttribute ? <Button onClick={deleteAttribute}>delete</Button> : <div />}
+      {addAttribute ? <Button onClick={addAttribute}>+</Button> : null}
+    </PageFormSection>
   );
 }

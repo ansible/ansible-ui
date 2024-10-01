@@ -18,17 +18,14 @@ export interface NeverTriggers {
 export interface GroupsTriggers {
   groups: { has_or: string[] } | { has_and: string[] };
 }
+export type AttributeDefinition = Record<
+  'contains' | 'matches' | 'ends_with' | 'equals' | 'in',
+  string | string[]
+>;
 export interface AttributesTriggers {
   attributes: {
     join_condition: 'and' | 'or';
-    [criteria: string]:
-      | 'and'
-      | 'or'
-      | { contains: string }
-      | { matches: string }
-      | { ends_with: string }
-      | { equals: string }
-      | { in: string[] };
+    [criteria: string]: 'and' | 'or' | AttributeDefinition;
   };
 }
 export type AuthenticatorMapTriggers =

@@ -3,7 +3,13 @@ import authenticators from '../../../../cypress/fixtures/platformAuthenticators.
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { AuthenticatorForm } from './AuthenticatorForm';
+import {
+  AuthenticatorForm,
+  AuthenticatorMapValues,
+  buildTriggers,
+  parseTrigger,
+} from './AuthenticatorForm';
+import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 
 describe('AuthenticatorForm', () => {
   const voidFn = async () => {};
@@ -89,7 +95,7 @@ describe('AuthenticatorForm', () => {
     cy.get('[data-cy="mappings-0-name"]').type('Map name');
   });
 
-  it.skip('should submit form data', () => {
+  it('should submit form data', () => {
     const handleSubmit = cy.spy();
 
     cy.mount(
@@ -118,8 +124,235 @@ describe('AuthenticatorForm', () => {
         name: 'Map name',
         map_type: 'allow',
         trigger: 'always',
-        conditional: 'or',
         revoke: false,
+      });
+    });
+  });
+
+  describe('buildTriggers', () => {
+    it('should build always trigger', () => {
+      const trigger = {
+        trigger: 'always',
+      };
+      expect(buildTriggers(trigger as AuthenticatorMapValues)).to.deep.equal({
+        always: {},
+      });
+    });
+
+    it('should build never trigger', () => {
+      const trigger = {
+        trigger: 'never',
+      };
+      expect(buildTriggers(trigger as AuthenticatorMapValues)).to.deep.equal({
+        never: {},
+      });
+    });
+
+    it('should build groups "and" trigger', () => {
+      const trigger = {
+        trigger: 'groups',
+        conditional: 'and',
+        groups_value: [
+          {
+            name: 'group1',
+          },
+          {
+            name: 'group2',
+          },
+        ],
+      };
+      expect(buildTriggers(trigger as AuthenticatorMapValues)).to.deep.equal({
+        groups: {
+          has_and: ['group1', 'group2'],
+        },
+      });
+    });
+
+    it('should build groups "or" trigger', () => {
+      const trigger = {
+        trigger: 'groups',
+        conditional: 'or',
+        groups_value: [
+          {
+            name: 'group1',
+          },
+          {
+            name: 'group2',
+          },
+        ],
+      };
+      expect(buildTriggers(trigger as AuthenticatorMapValues)).to.deep.equal({
+        groups: {
+          has_or: ['group1', 'group2'],
+        },
+      });
+    });
+
+    it('should build attributes trigger', () => {
+      const trigger = {
+        trigger: 'attributes',
+        conditional: 'and',
+        attributes: [
+          {
+            attribute: 'name',
+            comparison: 'matches',
+            value: 'admin',
+          },
+        ],
+      };
+
+      expect(buildTriggers(trigger as AuthenticatorMapValues)).to.deep.equal({
+        attributes: {
+          join_condition: 'and',
+          name: {
+            matches: 'admin',
+          },
+        },
+      });
+    });
+
+    it('should build multiple attributes from trigger', () => {
+      const trigger = {
+        trigger: 'attributes',
+        conditional: 'or',
+        attributes: [
+          {
+            attribute: 'name',
+            comparison: 'matches',
+            value: 'admin',
+          },
+          {
+            attribute: 'email',
+            comparison: 'contains',
+            value: 'foo',
+          },
+        ],
+      };
+
+      expect(buildTriggers(trigger as AuthenticatorMapValues)).to.deep.equal({
+        attributes: {
+          join_condition: 'or',
+          name: {
+            matches: 'admin',
+          },
+          email: {
+            contains: 'foo',
+          },
+        },
+      });
+    });
+  });
+
+  describe('parseTrigger', () => {
+    it('should parse always trigger', () => {
+      const triggers = {
+        always: {},
+      };
+      expect(parseTrigger({ triggers } as AuthenticatorMap)).to.deep.equal({
+        trigger: 'always',
+      });
+    });
+
+    it('should parse never trigger', () => {
+      const triggers = {
+        never: {},
+      };
+      expect(parseTrigger({ triggers } as AuthenticatorMap)).to.deep.equal({
+        trigger: 'never',
+      });
+    });
+
+    it('should parse groups "and" trigger', () => {
+      const triggers = {
+        groups: {
+          has_and: ['group1', 'group2'],
+        },
+      };
+      expect(parseTrigger({ triggers } as AuthenticatorMap)).to.deep.equal({
+        trigger: 'groups',
+        conditional: 'and',
+        groups_value: [
+          {
+            name: 'group1',
+          },
+          {
+            name: 'group2',
+          },
+        ],
+      });
+    });
+
+    it('should parse groups "or" trigger', () => {
+      const triggers = {
+        groups: {
+          has_or: ['group1', 'group2'],
+        },
+      };
+      expect(parseTrigger({ triggers } as AuthenticatorMap)).to.deep.equal({
+        trigger: 'groups',
+        conditional: 'or',
+        groups_value: [
+          {
+            name: 'group1',
+          },
+          {
+            name: 'group2',
+          },
+        ],
+      });
+    });
+
+    it('should parse attributes trigger', () => {
+      const triggers = {
+        attributes: {
+          join_condition: 'and',
+          name: {
+            matches: 'admin',
+          },
+        },
+      };
+
+      expect(parseTrigger({ triggers } as unknown as AuthenticatorMap)).to.deep.equal({
+        trigger: 'attributes',
+        conditional: 'and',
+        attributes: [
+          {
+            attribute: 'name',
+            comparison: 'matches',
+            value: 'admin',
+          },
+        ],
+      });
+    });
+
+    it('should parse multiple attributes from trigger', () => {
+      const triggers = {
+        attributes: {
+          join_condition: 'or',
+          name: {
+            matches: 'admin',
+          },
+          email: {
+            contains: 'foo',
+          },
+        },
+      };
+
+      expect(parseTrigger({ triggers } as unknown as AuthenticatorMap)).to.deep.equal({
+        trigger: 'attributes',
+        conditional: 'or',
+        attributes: [
+          {
+            attribute: 'name',
+            comparison: 'matches',
+            value: 'admin',
+          },
+          {
+            attribute: 'email',
+            comparison: 'contains',
+            value: 'foo',
+          },
+        ],
       });
     });
   });
