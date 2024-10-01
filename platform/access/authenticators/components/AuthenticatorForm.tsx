@@ -7,7 +7,13 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
-import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
+import {
+  AuthenticatorMap,
+  AuthenticatorMapType,
+  AuthenticatorMapTriggers,
+  AttributesTriggers,
+  AttributeDefinition,
+} from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugin,
   AuthenticatorPlugins,
@@ -45,12 +51,15 @@ interface MapGroups extends MapBase {
   conditional: 'or' | 'and';
   groups_value: { name: string }[];
 }
+interface Attribute {
+  attribute: string;
+  comparison: 'contains' | 'matches' | 'ends_with' | 'equals' | 'in';
+  value: string;
+}
 interface MapAttributes extends MapBase {
   trigger: 'attributes';
   conditional: 'or' | 'and';
-  criteria: string;
-  criteria_conditional: 'contains' | 'matches' | 'ends_with' | 'equals' | 'in';
-  criteria_value: string;
+  attributes: Attribute[];
 }
 
 export type AuthenticatorMapValues = MapAlways | MapNever | MapGroups | MapAttributes;
@@ -247,39 +256,50 @@ export function formatConfiguration(values: Configuration, plugin: Authenticator
   return formatted;
 }
 
-/* converts form field values to AuthenticatorMap triggers format */
-export function buildTriggers(map: AuthenticatorMapValues) {
-  const triggers: { [k: string]: string | object } = {};
-  let key;
+export function buildTriggers(map: AuthenticatorMapValues): AuthenticatorMapTriggers {
+  let attributes: AttributesTriggers['attributes'];
   switch (map.trigger) {
     case 'always':
-      triggers.always = {};
-      break;
-    case 'never':
-      triggers.never = {};
-      break;
-    case 'groups':
-      key = `has_${map.conditional}`; // has_or or has_and
-      triggers.groups = {
-        [key]: map.groups_value.map(({ name }) => name),
+      return {
+        always: {},
       };
       break;
+    case 'never':
+      return {
+        never: {},
+      };
+      break;
+    case 'groups':
+      if (map.conditional === 'or') {
+        return {
+          groups: { has_or: map.groups_value.map(({ name }) => name) },
+        };
+      } else {
+        return {
+          groups: { has_and: map.groups_value.map(({ name }) => name) },
+        };
+      }
+      break;
     case 'attributes':
-      key = map.criteria_conditional;
-      triggers.attributes = {
+      attributes = {
         join_condition: map.conditional || 'or',
-        [map.criteria]: {
-          [key]: key === 'in' ? map.criteria_value?.split(',') : map.criteria_value,
-        },
+      };
+      map.attributes.forEach(({ attribute, comparison, value }) => {
+        if (!attributes[attribute]) {
+          attributes[attribute] = {} as AttributesTriggers['attributes'][typeof attribute];
+        }
+        (attributes[attribute] as AttributeDefinition)[comparison] =
+          comparison === 'in' ? value?.split(',') : value;
+      });
+      return {
+        attributes,
       };
       break;
   }
-
-  return triggers;
 }
 
 /* converts triggers from AuthenticatorMap to form field format */
-function parseTrigger(mapping: AuthenticatorMap) {
+export function parseTrigger(mapping: AuthenticatorMap) {
   const { triggers } = mapping;
 
   if ('groups' in triggers) {
@@ -294,25 +314,24 @@ function parseTrigger(mapping: AuthenticatorMap) {
   }
   if ('attributes' in triggers) {
     const { attributes } = triggers;
-    const criteria = Object.keys(attributes).find((k) => k !== 'join_condition');
-    let criteriaConditional = '';
-    let criteriaValue = '';
-    if (criteria) {
-      const criteriaObj = attributes[criteria];
-      criteriaConditional = Object.keys(criteriaObj).pop() || 'contains';
-      if (criteriaConditional === 'in') {
-        criteriaValue = (criteriaObj as { in: string[] }).in.join(',');
-      } else {
-        criteriaValue = (criteriaObj as { [k: string]: string })[criteriaConditional];
-      }
-    }
-    return {
+    const values = {
       trigger: 'attributes',
       conditional: attributes.join_condition,
-      criteria,
-      criteria_conditional: criteriaConditional,
-      criteria_value: criteriaValue,
+      attributes: [] as Attribute[],
     };
+    Object.keys(attributes).forEach((attribute) => {
+      if (attribute !== 'join_condition') {
+        Object.entries(attributes[attribute]).forEach(([comparison, value]) => {
+          values.attributes.push({
+            attribute,
+            comparison: comparison as 'contains' | 'matches' | 'ends_with' | 'equals' | 'in',
+            value: Array.isArray(value) ? value.join(',') : value,
+          });
+        });
+      }
+    });
+
+    return values;
   }
   if ('never' in triggers) {
     return { trigger: 'never' };
