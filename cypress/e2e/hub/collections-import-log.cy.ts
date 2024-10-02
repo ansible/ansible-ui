@@ -21,7 +21,9 @@ describe('GalaxyKit Installation Check for Collections Import Log', () => {
       collectionName = randomE2Ename();
       cy.createHubNamespace().then((namespaceResult) => {
         namespace = namespaceResult;
-        cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+        cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+          cy.waitForAllTasks();
+        });
       });
     });
 

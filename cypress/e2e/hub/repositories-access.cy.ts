@@ -112,9 +112,11 @@ describe('Repositories user and team access tests', () => {
             expect(response?.statusCode).to.eql(201);
           });
       });
+      cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teams');
       cy.getModal().within(() => {
         cy.clickButton(/^Close$/);
       });
+      cy.wait('@teams');
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(repository.name);
       cy.selectTableRowByCheckbox('team-name', hubTeam.name, {

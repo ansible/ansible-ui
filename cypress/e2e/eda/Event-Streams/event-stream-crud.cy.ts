@@ -93,7 +93,9 @@ cyLabel(['aaas-unsupported'], function () {
       cy.verifyPageTitle('Event Streams');
       cy.clickTableRow(`${name} edited`, true);
       cy.verifyPageTitle(`${name} edited`);
-      cy.clickPageAction('delete-event-stream');
+      cy.getBy('[data-cy="name"]').should('contain', `${name} edited`);
+      cy.getByDataCy('actions-dropdown').click();
+      cy.getByDataCy('delete-event-stream').click();
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete event streams');
       cy.verifyPageTitle('Event Streams');

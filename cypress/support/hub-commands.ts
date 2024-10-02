@@ -340,8 +340,8 @@ Cypress.Commands.add(
           body: formData,
         });
       });
+      cy.waitForAllTasks();
     });
-    cy.waitForAllTasks();
   }
 );
 

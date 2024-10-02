@@ -8,7 +8,6 @@ import {
   checkHostGroup,
   createAndEditAndDeleteHost,
   createHost,
-  createHostAndCancelJob,
   launchHostJob,
   testHostBulkDelete,
 } from '../../../support/hostsfunctions';
@@ -103,7 +102,43 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   });
 
   it('can cancel a currently running job from the host jobs tab inside an inventory', () => {
-    createHostAndCancelJob(inventory, organization.id, project.id, true);
+    cy.createAwxJobTemplate({
+      inventory: inventory.id,
+      organization: organization.id,
+      project: project.id,
+    }).then((jobTemplate) => {
+      cy.navigateTo('awx', 'inventories');
+      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+      const hostName = createHost('inventory_host', inventory.id);
+      cy.navigateTo('awx', 'inventories');
+      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+      cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
+      cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launch');
+      cy.get('[data-cy="launch-template"]').first().click();
+      cy.wait('@launch');
+      cy.getBy('[data-cy="Output"]').should('be.visible');
+      cy.url().should('contain', '/output');
+      cy.verifyPageTitle(jobTemplate.name);
+      cy.navigateTo('awx', 'inventories');
+      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
+      cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
+      cy.filterTableByMultiSelect('name', [hostName]);
+      cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
+      cy.intercept(
+        { method: 'GET', url: awxAPI`/unified_jobs/*` },
+        { fixture: 'awxRunningJobs.json' }
+      );
+      cy.get('.pf-v5-c-tabs__item > a').contains('Jobs').click();
+      cy.get('[data-cy="cancel-job"]').should('be.enabled');
+      cy.get('[data-cy="cancel-job"]').click();
+      cy.clickModalConfirmCheckbox();
+      cy.contains('button', 'Cancel job').click();
+      cy.contains('Error').should('exist');
+    });
   });
 
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {

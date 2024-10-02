@@ -139,7 +139,10 @@ describe('Projects', () => {
       cy.clickButton(/^Save rule$/);
       cy.clickButton(/^Next$/);
       cy.clickButton(/^Next$/);
+      cy.intercept('POST', awxAPI`/schedules/preview/`).as('preview');
       cy.clickButton(/^Finish$/);
+      cy.wait('@preview');
+      cy.url().should('contain', '/details');
       cy.verifyPageTitle(schedule.name);
       cy.get('[data-ouia-component-id="simple-table"]')
         .scrollIntoView()
@@ -318,7 +321,7 @@ describe('Projects', () => {
         cy.getBy('[data-cy="edit-template"]').click();
         cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
         cy.getBy('button[id="project"]').click();
-        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+        cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
         cy.getModal().within(() => {
           cy.get('[data-cy="filter-input"]').click();
         });

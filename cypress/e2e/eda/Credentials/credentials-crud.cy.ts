@@ -109,11 +109,16 @@ cyLabel(['aaas-unsupported'], function () {
           cy.navigateTo('eda', 'credentials');
           cy.get('h1').should('contain', 'Credentials');
           cy.clickTableRow(edaCredential.name);
+          cy.verifyPageTitle(edaCredential.name);
+          cy.intercept(
+            'GET',
+            edaAPI`/eda-credentials/${edaCredential.id.toString()}/?refs=true`
+          ).as('edaCredentials');
+          cy.clickPageAction('delete-credential');
+          cy.wait('@edaCredentials');
           cy.intercept('DELETE', edaAPI`/eda-credentials/${edaCredential.id.toString()}/`).as(
             'deleted'
           );
-          cy.verifyPageTitle(edaCredential.name);
-          cy.clickPageAction('delete-credential');
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Delete credential');
           cy.wait('@deleted').then((deleted) => {

@@ -106,7 +106,7 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         cy.getBy('button[data-cy="apply-filter"]').click();
         cy.contains(platformTeam.name);
         cy.clickTableRowLink('name', platformTeam.name, { disableFilter: true });
-        cy.clickPageAction('edit-team');
+        cy.getBy('[data-cy="edit-team"]').click();
         cy.verifyPageTitle(`Edit ${platformTeam.name}`);
         cy.getByDataCy('name').clear().type(`${platformTeam.name} edited from details page`);
         cy.getByDataCy('Submit').click();

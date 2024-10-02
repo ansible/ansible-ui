@@ -25,9 +25,10 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       // as it is not necessary to create a new namespace and upload collection for each test
       cy.createHubNamespace().then((namespaceResult) => {
         namespace = namespaceResult;
-        cy.uploadCollection(collectionName, namespace.name, '1.0.0');
+        cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+          cy.waitForAllTasks();
+        });
       });
-      cy.waitForAllTasks();
     });
 
     after(() => {
