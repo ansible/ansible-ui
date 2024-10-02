@@ -50,7 +50,6 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
     typeof schedule?.skip_tags === 'string'
       ? parseStringToTagArray(schedule?.skip_tags)
       : schedule?.skip_tags;
-
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!schedule) return <LoadingPage breadcrumbs tabs />;
 
@@ -108,6 +107,9 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
           <Divider />
         </PageDetail>
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>
+        <PageDetail label={t('Execution Envionment')}>
+          {schedule.summary_fields.execution_environment?.name}
+        </PageDetail>
         <PageDetail label={t('Job type')}>{schedule.job_type}</PageDetail>
         <PageDetail label={t('Limit')}>{schedule.limit}</PageDetail>
         <PageDetail label={t('Forks')}>{schedule.forks}</PageDetail>

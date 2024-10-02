@@ -1,10 +1,10 @@
 import { Inventory as SwaggerInventory } from './generated-from-swagger/api';
+import { Label } from './Label';
 import {
+  SummaryFieldObjectRole,
   SummaryFieldsByUser,
   SummaryFieldsOrganization,
-  SummaryFieldObjectRole,
 } from './summary-fields/summary-fields';
-import { Label } from './Label';
 
 export interface CommonInventory
   extends Omit<
@@ -69,7 +69,7 @@ export interface RunCommandWizard {
   module_args: string;
   verbosity: number;
   limit: string;
-  forks: boolean;
+  forks: number;
   diff_mode: boolean;
   become_enabled: boolean;
   extra_vars: string;

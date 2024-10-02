@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageHeader,
   PageLayout,
@@ -7,20 +8,19 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
+import { postRequest } from '../../../common/crud/Data';
+import { useGet } from '../../../common/crud/useGet';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
-import { useNavigate, useParams } from 'react-router-dom';
+import { awxAPI } from '../../common/api/awx-utils';
+import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
+import { AwxRoute } from '../../main/AwxRoutes';
 import {
   RunCommandCredentialStep,
   RunCommandDetailStep,
   RunCommandExecutionEnvionment,
   RunCommandReviewStep,
 } from './components/RunCommandSteps';
-import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';
-import { postRequest } from '../../../common/crud/Data';
-import { awxAPI } from '../../common/api/awx-utils';
-import { useGet } from '../../../common/crud/useGet';
-import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
 
 export function InventoryRunCommand() {
   const { t } = useTranslation();
@@ -110,7 +110,7 @@ export function InventoryRunCommand() {
         steps={steps}
         singleColumn={false}
         onCancel={onCancel}
-        defaultValue={initialValues}
+        stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />

@@ -6,10 +6,10 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormSelect, PageFormTextInput, PageWizardStep } from '../../../../../../framework';
+import { PageFormSelect, PageFormTextInput } from '../../../../../../framework';
 import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
 import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
@@ -27,7 +27,7 @@ import { PageFormProjectSelect } from '../../../projects/components/PageFormProj
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { RESOURCE_TYPE } from '../constants';
-import type { AllResources, PromptFormValues, UnifiedJobType, WizardFormValues } from '../types';
+import type { PromptFormValues, WizardFormValues } from '../types';
 import { shouldHideOtherStep } from './helpers';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
@@ -36,26 +36,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   const { defaultValues } = formState;
 
-  const {
-    setWizardData,
-    setStepData,
-    stepData,
-    steps: allSteps,
-  } = usePageWizard() as {
-    setWizardData: Dispatch<SetStateAction<WizardFormValues>>;
-    setStepData: (
-      data:
-        | Record<'nodeTypeStep', Partial<WizardFormValues>>
-        | Record<'nodePromptsStep', { prompt: PromptFormValues }>
-    ) => void;
-    stepData: {
-      nodeTypeStep?: Partial<WizardFormValues>;
-      nodePromptsStep?: { prompt: PromptFormValues };
-    };
-    wizardData: Partial<WizardFormValues>;
-    visibleSteps: PageWizardStep[];
-    steps: PageWizardStep[];
-  };
+  const { setWizardData, setStepData, steps: allSteps } = usePageWizard<WizardFormValues>();
 
   // Register form fields
   register('node_type');
@@ -63,14 +44,14 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   register('prompt');
 
   // Watch form fields
-  const nodeType = useWatch<WizardFormValues>({
+  const nodeType = useWatch<WizardFormValues, 'node_type'>({
     name: 'node_type',
     control,
     defaultValue: defaultValues?.node_type,
-  }) as UnifiedJobType;
-  const nodeResource = useWatch<WizardFormValues>({
+  });
+  const nodeResource = useWatch<WizardFormValues, 'resource'>({
     name: 'resource',
-  }) as AllResources;
+  });
 
   useEffect(() => {
     const { isDirty, isTouched } = getFieldState('node_type');
@@ -87,10 +68,6 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       setStepData({ nodeTypeStep: currentFormValues });
     }
   }, [nodeType, getFieldState, setValue, reset, allSteps, setWizardData, setStepData, getValues]);
-
-  useEffect(() => {
-    setValue('resource', null);
-  }, [nodeType, setValue]);
 
   useEffect(() => {
     const setLaunchToWizardData = async () => {
@@ -126,7 +103,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
       launchConfigValue = {
         ...defaults,
-        execution_environment: defaults.execution_environment?.id,
+        execution_environment: defaults.execution_environment,
         inventory: inventory?.id ? inventory : null,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),
@@ -137,25 +114,17 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       if (shouldShowPromptStep || shouldShowSurveyStep) {
         setWizardData((prev) => ({
           ...prev,
-          launch_config: launchConfigResults,
+          launch_config: shouldShowPromptStep ? launchConfigResults : null,
+          resource: nodeResource,
         }));
-
-        if (stepData.nodePromptsStep && nodeResource) {
-          const { isDirty: isNodeTypeDirty } = getFieldState('node_type');
-          if (!isNodeTypeDirty && nodeResource.id === defaultValues?.resource?.id) {
-            setValue('prompt', { ...stepData.nodePromptsStep?.prompt });
-          } else {
-            // If the node type is not dirty and the node resource is not the same as the default value,
-            // and the wizard data is not the same as the default value, then reset the prompt to the default value
-            // else, set the prompt data to the current data.
-            setValue('prompt', launchConfigValue);
-            if ('type' in nodeResource && nodeResource.type !== templateType) {
-              setValue('resource', template);
-            }
-          }
-        }
-      } else {
-        setWizardData((prev) => ({ ...prev, launch_config: null }));
+        setStepData((prev) => ({
+          ...prev,
+          nodePromptsStep: {
+            launch_config: launchConfigResults,
+            resource: nodeResource,
+            prompt: launchConfigValue,
+          },
+        }));
       }
     };
 
@@ -171,7 +140,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     nodeType,
     setValue,
     setWizardData,
-    stepData,
+    setStepData,
   ]);
 
   return (

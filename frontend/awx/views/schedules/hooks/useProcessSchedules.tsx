@@ -1,18 +1,19 @@
 import { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
+import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
+import { StandardizedFormData } from '../wizard/ScheduleAddWizard';
 import { useProcessCredentials } from './useProcessCredentials';
 import { useProcessInstanceGroups } from './useProcessInstanceGroups';
 import { useProcessLabels } from './useProcessLabels';
-import { StandardizedFormData } from '../wizard/ScheduleAddWizard';
-import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
-import { useParams } from 'react-router-dom';
-import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
+import { parseVariableField } from '../../../../../framework/utils/codeEditorUtils';
 
 export type CreateSchedulePayload = {
   name: string;
-  description?: string;
+  description?: string | null;
   timezone: string;
   rrule: string;
   inventory?: number;
@@ -58,6 +59,7 @@ export const useProcessSchedule = () => {
             unified_job_template: resource.id,
           });
         }
+
         return postSchedule(endPoint, payload);
       };
 
@@ -74,20 +76,22 @@ export const useProcessSchedule = () => {
       const extraDataObject: { [key: string]: string } = {};
       const hasJobTags = job_tags && job_tags?.length > 0;
       const hasSkipTags = prompt && prompt?.skip_tags && prompt?.skip_tags?.length > 0;
-      schedule_days_to_keep && Object.assign(extraDataObject, { days: schedule_days_to_keep });
+      const extraData = parseVariableField(prompt?.extra_vars ?? '');
+
       survey &&
         Object.keys(survey).forEach((k: string) => {
           extraDataObject[k] = survey[k];
         });
+      schedule_days_to_keep && Object.assign(extraData, { days: schedule_days_to_keep });
       const payload = {
         ...rest,
         ...restOfPrompt,
         inventory: inventory?.id,
-        execution_environment: execution_environment,
+        execution_environment: execution_environment?.id,
         skip_tags: hasSkipTags ? stringifyTags(prompt?.skip_tags) : undefined,
         job_tags: hasJobTags ? stringifyTags(job_tags) : undefined,
         enabled: enabled,
-        extra_data: extraDataObject,
+        extra_data: { ...extraData, ...survey },
       };
       switch (type) {
         case 'inventory_source':

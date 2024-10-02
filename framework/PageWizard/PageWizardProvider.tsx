@@ -9,11 +9,13 @@ import {
   useState,
 } from 'react';
 import { useURLSearchParams } from '../components/useURLSearchParams';
-import type { PageWizardParentStep, PageWizardState, PageWizardStep } from './types';
+import type { PageWizardState } from './PageWizardState';
+import type { PageWizardParentStep, PageWizardStep } from './types';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
-export function usePageWizard() {
-  return useContext(PageWizardContext);
+
+export function usePageWizard<DataT extends NonNullable<object> = object>() {
+  return useContext(PageWizardContext) as unknown as PageWizardState<DataT>;
 }
 
 export function isStepVisible(step: PageWizardStep, values: object) {
@@ -24,23 +26,42 @@ export function isPageWizardParentStep(step: PageWizardStep): step is PageWizard
   return (step as PageWizardParentStep)?.substeps !== undefined;
 }
 
-export function PageWizardProvider<T extends object>(props: {
+export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
   children: ReactNode;
+
+  /** An array of steps to be rendered in the wizard. */
   steps: PageWizardStep[];
-  defaultValue?: Record<string, object>;
-  onSubmit: (wizardData: T) => Promise<void>;
+
+  /** An object with default values for each step, using the step ID as the key. */
+  stepDefaults?: { [stepID: string]: Partial<DataT> };
+
+  /** A function that will be called when the wizard is submitted with the final data. */
+  onSubmit: (wizardData: DataT) => Promise<void>;
 }) {
   const { steps, onSubmit } = props;
   const [isToggleExpanded, setToggleExpanded] = useState(false);
   const [activeStep, setActiveStep] = useState<PageWizardStep | null>(null);
-  const [wizardData, setWizardData] = useState<Partial<T>>({});
-  const [stepData, setStepData] = useState<Record<string, object>>(props.defaultValue ?? {});
+  const [wizardData, setWizardData] = useState<DataT>({} as DataT);
+  const [stepData, setStepData] = useState<{ [stepID: string]: Partial<DataT> }>(
+    props.stepDefaults ?? {}
+  );
   const [stepError, setStepError] = useState<Record<string, object>>({});
   const [submitError, setSubmitError] = useState<Error>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [_, setSearchParams] = useURLSearchParams();
   const flattenedSteps = useMemo(() => getFlattenedSteps(steps), [steps]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      for (const key in props.stepDefaults) {
+        if (!steps.find((step) => step.id === key)) {
+          // eslint-disable-next-line no-console
+          console.warn(`PageWizardProvider: defaultValue key '${key}' not found in steps.`);
+        }
+      }
+    }
+  }, [props.stepDefaults, steps]);
 
   // set initial activeStep
   useEffect(() => {
@@ -75,7 +96,7 @@ export function PageWizardProvider<T extends object>(props: {
       if (isLastStep) {
         setIsSubmitting(true);
         try {
-          await onSubmit(wizardData as T);
+          await onSubmit(wizardData);
         } catch (e) {
           setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
         } finally {
@@ -92,7 +113,7 @@ export function PageWizardProvider<T extends object>(props: {
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
-      setWizardData((prev: object) => ({ ...prev, ...formData }));
+      setWizardData((prev) => ({ ...prev, ...formData }));
       setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
       setActiveStep(nextStep);
       return Promise.resolve();
@@ -115,20 +136,20 @@ export function PageWizardProvider<T extends object>(props: {
   const contextValue = useMemo(
     () => ({
       wizardData,
-      setWizardData: setWizardData,
+      setWizardData,
       stepData,
-      setStepData: setStepData,
+      setStepData,
       steps: props.steps,
       visibleSteps: getVisibleSteps(steps, wizardData),
       visibleStepsFlattened: getVisibleStepsFlattened(steps, wizardData),
       activeStep,
-      setActiveStep: setActiveStep,
+      setActiveStep,
       stepError,
-      setStepError: setStepError,
+      setStepError,
       submitError,
-      setSubmitError: setSubmitError,
-      isToggleExpanded: isToggleExpanded,
-      setToggleExpanded: setToggleExpanded,
+      setSubmitError,
+      isToggleExpanded,
+      setToggleExpanded,
       onNext,
       onBack,
       isSubmitting,
@@ -155,7 +176,9 @@ export function PageWizardProvider<T extends object>(props: {
   );
 
   return (
-    <PageWizardContext.Provider value={contextValue}>{props.children}</PageWizardContext.Provider>
+    <PageWizardContext.Provider value={contextValue as PageWizardState<object>}>
+      {props.children}
+    </PageWizardContext.Provider>
   );
 }
 

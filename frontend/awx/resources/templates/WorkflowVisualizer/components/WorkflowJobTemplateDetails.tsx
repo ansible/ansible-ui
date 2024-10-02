@@ -1,24 +1,24 @@
-import { useTranslation } from 'react-i18next';
 import {
   TextList,
   TextListItem,
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { PageDetail, useGetPageUrl, TextCell } from '../../../../../../framework';
-import { useGet } from '../../../../../common/crud/useGet';
-import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import { AwxRoute } from '../../../../main/AwxRoutes';
+import { useTranslation } from 'react-i18next';
+import { PageDetail, TextCell, useGetPageUrl } from '../../../../../../framework';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
+import { useGet } from '../../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { Label as ILabel } from '../../../../interfaces/Label';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import { WebhookService } from '../../components/WebhookService';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { GraphNodeData } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
-import { WebhookService } from '../../components/WebhookService';
 
 export function WorkflowJobTemplateDetails({
   node,
@@ -128,7 +128,7 @@ export function WorkflowJobTemplateDetails({
         label={t('Labels')}
         nodeTags={
           launchConfig?.ask_labels_on_launch
-            ? promptValues?.labels ?? nodeLabels?.results
+            ? promptValues?.labels ?? nodeLabels?.results ?? []
             : template.summary_fields.labels?.results
         }
         templateTags={template.summary_fields.labels?.results}

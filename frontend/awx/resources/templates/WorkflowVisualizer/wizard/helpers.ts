@@ -2,6 +2,8 @@ import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { AllResources, NodeResource, UnifiedJobType } from '../types';
 import { RESOURCE_TYPE } from '../constants';
+import { Survey } from '../../../../interfaces/Survey';
+import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
 
 export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {
@@ -61,4 +63,41 @@ export function shouldHideOtherStep(launchData: LaunchConfiguration) {
     launchData.ask_variables_on_launch ||
     launchData.ask_verbosity_on_launch
   );
+}
+
+export function processSurvey(
+  extra_vars: string | null,
+  survey: { [key: string]: string | string[] },
+  surveyConfig: Survey | null
+): string {
+  const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
+  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+
+  if (surveyConfig?.spec) {
+    const passwordFields = surveyConfig.spec
+      .filter((q) => q.type === 'password')
+      .map((q) => q.variable);
+
+    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
+      updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
+    });
+  }
+
+  const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+    ...extraVarsObj,
+    ...updatedSurvey,
+  };
+
+  return jsonToYaml(JSON.stringify(mergedData));
+}
+
+function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+  const updated = { ...vars };
+  passwordKeys.forEach((key) => {
+    if (typeof updated[key] !== 'undefined') {
+      updated[key] = '$encrypted$';
+    }
+  });
+  return updated;
 }

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 import {
   PageHeader,
   PageLayout,
@@ -10,28 +11,27 @@ import {
 } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
+import { postRequest } from '../../../../common/crud/Data';
+import { RequestError } from '../../../../common/crud/RequestError';
+import { useGetItem } from '../../../../common/crud/useGet';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { RulesStep } from './RulesStep';
-import { RRule, RRuleSet, rrulestr } from 'rrule';
-import { ExceptionsStep } from './ExceptionsStep';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { NodePromptsStep as PromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
+import { Schedule } from '../../../interfaces/Schedule';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { Schedule } from '../../../interfaces/Schedule';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { RULES_DEFAULT_VALUES } from './constants';
-import { ScheduleSelectStep } from './ScheduleSelectStep';
-import { ScheduleReviewStep } from './ScheduleReviewStep';
-import { StandardizedFormData } from './ScheduleAddWizard';
-import { useProcessSchedule } from '../hooks/useProcessSchedules';
+import { NodePromptsStep as PromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
-import { RequestError } from '../../../../common/crud/RequestError';
-import { postRequest } from '../../../../common/crud/Data';
+import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useSetRRuleItemToRuleSet } from '../hooks/useSetRRuleItemToRuleSet';
+import { RuleFields, ScheduleFormWizard, schedulePageUrl, ScheduleResources } from '../types';
+import { RULES_DEFAULT_VALUES } from './constants';
+import { ExceptionsStep } from './ExceptionsStep';
+import { RulesStep } from './RulesStep';
+import { StandardizedFormData } from './ScheduleAddWizard';
+import { ScheduleReviewStep } from './ScheduleReviewStep';
+import { ScheduleSelectStep } from './ScheduleSelectStep';
 
 /**
  *
@@ -197,10 +197,8 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
       startDateTime: { date: startDate, time: time },
       timezone: schedule?.timezone,
       schedule_days_to_keep: schedule.extra_data.days,
-    },
-    promptStep: {
-      prompt: {},
-    },
+    } as Partial<ScheduleResources> as ScheduleResources,
+    promptStep: {},
     rules: { ...RULES_DEFAULT_VALUES, rules },
     exceptions: { ...RULES_DEFAULT_VALUES, exceptions },
   };
@@ -226,7 +224,7 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
         steps={steps}
         singleColumn={false}
         onCancel={onCancel}
-        defaultValue={currentValues}
+        stepDefaults={currentValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />

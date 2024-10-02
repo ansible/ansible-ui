@@ -3,10 +3,10 @@ import { InventorySource } from '../../interfaces/InventorySource';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../interfaces/LaunchConfiguration';
 import { Project } from '../../interfaces/Project';
-import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
-import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
 import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
+import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
 
 export enum Frequency {
   YEARLY = 0,
@@ -47,7 +47,7 @@ export interface RuleFields {
 export interface ScheduleFormWizard {
   resourceInventory?: number;
   name: string;
-  description?: string;
+  description?: string | null;
   schedule_type: string;
   resource: ScheduleResources;
   startDateTime: { date: string; time: string };

@@ -10,27 +10,28 @@ import {
   usePageAlertToaster,
 } from '../../../../../framework';
 import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
+import { requestGet } from '../../../../common/crud/Data';
+import { RequestError } from '../../../../common/crud/RequestError';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxError } from '../../../common/AwxError';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
-import type { JobTemplate } from '../../../interfaces/JobTemplate';
-import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import type { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { Credential } from '../../../interfaces/Credential';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
-import { useLabelPayload } from '../hooks/useLabelPayload';
-import { TemplateLaunchPromptStep } from './steps/TemplateLaunchPromptStep';
 import { PromptFormValues } from '../WorkflowVisualizer/types';
-import { CredentialPasswordsStep, TemplateLaunchReviewStep } from './steps';
-import { requestGet } from '../../../../common/crud/Data';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { RequestError } from '../../../../common/crud/RequestError';
-import { Credential } from '../../../interfaces/Credential';
 import { shouldHideOtherStep } from '../WorkflowVisualizer/wizard/helpers';
+import { useLabelPayload } from '../hooks/useLabelPayload';
+import { CredentialPasswordsStep, TemplateLaunchReviewStep } from './steps';
+import { NodePromptsStep as PromptStep } from '../WorkflowVisualizer/wizard/NodePromptsStep';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -52,7 +53,7 @@ export const formFieldToLaunchConfig = {
 };
 
 export interface TemplateLaunch {
-  resource: JobTemplate;
+  resource: JobTemplate | WorkflowJobTemplate;
   prompt: PromptFormValues;
   survey: { [key: string]: string | string[] };
   credential_passwords: { [key: string]: string };
@@ -114,7 +115,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
         const labelPayload = await createLabelPayload(prompt?.labels || [], template);
 
         let payload: Partial<LaunchPayload> = {};
-        const setValue = <K extends LaunchPayloadProperty>(key: K, value: LaunchPayload[K]) => {
+        const setValue = <K extends LaunchPayloadProperty>(key: K, value?: LaunchPayload[K]) => {
           const isValid = typeof value !== 'undefined' && value !== null;
           if (!isValid) {
             return;
@@ -140,7 +141,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           setValue('credential_passwords', credential_passwords);
           setValue('diff_mode', prompt.diff_mode);
           prompt?.execution_environment &&
-            setValue('execution_environment', prompt.execution_environment);
+            setValue('execution_environment', prompt.execution_environment.id);
           setValue('extra_vars', prompt?.extra_vars);
           setValue('forks', prompt?.forks);
           setValue(
@@ -224,28 +225,30 @@ export function LaunchWizard({
     isReadOnly: true,
   }));
 
-  const initialValues = {
-    resource: template,
-    credential_passwords: {},
-    prompt: {
-      inventory: defaults.inventory.id ? defaults.inventory : null,
-      credentials: defaults?.credentials,
-      execution_environment: defaults.execution_environment?.id,
-      instance_groups: defaults.instance_groups,
-      diff_mode: defaults.diff_mode,
-      scm_branch: defaults.scm_branch,
-      extra_vars: defaults.extra_vars,
-      forks: defaults.forks,
-      job_slice_count: defaults.job_slice_count,
-      job_tags: parseStringToTagArray(defaults.job_tags),
-      job_type: defaults.job_type,
-      labels: readOnlyLabels,
-      limit: defaults.limit,
-      skip_tags: parseStringToTagArray(defaults.skip_tags),
-      timeout: defaults.timeout,
-      verbosity: defaults.verbosity,
+  const initialValues: { [stepId: string]: Partial<TemplateLaunch> } = {
+    nodePromptsStep: {
+      resource: template,
+      prompt: {
+        inventory: defaults.inventory.id ? defaults.inventory : null,
+        credentials: defaults?.credentials,
+        execution_environment: defaults.execution_environment,
+        instance_groups: defaults.instance_groups,
+        diff_mode: defaults.diff_mode,
+        scm_branch: defaults.scm_branch,
+        extra_vars: defaults.extra_vars,
+        forks: defaults.forks,
+        job_slice_count: defaults.job_slice_count,
+        job_tags: parseStringToTagArray(defaults.job_tags),
+        job_type: defaults.job_type,
+        labels: readOnlyLabels,
+        limit: defaults.limit,
+        skip_tags: parseStringToTagArray(defaults.skip_tags),
+        timeout: defaults.timeout,
+        verbosity: defaults.verbosity,
+      },
+      launch_config: config,
     },
-    launch_config: config,
+    credential_passwords: {},
     survey: {},
   };
   const credentialVaultId = function (
@@ -276,7 +279,7 @@ export function LaunchWizard({
     {
       id: 'nodePromptsStep',
       label: t('Prompts'),
-      inputs: <TemplateLaunchPromptStep defaultValues={initialValues} />,
+      inputs: <PromptStep />,
       hidden: () => shouldHideOtherStep(config),
       validate: async (formData) => {
         const missingCredentialTypes: string[] = [];
@@ -392,7 +395,7 @@ export function LaunchWizard({
       />
       <PageWizard<TemplateLaunch>
         steps={steps}
-        defaultValue={initialValues}
+        stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />

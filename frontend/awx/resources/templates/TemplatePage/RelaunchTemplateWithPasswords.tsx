@@ -1,6 +1,6 @@
+import { LabelGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import {
   LoadingPage,
   PageDetail,
@@ -12,16 +12,16 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
 } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
 import { useGet } from '../../../../common/crud/useGet';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { UnifiedJob } from '../../../interfaces/UnifiedJob';
-import { Job } from '../../../interfaces/Job';
-import { AwxError } from '../../../common/AwxError';
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxError } from '../../../common/AwxError';
+import { Job } from '../../../interfaces/Job';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { CredentialPasswordsStep } from './steps';
-import { LabelGroup } from '@patternfly/react-core';
 import { CredentialDetail } from './steps/TemplateLaunchReviewStep';
 export interface LaunchPayload {
   credential_passwords: { [key: string]: string };
@@ -117,7 +117,7 @@ export function RelaunchTemplate() {
       />
       <PageWizard<LaunchPayload>
         steps={steps}
-        defaultValue={initialValues}
+        stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />

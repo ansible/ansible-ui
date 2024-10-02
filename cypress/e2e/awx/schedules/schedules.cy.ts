@@ -427,7 +427,7 @@ describe('Schedules - Create and Delete', () => {
     });
 
     //https://issues.redhat.com/browse/AAP-28740
-    it.skip('can create a complex schedule and navigate to details page', () => {
+    it('can create a complex schedule and navigate to details page', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
@@ -481,8 +481,11 @@ describe('Schedules - Create and Delete', () => {
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.getByDataCy('next-occurrence-timestamps-column-header')
           .should('be.visible')
-          .and('contain', 'Rules');
-        cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+          .and('contain', 'Next occurrence timestamps');
+        cy.get("[data-cy='next-occurrence-timestamps-column-cell']").should(
+          'have.descendants',
+          'ul'
+        );
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.clickButton(/^Next$/);
@@ -497,7 +500,7 @@ describe('Schedules - Create and Delete', () => {
       cy.selectDropdownOptionByResourceName('freq', 'Yearly');
       cy.getByDataCy('add-rule-button').click();
       cy.get('tr[data-cy="row-id-1"]').within(() => {
-        cy.get('td[data-cy="rrule-column-cell"]').should(
+        cy.get('td[data-cy="exrule-column-cell"]').should(
           'contains.text',
           'RRULE:FREQ=YEARLY;INTERVAL=200'
         );
@@ -505,8 +508,8 @@ describe('Schedules - Create and Delete', () => {
       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
         cy.getByDataCy('next-exclusion-timestamps-column-header')
           .should('be.visible')
-          .and('contain', 'Exceptions');
-        cy.getByDataCy('exceptions-column-cell').should('have.descendants', 'ul');
+          .and('contain', 'Next exclusion timestamps');
+        cy.getByDataCy('next-exclusion-timestamps-column-cell').should('have.descendants', 'ul');
         cy.get('tbody tr').should('have.length', 1);
       });
       cy.clickButton(/^Next$/);
@@ -555,8 +558,8 @@ describe('Schedules - Create and Delete', () => {
         .within(() => {
           cy.getByDataCy('next-occurrence-timestamps-column-header')
             .should('be.visible')
-            .and('contain', 'Rules');
-          cy.getByDataCy('rules-column-cell').should('have.descendants', 'ul');
+            .and('contain', 'Next occurrence timestamps');
+          cy.getByDataCy('next-occurrence-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1);
         });
 
@@ -566,8 +569,8 @@ describe('Schedules - Create and Delete', () => {
         .within(() => {
           cy.getByDataCy('next-exclusion-timestamps-column-header')
             .should('be.visible')
-            .and('contain', 'Exceptions');
-          cy.getByDataCy('exceptions-column-cell').should('have.descendants', 'ul');
+            .and('contain', 'Next exclusion timestamps');
+          cy.getByDataCy('next-exclusion-timestamps-column-cell').should('have.descendants', 'ul');
           cy.get('tbody tr').should('have.length', 1);
         });
     });

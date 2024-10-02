@@ -1,18 +1,15 @@
-import { useParams } from 'react-router-dom';
-import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
-import { ScheduleResourceInputs } from '../components/ScheduleResourceInputs';
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { ScheduleFormWizard, ScheduleResourceType, ScheduleResources } from '../types';
-import { Dispatch, SetStateAction, useEffect } from 'react';
-import { requestGet } from '../../../../common/crud/Data';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { PageWizardStep } from '../../../../../framework';
-import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { requestGet } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
+import { ScheduleResourceInputs } from '../components/ScheduleResourceInputs';
+import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
+import { ScheduleFormWizard, ScheduleResources } from '../types';
+import { useParams } from 'react-router-dom';
+import { InventorySource } from '../../../interfaces/InventorySource';
 
 /**
  *
@@ -27,38 +24,13 @@ export function ScheduleSelectStep(props: {
   isTopLevelSchedule?: boolean;
 }) {
   const isTopLevelScheduleForm = props.isTopLevelSchedule;
+  const resource = useWatch<ScheduleFormWizard, 'resource'>({ name: 'resource' });
+  const params = useParams<{ id?: string; source_id: string; schedule_id?: string }>();
+  const { setValue } = useFormContext();
+  const { setStepData } = usePageWizard<ScheduleFormWizard>();
 
-  const params = useParams();
-  const { reset, getValues, setValue, formState, getFieldState, register, control } =
-    useFormContext<ScheduleFormWizard>();
-  const { defaultValues } = formState;
-  const resource = useWatch({ name: 'resource' }) as ScheduleResources;
-  const {
-    setWizardData,
-    setStepData,
-    stepData,
-    steps: allSteps,
-  } = usePageWizard() as {
-    setWizardData: Dispatch<SetStateAction<ScheduleFormWizard>>;
-    setStepData: (
-      data:
-        | Record<'details', Partial<ScheduleFormWizard>>
-        | Record<'promptStep', { prompt: PromptFormValues }>
-    ) => void;
-
-    stepData: {
-      details?: Partial<ScheduleFormWizard>;
-      promptStep?: { prompt: PromptFormValues };
-    };
-    wizardData: Partial<ScheduleFormWizard>;
-    visibleSteps: PageWizardStep[];
-    steps: PageWizardStep[];
-  };
-
-  // Register form fields
-  register('schedule_type');
-  register('resource');
-  register('prompt');
+  // When the resource changes,
+  // we need to set the promptStep default values to the launch configuration defaults
   useEffect(() => {
     if (resource || !params?.id || props.resourceEndPoint === undefined) return;
     const getResource = async () => {
@@ -72,130 +44,73 @@ export function ScheduleSelectStep(props: {
           `${props.resourceEndPoint ?? ''}${params?.id}/`
         );
       }
-      reset(
-        {
-          ...defaultValues,
+
+      setStepData((prev) => ({
+        ...prev,
+        details: {
+          ...prev.details,
           schedule_type: scheduleResource.type,
           resource: scheduleResource,
         },
-        { keepDefaultValues: false }
-      );
+      }));
+      setValue('resource', scheduleResource);
     };
 
     void getResource();
-  }, [params, resource, defaultValues, props.resourceEndPoint, reset, setValue]);
-
-  const scheduleType = useWatch<ScheduleFormWizard>({
-    name: 'schedule_type',
-    control,
-    defaultValue: defaultValues?.schedule_type,
-  }) as ScheduleResourceType;
+  }, [params, resource, props.resourceEndPoint, setStepData, setValue]);
 
   useEffect(() => {
-    const { isDirty, isTouched } = getFieldState('schedule_type');
-    const currentFormValues = getValues();
-
-    setValue('schedule_type', scheduleType, { shouldTouch: true });
-
-    if (isTouched && !isDirty) {
-      reset(undefined, {
-        keepDefaultValues: true,
-      });
-      setWizardData({ ...currentFormValues, launch_config: null });
-      setStepData({ ...stepData, details: currentFormValues });
-    }
-  }, [
-    scheduleType,
-    getFieldState,
-    setValue,
-    reset,
-    allSteps,
-    setWizardData,
-    setStepData,
-    getValues,
-    stepData,
-  ]);
-
-  useEffect(() => {
-    /** Only job templates and workflow job templates need to be able to fetch
-     * the launch configuration.
-     */
-    const resourceIsNotATemplate =
-      resource?.type !== 'job_template' && resource?.type !== 'workflow_job_template';
-
-    if (
-      !resource?.id ||
-      (resourceIsNotATemplate &&
-        !props.resourceEndPoint?.includes('/job_template') &&
-        !props.resourceEndPoint?.includes('/workflow_job_template'))
-    ) {
-      return;
-    }
-    const setLaunchToWizardData = async () => {
-      let endPoint = '';
-      resource.type === 'job_template'
-        ? (endPoint = awxAPI`/job_templates/${resource.id.toString()}/launch/`)
-        : resource.type === 'workflow_job_template'
-          ? (endPoint = awxAPI`/workflow_job_templates/${resource.id.toString()}/launch/`)
-          : (endPoint = `${props.resourceEndPoint ?? ''}/${resource.id.toString()}/launch/`);
-      let launchConfigValue = {} as PromptFormValues;
-
-      const launchConfigResults = await requestGet<LaunchConfiguration>(endPoint);
-
-      const {
-        job_tags = '',
-        skip_tags = '',
-        inventory,
-        ...defaults
-      } = launchConfigResults.defaults;
-
-      launchConfigValue = {
-        ...defaults,
-        instance_groups: defaults.instance_groups || [],
-        execution_environment: defaults.execution_environment?.id,
-        inventory: inventory?.id ? inventory : null,
-        job_tags: parseStringToTagArray(job_tags || ''),
-        skip_tags: parseStringToTagArray(skip_tags || ''),
-      };
-      const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
-      const shouldShowSurveyStep = launchConfigResults.survey_enabled;
-      if (shouldShowPromptStep || shouldShowSurveyStep) {
-        setWizardData((prev) => ({
-          ...prev,
-          launch_config: launchConfigResults,
-        }));
-
-        if (stepData.promptStep && resource) {
-          const { isDirty: isNodeTypeDirty } = getFieldState('schedule_type');
-          if (!isNodeTypeDirty && resource?.id === defaultValues?.resource?.id) {
-            setValue('prompt', { ...stepData.promptStep?.prompt });
-          } else {
-            /**  If the node type is not dirty and the node resource is not the same as the default value,
-             * and the wizard data is not the same as the default value, then reset the prompt to the default value
-             * else, set the prompt data to the current data.
-             */
-            setValue('prompt', launchConfigValue);
-          }
-        }
-      } else {
-        setWizardData((prev) => ({ ...prev, launch_config: null }));
+    async function updatePromptStep() {
+      if (
+        !resource?.id ||
+        (resource.type !== 'job_template' && resource.type !== 'workflow_job_template')
+      ) {
+        return;
       }
-    };
+      const endPoint =
+        resource.type === 'job_template'
+          ? awxAPI`/job_templates/${resource.id.toString()}/launch/`
+          : awxAPI`/workflow_job_templates/${resource.id.toString()}/launch/`;
+      const launchConfig = await requestGet<LaunchConfiguration>(endPoint);
+      const defaults = launchConfig.defaults;
+      const readOnlyLabels = defaults?.labels?.map((label) => ({
+        ...label,
+        isReadOnly: true,
+      }));
+      setStepData((prev) => {
+        return {
+          ...prev,
+          promptStep: {
+            prompt: {
+              inventory: defaults?.inventory?.id ? defaults.inventory : null,
+              credentials: defaults?.credentials,
+              execution_environment: defaults.execution_environment,
+              instance_groups: defaults.instance_groups,
+              diff_mode: defaults.diff_mode,
+              scm_branch: defaults.scm_branch,
+              extra_vars: defaults.extra_vars,
+              forks: defaults.forks,
+              job_slice_count: defaults.job_slice_count,
+              job_tags: parseStringToTagArray(defaults.job_tags),
+              job_type: defaults.job_type,
+              labels: readOnlyLabels,
+              limit: defaults.limit,
+              skip_tags: parseStringToTagArray(defaults.skip_tags),
+              timeout: defaults.timeout,
+              verbosity: defaults.verbosity,
+            },
+            resource,
+            launch_config: launchConfig,
+          },
+          resource,
+        };
+      });
 
-    void setLaunchToWizardData();
-  }, [
-    allSteps,
-    defaultValues,
-    getFieldState,
-    getValues,
-    resource,
-    scheduleType,
-    setValue,
-    setWizardData,
-    stepData,
-    isTopLevelScheduleForm,
-    props.resourceEndPoint,
-  ]);
+      setValue('schedule_type', resource.type);
+      setValue('launch_config', launchConfig);
+    }
+    void updatePromptStep();
+  }, [props.resourceEndPoint, resource, setStepData, setValue]);
   return (
     <>
       {isTopLevelScheduleForm ? (

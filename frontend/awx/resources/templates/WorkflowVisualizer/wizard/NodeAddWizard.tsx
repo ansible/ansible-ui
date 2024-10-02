@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { PageWizard, PageWizardStep } from '../../../../../../framework';
 import { RequestError } from '../../../../../common/crud/RequestError';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { SurveyStep } from '../../../../common/SurveyStep';
+import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 import { NODE_DIAMETER, RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
 import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
+import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import { SurveyStep } from '../../../../common/SurveyStep';
-import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
-import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -34,7 +34,7 @@ interface NewGraphNode extends NodeModel {
         };
       };
     };
-    launch_data: PromptFormValues;
+    launch_data: Partial<PromptFormValues>;
     survey_data: { [key: string]: string | string[] };
   };
 }
@@ -238,7 +238,7 @@ export function NodeAddWizard() {
       steps={steps}
       onCancel={closeSidebar}
       onSubmit={handleSubmit}
-      defaultValue={initialValues}
+      stepDefaults={initialValues}
       errorAdapter={awxErrorAdapter}
       title={t('Add step')}
     />

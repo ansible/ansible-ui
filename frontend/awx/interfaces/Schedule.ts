@@ -31,6 +31,7 @@ export interface Schedule
     created_by: SummaryFieldsByUser;
     modified_by: SummaryFieldsByUser;
     inventory?: SummaryFieldInventory;
+    execution_environment?: { id: number; name: string; image: string; description: string };
   };
   extra_data: {
     days?: number;

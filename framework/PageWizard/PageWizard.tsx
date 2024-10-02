@@ -7,11 +7,14 @@ import { PageWizardProvider } from './PageWizardProvider';
 import { PageWizardToggle } from './PageWizardToggle';
 import type { PageWizardStep } from './types';
 
-export function PageWizard<T extends object>(props: {
+export function PageWizard<DataT extends NonNullable<object>>(props: {
   steps: PageWizardStep[];
-  defaultValue?: Record<string, object>;
+
+  /** An object with default values for each step, using the step ID as the key. */
+  stepDefaults?: { [stepID: string]: Partial<DataT> };
+
   onCancel?: () => void;
-  onSubmit: (wizardData: T) => Promise<void>;
+  onSubmit: (wizardData: DataT) => Promise<void>;
   errorAdapter?: ErrorAdapter;
   disableGrid?: boolean;
   title?: string;
@@ -19,9 +22,9 @@ export function PageWizard<T extends object>(props: {
   singleColumn?: boolean;
 }) {
   return (
-    <PageWizardProvider<T>
+    <PageWizardProvider<DataT>
       steps={props.steps}
-      defaultValue={props.defaultValue}
+      stepDefaults={props.stepDefaults}
       onSubmit={props.onSubmit}
     >
       <div

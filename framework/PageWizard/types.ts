@@ -1,8 +1,8 @@
-import { SetStateAction } from 'react';
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 
 export interface PageWizardBasicStep {
   id: string;
+  idOfparentStep?: string /*This is used to index PageWizard Stepdata, or wizardData, set data on a nested step field.   */;
   label: string;
   inputs?: React.ReactNode;
   element?: React.ReactNode;
@@ -21,29 +21,6 @@ export interface PageWizardParentStep extends Omit<PageWizardBasicStep, 'inputs'
 }
 
 export type PageWizardStep = PageWizardBasicStep | PageWizardParentStep;
-
-export interface PageWizardState {
-  activeStep: PageWizardStep | null;
-  isToggleExpanded: boolean;
-  setActiveStep: (step: PageWizardStep) => void;
-  setStepData: React.Dispatch<SetStateAction<Record<string, object>>>;
-  setStepError: React.Dispatch<SetStateAction<Record<string, object>>>;
-  setToggleExpanded: (update: (toggleNavExpanded: boolean) => boolean) => void;
-  setWizardData: (data: object) => void;
-  stepData: Record<string, object>;
-  stepError: Record<string, object>;
-  steps: PageWizardStep[];
-  // Top-level visible steps (including parent steps of substeps)
-  visibleSteps: PageWizardStep[];
-  // Flattened list containing all visible steps including substeps
-  visibleStepsFlattened: PageWizardStep[];
-  wizardData: object;
-  onNext: (formState: object) => Promise<void>;
-  onBack: () => void;
-  submitError?: Error | undefined;
-  setSubmitError: React.Dispatch<SetStateAction<Error | undefined>>;
-  isSubmitting: boolean;
-}
 
 export interface PageWizardBody {
   onCancel?: () => void;
