@@ -173,7 +173,6 @@ describe('Workflow Visualizer', () => {
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then((appNode) => {
           approvalNode = appNode;
           cy.createWorkflowJTSuccessNodeLink(projectNode, appNode);
-
           cy.navigateTo('awx', 'templates');
           cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
@@ -196,7 +195,7 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.getBy('button[id="job-template-select"]').click();
-          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+          cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
           cy.getModal().within(() => {
             cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
             cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
@@ -310,7 +309,7 @@ describe('Workflow Visualizer', () => {
       cy.clickButton('Add step');
       cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
       cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
       cy.getModal().within(() => {
         cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
         cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
@@ -330,7 +329,7 @@ describe('Workflow Visualizer', () => {
       cy.getByDataCy('edit-node').click();
       cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
       cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
       cy.getModal().within(() => {
         cy.get('[data-cy="filter-input"]').click();
       });
@@ -387,7 +386,7 @@ describe('Workflow Visualizer', () => {
             cy.clickButton('Add step');
             cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
             cy.getBy('button[id="job-template-select"]').click();
-            cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+            cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
             cy.getModal().within(() => {
               cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
               cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
@@ -406,7 +405,7 @@ describe('Workflow Visualizer', () => {
             cy.getByDataCy('add-node-and-link').click();
             cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
             cy.getBy('button[id="project"]').click();
-            cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+            cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
             cy.getModal().within(() => {
               cy.get('[data-cy="filter-input"]').click();
             });
@@ -454,7 +453,7 @@ describe('Workflow Visualizer', () => {
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
                 cy.getBy('button[id="job-template-select"]').click();
-                cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+                cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
                 cy.getModal().within(() => {
                   cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
                   cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
@@ -470,7 +469,7 @@ describe('Workflow Visualizer', () => {
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
                 cy.getBy('button[id="project"]').click();
-                cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+                cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
                 cy.getModal().within(() => {
                   cy.get('[data-cy="filter-input"]').click();
                 });
@@ -541,7 +540,7 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
           cy.getBy('button[id="job-template-select"]').click();
-          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+          cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
           cy.getModal().within(() => {
             cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
             cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');

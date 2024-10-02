@@ -142,8 +142,10 @@ export class ReusableTemplateSurveyTestSuite {
         });
       });
       cy.clickToolbarKebabAction('manage-question-order');
-      cy.get('#draggable-row-Foo').drag('#draggable-row-Baz');
-      cy.clickButton('Apply');
+      cy.getModal().within(() => {
+        cy.get('#draggable-row-Foo').drag('#draggable-row-Baz');
+        cy.clickButton('Apply');
+      });
       ['Bar', 'Baz', 'Foo'].forEach((spec, index) => {
         cy.getByDataCy(`row-${index}`).within(() => {
           cy.getByDataCy('name-column-cell').contains(spec);

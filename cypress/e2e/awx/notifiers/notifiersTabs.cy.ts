@@ -66,6 +66,7 @@ describe('Notifications', () => {
       cy.createAwxOrganization({ name: orgName }).then(() => {
         cy.navigateTo('awx', 'notification-templates');
         cy.get(`[data-cy="create-notifier"]`).click();
+        cy.url().should('contain', '/create');
         cy.verifyPageTitle('Create notifier');
         cy.get(`[data-cy="name"]`).type(notificationName);
         cy.get(`[data-cy="description"]`).type('this is test description');

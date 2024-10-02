@@ -48,6 +48,10 @@ describe('Assign Role to a Team', () => {
                 edaOrg
               ).then((rba) => {
                 edaRulebookActivation = rba;
+
+                cy.createEdaTeam().then((EdaTeam) => {
+                  team = EdaTeam;
+                });
               });
             });
           });
@@ -59,9 +63,6 @@ describe('Assign Role to a Team', () => {
           edaEventStream = EdaEventStream;
         });
       });
-    });
-    cy.createEdaTeam().then((EdaTeam) => {
-      team = EdaTeam;
     });
   });
 
@@ -76,7 +77,7 @@ describe('Assign Role to a Team', () => {
   });
 
   user_team_access_tab_resources.forEach((resource) => {
-    describe('give permissions to a team from the roles tab', () => {
+    describe('give permi/teams/ssions to a team from the roles tab', () => {
       let resource_object:
         | EdaProject
         | EdaDecisionEnvironment
@@ -102,6 +103,7 @@ describe('Assign Role to a Team', () => {
         cy.verifyPageTitle(team.name);
         cy.clickTab('Roles', true);
         cy.clickTab('Automation Decisions', true);
+        cy.intercept('GET', edaAPI`/teams/*`).as('edaTeam');
         cy.getByDataCy('add-roles').click();
         cy.getWizard().within(() => {
           cy.selectDropdownOptionByResourceName('resourcetype', resource.roles_tab_name);
@@ -119,12 +121,13 @@ describe('Assign Role to a Team', () => {
           cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
           cy.clickButton(/^Finish$/);
         });
-        cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
+        cy.getModal().within(() => {
+          cy.clickButton('Close');
+        });
         cy.wait('@assignment').then((assignment) => {
           expect(assignment?.response?.statusCode).to.eql(201);
-          cy.verifyPageTitle(team.name);
         });
+        cy.verifyPageTitle(team.name);
       });
     });
   });

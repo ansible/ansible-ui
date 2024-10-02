@@ -40,8 +40,8 @@ describe('GalaxyKit Installation Check for My Imports', () => {
           validCollection.version,
           'staging'
         );
+        cy.waitForAllTasks();
       });
-      cy.waitForAllTasks();
     });
 
     after(() => {

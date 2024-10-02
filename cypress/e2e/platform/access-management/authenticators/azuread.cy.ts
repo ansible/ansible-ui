@@ -1,4 +1,5 @@
 import { AzureAD } from '../../../../../platform/interfaces/AzureAD';
+import { gatewayAPI } from '../../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('Azure AD Authentication form - create, edit, update and delete', () => {
@@ -34,9 +35,11 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
       cy.navigateTo('platform', 'authentications');
 
       // Enable the Azure AD authenticator
+      cy.intercept('PATCH', gatewayAPI`/authenticators/*/`).as('editedAuth');
       cy.getTableRow('name', azureAdAuthenticator).within(() => {
         cy.get('[data-cy=toggle-switch]').click();
       });
+      cy.wait('@editedAuth');
     });
 
     // Logout

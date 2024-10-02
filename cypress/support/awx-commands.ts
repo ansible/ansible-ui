@@ -547,7 +547,12 @@ Cypress.Commands.add('assertModalSuccess', () => {
 
 Cypress.Commands.add('clickPageAction', (dataCy: string) => {
   cy.getByDataCy('actions-dropdown').click();
-  cy.getByDataCy(dataCy).click();
+  cy.document()
+    .its('body')
+    .find('.pf-v5-c-menu__content ul[role="menu"]')
+    .within(() => {
+      cy.getBy(`[data-cy="${dataCy}"] button`).click();
+    });
 });
 
 Cypress.Commands.add(
