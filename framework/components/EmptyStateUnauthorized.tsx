@@ -1,5 +1,6 @@
-import React from 'react';
 import { LockIcon } from '@patternfly/react-icons';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { EmptyStateCustom } from './EmptyStateCustom';
 
 export function EmptyStateUnauthorized(props: {
@@ -7,8 +8,9 @@ export function EmptyStateUnauthorized(props: {
   loginLink?: React.ReactNode;
   title?: string;
 }) {
-  const defaultAdminMessage = 'Contact your organization administrator for more information.';
-  const defaultTitle = 'You do not have access';
+  const { t } = useTranslation();
+  const defaultAdminMessage = t('Contact your organization administrator for more information.');
+  const defaultTitle = t('You do not have access');
 
   const { adminMessage, loginLink, title } = props;
 
