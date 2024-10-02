@@ -1,5 +1,4 @@
-import { SetStateAction, useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
   PageFormDataEditor,
@@ -9,77 +8,33 @@ import {
   PageFormTextInput,
 } from '../../../../../../framework';
 import { PageFormCreatableSelect } from '../../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
 import { PageFormLabelSelect } from '../../../../common/PageFormLabelSelect';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
-import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { ConditionalField } from '../../TemplatePage/steps/ConditionalField';
 import { PromptFormValues, WizardFormValues } from '../types';
 
+type NodePromptStepData = {
+  resource: JobTemplate | WorkflowJobTemplate;
+  prompt: PromptFormValues;
+  launch_config: LaunchConfiguration;
+};
+
 export function NodePromptsStep() {
   const { t } = useTranslation();
-  const { wizardData, setStepData } = usePageWizard() as {
-    wizardData: WizardFormValues;
-    setStepData: React.Dispatch<SetStateAction<Record<string, object>>>;
-  };
-  const { reset } = useFormContext<WizardFormValues>();
-  const promptForm = useWatch<{ prompt: PromptFormValues }>({ name: 'prompt' });
 
-  const { launch_config: config, resource, prompt } = wizardData;
-  const template = resource as JobTemplate | WorkflowJobTemplate;
+  const config = useWatch<NodePromptStepData, 'launch_config'>({ name: 'launch_config' });
+
+  const template = useWatch<NodePromptStepData, 'resource'>({
+    name: 'resource',
+  });
   const organizationId = template?.organization ?? null;
-
-  useEffect(() => {
-    setStepData((prev) => ({
-      ...prev,
-      nodePromptsStep: {
-        prompt: promptForm,
-      },
-    }));
-  }, [promptForm, setStepData]);
-
-  useEffect(() => {
-    if (!config || !config?.defaults) return;
-    const { defaults } = config;
-
-    const readOnlyLabels = defaults?.labels?.map((label) => ({
-      ...label,
-      isReadOnly: true,
-    }));
-    const defaultPromptValues = {
-      credentials: prompt?.credentials ?? defaults.credentials,
-      diff_mode: prompt?.diff_mode ?? defaults.diff_mode,
-      execution_environment: prompt?.execution_environment ?? defaults.execution_environment?.id,
-      extra_vars: prompt?.extra_vars ?? defaults.extra_vars,
-      forks: prompt?.forks ?? defaults.forks,
-      instance_groups: prompt?.instance_groups ?? defaults.instance_groups,
-      inventory: prompt?.inventory ?? (defaults.inventory.id ? defaults.inventory : null),
-      job_slice_count: prompt?.job_slice_count ?? defaults.job_slice_count,
-      job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults.job_tags),
-      job_type: prompt?.job_type ?? defaults.job_type,
-      labels: prompt?.labels ?? readOnlyLabels,
-      limit: prompt?.limit ?? defaults.limit,
-      organization: prompt?.organization ?? organizationId,
-      scm_branch: prompt?.scm_branch ?? defaults.scm_branch,
-      skip_tags: prompt?.skip_tags ?? parseStringToTagArray(defaults.skip_tags),
-      timeout: prompt?.timeout ?? defaults.timeout,
-      verbosity: prompt?.verbosity ?? defaults.verbosity,
-      defaults,
-    };
-
-    setStepData((prev) => ({
-      ...prev,
-      nodePromptsStep: {
-        prompt: defaultPromptValues,
-      },
-    }));
-    reset({ prompt: defaultPromptValues });
-  }, [reset, organizationId, setStepData, config, prompt]);
 
   if (!config || !template) {
     return null;
@@ -103,7 +58,7 @@ export function NodePromptsStep() {
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_execution_environment_on_launch}>
         <PageFormSelectExecutionEnvironment<WizardFormValues>
-          name="prompt.execution_environment"
+          name="prompt.execution_environment.id"
           organizationId={organizationId}
         />
       </ConditionalField>

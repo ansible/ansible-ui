@@ -78,7 +78,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
 
   const { data: ee } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
-    prompt?.execution_environment ?? ''
+    prompt?.execution_environment.id ?? ''
   );
   const { data: fullInventory } = useGetItem<Inventory>(
     awxAPI`/inventories/`,
@@ -138,7 +138,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       <PageDetail label={t`Execution environment`} isEmpty={isEmpty(prompt?.execution_environment)}>
         <Link
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: prompt?.execution_environment ? { id: prompt?.execution_environment } : {},
+            params: prompt?.execution_environment ? { id: prompt?.execution_environment.id } : {},
           })}
         >
           {ee?.name}

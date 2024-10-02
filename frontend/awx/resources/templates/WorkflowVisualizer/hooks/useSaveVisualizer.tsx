@@ -223,7 +223,7 @@ export function useSaveVisualizer(templateId: string) {
 
         // Prompt values
         setValue('diff_mode', launch_data?.diff_mode, true);
-        setValue('execution_environment', launch_data?.execution_environment, true);
+        setValue('execution_environment', launch_data?.execution_environment?.id, true);
         setValue('forks', launch_data?.forks, true);
         setValue('inventory', launch_data?.inventory?.id, true);
         setValue('job_slice_count', launch_data?.job_slice_count, true);
@@ -317,7 +317,7 @@ export function useSaveVisualizer(templateId: string) {
 
           // Prompt values
           setValue('diff_mode', launch_data?.diff_mode, true);
-          setValue('execution_environment', launch_data?.execution_environment, true);
+          setValue('execution_environment', launch_data?.execution_environment?.id, true);
           setValue('forks', launch_data?.forks, true);
           setValue('inventory', launch_data?.inventory?.id, true);
           setValue('job_slice_count', launch_data?.job_slice_count, true);
@@ -623,7 +623,7 @@ const useProcessLabels = () => {
     async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
       const hasLabelsPrompt =
         launch_data?.original?.launch_config?.ask_labels_on_launch ||
-        launch_data?.labels?.length > 0;
+        (launch_data?.labels && launch_data?.labels?.length > 0);
       const existingLabels = launch_data?.original?.labels;
 
       if (hasLabelsPrompt) {
@@ -685,7 +685,7 @@ const useProcessInstanceGroups = () => {
     async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
       const hasInstanceGroupsPrompt =
         launch_data?.original?.launch_config?.ask_instance_groups_on_launch ||
-        launch_data?.instance_groups?.length > 0;
+        (launch_data?.instance_groups && launch_data?.instance_groups?.length > 0);
       const existingInstanceGroups = launch_data?.original?.instance_groups;
 
       if (hasInstanceGroupsPrompt) {

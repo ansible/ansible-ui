@@ -76,8 +76,10 @@ export function PlatformOrganizationManageTeamRoles() {
   // Set default selections in the wizard
   const defaultValue = useMemo(
     () => ({
-      awxRoles: selectedAwxRoles ? selectedAwxRoles : [],
-      edaRoles: selectedEdaRoles ? selectedEdaRoles : [],
+      roles: {
+        awxRoles: selectedAwxRoles ? selectedAwxRoles : [],
+        edaRoles: selectedEdaRoles ? selectedEdaRoles : [],
+      },
     }),
     [selectedAwxRoles, selectedEdaRoles]
   );
@@ -97,6 +99,7 @@ export function PlatformOrganizationManageTeamRoles() {
                 {
                   id: 'awxRoles',
                   label: t('Automation Execution'),
+                  idOfparentStep: 'roles',
                   inputs: (
                     <AwxSelectRolesStep
                       contentType="organization"
@@ -111,6 +114,7 @@ export function PlatformOrganizationManageTeamRoles() {
                 {
                   id: 'edaRoles',
                   label: t('Automation Decisions'),
+                  idOfparentStep: 'roles',
                   inputs: (
                     <EdaSelectRolesStep
                       contentType="organization"
@@ -347,7 +351,7 @@ export function PlatformOrganizationManageTeamRoles() {
             params: { id: organization.id.toString() },
           });
         }}
-        defaultValue={defaultValue}
+        stepDefaults={defaultValue}
         disableGrid
       />
     </PageLayout>

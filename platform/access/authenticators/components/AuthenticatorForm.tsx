@@ -201,7 +201,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
       />
       <PageWizard<AuthenticatorFormValues>
         steps={steps}
-        defaultValue={initialValues}
+        stepDefaults={initialValues}
         onSubmit={props.handleSubmit}
         errorAdapter={authenticatorErrorAdapter}
       />

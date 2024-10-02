@@ -4,14 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '../../../../../../framework';
 import { RequestError } from '../../../../../common/crud/RequestError';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { SurveyStep } from '../../../../common/SurveyStep';
 import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { RESOURCE_TYPE } from '../constants';
 import { useCloseSidebar, useGetInitialValues } from '../hooks';
 import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } from '../types';
-import { NodePromptsStep } from './NodePromptsStep';
-import { NodeReviewStep } from './NodeReviewStep';
-import { NodeTypeStep } from './NodeTypeStep';
-import { SurveyStep } from '../../../../common/SurveyStep';
 import {
   getNodeLabel,
   getValueBasedOnJobType,
@@ -19,6 +16,9 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
+import { NodePromptsStep } from './NodePromptsStep';
+import { NodeReviewStep } from './NodeReviewStep';
+import { NodeTypeStep } from './NodeTypeStep';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -224,7 +224,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       steps={steps}
       onCancel={closeSidebar}
       onSubmit={handleSubmit}
-      defaultValue={initialValues}
+      stepDefaults={initialValues}
       errorAdapter={awxErrorAdapter}
       title={t('Edit step')}
     />

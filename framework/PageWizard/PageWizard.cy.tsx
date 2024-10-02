@@ -43,7 +43,7 @@ describe('PageWizard', () => {
         steps={steps}
         onCancel={onCancel}
         onSubmit={onSubmit}
-        defaultValue={{
+        stepDefaults={{
           inputs: {
             input_1: 'value 1',
             input_2: 'value 2',
@@ -162,7 +162,7 @@ describe('PageWizard', () => {
           steps={stepsWithSubsteps}
           onCancel={onCancel}
           onSubmit={onSubmit}
-          defaultValue={{
+          stepDefaults={{
             inputs: {
               input_1: 'value 1',
               input_2: 'value 2',

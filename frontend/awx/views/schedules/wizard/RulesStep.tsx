@@ -14,10 +14,10 @@ export function RulesStep() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean | number>(false);
   const { setValue, getValues } = useFormContext();
-  const { wizardData } = usePageWizard();
+  const { wizardData } = usePageWizard<ScheduleFormWizard>();
 
   const updateRules = useUpdateRules();
-  const { timezone } = wizardData as ScheduleFormWizard;
+  const { timezone } = wizardData;
   const rules = getValues('rules') as RuleListItemType[];
   const hasRules = rules?.length > 0;
   useEffect(() => {

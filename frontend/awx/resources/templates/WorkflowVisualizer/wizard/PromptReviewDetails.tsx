@@ -1,22 +1,22 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { Label, LabelGroup } from '@patternfly/react-core';
-import { AwxRoute } from '../../../../main/AwxRoutes';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { PageDetail, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
 import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
-import type { JobTemplate } from '../../../../interfaces/JobTemplate';
-import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
-import type { WizardFormValues } from '../types';
-import type { Survey } from '../../../../interfaces/Survey';
-import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
+import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import type { Survey } from '../../../../interfaces/Survey';
+import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import type { WizardFormValues } from '../types';
+import { processSurvey } from './helpers';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
@@ -33,43 +33,6 @@ function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
     default:
       return '';
   }
-}
-
-function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
-  const updated = { ...vars };
-  passwordKeys.forEach((key) => {
-    if (typeof updated[key] !== 'undefined') {
-      updated[key] = '$encrypted$';
-    }
-  });
-  return updated;
-}
-
-function processSurvey(
-  extra_vars: string | null,
-  survey: { [key: string]: string | string[] },
-  surveyConfig: Survey | null
-): string {
-  const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
-
-  if (surveyConfig?.spec) {
-    const passwordFields = surveyConfig.spec
-      .filter((q) => q.type === 'password')
-      .map((q) => q.variable);
-
-    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
-    Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
-      updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
-    });
-  }
-
-  const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
-    ...extraVarsObj,
-    ...updatedSurvey,
-  };
-
-  return jsonToYaml(JSON.stringify(mergedData));
 }
 
 export function PromptReviewDetails() {
@@ -103,9 +66,8 @@ export function PromptReviewDetails() {
   const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
   const { data: ee } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
-    String(execution_environment)
+    execution_environment?.id?.toString() ?? ''
   );
-
   const jobTags = typeof job_tags === 'string' ? parseStringToTagArray(job_tags) : job_tags;
   const skipTags = typeof skip_tags === 'string' ? parseStringToTagArray(skip_tags) : skip_tags;
   const verbosityString = useVerbosityString(Number(verbosity));
@@ -117,7 +79,7 @@ export function PromptReviewDetails() {
 
   let extraVarDetails = extra_vars || '{}';
   if (survey) {
-    extraVarDetails = processSurvey(extra_vars, survey, surveyConfig ?? null);
+    extraVarDetails = processSurvey(extra_vars ?? '', survey, surveyConfig ?? null);
   }
 
   if (!template) return null;
@@ -161,7 +123,7 @@ export function PromptReviewDetails() {
       <PageDetail label={t`Execution environment`} isEmpty={isEmpty(execution_environment)}>
         <Link
           to={getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
-            params: { id: execution_environment ? execution_environment.toString() : '' },
+            params: { id: execution_environment ? execution_environment?.id?.toString() : '' },
           })}
         >
           {ee?.name}

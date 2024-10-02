@@ -56,7 +56,7 @@ export interface LaunchConfiguration {
         };
       },
     ];
-    execution_environment: { id: number; name: string } | null;
+    execution_environment: { id: number; name: string } | Record<string, never>;
     forks: number;
     job_slice_count: number;
     timeout: number;

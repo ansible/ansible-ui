@@ -36,7 +36,7 @@ export const useProcessLabels = () => {
 
         const { added, removed } = getAddedAndRemoved(
           existingLabels || [],
-          labels || ([] as Label[])
+          labels ? labels || ([] as Label[]) : []
         );
 
         const disassociationPromises = removed.map((label: { id: number }) =>

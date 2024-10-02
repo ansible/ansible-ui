@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import {
   Label,
   LabelGroup,
@@ -7,27 +6,28 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { PageDetail, useGetPageUrl, TextCell } from '../../../../../../framework';
-import { useGet, useGetItem } from '../../../../../common/crud/useGet';
-import { JobTemplate } from '../../../../interfaces/JobTemplate';
-import { AwxRoute } from '../../../../main/AwxRoutes';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { PageDetail, TextCell, useGetPageUrl } from '../../../../../../framework';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
+import { useGet, useGetItem } from '../../../../../common/crud/useGet';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
-import { useVerbosityString } from '../../../../common/useVerbosityString';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { useVerbosityString } from '../../../../common/useVerbosityString';
 import { Credential } from '../../../../interfaces/Credential';
+import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { Label as ILabel } from '../../../../interfaces/Label';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import { WebhookService } from '../../components/WebhookService';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
-import { GraphNodeData, PromptFormValues } from '../types';
 import { useGetTimeoutString } from '../hooks';
+import { GraphNodeData, PromptFormValues } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
-import { WebhookService } from '../../components/WebhookService';
-import { Link } from 'react-router-dom';
-import { awxAPI } from '../../../../common/api/awx-utils';
-import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -243,7 +243,7 @@ export function JobTemplateDetails({
         templateCredentials={templateCredentials?.results ?? []}
       />
       <InstanceGroupsDetail
-        instanceGroups={instanceGroups}
+        instanceGroups={instanceGroups ?? []}
         templateInstanceGroups={templateInstanceGroups?.results ?? []}
       />
       <PageDetail label={t('Playbook')}>{template.playbook}</PageDetail>

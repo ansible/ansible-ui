@@ -7,15 +7,14 @@ import { PageFormTextInput } from '../../../../../framework';
 import { ScheduleFormWizard } from '../types';
 import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
 import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 export function ScheduleResourceInputs() {
   const { t } = useTranslation();
   const [timezoneMessage, setTimezoneMessage] = useState('');
-  const timeZone = useWatch({ name: 'timezone' }) as string;
-  const resource = useWatch({
+  const timeZone = useWatch<ScheduleFormWizard, 'timezone'>({ name: 'timezone' });
+  const resource = useWatch<ScheduleFormWizard, 'resource'>({
     name: 'resource',
-  }) as SystemJobTemplate;
+  });
   const hasDaysToKeepField =
     resource?.name &&
     (resource.name.includes('Cleanup Activity Stream') ||

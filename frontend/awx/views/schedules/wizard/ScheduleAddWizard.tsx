@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
 import { DateTime } from 'luxon';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   PageHeader,
   PageLayout,
@@ -10,26 +11,25 @@ import {
 } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
+import { postRequest } from '../../../../common/crud/Data';
+import { RequestError } from '../../../../common/crud/RequestError';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { RulesStep } from './RulesStep';
-import { ExceptionsStep } from './ExceptionsStep';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { ScheduleSelectStep } from './ScheduleSelectStep';
-import { NodePromptsStep as SchedulePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
+import { Schedule } from '../../../interfaces/Schedule';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { useProcessSchedule } from '../hooks/useProcessSchedules';
-import { useNavigate } from 'react-router-dom';
-import { Schedule } from '../../../interfaces/Schedule';
-import { RequestError } from '../../../../common/crud/RequestError';
-import { RULES_DEFAULT_VALUES } from './constants';
-import { ScheduleReviewStep } from './ScheduleReviewStep';
+import { NodePromptsStep as SchedulePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
+import { useProcessSchedule } from '../hooks/useProcessSchedules';
 import { useSetRRuleItemToRuleSet } from '../hooks/useSetRRuleItemToRuleSet';
-import { postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
+import { RULES_DEFAULT_VALUES } from './constants';
+import { ExceptionsStep } from './ExceptionsStep';
+import { RulesStep } from './RulesStep';
+import { ScheduleReviewStep } from './ScheduleReviewStep';
+import { ScheduleSelectStep } from './ScheduleSelectStep';
 
 export type StandardizedFormData = Omit<ScheduleFormWizard, 'rules' | 'exceptions'> & {
   rrule: string;
@@ -105,11 +105,10 @@ export function ScheduleAddWizard(props: {
         inputs: <SchedulePromptsStep />,
         hidden: (wizardData: Partial<ScheduleFormWizard>) => {
           const { resource, schedule_type, launch_config } = wizardData;
-          if (
-            (schedule_type === 'workflow_job_template' || schedule_type === 'job_template') &&
-            resource &&
-            launch_config
-          ) {
+          const isTemplate =
+            schedule_type === ('job_template' || 'workflow_job_template') ||
+            resource?.type === ('job_template' || 'workflow_job_template');
+          if (isTemplate && resource && launch_config) {
             return shouldHideOtherStep(launch_config);
           }
           return true;
@@ -184,14 +183,16 @@ export function ScheduleAddWizard(props: {
       },
     ];
   }, [getRuleSet, t, props]);
-  const initialValues = {
+  const initialValues: { [stepId: string]: Partial<ScheduleFormWizard> } = {
     details: {
       name: '',
       description: '',
       schedule_type: '',
-      resource: '',
       startDateTime: { date: currentDate, time: time },
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+    promptStep: {
+      // This needs to be set from the "details" step when the resource is selected
     },
     rules: { ...RULES_DEFAULT_VALUES, rules: [] },
     exceptions: { ...RULES_DEFAULT_VALUES, exceptions: [] },
@@ -210,7 +211,7 @@ export function ScheduleAddWizard(props: {
         steps={steps}
         singleColumn={false}
         onCancel={onCancel}
-        defaultValue={initialValues}
+        stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
       />

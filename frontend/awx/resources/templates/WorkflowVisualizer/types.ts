@@ -3,12 +3,13 @@ import {
   EdgeModel,
   ElementModel,
   GraphElement,
+  Node,
   NodeModel,
   NodeStatus,
   WithSelectionProps,
-  Node,
 } from '@patternfly/react-topology';
 import type { Credential } from '../../../interfaces/Credential';
+import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import type { Inventory } from '../../../interfaces/Inventory';
 import type { InventorySource } from '../../../interfaces/InventorySource';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -19,12 +20,11 @@ import type { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { SummaryFieldInventory } from '../../../interfaces/summary-fields/summary-fields';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
   resource: WorkflowNode;
-  launch_data: PromptFormValues;
+  launch_data: Partial<PromptFormValues>;
   survey_data: { [key: string]: string | string[] | { name: string }[] };
 };
 export interface CustomNodeProps extends WithSelectionProps {
@@ -114,8 +114,8 @@ export interface NodeResource {
 }
 
 export interface PromptFormValues {
-  inventory: Partial<Inventory> | SummaryFieldInventory | null;
-  credentials:
+  inventory?: Partial<Inventory> | SummaryFieldInventory | null;
+  credentials?:
     | Credential[]
     | {
         id: number;
@@ -126,7 +126,7 @@ export interface PromptFormValues {
       }[];
   credential_passwords?: { [key: string]: string };
   instance_groups: InstanceGroup[];
-  execution_environment: number | null | undefined;
+  execution_environment: { name: string; id: number } | Record<string, never>;
   diff_mode: boolean;
   extra_vars: string;
   forks: number;
@@ -175,7 +175,7 @@ export interface WizardFormValues {
   node_type: UnifiedJobType;
   node_status_type?: EdgeStatus;
   launch_config: LaunchConfiguration | null;
-  prompt: PromptFormValues;
+  prompt: Partial<PromptFormValues>;
   inventory?: Inventory;
   relatedJobTypeApiUrl?: string;
   survey: { [key: string]: string | string[] };

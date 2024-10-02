@@ -103,7 +103,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
 
   const defaultValues = {
     details: {
-      organization: organization || {},
+      organization,
       galaxyCredentials: galaxyCredentials || [],
       instanceGroups: instanceGroups || [],
       executionEnvironment: controllerOrganization?.summary_fields?.default_environment?.id,
@@ -130,7 +130,7 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
       />
       <PageWizard<OrganizationWizardFormValues>
         steps={steps}
-        defaultValue={defaultValues}
+        stepDefaults={defaultValues}
         onSubmit={props.handleSubmit}
         disableGrid
       />
