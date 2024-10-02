@@ -7,7 +7,7 @@ We have two main objectives:
 
 To address those objectives:
 
-- Nightly end-to-end tests 
+- Nightly end-to-end tests
 
 ## Approach
 
