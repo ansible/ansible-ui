@@ -133,14 +133,29 @@ export function validateMappingStep(formData: object, t: (s: string) => string) 
   const mappings = (formData as { mappings: AuthenticatorMapValues[] }).mappings;
   const names = mappings.map((mapping) => mapping.name);
   const hasDuplicateNames = names.length !== new Set(names).size;
+  let hasDuplicateAttrs = false;
 
-  if (!hasDuplicateNames) {
+  mappings.forEach((mapping) => {
+    if (mapping.trigger === 'attributes') {
+      const attrNames = mapping.attributes.map((attr) => attr.attribute);
+      if (attrNames.length !== new Set(attrNames).size) {
+        hasDuplicateAttrs = true;
+      }
+    }
+  });
+
+  const errors: string[] = [];
+  if (hasDuplicateNames) {
+    errors.push(t('Mapping names must be unique'));
+  }
+  if (hasDuplicateAttrs) {
+    errors.push(t('Attribute names must be unique'));
+  }
+  if (!errors.length) {
     return;
   }
 
-  const errors = {
-    non_field_errors: [t('Mapping names must be unique')],
-  };
-
-  throw new RequestError('', '', 400, '', errors);
+  throw new RequestError('', '', 400, '', {
+    non_field_errors: errors,
+  });
 }

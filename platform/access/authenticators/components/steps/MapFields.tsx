@@ -27,10 +27,11 @@ export const MapFieldsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 24px 24px;
   gap: var(--pf-v5-l-grid--m-gutter--GridGap);
-  align-items: end;
 
   & > button {
     justify-self: start;
+    align-self: start;
+    margin-top: 30px;
   }
 `;
 
