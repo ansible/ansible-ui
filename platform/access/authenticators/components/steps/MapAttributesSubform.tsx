@@ -7,7 +7,7 @@ import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFor
 import { MapFieldsGrid } from './MapFields';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 
-export function MapAttributesSubform(props: { mappingIndex: number }) {
+export function MapAttributesSubform(props: Readonly<{ mappingIndex: number }>) {
   const { mappingIndex } = props;
   const { control } = useFormContext();
   const {
@@ -50,10 +50,9 @@ interface AttributeFieldsProps {
   addAttribute?: () => void;
   deleteAttribute?: () => void;
 }
-export function AttributeFields(props: AttributeFieldsProps) {
+export function AttributeFields(props: Readonly<AttributeFieldsProps>) {
   const { mapIndex, index, deleteAttribute, addAttribute } = props;
   const { t } = useTranslation();
-  // TODO: validate against duplicate criteria
   return (
     <PageFormSection singleColumn>
       <MapFieldsGrid>

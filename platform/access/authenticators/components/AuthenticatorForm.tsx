@@ -263,12 +263,10 @@ export function buildTriggers(map: AuthenticatorMapValues): AuthenticatorMapTrig
       return {
         always: {},
       };
-      break;
     case 'never':
       return {
         never: {},
       };
-      break;
     case 'groups':
       if (map.conditional === 'or') {
         return {
@@ -279,7 +277,6 @@ export function buildTriggers(map: AuthenticatorMapValues): AuthenticatorMapTrig
           groups: { has_and: map.groups_value.map(({ name }) => name) },
         };
       }
-      break;
     case 'attributes':
       attributes = {
         join_condition: map.conditional || 'or',
@@ -294,7 +291,6 @@ export function buildTriggers(map: AuthenticatorMapValues): AuthenticatorMapTrig
       return {
         attributes,
       };
-      break;
   }
 }
 
