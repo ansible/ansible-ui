@@ -19,6 +19,3 @@ CCT:
 
 AFW:
   - framework/**/*
-
-backport-2.5:
-  - cypress/e2e/**
