@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -41,7 +40,7 @@ export function TeamPage() {
         headerActions={
           <PageActions<Team>
             actions={[...viewActivityStreamAction, ...itemActions]}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={team}
           />
         }

@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import {
   LoadingPage,
   PageActions,
@@ -54,7 +54,7 @@ export function RemoteRegistryPage() {
           headerActions={
             <PageActions<RemoteRegistry>
               actions={pageActions}
-              position={DropdownPosition.right}
+              position={'right'}
               selectedItem={remoteRegistry}
             />
           }

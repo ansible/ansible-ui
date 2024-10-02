@@ -1,5 +1,4 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +36,7 @@ export function PageSettingsDetails() {
     <PageLayout>
       <PageHeader
         title={t('User Preferences')}
-        headerActions={<PageActions actions={actions} position={DropdownPosition.right} />}
+        headerActions={<PageActions actions={actions} position={'right'} />}
       />
       <PageDetails>
         {options.map((option) => (

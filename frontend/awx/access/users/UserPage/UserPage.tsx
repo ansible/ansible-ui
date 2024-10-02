@@ -1,5 +1,4 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -89,11 +88,7 @@ export function UserPage() {
           { label: user.username },
         ]}
         headerActions={
-          <PageActions<AwxUser>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={user}
-          />
+          <PageActions<AwxUser> actions={itemActions} position={'right'} selectedItem={user} />
         }
       />
       <PageRoutedTabs

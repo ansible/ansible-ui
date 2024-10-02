@@ -1,5 +1,4 @@
 import { Button, Label } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
@@ -263,7 +262,7 @@ export function CollectionPage() {
           collection && (
             <PageActions<Partial<CollectionVersionSearch>>
               actions={itemActions as IPageAction<Partial<CollectionVersionSearch>>[]}
-              position={DropdownPosition.right}
+              position={'right'}
               selectedItem={collection}
             />
           )

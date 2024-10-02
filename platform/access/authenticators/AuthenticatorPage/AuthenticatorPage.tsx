@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -45,7 +44,7 @@ export function AuthenticatorPage() {
         headerActions={
           <PageActions<Authenticator>
             actions={actions}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={authenticator}
           />
         }

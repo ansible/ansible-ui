@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,11 +74,7 @@ export function UserTokenPage(props: {
           },
         ]}
         headerActions={
-          <PageActions<Token>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={token}
-          />
+          <PageActions<Token> actions={itemActions} position={'right'} selectedItem={token} />
         }
       ></PageHeader>
       <PageRoutedTabs

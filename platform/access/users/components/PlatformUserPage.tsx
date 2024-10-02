@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -50,11 +49,7 @@ export function PlatformUserPage() {
           { label: user.username },
         ]}
         headerActions={
-          <PageActions<PlatformUser>
-            actions={actions}
-            position={DropdownPosition.right}
-            selectedItem={user}
-          />
+          <PageActions<PlatformUser> actions={actions} position={'right'} selectedItem={user} />
         }
       />
       <PageRoutedTabs

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -106,11 +106,7 @@ export function UserPage() {
             : undefined
         }
         headerActions={
-          <PageActions<EdaUser>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={user}
-          />
+          <PageActions<EdaUser> actions={itemActions} position={'right'} selectedItem={user} />
         }
       />
       <PageRoutedTabs

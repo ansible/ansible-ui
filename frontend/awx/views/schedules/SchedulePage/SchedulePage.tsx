@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageActions, PageHeader, PageLayout } from '../../../../../framework';
@@ -157,7 +156,7 @@ export function SchedulePage(props: {
         headerActions={
           <PageActions<Schedule>
             actions={[...viewActivityStreamAction, ...itemActions]}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={schedule}
           />
         }

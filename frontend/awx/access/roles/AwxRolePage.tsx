@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -51,11 +50,7 @@ export function AwxRolePage(props: {
           { label: role?.name },
         ]}
         headerActions={
-          <PageActions<AwxRbacRole>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={role}
-          />
+          <PageActions<AwxRbacRole> actions={itemActions} position={'right'} selectedItem={role} />
         }
       />
       <PageRoutedTabs

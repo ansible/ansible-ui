@@ -1,5 +1,4 @@
 import { ButtonVariant, Label } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { CheckIcon, ExclamationCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -68,9 +67,7 @@ export function SubscriptionDetails() {
     <PageLayout>
       <PageHeader
         title={t('Subscription Settings')}
-        headerActions={
-          <PageActions<CredentialType> actions={actions} position={DropdownPosition.right} />
-        }
+        headerActions={<PageActions<CredentialType> actions={actions} position={'right'} />}
       />
       <PageDetails>
         <PageDetail label={t('Subscription')}>{license_info.subscription_name}</PageDetail>
