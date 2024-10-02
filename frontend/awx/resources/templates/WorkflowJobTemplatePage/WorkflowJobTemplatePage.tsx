@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -83,7 +83,7 @@ export function WorkflowJobTemplatePage() {
         headerActions={
           <PageActions<WorkflowJobTemplate>
             actions={[...activityStream, ...itemActions]}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={template}
           />
         }

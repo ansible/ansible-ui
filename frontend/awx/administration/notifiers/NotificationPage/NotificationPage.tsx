@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -72,7 +72,7 @@ export function NotificationPage() {
         headerActions={
           <PageActions<NotificationTemplate>
             actions={[...activityStream, ...pageActions]}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={notificationTemplate}
           />
         }

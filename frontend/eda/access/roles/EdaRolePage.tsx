@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -94,11 +93,7 @@ export function EdaRolePage(props: {
           { label: role?.name },
         ]}
         headerActions={
-          <PageActions<EdaRbacRole>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={role}
-          />
+          <PageActions<EdaRbacRole> actions={itemActions} position={'right'} selectedItem={role} />
         }
       />
       <PageRoutedTabs

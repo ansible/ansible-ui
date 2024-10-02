@@ -1,5 +1,4 @@
 import { Flex, FlexItem, Icon, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
 import isDeepEqual from 'fast-deep-equal';
 import getValue from 'get-value';
@@ -290,7 +289,7 @@ export function PageFormDataEditor<
                     },
                   ]}
                   // variant={ButtonVariant.control}
-                  position={DropdownPosition.right}
+                  position={'right'}
                 />
               </div>
             )}

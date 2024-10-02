@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
@@ -119,7 +119,7 @@ export function InventoryPage() {
         headerActions={
           <PageActions<Inventory>
             actions={[...activityStream, ...itemActions]}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={inventory}
           />
         }

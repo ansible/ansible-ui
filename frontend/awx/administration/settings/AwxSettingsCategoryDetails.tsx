@@ -1,5 +1,4 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { t } from 'i18next';
 import jsyaml from 'js-yaml';
@@ -76,7 +75,7 @@ export function AwxSettingsCategoryDetailsPage(props: { categoryId: string }) {
     <PageLayout>
       <PageHeader
         title={title ?? category.name}
-        headerActions={<PageActions actions={actions} position={DropdownPosition.right} />}
+        headerActions={<PageActions actions={actions} position={'right'} />}
       />
       <AwxSettingsCategoryDetails options={categoryOptions} data={all.data} />
     </PageLayout>

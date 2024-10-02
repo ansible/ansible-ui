@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -94,11 +93,7 @@ export function HubRolePage(props: {
           { label: role?.name },
         ]}
         headerActions={
-          <PageActions<HubRbacRole>
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={role}
-          />
+          <PageActions<HubRbacRole> actions={itemActions} position={'right'} selectedItem={role} />
         }
       />
       <PageRoutedTabs

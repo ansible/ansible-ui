@@ -5,7 +5,6 @@ import {
   InputGroupItem,
   TextInput,
 } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
 import getValue from 'get-value';
 import { ReactNode, useState } from 'react';
@@ -388,7 +387,7 @@ export function PageFormTextInput<
                   },
                 ]}
                 variant={ButtonVariant.control}
-                position={DropdownPosition.right}
+                position={'right'}
               />
             </InputGroup>
           </PageFormGroup>

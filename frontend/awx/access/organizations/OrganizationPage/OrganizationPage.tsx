@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,7 +86,7 @@ export function OrganizationPage() {
         headerActions={
           <PageActions<Organization>
             actions={itemActions}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={organization}
           />
         }

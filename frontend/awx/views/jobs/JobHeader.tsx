@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PageActions, PageHeader, useGetPageUrl, usePageNavigate } from '../../../../framework';
 import { useJobHeaderActions } from './hooks/useJobHeaderActions';
 import { Job } from '../../interfaces/Job';
@@ -45,11 +44,7 @@ export function JobHeader() {
             </FlexItem>
           )}
           <FlexItem>
-            <PageActions<Job>
-              actions={actions}
-              position={DropdownPosition.right}
-              selectedItem={job}
-            />
+            <PageActions<Job> actions={actions} position={'right'} selectedItem={job} />
           </FlexItem>
         </Flex>
       }

@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -37,11 +36,7 @@ export function PlatformTeamPage() {
           { label: team.name },
         ]}
         headerActions={
-          <PageActions<PlatformTeam>
-            actions={actions}
-            position={DropdownPosition.right}
-            selectedItem={team}
-          />
+          <PageActions<PlatformTeam> actions={actions} position={'right'} selectedItem={team} />
         }
       />
       <PageRoutedTabs

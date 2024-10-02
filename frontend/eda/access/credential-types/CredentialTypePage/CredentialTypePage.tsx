@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -110,7 +110,7 @@ export function CredentialTypePage() {
           isActionTab ? (
             <PageActions<EdaCredentialType>
               actions={actions}
-              position={DropdownPosition.right}
+              position={'right'}
               selectedItem={credentialType}
             />
           ) : (

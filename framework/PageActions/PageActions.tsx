@@ -1,5 +1,4 @@
-import { ButtonVariant, Flex, FlexItem } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+import { ButtonVariant, DropdownPopperProps, Flex, FlexItem } from '@patternfly/react-core';
 import {
   ComponentClass,
   FunctionComponent,
@@ -33,7 +32,7 @@ interface PageActionProps<T extends object> {
   collapse?: WindowSize | 'always' | 'never';
 
   /** The position for the dropdown */
-  position?: DropdownPosition;
+  position?: DropdownPopperProps['position'];
 
   /** Indicates if only to show the icon when not collapsed */
   iconOnly?: boolean;

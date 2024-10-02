@@ -1,5 +1,4 @@
 import { Checkbox, CheckboxProps } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { ReactNode } from 'react';
 import {
   Controller,
@@ -90,7 +89,7 @@ export function PageFormCheckbox<
                           isHidden: () => !props.enableReset || value === props.defaultValue,
                         },
                       ]}
-                      position={DropdownPosition.right}
+                      position={'right'}
                     />
                   </div>
                 </div>

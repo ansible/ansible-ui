@@ -1,10 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import {
-  DropdownPosition,
-  Select,
-  SelectOption,
-  SelectOptionObject,
-} from '@patternfly/react-core/deprecated';
+import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
 import getValue from 'get-value';
 import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
 import {
@@ -273,7 +268,7 @@ export function PageFormSelect<
                   },
                 ]}
                 variant={ButtonVariant.control}
-                position={DropdownPosition.right}
+                position={'right'}
               />
             </div>
           </PageFormGroup>

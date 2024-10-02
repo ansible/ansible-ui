@@ -1,5 +1,4 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +49,7 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
       <PageHeader
         title={category.title}
         description={category.description}
-        headerActions={<PageActions actions={actions} position={DropdownPosition.right} />}
+        headerActions={<PageActions actions={actions} position={'right'} />}
       />
       <PageDetails>
         {category.sections.map((section) => (

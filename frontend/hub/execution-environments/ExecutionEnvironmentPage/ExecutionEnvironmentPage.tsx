@@ -1,5 +1,5 @@
 import { Flex, FlexItem, Stack } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
+
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -87,7 +87,7 @@ export function ExecutionEnvironmentPage() {
         headerActions={
           <PageActions<ExecutionEnvironment>
             actions={pageActions}
-            position={DropdownPosition.right}
+            position={'right'}
             selectedItem={ee}
           />
         }

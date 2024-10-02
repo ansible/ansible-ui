@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -54,11 +53,7 @@ export function InstanceGroupInstancesPage() {
           },
         ]}
         headerActions={
-          <PageActions
-            actions={itemActions}
-            position={DropdownPosition.right}
-            selectedItem={instance}
-          />
+          <PageActions actions={itemActions} position={'right'} selectedItem={instance} />
         }
       />
       <PageRoutedTabs

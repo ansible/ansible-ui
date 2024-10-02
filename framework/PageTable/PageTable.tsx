@@ -11,7 +11,6 @@ import {
   PerPageOptions,
   Stack,
 } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { SearchIcon } from '@patternfly/react-icons';
 import {
   CollapseColumn,
@@ -942,7 +941,7 @@ function TableCells<T extends object>(props: {
           <PageActions
             actions={rowActions}
             selectedItem={item}
-            position={DropdownPosition.right}
+            position={'right'}
             iconOnly
             onOpen={setActionsExpanded}
           />

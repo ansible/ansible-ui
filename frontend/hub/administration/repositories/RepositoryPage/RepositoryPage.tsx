@@ -1,4 +1,3 @@
-import { DropdownPosition } from '@patternfly/react-core/dist/esm/deprecated';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import {
@@ -40,67 +39,61 @@ export function RepositoryPage() {
   const repository = data?.results.length > 0 ? data?.results[0] : undefined;
   const repo_id: string = parsePulpIDFromURL(repository?.pulp_href) || '';
   return (
-    <>
-      <PageLayout>
-        <PageHeader
-          title={params.id}
-          headerActions={
-            <PageActions
-              actions={headerActions}
-              position={DropdownPosition.right}
-              selectedItem={repository}
-            />
-          }
-          footer={
-            !!repository &&
-            !!repository.last_sync_task && (
-              <div>
-                <Trans>
-                  Last updated from registry{' '}
-                  {<DateTimeCell value={repository.last_sync_task?.finished_at} />}
-                </Trans>
-                <StatusCell status={repository.last_sync_task?.state} />
-              </div>
-            )
-          }
-          breadcrumbs={breadcrumbs}
-        />
-        <PageRoutedTabs
-          backTab={{
-            label: t('Back to Repositories'),
-            page: HubRoute.Repositories,
-            persistentFilterKey: '',
-          }}
-          tabs={[
-            {
-              label: t('Details'),
-              page: HubRoute.RepositoryDetails,
-            },
-            {
-              label: t('Collection Versions'),
-              page: HubRoute.RepositoryCollectionVersion,
-            },
-            {
-              label: t('Versions'),
-              page: HubRoute.RepositoryVersions,
-            },
-            {
-              label: t('Distributions'),
-              page: HubRoute.RepositoryDistributions,
-            },
-            {
-              label: t('Team Access'),
-              page: HubRoute.RepositoryTeamAccess,
-            },
-            {
-              label: t('User Access'),
-              page: HubRoute.RepositoryUserAccess,
-            },
-          ]}
-          params={{ id: params.id, repo_id: repo_id }}
-          componentParams={{ id: params.id, repo_id: repo_id, repository: repository }}
-        />
-      </PageLayout>
-    </>
+    <PageLayout>
+      <PageHeader
+        title={params.id}
+        headerActions={
+          <PageActions actions={headerActions} position={'right'} selectedItem={repository} />
+        }
+        footer={
+          !!repository &&
+          !!repository.last_sync_task && (
+            <div>
+              <Trans>
+                Last updated from registry{' '}
+                {<DateTimeCell value={repository.last_sync_task?.finished_at} />}
+              </Trans>
+              <StatusCell status={repository.last_sync_task?.state} />
+            </div>
+          )
+        }
+        breadcrumbs={breadcrumbs}
+      />
+      <PageRoutedTabs
+        backTab={{
+          label: t('Back to Repositories'),
+          page: HubRoute.Repositories,
+          persistentFilterKey: '',
+        }}
+        tabs={[
+          {
+            label: t('Details'),
+            page: HubRoute.RepositoryDetails,
+          },
+          {
+            label: t('Collection Versions'),
+            page: HubRoute.RepositoryCollectionVersion,
+          },
+          {
+            label: t('Versions'),
+            page: HubRoute.RepositoryVersions,
+          },
+          {
+            label: t('Distributions'),
+            page: HubRoute.RepositoryDistributions,
+          },
+          {
+            label: t('Team Access'),
+            page: HubRoute.RepositoryTeamAccess,
+          },
+          {
+            label: t('User Access'),
+            page: HubRoute.RepositoryUserAccess,
+          },
+        ]}
+        params={{ id: params.id, repo_id: repo_id }}
+        componentParams={{ id: params.id, repo_id: repo_id, repository: repository }}
+      />
+    </PageLayout>
   );
 }

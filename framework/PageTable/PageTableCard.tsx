@@ -16,7 +16,6 @@ import {
   Text,
   Truncate,
 } from '@patternfly/react-core';
-import { DropdownPosition } from '@patternfly/react-core/deprecated';
 import { ReactNode, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { IPageAction } from '../PageActions/PageAction';
@@ -162,7 +161,7 @@ export function PageTableCard<T extends object>(props: {
                 {itemActions && itemActions.length && (
                   <PageActions
                     actions={itemActions}
-                    position={DropdownPosition.right}
+                    position={'right'}
                     selectedItem={item}
                     iconOnly
                     collapse="always"
