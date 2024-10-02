@@ -26,11 +26,11 @@ This will return the singular translation for the key `singular`. If the `count`
 
 Before any new release of Ansible Automation Platform, it is necessary to do a few manual checks of the codebase to ensure all appropriate strings are tagged for translation.
 
-Every file does not need to be checked but all objects and elements in the codebase which the linter does not cover need to be manually checked. 
+Every file does not need to be checked but all objects and elements in the codebase which the linter does not cover need to be manually checked.
 
 The list of items to be checked:
- - All `IPageAction`, `ITableColumn` and `IToolbarFilter` objects; Ensure that all static string fields in these objects are tagged for translation.
- - `breadcrumbs` attributes on `PageHeader` components and `backTab` & `tabs` attributes on `PageRoutedTabs` components; these attributes have objects assigned to them which contain string fields that may need to be tagged for translation.
 
+- All `IPageAction`, `ITableColumn` and `IToolbarFilter` objects; Ensure that all static string fields in these objects are tagged for translation.
+- `breadcrumbs` attributes on `PageHeader` components and `backTab` & `tabs` attributes on `PageRoutedTabs` components; these attributes have objects assigned to them which contain string fields that may need to be tagged for translation.
 
 Before any release, these steps must be taken to verify all appropriate strings have been marked for translation.
