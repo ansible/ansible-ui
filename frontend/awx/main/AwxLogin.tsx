@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Page } from '@patternfly/react-core';
 import useSWR, { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
@@ -21,6 +22,7 @@ export function AwxLogin(props: {
   loginTitle?: string;
   loginApiUrl?: string;
   baseLoginUrl?: string;
+  brandImg?: ReactNode;
   otherOptions?: { label: string; onClick: () => void }[];
 }) {
   const { data: options } = useSWR<AwxAuthOptions>(awxAPI`/auth/`, requestGet);
@@ -56,7 +58,7 @@ export function AwxLogin(props: {
           refreshActiveAwxUser?.();
           void mutate(() => true);
         }}
-        brandImg="/assets/awx-logo.svg"
+        brandImg={props.brandImg ? props.brandImg : '/assets/awx-logo.svg'}
         brandImgAlt={process.env.PRODUCT}
         otherOptions={props.otherOptions}
       />
