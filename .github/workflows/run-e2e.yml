@@ -33,7 +33,7 @@ jobs:
   platform-e2e:
     name: Platform E2E
     needs:
-      - image
+      - platform-ui-image
     uses: ./.github/workflows/e2e.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
