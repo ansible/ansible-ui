@@ -66,7 +66,7 @@ function SocialAuthLink(props: { option: AuthOption }) {
     'google-oauth2': t('Google'),
     oidc: t('OIDC'),
     saml: t('SAML'),
-    'saml:Keycloak': t('SAML Keycloak'),
+    'saml:keycloak': t('SAML Keycloak'),
   };
 
   const Icon = icons[option.type] ?? UserCircleIcon;
