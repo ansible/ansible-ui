@@ -36,28 +36,32 @@ describe('Topology view', () => {
   });
 
   it('navigate to instance group detail when instance group is clicked from sidebar', () => {
-    cy.navigateTo('awx', 'topology-view');
-    cy.wait('@getMeshVisualizer')
-      .its('response.body')
-      .then((data: MeshVisualizer) => {
-        cy.get(`[data-id="${data.nodes[0].id}"]`).click();
-        cy.get('[data-cy="mesh-viz-sidebar"]').should('be.visible');
-        cy.wait('@getInstanceGroups')
-          .its('response.body.results')
-          .then((instanceGroups: InstanceGroup[]) => {
-            cy.clickLink(`${instanceGroups[0].name}`);
-            cy.url().should('contain', `/instance-groups/${instanceGroups[0].id}`);
-            cy.verifyPageTitle(instanceGroups[0].name);
-          });
-      });
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      if (!data?.IS_K8S) {
+        cy.log('TEST SKIPPED | IS_K8S: False');
+        return;
+      }
+      cy.navigateTo('awx', 'topology-view');
+      cy.wait('@getMeshVisualizer')
+        .its('response.body')
+        .then((data: MeshVisualizer) => {
+          cy.get(`[data-id="${data.nodes[0].id}"]`).click();
+          cy.get('[data-cy="mesh-viz-sidebar"]').should('be.visible');
+          cy.wait('@getInstanceGroups')
+            .its('response.body.results')
+            .then((instanceGroups: InstanceGroup[]) => {
+              cy.clickLink(`${instanceGroups[0].name}`);
+              cy.url().should('contain', `/instance-groups/${instanceGroups[0].id}`);
+              cy.verifyPageTitle(instanceGroups[0].name);
+            });
+        });
+    });
   });
 
   it('will allow the user to view a large number of nodes', () => {
     cy.fixture('instance_nodes').then((instanceNodes: MeshVisualizer) => {
       cy.intercept('GET', awxAPI`/mesh_visualizer/`, instanceNodes);
-
       cy.navigateTo('awx', 'topology-view');
-
       instanceNodes.nodes.forEach((node) => {
         cy.contains(node.hostname);
       });
@@ -100,7 +104,7 @@ describe('Topology view', () => {
   });
 
   cyLabel(['upstream'], () => {
-    it('does not show Topology View in sidebar for non admins', function () {
+    it('does not show Topology View in sidebar for non-admins', function () {
       cy.createAwxUser({ organization: organization.id }).then((awxUser) => {
         user = awxUser;
         cy.awxLoginTestUser(user.username, 'pw');

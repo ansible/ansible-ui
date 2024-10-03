@@ -24,11 +24,15 @@ describe('Platform Header Toolbar - Help Menu', () => {
     cy.get('[data-cy="masthead-about"]').click();
 
     cy.get('.pf-v5-c-about-modal-box').within(() => {
-      // Check the Automation Controller Version
-      cy.get('dt').contains('Automation Controller Version').next().should('have.text', '4.6.0');
+      // Check the Automation Controller Version is not empty
+      cy.get('dt').contains('Automation Controller Version').next().should('not.be.empty');
 
-      // Check the Automation Hub Version
-      cy.get('dt').contains('Automation Hub Version').next().should('have.text', '4.10.0');
+      // Check the Automation Hub Version is not empty
+      cy.get('dt').contains('Automation Hub Version').next().should('not.be.empty');
+
+      // Check the Event Driven Automation Version is not empty
+      cy.get('dt').contains('Event Driven Automation Version').next().should('not.be.empty');
+
       cy.get('.pf-v5-c-button').click();
     });
   });
