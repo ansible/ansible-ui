@@ -37,7 +37,7 @@ export function Namespaces() {
             'They provide organization, prevent naming conflicts, and simplify the process of discovering and sharing Ansible automation content.'
           ),
         ]}
-        titleDocLink="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.2/html/curating_collections_using_namespaces_in_automation_hub/index"
+        titleDocLink="https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/managing_automation_content/managing-collections-hub#assembly-working-with-namespaces"
       />
       <PageTabs>
         <PageTab label={t('All')}>

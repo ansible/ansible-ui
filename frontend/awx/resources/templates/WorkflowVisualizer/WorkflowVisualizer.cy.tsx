@@ -161,7 +161,7 @@ describe('WorkflowVisualizer', () => {
       .get('[data-cy="workflow-documentation"]')
       .contains('Documentation')
       .should('have.attr', 'href')
-      .should('include', 'userguide/workflow_templates.html#ug-wf-editor');
+      .should('include', 'controller-workflow-job-templates#controller-workflow-visualizer');
     cy.get('.toggle-kebab').click();
     cy.get('.toggle-kebab')
       .click()

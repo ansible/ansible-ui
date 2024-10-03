@@ -24,6 +24,7 @@ import {
 } from '../hooks/useOrganizationActions';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
 import { useOrganizationFilters } from '../hooks/useOrganizationFilters';
+import { useGetDocsUrl } from '../../../../frontend/awx/common/util/useGetDocsUrl';
 
 export function PlatformOrganizationList() {
   const { t } = useTranslation();
@@ -46,6 +47,7 @@ export function PlatformOrganizationList() {
   const canCreateOrganization = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useOrganizationToolbarActions(view);
   const rowActions = useOrganizationRowActions(view.unselectItemsAndRefresh);
+  const docsLink = useGetDocsUrl(undefined, 'organizations');
 
   if (isLoadingOptions) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
@@ -57,7 +59,7 @@ export function PlatformOrganizationList() {
         description={t('An organization is a logical collection of users, teams, and resources.')}
         titleHelpTitle={t('Organizations')}
         titleHelp={[t('An organization is a logical collection of users, teams, and resources.')]}
-        titleDocLink="https://docs.ansible.com"
+        titleDocLink={docsLink}
       />
       <PageTable<PlatformOrganization>
         id="platform-organizations-table"

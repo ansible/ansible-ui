@@ -21,6 +21,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamRowActions, useTeamToolbarActions } from '../hooks/useTeamActions';
 import { useTeamColumns } from '../hooks/useTeamColumns';
 import { useTeamFilters } from '../hooks/useTeamFilters';
+import { useGetDocsUrl } from '../../../../frontend/awx/common/util/useGetDocsUrl';
 
 export function PlatformTeamList() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export function PlatformTeamList() {
   const canCreateTeam = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useTeamToolbarActions(view);
   const rowActions = useTeamRowActions(view.unselectItemsAndRefresh);
+  const docsLink = useGetDocsUrl(undefined, 'teams');
 
   if (isLoadingOptions) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
@@ -59,7 +61,7 @@ export function PlatformTeamList() {
             'Teams provide a means to implement role-based access control schemes and delegate responsibilities across organizations. For instance, permissions may be granted to a whole team rather than each user on the team.'
           ),
         ]}
-        titleDocLink="https://docs.ansible.com"
+        titleDocLink={docsLink}
       />
       <PageTable<PlatformTeam>
         id="platform-teams-table"

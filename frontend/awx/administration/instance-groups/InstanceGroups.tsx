@@ -12,6 +12,8 @@ import {
 import { useInstanceGroupsColumns } from './hooks/useInstanceGroupColumns';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function InstanceGroups() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export function InstanceGroups() {
   const toolbarActions = useInstanceGroupToolbarActions(view.unselectItemsAndRefresh);
   const rowActions = useInstanceGroupRowActions(view.unselectItemsAndRefresh);
   const isCreateActionDisabled = useDisableCreateInstanceGroup();
+  const config = useAwxConfig();
 
   return (
     <PageLayout>
@@ -38,6 +41,7 @@ export function InstanceGroups() {
           'An instance group provides the ability to group instances in a clustered environment.'
         )}
         headerActions={<ActivityStreamIcon type={'instance_group'} />}
+        titleDocLink={useGetDocsUrl(config, 'instanceGroups')}
       />
       <PageTable<InstanceGroup>
         id="awx-instance-groups-table"

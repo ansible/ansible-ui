@@ -10,10 +10,13 @@ import { InstancesList } from './components/InstancesList';
 import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function Instances() {
   const { t } = useTranslation();
   const tableColumns = useInstancesColumns();
+  const config = useAwxConfig();
 
   return (
     <PageLayout>
@@ -27,6 +30,7 @@ export function Instances() {
           'Ansible node instances dedicated for a particular purpose indicated by node type.'
         )}
         headerActions={<ActivityStreamIcon type={'instance'} />}
+        titleDocLink={useGetDocsUrl(config, 'instances')}
       />
       <InstancesList
         useToolbarActions={useInstanceToolbarActions}
