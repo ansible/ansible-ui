@@ -69,6 +69,25 @@ jobs:
       - name: Checks
         run: npm run checks
 
+  platform-ui-image:
+    name: Platform UI Image
+    needs:
+      - packages
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+      
+  playwright:
+    name: Playwright
+    needs:
+      - platform-ui-image
+    uses: ./.github/workflows/playwright.yml
+
   awx-component:
     name: AWX Component
     needs: packages
@@ -126,6 +145,7 @@ jobs:
   #   needs:
   #     - packages
   #     - cleanup
+  #     - image
   #   uses: ./.github/workflows/e2e.yml
   #   with:
   #     PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
@@ -140,6 +160,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
         - checks
+        - playwright
         - awx-component
         - eda-component
         - hub-component
@@ -151,6 +172,7 @@ jobs:
     steps:
       - name: Success Check
         if: ${{ needs.checks.result == 'success' &&
+                needs.playwright.result == 'success' &&
                 needs.awx-component.result == 'success' &&
                 needs.eda-component.result == 'success' &&
                 needs.hub-component.result == 'success' &&
@@ -160,10 +182,13 @@ jobs:
         run: echo "All jobs succeeded"
       - name: Failure or Cancelled
         if: ${{ needs.checks.result != 'success' ||
+                needs.playwright.result != 'success' ||
                 needs.awx-component.result != 'success' ||
                 needs.eda-component.result != 'success' ||
                 needs.hub-component.result != 'success' ||
                 needs.common-component.result != 'success' ||
                 needs.framework-component.result != 'success' ||
                 needs.platform-component.result != 'success' }}
-        run: exit 1
+        run: |
+          echo playwright: ${{ needs.playwright.result }}
+          exit 1

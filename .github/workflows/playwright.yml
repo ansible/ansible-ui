@@ -1,0 +1,109 @@
+name: Playwright
+
+on:
+  workflow_call:
+
+jobs:
+  playwright:
+    name: Playwright
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2]
+        shardTotal: [2]
+    steps:
+    - name: Download image
+      uses: actions/download-artifact@v4
+      with:
+        name: platform-ui.tar
+    - name: Load image
+      run: docker load --input platform-ui.tar
+    - name: Run container
+      run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=http://localhost platform-ui
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: PreCache
+      run: npm version 0.0.0 --no-git-tag-version
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ./node_modules
+          /home/runner/.cache/Cypress
+        key: modules-${{ hashFiles('package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps chromium
+    - name: Run Playwright tests
+      working-directory: playwright
+      run: npx playwright test --project="mock chromium" --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      env:
+        PLATFORM_USERNAME: mock
+        PLATFORM_PASSWORD: mock
+    - name: Upload blob report to GitHub Actions Artifacts
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: blob-report-${{ matrix.shardIndex }}
+        path: blob-report
+        retention-days: 1
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: text-results-${{ matrix.shardIndex }}
+        path: test-results
+        retention-days: 1
+        overwrite: true
+        if-no-files-found: ignore
+    - name: Stop container
+      run: docker stop platform-ui
+
+  playwright-report:
+    name: Playwright Report
+    if: ${{ !cancelled() }}
+    needs: [playwright]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: PreCache
+      run: npm version 0.0.0 --no-git-tag-version
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ./node_modules
+          /home/runner/.cache/Cypress
+        key: modules-${{ hashFiles('package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci
+    - name: Download blob reports from GitHub Actions Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-blob-reports
+        pattern: blob-report-*
+        merge-multiple: true
+    - name: Merge into JUint Report
+      run: npx playwright merge-reports --reporter junit ./all-blob-reports > junit.xml
+    - name: Upload JUint report
+      uses: actions/upload-artifact@v4
+      with:
+        name: junit-report
+        path: junit.xml
+        retention-days: 1
+    - name: Test Summary
+      if: always()
+      uses: test-summary/action@v2
+      with:
+        paths: junit.xml

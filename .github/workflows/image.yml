@@ -25,7 +25,7 @@ on:
         description: 'Docker Publish Image'
         type: boolean
         default: false
-      upload-image:
+      upload-artifact:
         description: 'Upload Image as Artifact'
         type: boolean
         default: false
@@ -109,7 +109,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and Load Image
-        if: ${{ inputs.upload-image }}
+        if: ${{ inputs.upload-artifact }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -120,11 +120,11 @@ jobs:
           load: true
 
       - name: Save Image
-        if: ${{ inputs.upload-image }}
+        if: ${{ inputs.upload-artifact }}
         run: docker save ${{ inputs.docker-image }} > ${{ inputs.docker-image }}.tar
 
       - name: Upload Image
-        if: ${{ inputs.upload-image }}
+        if: ${{ inputs.upload-artifact }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.docker-image }}.tar
