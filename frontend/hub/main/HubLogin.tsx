@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Page } from '@patternfly/react-core';
 import useSWR, { mutate } from 'swr';
 import { LoadingState } from '../../../framework/components/LoadingState';
@@ -16,6 +17,7 @@ export function HubLogin(props: {
   loginTitle?: string;
   loginApiUrl?: string;
   baseLoginUrl?: string;
+  brandImg?: ReactNode;
   otherOptions?: { label: string; onClick: () => void }[];
 }) {
   const { data: options } = useSWR<HubAuthOptions>(hubAPI`/_ui/v1/settings/`, requestGet);
@@ -51,7 +53,7 @@ export function HubLogin(props: {
           refreshActiveHubUser?.();
           void mutate(() => true);
         }}
-        brandImg="/assets/galaxy-logo.svg"
+        brandImg={props.brandImg ? props.brandImg : '/assets/galaxy-logo.svg'}
         brandImgAlt={process.env.PRODUCT}
         otherOptions={props.otherOptions}
       />
