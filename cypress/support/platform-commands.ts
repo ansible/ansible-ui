@@ -184,7 +184,7 @@ Cypress.Commands.add('getUserForMigration', (userType: UpgradeUserType) => {
       gatewayAPI`/users?username=${users[index]?.username}`
     ).then((result) => {
       const platformUser = result.results?.[0];
-      if (platformUser.last_login === null) {
+      if (platformUser?.last_login === null) {
         // This user has not been migrated yet and is available for testing upgrades
         return new Promise((resolve, _reject) => resolve(users[index]));
       } else {
