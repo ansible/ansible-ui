@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -16,7 +17,6 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectToolbarActions } from './hooks/useProjectToolbarActions';
 import { useProjectsColumns } from './hooks/useProjectsColumns';
 import { useProjectsFilters } from './hooks/useProjectsFilters';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Projects() {
   const { t } = useTranslation();

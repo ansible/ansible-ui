@@ -33,6 +33,7 @@
     "platform",
     "frontend",
     "framework",
+    "playwright",
     "cypress",
     "*.config.ts",
     "cypress.d.ts",

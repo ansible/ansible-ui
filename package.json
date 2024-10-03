@@ -154,11 +154,13 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.2.5",
     "@cypress/code-coverage": "3.12.41",
+    "@playwright/test": "^1.47.2",
     "@types/webpack-dev-server": "4.7.1",
     "@typescript-eslint/eslint-plugin": "7.16.0",
     "@typescript-eslint/parser": "7.16.0",
     "cypress": "13.5.1",
     "cypress-react-selector": "3.0.0",
+    "dotenv": "^16.4.5",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-i18next": "6.0.7",

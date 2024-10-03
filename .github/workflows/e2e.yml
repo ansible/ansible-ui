@@ -25,17 +25,6 @@ on:
         required: true
 
 jobs:
-  platform-ui-image:
-    name: Platform UI Image
-    uses: ./.github/workflows/image.yml
-    with:
-      build-directory: platform
-      build-script: build
-      docker-file: platform/Dockerfile
-      docker-target: platform-ui
-      docker-image: platform-ui
-      upload-image: true
-
   matrix-containers:
     name: Matrix Containers
     runs-on: ubuntu-latest

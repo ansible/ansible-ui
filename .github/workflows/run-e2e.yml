@@ -19,8 +19,21 @@ on:
         description: 'Update server on success'
 
 jobs:
+  platform-ui-image:
+    name: Platform UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+
   platform-e2e:
     name: Platform E2E
+    needs:
+      - image
     uses: ./.github/workflows/e2e.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
