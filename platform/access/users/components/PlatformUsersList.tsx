@@ -21,6 +21,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
 import { useUsersColumns } from '../hooks/useUserColumns';
 import { useUsersFilters } from '../hooks/useUsersFilters';
+import { useGetDocsUrl } from '../../../../frontend/awx/common/util/useGetDocsUrl';
 
 export function PlatformUsersList() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export function PlatformUsersList() {
   const canCreateUser = Boolean(data && data.actions && data.actions['POST']);
   const toolbarActions = useUserToolbarActions(view);
   const rowActions = useUserRowActions(view.unselectItemsAndRefresh);
+  const docsLink = useGetDocsUrl(undefined, 'users');
 
   if (isLoadingOptions) return <LoadingPage />;
   if (error) return <AwxError error={error} />;
@@ -58,7 +60,7 @@ export function PlatformUsersList() {
         titleHelp={[
           t('A user is someone who has access with associated permissions and credentials.'),
         ]}
-        titleDocLink="https://docs.ansible.com"
+        titleDocLink={docsLink}
       />
       <PageTable<PlatformUser>
         id="platform-users-table"

@@ -43,7 +43,7 @@ export function Collections() {
         titleHelp={t(
           'Collections are a packaged unit of Ansible content that includes roles, modules, plugins, and other components, making it easier to share and reuse automation functionality.'
         )}
-        titleDocLink="https://docs.ansible.com/ansible/latest/user_guide/collections_using.html"
+        titleDocLink="https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/developing_automation_content/devtools-develop-collections_develop-automation-content"
       />
 
       <PageTable<CollectionVersionSearch>
