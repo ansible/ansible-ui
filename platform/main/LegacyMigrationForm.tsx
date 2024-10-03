@@ -11,6 +11,7 @@ import { AwxPageForm } from '../../frontend/awx/common/AwxPageForm';
 import { usePostRequest } from '../../frontend/common/crud/usePostRequest';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { Account, LegacyAuth } from '../interfaces/LegacyAuth';
+import { useLegacyAuth } from './LegacyAuthProvider';
 
 interface LinkAccountRequest {
   username: string;
@@ -32,6 +33,7 @@ const MigrationInputs = (props: { legacyAuth: LegacyAuth }) => {
   const { legacyAuth } = props;
   const linkAccountRequest = usePostRequest<LinkAccountRequest, LegacyAuth>();
   const { reset, getValues, setError, clearErrors } = useFormContext();
+  const { refreshLegacyAuth } = useLegacyAuth();
   const [serviceAccounts, setServiceAccounts] = useState<Account[]>(legacyAuth.linked_accounts);
   const [loading, setLoading] = useState<Record<ServiceType, boolean>>({
     controller: false,
@@ -84,6 +86,9 @@ const MigrationInputs = (props: { legacyAuth: LegacyAuth }) => {
         }
       } finally {
         setLoading((prev) => ({ ...prev, [service]: false }));
+        if (legacyAuth.is_migrated) {
+          refreshLegacyAuth?.();
+        }
       }
     }
   };

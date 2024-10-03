@@ -42,10 +42,12 @@ const Footer = (props: {
   const { t } = useTranslation();
   const { onCancel, setShowCreateUserForm } = props;
   const [isLoading, setIsLoading] = useState(false);
+
   const handleCancel = async () => {
     setIsLoading(true);
     await onCancel();
   };
+
   return (
     <PageSection variant="light" isFilled={false} className="bg-lighten border-top">
       <Button variant="primary" onClick={() => setShowCreateUserForm(true)}>
@@ -60,14 +62,24 @@ const Footer = (props: {
 
 export function LegacyMigration(props: { children: ReactNode }) {
   const { t } = useTranslation();
-  const { legacyAuth, refreshLegacyAuth } = useLegacyAuth();
-  const { refreshActivePlatformUser } = usePlatformActiveUser();
+  const { legacyAuth, refreshLegacyAuth, isLoading } = useLegacyAuth();
+  const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
   const cancelRequest = usePostRequest<{ username: string }>();
   const [showCreateUserForm, setShowCreateUserForm] = useState(false);
+
   const isLDAPAccount =
     legacyAuth?.allow_aap_password === false && legacyAuth?.allow_rename === false;
   const isSSOAccount = legacyAuth?.is_sso_account;
-  if (legacyAuth === undefined) {
+
+  if (legacyAuth === undefined || (isLoading && legacyAuth?.is_migrated === false)) {
+    return (
+      <Page>
+        <LoadingState />
+      </Page>
+    );
+  }
+
+  if (legacyAuth?.is_authenticated === true && !activePlatformUser) {
     return (
       <Page>
         <LoadingState />

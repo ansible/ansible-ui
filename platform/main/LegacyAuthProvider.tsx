@@ -7,6 +7,7 @@ import { LegacyAuth } from '../interfaces/LegacyAuth';
 interface LegacyAuthState {
   legacyAuth?: LegacyAuth | null | undefined;
   refreshLegacyAuth?: () => void;
+  isLoading?: boolean;
 }
 
 export const LegacyAuthContext = createContext<LegacyAuthState>({});
@@ -16,7 +17,9 @@ export function useLegacyAuth() {
 }
 
 export function LegacyAuthProvider(props: { children: ReactNode }) {
-  const response = useSWR<LegacyAuth>(gatewayAPI`/legacy_auth/`, requestGet);
+  const response = useSWR<LegacyAuth>(gatewayAPI`/legacy_auth/`, requestGet, {
+    refreshInterval: 0,
+  });
 
   const [legacyAuth, setLegacyAuth] = useState<LegacyAuth | undefined | null>(undefined);
 
@@ -37,8 +40,12 @@ export function LegacyAuthProvider(props: { children: ReactNode }) {
 
   const mutate = response.mutate;
   const state = useMemo<LegacyAuthState>(() => {
-    return { legacyAuth, refreshLegacyAuth: () => void mutate(undefined) };
-  }, [legacyAuth, mutate]);
+    return {
+      legacyAuth,
+      refreshLegacyAuth: () => void mutate(undefined),
+      isLoading: response.isLoading,
+    };
+  }, [legacyAuth, mutate, response.isLoading]);
 
   return <LegacyAuthContext.Provider value={state}>{props.children}</LegacyAuthContext.Provider>;
 }

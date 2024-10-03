@@ -2,7 +2,6 @@ import { Button, GridItem } from '@patternfly/react-core';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PageFormTextInput } from '../../framework';
 import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
 import { AwxPageForm } from '../../frontend/awx/common/AwxPageForm';
@@ -66,7 +65,6 @@ export function CreateAAPUserForm(props: {
 }) {
   const { t } = useTranslation();
   const { legacyAuth, setShowCreateUserForm, isLDAPAccount } = props;
-  const navigate = useNavigate();
   const { refreshActivePlatformUser } = usePlatformActiveUser();
   const { refreshLegacyAuth } = useLegacyAuth();
 
@@ -74,6 +72,7 @@ export function CreateAAPUserForm(props: {
     CreateAAPUserRequest | CreateLDAPUserRequest,
     LegacyAuth
   >();
+
   const handleSubmit = async (formValues: LegacyAuth) => {
     await createAAPUserRequest(
       gatewayAPI`/legacy_auth/finalize/`,
@@ -84,10 +83,9 @@ export function CreateAAPUserForm(props: {
             aap_password: formValues.aap_password,
           }
     );
-    setShowCreateUserForm(false);
-    refreshActivePlatformUser?.();
     refreshLegacyAuth?.();
-    navigate(`/`);
+    refreshActivePlatformUser?.();
+    setShowCreateUserForm(false);
   };
 
   return (
