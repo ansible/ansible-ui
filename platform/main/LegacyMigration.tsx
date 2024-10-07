@@ -17,9 +17,9 @@ import { usePostRequest } from '../../frontend/common/crud/usePostRequest';
 import AAPLogo from '../assets/aap-logo.svg';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useLegacyAuth } from './LegacyAuthProvider';
-import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { CreateAAPUserForm } from './LegacyMigrationCreateAAPUserForm';
 import { LegacyMigrationForm } from './LegacyMigrationForm';
+import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 
 const AAPLogoBlackText = styled(AAPLogo)`
   .aap-logo_svg__st0 {
