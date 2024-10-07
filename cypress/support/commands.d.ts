@@ -491,6 +491,9 @@ declare global {
         options?: { inKebab?: boolean; disableFilter?: boolean }
       );
 
+      /** selects the Linked button from the section text */
+      checkLinkedButton(text: string): Chainable<void>;
+
       /** Selects a table row by clicking on the row checkbox. */
       selectTableRowByCheckbox(
         columnDataCy: string,

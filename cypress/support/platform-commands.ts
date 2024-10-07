@@ -583,3 +583,9 @@ Cypress.Commands.add('getCurrentPlatformUser', () => {
       return results[0];
     });
 });
+
+Cypress.Commands.add('checkLinkedButton', (text) => {
+  cy.get('[class="pf-v5-c-form"]').within(() => {
+    cy.contains('div', text).parent().parent().contains('button', 'Linked').should('be.visible');
+  });
+});
