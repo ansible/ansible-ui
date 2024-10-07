@@ -108,7 +108,9 @@ export function LegacyMigration(props: { children: ReactNode }) {
                 <AAPLogoBlackText />
               </CardHeader>
               <CardBody>
-                <CardTitle>{t('Link your Ansible Automation Platform accounts')}</CardTitle>
+                <CardTitle data-cy="link-accounts">
+                  {t('Link your Ansible Automation Platform accounts')}
+                </CardTitle>
                 <Text style={{ padding: '0 16px' }}>
                   {t(
                     'You have just linked your AAP v2.4 account to AAP v2.5. You can continue linking your AAP services to this same AAP v2.5 account.'
