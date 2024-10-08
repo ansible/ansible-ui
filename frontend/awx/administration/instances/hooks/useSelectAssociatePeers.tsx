@@ -19,7 +19,7 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
   const { instanceId, onPeer } = props;
 
   const toolbarFilters = usePeersTabFilters();
-  const columns = usePeersColumns();
+  const columns = usePeersColumns({ disableLinks: true });
   const tableColumns = useMemo(
     () =>
       columns.filter((item) =>

@@ -33,7 +33,10 @@ export type PeerColumnId =
   | 'protocol'
   | 'canonical';
 
-export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
+export function usePeersColumns(options?: {
+  disableLinks?: boolean;
+  isListenerAddresses?: boolean;
+}) {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: instance } = useGetItem<Instance>(awxAPI`/instances`, id);
@@ -48,7 +51,11 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
         cell: (peer) => (
           <TextCell
             text={peer.address}
-            to={getPageUrl(AwxRoute.InstanceDetails, { params: { id: peer.instance } })}
+            to={
+              !options?.disableLinks
+                ? getPageUrl(AwxRoute.InstanceDetails, { params: { id: peer.instance } })
+                : undefined
+            }
           />
         ),
         card: 'name',
@@ -60,7 +67,7 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
         header: t('Address'),
         id: 'address' as PeerColumnId,
         type: 'text',
-        value: (peer) => (_options?.isListenerAddresses ? instance?.hostname : peer.address),
+        value: (peer) => (options?.isListenerAddresses ? instance?.hostname : peer.address),
         sort: 'address',
       },
       {
@@ -68,7 +75,7 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
         id: 'port' as PeerColumnId,
         type: 'text',
         value: (peer) =>
-          _options?.isListenerAddresses
+          options?.isListenerAddresses
             ? instance?.listener_port?.toString()
             : peer.port?.toString(),
         sort: 'port',
@@ -84,7 +91,7 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
         header: t('Protocol'),
         id: 'protocol' as PeerColumnId,
         type: 'text',
-        value: (peer) => (_options?.isListenerAddresses ? instance?.protocol : peer.protocol),
+        value: (peer) => (options?.isListenerAddresses ? instance?.protocol : peer.protocol),
         sort: 'protocol',
       },
       {
@@ -92,13 +99,13 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
         id: 'canonical' as PeerColumnId,
         type: 'text',
         value: (peer) =>
-          _options?.isListenerAddresses
+          options?.isListenerAddresses
             ? GetCanonical(instance)?.toString()
             : peer.canonical.toString(),
         sort: 'canonical',
       },
     ],
-    [_options?.isListenerAddresses, getPageUrl, instance, t]
+    [options?.isListenerAddresses, options?.disableLinks, getPageUrl, instance, t]
   );
   return tableColumns;
 }
