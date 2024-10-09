@@ -44,6 +44,7 @@ export function PageFormSection(props: {
   }
   return (
     <FormSection
+      data-cy={props.title}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {props.canCollapse && (

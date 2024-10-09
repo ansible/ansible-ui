@@ -494,6 +494,9 @@ declare global {
       /** selects the Linked button from the section text */
       checkLinkedButton(text: string): Chainable<void>;
 
+      /** clicks on the Link button to link an account*/
+      clickOnLinkAccount(text: string): Chainable<void>;
+
       /** Selects a table row by clicking on the row checkbox. */
       selectTableRowByCheckbox(
         columnDataCy: string,
