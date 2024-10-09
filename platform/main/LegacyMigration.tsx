@@ -139,7 +139,11 @@ export function LegacyMigration(props: { children: ReactNode }) {
                 <AAPLogoBlackText />
               </CardHeader>
               <CardBody>
-                <CardTitle>
+                <CardTitle
+                  data-cy={
+                    isLDAPAccount || isSSOAccount ? 'complete-aap-migration' : 'set-app-credentials'
+                  }
+                >
                   {isLDAPAccount || isSSOAccount
                     ? t('Complete your AAP migration')
                     : t('Set your AAP credentials')}

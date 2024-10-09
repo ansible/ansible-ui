@@ -589,3 +589,14 @@ Cypress.Commands.add('checkLinkedButton', (text) => {
     cy.contains('div', text).parent().parent().contains('button', 'Linked').should('be.visible');
   });
 });
+
+Cypress.Commands.add('clickOnLinkAccount', (text) => {
+  cy.get('[class="pf-v5-c-form"]').within(() => {
+    cy.contains('div', text)
+      .parent()
+      .parent()
+      .contains('button', 'Link')
+      .should('be.visible')
+      .click();
+  });
+});
