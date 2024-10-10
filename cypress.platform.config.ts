@@ -24,11 +24,9 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/eda/overview/*.cy.ts',
   'cypress/e2e/eda/Roles/*.cy.ts',
   'cypress/e2e/eda/Users/*.cy.ts',
-  'cypress/e2e/hub/api-tokens.cy.ts',
   'cypress/e2e/hub/approvals.cy.ts',
+  'cypress/e2e/hub/api-tokens.cy.ts',
   'cypress/e2e/hub/collections-detail-install.cy.ts',
-  'cypress/e2e/hub/overview/hub-overview.cy.ts',
-  'cypress/e2e/hub/hub-roles.cy.ts',
   'cypress/e2e/hub/namespaces.cy.ts',
   'cypress/e2e/hub/signature-keys.cy.ts',
 ];
