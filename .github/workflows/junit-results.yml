@@ -2,6 +2,8 @@ name: Merge and upload jUnit component test results
 
 on:
   workflow_call:
+    secrets:
+      PDE_ORG_RESULTS_UPLOAD_PASSWORD:
 
 jobs:
   merge-and-upload-junit-test-results:
@@ -40,7 +42,7 @@ jobs:
       - name: Upload combined test result to platform readiness dashboard
         working-directory: junit-results
         run: >-
-          curl -v --user "${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_USER }}:${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}"
+          curl --fail-with-body -v --user "${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_USER }}:${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}"
           --form "xunit_xml=@aapui-test-results.xml"
           --form "component_name=aap-ui"
           --form "git_commit_sha=${{ github.sha }}"
