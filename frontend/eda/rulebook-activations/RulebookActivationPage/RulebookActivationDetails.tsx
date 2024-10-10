@@ -237,7 +237,7 @@ export function RulebookActivationDetails() {
         </PageDetails>
       )}
       {!!rulebookActivation?.skip_audit_events && (
-        <PageDetails numberOfColumns={'single'}>
+        <PageDetails numberOfColumns={'single'} disableScroll={true}>
           <PageDetail label={t('Enabled option')}>
             <DescriptionListGroup>
               <DescriptionListTerm style={{ opacity: 0.6 }}>
