@@ -1,12 +1,12 @@
 //Tests a user's ability to give permissions to a user from the roles tab.
-import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
-import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { Repository } from '../../../../frontend/hub/administration/repositories/Repository';
-import { HubRemote } from '../../../../frontend/hub/administration/remotes/Remotes';
-import { HubNamespace } from '../../../../frontend/hub/namespaces/HubNamespace';
 import { randomString } from '../../../../framework/utils/random-string';
+import { HubRemote } from '../../../../frontend/hub/administration/remotes/Remotes';
+import { Repository } from '../../../../frontend/hub/administration/repositories/Repository';
 import { ContentTypeEnum } from '../../../../frontend/hub/interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { HubNamespace } from '../../../../frontend/hub/namespaces/HubNamespace';
+import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
+import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
 import { hubAPI } from '../../../support/formatApiPathForHub';
 
 describe(`Assign Role to a Team `, () => {
@@ -103,6 +103,7 @@ describe(`Assign Role to a Team `, () => {
     cy.assertModalSuccess();
     cy.clickButton(/^Close$/);
     cy.verifyPageTitle(PlatformTeam.name);
+    cy.clickTab(/^Automation Content$/, true);
     cy.contains(hubRepository.name);
     cy.contains(repositoryRole.name);
     cy.contains('Repository');
@@ -130,6 +131,7 @@ describe(`Assign Role to a Team `, () => {
     cy.assertModalSuccess();
     cy.clickButton(/^Close$/);
     cy.verifyPageTitle(PlatformTeam.name);
+    cy.clickTab(/^Automation Content$/, true);
     cy.contains(hubRemote.name);
     cy.contains(remoteRole.name);
     cy.contains('Remote');
