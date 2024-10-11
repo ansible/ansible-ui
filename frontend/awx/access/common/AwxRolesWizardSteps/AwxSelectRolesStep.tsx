@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
-import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
-import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
-import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
+import { ITableColumn, TextCell } from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useAwxRolesFilters } from '../../roles/hooks/useAwxRolesFilters';
+import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
 import { QueryParams } from '../../../common/useAwxView';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { useAwxRolesFilters } from '../../roles/hooks/useAwxRolesFilters';
 
 export function AwxSelectRolesStep(props: {
   contentType?: string;
@@ -22,7 +22,9 @@ export function AwxSelectRolesStep(props: {
   const { fieldNameForPreviousStep, title } = props;
 
   const contentType = useMemo(() => {
-    return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
+    return props.contentType
+      ? props.contentType
+      : ((resourceType as string)?.split('.').pop() ?? '');
   }, [props.contentType, resourceType]);
 
   const descriptionForRoleSelection = useMemo(() => {

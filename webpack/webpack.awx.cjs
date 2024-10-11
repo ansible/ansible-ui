@@ -1,4 +1,3 @@
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const webpackConfig = require('./webpack.config');
 const env = require('./environment.cjs');
 const { AWX_SERVER } = env;
@@ -11,16 +10,9 @@ module.exports = function (env, argv) {
   // https://webpack.js.org/guides/public-path/
   config.output.publicPath = process.env.PUBLIC_PATH || process.env.ROUTE_PREFIX || '/';
 
-  // FavIcons
-  config.plugins.unshift(
-    new FaviconsWebpackPlugin({
-      logo: './frontend/assets/awx-icon.svg',
-      inject: true,
-    })
-  );
-
-  config.devServer.proxy = {
-    '/api': {
+  config.devServer.proxy = [
+    {
+      context: ['/api'],
       target: AWX_SERVER,
       secure: false,
       bypass: (req) => {
@@ -29,7 +21,8 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
-    '/sso': {
+    {
+      context: ['/sso'],
       target: AWX_SERVER,
       secure: false,
       bypass: (req, res, options) => {
@@ -38,13 +31,14 @@ module.exports = function (env, argv) {
         req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
       },
     },
-    '/websocket': {
+    {
+      context: ['/websocket'],
       target: AWX_SERVER,
       secure: false,
       ws: true,
       changeOrigin: true,
     },
-  };
+  ];
   return config;
 };
 

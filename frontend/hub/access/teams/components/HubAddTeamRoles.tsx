@@ -130,8 +130,8 @@ export function HubAddTeamRoles(props: Readonly<{ id?: string; teamRolesRoute?: 
               resourceType === (ContentTypeEnum.ExecutionEnvironment as string)
                 ? (resource as ExecutionEnvironment)?.namespace?.id
                 : resourceType !== 'system'
-                  ? (resource as ResourceTypeWithID).id ??
-                    parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href)
+                  ? ((resource as ResourceTypeWithID).id ??
+                    parsePulpIDFromURL((resource as ResourceTypeWithPulpHref)?.pulp_href))
                   : undefined,
           }),
         onComplete: () => {

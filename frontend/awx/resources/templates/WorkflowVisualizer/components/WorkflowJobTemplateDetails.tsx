@@ -128,7 +128,7 @@ export function WorkflowJobTemplateDetails({
         label={t('Labels')}
         nodeTags={
           launchConfig?.ask_labels_on_launch
-            ? promptValues?.labels ?? nodeLabels?.results ?? []
+            ? (promptValues?.labels ?? nodeLabels?.results ?? [])
             : template.summary_fields.labels?.results
         }
         templateTags={template.summary_fields.labels?.results}
@@ -137,7 +137,7 @@ export function WorkflowJobTemplateDetails({
         label={t('Job tags')}
         nodeTags={
           launchConfig?.ask_tags_on_launch
-            ? promptValues?.job_tags ?? parseStringToTagArray(nodeValues?.job_tags || '')
+            ? (promptValues?.job_tags ?? parseStringToTagArray(nodeValues?.job_tags || ''))
             : parseStringToTagArray(template.job_tags || '')
         }
         templateTags={parseStringToTagArray(template.job_tags || '')}
@@ -146,7 +146,7 @@ export function WorkflowJobTemplateDetails({
         label={t('Skip tags')}
         nodeTags={
           launchConfig?.ask_skip_tags_on_launch
-            ? promptValues?.skip_tags ?? parseStringToTagArray(nodeValues?.skip_tags || '')
+            ? (promptValues?.skip_tags ?? parseStringToTagArray(nodeValues?.skip_tags || ''))
             : parseStringToTagArray(template.skip_tags || '')
         }
         templateTags={parseStringToTagArray(template.skip_tags || '')}

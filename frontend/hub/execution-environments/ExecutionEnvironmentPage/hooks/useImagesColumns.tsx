@@ -55,7 +55,8 @@ export function useImagesColumns({
       {
         header: t('Layers'),
         type: 'text',
-        value: (image) => (isManifestList(image) ? '---' : image.layers?.length.toString() ?? '0'),
+        value: (image) =>
+          isManifestList(image) ? '---' : (image.layers?.length.toString() ?? '0'),
       },
       {
         header: t('Size'),

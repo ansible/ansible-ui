@@ -1,6 +1,5 @@
 import { PageSection, Skeleton, Tab, TabProps, Tabs } from '@patternfly/react-core';
 import { Children, ReactNode, isValidElement, useCallback, useState } from 'react';
-import styled from 'styled-components';
 
 export function PageTabs(props: {
   children: ReactNode;
@@ -33,21 +32,35 @@ export function PageTabs(props: {
 
   if (loading) {
     return (
-      <TabsStyled>
+      <Tabs
+        style={{
+          flexShrink: 0,
+          backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)',
+        }}
+      >
         <PageTab>
           <PageSection variant="light">
             <Skeleton />
           </PageSection>
         </PageTab>
-      </TabsStyled>
+      </Tabs>
     );
   }
 
   return (
     <>
-      <TabsStyled activeKey={activeKey} onSelect={onSelect} inset={{ default: 'insetSm' }} isBox>
+      <Tabs
+        activeKey={activeKey}
+        onSelect={onSelect}
+        inset={{ default: 'insetSm' }}
+        isBox
+        style={{
+          flexShrink: 0,
+          backgroundColor: 'var(--pf-v5-c-tabs__link--BackgroundColor)',
+        }}
+      >
         {tabs as unknown as TabsChild}
-      </TabsStyled>
+      </Tabs>
       {content}
     </>
   );
@@ -59,8 +72,3 @@ export function PageTab(props: { label?: string; children: ReactNode }) {
 
 type TabElement = React.ReactElement<TabProps, React.JSXElementConstructor<TabProps>>;
 type TabsChild = TabElement | boolean | null | undefined;
-
-const TabsStyled = styled(Tabs)`
-  flex-shrink: 0;
-  background-color: 'var(--pf-v5-c-tabs__link--BackgroundColor)';
-`;

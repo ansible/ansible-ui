@@ -23,7 +23,9 @@ export function HubSelectRolesStep(props: {
   const managedRolesWithDescription = useManagedRolesWithDescription();
 
   const contentType = useMemo(() => {
-    return props.contentType ? props.contentType : (resourceType as string)?.split('.').pop() ?? '';
+    return props.contentType
+      ? props.contentType
+      : ((resourceType as string)?.split('.').pop() ?? '');
   }, [props.contentType, resourceType]);
 
   const descriptionForRoleSelection = useMemo(() => {

@@ -73,7 +73,7 @@ export function useNameColumn<
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
         />
       ),
-      sort: disableSort ? undefined : options?.sort ?? 'name',
+      sort: disableSort ? undefined : (options?.sort ?? 'name'),
       card: 'name',
       list: 'name',
       defaultSort: options?.defaultSort !== undefined ? options?.defaultSort : true,
@@ -130,7 +130,7 @@ export function useLastRanColumn(options?: {
         if (!item.last_job_run) return <></>;
         return <DateTimeCell value={item.last_job_run} />;
       },
-      sort: options?.disableSort ? undefined : options?.sortKey ?? 'last_job_run',
+      sort: options?.disableSort ? undefined : (options?.sortKey ?? 'last_job_run'),
       defaultSortDirection: 'desc',
     }),
     [options?.disableSort, options?.sortKey, t]
@@ -242,7 +242,7 @@ export function useCreatedColumn(options?: {
           />
         );
       },
-      sort: options?.disableSort ? undefined : options?.sort ?? 'created',
+      sort: options?.disableSort ? undefined : (options?.sort ?? 'created'),
       defaultSortDirection: 'desc',
       table: 'hidden',
       card: 'hidden',
@@ -305,7 +305,7 @@ export function useModifiedColumn(options?: {
           />
         );
       },
-      sort: options?.disableSort ? undefined : options?.sort ?? 'modified',
+      sort: options?.disableSort ? undefined : (options?.sort ?? 'modified'),
       defaultSortDirection: 'desc',
       table: 'hidden',
       card: 'hidden',
@@ -554,7 +554,7 @@ export function useScopeColumn<T extends { scope?: string }>(options?: {
     () => ({
       header: t('Scope'),
       cell: (item: T) => <TextCell text={item.scope} />,
-      sort: options?.disableSort ? undefined : options?.sort ?? 'scope',
+      sort: options?.disableSort ? undefined : (options?.sort ?? 'scope'),
     }),
     [t, options?.disableSort, options?.sort]
   );
@@ -571,7 +571,7 @@ export function useExpiresColumn<T extends { expires?: string }>(options?: {
     () => ({
       header: t('Expires'),
       cell: (item: T) => <DateTimeCell value={item.expires} />,
-      sort: options?.disableSort ? undefined : options?.sort ?? 'expires',
+      sort: options?.disableSort ? undefined : (options?.sort ?? 'expires'),
     }),
     [t, options?.disableSort, options?.sort]
   );
@@ -608,7 +608,7 @@ export function useAddressColumn<
           onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
         />
       ),
-      sort: disableSort ? undefined : options?.sort ?? 'name',
+      sort: disableSort ? undefined : (options?.sort ?? 'name'),
       card: 'name',
       list: 'name',
       defaultSort: true,

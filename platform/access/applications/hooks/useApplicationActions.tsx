@@ -1,3 +1,4 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +12,6 @@ import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useDeleteApplications } from './useDeleteApplications';
-import { ButtonVariant } from '@patternfly/react-core';
 
 export function useApplicationActions(options: {
   onApplicationsDeleted: (applications: Application[]) => void;
@@ -32,7 +32,7 @@ export function useApplicationActions(options: {
         variant: ButtonVariant.primary,
         label: t('Edit OAuth application'),
         ouiaId: 'application-detail-edit-button',
-        isHidden: (_application) => !activePlatformUser?.is_superuser ?? false,
+        isHidden: (_application) => !activePlatformUser?.is_superuser,
         onClick: (application) =>
           pageNavigate(PlatformRoute.EditApplication, { params: { id: application.id } }),
       },
@@ -42,7 +42,7 @@ export function useApplicationActions(options: {
         selection: PageActionSelection.Single,
         icon: TrashIcon,
         label: t('Delete OAuth application'),
-        isHidden: (_application) => !activePlatformUser?.is_superuser ?? false,
+        isHidden: (_application) => !activePlatformUser?.is_superuser,
         onClick: (application) => {
           if (!application) return;
           deleteApplications([application]);

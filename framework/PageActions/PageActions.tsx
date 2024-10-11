@@ -51,7 +51,7 @@ export function PageActions<T extends object>(props: PageActionProps<T>) {
   const { actions, selectedItem, iconOnly, onOpen } = props;
 
   const collapseBreakpoint = useBreakpoint(
-    props.collapse !== 'never' && props.collapse !== 'always' ? props.collapse ?? 'lg' : 'lg'
+    props.collapse !== 'never' && props.collapse !== 'always' ? (props.collapse ?? 'lg') : 'lg'
   );
   const collapseButtons =
     props.collapse !== 'never' && (props.collapse === 'always' || !collapseBreakpoint);

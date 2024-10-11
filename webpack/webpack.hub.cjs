@@ -1,4 +1,3 @@
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const webpackConfig = require('./webpack.config');
 const env = require('./environment.cjs');
 const { HUB_SERVER } = env;
@@ -12,16 +11,9 @@ module.exports = function (env, argv) {
   // https://webpack.js.org/guides/public-path/
   config.output.publicPath = process.env.PUBLIC_PATH || process.env.ROUTE_PREFIX || '/';
 
-  // FavIcons
-  config.plugins.unshift(
-    new FaviconsWebpackPlugin({
-      logo: './frontend/assets/galaxy-icon.svg',
-      inject: true,
-    })
-  );
-
-  config.devServer.proxy = {
-    '/api': {
+  config.devServer.proxy = [
+    {
+      context: ['/api'],
       target: HUB_SERVER,
       secure: false,
       bypass: (req) => {
@@ -30,6 +22,6 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
-  };
+  ];
   return config;
 };

@@ -253,7 +253,7 @@ export function PageAsyncSingleSelect<
               >
                 {typeof props.queryErrorText === 'function'
                   ? props.queryErrorText(loadingError)
-                  : props.queryErrorText ?? t('Error loading options')}
+                  : (props.queryErrorText ?? t('Error loading options'))}
               </ButtonFullWidth>
             )
           : undefined
