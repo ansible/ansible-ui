@@ -104,10 +104,9 @@ describe('Inventory Sources', () => {
           cy.getByDataCy('enabled-variable').should('contain', 'foo.bar');
           cy.getByDataCy('enabled-value').should('contain', 'test');
           cy.getByDataCy('credential').should('contain', credential.name);
-          cy.getByDataCy('enabled-options').should(
-            'contain',
-            'Overwrite' && 'Overwrite variables' && 'Update on launch'
-          );
+          cy.getByDataCy('enabled-options').should('contain', 'Overwrite');
+          cy.getByDataCy('enabled-options').should('contain', 'Overwrite variables');
+          cy.getByDataCy('enabled-options').should('contain', 'Update on launch');
           cy.getByDataCy('source-variables').should('contain', 'test: output');
           cy.getByDataCy('created').should('exist');
           cy.getByDataCy('last-modified').should('exist');
@@ -400,10 +399,9 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.getByDataCy('host-filter').should('contain', '/^test$/');
     cy.getByDataCy('enabled-variable').should('contain', 'foo.bar');
     cy.getByDataCy('enabled-value').should('contain', 'test');
-    cy.getByDataCy('enabled-options').should(
-      'contain',
-      'Overwrite' && 'Overwrite variables' && 'Update on launch'
-    );
+    cy.getByDataCy('enabled-options').should('contain', 'Overwrite');
+    cy.getByDataCy('enabled-options').should('contain', 'Overwrite variables');
+    cy.getByDataCy('enabled-options').should('contain', 'Update on launch');
     cy.getByDataCy('source-variables').should('contain', '');
     cy.getByDataCy('created').should('exist');
     cy.getByDataCy('last-modified').should('exist');

@@ -1,6 +1,4 @@
 const webpackConfig = require('../webpack/webpack.config');
-const webpack = require('webpack');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER || 'https://localhost:443';
@@ -12,13 +10,11 @@ module.exports = function (env, argv) {
 
   config.entry = './platform/main/Platform.tsx';
 
-  config.plugins.unshift(
-    new FaviconsWebpackPlugin({ logo: 'platform/assets/redhat-icon.svg', inject: true })
-  );
   config.plugins.unshift(new CopyPlugin({ patterns: [{ from: 'platform/assets', to: 'assets' }] }));
 
-  config.devServer.proxy = {
-    '/o/': {
+  config.devServer.proxy = [
+    {
+      context: ['/o/'],
       target: PLATFORM_SERVER,
       secure: false,
       bypass: (req) => {
@@ -27,7 +23,8 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
-    '/api': {
+    {
+      context: ['/api/'],
       target: PLATFORM_SERVER,
       secure: false,
       bypass: (req) => {
@@ -36,7 +33,8 @@ module.exports = function (env, argv) {
         req.headers.referer = proxyUrl.href;
       },
     },
-    '/sso': {
+    {
+      context: ['/sso'],
       target: PLATFORM_SERVER,
       secure: false,
       bypass: (req) => {
@@ -45,7 +43,8 @@ module.exports = function (env, argv) {
         req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
       },
     },
-    '/api/controller/v2/websocket': {
+    {
+      context: ['/api/controller/v2/websocket'],
       target: PLATFORM_SERVER,
       secure: false,
       ws: true,
@@ -55,7 +54,7 @@ module.exports = function (env, argv) {
         req.referrer = getRawHeader(req.rawHeaders, 'Referer') || proxyUrl.href;
       },
     },
-  };
+  ];
 
   return config;
 };

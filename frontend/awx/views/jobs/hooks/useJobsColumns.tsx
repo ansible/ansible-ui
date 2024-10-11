@@ -151,7 +151,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Schedule'),
         cell: (job: UnifiedJob) => {
           return (
-            <Link to={job.summary_fields?.schedule ? getScheduleUrl(job) ?? '' : ''}>
+            <Link to={job.summary_fields?.schedule ? (getScheduleUrl(job) ?? '') : ''}>
               {job.summary_fields?.schedule?.name}
             </Link>
           );

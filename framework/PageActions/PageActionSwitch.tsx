@@ -25,7 +25,7 @@ export function PageActionSwitch<T extends object>(props: {
       : iconOnly
         ? isChecked
           ? action.label
-          : action.labelOff ?? action.label
+          : (action.labelOff ?? action.label)
         : undefined;
 
   const id = useId();

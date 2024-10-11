@@ -321,7 +321,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
                 ? translations.errorText
                 : !isProcessing
                   ? translations.successText
-                  : processingText ?? translations.processingText
+                  : (processingText ?? translations.processingText)
           }
           size={ProgressSize.lg}
           variant={

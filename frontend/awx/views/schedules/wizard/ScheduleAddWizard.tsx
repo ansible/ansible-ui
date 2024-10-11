@@ -106,8 +106,10 @@ export function ScheduleAddWizard(props: {
         hidden: (wizardData: Partial<ScheduleFormWizard>) => {
           const { resource, schedule_type, launch_config } = wizardData;
           const isTemplate =
-            schedule_type === ('job_template' || 'workflow_job_template') ||
-            resource?.type === ('job_template' || 'workflow_job_template');
+            schedule_type === 'job_template' ||
+            schedule_type === 'workflow_job_template' ||
+            resource?.type === 'job_template' ||
+            resource?.type === 'workflow_job_template';
           if (isTemplate && resource && launch_config) {
             return shouldHideOtherStep(launch_config);
           }

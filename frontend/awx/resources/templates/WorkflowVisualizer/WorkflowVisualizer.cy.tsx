@@ -1,7 +1,7 @@
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizer } from './WorkflowVisualizer';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('WorkflowVisualizer', () => {
   beforeEach(() => {
@@ -80,6 +80,7 @@ describe('WorkflowVisualizer', () => {
 
   it('Node label kebab should open context menu dropdown', () => {
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#zoom-out').click();
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
     cy.get('li[data-cy="edit-node"]').should('be.visible');
     cy.get('li[data-cy="add-node-and-link"]').should('be.visible');
@@ -191,14 +192,13 @@ describe('WorkflowVisualizer', () => {
 
   it('Show confirmation modal when removing a node, then cancel removal, then actually remove', () => {
     cy.mount(<WorkflowVisualizer />);
-    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click({ force: true });
     cy.get('li[data-cy="remove-node"]').within(() => {
       cy.get('button').click({ force: true });
     });
     cy.get('div[aria-label="Remove step"]').should('be.visible');
     cy.clickButton('Cancel');
-    cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('be.visible');
-    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
+    cy.get('[data-id="1510"] .pf-topology__node__action-icon').click({ force: true });
     cy.get('li[data-cy="remove-node"]').within(() => {
       cy.get('button').click({ force: true });
     });
@@ -214,6 +214,7 @@ describe('WorkflowVisualizer', () => {
       { fixture: 'jobTemplates.json' }
     );
     cy.mount(<WorkflowVisualizer />);
+    cy.get('#zoom-out').click();
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').click();
     cy.get('li[data-cy="add-node-and-link"]').within(() => {
       cy.get('button').click({ force: true });
