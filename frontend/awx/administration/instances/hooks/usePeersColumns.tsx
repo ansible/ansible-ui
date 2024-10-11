@@ -25,6 +25,14 @@ export interface ReceptorAddresses {
   ];
 }
 
+export type PeerColumnId =
+  | 'instanceName'
+  | 'address'
+  | 'port'
+  | 'nodeType'
+  | 'protocol'
+  | 'canonical';
+
 export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
@@ -36,6 +44,7 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
     () => [
       {
         header: t('Instance name'),
+        id: 'instanceName' as PeerColumnId,
         cell: (peer) => (
           <TextCell
             text={peer.address}
@@ -49,12 +58,14 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
       },
       {
         header: t('Address'),
+        id: 'address' as PeerColumnId,
         type: 'text',
         value: (peer) => (_options?.isListenerAddresses ? instance?.hostname : peer.address),
         sort: 'address',
       },
       {
         header: t('Port'),
+        id: 'port' as PeerColumnId,
         type: 'text',
         value: (peer) =>
           _options?.isListenerAddresses
@@ -64,18 +75,21 @@ export function usePeersColumns(_options?: { isListenerAddresses?: boolean }) {
       },
       {
         header: t('Node type'),
+        id: 'nodeType' as PeerColumnId,
         type: 'text',
         value: (peer) => GetNodeTypePeer(peer),
         sort: undefined,
       },
       {
         header: t('Protocol'),
+        id: 'protocol' as PeerColumnId,
         type: 'text',
         value: (peer) => (_options?.isListenerAddresses ? instance?.protocol : peer.protocol),
         sort: 'protocol',
       },
       {
         header: t('Canonical'),
+        id: 'canonical' as PeerColumnId,
         type: 'text',
         value: (peer) =>
           _options?.isListenerAddresses

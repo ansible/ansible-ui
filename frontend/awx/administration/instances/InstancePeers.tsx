@@ -7,7 +7,7 @@ import { useGetItem } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance, Peer } from '../../interfaces/Instance';
 import { usePeersTabFilters } from './Instances';
-import { usePeersColumns } from './hooks/usePeersColumns';
+import { PeerColumnId, usePeersColumns } from './hooks/usePeersColumns';
 import { useAwxView } from '../../common/useAwxView';
 import { useMemo } from 'react';
 import { usePeerInstanceModal } from './hooks/useSelectAssociatePeers';
@@ -26,16 +26,21 @@ export function InstancePeersTab(props: { instance: Instance }) {
   return <ResourcePeersList url={awxAPI`/instances/${instance.id.toString()}/peers/`} />;
 }
 
+const tableColumnsIds: PeerColumnId[] = [
+  'instanceName',
+  'address',
+  'port',
+  'nodeType',
+  'canonical',
+];
+
 export function ResourcePeersList(props: { url: string }) {
   const { t } = useTranslation();
   const { url } = props;
   const toolbarFilters = usePeersTabFilters();
   const columns = usePeersColumns();
   const tableColumns = useMemo(
-    () =>
-      columns.filter((item) =>
-        ['Instance name', 'Address', 'Port', 'Node type', 'Canonical'].includes(item.header)
-      ),
+    () => columns.filter((item) => item.id && tableColumnsIds.includes(item.id as PeerColumnId)),
     [columns]
   );
   const view = useAwxView({
