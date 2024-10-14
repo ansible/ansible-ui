@@ -11,12 +11,7 @@ baseConfig.e2e!.specPattern = [
   'cypress/e2e/resource_cleanup_downstream/*.cy.ts',
 ];
 baseConfig.e2e!.excludeSpecPattern = [
-  'cypress/e2e/awx/access/organizations/*.cy.ts',
-  'cypress/e2e/awx/access/teams/*.cy.ts',
-  'cypress/e2e/awx/access/tokens/*.cy.ts',
-  'cypress/e2e/awx/access/users/*.cy.ts',
   'cypress/e2e/awx/cleanup/*.cy.ts',
-  'cypress/e2e/awx/overview/*.cy.ts',
   'cypress/e2e/eda/admin-user/*.cy.ts',
   'cypress/e2e/eda/cleanup/*.cy.ts',
   'cypress/e2e/eda/General-UI/*.cy.ts',
