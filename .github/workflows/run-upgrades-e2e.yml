@@ -1,0 +1,33 @@
+name: Run Upgrades E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+        description: 'Platform Server'
+
+jobs:
+  platform-ui-image:
+    name: Platform UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+
+  platform-upgrades-e2e:
+    name: Platform Upgrades E2E
+    needs:
+      - platform-ui-image
+    uses: ./.github/workflows/upgrades-e2e.yml
+    with:
+      PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
