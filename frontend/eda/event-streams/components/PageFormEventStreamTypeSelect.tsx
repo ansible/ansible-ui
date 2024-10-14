@@ -20,7 +20,7 @@ export function PageFormSelectEventStreamType<
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
   const { t } = useTranslation();
-  const eventStreamTypeColumns = useCredentialTypesColumns();
+  const eventStreamTypeColumns = useCredentialTypesColumns({ disableLinks: true });
   const eventStreamTypeFilters = useCredentialTypeFilters();
   return (
     <PageFormSingleSelectEdaResource<EdaCredentialType, TFieldValues, TFieldName>

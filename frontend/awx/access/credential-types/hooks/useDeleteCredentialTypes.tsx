@@ -9,7 +9,7 @@ import { useCredentialTypesColumns } from './useCredentialTypesColumns';
 
 export function useDeleteCredentialTypes(onComplete: (users: CredentialType[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useCredentialTypesColumns();
+  const confirmationColumns = useCredentialTypesColumns({ disableLinks: true });
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Name'),
