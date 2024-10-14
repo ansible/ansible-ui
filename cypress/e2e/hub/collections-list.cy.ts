@@ -45,7 +45,10 @@ describe('GalaxyKit Installation Check for Collections List', () => {
           cy.clickKebabAction('actions-dropdown', 'sign-collection');
         });
         cy.get('#confirm').click();
+        cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
         cy.clickButton(/^Sign collections$/);
+        cy.wait('@signed'); // The response is a 202 that kicks off a task for signing the collection
+        cy.waitForAllTasks();
         cy.get('[data-label="Status"]').should('contain', 'Success');
         cy.clickButton(/^Close$/);
         cy.getModal().should('not.exist');
@@ -67,7 +70,8 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.get('#confirm').click();
         cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
         cy.clickButton(/^Sign collections$/);
-        cy.wait('@signed');
+        cy.wait('@signed'); // The response is a 202 that kicks off a task for signing the collection
+        cy.waitForAllTasks();
         cy.get('[data-label="Status"]').should('contain', 'Success');
         cy.clickButton(/^Close$/);
         cy.contains('Signed state').should('be.visible');
