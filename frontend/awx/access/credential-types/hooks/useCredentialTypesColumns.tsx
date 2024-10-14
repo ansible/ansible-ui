@@ -16,7 +16,7 @@ import {
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function useCredentialTypesColumns() {
+export function useCredentialTypesColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const descriptionColumn = useDescriptionColumn();
@@ -31,7 +31,13 @@ export function useCredentialTypesColumns() {
           <Split hasGutter>
             <TextCell
               text={credentialType.name}
-              to={getPageUrl(AwxRoute.CredentialTypeDetails, { params: { id: credentialType.id } })}
+              to={
+                options?.disableLinks
+                  ? undefined
+                  : getPageUrl(AwxRoute.CredentialTypeDetails, {
+                      params: { id: credentialType.id },
+                    })
+              }
             />
             {credentialType.managed && <Label>{t('Read-only')}</Label>}
           </Split>

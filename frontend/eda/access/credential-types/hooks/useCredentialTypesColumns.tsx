@@ -12,7 +12,7 @@ import { useDescriptionColumn } from '../../../../common/columns';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 
-export function useCredentialTypesColumns() {
+export function useCredentialTypesColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const descriptionColumn = useDescriptionColumn();
@@ -25,7 +25,13 @@ export function useCredentialTypesColumns() {
           <Split hasGutter>
             <TextCell
               text={credentialType.name}
-              to={getPageUrl(EdaRoute.CredentialTypeDetails, { params: { id: credentialType.id } })}
+              to={
+                options?.disableLinks
+                  ? undefined
+                  : getPageUrl(EdaRoute.CredentialTypeDetails, {
+                      params: { id: credentialType.id },
+                    })
+              }
             />
             {credentialType.managed && <Label>{t('Read-only')}</Label>}
           </Split>
@@ -49,7 +55,7 @@ export function useCredentialTypesColumns() {
         modal: ColumnModalOption.hidden,
       },
     ],
-    [descriptionColumn, getPageUrl, t]
+    [descriptionColumn, getPageUrl, options?.disableLinks, t]
   );
   return tableColumns;
 }

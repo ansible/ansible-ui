@@ -13,7 +13,7 @@ export function useDeleteCredentialTypes(
   onComplete?: (credentialTypes: EdaCredentialType[]) => void
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useCredentialTypesColumns();
+  const confirmationColumns = useCredentialTypesColumns({ disableLinks: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
 

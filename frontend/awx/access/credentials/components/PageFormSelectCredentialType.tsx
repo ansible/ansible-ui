@@ -20,7 +20,7 @@ export function PageFormSelectCredentialType<
 >(props: { name: TFieldName; isRequired?: boolean; isDisabled?: string; helperText?: string }) {
   const { t } = useTranslation();
   const toolbarFilters = useCredentialTypesFilters();
-  const tableColumns = useCredentialTypesColumns();
+  const tableColumns = useCredentialTypesColumns({ disableLinks: true });
   return (
     <PageFormSingleSelectAwxResource<CredentialType, TFieldValues, TFieldName>
       name={props.name}
