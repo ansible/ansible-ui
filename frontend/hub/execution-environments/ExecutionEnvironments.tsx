@@ -1,16 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { idKeyFn } from '../../common/utils/nameKeyFn';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubView } from '../common/useHubView';
-import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentActions } from './hooks/useExecutionEnvironmentActions';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
-import { useExecutionEnvironmentsActions } from './hooks/useExecutionEnvironmentsActions';
+import {
+  useExecutionEnvironmentsActions,
+  useEmptyEEsActions,
+} from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -23,8 +23,8 @@ export function ExecutionEnvironments() {
     tableColumns,
   });
   const toolbarActions = useExecutionEnvironmentsActions(view.unselectItemsAndRefresh);
+  const emptyActions = useEmptyEEsActions();
   const rowActions = useExecutionEnvironmentActions(view.unselectItemsAndRefresh);
-  const navigate = usePageNavigate();
 
   return (
     <PageLayout>
@@ -46,13 +46,7 @@ export function ExecutionEnvironments() {
         rowActions={rowActions}
         errorStateTitle={t('Error loading execution environments')}
         emptyStateTitle={t('No execution environments yet')}
-        emptyStateButtonText={t('Create execution environment')}
-        emptyStateButtonIcon={
-          <Icon>
-            <PlusCircleIcon />
-          </Icon>
-        }
-        emptyStateButtonClick={() => navigate(HubRoute.CreateExecutionEnvironment)}
+        emptyStateActions={emptyActions}
         {...view}
         defaultSubtitle={t('Execution Environment')}
       />

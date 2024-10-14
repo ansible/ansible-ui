@@ -1,15 +1,27 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CheckIcon, ExternalLinkAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  ButtonVariant,
+  ClipboardCopy,
+  Modal,
+  ModalBoxBody,
+  ModalVariant,
+  Stack,
+  ToggleGroup,
+  ToggleGroupItem,
+} from '@patternfly/react-core';
+import { CheckIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   compareStrings,
+  usePageDialog,
   usePageNavigate,
 } from '../../../../framework';
+import { ExternalLink } from '../../common/ExternalLink';
 import { requestGet } from '../../../common/crud/Data';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { hubAPIDelete, hubAPIPost } from '../../common/api/hub-api-utils';
@@ -24,12 +36,10 @@ import { AAPDocsURL } from '../../common/constants';
 import { useCanSignEE } from '../../common/utils/canSign';
 import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
-export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
+export function useEmptyEEsActions() {
   const { t } = useTranslation();
-  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
-  const signExecutionEnvironments = useSignExecutionEnvironments(callback);
   const pageNavigate = usePageNavigate();
-  const canSignEE = useCanSignEE();
+  const eePush = useEEPush();
 
   return useMemo<IPageAction<ExecutionEnvironment>[]>(
     () => [
@@ -49,12 +59,26 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         selection: PageActionSelection.None,
         variant: ButtonVariant.link,
         isPinned: true,
-        icon: ExternalLinkAltIcon,
         label: t('Push container images'),
         onClick: () => {
-          window.open(AAPDocsURL, '_blank');
+          eePush();
         },
       },
+    ],
+    [t, pageNavigate, eePush]
+  );
+}
+
+export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnvironment[]) => void) {
+  const { t } = useTranslation();
+  const deleteExecutionEnvironments = useDeleteExecutionEnvironments(callback);
+  const signExecutionEnvironments = useSignExecutionEnvironments(callback);
+  const canSignEE = useCanSignEE();
+  const emptyActions = useEmptyEEsActions();
+
+  return useMemo<IPageAction<ExecutionEnvironment>[]>(
+    () => [
+      ...emptyActions,
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -73,7 +97,7 @@ export function useExecutionEnvironmentsActions(callback?: (ees: ExecutionEnviro
         isDanger: true,
       },
     ],
-    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, pageNavigate]
+    [t, signExecutionEnvironments, canSignEE, deleteExecutionEnvironments, emptyActions]
   );
 }
 
@@ -218,4 +242,66 @@ export function getContainerPulpType(item: ExecutionEnvironment) {
   } else {
     return '';
   }
+}
+
+function useEEPush() {
+  const [_, setDialog] = usePageDialog();
+  const onClose = useCallback(() => setDialog(undefined), [setDialog]);
+
+  return () => {
+    setDialog(<EEPushModal onClose={onClose} />);
+  };
+}
+
+function EEPushModal(props: { onClose: () => void }) {
+  const { onClose } = props;
+  const { t } = useTranslation();
+
+  const host = window.location.host;
+  const [tlsVerify, setTlsVerify] = useState(window.location.protocol === 'https:');
+  const name = 'example';
+  const containerURL = `${host}/${name}:latest`;
+
+  const code = `podman login --tls-verify=${tlsVerify.toString()} ${host}
+podman image tag ${name} ${containerURL}
+podman push --tls-verify=${tlsVerify.toString()} ${containerURL}
+`;
+
+  return (
+    <Modal
+      title={t(`Push container images`)}
+      aria-label={t(`Push container images`)}
+      isOpen
+      onClose={onClose}
+      variant={ModalVariant.medium}
+      tabIndex={0}
+      hasNoBodyWrapper
+      actions={[
+        <Button key="confirm" variant="secondary" onClick={onClose}>
+          {t(`Close`)}
+        </Button>,
+        <ExternalLink key="docs" href={AAPDocsURL}>{t`Documentation`}</ExternalLink>,
+      ]}
+    >
+      <ModalBoxBody style={{ overflow: 'hidden' }}>
+        <Stack hasGutter>
+          <ToggleGroup isCompact aria-label={t(`Toggle between HTTPS and HTTP`)}>
+            <ToggleGroupItem
+              text={t(`Valid HTTPS`)}
+              isSelected={tlsVerify}
+              onChange={() => setTlsVerify(true)}
+            />
+            <ToggleGroupItem
+              text={t(`HTTP or self-signed HTTPS`)}
+              isSelected={!tlsVerify}
+              onChange={() => setTlsVerify(false)}
+            />
+          </ToggleGroup>
+          <ClipboardCopy isCode isReadOnly isExpanded variant="expansion">
+            {code}
+          </ClipboardCopy>
+        </Stack>
+      </ModalBoxBody>
+    </Modal>
+  );
 }
