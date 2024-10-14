@@ -86,16 +86,12 @@ export function formatPartCode(part: dom.CodePart, params: Params): React.ReactN
   return formatPartCodeCommon(part.text, params);
 }
 
-export function formatPartCodeCommon(text: string, params: Params): React.ReactNode {
-  let color = '#e6e9e9';
-  if (params.settings.theme === 'dark') {
-    color = '#6e9e9e';
-  }
+export function formatPartCodeCommon(text: string, _params: Params): React.ReactNode {
   return (
     <span
       style={{
-        backgroundColor: color,
-        fontFamily: 'var(--pf-global--FontFamily--monospace)',
+        backgroundColor: 'var(--pf-v5-global--BackgroundColor--200)',
+        fontFamily: 'var(--pf-v5-global--FontFamily--monospace)',
         display: 'inline-block',
         borderRadius: '2px',
         padding: '0 2px',
