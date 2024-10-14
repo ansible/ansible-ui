@@ -29,10 +29,11 @@ describe('Execution Environments', () => {
         executionEnvironment: { registry: remoteRegistry.id },
       }).then((executionEnvironment) => {
         cy.navigateTo('hub', ExecutionEnvironments.url);
-        cy.window().then((win) => cy.stub(win, 'open').as('docsTab'));
         cy.get('[data-cy="push-container-images"]').click();
-        cy.get('@docsTab').should(
-          'be.calledWith',
+        cy.contains('.pf-v5-c-modal-box__title-text', 'Push container images');
+        cy.contains('.pf-v5-c-modal-box__footer a', 'Documentation').should(
+          'have.attr',
+          'href',
           'https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/'
         );
         cy.deleteHubExecutionEnvironment(executionEnvironment);
