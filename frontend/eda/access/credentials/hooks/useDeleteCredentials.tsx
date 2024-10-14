@@ -12,7 +12,7 @@ import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 
 export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useCredentialColumns();
+  const confirmationColumns = useCredentialColumns({ disableLinks: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useEdaBulkConfirmation<EdaCredential>();

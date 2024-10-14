@@ -25,7 +25,7 @@ export function PageFormSelectEventStreamCredential<
   helperText?: string;
 }) {
   const { t } = useTranslation();
-  const CredentialColumns = useCredentialColumns();
+  const CredentialColumns = useCredentialColumns({ disableLinks: true });
   const CredentialFilters = useCredentialFilters();
   return (
     <PageFormSingleSelectEdaResource<EdaCredential, TFieldValues, TFieldName>

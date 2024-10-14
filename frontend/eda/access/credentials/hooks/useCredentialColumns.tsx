@@ -4,7 +4,7 @@ import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
-export function useCredentialColumns() {
+export function useCredentialColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaCredential>[]>(
@@ -14,9 +14,13 @@ export function useCredentialColumns() {
         cell: (credential) => (
           <TextCell
             text={credential.name}
-            to={getPageUrl(EdaRoute.CredentialPage, {
-              params: { id: credential.id },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(EdaRoute.CredentialPage, {
+                    params: { id: credential.id },
+                  })
+            }
           />
         ),
         card: 'name',
@@ -51,6 +55,6 @@ export function useCredentialColumns() {
         list: 'secondary',
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, options?.disableLinks, t]
   );
 }
