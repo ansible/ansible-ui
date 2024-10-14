@@ -103,6 +103,7 @@ describe('Job Templates Tests', function () {
         cy.clickLink(/^Create job template$/);
         cy.getBy('[data-cy="name"]').type(jtName);
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
+        cy.getBy('[data-cy="extra-vars"]').type('foo: bar');
         cy.selectPromptOnLaunch('inventory');
         cy.getBy('button[id="project"]').click();
         cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
@@ -116,6 +117,7 @@ describe('Job Templates Tests', function () {
         cy.clickButton('Confirm');
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
+        cy.selectPromptOnLaunch('variables');
         cy.selectPromptOnLaunch('credential');
         cy.selectPromptOnLaunch('instance_groups');
         cy.getBy('[data-cy="Submit"]').click();
@@ -128,6 +130,7 @@ describe('Job Templates Tests', function () {
             cy.filterTableByMultiSelect('name', [jtName]);
             cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
             cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
+            cy.dataEditorShouldContain('[data-cy="prompt-extra-vars"]', 'foo: bar');
             cy.getBy('button[data-cy="credential"]').click();
             cy.get('[data-cy="search-input"]').find('input').type(`${machineCredential.name}`);
             cy.get('li').contains(`${machineCredential.name}`).click();
