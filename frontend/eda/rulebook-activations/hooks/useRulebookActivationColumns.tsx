@@ -8,7 +8,7 @@ import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-export function useRulebookActivationColumns() {
+export function useRulebookActivationColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaRulebookActivation>[]>(
@@ -26,9 +26,13 @@ export function useRulebookActivationColumns() {
           rulebookActivation?.status !== StatusEnum.Deleting ? (
             <TextCell
               text={rulebookActivation.name}
-              to={getPageUrl(EdaRoute.RulebookActivationPage, {
-                params: { id: rulebookActivation.id },
-              })}
+              to={
+                options?.disableLinks
+                  ? undefined
+                  : getPageUrl(EdaRoute.RulebookActivationPage, {
+                      params: { id: rulebookActivation.id },
+                    })
+              }
             />
           ) : (
             <TextCell text={rulebookActivation.name} />

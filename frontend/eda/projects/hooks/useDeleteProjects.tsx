@@ -10,7 +10,7 @@ import { useProjectColumns } from './useProjectColumns';
 
 export function useDeleteProjects(onComplete: (projects: EdaProject[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useProjectColumns();
+  const confirmationColumns = useProjectColumns({ disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useEdaBulkConfirmation<EdaProject>();
   return useCallback(

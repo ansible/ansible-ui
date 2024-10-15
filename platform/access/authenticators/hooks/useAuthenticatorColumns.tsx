@@ -6,7 +6,7 @@ import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
-export function useAuthenticatorsColumns() {
+export function useAuthenticatorsColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const createdColumn = useCreatedColumn({
@@ -31,9 +31,13 @@ export function useAuthenticatorsColumns() {
         cell: (authenticator) => (
           <TextCell
             text={authenticator.name}
-            to={getPageUrl(PlatformRoute.AuthenticatorDetails, {
-              params: { id: authenticator?.id },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(PlatformRoute.AuthenticatorDetails, {
+                    params: { id: authenticator?.id },
+                  })
+            }
           />
         ),
         card: 'name',
@@ -50,7 +54,7 @@ export function useAuthenticatorsColumns() {
       createdColumn,
       modifiedColumn,
     ],
-    [getPageUrl, createdColumn, modifiedColumn, t]
+    [getPageUrl, createdColumn, modifiedColumn, options?.disableLinks, t]
   );
   return tableColumns;
 }

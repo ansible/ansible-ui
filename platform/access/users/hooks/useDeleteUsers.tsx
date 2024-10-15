@@ -8,7 +8,7 @@ import { useUsersColumns } from './useUserColumns';
 
 export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useUsersColumns();
+  const confirmationColumns = useUsersColumns({ disableLinks: true });
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Username'),

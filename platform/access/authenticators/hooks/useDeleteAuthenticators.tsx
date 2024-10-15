@@ -8,7 +8,7 @@ import { useAuthenticatorsColumns } from './useAuthenticatorColumns';
 
 export function useDeleteAuthenticators(onComplete: (authenticators: Authenticator[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useAuthenticatorsColumns();
+  const confirmationColumns = useAuthenticatorsColumns({ disableLinks: true });
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Name'),

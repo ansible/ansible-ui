@@ -12,7 +12,7 @@ import { StatusCell } from '../../../common/Status';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-export function useProjectColumns() {
+export function useProjectColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaProject>[]>(
@@ -22,7 +22,11 @@ export function useProjectColumns() {
         cell: (project) => (
           <TextCell
             text={project.name}
-            to={getPageUrl(EdaRoute.ProjectPage, { params: { id: project.id } })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(EdaRoute.ProjectPage, { params: { id: project.id } })
+            }
           />
         ),
         card: 'name',
