@@ -19,7 +19,7 @@ export function useDeleteDecisionEnvironments(
   onComplete: (decisionEnvironments: EdaDecisionEnvironment[]) => void
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useDecisionEnvironmentsColumns();
+  const confirmationColumns = useDecisionEnvironmentsColumns({ disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useEdaBulkConfirmation<EdaDecisionEnvironment>();
   return useCallback(
@@ -66,7 +66,7 @@ export function useDeleteDecisionEnvironment(
   onComplete: (decisionEnvironments: EdaDecisionEnvironmentRead[]) => void
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useDecisionEnvironmentColumns();
+  const confirmationColumns = useDecisionEnvironmentColumns({ disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useEdaBulkConfirmation<EdaDecisionEnvironmentRead>();
   return useCallback(

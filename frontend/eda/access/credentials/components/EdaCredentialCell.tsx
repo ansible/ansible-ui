@@ -3,7 +3,10 @@ import { useGet } from '../../../../common/crud/useGet';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
-export function EdaCredentialCell(props: { eda_credential_id?: number | null }) {
+export function EdaCredentialCell(props: {
+  eda_credential_id?: number | null;
+  disableLink?: boolean;
+}) {
   const getPageUrl = useGetPageUrl();
   const { data } = useGet<EdaCredential>(
     props.eda_credential_id ? `/api/eda/v1/eda-credentials/${props.eda_credential_id}/` : undefined,
@@ -21,7 +24,7 @@ export function EdaCredentialCell(props: { eda_credential_id?: number | null }) 
     <TextCell
       text={data.name}
       to={
-        props.eda_credential_id
+        props.eda_credential_id && !props.disableLink
           ? getPageUrl(EdaRoute.CredentialPage, {
               params: { id: data.id },
             })
