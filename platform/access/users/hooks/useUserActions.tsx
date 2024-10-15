@@ -132,7 +132,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
 
     const isLoggedInUser = activePlatformUser?.id.toString() === params.id;
     const canLinkAdditionalAccounts =
-      legacyAuth?.is_migrated && legacyAuth?.linked_accounts.length < 3;
+      legacyAuth?.is_migrated && legacyAuth?.linked_accounts.length < 2;
 
     return [
       {

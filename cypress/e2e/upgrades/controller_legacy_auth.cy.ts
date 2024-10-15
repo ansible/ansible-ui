@@ -5,18 +5,12 @@ describe('Authenticate using Controller legacy login', () => {
   let awxUsername: string;
   let hubPassword: string;
   let hubUsername: string;
-  let edaUsername: string;
-  let edaPassword: string;
 
   before(() => {
     cy.platformLogin();
     cy.getUserForMigration(UpgradeUserType.hubLegacy).then((user) => {
       hubUsername = user.username;
       hubPassword = user.password;
-    });
-    cy.getUserForMigration(UpgradeUserType.eda).then((user) => {
-      edaUsername = user.username;
-      edaPassword = user.password;
     });
     cy.platformLogout();
   });
@@ -81,17 +75,12 @@ describe('Authenticate using Controller legacy login', () => {
     //cy.getTableRow('username', controller_user.username).click();
     cy.clickTableRowLink('username', awxUsername);
     cy.clickKebabAction('actions-dropdown', 'link-user-accounts');
+    cy.verifyPageTitle('Link user accounts');
     //link hub account
     cy.getByDataCy('hub-username').type(hubUsername);
     cy.getByDataCy('hub-password').type(hubPassword);
     cy.getBy('button[value="hub"]').click();
     cy.checkLinkedButton('Automation Hub');
-    //link eda account
-    cy.getByDataCy('eda-username').type(edaUsername);
-    cy.getByDataCy('eda-password').type(edaPassword);
-    cy.getBy('button[value="eda"]').click();
-    cy.verifyPageTitle('Link user accounts');
-    cy.checkLinkedButton('Event-Driven Ansible');
   });
 });
 

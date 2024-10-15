@@ -5,15 +5,9 @@ describe('Successfully authenticate hub legacy credentials', () => {
   let hubUsername: string;
   let controllerUsername: string;
   let controllerPassword: string;
-  let edaPassword: string;
-  let edaUsername: string;
 
   before(() => {
     cy.platformLogin();
-    cy.getUserForMigration(UpgradeUserType.eda).then((user) => {
-      edaUsername = user.username;
-      edaPassword = user.password;
-    });
     cy.getUserForMigration(UpgradeUserType.controllerLegacy).then((user) => {
       controllerUsername = user.username;
       controllerPassword = user.password;
@@ -79,10 +73,6 @@ describe('Successfully authenticate hub legacy credentials', () => {
     cy.getByDataCy('controller-password').type(controllerPassword);
     cy.get('button[value="controller"]').click();
     cy.checkLinkedButton('Automation Controller');
-    cy.getByDataCy('eda-username').type(edaUsername);
-    cy.getByDataCy('eda-password').type(edaPassword);
-    cy.get('button[value="eda"]').click();
-    cy.checkLinkedButton('Event-Driven Ansible');
   });
 });
 
