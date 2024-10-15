@@ -10,6 +10,7 @@ import { Account, LegacyAuth } from '../interfaces/LegacyAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useLegacyAuth } from './LegacyAuthProvider';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
+import { useAwxActiveUser } from '../../frontend/awx/common/useAwxActiveUser';
 
 interface CreateAAPUserRequest {
   new_username: string | undefined;
@@ -67,7 +68,9 @@ export function CreateAAPUserForm(props: {
   const { legacyAuth, setShowCreateUserForm, isLDAPAccount } = props;
   const { refreshActivePlatformUser } = usePlatformActiveUser();
   const { refreshLegacyAuth } = useLegacyAuth();
+  const { refreshActiveAwxUser } = useAwxActiveUser();
 
+  const cancelRequest = usePostRequest<{ username: string }>();
   const createAAPUserRequest = usePostRequest<
     CreateAAPUserRequest | CreateLDAPUserRequest,
     LegacyAuth
@@ -88,6 +91,22 @@ export function CreateAAPUserForm(props: {
     setShowCreateUserForm(false);
   };
 
+  const handleBack = async () => {
+    if (legacyAuth.is_migrated && legacyAuth.needs_aap_password) {
+      try {
+        await cancelRequest(gatewayAPI`/legacy_auth/reset/`, {
+          username: legacyAuth?.username || '',
+        });
+      } finally {
+        void refreshActiveAwxUser?.();
+        void refreshActivePlatformUser?.();
+        void refreshLegacyAuth?.();
+      }
+    } else {
+      setShowCreateUserForm(false);
+    }
+  };
+
   return (
     <AwxPageForm<LegacyAuth>
       onSubmit={handleSubmit}
@@ -95,12 +114,7 @@ export function CreateAAPUserForm(props: {
       defaultValue={legacyAuth}
       disableGrid
       additionalActions={
-        <Button
-          variant="link"
-          onClick={() => {
-            setShowCreateUserForm(false);
-          }}
-        >
+        <Button variant="link" onClick={() => void handleBack()}>
           {t('Back')}
         </Button>
       }
