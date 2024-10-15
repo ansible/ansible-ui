@@ -11,7 +11,7 @@ export function useDeleteRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useRulebookActivationColumns();
+  const confirmationColumns = useRulebookActivationColumns({ disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
   const bulkAction = useEdaBulkConfirmation<EdaRulebookActivation>();
   return useCallback(

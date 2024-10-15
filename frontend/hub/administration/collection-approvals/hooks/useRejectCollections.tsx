@@ -13,7 +13,7 @@ export function useRejectCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void
 ) {
   const { t } = useTranslation();
-  const confirmationColumns = useApprovalsColumns();
+  const confirmationColumns = useApprovalsColumns({ disableLinks: true });
   const actionColumns = useMemo(() => [confirmationColumns[0]], [confirmationColumns]);
 
   const bulkAction = useHubBulkConfirmation<CollectionVersionSearch>();

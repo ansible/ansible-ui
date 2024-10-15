@@ -16,7 +16,7 @@ import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';
 
-export function useApprovalsColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
+export function useApprovalsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const { featureFlags } = useHubContext();
   const { can_upload_signatures, require_upload_signatures, display_signatures } = featureFlags;
@@ -29,11 +29,15 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         cell: (approval) => (
           <TextCell
             text={approval.collection_version?.namespace}
-            to={getPageUrl(HubRoute.NamespaceDetails, {
-              params: {
-                id: approval.collection_version?.namespace,
-              },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.NamespaceDetails, {
+                    params: {
+                      id: approval.collection_version?.namespace,
+                    },
+                  })
+            }
           />
         ),
         sort: 'namespace',
@@ -43,16 +47,20 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         cell: (approval) => (
           <TextCell
             text={approval.collection_version?.name}
-            to={getPageUrl(HubRoute.CollectionDetails, {
-              params: {
-                repository: approval.repository?.name || '',
-                namespace: approval.collection_version?.namespace || '',
-                name: approval.collection_version?.name || '',
-              },
-              query: {
-                version: approval.collection_version?.version,
-              },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.CollectionDetails, {
+                    params: {
+                      repository: approval.repository?.name || '',
+                      namespace: approval.collection_version?.namespace || '',
+                      name: approval.collection_version?.name || '',
+                    },
+                    query: {
+                      version: approval.collection_version?.version,
+                    },
+                  })
+            }
           />
         ),
         card: 'name',
@@ -64,16 +72,20 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         cell: (approval) => (
           <TextCell
             text={approval.collection_version?.version}
-            to={getPageUrl(HubRoute.CollectionDetails, {
-              params: {
-                repository: approval.repository?.name || '',
-                namespace: approval.collection_version?.namespace || '',
-                name: approval.collection_version?.name || '',
-              },
-              query: {
-                version: approval.collection_version?.version,
-              },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.CollectionDetails, {
+                    params: {
+                      repository: approval.repository?.name || '',
+                      namespace: approval.collection_version?.namespace || '',
+                      name: approval.collection_version?.name || '',
+                    },
+                    query: {
+                      version: approval.collection_version?.version,
+                    },
+                  })
+            }
           />
         ),
         list: 'secondary',
@@ -84,11 +96,15 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         cell: (approval) => (
           <TextCell
             text={approval.repository?.name}
-            to={getPageUrl(HubRoute.RepositoryDetails, {
-              params: {
-                id: approval.repository?.name,
-              },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.RepositoryDetails, {
+                    params: {
+                      id: approval.repository?.name,
+                    },
+                  })
+            }
           />
         ),
       },
@@ -148,7 +164,14 @@ export function useApprovalsColumns(_options?: { disableSort?: boolean; disableL
         sort: 'pulp_created',
       },
     ],
-    [t, can_upload_signatures, require_upload_signatures, display_signatures, getPageUrl]
+    [
+      t,
+      can_upload_signatures,
+      require_upload_signatures,
+      display_signatures,
+      getPageUrl,
+      options?.disableLinks,
+    ]
   );
   return tableColumns;
 }
