@@ -63,7 +63,7 @@ export function useCredentialTypesColumns(options?: { disableLinks?: boolean }) 
       createdColumn,
       modifiedColumn,
     ],
-    [descriptionColumn, getPageUrl, t, createdColumn, modifiedColumn]
+    [descriptionColumn, getPageUrl, t, createdColumn, modifiedColumn, options?.disableLinks]
   );
   return tableColumns;
 }
