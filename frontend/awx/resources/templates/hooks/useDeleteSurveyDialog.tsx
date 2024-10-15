@@ -75,7 +75,7 @@ function DeleteSurveyDialog(props: {
   const { questions, onClose, onComplete, onError, id, templateType } = props;
   const { t } = useTranslation();
   const pagination = usePaged(questions);
-  const modalColumns = useSurveyColumns();
+  const modalColumns = useSurveyColumns({ disableLinks: true });
   const deleteSurvey = useDeleteSurvey({ onClose, onComplete, onError, id, templateType });
   const [confirmed, setConfirmed] = useState(false);
 

@@ -11,7 +11,7 @@ import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 
 export function useDeleteEventStreams(onComplete?: (eventStreams: EdaEventStream[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useEventStreamColumns();
+  const confirmationColumns = useEventStreamColumns({ disableLinks: true });
   const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useEdaBulkConfirmation<EdaEventStream>();

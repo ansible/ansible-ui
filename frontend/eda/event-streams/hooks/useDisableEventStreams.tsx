@@ -11,7 +11,7 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function useDisableEventStreams(onComplete?: (eventStreams: EdaEventStream[]) => void) {
   const { t } = useTranslation();
-  const confirmationColumns = useEventStreamColumns();
+  const confirmationColumns = useEventStreamColumns({ disableLinks: true });
   const disableActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [disableActionNameColumn], [disableActionNameColumn]);
   const patchRequest = usePatchRequest<unknown, unknown>();

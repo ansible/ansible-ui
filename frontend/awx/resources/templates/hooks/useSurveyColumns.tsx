@@ -6,12 +6,13 @@ import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework'
 import type { Spec } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
-export function useSurveyColumns(_options?: {
+export function useSurveyColumns(options?: {
+  disableLinks?: boolean;
   templateType?: 'job_template' | 'workflow_job_template';
   id?: string;
 }) {
   const { t } = useTranslation();
-  const { templateType, id } = _options ?? {};
+  const { templateType, id } = options ?? {};
 
   const getPageUrl = useGetPageUrl();
 
@@ -33,12 +34,16 @@ export function useSurveyColumns(_options?: {
                   </Tooltip>
                 ) : null
               }
-              to={getPageUrl(
-                templateType === 'job_template'
-                  ? AwxRoute.EditJobTemplateSurvey
-                  : AwxRoute.EditWorkflowJobTemplateSurvey,
-                { params: { id }, query: { question_variable: question.variable } }
-              )}
+              to={
+                options?.disableLinks
+                  ? undefined
+                  : getPageUrl(
+                      templateType === 'job_template'
+                        ? AwxRoute.EditJobTemplateSurvey
+                        : AwxRoute.EditWorkflowJobTemplateSurvey,
+                      { params: { id }, query: { question_variable: question.variable } }
+                    )
+              }
             />
           </Flex>
         ),
@@ -81,6 +86,6 @@ export function useSurveyColumns(_options?: {
         },
       },
     ],
-    [t, getPageUrl, id, templateType]
+    [t, getPageUrl, id, templateType, options?.disableLinks]
   );
 }

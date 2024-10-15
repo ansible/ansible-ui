@@ -12,7 +12,7 @@ import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
-export function useEventStreamColumns() {
+export function useEventStreamColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaEventStream>[]>(
@@ -22,9 +22,13 @@ export function useEventStreamColumns() {
         cell: (eventStream) => (
           <TextCell
             text={eventStream.name}
-            to={getPageUrl(EdaRoute.EventStreamPage, {
-              params: { id: eventStream.id },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(EdaRoute.EventStreamPage, {
+                    params: { id: eventStream.id },
+                  })
+            }
           />
         ),
         card: 'name',
