@@ -1,13 +1,11 @@
-import { UpgradeUserType } from '../../support/constants';
 import { randomString } from '../../../framework/utils/random-string';
+import { UpgradeUserType } from '../../support/constants';
 
 describe('Linking accounts - Controller', () => {
   let controllerPassword: string;
   let controllerUsername: string;
   let hubPassword: string;
   let hubUsername: string;
-  let edaPassword: string;
-  let edaUsername: string;
   let newPwd: string;
 
   beforeEach(() => {
@@ -20,14 +18,10 @@ describe('Linking accounts - Controller', () => {
       controllerUsername = user.username;
       controllerPassword = user.password;
     });
-    cy.getUserForMigration(UpgradeUserType.eda).then((user) => {
-      edaUsername = user.username;
-      edaPassword = user.password;
-    });
     cy.platformLogout();
   });
 
-  it('Login using an Automation Controller account and use migration form to link both Hub and EDA account', () => {
+  it('Login using an Automation Controller account and use migration form to link Hub account', () => {
     cy.clickLink(/^I have an Automation Controller account$/);
     cy.get('input[id*="login-username-id"]').type(controllerUsername);
     cy.get('input[id*="login-password-id"]').type(controllerPassword);
@@ -49,19 +43,6 @@ describe('Linking accounts - Controller', () => {
     });
     cy.checkLinkedButton('Automation Hub');
 
-    //Link EDA account
-    cy.getByDataCy('Link your Event-Driven Ansible account').should('be.visible');
-    cy.getByDataCy('eda-username').type(edaUsername);
-    cy.getByDataCy('eda-password').type(edaPassword);
-    cy.get('[class="pf-v5-c-form"]').within(() => {
-      cy.contains('div', 'Link your Event-Driven Ansible account')
-        .parent()
-        .parent()
-        .contains('button', 'Link')
-        .should('be.visible')
-        .click();
-    });
-    cy.checkLinkedButton('Event-Driven Ansible');
     cy.clickButton(/^Next$/);
 
     cy.getByDataCy('set-app-credentials').contains('Set your AAP credentials');
@@ -77,7 +58,7 @@ describe('Linking accounts - Controller', () => {
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
   });
 
-  it('Login using a Automation Hub account and link Controller and EDA accounts from the Login page', () => {
+  it('Login using a Automation Hub account and link Controller account from the Login page', () => {
     cy.clickLink(/^I have an Automation Hub account$/);
     cy.get('input[id*="login-username-id"]').type(hubUsername);
     cy.get('input[id*="login-password-id"]').type(hubPassword);
@@ -92,12 +73,6 @@ describe('Linking accounts - Controller', () => {
     cy.clickOnLinkAccount('Link your Automation Controller account');
     cy.checkLinkedButton('Automation Controller');
 
-    //Link EDA account
-    cy.getByDataCy('Link your Event-Driven Ansible account').should('be.visible');
-    cy.getByDataCy('eda-username').type(edaUsername);
-    cy.getByDataCy('eda-password').type(edaPassword);
-    cy.clickOnLinkAccount('Link your Event-Driven Ansible account');
-    cy.checkLinkedButton('Event-Driven Ansible');
     cy.clickButton(/^Next$/);
 
     cy.getByDataCy('set-app-credentials').contains('Set your AAP credentials');

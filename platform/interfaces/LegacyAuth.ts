@@ -3,7 +3,7 @@ export interface Account {
   gateway_username: string;
   original_username: string;
   service: number;
-  service_type: 'controller' | 'hub' | 'eda';
+  service_type: 'controller' | 'hub';
   user: number;
 }
 export interface LegacyAuth {

@@ -6,17 +6,11 @@ describe('Controller LDAP user migration flow', () => {
   let hubUsername: string;
   let controllerLdapUsername: string;
   let controllerLdapPassword: string;
-  let edaPassword: string;
-  let edaUsername: string;
 
   before(() => {
     cy.getUserForMigration(UpgradeUserType.hubLegacy).then((user) => {
       hubUsername = user.username;
       hubPassword = user.password;
-    });
-    cy.getUserForMigration(UpgradeUserType.eda).then((user) => {
-      edaUsername = user.username;
-      edaPassword = user.password;
     });
   });
 
@@ -69,10 +63,6 @@ describe('Controller LDAP user migration flow', () => {
     cy.getByDataCy('hub-password').type(hubPassword);
     cy.get('button[value="hub"]').click();
     cy.checkLinkedButton('Automation Hub');
-    cy.getByDataCy('eda-username').type(edaUsername);
-    cy.getByDataCy('eda-password').type(edaPassword);
-    cy.get('button[value="eda"]').click();
-    cy.checkLinkedButton('Event-Driven Ansible');
     cy.clickButton('Close');
     cy.getByDataCy('actions-dropdown').click();
     cy.contains('Link user accounts').should('not.exist');

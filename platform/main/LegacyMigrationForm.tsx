@@ -9,8 +9,8 @@ import { genericErrorAdapter } from '../../framework/PageForm/genericErrorAdapte
 import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
 import { AwxPageForm } from '../../frontend/awx/common/AwxPageForm';
 import { usePostRequest } from '../../frontend/common/crud/usePostRequest';
-import { gatewayAPI } from '../utils/gateway-api-utils';
 import { Account, LegacyAuth } from '../interfaces/LegacyAuth';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useLegacyAuth } from './LegacyAuthProvider';
 
 interface LinkAccountRequest {
@@ -18,7 +18,7 @@ interface LinkAccountRequest {
   password: string;
 }
 
-type ServiceType = 'controller' | 'hub' | 'eda';
+type ServiceType = 'controller' | 'hub';
 
 const LinkButton = styled(Button)`
   align-self: flex-end;
@@ -38,7 +38,6 @@ const MigrationInputs = (props: { legacyAuth: LegacyAuth }) => {
   const [loading, setLoading] = useState<Record<ServiceType, boolean>>({
     controller: false,
     hub: false,
-    eda: false,
   });
   useEffect(() => {
     reset({
@@ -53,7 +52,6 @@ const MigrationInputs = (props: { legacyAuth: LegacyAuth }) => {
   const serviceTypeMap: Record<ServiceType, string> = {
     controller: 'Automation Controller',
     hub: 'Automation Hub',
-    eda: 'Event-Driven Ansible',
   };
 
   const handleLinkAccount = async (service: ServiceType) => {
