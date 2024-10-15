@@ -71,15 +71,21 @@ export function LegacyMigration(props: { children: ReactNode }) {
     legacyAuth?.allow_aap_password === false && legacyAuth?.allow_rename === false;
   const isSSOAccount = legacyAuth?.is_sso_account;
 
-  if (legacyAuth === undefined || (isLoading && legacyAuth?.is_migrated === false)) {
-    return (
-      <Page>
-        <LoadingState />
-      </Page>
-    );
-  }
+  const showLoading =
+    legacyAuth === undefined ||
+    (isLoading && legacyAuth?.is_migrated === false) ||
+    (legacyAuth?.is_authenticated === true && !activePlatformUser) ||
+    (legacyAuth?.is_migrated === undefined && activePlatformUser);
 
-  if (legacyAuth?.is_authenticated === true && !activePlatformUser) {
+  const showDashboard =
+    legacyAuth?.is_migrated === true && legacyAuth?.needs_aap_password === false;
+  const showLogin = legacyAuth?.is_migrated === undefined;
+  const showLinkAccountsForm = legacyAuth?.is_migrated === false && showCreateUserForm === false;
+  const showUsernamePasswordForm =
+    (legacyAuth?.is_migrated === true && legacyAuth?.needs_aap_password === true) ||
+    (legacyAuth?.is_migrated === false && showCreateUserForm === true);
+
+  if (showLoading) {
     return (
       <Page>
         <LoadingState />
@@ -98,7 +104,52 @@ export function LegacyMigration(props: { children: ReactNode }) {
     }
   };
 
-  if (legacyAuth?.is_migrated === false && !showCreateUserForm) {
+  if (showUsernamePasswordForm) {
+    // User is not migrated, completed linking accounts, and needs to create a username/password
+    // User is migrated and needs to create a username/password
+    return (
+      <Page>
+        <PageLayout>
+          <PageSectionWrapper variant="light">
+            <Card isFlat isCompact style={{ maxWidth: '800px' }}>
+              <CardHeader style={{ padding: '16px 32px' }}>
+                <AAPLogoBlackText />
+              </CardHeader>
+              <CardBody>
+                <CardTitle
+                  data-cy={
+                    isLDAPAccount || isSSOAccount ? 'complete-aap-migration' : 'set-app-credentials'
+                  }
+                >
+                  {isLDAPAccount || isSSOAccount
+                    ? t('Complete your AAP migration')
+                    : t('Set your AAP credentials')}
+                </CardTitle>
+                <Text style={{ padding: '0 16px' }}>
+                  {isLDAPAccount || isSSOAccount
+                    ? t(
+                        'Your accounts have been linked. Complete your migration by clicking on the submit button below. If you have an LDAP account, you can continue using your same LDAP credentials to log in to AAP.'
+                      )
+                    : t(
+                        'Your accounts have been linked. To complete the migration please set a new username and password. These will be your credentials to log in to AAP.'
+                      )}
+                </Text>
+
+                <CreateAAPUserForm
+                  legacyAuth={legacyAuth}
+                  setShowCreateUserForm={setShowCreateUserForm}
+                  isLDAPAccount={isLDAPAccount}
+                />
+              </CardBody>
+            </Card>
+          </PageSectionWrapper>
+        </PageLayout>
+      </Page>
+    );
+  }
+
+  if (showLinkAccountsForm) {
+    // User is not migrated and needs to link accounts
     return (
       <Page>
         <PageLayout>
@@ -129,47 +180,16 @@ export function LegacyMigration(props: { children: ReactNode }) {
       </Page>
     );
   }
-  if (legacyAuth?.is_migrated === false && showCreateUserForm) {
-    return (
-      <Page>
-        <PageLayout>
-          <PageSectionWrapper variant="light">
-            <Card isFlat isCompact style={{ maxWidth: '800px' }}>
-              <CardHeader style={{ padding: '16px 32px' }}>
-                <AAPLogoBlackText />
-              </CardHeader>
-              <CardBody>
-                <CardTitle
-                  data-cy={
-                    isLDAPAccount || isSSOAccount ? 'complete-aap-migration' : 'set-app-credentials'
-                  }
-                >
-                  {isLDAPAccount || isSSOAccount
-                    ? t('Complete your AAP migration')
-                    : t('Set your AAP credentials')}
-                </CardTitle>
-                <Text style={{ padding: '0 16px' }}>
-                  {isLDAPAccount || isSSOAccount
-                    ? t(
-                        'You accounts have been linked. Complete your migration by clicking on the submit button below. If you have an LDAP account, you can continue using your same LDAP credentials to log in to AAP.'
-                      )
-                    : t(
-                        'Your accounts have been linked. To complete the migration please set a new username and password. These will be your credentials to log in to AAP.'
-                      )}
-                </Text>
 
-                <CreateAAPUserForm
-                  legacyAuth={legacyAuth}
-                  setShowCreateUserForm={setShowCreateUserForm}
-                  isLDAPAccount={isLDAPAccount}
-                />
-              </CardBody>
-            </Card>
-          </PageSectionWrapper>
-        </PageLayout>
-      </Page>
-    );
+  if (showLogin || showDashboard) {
+    // User has not logged (legacyAuth?.is_migrated === undefined;)
+    // User has logged in, is migrated, and does not need to create a username/password
+    return props.children;
   }
 
-  return props.children;
+  return (
+    <Page>
+      <LoadingState />
+    </Page>
+  );
 }
