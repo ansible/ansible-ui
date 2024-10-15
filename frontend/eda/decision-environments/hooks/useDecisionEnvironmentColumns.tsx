@@ -14,7 +14,9 @@ import {
 } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';
 
-export function useDecisionEnvironmentsColumns() {
+// TODO: consolidate this with the nearly identical useDecisionEnvironmentColumns
+// below (will take some work to make TypeScript happy)
+export function useDecisionEnvironmentsColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaDecisionEnvironment>[]>(
@@ -24,9 +26,13 @@ export function useDecisionEnvironmentsColumns() {
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
-            to={getPageUrl(EdaRoute.DecisionEnvironmentPage, {
-              params: { id: decisionEnvironment.id },
-            })}
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(EdaRoute.DecisionEnvironmentPage, {
+                    params: { id: decisionEnvironment.id },
+                  })
+            }
           />
         ),
         card: 'name',
@@ -50,7 +56,10 @@ export function useDecisionEnvironmentsColumns() {
       {
         header: t('Credential'),
         cell: (decisionEnvironment) => (
-          <EdaCredentialCell eda_credential_id={decisionEnvironment.eda_credential_id} />
+          <EdaCredentialCell
+            eda_credential_id={decisionEnvironment.eda_credential_id}
+            disableLink={options?.disableLinks}
+          />
         ),
         value: (decisionEnvironment) => decisionEnvironment.eda_credential_id,
       },
@@ -73,11 +82,11 @@ export function useDecisionEnvironmentsColumns() {
         modal: ColumnModalOption.hidden,
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, options?.disableLinks, t]
   );
 }
 
-export function useDecisionEnvironmentColumns() {
+export function useDecisionEnvironmentColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   return useMemo<ITableColumn<EdaDecisionEnvironmentRead>[]>(
@@ -87,11 +96,15 @@ export function useDecisionEnvironmentColumns() {
         cell: (decisionEnvironment) => (
           <TextCell
             text={decisionEnvironment.name}
-            to={getPageUrl(
-              EdaRoute.DecisionEnvironmentPage,
+            to={
+              options?.disableLinks
+                ? undefined
+                : getPageUrl(
+                    EdaRoute.DecisionEnvironmentPage,
 
-              { params: { id: decisionEnvironment.id } }
-            )}
+                    { params: { id: decisionEnvironment.id } }
+                  )
+            }
           />
         ),
         card: 'name',
@@ -144,6 +157,6 @@ export function useDecisionEnvironmentColumns() {
         dashboard: 'hidden',
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, options?.disableLinks, t]
   );
 }
