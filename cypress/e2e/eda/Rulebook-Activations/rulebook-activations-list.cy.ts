@@ -105,7 +105,7 @@ cyLabel(['aaas-unsupported'], function () {
           'contain',
           `Yes, I confirm that I want to disable these`
         );
-        cy.get('a').should('contain', edaRBA1.name);
+        cy.get('td[data-label="Name"]').should('contain', edaRBA1.name);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Disable rulebook activations').click();
       });
@@ -123,7 +123,7 @@ cyLabel(['aaas-unsupported'], function () {
           'contain',
           `Yes, I confirm that I want to delete these`
         );
-        cy.get('a').should('contain', edaRBA1.name);
+        cy.get('td[data-label="Name"]').should('contain', edaRBA1.name);
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Delete rulebook activations').click();
       });
