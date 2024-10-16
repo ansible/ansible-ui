@@ -86,6 +86,6 @@ export function useEventStreamColumns(options?: { disableLinks?: boolean }) {
         list: 'secondary',
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, options?.disableLinks, t]
   );
 }
