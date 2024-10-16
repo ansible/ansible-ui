@@ -74,6 +74,6 @@ export function useProjectColumns(options?: { disableLinks?: boolean }) {
         dashboard: 'hidden',
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, options?.disableLinks, t]
   );
 }

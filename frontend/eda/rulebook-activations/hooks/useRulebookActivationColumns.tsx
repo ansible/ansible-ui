@@ -112,6 +112,6 @@ export function useRulebookActivationColumns(options?: { disableLinks?: boolean 
         dashboard: 'hidden',
       },
     ],
-    [getPageUrl, t]
+    [getPageUrl, options?.disableLinks, t]
   );
 }
