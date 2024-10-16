@@ -22,7 +22,7 @@ export function RuleAudit() {
   return (
     <PageLayout>
       <PageHeader
-        title={`Rule Audit`}
+        title={t(`Rule Audit`)}
         titleHelpTitle={t('Rule Audit')}
         titleHelp={t(
           'Rule audit allows auditing of rules which have been triggered by incoming events.'
