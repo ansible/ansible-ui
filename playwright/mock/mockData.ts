@@ -22,6 +22,7 @@ interface IGatewayData {
   ping: object;
   me: DeepPartial<AwxUser>[];
   login: object;
+  legacy_auth: object;
   ui_auth: {
     show_login_form: boolean;
     passwords: { name: string; type: string }[];
@@ -79,6 +80,10 @@ export const mockData: IApiData = {
         ping: {},
         me: [],
         login: {},
+        legacy_auth: {
+          username: '',
+          linked_accounts: [],
+        },
         ui_auth: {
           show_login_form: true,
           passwords: [
