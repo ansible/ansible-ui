@@ -157,53 +157,61 @@ export const usersForMigration: {
   ],
   hubLegacy: [
     {
-      username: 'hub_test_user_1',
-      password: 'ps12345678',
+      username: 'hub_ui_user_1',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_2',
-      password: 'ps12345678',
+      username: 'hub_ui_user_2',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_3',
-      password: 'ps12345678',
+      username: 'hub_ui_user_3',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_4',
-      password: 'ps12345678',
+      username: 'hub_ui_user_4',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_5',
-      password: 'ps12345678',
+      username: 'hub_ui_user_5',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_6',
-      password: 'ps12345678',
+      username: 'hub_ui_user_6',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_7',
-      password: 'ps12345678',
+      username: 'hub_ui_user_7',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_8',
-      password: 'ps12345678',
+      username: 'hub_ui_user_8',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_9',
-      password: 'ps12345678',
+      username: 'hub_ui_user_9',
+      password: '12345678pw',
     },
     {
-      username: 'hub_test_user_10',
-      password: 'ps12345678',
-    },
-    {
-      username: 'hub_test_admin_1',
-      password: 'ps12345678',
+      username: 'hub_ui_user_10',
+      password: '12345678pw',
     },
   ],
   hubLdap: [
     {
-      username: 'gbelcher',
+      username: 'awong',
+      password: 'Th1sP4ssd',
+    },
+    {
+      username: 'hfarnsworth',
+      password: 'Th1sP4ssd',
+    },
+    {
+      username: 'lobelcher',
+      password: 'Th1sP4ssd',
+    },
+    {
+      username: 'tleela',
       password: 'Th1sP4ssd',
     },
   ],
