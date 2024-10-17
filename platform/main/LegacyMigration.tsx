@@ -78,7 +78,9 @@ export function LegacyMigration(props: { children: ReactNode }) {
     (legacyAuth?.is_migrated === undefined && activePlatformUser);
 
   const showDashboard =
-    legacyAuth?.is_migrated === true && legacyAuth?.needs_aap_password === false;
+    legacyAuth?.is_migrated === true &&
+    (legacyAuth?.needs_aap_password === undefined || legacyAuth?.needs_aap_password === false);
+
   const showLogin = legacyAuth?.is_migrated === undefined;
   const showLinkAccountsForm = legacyAuth?.is_migrated === false && showCreateUserForm === false;
   const showUsernamePasswordForm =
