@@ -21,6 +21,7 @@ import { ErrorBoundary } from '../../../framework/components/ErrorBoundary';
 import { getCookie } from '../crud/cookie';
 import { createRequestError, RequestError } from '../crud/RequestError';
 import { AuthOption, SocialAuthLogin } from '../SocialAuthLogin';
+import { validateUrlPath } from './validateUrlPath';
 
 export function AnsibleLogin(props: {
   /** Title for the login main body header of the login page */
@@ -61,7 +62,7 @@ export function AnsibleLogin(props: {
 
   const { loginApiUrl } = props;
   const queryParams = new URLSearchParams(location.search);
-  const nextPath = queryParams.get('next');
+  const nextPath = validateUrlPath(queryParams.get('next'));
   const onSubmit = useCallback(async () => {
     try {
       const loginPageResponse = await fetch(loginApiUrl, {
