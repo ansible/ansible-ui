@@ -15,7 +15,7 @@ module.exports = function (env, argv) {
       context: ['/api'],
       target: EDA_SERVER,
       secure: false,
-      bypass: (req) => {
+      router: (req) => {
         req.headers.host = proxyUrl.host;
         req.headers.origin = proxyUrl.origin;
         req.headers.referer = proxyUrl.href;
