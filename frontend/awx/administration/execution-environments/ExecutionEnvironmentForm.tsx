@@ -20,12 +20,6 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../main/AwxRoutes';
 
-const PullOption = {
-  Always: 'Always pull container before running',
-  Missing: 'Only pull the image if not present before running',
-  Never: 'Never pull container before running',
-};
-
 export function CreateExecutionEnvironment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -191,15 +185,15 @@ function ExecutionEnvironmentInputs(props: {
         placeholderText={t('Select pull option')}
         options={[
           {
-            label: t(`${PullOption.Always}`),
+            label: t(`Always pull container before running`),
             value: 'always',
           },
           {
-            label: t(`${PullOption.Missing}`),
+            label: t('Only pull the image if not present before running'),
             value: 'missing',
           },
           {
-            label: t(`${PullOption.Never}`),
+            label: t(`Never pull container before running`),
             value: 'never',
           },
         ]}
