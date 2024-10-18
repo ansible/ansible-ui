@@ -1,7 +1,8 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { UpgradeUserType, usersForMigration } from '../../support/constants';
 
-describe('Controller LDAP user migration flow', () => {
+// is flakey due to https://issues.redhat.com/browse/AAP-32355
+describe.skip('Controller LDAP user migration flow', () => {
   let hubPassword: string;
   let hubUsername: string;
   let controllerLdapUsername: string;
@@ -69,7 +70,8 @@ describe('Controller LDAP user migration flow', () => {
   });
 });
 
-describe('Negative paths for controller LDAP authentication', () => {
+// is flakey due to https://issues.redhat.com/browse/AAP-32355
+describe.skip('Negative paths for controller LDAP authentication', () => {
   const controllerLdapUsername = usersForMigration[UpgradeUserType.controllerLdap][0].username;
 
   before(() => {
