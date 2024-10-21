@@ -8,12 +8,13 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import {
+  getPatternflyColor,
   LoadingPage,
   PageDetail,
   PageDetails,
   useGetPageUrl,
-  getPatternflyColor,
 } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
@@ -27,7 +28,6 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { WebhookService } from '../components/WebhookService';
-import styled from 'styled-components';
 
 const DangerText = styled.span`
   color: ${getPatternflyColor('danger')};
@@ -85,7 +85,9 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           template.name
         )}
       </PageDetail>
-      <PageDetail label={t('Description')}>{template.description}</PageDetail>
+      <PageDetail label={t('Description')} fullWidth>
+        {template.description}
+      </PageDetail>
       <PageDetail
         label={t('Job type')}
         helpText={t(
