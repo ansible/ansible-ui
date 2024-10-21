@@ -25,6 +25,8 @@ export function PageApp(props: {
   defaultRefreshInterval: number;
 
   banner?: ReactNode;
+
+  contextSwitcher?: ReactNode;
 }) {
   const { navigation, masthead } = props;
   const navigationItems = useMemo(
@@ -34,7 +36,13 @@ export function PageApp(props: {
         element: (
           <Page
             header={masthead}
-            sidebar={<PageNavigation navigation={navigation} basename={props.basename} />}
+            sidebar={
+              <PageNavigation
+                navigation={navigation}
+                basename={props.basename}
+                contextSwitcher={props.contextSwitcher}
+              />
+            }
           >
             <PageNotificationsDrawer>
               <div
