@@ -65,6 +65,7 @@ export function useAwxView<T extends { id: number }>(options: {
 
   defaultSort?: string | undefined;
   defaultSortDirection?: 'asc' | 'desc' | undefined;
+  defaultFilters?: { [key: string]: string[] };
 }): IAwxView<T> {
   let { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString } = options;
@@ -80,7 +81,11 @@ export function useAwxView<T extends { id: number }>(options: {
   }
 
   const view = useView({
-    defaultValues: { sort: defaultSort, sortDirection: defaultSortDirection },
+    defaultValues: {
+      sort: defaultSort,
+      sortDirection: defaultSortDirection,
+      filterState: options.defaultFilters,
+    },
     disableQueryString,
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
