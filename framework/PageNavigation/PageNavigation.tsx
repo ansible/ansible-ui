@@ -1,4 +1,5 @@
 import {
+  Divider,
   Flex,
   FlexItem,
   Label,
@@ -6,8 +7,10 @@ import {
   NavExpandable,
   NavItem,
   NavList,
+  PageSection,
   PageSidebar,
   PageSidebarBody,
+  Stack,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useState, type CSSProperties } from 'react';
@@ -16,13 +19,25 @@ import './PageNavigation.css';
 import { PageNavigationItem } from './PageNavigationItem';
 
 /** Renders a sidebar navigation menu from an arroy of navigation items. */
-export function PageNavigation(props: { navigation: PageNavigationItem[]; basename?: string }) {
+export function PageNavigation(props: {
+  navigation: PageNavigationItem[];
+  basename?: string;
+  contextSwitcher?: React.ReactNode;
+}) {
   const { navigation: navigationItems } = props;
   const navBar = usePageNavSideBar();
 
   return (
     <PageSidebar isSidebarOpen={navBar.isOpen} className="bg-lighten">
       <PageSidebarBody>
+        {props.contextSwitcher && (
+          <>
+            <PageSection style={{ background: 'transparent', paddingTop: 16 }}>
+              <Stack hasGutter>{props.contextSwitcher}</Stack>
+            </PageSection>
+            <Divider />
+          </>
+        )}
         <Nav data-cy="page-navigation" className="side-nav">
           <NavList>
             <PageNavigationItems baseRoute={props.basename ?? ''} items={navigationItems} />
