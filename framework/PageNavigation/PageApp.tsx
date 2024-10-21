@@ -66,7 +66,7 @@ export function PageApp(props: {
       },
       { path: '*', element: <PageNotFound /> },
     ],
-    [masthead, navigation, props.banner, props.basename]
+    [masthead, navigation, props.banner, props.basename, props.contextSwitcher]
   );
   const [_, setNavigation] = usePageNavigationRoutesContext();
   useEffect(() => setNavigation(navigationItems), [navigationItems, setNavigation]);
