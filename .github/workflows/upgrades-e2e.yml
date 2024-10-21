@@ -66,19 +66,22 @@ jobs:
       - name: Install galaxykit
         run: |
           pip3 install ansible git+https://github.com/ansible/galaxykit.git@main
+      - name: Strip trailing slash from PLATFORM_SERVER
+        run: |
+          echo "PLATFORM_SERVER=$(echo '${{ inputs.PLATFORM_SERVER }}' | sed 's:/*$::')" >> $GITHUB_ENV
       - name: Cypress
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v6
         with:
           install: false
-          start: docker run --rm -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
+          start: docker run --rm -p 4100:443 -e PLATFORM_SERVER=${{ env.PLATFORM_SERVER }} platform-ui
           wait-on: 'https://localhost:4100'
           record: true
           parallel: false
           config-file: cypress.upgrades.config.ts
           tag: ${{ inputs.TAGS }}
         env:
-          PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+          PLATFORM_SERVER: ${{ env.PLATFORM_SERVER }}
           PLATFORM_USERNAME: e2e
           PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
           CYPRESS_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
