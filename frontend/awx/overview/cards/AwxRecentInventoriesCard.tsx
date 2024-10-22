@@ -35,6 +35,7 @@ export function AwxRecentInventoriesCard() {
 
   return (
     <PageDashboardCard
+      id="inventories-card"
       title={t('Inventories')}
       subtitle={t('Recently updated inventories')}
       width="md"
