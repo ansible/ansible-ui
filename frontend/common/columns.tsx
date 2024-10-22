@@ -127,11 +127,14 @@ export function useLastRanColumn(options?: {
     () => ({
       header: t('Last ran'),
       cell: (item) => {
-        if (!item.last_job_run) return <></>;
+        if (!item.last_job_run) return null;
         return <DateTimeCell value={item.last_job_run} />;
       },
+      value: (item) => item.last_job_run,
       sort: options?.disableSort ? undefined : (options?.sortKey ?? 'last_job_run'),
       defaultSortDirection: 'desc',
+      list: 'secondary',
+      card: 'hidden',
     }),
     [options?.disableSort, options?.sortKey, t]
   );
@@ -155,10 +158,7 @@ export function useLabelsColumn() {
           </LabelGroup>
         );
       },
-      table: ColumnTableOption.expanded,
       value: (item) => (item.summary_fields?.labels?.results.length ? true : undefined),
-      card: 'hidden',
-      list: 'hidden',
       modal: ColumnModalOption.hidden,
     }),
     [t]

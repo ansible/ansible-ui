@@ -1,3 +1,4 @@
+import { ToolbarFilterType } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
@@ -49,7 +50,15 @@ export function useTemplateFilters({
   const queryParams = getQueryParams(projectId, inventoryId, credentialsId, executionEnvironmentId);
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: optionsPath,
-    preSortedKeys: ['name', 'description', 'status', 'created-by', 'modified-by', 'type-templates'],
+    preSortedKeys: [
+      'name',
+      'labels',
+      'description',
+      'status',
+      'created-by',
+      'modified-by',
+      'type-templates',
+    ],
     preFilledValueKeys: {
       name: {
         apiPath: optionsPath,
@@ -60,7 +69,18 @@ export function useTemplateFilters({
         queryParams: queryParams,
       },
     },
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter, typeToolbarFilter],
+    additionalFilters: [
+      createdByToolbarFilter,
+      modifiedByToolbarFilter,
+      typeToolbarFilter,
+      {
+        type: ToolbarFilterType.MultiText,
+        key: 'labels',
+        label: 'Labels',
+        comparison: 'contains',
+        query: 'labels__name',
+      },
+    ],
     removeFilters: ['type'], // Remove the default type filter provided by API as it gives additional types that are not applicable to the Templates list view
   });
   return toolbarFilters;
