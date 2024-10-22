@@ -90,6 +90,9 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
       id = rootChild.id;
     }
   }
+  if (!id) {
+    id = props.item.label?.split(' ').join('-').toLowerCase();
+  }
 
   const onClickNavItem = usePageNavBarClick();
   let route = props.baseRoute + '/' + item.path;
@@ -149,6 +152,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
 
   return (
     <NavExpandable
+      buttonProps={{ id }}
       title={
         (
           <div>

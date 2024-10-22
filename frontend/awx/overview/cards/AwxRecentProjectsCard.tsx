@@ -34,6 +34,7 @@ export function AwxRecentProjectsCard() {
 
   return (
     <PageDashboardCard
+      id="projects-card"
       title={t('Projects')}
       subtitle={t('Recently updated projects')}
       width="md"

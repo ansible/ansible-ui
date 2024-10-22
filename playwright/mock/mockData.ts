@@ -57,6 +57,7 @@ interface IControllerData {
   users: DeepPartial<AwxUser>[];
   workflow_approvals: DeepPartial<WorkflowApproval>[];
   workflow_job_templates: DeepPartial<WorkflowJobTemplate>[];
+  dashboard: object;
 }
 
 export interface IApiData {
@@ -129,6 +130,87 @@ export const mockData: IApiData = {
         unified_jobs: [],
         'execution-environments': [],
         instance_groups: [],
+        dashboard: {
+          related: {
+            jobs_graph: '/api/controller/v2/dashboard/graphs/jobs/',
+          },
+          inventories: {
+            url: '/api/controller/v2/inventories/',
+            total: 1,
+            total_with_inventory_source: 0,
+            job_failed: 0,
+            inventory_failed: 0,
+          },
+          inventory_sources: {
+            ec2: {
+              url: '/api/controller/v2/inventory_sources/?source=ec2',
+              failures_url: '/api/controller/v2/inventory_sources/?source=ec2&status=failed',
+              label: 'Amazon EC2',
+              total: 0,
+              failed: 0,
+            },
+          },
+          groups: {
+            url: '/api/controller/v2/groups/',
+            total: 0,
+            inventory_failed: 0,
+          },
+          hosts: {
+            url: '/api/controller/v2/hosts/',
+            failures_url: '/api/controller/v2/hosts/?last_job_host_summary__failed=True',
+            total: 1,
+            failed: 0,
+          },
+          projects: {
+            url: '/api/controller/v2/projects/',
+            failures_url: '/api/controller/v2/projects/?last_job_failed=True',
+            total: 7,
+            failed: 0,
+          },
+          scm_types: {
+            git: {
+              url: '/api/controller/v2/projects/?scm_type=git',
+              label: 'Git',
+              failures_url: '/api/controller/v2/projects/?scm_type=git&last_job_failed=True',
+              total: 7,
+              failed: 0,
+            },
+            svn: {
+              url: '/api/controller/v2/projects/?scm_type=svn',
+              label: 'Subversion',
+              failures_url: '/api/controller/v2/projects/?scm_type=svn&last_job_failed=True',
+              total: 0,
+              failed: 0,
+            },
+            archive: {
+              url: '/api/controller/v2/projects/?scm_type=archive',
+              label: 'Remote Archive',
+              failures_url: '/api/controller/v2/projects/?scm_type=archive&last_job_failed=True',
+              total: 0,
+              failed: 0,
+            },
+          },
+          users: {
+            url: '/api/controller/v2/users/',
+            total: 10,
+          },
+          organizations: {
+            url: '/api/controller/v2/organizations/',
+            total: 1,
+          },
+          teams: {
+            url: '/api/controller/v2/teams/',
+            total: 0,
+          },
+          credentials: {
+            url: '/api/controller/v2/credentials/',
+            total: 8,
+          },
+          job_templates: {
+            url: '/api/controller/v2/job_templates/',
+            total: 1,
+          },
+        },
       },
     },
   },
