@@ -41,56 +41,59 @@ export function PageActionButton<T extends object>(props: {
 
   const Wrapper = wrapper ?? Fragment;
   const Icon = action.icon;
-
-  let tooltip;
   const { t } = useTranslation();
 
-  if (isDisabled) {
-    tooltip = isDisabled;
-  } else if (action.tooltip) {
-    tooltip = action.tooltip;
-  } else if (iconOnly) {
-    tooltip = action.label;
-  } else {
-    tooltip = undefined;
-  }
+  const isEmptyMultiSelect =
+    action.selection === PageActionSelection.Multiple && !selectedItems?.length;
 
-  let isButtonDisabled = !!isDisabled;
-  if (
-    action.selection === PageActionSelection.Multiple &&
-    (!selectedItems || !selectedItems.length)
-  ) {
-    tooltip = t(`Select at least one item from the list`);
-    isButtonDisabled = true;
-  }
+  const getTooltip = () => {
+    if (isEmptyMultiSelect) {
+      return t(`Select at least one item from the list`);
+    }
+    if (isDisabled) {
+      return isDisabled;
+    }
+    if (action.tooltip) {
+      return action.tooltip;
+    }
+    if (iconOnly) {
+      return action.label;
+    }
+    return undefined;
+  };
+  const tooltip = getTooltip();
 
-  let variant = action.variant ?? ButtonVariant.secondary;
-  if (isSecondary && [ButtonVariant.primary, ButtonVariant.danger].includes(variant)) {
-    variant = ButtonVariant.secondary;
-  }
-  if (variant === ButtonVariant.primary && action.isDanger) {
-    variant = ButtonVariant.danger;
-  }
-  if (iconOnly) {
-    variant = ButtonVariant.plain;
-  }
+  const isButtonDisabled = !!isDisabled || isEmptyMultiSelect;
 
-  let to: string;
-  if (action.type === PageActionType.Link) {
+  const getVariant = () => {
+    const variant = action.variant ?? ButtonVariant.secondary;
+    if (isSecondary && [ButtonVariant.primary, ButtonVariant.danger].includes(variant)) {
+      return ButtonVariant.secondary;
+    }
+    if (variant === ButtonVariant.primary && action.isDanger) {
+      return ButtonVariant.danger;
+    }
+    if (iconOnly) {
+      return ButtonVariant.plain;
+    }
+    return variant;
+  };
+  const variant = getVariant();
+
+  const getTo = () => {
+    if (action.type !== PageActionType.Link) {
+      return undefined;
+    }
     switch (action.selection) {
       case PageActionSelection.None:
-        to = action.href;
-        break;
+        return action.href;
       case PageActionSelection.Single:
-        if (selectedItem) {
-          to = action.href(selectedItem);
-        } else to = '';
-        break;
+        return selectedItem ? action.href(selectedItem) : '';
       default:
-        to = '';
-        break;
+        return '';
     }
-  }
+  };
+  const to = getTo();
 
   const id = useID(action);
   const content = iconOnly && Icon ? <Icon /> : action.label;
