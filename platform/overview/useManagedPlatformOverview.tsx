@@ -45,7 +45,7 @@ export function useManagedPlatformOverview() {
     }
 
     if (quickStarts.length > 0) {
-      baseResources.push({ id: 'quick-starts', name: t('Quick starts') });
+      baseResources.push({ id: 'platform-quick-starts', name: t('Quick starts') });
     }
 
     return baseResources;

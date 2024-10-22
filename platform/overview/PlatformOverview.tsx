@@ -1,18 +1,9 @@
-import { QuickStartCatalogPage } from '@patternfly/quickstarts';
-import {
-  Button,
-  CardHeader,
-  CardTitle,
-  Divider,
-  Split,
-  SplitItem,
-  Stack,
-} from '@patternfly/react-core';
+import { Button, CardHeader, CardTitle, Split, SplitItem, Stack } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { PageDashboard, PageDashboardCard, PageHeader, PageLayout } from '../../framework';
+import { PageDashboard, PageHeader, PageLayout } from '../../framework';
 import { AwxJobActivityCard } from '../../frontend/awx/overview/cards/AwxJobActivityCard';
 import { AwxRecentInventoriesCard } from '../../frontend/awx/overview/cards/AwxRecentInventoriesCard';
 import { AwxRecentJobsCard } from '../../frontend/awx/overview/cards/AwxRecentJobsCard';
@@ -21,9 +12,7 @@ import { EdaDecisionEnvironmentsCard } from '../../frontend/eda/overview/cards/E
 import { EdaRuleAuditCard } from '../../frontend/eda/overview/cards/EdaRuleAuditCard';
 import { EdaRulebookActivationsCard } from '../../frontend/eda/overview/cards/EdaRulebookActivationsCard';
 import { useHasAwxService, useHasEdaService } from '../main/GatewayServices';
-import { useIsManagedCloudInstall } from '../main/GatewayUIAuth';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
-import { useQuickStarts } from './quickstarts/useQuickStarts';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
 export function PlatformOverview() {
@@ -31,8 +20,6 @@ export function PlatformOverview() {
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
   const awxService = useHasAwxService();
   const edaService = useHasEdaService();
-  const managedCloudInstall = useIsManagedCloudInstall() ?? false;
-  const quickStarts = useQuickStarts();
   return (
     <PageLayout>
       <PageHeader
@@ -50,8 +37,6 @@ export function PlatformOverview() {
         {managedResources
           .filter((resource) => {
             switch (resource.id) {
-              case 'quick-starts':
-                return quickStarts.length > 0 && !managedCloudInstall;
               case 'counts':
               case 'job_activity':
               case 'recent_jobs':
@@ -67,19 +52,6 @@ export function PlatformOverview() {
           })
           .map((resource) => {
             switch (resource.id) {
-              case 'quick-starts':
-                return (
-                  <PageDashboardCard
-                    key={resource.id}
-                    width="xxl"
-                    title={t('Quick Starts')}
-                    subtitle={t('Learn Ansible automation with hands-on quick starts.')}
-                    canCollapse
-                  >
-                    <Divider />
-                    <QuickStartCatalogPage showFilter showTitle={false} />
-                  </PageDashboardCard>
-                );
               case 'counts':
                 return <PlatformCountsCard key={resource.id} />;
               case 'job_activity':

@@ -180,12 +180,6 @@ export function usePlatformNavigation() {
       path: 'lightspeed',
       element: <Lightspeed />,
     });
-    navigationItems.push({
-      id: PlatformRoute.QuickStarts,
-      // label: t('QuickStarts'),
-      path: 'quickstarts',
-      element: <QuickStartsPage />,
-    });
     if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
       const settingsNav: PageNavigationItem[] = [];
 
@@ -311,6 +305,15 @@ export function usePlatformNavigation() {
         path: 'settings',
         children: settingsNav,
       });
+
+      if (!managedCloudInstall) {
+        navigationItems.push({
+          id: PlatformRoute.QuickStarts,
+          label: t('QuickStarts'),
+          path: 'quickstarts',
+          element: <QuickStartsPage />,
+        });
+      }
     }
     navigationItems.push(resources);
     navigationItems.push({
