@@ -1,3 +1,5 @@
+import { Icon, Split, Tooltip } from '@patternfly/react-core';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -25,8 +27,6 @@ import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../components/Sparkline';
-import { Split, Tooltip, Icon } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 function useActivityColumn() {
   const { t } = useTranslation();
@@ -68,7 +68,18 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
   const descriptionColumn = useDescriptionColumn();
   const activityColumn = useActivityColumn();
   const modifiedColumn = useModifiedColumn(options);
-  const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
+  const organizationColumnDefault = useOrganizationNameColumn(
+    AwxRoute.OrganizationDetails,
+    options
+  );
+  const organizationColumn = useMemo<ITableColumn<JobTemplate | WorkflowJobTemplate>>(
+    () => ({
+      ...organizationColumnDefault,
+      card: 'hidden',
+      list: 'hidden',
+    }),
+    [organizationColumnDefault]
+  );
   const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
   const projectColumn = useProjectNameColumn(AwxRoute.ProjectDetails, options);
   const credentialsColumn = useCredentialsColumn();
