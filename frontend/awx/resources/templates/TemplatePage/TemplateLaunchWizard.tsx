@@ -10,12 +10,9 @@ import {
   usePageAlertToaster,
 } from '../../../../../framework';
 import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
-import { requestGet } from '../../../../common/crud/Data';
-import { RequestError } from '../../../../common/crud/RequestError';
 import { useGet } from '../../../../common/crud/useGet';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -32,6 +29,7 @@ import { shouldHideOtherStep } from '../WorkflowVisualizer/wizard/helpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, TemplateLaunchReviewStep } from './steps';
 import { NodePromptsStep as PromptStep } from '../WorkflowVisualizer/wizard/NodePromptsStep';
+import { useCredentialsValidate } from '../../../access/credentials/hooks/useCredentialsValidate';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',
@@ -220,6 +218,7 @@ export function LaunchWizard({
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { defaults } = config;
+  const validateCredentials = useCredentialsValidate();
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
     isReadOnly: true,
@@ -251,29 +250,6 @@ export function LaunchWizard({
     credential_passwords: {},
     survey: {},
   };
-  const credentialVaultId = function (
-    selectedCredential:
-      | Credential
-      | {
-          id: number;
-          name: string;
-          credential_type: number;
-          passwords_needed?: string[];
-          vault_id?: string;
-        }
-  ) {
-    if (
-      selectedCredential &&
-      'inputs' in selectedCredential &&
-      'vault_id' in selectedCredential['inputs']
-    ) {
-      return selectedCredential.inputs.vault_id;
-    }
-    if (selectedCredential && 'vault_id' in selectedCredential) {
-      return selectedCredential.vault_id;
-    }
-    return undefined;
-  };
 
   const steps: PageWizardStep[] = [
     {
@@ -282,51 +258,12 @@ export function LaunchWizard({
       inputs: <PromptStep />,
       hidden: () => shouldHideOtherStep(config),
       validate: async (formData) => {
-        const missingCredentialTypes: string[] = [];
-        await requestGet<AwxItemsResponse<Credential>>(
-          awxAPI`/job_templates/${template.id?.toString()}/credentials/`
-        ).then(({ results: originalCredentials }) => {
-          const {
-            prompt: { credentials: selectedCredentials },
-          } = formData as TemplateLaunch;
-          if (originalCredentials.length > 0 && selectedCredentials) {
-            originalCredentials.forEach((originalCredential) => {
-              if (
-                !selectedCredentials.find((selectedCredential) => {
-                  const selectedCredentialVaultID = credentialVaultId(selectedCredential);
-                  const originalCredentialVaultID = credentialVaultId(originalCredential);
-                  return (
-                    (selectedCredential?.credential_type === originalCredential?.credential_type &&
-                      !selectedCredentialVaultID &&
-                      !originalCredentialVaultID) ||
-                    (originalCredentialVaultID &&
-                      selectedCredentialVaultID === originalCredentialVaultID)
-                  );
-                })
-              ) {
-                missingCredentialTypes.push(
-                  originalCredential?.inputs?.vault_id
-                    ? `${originalCredential?.summary_fields.credential_type.name} | ${originalCredential.inputs.vault_id}`
-                    : originalCredential?.summary_fields.credential_type.name
-                );
-              }
-            });
-          }
-          if (missingCredentialTypes.length > 0) {
-            const errors = {
-              __all__: [
-                t(
-                  `Job Template default credentials must be replaced with one of the same type.  Please select a credential for the following types in order to proceed: ${missingCredentialTypes.join(
-                    ', '
-                  )}`
-                ),
-              ],
-            };
-            throw new RequestError('', '', 400, '', errors);
-          }
-
-          return undefined;
-        });
+        const {
+          resource,
+          prompt: { credentials: selectedCredentials = [] },
+        } = formData as TemplateLaunch;
+        if (resource?.type === 'workflow_job_template') return;
+        await validateCredentials(selectedCredentials);
       },
     },
     {
