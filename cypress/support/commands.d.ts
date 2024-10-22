@@ -1720,7 +1720,10 @@ declare global {
         sourceRepo: string,
         targetRepo: string
       ): Cypress.Chainable<void>;
-      collectionCopyVersionToRepositories(collectionName: string): Cypress.Chainable<void>;
+      collectionCopyVersionToRepositories(
+        collectionName: string,
+        totalItems: number
+      ): Cypress.Chainable<void>;
       addAndApproveMultiCollections(thisRange: number): Cypress.Chainable<void>;
 
       createRepository(repositoryName: string, remoteName?: string): Cypress.Chainable<Repository>;

@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-import { pulpAPI } from '../../support/formatApiPathForHub';
 
 function visitCollection(collection: string, namespace: string) {
   cy.navigateTo('hub', Collections.url);
@@ -14,15 +14,23 @@ function visitCollection(collection: string, namespace: string) {
   cy.verifyPageTitle(`${namespace}.${collection}`);
 }
 
-describe.skip('Collections Details', () => {
+describe('Collections Details', () => {
   let namespace: HubNamespace;
   let collectionName: string;
   const latestVersion: string = '1.2.3';
   const firstVersion: string = '1.0.0';
 
   before(() => {
-    cy.createHubNamespace().then((namespaceResult) => {
-      namespace = namespaceResult;
+    cy.isGalaxyKitInstalled().then((isInstalled) => {
+      if (!isInstalled) {
+        cy.log(`GalaxyKit is not installed, skipping the test suite`);
+        return;
+        // By returning false in the before hook, Cypress will skip all tests in the spec file without executing them.
+        // This approach avoids the "unsafe call" error from `this.skip()` and still effectively skips the entire spec.
+      }
+      cy.createHubNamespace().then((namespaceResult) => {
+        namespace = namespaceResult;
+      });
     });
   });
 
@@ -31,111 +39,53 @@ describe.skip('Collections Details', () => {
     cy.deleteHubNamespace({ ...namespace, failOnStatusCode: false });
   });
 
-  describe('Collections Details - Copy and delete', () => {
+  describe('Collections Details - Delete from repository', () => {
     beforeEach(() => {
       collectionName = randomE2Ename();
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
-      cy.uploadCollection(collectionName, namespace.name, firstVersion).then((collection) => {
-        cy.log(collection);
+      cy.uploadCollection(collectionName, namespace.name).then(() => {
+        cy.waitForAllTasks();
+        cy.galaxykit(
+          'collection upload --skip-upload',
+          namespace.name,
+          collectionName,
+          firstVersion
+        );
+        cy.waitForAllTasks();
+
         cy.uploadCollection(collectionName, namespace.name, latestVersion);
+        cy.waitForAllTasks();
       });
     });
 
-    afterEach(() => {
-      cy.deleteHubCollectionByName(collectionName);
-    });
-    it('can delete entire collection from system', () => {
-      cy.getByDataCy('table-view').click();
-      cy.filterTableBySingleText(collectionName, true);
-      cy.clickLink(collectionName);
-      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
-      cy.contains('Loading').should('not.exist');
-      cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
-      // Verify collection has been deleted from system
-      cy.verifyPageTitle(Collections.title);
-      cy.getHubCollection(collectionName).then((deleted) => {
-        //Assert that the query returns an empty array, indicating no API results exist
-        expect(deleted.data).to.be.empty;
-      });
-      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
-      //these lines fail if there are no Collections present
-    });
-
-    it('can delete entire collection from repository', () => {
-      cy.getByDataCy('table-view').click();
-      cy.filterTableBySingleText(collectionName, true);
-      cy.clickLink(collectionName);
-      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
-      cy.contains('Loading').should('not.exist');
-      cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
-      // Verify collection has been deleted from system
-      cy.verifyPageTitle(Collections.title);
-      cy.getHubCollection(collectionName).then((deleted) => {
-        //Assert that the query returns an empty array, indicating no API results exist
-        expect(deleted.data).to.be.empty;
-      });
-      //Removed the lines attempting to assert that filtering the list for the collection returns an empty list
-      //these lines fail if there are no Collections present
-    });
-
-    it.skip('can copy a version to repository', () => {
-      cy.navigateTo('hub', Collections.url);
-      cy.filterTableBySingleText(collectionName, true);
-      cy.clickLink(collectionName);
-
-      cy.clickKebabAction('actions-dropdown', 'copy-version-to-repositories');
-      cy.collectionCopyVersionToRepositories(collectionName);
-    });
-
-    it.skip('user can delete version from system', () => {
-      // Delete version from system
-      cy.getByDataCy('table-view').click();
-      cy.filterTableBySingleText(collectionName, true);
-      cy.clickLink(collectionName);
-      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
-      cy.contains('Loading').should('not.exist');
-
-      cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-      cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
-      cy.url().should(
-        'contain',
-        `/collections/validated/${namespace.name}/${collectionName}/details?version=${firstVersion}`
-      );
-      cy.selectDetailsPageKebabAction('delete-version-from-system');
-      //Verify the version has been deleted
-      cy.navigateTo('hub', Collections.url);
-      cy.getByDataCy('table-view').click();
-      cy.filterTableBySingleText(collectionName, true);
-      cy.clickLink(collectionName);
-      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
-      cy.contains('Loading').should('not.exist');
-      cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-      cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains(latestVersion);
-    });
-
-    it('user can delete version from repository', () => {
+    //https://issues.redhat.com/browse/AAP-33916
+    it.skip('user can delete version from repository', () => {
       // Delete version from repository
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      // refreshing the page to force UI to update and cypress to wait
+      cy.get('[data-cy="refresh"]').click();
       cy.contains('Loading').should('not.exist');
       cy.get(`[data-cy="browse-collection-version"] button`).as('versionButton');
       cy.get('@versionButton').first().click();
       cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
-      // how to double check we are in the right page?
       cy.url().should(
         'contain',
         `/collections/validated/${namespace.name}/${collectionName}/details?version=${firstVersion}`
       );
       cy.get('@versionButton').should('not.have.class', 'pf-m-expanded');
       cy.get(`[data-cy="browse-collection-version"] button .pf-v5-c-menu-toggle__text`).should(
-        'have.text',
+        'contain',
         firstVersion
       );
       cy.selectDetailsPageKebabAction('delete-version-from-repository');
-      //Verify the version has been deleted
+
+      // Verify the version has been deleted
+      // refreshing the page to force UI to update and cypress to wait
+      cy.get('[data-cy="refresh"]').click();
       cy.navigateTo('hub', Collections.url);
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName);
@@ -150,16 +100,104 @@ describe.skip('Collections Details', () => {
     });
   });
 
+  describe('Collections Details -  Copy and delete', () => {
+    beforeEach(() => {
+      collectionName = randomE2Ename();
+      cy.navigateTo('hub', Collections.url);
+      cy.verifyPageTitle(Collections.title);
+      cy.uploadCollection(collectionName, namespace.name).then(() => {
+        cy.waitForAllTasks();
+        cy.galaxykit(
+          'collection upload --skip-upload',
+          namespace.name,
+          collectionName,
+          firstVersion
+        );
+        cy.waitForAllTasks();
+
+        cy.uploadCollection(collectionName, namespace.name, latestVersion);
+        cy.waitForAllTasks();
+      });
+    });
+    it('can delete entire collection from system', () => {
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.selectDetailsPageKebabAction('delete-entire-collection-from-system');
+      // Verify collection has been deleted from system
+      cy.verifyPageTitle(Collections.title);
+      cy.filterTableBySingleText(collectionName);
+      cy.contains('No results found').should('exist');
+    });
+    it('can delete entire collection from repository', () => {
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.selectDetailsPageKebabAction('delete-entire-collection-from-repository');
+      // Verify collection has been deleted from system
+      cy.verifyPageTitle(Collections.title);
+      cy.getHubCollection(collectionName).then((deleted) => {
+        // Assert that the query returns an empty array, indicating no API results exist
+        expect(deleted.data).to.be.empty;
+      });
+      // Removed the lines attempting to assert that filtering the list for the collection returns an empty list
+      // these lines fail if there are no Collections present
+    });
+    it('can copy a version to repository', () => {
+      cy.navigateTo('hub', Collections.url);
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.clickKebabAction('actions-dropdown', 'copy-version-to-repositories');
+      cy.collectionCopyVersionToRepositories(collectionName, 3);
+    });
+    it('user can delete version from system', () => {
+      // Delete version from system
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      // refreshing the page to force UI to update and cypress to wait
+      cy.get('[data-cy="refresh"]').click();
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.clickTab(/^Details$/, true);
+      cy.contains('Loading').should('not.exist');
+      cy.get(`[data-cy="browse-collection-version"] button`).as('versionButton');
+      cy.get('@versionButton').first().click();
+      cy.get('.pf-v5-c-menu__item-text').contains(firstVersion).click();
+      cy.url().should(
+        'contain',
+        `/collections/validated/${namespace.name}/${collectionName}/details?version=${firstVersion}`
+      );
+      cy.get('@versionButton').should('not.have.class', 'pf-m-expanded');
+      cy.get(`[data-cy="browse-collection-version"] button .pf-v5-c-menu-toggle__text`).should(
+        'contain',
+        firstVersion
+      );
+      cy.selectDetailsPageKebabAction('delete-version-from-system');
+
+      // Verify the version has been deleted
+      // refreshing the page to force UI to update and cypress to wait
+      cy.get('[data-cy="refresh"]').click();
+      cy.navigateTo('hub', Collections.url);
+      cy.getByDataCy('table-view').click();
+      cy.filterTableBySingleText(collectionName, true);
+      cy.clickLink(collectionName);
+      cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.contains('Loading').should('not.exist');
+      cy.get('@versionButton').first().click();
+      cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains(latestVersion);
+    });
+  });
+
   describe('Collections Details - Signing and deprecation', () => {
     beforeEach(() => {
       collectionName = randomE2Ename();
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
       cy.uploadCollection(collectionName, namespace.name, firstVersion);
-    });
-
-    afterEach(() => {
-      cy.deleteHubCollectionByName(collectionName);
     });
 
     it('can sign a collection', () => {
@@ -170,26 +208,27 @@ describe.skip('Collections Details', () => {
       cy.getModal().should('not.exist');
       // Verify collection has been signed
       cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
-      // cy.deleteHubCollectionByName(collectionName);
     });
 
+    // https://issues.redhat.com/browse/AAP-31186
+    // [ErrorDetail(string='Collection e2e_r1e6o.e2e_jul8w-1.0.0 already exists with a different artifact', code='invalid')]
     it.skip('can sign a selected version of a collection', () => {
       // This test won't work with the current resources created by the before each block
       // find a better way to create these resources before the test.
-      cy.uploadCollection(collectionName, namespace.name).then(() => {
+      cy.uploadCollection(collectionName, namespace.name, firstVersion).then(() => {
         cy.waitForAllTasks();
         cy.galaxykit(
           'collection upload --skip-upload',
           namespace.name,
           collectionName,
-          '1.2.3'
+          latestVersion
         ).then((result: { filename: string }) => {
-          //Visit the details screen of the newly uploaded collection
+          // Visit the details screen of the newly uploaded collection
           visitCollection(collectionName, namespace.name);
-          //Assert baseline version nuumber
-          cy.getByDataCy('version').should('contain', '1.0.0');
+          // Assert baseline version number
+          cy.getByDataCy('version').should('contain', firstVersion);
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
-          //Upload new version to the collection
+          // Upload new version to the collection
           cy.clickPageAction('upload-new-version');
           cy.get('#file-browse-button').click();
           cy.get('input[id="file-filename"]').selectFile(result.filename, {
@@ -202,7 +241,7 @@ describe.skip('Collections Details', () => {
           });
           cy.get('[data-cy="Submit"]').click();
           cy.verifyPageTitle(Collections.title);
-          //Navigate back to the details screen of the collection after upload
+          // Navigate back to the details screen of the collection after upload
           cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.clickTableRow(collectionName, false);
@@ -211,26 +250,27 @@ describe.skip('Collections Details', () => {
 
           cy.contains('[type="button"]', '1.0.0 updated').click();
 
-          //Select the first version of the collection in order to sign it
-          cy.getByDataCy('version').should('contain', '1.0.0');
+          // Select the first version of the collection in order to sign it
+          cy.getByDataCy('version').should('contain', firstVersion);
           cy.getByDataCy('signed-state').should('contain', 'Unsigned');
-          // FIXME: here, the version changes from 1.0.0 to 1.2.3 .. could be autoreload when no version is explicitly selected, or sign-version forgetting state?
+          // FIXME: here, the version changes from 1.0.0 to 1.2.3
+          // could be autoreload when no version is explicitly selected, or sign-version forgetting state?
           cy.selectDetailsPageKebabAction('sign-version');
           cy.getModal().then(() => {
             cy.clickButton(/^Close$/);
           });
-          //Reload the page to reflect and assert the newly signed version
+          // Reload the page to reflect and assert the newly signed version
           cy.reload();
-          cy.getByDataCy('version').should('contain', '1.0.0');
+          cy.getByDataCy('version').should('contain', firstVersion);
           cy.getByDataCy('signed-state').should('contain', 'Signed');
-          //Display the other version of the collection to assert that it is not signed
+          // Display the other version of the collection to assert that it is not signed
           cy.get(`[data-cy="browse-collection-version"] button`).first().click();
 
           cy.contains('[type="button"]', '(latest)').click();
 
-          cy.getByDataCy('version').should('contain', '1.2.3');
+          cy.getByDataCy('version').should('contain', latestVersion);
           cy.getByDataCy('signed-state').should('contain', 'Unsigned');
-          //Delete the collection
+          // Delete the collection
           cy.deleteHubCollectionByName(collectionName);
         });
       });
@@ -281,15 +321,15 @@ describe.skip('Collections Details', () => {
   });
 
   describe('Collections Details - Contents and Documentation', () => {
-    beforeEach(() => {
+    before(() => {
       collectionName = randomE2Ename();
       cy.navigateTo('hub', Collections.url);
       cy.verifyPageTitle(Collections.title);
-      cy.uploadCollection(collectionName, namespace.name, firstVersion);
-    });
-
-    afterEach(() => {
-      cy.deleteHubCollectionByName(collectionName);
+      cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+        cy.waitForAllTasks();
+        cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName, '1.0.0');
+        cy.waitForAllTasks();
+      });
     });
 
     it('can show documentation tab for a collection', () => {

@@ -368,22 +368,25 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('collectionCopyVersionToRepositories', (collectionName: string) => {
-  cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
-    cy.get('header').contains('Select repositories');
-    cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
-    cy.filterTableBySingleText('community');
-    cy.get('[data-cy="data-list-check"]').click();
-    cy.get('button').contains('Select').click();
-  });
+Cypress.Commands.add(
+  'collectionCopyVersionToRepositories',
+  (collectionName: string, totalItems: number) => {
+    cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+      cy.get('header').contains('Select repositories');
+      cy.get('button').contains('Select').should('have.attr', 'aria-disabled', 'true');
+      cy.filterTableBySingleText('community');
+      cy.get('[data-cy="data-list-check"]').click();
+      cy.get('button').contains('Select').click();
+    });
 
-  cy.navigateTo('hub', 'approvals');
-  cy.clickButton(/^Clear all filters$/);
+    cy.navigateTo('hub', 'approvals');
+    cy.clickButton(/^Clear all filters$/);
 
-  cy.filterTableBySingleText(collectionName);
-  cy.get('[aria-label="Simple table"] tr').should('have.length', 3);
-  cy.contains('No results found').should('not.exist');
-});
+    cy.filterTableBySingleText(collectionName);
+    cy.get('[aria-label="Simple table"] tbody tr').should('have.length', totalItems);
+    cy.contains('No results found').should('not.exist');
+  }
+);
 
 // HUB Execution Environment Commands
 export type HubQueryExecutionEnvironmentsOptions = { qs?: { limit?: number } } & Omit<

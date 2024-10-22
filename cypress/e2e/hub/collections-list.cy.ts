@@ -169,7 +169,11 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.get('[data-cy="actions-dropdown"]').first().click();
       });
       cy.get('[data-cy="copy-version-to-repositories"] button').click();
-      cy.collectionCopyVersionToRepositories(collectionName);
+
+      cy.collectionCopyVersionToRepositories(collectionName, 2);
+
+      // delete it from repository community
+
       cy.navigateTo('hub', Collections.url);
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName);
