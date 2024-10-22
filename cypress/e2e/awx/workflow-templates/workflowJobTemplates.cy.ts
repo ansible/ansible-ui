@@ -797,7 +797,53 @@ describe('Workflow Job Templates Tests', () => {
       cy.deleteAwxWorkflowJobTemplate(workflowTemplate, { failOnStatusCode: false });
     });
   });
+  describe('Prompt on Launch', () => {
+    let workflowJobTemplate: WorkflowJobTemplate;
+    let jobTemplate: JobTemplate;
+    let inventory: Inventory;
+    let project: Project;
 
+    beforeEach(function () {
+      cy.createAwxInventory(organization).then((i) => {
+        inventory = i;
+
+        cy.createAwxProject(organization).then((proj) => {
+          project = proj;
+
+          cy.createAwxJobTemplate({
+            organization: organization.id,
+            project: project.id,
+            inventory: inventory.id,
+          }).then((jt) => {
+            jobTemplate = jt;
+            cy.createAwxWorkflowJobTemplate({
+              organization: organization.id,
+              inventory: inventory.id,
+              ask_limit_on_launch: true,
+            }).then((wfjt) => {
+              workflowJobTemplate = wfjt;
+            });
+          });
+        });
+      });
+    });
+    afterEach(function () {
+      cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+      cy.deleteAwxProject(project, { failOnStatusCode: false });
+    });
+    it('Can launch a workflow job template with prompt on launch values.', () => {
+      cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
+      cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
+      cy.getByDataCy('launch-template').click();
+      cy.get('[data-cy="limit"]').should('exist').type('localhost');
+      cy.clickButton(/^Next/);
+      cy.get('[data-cy="limit"]').should('have.text', 'localhost');
+      cy.clickButton(/^Finish/);
+    });
+  });
   describe('Workflow template: Output and Details Screen', () => {
     let workflowJobTemplate: WorkflowJobTemplate;
     let jobTemplate: JobTemplate;

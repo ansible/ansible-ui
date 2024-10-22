@@ -78,7 +78,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
 
   const { data: ee } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
-    prompt?.execution_environment.id ?? ''
+    prompt?.execution_environment?.id ?? ''
   );
   const { data: fullInventory } = useGetItem<Inventory>(
     awxAPI`/inventories/`,
