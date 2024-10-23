@@ -6,6 +6,7 @@ import {
   PageDetail,
   PageDetails,
   TextCell,
+  useGetPageUrl,
   usePageNavigate,
 } from '../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
@@ -14,7 +15,6 @@ import { AwxHost } from '../../../interfaces/AwxHost';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { Sparkline } from '../../templates/components/Sparkline';
-import { useGetPageUrl } from '../../../../../framework';
 
 function useHostDetailParams() {
   const params = useParams<{ id: string; inventory_type: string; host_id: string }>();
@@ -56,7 +56,7 @@ export function InventoryHostDetailsInner(props: { host: AwxHost }) {
 
   const host = props.host;
 
-  const recentPlaybookJobs = host.summary_fields.recent_jobs.map((job) => ({
+  const recentPlaybookJobs = (host.summary_fields.recent_jobs ?? []).map((job) => ({
     ...job,
     canceled_on: null,
   }));

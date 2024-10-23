@@ -4,7 +4,7 @@ import { setupAfter, setupBefore } from '../commands/setup';
 test.beforeEach(setupBefore);
 test.afterEach(setupAfter);
 
-test('Overview', async ({ page }) => {
+test('overview shows the right dashboard cards', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
 
   if (await page.locator('#platform-awx').isVisible()) {
