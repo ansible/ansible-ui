@@ -57,6 +57,8 @@ interface IControllerData {
   users: DeepPartial<AwxUser>[];
   workflow_approvals: DeepPartial<WorkflowApproval>[];
   workflow_job_templates: DeepPartial<WorkflowJobTemplate>[];
+  hosts: object[];
+  labels: object[];
   dashboard: object;
 }
 
@@ -130,6 +132,8 @@ export const mockData: IApiData = {
         unified_jobs: [],
         'execution-environments': [],
         instance_groups: [],
+        hosts: [],
+        labels: [],
         dashboard: {
           related: {
             jobs_graph: '/api/controller/v2/dashboard/graphs/jobs/',

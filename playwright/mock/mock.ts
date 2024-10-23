@@ -201,6 +201,7 @@ function postMock(url: URL, body: object, mockData: IApiData): MockResponse | un
       (
         body as {
           summary_fields: {
+            labels: { results: { id: number }[] };
             resource: { ansible_id: string };
             user_capabilities: {
               edit: boolean;
@@ -212,6 +213,7 @@ function postMock(url: URL, body: object, mockData: IApiData): MockResponse | un
           };
         }
       ).summary_fields = {
+        labels: { results: [] },
         resource: {
           ansible_id: '1234',
         },
