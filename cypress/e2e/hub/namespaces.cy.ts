@@ -23,10 +23,16 @@ describe('Namespaces', () => {
     cy.url().should('include', Namespaces.urlCreate);
     cy.getByDataCy('name').type(namespaceName);
     cy.getByDataCy('company').type('test company');
+    cy.get('.view-lines').click().type('name: example_namespace');
+    cy.contains('Preview').click();
+    cy.getByDataCy('resources-form-group').should('contain', 'name: example_namespace');
+    cy.contains('Markdown').click();
     cy.getByDataCy('link-text-0').type('test link');
     cy.getByDataCy('link-url-0').type('https://test.com');
     cy.getByDataCy('Submit').click();
     cy.url().should('include', `/namespaces/${namespaceName}/details`);
+    cy.contains('Resources').should('be.visible');
+    cy.contains('name: example_namespace').should('be.visible');
     cy.selectDetailsPageKebabAction('delete-namespace');
     cy.url().should('include', Namespaces.url);
     cy.url().should('not.include', `/namespaces/${namespaceName}/details`);

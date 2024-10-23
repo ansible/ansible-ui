@@ -187,7 +187,7 @@ function MarkdownActions(props: {
             data-cy="toggle-markdown"
             aria-label={t('Toggle to Markdown')}
             isSelected={!preview}
-            text="Markdown"
+            text={t('Markdown')}
             type="button"
             onChange={() => setPreview(false)}
           />
@@ -196,7 +196,7 @@ function MarkdownActions(props: {
             data-cy="toggle-preview"
             aria-label={t('Toggle to Preview')}
             isSelected={preview}
-            text="Preview"
+            text={t('Preview')}
             type="button"
             onChange={() => setPreview(true)}
           />
