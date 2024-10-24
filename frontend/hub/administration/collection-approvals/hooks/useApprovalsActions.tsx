@@ -1,4 +1,4 @@
-import { ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
+import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
@@ -34,7 +34,7 @@ export function useApprovalsActions(callback: (collections: CollectionVersionSea
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
-        icon: TrashIcon,
+        icon: ThumbsDownIcon,
         label: t('Reject collections'),
         onClick: rejectCollections,
         isDanger: true,
