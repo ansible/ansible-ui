@@ -6,13 +6,15 @@ import { createE2EName } from '../commands/createE2EName';
 import { filterTableBySelect } from '../commands/filterTableBySelect';
 import { navigateTo } from '../commands/navigateTo';
 
-export async function createHost(options: { name?: string; inventoryName: string }, page: Page) {
+export async function createHost(options: { name?: string; inventoryName?: string }, page: Page) {
   const hostName = options.name ?? createE2EName('host');
+  const inventoryName = options.inventoryName ?? 'Demo Inventory';
   await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Infrastructure', 'Hosts');
   await page.getByRole('button', { name: 'Create host' }).click();
   await page.getByPlaceholder('Enter host name').fill(hostName);
   await page.getByLabel('Inventory *').click();
-  await page.getByRole('option', { name: options.inventoryName }).click();
+  await page.getByLabel('Search input').fill(inventoryName);
+  await page.getByRole('option', { name: inventoryName }).click();
   await page.getByRole('button', { name: 'Create host' }).click();
   await expect(page.getByRole('heading')).toContainText(hostName);
   await expect(page.locator('#name')).toContainText(hostName);

@@ -118,7 +118,7 @@ export const mockData: IApiData = {
         me: [],
         config: { license_info: { compliant: true } },
         inventory_sources: [],
-        inventories: [],
+        inventories: [{ id: 1, name: 'Demo Inventory' }],
         job_templates: [],
         jobs: [],
         projects: [{ id: 1, name: 'Demo Project' }],

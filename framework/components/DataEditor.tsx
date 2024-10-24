@@ -62,7 +62,11 @@ export function DataEditor(props: {
         },
       });
       editorRef.current.editor = editor;
-      return () => editor.dispose();
+      return () => {
+        setTimeout(() => {
+          editor.dispose();
+        }, 1000);
+      };
     }
   }, [props.lineNumbers]);
 

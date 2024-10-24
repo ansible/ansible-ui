@@ -19,7 +19,6 @@ export async function createInventory(options: { name?: string }, page: Page) {
   await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
   await page.getByLabel('Organization *').click();
   await page.getByRole('option', { name: 'Default' }).click();
-  await page.waitForTimeout(1000); // TODO - Need to wait for the monaco editor to initialize
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading')).toContainText(inventoryName);
   await expect(page.locator('#name')).toContainText(inventoryName);
