@@ -149,10 +149,16 @@ declare global {
       // ==============================================================================================================
 
       /** Get by selector, making sure it is not disabled or hidden */
-      getBy(selector: string): Chainable<JQuery<HTMLElement>>;
+      getBy(
+        selector: string,
+        options?: { scrollIntoView?: boolean }
+      ): Chainable<JQuery<HTMLElement>>;
 
       /** Get by data-cy attribute, making sure it is not disabled or hidden */
-      getByDataCy(dataCy: string): Chainable<JQuery<HTMLElement>>;
+      getByDataCy(
+        dataCy: string,
+        options?: { scrollIntoView?: boolean }
+      ): Chainable<JQuery<HTMLElement>>;
 
       /** Contains by selector, making sure it is not disabled or hidden */
       containsBy(selector: string, text: string | number | RegExp): Chainable<JQuery<HTMLElement>>;

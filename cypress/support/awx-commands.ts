@@ -7,7 +7,9 @@ import { randomString } from '../../framework/utils/random-string';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { Application } from '../../frontend/awx/interfaces/Application';
 import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
+import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
 import { AwxToken } from '../../frontend/awx/interfaces/AwxToken';
+import { ContentTypeEnum } from '../../frontend/awx/interfaces/ContentType';
 import { Credential } from '../../frontend/awx/interfaces/Credential';
 import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
 import { ExecutionEnvironment } from '../../frontend/awx/interfaces/ExecutionEnvironment';
@@ -29,8 +31,6 @@ import { WorkflowApproval } from '../../frontend/awx/interfaces/WorkflowApproval
 import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { WorkflowJobNode, WorkflowNode } from '../../frontend/awx/interfaces/WorkflowNode';
 import { awxAPI } from './formatApiPathForAwx';
-import { AwxRbacRole } from '../../frontend/awx/interfaces/AwxRbacRole';
-import { ContentTypeEnum } from '../../frontend/awx/interfaces/ContentType';
 
 //  AWX related custom command implementation
 
@@ -519,7 +519,7 @@ Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean)
 Cypress.Commands.add(
   'hasDetail',
   (detailTerm: string | RegExp, detailDescription: string | RegExp) => {
-    cy.contains('dt', detailTerm).next().should('contain', detailDescription);
+    cy.contains('dt', detailTerm).next().scrollIntoView().should('contain', detailDescription);
   }
 );
 

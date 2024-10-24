@@ -371,7 +371,7 @@ describe('Job Templates Tests', function () {
       cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
       cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
       cy.getByDataCy('related-webhook-receiver').should('have.attr', 'readonly');
-      cy.getByDataCy('webhook-key').should(
+      cy.getByDataCy('webhook-key', { scrollIntoView: true }).should(
         'have.value',
         'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.'
       );
@@ -381,9 +381,9 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('enabled-options').contains('Webhooks');
       cy.clickLink('Edit template');
       cy.getByDataCy('isWebhookEnabled').should('be.checked');
-      cy.getByDataCy('webhook-service-form-group').contains('GitHub');
+      cy.getByDataCy('webhook-service-form-group', { scrollIntoView: true }).contains('GitHub');
       cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
-      cy.getByDataCy('webhook-key').should(
+      cy.getByDataCy('webhook-key', { scrollIntoView: true }).should(
         'not.have.value',
         'A NEW WEBHOOK KEY WILL BE GENERATED ON SAVE.'
       );
@@ -392,7 +392,7 @@ describe('Job Templates Tests', function () {
       cy.contains('Webhook details').should('not.exist');
       cy.getByDataCy('isWebhookEnabled').click();
       cy.getByDataCy('isWebhookEnabled').should('be.checked');
-      cy.getByDataCy('webhook-service-form-group').contains('GitHub');
+      cy.getByDataCy('webhook-service-form-group', { scrollIntoView: true }).contains('GitHub');
       cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
       cy.getByDataCy('isProvisioningCallbackEnabled').click();
       cy.contains('Provisioning callback details');
@@ -442,13 +442,18 @@ describe('Job Templates Tests', function () {
 
             cy.get('[data-cy="webhook_credential"]').scrollIntoView();
             cy.getByDataCy('webhook_credential').should('have.text', ghCred.name);
-            cy.getByDataCy('webhook-service-form-group').contains('GitHub');
-            cy.getByDataCy('webhook-key').should('have.value', webhookKey);
+            cy.getByDataCy('webhook-service-form-group', { scrollIntoView: true }).contains(
+              'GitHub'
+            );
+            cy.getByDataCy('webhook-key', { scrollIntoView: true }).should(
+              'have.value',
+              webhookKey
+            );
             cy.intercept(
               'POST',
               awxAPI`/job_templates/${jobTemplate.id.toString()}/webhook_key/`
             ).as('generateWebhookKey');
-            cy.getByDataCy('webhook-key-form-group').within(() => {
+            cy.getByDataCy('webhook-key-form-group', { scrollIntoView: true }).within(() => {
               cy.get('button').click();
             });
             cy.wait('@generateWebhookKey')
@@ -462,7 +467,10 @@ describe('Job Templates Tests', function () {
                 cy.wait('@saveJT');
                 cy.getByDataCy('webhook-service').contains('GitHub');
                 cy.clickLink('Edit template');
-                cy.getByDataCy('webhook-key').should('have.value', webhookKey);
+                cy.getByDataCy('webhook-key', { scrollIntoView: true }).should(
+                  'have.value',
+                  webhookKey
+                );
               });
           });
       });

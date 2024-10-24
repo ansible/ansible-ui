@@ -1,5 +1,9 @@
-Cypress.Commands.add('getBy', (selector: string) => {
-  cy.get(selector)
+Cypress.Commands.add('getBy', (selector: string, options?: { scrollIntoView?: boolean }) => {
+  const chainable = cy.get(selector);
+  if (options?.scrollIntoView) {
+    chainable.scrollIntoView();
+  }
+  chainable
     .should('not.be.disabled')
     .should('not.have.attr', 'aria-disabled', 'true')
     .should('not.be.hidden')
@@ -10,8 +14,8 @@ Cypress.Commands.add('getBy', (selector: string) => {
   cy.get(selector);
 });
 
-Cypress.Commands.add('getByDataCy', (dataCy: string) => {
-  cy.getBy(`[data-cy="${dataCy}"]`);
+Cypress.Commands.add('getByDataCy', (dataCy: string, options?: { scrollIntoView?: boolean }) => {
+  cy.getBy(`[data-cy="${dataCy}"]`, options);
 });
 
 Cypress.Commands.add('containsBy', (selector: string, text: string | number | RegExp) => {
