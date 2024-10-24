@@ -49,6 +49,22 @@ export function RulebookActivationDetails() {
       <p>{t('On failure: only restarts when it fails.')}</p>
     </>
   );
+  const logLevelHelpBlock = (
+    <>
+      <p>{t('The different log level options:')}</p>
+      <p>{t('Error: Logs that contain a rulebook activation error message.')}</p>
+      <p>
+        {t(
+          'Info: Logs that contain useful information about rulebook activations, such as a success or failure.'
+        )}
+      </p>
+      <p>
+        {t(
+          'Debug: Logs that contain information that is only useful during the debug phase and might be of little value during production. This log level includes both error and log level data.'
+        )}
+      </p>
+    </>
+  );
   if (!rulebookActivation) {
     return <LoadingPage />;
   }
@@ -196,10 +212,7 @@ export function RulebookActivationDetails() {
               {rulebookActivation?.status_message}
             </PageDetail>
           )}
-        <PageDetail
-          label={t('Log level')}
-          helpText={t('The different log level options: Error, Info, and Debug.')}
-        >
+        <PageDetail label={t('Log level')} helpText={logLevelHelpBlock}>
           {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
         <PageDetail label={t('Service name')} helpText={t('Optional service name.')}>

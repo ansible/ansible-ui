@@ -151,6 +151,23 @@ export function RulebookActivationInputs() {
     { label: t('Never'), value: 'never' },
   ];
 
+  const logLevelHelpBlock = (
+    <>
+      <p>{t('The different log level options:')}</p>
+      <p>{t('Error: Logs that contain a rulebook activation error message.')}</p>
+      <p>
+        {t(
+          'Info: Logs that contain useful information about rulebook activations, such as a success or failure.'
+        )}
+      </p>
+      <p>
+        {t(
+          'Debug: Logs that contain information that is only useful during the debug phase and might be of little value during production. This log level includes both error and log level data.'
+        )}
+      </p>
+    </>
+  );
+
   const LOG_LEVEL_OPTIONS = [
     { label: t('Error'), value: 'error' },
     { label: t('Info'), value: 'info' },
@@ -282,7 +299,7 @@ export function RulebookActivationInputs() {
         placeholderText={t('Select log level')}
         isRequired
         options={LOG_LEVEL_OPTIONS}
-        labelHelp={t('The different log level options: Error, Info, and Debug.')}
+        labelHelp={logLevelHelpBlock}
         labelHelpTitle={t('Log level')}
       />
       <PageFormTextInput<IEdaRulebookActivationInputs>
