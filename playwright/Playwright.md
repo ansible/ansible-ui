@@ -17,18 +17,38 @@ Solution
 ## Getting Started
 
 1. Install Playwright:
-
     ```bash
     npm ci
     ```
 
 2. Add the vscode plugin for Playwright
+   > https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright
+
 3. Install the browser binaries:
+    ```bash
+    npx playwright install
+    ```
 
-```bash
+4. Setup environment variable by creating a `.env` file in the `/playwright` directory.
+   ```
+   PLATFORM_UI=https://localhost:4100
+   PLATFORM_USERNAME=username
+   PLATFORM_PASSWORD=password
+   ```
 
-npx playwright install
-```
+   > Why PLATFORM_UI vs PLATFORM_SERVER?
+   >
+   > Playwright runs against a UI that might not be the same as the API server. Having a new variable PLATFORM_UI keeps existing developers from running into issues with PLATFORM_SERVER which is pointed at the server API.
+   >
+   > For nightly runs PLATFORM_UI will be pointed at a PLATFORM_SERVER to run tests.
+
+5. Run the Platform UI
+   ```
+   cd platform
+   npm start
+   ```
+
+6. Run Playwright tests from the VSCode test explorer.
 
 ### Developer Experience
 
