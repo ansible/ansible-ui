@@ -43,7 +43,7 @@ jobs:
       run: npx playwright install --with-deps chromium
     - name: Run Playwright tests
       working-directory: playwright
-      run: npx playwright test --project="mock chromium" --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: npx playwright test --project="mock chromium" --grep-invert @not-mock --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
         PLATFORM_USERNAME: mock
         PLATFORM_PASSWORD: mock

@@ -60,6 +60,7 @@ interface IControllerData {
   hosts: object[];
   labels: object[];
   dashboard: object;
+  unified_job_templates: object[];
 }
 
 export interface IApiData {
@@ -134,6 +135,7 @@ export const mockData: IApiData = {
         instance_groups: [],
         hosts: [],
         labels: [],
+        unified_job_templates: [],
         dashboard: {
           related: {
             jobs_graph: '/api/controller/v2/dashboard/graphs/jobs/',
