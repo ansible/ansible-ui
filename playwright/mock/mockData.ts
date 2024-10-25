@@ -36,6 +36,7 @@ interface IGatewayData {
   organizations: DeepPartial<PlatformOrganization>[];
   users: DeepPartial<PlatformUser>[];
   teams: DeepPartial<PlatformTeam>[];
+  applications: object[];
 }
 
 interface IControllerData {
@@ -111,6 +112,7 @@ export const mockData: IApiData = {
           },
         ],
         teams: [],
+        applications: [],
       },
     },
     controller: {

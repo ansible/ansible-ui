@@ -23,7 +23,7 @@ export async function createAwxProject(
   options: { projectName?: string; organizationName?: string },
   page: Page
 ) {
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Projects');
+  await navigateTo(page, 'Automation Execution', 'Projects');
   await page.getByRole('link', { name: 'Create project', exact: true }).click();
   const projectName = options.projectName ?? createE2EName();
   await page.getByLabel('Name').fill(projectName);
@@ -38,14 +38,14 @@ export async function createAwxProject(
 }
 
 export async function syncAwxProject(projectName: string, page: Page) {
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Projects');
+  await navigateTo(page, 'Automation Execution', 'Projects');
   await clearTableFilters(page);
   await filterTableBySelect(projectName, page);
   await expectRowToContain(projectName, 'Success', page, 60 * 1000);
 }
 
 export async function deleteAwxProject(projectName: string, page: Page) {
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Projects');
+  await navigateTo(page, 'Automation Execution', 'Projects');
   await clearTableFilters(page);
   await filterTableBySelect(projectName, page);
   await clickTableRow(projectName, page);
