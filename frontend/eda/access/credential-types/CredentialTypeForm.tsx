@@ -199,19 +199,22 @@ function CredentialTypeInputs() {
           format="object"
         />
       </PageFormSection>
-      {credentialInputs && Object.keys(credentialInputs).length !== 0 && (
-        <PageFormSection>
-          <Button
-            id={'generate-injector'}
-            variant={'secondary'}
-            size={'sm'}
-            style={{ maxWidth: 150 }}
-            onClick={() => setInjectorsExtraVars()}
-          >
-            {t('Generate extra vars')}
-          </Button>
-        </PageFormSection>
-      )}
+      {credentialInputs &&
+        Object.keys(credentialInputs).length !== 0 &&
+        credentialInputs.fields &&
+        credentialInputs.fields.length > 0 && (
+          <PageFormSection>
+            <Button
+              id={'generate-injector'}
+              variant={'secondary'}
+              size={'sm'}
+              style={{ maxWidth: 150 }}
+              onClick={() => setInjectorsExtraVars()}
+            >
+              {t('Generate extra vars')}
+            </Button>
+          </PageFormSection>
+        )}
       {!injectorGenerated && (
         <PageFormSection singleColumn>
           <PageFormDataEditor
