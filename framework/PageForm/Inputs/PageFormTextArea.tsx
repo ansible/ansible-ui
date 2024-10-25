@@ -100,6 +100,8 @@ export function PageFormTextArea<
                   autoComplete={autoComplete || 'off'}
                   data-cy={id}
                   autoResize={disableAutoResize === undefined ? true : !disableAutoResize}
+                  rows={1}
+                  resizeOrientation="vertical"
                 />
               </InputGroupItem>
               {type === 'password' && (

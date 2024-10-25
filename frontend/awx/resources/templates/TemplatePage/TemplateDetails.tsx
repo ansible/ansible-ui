@@ -161,7 +161,8 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       <PageDetail label={t('Source control branch')}>{template.scm_branch}</PageDetail>
       <PageDetail
         label={t('Playbook')}
-        helpText={t('Select the playbook to be executed by this job.')}
+        helpText={t('The playbook to be executed by this job.')}
+        fullWidth
       >
         {template.playbook}
       </PageDetail>
@@ -266,19 +267,19 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
           )
         }
       />
-      <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length}>
+      <PageDetail label={t('Labels')} isEmpty={!summaryFields.labels?.results?.length} fullWidth>
         <LabelGroup>
           {summaryFields.labels?.results?.map((label) => (
             <Label key={label.id}>{label.name}</Label>
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Job tags')} isEmpty={!template.job_tags}>
+      <PageDetail label={t('Job tags')} isEmpty={!template.job_tags} fullWidth>
         <LabelGroup>
           {template.job_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags}>
+      <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags} fullWidth>
         <LabelGroup>
           {template.skip_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>

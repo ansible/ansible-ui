@@ -3,7 +3,6 @@
 import {
   Alert,
   Card,
-  CardBody,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -22,6 +21,7 @@ import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
 import { PageDetail } from '../PageDetails/PageDetail';
 import { IconWrapper } from '../components/IconWrapper';
+import { Scrollable } from '../components/Scrollable';
 import { LabelColor } from '../components/pfcolors';
 import {
   ITableColumn,
@@ -82,6 +82,7 @@ const CardFooterDiv = styled.div`
   flex-direction: row;
   align-items: end;
   gap: 16px;
+  flex-wrap: wrap;
 `;
 
 const CardFooterLabelsDiv = styled.div`
@@ -158,15 +159,6 @@ export function PageTableCard<T extends object>(props: {
           actions: {
             actions: (
               <>
-                {itemActions && itemActions.length && (
-                  <PageActions
-                    actions={itemActions}
-                    position={'right'}
-                    selectedItem={item}
-                    iconOnly
-                    collapse="always"
-                  />
-                )}
                 {showSelect && (
                   <Checkbox
                     isChecked={isSelected?.(item)}
@@ -178,7 +170,7 @@ export function PageTableCard<T extends object>(props: {
                 )}
               </>
             ),
-            hasNoOffset: false,
+            hasNoOffset: true,
             className: undefined,
           },
         })}
@@ -228,8 +220,18 @@ export function PageTableCard<T extends object>(props: {
           )}
         </CardHeaderDiv>
       </CardHeader>
-      {card.cardBody}
-      {card.labels && (
+      <div
+        style={{
+          maxHeight: 250,
+          overflow: 'hidden',
+          display: 'flex',
+          paddingBottom: 16,
+          flexGrow: 1,
+        }}
+      >
+        <Scrollable>{card.cardBody}</Scrollable>
+      </div>
+      {(card.labels || (itemActions && itemActions.length)) && (
         <CardFooter>
           <CardFooterDiv>
             <CardFooterLabelsDiv>
@@ -248,6 +250,18 @@ export function PageTableCard<T extends object>(props: {
                 </LabelGroup>
               )}
             </CardFooterLabelsDiv>
+            {itemActions && itemActions.length && (
+              <div
+                style={{ marginRight: -16, alignSelf: 'end', justifySelf: 'flex-end', flexGrow: 1 }}
+              >
+                <PageActions
+                  actions={itemActions}
+                  position={'right'}
+                  selectedItem={item}
+                  iconOnly
+                />
+              </div>
+            )}
           </CardFooterDiv>
         </CardFooter>
       )}
@@ -334,41 +348,39 @@ export function useColumnsToTableCardFn<T extends object>(
           <TableColumnCell column={subtitleColumn} item={item} />
         ),
         cardBody: (
-          <CardBody>
-            <DescriptionList isCompact>
-              {hasDescription && descriptionColumn && (
-                <PageDetail key={descriptionColumn.id ?? descriptionColumn.header}>
-                  {descriptionColumn.type === 'description' ? (
-                    <div>{descriptionColumn.value(item)}</div>
-                  ) : (
-                    <TableColumnCell column={descriptionColumn} item={item} />
-                  )}
-                </PageDetail>
-              )}
-              {visibleCardColumns.map((column) => (
-                <PageDetail key={column.id ?? column.header} label={column.header}>
-                  <TableColumnCell column={column} item={item} />
-                </PageDetail>
-              ))}
-              {countColumns.length > 0 && (
-                <PageDetail key="count-columns">
-                  <PageDetailDiv>
-                    {countColumns.map((column, i) => (
-                      <ColumnsDiv key={i}>
-                        <TableColumnCell column={column} item={item} />
-                        <Small>{column.header}</Small>
-                      </ColumnsDiv>
-                    ))}
-                  </PageDetailDiv>
-                </PageDetail>
-              )}
-            </DescriptionList>
-          </CardBody>
+          <DescriptionList isCompact style={{ paddingLeft: 32, paddingRight: 32 }}>
+            {hasDescription && descriptionColumn && (
+              <PageDetail key={descriptionColumn.id ?? descriptionColumn.header}>
+                {descriptionColumn.type === 'description' ? (
+                  <div>{descriptionColumn.value(item)}</div>
+                ) : (
+                  <TableColumnCell column={descriptionColumn} item={item} />
+                )}
+              </PageDetail>
+            )}
+            {visibleCardColumns.map((column) => (
+              <PageDetail key={column.id ?? column.header} label={column.header}>
+                <TableColumnCell column={column} item={item} />
+              </PageDetail>
+            ))}
+            {countColumns.length > 0 && (
+              <PageDetail key="count-columns">
+                <PageDetailDiv>
+                  {countColumns.map((column, i) => (
+                    <ColumnsDiv key={i}>
+                      <TableColumnCell column={column} item={item} />
+                      <Small>{column.header}</Small>
+                    </ColumnsDiv>
+                  ))}
+                </PageDetailDiv>
+              </PageDetail>
+            )}
+          </DescriptionList>
         ),
         labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
       };
       if (!hasDescription && visibleCardColumns.length === 0 && countColumns.length === 0) {
-        pageTableCard.cardBody = undefined;
+        pageTableCard.cardBody = <div style={{ flexGrow: 1 }} />;
       }
       return pageTableCard;
     };

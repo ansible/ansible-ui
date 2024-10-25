@@ -1,6 +1,6 @@
-import { ToolbarFilterType } from '../../../../../framework';
 import {
   useCreatedByToolbarFilter,
+  useLabelsToolbarFilter,
   useModifiedByToolbarFilter,
   useTemplateTypeToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
@@ -23,6 +23,7 @@ export function useTemplateFilters({
   const optionsPath = splitUrl[splitUrl.length - 2] || 'unified_job_templates';
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
+  const labelsToolbarFilter = useLabelsToolbarFilter();
   const typeToolbarFilter = useTemplateTypeToolbarFilter();
   const getQueryParams = (
     projectId?: string,
@@ -73,13 +74,7 @@ export function useTemplateFilters({
       createdByToolbarFilter,
       modifiedByToolbarFilter,
       typeToolbarFilter,
-      {
-        type: ToolbarFilterType.MultiText,
-        key: 'labels',
-        label: 'Labels',
-        comparison: 'contains',
-        query: 'labels__name',
-      },
+      labelsToolbarFilter,
     ],
     removeFilters: ['type'], // Remove the default type filter provided by API as it gives additional types that are not applicable to the Templates list view
   });

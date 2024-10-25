@@ -1,4 +1,4 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
+import { LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -148,17 +148,11 @@ export function useLabelsColumn() {
   }> = useMemo(
     () => ({
       header: t('Labels'),
-      cell: (item) => {
-        if (!item.summary_fields?.labels?.results) return <></>;
-        return (
-          <LabelGroup>
-            {item.summary_fields.labels?.results.map((result) => (
-              <Label key={result.id}>{result.name}</Label>
-            ))}
-          </LabelGroup>
-        );
-      },
-      value: (item) => (item.summary_fields?.labels?.results.length ? true : undefined),
+      type: 'labels',
+      value: (item) =>
+        item.summary_fields?.labels?.results.length
+          ? item.summary_fields?.labels?.results.map((label) => label.name)
+          : undefined,
       modal: ColumnModalOption.hidden,
     }),
     [t]

@@ -3,7 +3,7 @@ import { FormSection } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormDataEditor, PageFormSelect } from '../../../../framework';
+import { PageFormDataEditor, PageFormSelect, PageFormTextArea } from '../../../../framework';
 import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSwitch';
@@ -77,7 +77,7 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         placeholder={t('Enter job template name')}
       />
       <PageFormSection singleColumn>
-        <PageFormTextInput<JobTemplateForm>
+        <PageFormTextArea<JobTemplateForm>
           name="description"
           label={t('Description')}
           placeholder={t('Enter description')}

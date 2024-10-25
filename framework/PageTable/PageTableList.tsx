@@ -243,11 +243,14 @@ export function useColumnsToDataList<T extends object>(
                             </DescriptionListGroup>
                           )}
                           {labelColumn && (
-                            <DescriptionListGroup key={labelColumn.header}>
-                              <DescriptionListDescription>
-                                <TableColumnCell column={labelColumn} item={item} />
-                              </DescriptionListDescription>
-                            </DescriptionListGroup>
+                            <>
+                              <div style={{ flexGrow: 1 }}></div>
+                              <DescriptionListGroup key={labelColumn.header}>
+                                <DescriptionListDescription>
+                                  <TableColumnCell column={labelColumn} item={item} />
+                                </DescriptionListDescription>
+                              </DescriptionListGroup>
+                            </>
                           )}
                         </DescriptionList>
                       )}

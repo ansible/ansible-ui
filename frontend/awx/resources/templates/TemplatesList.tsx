@@ -9,10 +9,10 @@ import {
   PageTable,
   useGetPageUrl,
 } from '../../../../framework';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
 import { useOptions } from '../../../common/crud/useOptions';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';
