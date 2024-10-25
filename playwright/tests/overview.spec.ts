@@ -5,7 +5,9 @@ test.beforeEach(setupBefore);
 test.afterEach(setupAfter);
 
 test('overview shows the right dashboard cards', async ({ page }) => {
-  await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
+  await expect(page.locator('h1').first()).toContainText(
+    'Welcome to the Ansible Automation Platform'
+  );
 
   if (await page.locator('#platform-awx').isVisible()) {
     await expect(page.locator('#resource-counts')).toContainText('Resource Counts');
