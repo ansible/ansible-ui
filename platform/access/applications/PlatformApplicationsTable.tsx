@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,8 +8,11 @@ import {
   PageActionSelection,
   PageActionType,
   PageTable,
+  useGetPageUrl,
   usePageNavigate,
 } from '../../../framework';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
 import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
@@ -28,6 +31,7 @@ import { useDeleteApplications } from './hooks/useDeleteApplications';
 export function PlatformApplicationsTable() {
   const { t } = useTranslation();
   const { activePlatformUser } = usePlatformActiveUser();
+  const getPageUrl = useGetPageUrl();
   const nameFilter = useNameToolbarFilter();
   const orgFilter = useOrganizationToolbarFilter();
   const toolbarFilters: IToolbarFilter[] = [nameFilter, orgFilter];
@@ -114,6 +118,9 @@ export function PlatformApplicationsTable() {
     [t, activePlatformUser, pageNavigate, deleteApplications]
   );
 
+  const canCreateApplicationAndIsSuperUser =
+    canCreateApplication && activePlatformUser?.is_superuser;
+
   return (
     <PageTable<Application>
       id="platform-applications-table"
@@ -122,31 +129,32 @@ export function PlatformApplicationsTable() {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading OAuth applications')}
-      emptyStateTitle={
-        canCreateApplication && activePlatformUser?.is_superuser
-          ? t('There are currently no OAuth applications added')
-          : t('You do not have permission to create an OAuth application.')
-      }
-      emptyStateDescription={
-        canCreateApplication && activePlatformUser?.is_superuser
-          ? t('Please create an OAuth application by using the button below.')
-          : t(
+      emptyState={
+        canCreateApplicationAndIsSuperUser ? (
+          <PageTableEmptyState
+            title={t('No OAuth applications found')}
+            description={t('No OAuth applications match the filter criteria')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(PlatformRoute.CreateApplication)}
+            >
+              {t('Create OAuth application')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            icon={CubesIcon}
+            title={t('No OAuth applications found')}
+            description={t(
               'Please contact your organization administrator if there is an issue with your access.'
-            )
+            )}
+          />
+        )
       }
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={
-        canCreateApplication && activePlatformUser?.is_superuser
-          ? t('Create OAuth application')
-          : undefined
-      }
-      emptyStateButtonClick={
-        canCreateApplication && activePlatformUser?.is_superuser
-          ? () => pageNavigate(PlatformRoute.CreateApplication)
-          : undefined
-      }
-      {...view}
       defaultSubtitle={t('Application')}
+      {...view}
     />
   );
 }

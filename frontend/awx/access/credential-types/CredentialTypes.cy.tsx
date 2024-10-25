@@ -140,7 +140,7 @@ describe('Credential Types List', () => {
       cy.mount(<CredentialTypes />);
       cy.contains(/^There are currently no credential types added.$/);
       cy.contains(/^Please create a credential type by using the button below.$/);
-      cy.contains('button', /^Create credential type$/).should('be.visible');
+      cy.contains(/^Create credential type$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create credential types', () => {
@@ -154,7 +154,7 @@ describe('Credential Types List', () => {
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create credential type$/).should('not.exist');
+      cy.contains('^Create credential type$/').should('not.exist');
     });
   });
 });

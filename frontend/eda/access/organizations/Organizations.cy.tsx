@@ -111,6 +111,6 @@ describe('Empty list', () => {
     cy.mount(<Organizations />);
     cy.contains(/^There are currently no organizations created.$/);
     cy.contains(/^Please create an organization by using the button below.$/);
-    cy.contains('button', /^Create organization$/).should('be.visible');
+    cy.contains(/^Create organization$/).should('be.visible');
   });
 });

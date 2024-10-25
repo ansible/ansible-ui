@@ -427,10 +427,10 @@ function testCreatePermissionsForbidden(
       /^Please contact your organization administrator if there is an issue with your access.$/
     );
   } else {
-    cy.contains(/^No hosts Found$/);
+    cy.contains(/^No hosts found$/);
     cy.contains(/^Please add hosts to populate this list$/);
   }
-  cy.contains('button', /^Create host$/).should('not.exist');
+  cy.contains(/^Create host$/).should('not.exist');
 }
 
 function testCreatePermissions(component: React.ReactElement, params: paramsType, type: string) {
@@ -457,6 +457,6 @@ function testCreatePermissions(component: React.ReactElement, params: paramsType
     cy.contains(/^There are currently no hosts added to this inventory.$/);
   }
   cy.contains(/^Please create a host by using the button below.$/);
-  cy.contains('button', /^Create host$/).should('be.visible');
-  cy.contains('button', /^Create host$/).click();
+  cy.contains(/^Create host$/).should('be.visible');
+  cy.contains(/^Create host$/).click();
 }

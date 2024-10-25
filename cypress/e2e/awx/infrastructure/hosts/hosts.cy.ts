@@ -35,7 +35,7 @@ describe('Host Tests', () => {
   it('can create, edit and delete a stand alone host', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
-    cy.clickButton(/^Create host$/);
+    cy.contains('Create host').click();
     cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');
@@ -81,7 +81,7 @@ describe('Host Tests', () => {
   it('can view host facts in stand alone host', () => {
     const hostName = 'E2E Inventory host ' + randomString(4);
     cy.navigateTo('awx', 'hosts');
-    cy.clickButton(/^Create host$/);
+    cy.contains('Create host').click();
     cy.verifyPageTitle('Create host');
     cy.getByDataCy('name').type(hostName);
     cy.getByDataCy('description').type('This is the description');

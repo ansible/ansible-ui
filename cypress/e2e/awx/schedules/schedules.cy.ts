@@ -493,9 +493,9 @@ describe('Schedules - Create and Delete', () => {
       //Exception step
       cy.get('[data-cy="wizard-nav"] li').eq(4).should('contain.text', 'Exceptions');
       cy.getByDataCy('page-title').contains('Schedule Exceptions');
-      cy.getByDataCy('empty-state-title').contains('No exceptions yet');
-      cy.getByDataCy('To get started, create an exception.').should('be.visible');
-      cy.getByDataCy('create-exception').click();
+      cy.contains('No exceptions yet').should('be.visible');
+      cy.contains('To get started, create an exception.').should('be.visible');
+      cy.contains('Create exception').should('be.visible').click();
       cy.getByDataCy('interval').clear().type('200');
       cy.selectDropdownOptionByResourceName('freq', 'Yearly');
       cy.getByDataCy('add-rule-button').click();
@@ -834,8 +834,8 @@ describe('Schedules - Edit', () => {
       cy.getBy('[data-cy="row-id-1"]').within(() => {
         cy.getByDataCy('delete-exception').click();
       });
-      cy.getByDataCy('empty-state-title').contains('No exceptions yet');
-      cy.getByDataCy('To get started, create an exception.').should('be.visible');
+      cy.contains('No exceptions yet').should('be.visible');
+      cy.contains('To get started, create an exception.').should('be.visible');
       cy.clickButton(/^Next$/);
       cy.get('[data-cy="exclusions-column-header"]').should('not.exist');
       cy.get('[data-cy="exclusions-column-cell"]').should('not.exist');

@@ -1,3 +1,4 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -5,8 +6,10 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  usePageNavigate,
+  useGetPageUrl,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
@@ -27,7 +30,7 @@ export function PlatformUsersList() {
   const { t } = useTranslation();
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   usePersistentFilters('users');
 
   const view = usePlatformView<PlatformUser>({
@@ -69,23 +72,29 @@ export function PlatformUsersList() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading users')}
-        emptyStateTitle={
-          canCreateUser
-            ? t('There are currently no users added.')
-            : t('You do not have permission to create a user')
-        }
-        emptyStateDescription={
-          canCreateUser
-            ? t('Please create a user by using the button below.')
-            : t(
+        emptyState={
+          canCreateUser ? (
+            <PageTableEmptyState
+              title={t('There are currently no users added.')}
+              description={t('Please create a user by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(PlatformRoute.CreateUser)}
+              >
+                {t('Create user')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a user')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateUser ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateUser ? t('Create user') : undefined}
-        emptyStateButtonClick={
-          canCreateUser ? () => pageNavigate(PlatformRoute.CreateUser) : undefined
+              )}
+            />
+          )
         }
         {...view}
       />

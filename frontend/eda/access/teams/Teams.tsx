@@ -10,20 +10,20 @@ import {
   PageLayout,
   PageTable,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaTeam } from '../../interfaces/EdaTeam';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteTeams } from './hooks/useDeleteTeams';
-import { useEdaView } from '../../common/useEventDrivenView';
-import { edaAPI } from '../../common/eda-utils';
-import { useTeamsFilters } from './hooks/useTeamsFilters';
 import { useTeamColumns } from './hooks/useTeamColumns';
+import { useTeamsFilters } from './hooks/useTeamsFilters';
 
 export function Teams() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   usePersistentFilters('teams');
   const toolbarFilters = useTeamsFilters();
@@ -107,13 +107,22 @@ export function Teams() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
-        emptyStateTitle={t('There are currently no teams created.')}
-        emptyStateDescription={t('Please create a team by using the button below.')}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create team')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateTeam)}
-        {...view}
         defaultSubtitle={t('Team')}
+        emptyState={
+          <PageTableEmptyState
+            title={t('No teams found')}
+            description={t('There are currently no teams added to your organization')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(EdaRoute.CreateTeam)}
+            >
+              {t('Create team')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
+        {...view}
       />
     </PageLayout>
   );

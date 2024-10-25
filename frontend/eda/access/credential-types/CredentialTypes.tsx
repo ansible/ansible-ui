@@ -1,23 +1,25 @@
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { useOptions } from '../../../common/crud/useOptions';
+import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useCredentialTypeRowActions,
   useCredentialTypeToolbarActions,
 } from './hooks/useCredentialTypeActions';
-import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
-import { edaAPI } from '../../common/eda-utils';
-import { useEdaView } from '../../common/useEventDrivenView';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useCredentialTypeCredentialsFilters } from './hooks/useCredentialTypeCredentialsFilters';
+import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
   const tableColumns = useCredentialTypesColumns();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/credential-types/`);
   const canCreateCredentialTypes = Boolean(data && data.actions && data.actions['POST']);
   const toolbarFilters = useCredentialTypeCredentialsFilters();
@@ -49,23 +51,29 @@ export function CredentialTypes() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading credential types')}
-        emptyStateTitle={
-          canCreateCredentialTypes
-            ? t('There are currently no credential types created for your organization.')
-            : t('You do not have permission to create a credential type.')
-        }
-        emptyStateDescription={
-          canCreateCredentialTypes
-            ? t('Please create a credential type by using the button below.')
-            : t(
+        emptyState={
+          canCreateCredentialTypes ? (
+            <PageTableEmptyState
+              title={t('There are currently no credential types added.')}
+              description={t('Please create a credential type by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant="primary"
+                href={getPageUrl(EdaRoute.CreateCredentialType)}
+              >
+                {t('Create credential type')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a credential type.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateCredentialTypes ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateCredentialTypes ? t('Create credential type') : undefined}
-        emptyStateButtonClick={
-          canCreateCredentialTypes ? () => pageNavigate(EdaRoute.CreateCredentialType) : undefined
+              )}
+            />
+          )
         }
         {...view}
       />

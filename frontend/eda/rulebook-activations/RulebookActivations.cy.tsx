@@ -221,6 +221,6 @@ describe('Empty list with POST permission', () => {
     cy.mount(<RulebookActivations />);
     cy.contains(/^There are currently no rulebook activations created for your organization.$/);
     cy.contains(/^Please create a rulebook activation by using the button below.$/);
-    cy.contains('button', /^Create rulebook activation$/).should('be.visible');
+    cy.contains(/^Create rulebook activation$/).should('be.visible');
   });
 });

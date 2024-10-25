@@ -1,13 +1,15 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   PageTable,
   useDashboardColumns,
   useGetPageUrl,
-  usePageNavigate,
   useVisibleModalColumns,
 } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';
@@ -20,7 +22,6 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
   let columns = useVisibleModalColumns(tableColumns);
   columns = useDashboardColumns(columns);
   const getPageUrl = useGetPageUrl();
-  const pageNavigate = usePageNavigate();
   return (
     <PageDashboardCard
       title={t('Projects')}
@@ -37,13 +38,20 @@ export function EdaRecentProjectsCard(props: { view: IEdaView<EdaProject> }) {
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading projects')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no projects')}
-        emptyStateDescription={t('Create a project by clicking the button below.')}
-        emptyStateButtonText={t('Create project')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateProject)}
+        emptyState={
+          <PageTableEmptyState
+            title={t('There are currently no projects')}
+            description={t('Create a project by clicking the button below.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(EdaRoute.CreateProject)}
+            >
+              {t('Create project')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

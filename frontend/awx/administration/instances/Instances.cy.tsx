@@ -168,7 +168,7 @@ describe('Instance Empty list', () => {
     cy.mount(<Instances />);
     cy.contains(/^There are currently no instances added$/);
     cy.contains(/^Please create an instance by using the button below.$/);
-    cy.contains('button', /^Create instance$/).should('be.visible');
+    cy.contains(/^Create instance$/).should('be.visible');
   });
 
   it('Empty state is displayed correctly for user without permission to create instances', () => {
@@ -182,6 +182,6 @@ describe('Instance Empty list', () => {
     cy.contains(
       /^Please contact your organization administrator if there is an issue with your access.$/
     );
-    cy.contains('button', /^Create instance$/).should('not.exist');
+    cy.contains(/^Create instance$/).should('not.exist');
   });
 });

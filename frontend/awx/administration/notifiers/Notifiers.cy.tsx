@@ -163,7 +163,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.mount(<Notifiers />);
       cy.contains(/^No notifiers found.$/);
       cy.contains(/^Please create notifiers to populate this list.$/);
-      cy.contains('button', /^Create notifier$/).should('be.visible');
+      cy.contains(/^Create notifier$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to add notifier', () => {
@@ -177,7 +177,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create notifier$/).should('not.exist');
+      cy.contains(/^Create notifier$/).should('not.exist');
     });
   });
 });

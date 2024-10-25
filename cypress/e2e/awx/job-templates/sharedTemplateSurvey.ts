@@ -30,7 +30,7 @@ export class ReusableTemplateSurveyTestSuite {
     cy.get('[aria-selected="true"]').contains('Survey');
     cy.contains('There are currently no survey questions.');
     cy.contains('Create a survey question by clicking the button below.');
-    cy.clickButton('Create survey question');
+    cy.clickLink('Create survey question');
     cy.getByDataCy('question-name').type(question.question_name);
     cy.getByDataCy('question-description').type(question.question_description);
     cy.getByDataCy('question-variable').type(question.variable);

@@ -26,7 +26,7 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         const oauthApplicationName = `AAP OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
-        cy.getByDataCy('create-oauth-application').click();
+        cy.clickLink('Create OAuth application');
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
         cy.singleSelectByDataCy('organization', platformOrganization.name);
@@ -105,7 +105,7 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         const oauthApplicationName = `AAP OAuth Application ${randomString(2)}`;
         const authGrantType = grantType.replace(/ /g, '-').toLowerCase();
         const appClientType = clientType.toLowerCase();
-        cy.getByDataCy('create-oauth-application').click();
+        cy.clickLink('Create OAuth application');
         cy.getByDataCy('name').type(oauthApplicationName);
         cy.getByDataCy('description').type(`${authGrantType} with ${appClientType} description`);
         cy.singleSelectByDataCy('organization', platformOrganization.name);

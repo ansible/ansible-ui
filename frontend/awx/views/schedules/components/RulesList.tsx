@@ -1,3 +1,5 @@
+import { Button } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,13 +9,13 @@ import {
   PageHeader,
   PageTable,
 } from '../../../../../framework';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
-import { RuleListItemType } from '../types';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { ScheduleSummary } from './ScheduleSummary';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
+import { RuleListItemType } from '../types';
+import { ScheduleSummary } from './ScheduleSummary';
 
 export function RulesList(props: {
   setIsOpen?: (isOpen: boolean | number) => void;
@@ -106,15 +108,24 @@ export function RulesList(props: {
         id="awx-schedule-rules-table"
         rowActions={rowActions}
         errorStateTitle={isExceptions ? t('Error loading exceptions') : t('Error loading rules')}
-        emptyStateTitle={isExceptions ? t('No exceptions yet') : t('No rules yet')}
-        emptyStateDescription={
-          isExceptions
-            ? t('To get started, create an exception.')
-            : t('To get started, create an rule.')
+        emptyState={
+          <PageTableEmptyState
+            title={isExceptions ? t('No exceptions yet') : t('No rules yet')}
+            description={
+              isExceptions
+                ? t('To get started, create an exception.')
+                : t('To get started, create an rule.')
+            }
+          >
+            <Button
+              variant="primary"
+              icon={<PlusCircleIcon />}
+              onClick={() => (props.setIsOpen ? props.setIsOpen(true) : null)}
+            >
+              {isExceptions ? t('Create exception') : t('Create Rule')}
+            </Button>
+          </PageTableEmptyState>
         }
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={isExceptions ? t('Create exception') : t('Create Rule')}
-        emptyStateButtonClick={() => (props.setIsOpen ? props.setIsOpen(true) : null)}
         defaultSubtitle={isExceptions ? t('Exceptions') : t('Rules')}
         disablePagination
         page={1}

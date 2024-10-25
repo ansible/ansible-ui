@@ -1,20 +1,23 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../framework';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
+import { useOptions } from '../../common/crud/useOptions';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { EdaRoute } from '../main/EdaRoutes';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useOptions } from '../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useRulebookActivationFilters();
   const tableColumns = useRulebookActivationColumns();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
@@ -45,23 +48,31 @@ export function RulebookActivations() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading rulebook activations')}
-        emptyStateTitle={
-          canCreateActivations
-            ? t('There are currently no rulebook activations created for your organization.')
-            : t('You do not have permission to create a rulebook activation.')
-        }
-        emptyStateDescription={
-          canCreateActivations
-            ? t('Please create a rulebook activation by using the button below.')
-            : t(
+        emptyState={
+          canCreateActivations ? (
+            <PageTableEmptyState
+              title={t(
+                'There are currently no rulebook activations created for your organization.'
+              )}
+              description={t('Please create a rulebook activation by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(EdaRoute.CreateRulebookActivation)}
+              >
+                {t('Create rulebook activation')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a rulebook activation.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateActivations ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateActivations ? t('Create rulebook activation') : undefined}
-        emptyStateButtonClick={
-          canCreateActivations ? () => pageNavigate(EdaRoute.CreateRulebookActivation) : undefined
+              )}
+            />
+          )
         }
         {...view}
         defaultSubtitle={t('Rulebook Activation')}

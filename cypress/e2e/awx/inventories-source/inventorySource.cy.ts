@@ -347,8 +347,7 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
     cy.verifyPageTitle(inventory.name);
     cy.clickTab(/^Sources$/, true);
-
-    cy.getByDataCy('create-source').click();
+    cy.clickLink('Create source');
     cy.verifyPageTitle('Create source');
     cy.getByDataCy('name').type('amazon ec2 source');
     cy.selectDropdownOptionByResourceName('source_control_type', 'Amazon EC2');

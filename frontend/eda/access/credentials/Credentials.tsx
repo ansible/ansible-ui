@@ -1,21 +1,24 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { useOptions } from '../../../common/crud/useOptions';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaCredential } from '../../interfaces/EdaCredential';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialColumns } from './hooks/useCredentialColumns';
 import { useCredentialFilters } from './hooks/useCredentialFilters';
 import { useCredentialsActions } from './hooks/useCredentialsActions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function Credentials() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('EDA');
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
@@ -48,23 +51,29 @@ export function Credentials() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading credentials')}
-        emptyStateTitle={
-          canCreateCredential
-            ? t('There are currently no credentials created for your organization.')
-            : t('You do not have permission to create a credential.')
-        }
-        emptyStateDescription={
-          canCreateCredential
-            ? t('Please create a credential by using the button below.')
-            : t(
+        emptyState={
+          canCreateCredential ? (
+            <PageTableEmptyState
+              title={t('There are currently no credentials created for your organization.')}
+              description={t('Please create a credential by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(EdaRoute.CreateCredential)}
+              >
+                {t('Create credential')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a credential.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateCredential ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateCredential ? t('Create credential') : undefined}
-        emptyStateButtonClick={
-          canCreateCredential ? () => pageNavigate(EdaRoute.CreateCredential) : undefined
+              )}
+            />
+          )
         }
         {...view}
         defaultSubtitle={t('Credential')}

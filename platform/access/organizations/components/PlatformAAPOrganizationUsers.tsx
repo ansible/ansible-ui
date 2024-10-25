@@ -1,7 +1,10 @@
-import { CubesIcon } from '@patternfly/react-icons';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable } from '../../../../framework';
+import { PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { LoadingState } from '../../../../framework/components/LoadingState';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
@@ -13,6 +16,7 @@ import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersColumns } from '../../users/hooks/useUserColumns';
 import { useUsersFilters } from '../../users/hooks/useUsersFilters';
@@ -26,6 +30,7 @@ export function PlatformAAPOrganizationUsers() {
   const toolbarFilters = useUsersFilters();
   const tableColumns = useUsersColumns();
   const params = useParams<{ id: string }>();
+  const getPageUrl = useGetPageUrl();
   const {
     data: organization,
     isLoading,
@@ -60,21 +65,30 @@ export function PlatformAAPOrganizationUsers() {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading users')}
-      emptyStateTitle={
-        canEditOrganization
-          ? t('There are currently no users added to this organization.')
-          : t('You do not have permission to add a user to this organization.')
-      }
-      emptyStateDescription={
-        canEditOrganization
-          ? t('Add users by clicking the button below.')
-          : t(
+      emptyState={
+        canEditOrganization ? (
+          <PageTableEmptyState
+            title={t('There are currently no users added to this organization.')}
+            description={t('Add users by clicking the button below.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(PlatformRoute.OrganizationAddUsers, { params: { id: params.id } })}
+            >
+              {t('Add user(s)')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            icon={CubesIcon}
+            title={t('You do not have permission to add a user to this organization.')}
+            description={t(
               'Please contact your organization administrator if there is an issue with your access.'
-            )
+            )}
+          />
+        )
       }
-      emptyStateIcon={canEditOrganization ? undefined : CubesIcon}
-      emptyStateButtonText={canEditOrganization ? t('Add user(s)') : undefined}
-      emptyStateActions={canEditOrganization ? toolbarActions.slice(0, 1) : undefined}
       {...view}
     />
   );

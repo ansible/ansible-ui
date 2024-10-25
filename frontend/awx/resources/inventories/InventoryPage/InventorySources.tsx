@@ -1,20 +1,23 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
+import { PageLayout, PageTable, useGetPageUrl } from '../../../../../framework';
+import { ButtonLink } from '../../../../../framework/components/ButtonLink';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { useAwxView } from '../../../common/useAwxView';
-import { useInventorySourceFilters } from '../hooks/useInventorySourceFilters';
+import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoriesSourcesToolbarActions } from '../hooks/useInventoriesSourcesToolbarActions';
 import { useInventorySourceActions } from '../hooks/useInventorySourceActions';
 import { useInventorySourceColumns } from '../hooks/useInventorySourceColumns';
-import { useCallback } from 'react';
-import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
+import { useInventorySourceFilters } from '../hooks/useInventorySourceFilters';
 
 type WebSocketMessage = {
   group_name?: string;
@@ -25,7 +28,7 @@ type WebSocketMessage = {
 
 export function InventorySources() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useInventorySourceColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
   const toolbarFilters = useInventorySourceFilters(
@@ -89,28 +92,31 @@ export function InventorySources() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventory sources')}
-        emptyStateTitle={
-          canCreateSource
-            ? t('There are currently no sources added to this inventory.')
-            : t('You do not have permission to create a host')
-        }
-        emptyStateDescription={
-          canCreateSource
-            ? t('Please create a source by using the button below.')
-            : t(
-                'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateSource ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateSource ? t('Create source') : undefined}
-        emptyStateButtonClick={
-          canCreateSource
-            ? () =>
-                pageNavigate(AwxRoute.InventorySourcesAdd, {
+        emptyState={
+          canCreateSource ? (
+            <PageTableEmptyState
+              title={t('There are currently no sources added to this inventory.')}
+              description={t('Please create a source by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.InventorySourcesAdd, {
                   params: { id: params.id, inventory_type: params.inventory_type },
-                })
-            : undefined
+                })}
+              >
+                {t('Create source')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a host')}
+              description={t(
+                'Please contact your organization administrator if there is an issue with your access.'
+              )}
+            />
+          )
         }
         {...view}
       />

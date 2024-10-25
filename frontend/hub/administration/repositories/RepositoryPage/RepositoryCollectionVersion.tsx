@@ -9,7 +9,7 @@ import { useHubView } from '../../../common/useHubView';
 import { useCollectionVersionsActionsRemove } from '../hooks/useRepositoryActions';
 import { useRepositoryCollectionVersionFiltersRemove } from '../hooks/useRepositorySelector';
 import { useState } from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 import { Repository } from '../Repository';
 import { useMemo } from 'react';
@@ -18,6 +18,7 @@ import { useCallback } from 'react';
 import { ITableColumn } from '../../../../../framework';
 import { useAddCollections } from '../hooks/useAddCollections';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();
@@ -76,11 +77,21 @@ export function RepositoryCollectionVersion() {
       }
       rowActions={rowActions}
       errorStateTitle={t('Error loading collection versions')}
-      emptyStateTitle={t('No collection versions yet')}
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={t('Add collections')}
-      emptyStateButtonClick={() => runAddModal()}
-      emptyStateDescription={t('Collection versions will appear once the repository is modified.')}
+      emptyState={
+        <PageTableEmptyState
+          title={t('No collection versions yet')}
+          description={t('Collection versions will appear once the repository is modified.')}
+        >
+          <Button
+            data-cy="add-collections"
+            icon={<PlusCircleIcon />}
+            onClick={() => runAddModal()}
+            variant={ButtonVariant.primary}
+          >
+            {t('Add collections')}
+          </Button>
+        </PageTableEmptyState>
+      }
       {...view}
       defaultTableView="list"
       defaultSubtitle={t('Collection')}

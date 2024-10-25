@@ -53,7 +53,7 @@ cyLabel(['aaas-unsupported'], () => {
       it('can restart a Rulebook Activation from list view', () => {
         const name = 'E2E Rulebook Activation ' + randomString(4);
         cy.navigateTo('eda', 'rulebook-activations');
-        cy.clickButton(/^Create rulebook activation$/);
+        cy.contains(/^Create rulebook activation$/).click();
         cy.get('h1').should('contain', 'Create rulebook activation');
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a new rulebook activation.');

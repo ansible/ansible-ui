@@ -1,8 +1,11 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageTable, useDashboardColumns, usePageNavigate } from '../../../../framework';
+import { PageTable, useDashboardColumns } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
@@ -20,7 +23,6 @@ export function AwxRecentJobsCard() {
     defaultSortDirection: 'desc',
   });
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   let columns = useJobsColumns();
   columns = useDashboardColumns(columns);
 
@@ -52,22 +54,29 @@ export function AwxRecentJobsCard() {
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading jobs')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no jobs')}
-        emptyStateDescription={
-          canCreateJobTemplate || canCreateWFJobTemplate
-            ? t('Create a job by clicking the button below.')
-            : t(
+        emptyState={
+          canCreateJobTemplate || canCreateWFJobTemplate ? (
+            <PageTableEmptyState
+              title={t('There are currently no jobs')}
+              description={t('Create a job by clicking the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.CreateJobTemplate)}
+              >
+                {t('Create job')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={PlusCircleIcon}
+              title={t('You do not have permission to create a job')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateButtonText={
-          canCreateJobTemplate || canCreateWFJobTemplate ? t('Create job') : undefined
-        }
-        emptyStateButtonClick={
-          canCreateJobTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
+              )}
+            />
+          )
         }
         {...view}
         compact

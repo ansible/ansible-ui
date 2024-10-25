@@ -1,3 +1,4 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -5,8 +6,10 @@ import {
   PageHeader,
   PageLayout,
   PageTable,
-  usePageNavigate,
+  useGetPageUrl,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
@@ -30,7 +33,7 @@ export function PlatformOrganizationList() {
   const { t } = useTranslation();
   const toolbarFilters = useOrganizationFilters();
   const tableColumns = useOrganizationColumns();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   usePersistentFilters('organizations');
 
   const view = usePlatformView<PlatformOrganization>({
@@ -68,26 +71,32 @@ export function PlatformOrganizationList() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
-        emptyStateTitle={
-          canCreateOrganization
-            ? t('There are currently no organizations added.')
-            : t('You do not have permission to create an organization')
-        }
-        emptyStateDescription={
-          canCreateOrganization
-            ? t('Please create an organization by using the button below.')
-            : t(
+        emptyState={
+          canCreateOrganization ? (
+            <PageTableEmptyState
+              title={t('No organizations found')}
+              description={t('There are currently no organizations added.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(PlatformRoute.CreateOrganization)}
+              >
+                {t('Create organization')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create an organization')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
+              )}
+            />
+          )
         }
-        emptyStateIcon={canCreateOrganization ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateOrganization ? t('Create organization') : undefined}
-        emptyStateButtonClick={
-          canCreateOrganization ? () => pageNavigate(PlatformRoute.CreateOrganization) : undefined
-        }
-        {...view}
         defaultSubtitle={t('Organization')}
+        {...view}
       />
     </PageLayout>
   );

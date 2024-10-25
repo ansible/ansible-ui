@@ -14,13 +14,11 @@ export function createAndCheckHost(host_type: string, inventory: string) {
   const hostName = 'E2E Inventory host ' + randomString(4);
 
   if (host_type === 'inventory_host') {
-    cy.getByDataCy('empty-state-title').contains(
-      /^There are currently no hosts added to this inventory./
-    );
+    cy.contains('There are currently no hosts added to this inventory.');
   }
 
   // create host
-  cy.clickButton(/^Create host$/);
+  cy.clickLink('Create host');
   cy.verifyPageTitle('Create host');
   cy.getByDataCy('name').type(hostName);
   cy.getByDataCy('description').type('This is the description');
@@ -29,7 +27,7 @@ export function createAndCheckHost(host_type: string, inventory: string) {
     cy.singleSelectByDataCy('inventory', inventory);
   }
 
-  // after creation - verify data is currect
+  // after creation - verify data is correct
   cy.getByDataCy('variables').type('test: true');
   cy.clickButton(/^Create host/);
   cy.hasDetail(/^Name$/, hostName);
@@ -108,9 +106,7 @@ function deleteAllInventoryHosts(inventory: Inventory) {
   cy.clickModalConfirmCheckbox();
   cy.clickButton(/^Delete hosts$/);
   cy.clickButton(/^Close$/);
-  cy.getByDataCy('empty-state-title').contains(
-    /^There are currently no hosts added to this inventory./
-  );
+  cy.contains('There are currently no hosts added to this inventory.').should('be.visible');
 }
 
 function navigateToHost(host_type: string, name: string, data: string, inventoryName: string) {
@@ -174,9 +170,7 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.contains(group2.name);
       cy.getByDataCy('select-all').click();
       disassociate();
-      cy.getByDataCy('empty-state-title').contains(
-        /^There are currently no groups associated with this host/
-      );
+      cy.contains('There are currently no groups associated with this host').should('be.visible');
       // Add - multi groups
       cy.clickButton(/^Associate groups$/);
       cy.getByDataCy('select-all').click();
@@ -243,9 +237,7 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   cy.contains('button', 'Delete hosts').click();
   cy.contains('button', 'Close').click();
   if (host_type === 'inventory_host') {
-    cy.getByDataCy('empty-state-title').contains(
-      /^There are currently no hosts added to this inventory./
-    );
+    cy.contains('There are currently no hosts added to this inventory.').should('be.visible');
   }
 }
 

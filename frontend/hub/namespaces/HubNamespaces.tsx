@@ -1,3 +1,5 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import {
   PageHeader,
@@ -5,8 +7,10 @@ import {
   PageTab,
   PageTable,
   PageTabs,
-  usePageNavigate,
+  useGetPageUrl,
 } from '../../../framework';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
 import { idKeyFn } from '../../common/utils/nameKeyFn';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubView } from '../common/useHubView';
@@ -16,8 +20,6 @@ import { useHubNamespaceActions } from './hooks/useHubNamespaceActions';
 import { useHubNamespaceFilters } from './hooks/useHubNamespaceFilters';
 import { useHubNamespaceToolbarActions } from './hooks/useHubNamespaceToolbarActions';
 import { useHubNamespacesColumns } from './hooks/useHubNamespacesColumns';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
 
 export function Namespaces() {
   const { t } = useTranslation();
@@ -61,7 +63,7 @@ export function MyNamespaces() {
 
 export function CommonNamespaces({ url }: { url: string }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useHubNamespaceFilters();
   const tableColumns = useHubNamespacesColumns();
   const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
@@ -77,18 +79,23 @@ export function CommonNamespaces({ url }: { url: string }) {
       toolbarActions={toolbarActions}
       rowActions={rowActions}
       errorStateTitle={t('Error loading namespaces')}
-      emptyStateTitle={t('No namespaces yet')}
-      emptyStateDescription={t('To get started, create an namespace.')}
-      emptyStateButtonText={t('Create namespace')}
-      emptyStateButtonIcon={
-        <Icon>
-          <PlusCircleIcon />
-        </Icon>
+      emptyState={
+        <PageTableEmptyState
+          title={t('No namespaces yet')}
+          description={t('To get started, create an namespace.')}
+        >
+          <ButtonLink
+            icon={<PlusCircleIcon />}
+            variant={ButtonVariant.primary}
+            href={getPageUrl(HubRoute.CreateNamespace)}
+          >
+            {t('Create namespace')}
+          </ButtonLink>
+        </PageTableEmptyState>
       }
-      emptyStateButtonClick={() => pageNavigate(HubRoute.CreateNamespace)}
-      {...view}
       defaultSubtitle={t('Namespace')}
       defaultTableView="cards"
+      {...view}
     />
   );
 }

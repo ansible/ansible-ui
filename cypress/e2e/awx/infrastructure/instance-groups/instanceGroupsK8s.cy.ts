@@ -58,7 +58,7 @@ describe('Instance Groups: Instances Tab', () => {
     });
 
     cy.clickTab(/^Instances$/, true);
-    cy.getByDataCy('empty-state-title').contains('There are currently no instances added');
+    cy.contains('There are currently no instances added').should('be.visible');
     cy.get('[data-cy="Please associate an instance by using the button below."]').should(
       'be.visible'
     );
@@ -151,7 +151,7 @@ describe('Instance Groups: Instances Tab', () => {
           expect(response?.statusCode).to.eql(204);
         });
       cy.clickModalButton('Close');
-      cy.getByDataCy('empty-state-title').contains('There are currently no instances added');
+      cy.contains('There are currently no instances added').should('be.visible');
       cy.get('[data-cy="Please associate an instance by using the button below."]').should(
         'be.visible'
       );

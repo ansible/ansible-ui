@@ -92,8 +92,8 @@ describe('Namespaces - use existing namespaces', () => {
     cy.url().should('include', `/namespaces/${namespace.name}/details`);
     cy.getByDataCy('collections-tab').should('contain', 'Collections');
     cy.getByDataCy('collections-tab').click();
-    cy.getByDataCy('empty-state-title').should('contain', 'No collections yet');
-    cy.getByDataCy('upload-collection').should('contain', 'Upload collection');
+    cy.contains('No collections yet').should('be.visible');
+    cy.contains('Upload collection').should('be.visible');
 
     cy.clickPageAction('imports');
     cy.url().should('include', MyImports.url);

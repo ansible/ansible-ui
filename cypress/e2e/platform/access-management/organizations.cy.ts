@@ -154,7 +154,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
           cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
           cy.clickTableRowLink('name', organization.name, { disableFilter: true });
           cy.clickTab('Users', true);
-          cy.getByDataCy('add-users').click();
+          cy.clickLink('Add user(s)');
           cy.verifyPageTitle('Add roles');
           cy.getWizard().within(() => {
             cy.selectTableRowByCheckbox('username', createdUser1.username);
@@ -229,7 +229,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Users', true);
-        cy.getByDataCy('add-users').click();
+        cy.clickLink('Add user(s)');
         cy.verifyPageTitle('Add roles');
         cy.getWizard().within(() => {
           cy.selectTableRowByCheckbox('username', createdUser1.username);
@@ -436,7 +436,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
     // Create Team
     const teamName = `E2E PlatformTeam ${randomString(4)}`;
     cy.intercept('POST', gatewayAPI`/teams/`).as('createTeam');
-    cy.getByDataCy('create-team').click();
+    cy.clickLink(/^Create team$/);
     cy.get('[data-cy="name"]').type(teamName);
     cy.singleSelectByDataCy('organization', organization.name);
     cy.clickButton(/^Create team$/);

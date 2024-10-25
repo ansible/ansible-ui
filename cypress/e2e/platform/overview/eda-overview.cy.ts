@@ -71,7 +71,7 @@ cyLabel(['aaas-unsupported'], () => {
                   'div.pf-v5-c-empty-state__body',
                   'Create a rulebook activation by clicking the button below.'
                 );
-                cy.clickButton(/^Create rulebook activation$/);
+                cy.clickLink(/^Create rulebook activation$/);
               });
             cy.verifyPageTitle('Create rulebook activation');
           } else if (results.length >= 1) {

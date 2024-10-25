@@ -293,7 +293,7 @@ describe('Execution Environments List', () => {
       cy.mount(<ExecutionEnvironments />);
       cy.contains(/^No execution environments yet$/);
       cy.contains(/^To get started, create an execution environment.$/);
-      cy.contains('button', /^Create execution environment$/).should('be.visible');
+      cy.contains(/^Create execution environment$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create execution environments', () => {
@@ -307,7 +307,7 @@ describe('Execution Environments List', () => {
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create execution environment$/).should('not.exist');
+      cy.contains(/^Create execution environment$/).should('not.exist');
     });
   });
 });

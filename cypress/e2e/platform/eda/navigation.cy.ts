@@ -25,7 +25,7 @@ cyLabel(['aaas-unsupported'], () => {
         'have.text',
         'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
       );
-      cy.contains('button', 'Create rulebook activation').should('exist');
+      cy.contains('Create rulebook activation').should('exist');
     });
 
     it('can visit the projects page and assert the data there', () => {
@@ -35,7 +35,7 @@ cyLabel(['aaas-unsupported'], () => {
         'have.text',
         'A project is a logical collection of rulebooks.'
       );
-      cy.contains('button', 'Create project').should('exist');
+      cy.contains('Create project').should('exist');
     });
 
     it('can visit the decision environment page and assert the data there', () => {
@@ -45,7 +45,7 @@ cyLabel(['aaas-unsupported'], () => {
         'have.text',
         'Decision environments are a container image to run Ansible rulebooks.'
       );
-      cy.contains('button', 'Create decision environment').should('exist');
+      cy.contains('Create decision environment').should('exist');
     });
   });
 });

@@ -28,7 +28,7 @@ cyLabel(['aaas-unsupported'], function () {
     it('can create an event stream, and assert the information showing on the details page', () => {
       cy.navigateTo('eda', 'event-streams');
       cy.verifyPageTitle('Event Streams');
-      cy.clickButton(/^Create event stream$/);
+      cy.clickLink(/^Create event stream$/);
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');

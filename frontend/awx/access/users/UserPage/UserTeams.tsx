@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import { useRemoveTeamsFromUsers } from '../../teams/hooks/useRemoveTeamsFromUse
 import { useSelectTeamsAddUsers } from '../../teams/hooks/useSelectTeamsAddUsers';
 import { useTeamsColumns } from '../../teams/hooks/useTeamsColumns';
 import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 
 export function UserTeams() {
   const params = useParams<{ id: string }>();
@@ -76,6 +77,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
     ],
     [t, canAddUserToTeam, selectTeamsAddUsers, user, removeTeamsFromUsers, view.selectedItems]
   );
+
   const rowActions = useMemo<IPageAction<Team>[]>(
     () => [
       {
@@ -89,6 +91,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
     ],
     [removeTeamsFromUsers, t, user]
   );
+
   return (
     <>
       <DetailInfo
@@ -101,22 +104,30 @@ function UserTeamsInternal(props: { user: AwxUser }) {
         toolbarActions={toolbarActions}
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
-        emptyStateTitle={
-          canAddUserToTeam
-            ? t('This user currently does not belong to any teams.')
-            : t('You do not have permissions to add this user to a team.')
-        }
-        emptyStateDescription={
-          canAddUserToTeam
-            ? t('Please add a team by using the button below.')
-            : t(
+        emptyState={
+          canAddUserToTeam ? (
+            <PageTableEmptyState
+              title={t('This user currently does not belong to any teams.')}
+              description={t('To get started, add the user to a team.')}
+            >
+              <Button
+                variant={ButtonVariant.primary}
+                icon={<PlusCircleIcon />}
+                onClick={() => selectTeamsAddUsers([user])}
+              >
+                {t('Add team')}
+              </Button>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permissions to add this user to a team.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
+              )}
+            />
+          )
         }
-        emptyStateIcon={canAddUserToTeam ? undefined : CubesIcon}
-        emptyStateButtonText={canAddUserToTeam ? t('Add team') : undefined}
-        emptyStateButtonIcon={canAddUserToTeam ? <PlusCircleIcon /> : null}
-        emptyStateButtonClick={canAddUserToTeam ? () => selectTeamsAddUsers([user]) : undefined}
         {...view}
       />
     </>

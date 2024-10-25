@@ -239,6 +239,6 @@ describe('Empty list with POST permission', () => {
     cy.mount(<Credentials />);
     cy.contains(/^There are currently no credentials created for your organization.$/);
     cy.contains(/^Please create a credential by using the button below.$/);
-    cy.contains('button', /^Create credential$/).should('be.visible');
+    cy.contains(/^Create credential$/).should('be.visible');
   });
 });

@@ -18,6 +18,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
@@ -224,22 +226,30 @@ export function Users() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading users')}
-        emptyStateTitle={
-          canCreateUser
-            ? t('There are currently no users added.')
-            : t('You do not have permission to create a user')
-        }
-        emptyStateDescription={
-          canCreateUser
-            ? t('Please create a user by using the button below.')
-            : t(
+        emptyState={
+          canCreateUser ? (
+            <PageTableEmptyState
+              title={t('There are currently no users added.')}
+              description={t('Please create a user by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.CreateUser)}
+              >
+                {t('Create user')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a user')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
+              )}
+            />
+          )
         }
-        emptyStateIcon={canCreateUser ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateUser ? t('Create user') : undefined}
-        emptyStateButtonClick={canCreateUser ? () => pageNavigate(AwxRoute.CreateUser) : undefined}
         {...view}
       />
     </PageLayout>

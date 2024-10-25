@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import {
 } from '../../organizations/Organizations';
 import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
 import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 
 export function UserOrganizations() {
   const params = useParams<{ id: string }>();
@@ -106,11 +107,18 @@ function UserOrganizationsInternal(props: { user: AwxUser }) {
         toolbarActions={toolbarActions}
         rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
-        emptyStateTitle={t('User is not a member of any organizations.')}
-        emptyStateDescription={t('To get started, add the user to an organization.')}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Add user to organization')}
-        emptyStateButtonClick={() => selectOrganizationsAddUsers([user])}
+        emptyState={
+          <PageTableEmptyState
+            title={t('User is not a member of any organizations.')}
+            description={t('To get started, add the user to an organization.')}
+          >
+            <Button
+              variant={ButtonVariant.primary}
+              icon={<PlusCircleIcon />}
+              onClick={() => selectOrganizationsAddUsers([user])}
+            ></Button>
+          </PageTableEmptyState>
+        }
         {...view}
       />
     </>

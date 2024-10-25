@@ -49,7 +49,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.get(`a[href*="/groups?"]`).click();
-        cy.clickButton(/^Create group$/);
+        cy.clickLink(/^Create group$/);
         cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
@@ -80,10 +80,7 @@ describe('Inventory Groups', () => {
             expect(response?.statusCode).to.eql(204);
           });
         cy.clickButton(/^Clear all filters$/);
-        cy.getByDataCy('empty-state-title').should(
-          'contain',
-          'There are currently no groups added to this inventory.'
-        );
+        cy.contains('There are currently no groups added to this inventory.').should('be.visible');
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -177,7 +174,7 @@ describe('Inventory Groups', () => {
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.get(`a[href*="/groups?"]`).click();
-        cy.clickButton(/^Create group$/);
+        cy.clickLink(/^Create group$/);
         cy.verifyPageTitle('Create group');
         cy.get('[data-cy="name"]').type(newGroupName);
         cy.get('[data-cy="description"]').type('This is a description');
@@ -197,10 +194,7 @@ describe('Inventory Groups', () => {
         cy.get('[data-cy="delete-group"]').click();
         cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
         cy.get('[data-cy="delete-group-modal-delete-button"]').click();
-        cy.getByDataCy('empty-state-title').should(
-          'contain',
-          'There are currently no groups added to this inventory.'
-        );
+        cy.contains('There are currently no groups added to this inventory.').should('be.visible');
         cy.wait('@deleted')
           .its('response')
           .then((response) => {

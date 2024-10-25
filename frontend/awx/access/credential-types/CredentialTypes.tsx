@@ -1,7 +1,11 @@
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -15,8 +19,6 @@ import {
 } from './hooks/useCredentialTypeActions';
 import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
 import { useCredentialTypesFilters } from './hooks/useCredentialTypesFilters';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
@@ -24,8 +26,7 @@ export function CredentialTypes() {
   usePersistentFilters('credential_types');
   const toolbarFilters = useCredentialTypesFilters();
   const tableColumns = useCredentialTypesColumns();
-  const pageNavigate = usePageNavigate();
-
+  const getPageUrl = useGetPageUrl();
   const view = useAwxView<CredentialType>({
     url: awxAPI`/credential_types/`,
     toolbarFilters,
@@ -36,6 +37,7 @@ export function CredentialTypes() {
   const rowActions = useCredentialTypeRowActions(view.unselectItemsAndRefresh);
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/credential_types/`);
+
   const canCreateCredentialType = Boolean(data && data.actions && data.actions['POST']);
 
   return (
@@ -59,23 +61,29 @@ export function CredentialTypes() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading credential types')}
-        emptyStateTitle={
-          canCreateCredentialType
-            ? t('There are currently no credential types added.')
-            : t('You do not have permission to create a credential type.')
-        }
-        emptyStateDescription={
-          canCreateCredentialType
-            ? t('Please create a credential type by using the button below.')
-            : t(
+        emptyState={
+          canCreateCredentialType ? (
+            <PageTableEmptyState
+              title={t('There are currently no credential types added.')}
+              description={t('Please create a credential type by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant="primary"
+                href={getPageUrl(AwxRoute.CreateCredentialType)}
+              >
+                {t('Create credential type')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a credential type.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateCredentialType ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateCredentialType ? t('Create credential type') : undefined}
-        emptyStateButtonClick={
-          canCreateCredentialType ? () => pageNavigate(AwxRoute.CreateCredentialType) : undefined
+              )}
+            />
+          )
         }
         {...view}
       />

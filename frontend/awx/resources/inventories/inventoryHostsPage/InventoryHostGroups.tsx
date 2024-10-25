@@ -1,20 +1,22 @@
+import { Button } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageLayout, PageTable } from '../../../../../framework';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { useAwxView } from '../../../common/useAwxView';
-import { useHostsGroupsFilters } from './hooks/useHostsGroupsFilters';
-import { useHostsGroupsToolbarActions } from './hooks/useHostsGroupsToolbarActions';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { useGetHost } from '../../hosts/hooks/useGetHost';
+import { useAssociateGroupsToHost } from './hooks/useAssociateGroupsToHost';
 import { useHostsGroupsActions } from './hooks/useHostsGroupsActions';
 import { useHostsGroupsColumns } from './hooks/useHostsGroupsColumns';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { useHostsGroupsFilters } from './hooks/useHostsGroupsFilters';
+import { useHostsGroupsToolbarActions } from './hooks/useHostsGroupsToolbarActions';
 import { useInventoryHostGroupsAddModal } from './InventoryHostGroupsModal';
-import { useAssociateGroupsToHost } from './hooks/useAssociateGroupsToHost';
-import { useGetHost } from '../../hosts/hooks/useGetHost';
 
 export function InventoryHostGroups(props: { page: string }) {
   const { t } = useTranslation();
@@ -59,30 +61,35 @@ export function InventoryHostGroups(props: { page: string }) {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading associated groups')}
-        emptyStateTitle={
-          canCreateGroup
-            ? t('There are currently no groups associated with this host')
-            : t('You do not have permission to add a group')
-        }
-        emptyStateDescription={
-          canCreateGroup
-            ? t('Please add a group by using the button below.')
-            : t(
+        emptyState={
+          canCreateGroup ? (
+            <PageTableEmptyState
+              title={t('There are currently no groups associated with this host')}
+              description={t('Please add a group by using the button below.')}
+            >
+              <Button
+                icon={<PlusCircleIcon />}
+                variant="primary"
+                onClick={() =>
+                  openInventoryHostsGroupsAddModal({
+                    onAdd: associateGroups,
+                    inventoryId: inventoryId,
+                    hostId: hostId,
+                  })
+                }
+              >
+                {t('Associate groups')}
+              </Button>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to add a group')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateGroup ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateGroup ? t('Associate groups') : undefined}
-        emptyStateButtonClick={
-          canCreateGroup
-            ? () =>
-                openInventoryHostsGroupsAddModal({
-                  onAdd: associateGroups,
-                  inventoryId: inventoryId,
-                  hostId: hostId,
-                })
-            : undefined
+              )}
+            />
+          )
         }
         {...view}
       />
