@@ -1,4 +1,4 @@
-import { Chip, ChipGroup, LabelGroup } from '@patternfly/react-core';
+import { LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -92,10 +92,23 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         dashboard: 'hidden',
       },
       {
+        header: t('Labels'),
+        type: 'labels',
+        helpText: t('Labels used to describe job.'),
+        value: (job: UnifiedJob) =>
+          job.summary_fields?.labels
+            ? job.summary_fields?.labels?.results.map((l) => l.name)
+            : undefined,
+        defaultSortDirection: 'desc',
+        modal: ColumnModalOption.hidden,
+        dashboard: 'hidden',
+      },
+      {
         header: t('Duration'),
         cell: (job: UnifiedJob) =>
           job.started && <ElapsedTimeCell start={job.started} finish={job.finished} />,
         modal: ColumnModalOption.hidden,
+        list: 'secondary',
         dashboard: 'hidden',
       },
       {
@@ -308,35 +321,6 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         value: (job: UnifiedJob) =>
           job.summary_fields?.credentials?.length
             ? job.summary_fields?.credentials?.length
-            : undefined,
-        table: ColumnTableOption.expanded,
-        card: 'hidden',
-        list: 'hidden',
-        defaultSortDirection: 'desc',
-        modal: ColumnModalOption.hidden,
-        dashboard: 'hidden',
-      },
-      {
-        header: t('Labels'),
-        helpText: t('Labels used to describe job.'),
-        cell: (job: UnifiedJob) => (
-          <ChipGroup
-            numChips={5}
-            collapsedText={t(`{{count}} more`, {
-              count: (job.summary_fields?.labels?.results.length ?? 0) - 5,
-            })}
-            ouiaId={`job-${job.id}-label-chips`}
-          >
-            {job.summary_fields?.labels?.results.map((l) => (
-              <Chip key={l.id} isReadOnly ouiaId={`label-${l.id}-chip`}>
-                {l.name}
-              </Chip>
-            ))}
-          </ChipGroup>
-        ),
-        value: (job: UnifiedJob) =>
-          job.summary_fields?.labels?.results.length
-            ? job.summary_fields?.labels?.results.length
             : undefined,
         table: ColumnTableOption.expanded,
         card: 'hidden',

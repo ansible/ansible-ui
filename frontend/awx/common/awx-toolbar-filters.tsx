@@ -1,6 +1,9 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IToolbarFilter, ToolbarFilterType } from '../../../framework';
+import { useQueryPlatformOptions } from '../../../platform/common/useQueryPlatformOptions';
+import { Label } from '../interfaces/Label';
+import { awxAPI } from './api/awx-utils';
 
 export function useNameToolbarFilter() {
   const { t } = useTranslation();
@@ -248,5 +251,28 @@ export function useTemplateTypeToolbarFilter() {
       placeholder: t('Select types'),
     }),
     [t]
+  );
+}
+
+export function useLabelsToolbarFilter() {
+  const { t } = useTranslation();
+  const queryOptions = useQueryPlatformOptions<Label, 'name', 'name'>({
+    url: awxAPI`/labels/`,
+    labelKey: 'name',
+    valueKey: 'name',
+    orderQuery: 'order_by',
+  });
+  const queryLabel = useCallback((label: string) => label, []);
+  return useMemo<IToolbarFilter>(
+    () => ({
+      type: ToolbarFilterType.AsyncMultiSelect,
+      key: 'labels',
+      label: t('Labels'),
+      query: 'labels__name',
+      placeholder: t('Select labels'),
+      queryOptions,
+      queryLabel,
+    }),
+    [queryLabel, queryOptions, t]
   );
 }

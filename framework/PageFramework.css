@@ -127,3 +127,7 @@ tr.selected:hover {
 pre {
   white-space: pre-wrap;
 }
+
+.pf-v5-c-truncate__start {
+  min-width: 32px !important;
+}
