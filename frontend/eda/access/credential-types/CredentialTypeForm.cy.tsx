@@ -98,10 +98,7 @@ describe('CredentialTypeForm.cy.ts', () => {
       cy.get('[data-cy="name"]').type('Sample Credential Type');
       cy.get('[data-cy="description"]').type('This is a sample credential');
       cy.clickButton(/^Generate extra vars$/);
-      cy.dataEditorShouldContain(
-        '[data-cy="injectors-g"]',
-        '{"extra_vars": { "name" : "{{name}}"}}'
-      );
+      cy.dataEditorShouldContain('[data-cy="injectors"]', { extra_vars: { name: '{{name}}' } });
     });
   });
 });
