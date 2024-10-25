@@ -18,7 +18,16 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { PFColorE, getPatternflyColor } from '../components/pfcolors';
 import { getID } from '../hooks/useID';
-import { IPageAction, PageActionSelection, PageActionType } from './PageAction';
+import {
+  IPageAction,
+  IPageActionButton,
+  IPageActionButtonMultiple,
+  IPageActionButtonSingle,
+  IPageActionLink,
+  IPageActionLinkSingle,
+  PageActionSelection,
+  PageActionType,
+} from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 import { isPageActionHidden, usePageActionDisabled } from './PageActionUtils';
 
@@ -110,16 +119,19 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   const isKebab = Boolean(!label && !icon);
   const CustomIcon = icon;
 
-  let tooltipContent;
-  if (isDisabled) {
-    tooltipContent = isDisabled;
-  } else if (tooltip) {
-    tooltipContent = tooltip;
-  } else if (iconOnly) {
-    tooltipContent = label;
-  } else {
-    tooltipContent = undefined;
-  }
+  const getToolTipContent = () => {
+    if (isDisabled) {
+      return isDisabled;
+    } else if (tooltip) {
+      return tooltip;
+    } else if (iconOnly) {
+      return label;
+    } else {
+      return undefined;
+    }
+  };
+
+  const tooltipContent = getToolTipContent();
 
   const dropdownMenuLabel: string | JSX.Element | undefined =
     iconOnly && CustomIcon ? (
@@ -210,6 +222,108 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   );
 }
 
+function PageActionButton<T extends object>(
+  props: Readonly<{
+    action: IPageActionButton | IPageActionButtonSingle<T> | IPageActionButtonMultiple<T>;
+    tooltip: string | undefined;
+    CustomIcon: ComponentClass<object, unknown> | FunctionComponent<object> | undefined;
+    isButtonDisabled: boolean;
+    hasSwitches: boolean;
+    selectedItem?: T;
+    selectedItems: T[];
+    isDisabled: string | undefined;
+  }>
+) {
+  const {
+    action,
+    tooltip,
+    CustomIcon,
+    isButtonDisabled,
+    hasSwitches,
+    selectedItem,
+    selectedItems,
+    isDisabled,
+  } = props;
+
+  return (
+    <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+      <StyledDropdownItem $hasSwitches={hasSwitches} $isDanger={Boolean(action.isDanger)}>
+        <DropdownItem
+          id={getID(action)}
+          data-cy={getID(action)?.split('.').join('-')}
+          isAriaDisabled={isButtonDisabled}
+          onClick={() => {
+            switch (action.selection) {
+              case PageActionSelection.None:
+                action.onClick();
+                break;
+              case PageActionSelection.Single:
+                if (selectedItem) action.onClick(selectedItem);
+                break;
+              case PageActionSelection.Multiple:
+                if (selectedItems) action.onClick(selectedItems);
+                break;
+            }
+          }}
+          style={{
+            color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
+          }}
+        >
+          {CustomIcon ? (
+            <Icon
+              size="lg"
+              iconSize="md"
+              style={{
+                paddingRight: '.5rem',
+              }}
+            >
+              <CustomIcon />
+            </Icon>
+          ) : undefined}
+          {action.label}
+        </DropdownItem>
+      </StyledDropdownItem>
+    </Tooltip>
+  );
+}
+
+function PageActionLink<T extends object>(
+  props: Readonly<{
+    action: IPageActionLink | IPageActionLinkSingle<T>;
+    tooltip: string | undefined;
+    to: string;
+    CustomIcon: ComponentClass<object, unknown> | FunctionComponent<object> | undefined;
+    isDisabled: string | undefined;
+  }>
+) {
+  const { action, tooltip, to, CustomIcon, isDisabled } = props;
+  return (
+    <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+      <DropdownItem
+        component={(p) => <Link {...p} to={to} />}
+        isAriaDisabled={Boolean(isDisabled)}
+        data-cy={getID(action)?.split('.').join('-')}
+        style={{
+          color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
+        }}
+      >
+        {CustomIcon ? (
+          <Icon
+            size="lg"
+            iconSize="md"
+            style={{
+              paddingRight: '.5rem',
+            }}
+          >
+            <CustomIcon />
+          </Icon>
+        ) : undefined}
+        {action.label}
+      </DropdownItem>
+    </Tooltip>
+  );
+}
+
 function PageDropdownActionItem<T extends object>(props: {
   action: IPageAction<T>;
   selectedItems: T[];
@@ -223,146 +337,121 @@ function PageDropdownActionItem<T extends object>(props: {
   const isPageActionDisabled = usePageActionDisabled<T>();
   const isDisabled = isPageActionDisabled(action, selectedItem, selectedItems);
 
-  switch (action.type) {
-    case PageActionType.Button: {
-      let CustomIcon: ComponentClass | FunctionComponent | undefined = action.icon;
-      if (!CustomIcon && hasIcons) CustomIcon = TransparentIcon;
-      let tooltip;
+  const getToolTip = (
+    action: IPageActionButton | IPageActionButtonSingle<T> | IPageActionButtonMultiple<T>,
+    isEmptyMultiSelect: boolean
+  ) => {
+    let tooltip;
+    if (isEmptyMultiSelect) {
+      tooltip = t(`Select at least one item from the list`);
+    } else if (isDisabled) {
+      tooltip = isDisabled;
+    } else if (action.tooltip) {
+      tooltip = action.tooltip;
+    } else if (action.icon) {
+      tooltip = action.label;
+    } else {
+      tooltip = undefined;
+    }
 
-      if (isDisabled) {
-        tooltip = isDisabled;
-      } else if (action.tooltip) {
-        tooltip = action.tooltip;
-      } else if (action.icon) {
-        tooltip = action.label;
-      } else {
-        tooltip = undefined;
+    return tooltip;
+  };
+
+  const getTo = (action: IPageActionLink | IPageActionLinkSingle<T>) => {
+    let to: string;
+    switch (action.selection) {
+      case PageActionSelection.None:
+        to = action.href;
+        break;
+      case PageActionSelection.Single:
+        if (selectedItem) {
+          to = action.href(selectedItem);
+        } else to = '';
+        break;
+      default:
+        to = '';
+        break;
+    }
+
+    return to;
+  };
+
+  const getActionItem = () => {
+    switch (action.type) {
+      case PageActionType.Button: {
+        let CustomIcon: ComponentClass | FunctionComponent | undefined = action.icon;
+        if (!CustomIcon && hasIcons) CustomIcon = TransparentIcon;
+
+        const isEmptyMultiSelect =
+          action.selection === PageActionSelection.Multiple && !selectedItems?.length;
+
+        const tooltip = getToolTip(action, isEmptyMultiSelect);
+
+        const isButtonDisabled = isEmptyMultiSelect ? true : !!isDisabled;
+
+        return (
+          <PageActionButton
+            action={action}
+            tooltip={tooltip}
+            CustomIcon={CustomIcon}
+            isButtonDisabled={isButtonDisabled}
+            hasSwitches={hasSwitches}
+            selectedItem={selectedItem}
+            selectedItems={selectedItems}
+            isDisabled={isDisabled}
+          />
+        );
       }
 
-      let isButtonDisabled = !!isDisabled;
-      if (action.selection === PageActionSelection.Multiple && !selectedItems.length) {
-        tooltip = t(`Select at least one item from the list`);
-        isButtonDisabled = true;
+      case PageActionType.Link: {
+        let CustomIcon: ComponentClass | FunctionComponent | undefined = action.icon;
+        if (!CustomIcon && hasIcons) CustomIcon = TransparentIcon;
+        const tooltip = isDisabled ?? action.tooltip;
+        const to = getTo(action);
+
+        return (
+          <PageActionLink
+            action={action}
+            tooltip={tooltip}
+            to={to}
+            CustomIcon={CustomIcon}
+            isDisabled={isDisabled}
+          />
+        );
       }
 
-      return (
-        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <StyledDropdownItem $hasSwitches={hasSwitches} $isDanger={Boolean(action.isDanger)}>
-            <DropdownItem
-              id={getID(action)}
-              data-cy={getID(action)?.split('.').join('-')}
-              isAriaDisabled={isButtonDisabled}
-              onClick={() => {
-                switch (action.selection) {
-                  case PageActionSelection.None:
-                    action.onClick();
-                    break;
-                  case PageActionSelection.Single:
-                    if (selectedItem) action.onClick(selectedItem);
-                    break;
-                  case PageActionSelection.Multiple:
-                    if (selectedItems) action.onClick(selectedItems);
-                    break;
-                }
-              }}
-              style={{
-                color:
-                  action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
-              }}
-            >
-              {CustomIcon ? (
-                <Icon
-                  size="lg"
-                  iconSize="md"
-                  style={{
-                    paddingRight: '.5rem',
-                  }}
-                >
-                  <CustomIcon />
-                </Icon>
-              ) : undefined}
-              {action.label}
-            </DropdownItem>
-          </StyledDropdownItem>
-        </Tooltip>
-      );
-    }
-
-    case PageActionType.Link: {
-      let CustomIcon: ComponentClass | FunctionComponent | undefined = action.icon;
-      if (!CustomIcon && hasIcons) CustomIcon = TransparentIcon;
-      const tooltip = isDisabled ? isDisabled : action.tooltip;
-      let to: string;
-
-      switch (action.selection) {
-        case PageActionSelection.None:
-          to = action.href;
-          break;
-        case PageActionSelection.Single:
-          if (selectedItem) {
-            to = action.href(selectedItem);
-          } else to = '';
-          break;
-        default:
-          to = '';
-          break;
+      case PageActionType.Switch: {
+        return (
+          <ActionSwitchDiv>
+            <PageActionSwitch action={action} selectedItem={selectedItem} />
+          </ActionSwitchDiv>
+        );
       }
 
-      return (
-        <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
-          <DropdownItem
-            component={(p) => <Link {...p} to={to} />}
-            isAriaDisabled={Boolean(isDisabled)}
-            data-cy={getID(action)?.split('.').join('-')}
-            style={{
-              color:
-                action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,
-            }}
-          >
-            {CustomIcon ? (
-              <Icon
-                size="lg"
-                iconSize="md"
-                style={{
-                  paddingRight: '.5rem',
-                }}
-              >
-                <CustomIcon />
-              </Icon>
-            ) : undefined}
-            {action.label}
-          </DropdownItem>
-        </Tooltip>
-      );
-    }
+      case PageActionType.Dropdown: {
+        const tooltip = action.label;
+        return (
+          <PageActionDropdown<T>
+            key={action.label}
+            label={action.label}
+            actions={action.actions}
+            selectedItem={selectedItem}
+            selectedItems={selectedItems}
+            isDisabled={isDisabled}
+            tooltip={tooltip}
+            // variant={action.variant}
+          />
+        );
+      }
 
-    case PageActionType.Switch: {
-      return (
-        <ActionSwitchDiv>
-          <PageActionSwitch action={action} selectedItem={selectedItem} />
-        </ActionSwitchDiv>
-      );
+      case PageActionType.Seperator:
+        return <Divider component="li" key={`separator-${index}`} />;
     }
+  };
 
-    case PageActionType.Dropdown: {
-      const tooltip = action.label;
-      return (
-        <PageActionDropdown<T>
-          key={action.label}
-          label={action.label}
-          actions={action.actions}
-          selectedItem={selectedItem}
-          selectedItems={selectedItems}
-          isDisabled={isDisabled}
-          tooltip={tooltip}
-          // variant={action.variant}
-        />
-      );
-    }
+  const item = getActionItem();
 
-    case PageActionType.Seperator:
-      return <Divider component="li" key={`separator-${index}`} />;
-  }
+  return item;
 }
 
 const TransparentIcon = () => <CircleIcon style={{ opacity: 0 }} />;
