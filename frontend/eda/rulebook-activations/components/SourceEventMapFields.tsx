@@ -45,7 +45,7 @@ export function FormSingleSelectEventStream(props: {
       placeholder={t('Select event stream')}
       isRequired
       labelHelp={t(
-        'All the event streams available and set up to forward events to rulebook activations will be displayed.'
+        'Only event streams that are configured to forward events to rulebook activations are displayed.'
       )}
       labelHelpTitle={t('Event stream')}
       options={getEventOptions()}
