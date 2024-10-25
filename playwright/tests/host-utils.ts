@@ -9,7 +9,7 @@ import { navigateTo } from '../commands/navigateTo';
 export async function createHost(options: { name?: string; inventoryName?: string }, page: Page) {
   const hostName = options.name ?? createE2EName('host');
   const inventoryName = options.inventoryName ?? 'Demo Inventory';
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Infrastructure', 'Hosts');
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
   await page.getByRole('button', { name: 'Create host' }).click();
   // await page.getByLabel('Create host').click();
   await page.getByPlaceholder('Enter host name').fill(hostName);
@@ -24,7 +24,7 @@ export async function createHost(options: { name?: string; inventoryName?: strin
 }
 
 export async function deleteHost(hostName: string, page: Page) {
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Infrastructure', 'Hosts');
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
   await clearTableFilters(page);
   await filterTableBySelect(hostName, page);
   await clickTableRow(hostName, page);

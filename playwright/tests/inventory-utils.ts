@@ -8,16 +8,12 @@ import { navigateTo } from '../commands/navigateTo';
 
 export async function createInventory(options: { name?: string }, page: Page) {
   const inventoryName = options.name ?? createE2EName('inventory');
-  await navigateTo(
-    page,
-    'Automation ExecutionAutomation Controller',
-    'Infrastructure',
-    'Inventories'
-  );
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
   await page.getByLabel('dropdown toggle', { exact: true }).click();
   await page.getByRole('menuitem', { name: 'Create inventory' }).click();
   await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
   await page.getByLabel('Organization *').click();
+  await page.getByLabel('Search input').fill('Default');
   await page.getByRole('option', { name: 'Default' }).click();
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading')).toContainText(inventoryName);
@@ -26,12 +22,7 @@ export async function createInventory(options: { name?: string }, page: Page) {
 }
 
 export async function deleteInventory(inventoryName: string, page: Page) {
-  await navigateTo(
-    page,
-    'Automation ExecutionAutomation Controller',
-    'Infrastructure',
-    'Inventories'
-  );
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
   await clearTableFilters(page);
   await filterTableBySelect(inventoryName, page);
   await clickTableRow(inventoryName, page);

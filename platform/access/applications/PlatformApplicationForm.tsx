@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Alert, TextContent } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import {
+  CopyCell,
   PageFormSelect,
   PageFormSubmitHandler,
   PageHeader,
@@ -12,6 +14,7 @@ import {
   usePageNavigate,
 } from '../../../framework';
 import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { AwxPageForm } from '../../../frontend/awx/common/AwxPageForm';
 import { Application } from '../../../frontend/awx/interfaces/Application';
 import { requestGet, requestPatch, swrOptions } from '../../../frontend/common/crud/Data';
@@ -153,8 +156,73 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
   const authorizationGrantType = useWatch<Application>({
     name: 'authorization_grant_type',
   });
+  const { data: gatewaySettings } = useSWR<{ gateway_proxy_url: string }>(
+    gatewayAPI`/settings/all/`,
+    requestGet,
+    swrOptions
+  );
   return (
     <>
+      <PageFormSection singleColumn>
+        <Alert variant="info" isInline title={t('Configure OAuth Application')} isExpandable>
+          <TextContent>
+            <p>
+              {t(
+                'You are setting up an OAuth application to allow secure authentication and integration with an external service. This will allow the external service to authenticate users using AAP authentication and obtain an access token to access AAP resources on behalf of the user.'
+              )}
+            </p>
+            <p>
+              {t(
+                'In this form, you will provide the necessary details required for OAuth, including grant type, client type, and credentials. These fields are typically provided by the external service when registering an application on their platform.'
+              )}
+            </p>
+            <p>{t('To complete this setup:')}</p>
+            <ol>
+              <li>
+                <p>
+                  {t(
+                    'Register the application on the external service and obtain the required information, such as the Client ID and Client Secret.'
+                  )}
+                </p>
+                <p>{t('The external service will need:')}</p>
+                <ul>
+                  <li>
+                    {t('Auth URL')}
+                    <CopyCell
+                      text={t('{{server}}/o/authorize/', {
+                        server: gatewaySettings?.gateway_proxy_url ?? 'http://your-aap',
+                      })}
+                    />
+                  </li>
+                  <li>
+                    {t('Token URL')}
+                    <CopyCell
+                      text={t('{{server}}/o/token/', {
+                        server: gatewaySettings?.gateway_proxy_url ?? 'http://your-aap',
+                      })}
+                    />
+                  </li>
+                </ul>
+              </li>
+              <li>
+                {t(
+                  'Configure the redirect URIs that will handle responses after successful authentication. Redirect URIs are endpoints in your application that will handle the authorization server’s response after the user logs in. You must register these URIs with the external service.'
+                )}
+              </li>
+              <li>
+                {t(
+                  'Select the appropriate authorization grant type and client type based on your application’s security needs and interaction with the external service.'
+                )}
+              </li>
+            </ol>
+            <p>
+              {t(
+                'Make sure to input all the required details accurately to ensure a smooth OAuth authentication process.'
+              )}
+            </p>
+          </TextContent>
+        </Alert>
+      </PageFormSection>
       <PageFormTextInput<Application>
         name="name"
         label={t('Name')}
@@ -162,12 +230,14 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         isRequired
         maxLength={150}
       />
-      <PageFormTextInput<Application>
-        name="description"
-        label={t('Description')}
-        placeholder={t('Enter description')}
-      />
       <PageFormPlatformOrganizationSelect<Application> name="organization" isRequired />
+      <PageFormSection singleColumn>
+        <PageFormTextInput<Application>
+          name="description"
+          label={t('Description')}
+          placeholder={t('Enter description')}
+        />
+      </PageFormSection>
       <PageFormSelect<Application>
         isReadOnly={mode === 'edit'}
         name="authorization_grant_type"
@@ -177,13 +247,23 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
           {
             label: t('Authorization code'),
             value: AuthorizationType.AuthorizationCode,
+            description: t(
+              'Use this for server-side applications that can securely store a client secret. This grant type is more secure because it requires user authorization and an authorization code exchange.'
+            ),
           },
           {
             label: t('Password'),
             value: AuthorizationType.Password,
+            description: t(
+              'Use this for trusted first-party clients only. The user provides their username and password directly to the client, which exchanges them for an access token.'
+            ),
           },
         ]}
         isRequired
+        defaultValue={AuthorizationType.AuthorizationCode}
+        labelHelp={t(
+          'Defines the method by which the client application will obtain the access token. The grant type determines the security level and the interaction between the client, user, and authorization server.'
+        )}
       />
       <PageFormSelect<Application>
         name="client_type"
@@ -193,20 +273,33 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
           {
             label: t('Confidential'),
             value: ClientType.Confidential,
+            description:
+              'Select this if the client can securely store a client secret (e.g., server-side applications).',
           },
           {
             label: t('Public'),
             value: ClientType.Public,
+            description:
+              'Select this if the client cannot securely store a client secret (e.g., single-page applications, mobile apps).',
           },
         ]}
         isRequired
+        defaultValue={ClientType.Confidential}
+        labelHelp={t(
+          'Defines the security level of the client application based on whether it can securely store sensitive information like a client secret.'
+        )}
       />
-      <PageFormTextInput<Application>
-        name="redirect_uris"
-        label={t('Redirect URIs')}
-        placeholder={t('Enter redirect URIs')}
-        isRequired={Boolean(authorizationGrantType === 'authorization-code')}
-      />
+      <PageFormSection singleColumn>
+        <PageFormTextInput<Application>
+          name="redirect_uris"
+          label={t('Redirect URIs')}
+          placeholder={t('Enter redirect URIs')}
+          isRequired={Boolean(authorizationGrantType === 'authorization-code')}
+          labelHelp={t(
+            'Provide one or more URIs where the authorization server will send the user after successful authentication. These URIs must be registered with the authorization server.'
+          )}
+        />
+      </PageFormSection>
     </>
   );
 }
