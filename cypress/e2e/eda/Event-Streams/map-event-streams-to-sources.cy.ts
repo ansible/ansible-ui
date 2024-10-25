@@ -93,7 +93,7 @@ cyLabel(['aaas-unsupported'], function () {
     it('Basic Flow -  can create a Rulebook Activation  and map event streams to sources', () => {
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.clickButton(/^Create rulebook activation$/);
+      cy.clickLink(/^Create rulebook activation$/);
       cy.verifyPageTitle('Create rulebook activation');
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');

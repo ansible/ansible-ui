@@ -1,5 +1,9 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../framework';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
 import { hubAPI } from '../common/api/formatPath';
 import { collectionKeyFn } from '../common/api/hub-api-utils';
 import { useHubView } from '../common/useHubView';
@@ -9,12 +13,10 @@ import { useCollectionActions } from './hooks/useCollectionActions';
 import { useCollectionColumns } from './hooks/useCollectionColumns';
 import { useCollectionFilters } from './hooks/useCollectionFilters';
 import { useCollectionsActions } from './hooks/useCollectionsActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
 
 export function Collections() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useCollectionFilters();
   const tableColumns = useCollectionColumns();
   const view = useHubView<CollectionVersionSearch>({
@@ -53,18 +55,24 @@ export function Collections() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading collections')}
-        emptyStateTitle={t('No collections yet')}
-        emptyStateDescription={t('To get started, upload a collection.')}
-        emptyStateButtonText={t('Upload collection')}
-        emptyStateButtonIcon={
-          <Icon>
-            <PlusCircleIcon />
-          </Icon>
+        emptyState={
+          <PageTableEmptyState
+            title={t('No collections yet')}
+            description={t('To get started, upload a collection.')}
+          >
+            <ButtonLink
+              data-cy="upload-collection"
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(HubRoute.UploadCollection)}
+            >
+              {t('Upload collection')}
+            </ButtonLink>
+          </PageTableEmptyState>
         }
-        emptyStateButtonClick={() => pageNavigate(HubRoute.UploadCollection)}
-        {...view}
         defaultTableView="list"
         defaultSubtitle={t('Collection')}
+        {...view}
       />
     </PageLayout>
   );

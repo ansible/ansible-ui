@@ -37,6 +37,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { IPageAction, PageActionSelection } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
@@ -69,7 +70,7 @@ const ScrollDiv = styled.div`
   flex: 1;
 `;
 
-export type PageTableProps<T extends object> = {
+export type PageTableCommonProps<T extends object> = {
   id?: string;
 
   keyFn: (item: T) => string | number;
@@ -122,15 +123,7 @@ export type PageTableProps<T extends object> = {
   errorStateTitle: string;
   error?: Error;
 
-  emptyStateTitle: string;
-  emptyStateDescription?: string | null;
-  emptyStateIcon?: React.ComponentClass;
-  emptyStateNoDataIcon?: React.ComponentClass;
-  emptyStateActions?: IPageAction<T>[];
-  emptyStateButtonIcon?: React.ReactNode;
-  emptyStateButtonText?: string | null;
-  emptyStateButtonClick?: () => void;
-  emptyStateVariant?: 'default' | 'light' | 'dark' | 'darker';
+  emptyState?: ReactNode;
 
   /**
    * Enables multi-selection of items even though there are no actions that are bulk actions.
@@ -201,6 +194,42 @@ export type PageTableProps<T extends object> = {
   defaultExpandedRows?: boolean;
 };
 
+// Define the mutually exclusive types
+export type PageTableProps<T extends object> =
+  | WithEmptyState<T> // When `emptyState` is provided
+  | WithoutEmptyState<T>; // When `emptyState` is not provided
+
+// Define the type when `emptyState` is provided
+interface WithEmptyState<T extends object> extends PageTableCommonProps<T> {
+  emptyState: ReactNode;
+  // Disallow other empty state-related props
+  emptyStateTitle?: never;
+  emptyStateDescription?: never;
+  emptyStateIcon?: never;
+  emptyStateNoDataIcon?: never;
+  emptyStateActions?: never;
+  emptyStateButtonIcon?: never;
+  emptyStateButtonText?: never;
+  emptyStateButtonClick?: never;
+  emptyStateVariant?: never;
+}
+
+// Define the type when `emptyState` is NOT provided
+interface WithoutEmptyState<T extends object> extends PageTableCommonProps<T> {
+  emptyState?: never; // Ensure `emptyState` is not provided
+
+  // Allow other empty state-related props
+  emptyStateTitle?: string;
+  emptyStateDescription?: string | null;
+  emptyStateIcon?: React.ComponentClass;
+  emptyStateNoDataIcon?: React.ComponentClass;
+  emptyStateActions?: IPageAction<T>[];
+  emptyStateButtonIcon?: React.ReactNode;
+  emptyStateButtonText?: string | null;
+  emptyStateButtonClick?: () => void;
+  emptyStateVariant?: 'default' | 'light' | 'dark' | 'darker';
+}
+
 /**
  * The PageTable component is used for adding a table to a page.
  *
@@ -218,6 +247,7 @@ export type PageTableProps<T extends object> = {
  */
 export function PageTable<T extends object>(props: PageTableProps<T>) {
   const { id, toolbarActions, filterState, error, itemCount } = props;
+  const { t } = useTranslation();
 
   const showSelect =
     props.showSelect ||
@@ -272,9 +302,12 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
   }
 
   if (itemCount === 0 && Object.keys(filterState ?? {}).length === 0) {
+    if (props.emptyState) {
+      return props.emptyState;
+    }
     return (
       <EmptyStateNoData
-        title={props.emptyStateTitle}
+        title={props.emptyStateTitle ?? t`No data`}
         description={props.emptyStateDescription}
         icon={props.emptyStateNoDataIcon}
         button={

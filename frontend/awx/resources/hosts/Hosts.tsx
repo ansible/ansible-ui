@@ -1,24 +1,27 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { AwxRoute } from '../../main/AwxRoutes';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { useOptions } from '../../../common/crud/useOptions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useHostsFilters } from './hooks/useHostsFilters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { AwxHost } from '../../interfaces/AwxHost';
-import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
-import { useHostsColumns } from './hooks/useHostsColumns';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../main/AwxRoutes';
 import { useHostsActions } from './hooks/useHostsActions';
-import { useOptions } from '../../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useHostsColumns } from './hooks/useHostsColumns';
+import { useHostsFilters } from './hooks/useHostsFilters';
+import { useHostsToolbarActions } from './hooks/useHostsToolbarActions';
 
 export function Hosts() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useHostsColumns();
   const view = useAwxView<AwxHost>({ url: awxAPI`/hosts/`, toolbarFilters, tableColumns });
@@ -59,21 +62,30 @@ export function Hosts() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading hosts')}
-        emptyStateTitle={
-          canCreateHost
-            ? t('There are currently no hosts added')
-            : t('You do not have permission to create a host.')
-        }
-        emptyStateDescription={
-          canCreateHost
-            ? t('Please create a host by using the button below.')
-            : t(
+        emptyState={
+          canCreateHost ? (
+            <PageTableEmptyState
+              title={t('There are currently no hosts added')}
+              description={t('Please create a host by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.CreateHost)}
+              >
+                {t('Create host')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a host.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
+              )}
+            />
+          )
         }
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateHost ? t('Create host') : undefined}
-        emptyStateButtonClick={canCreateHost ? () => pageNavigate(AwxRoute.CreateHost) : undefined}
         {...view}
         defaultSubtitle={t('Host')}
       />

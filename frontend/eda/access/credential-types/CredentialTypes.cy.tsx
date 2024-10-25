@@ -334,8 +334,8 @@ describe('Empty list with POST permission', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<CredentialTypes />);
-    cy.contains(/^There are currently no credential types created for your organization.$/);
+    cy.contains(/^There are currently no credential types added.$/);
     cy.contains(/^Please create a credential type by using the button below.$/);
-    cy.contains('button', /^Create credential type$/).should('be.visible');
+    cy.contains('Create credential').should('be.visible');
   });
 });

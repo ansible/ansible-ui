@@ -1,22 +1,25 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageLayout, PageTable, usePageNavigate } from '../../../../../framework';
+import { PageLayout, PageTable, useGetPageUrl } from '../../../../../framework';
+import { ButtonLink } from '../../../../../framework/components/ButtonLink';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { useAwxView } from '../../../common/useAwxView';
-import { useHostsFilters } from '../../hosts/hooks/useHostsFilters';
-import { useInventoriesHostsToolbarActions } from '../hooks/useInventoriesHostsToolbarActions';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useHostsActions } from '../../hosts/hooks/useHostsActions';
+import { useHostsFilters } from '../../hosts/hooks/useHostsFilters';
 import { useInventoriesHostsColumns } from '../hooks/useInventoriesHostsColumns';
+import { useInventoriesHostsToolbarActions } from '../hooks/useInventoriesHostsToolbarActions';
 
 export function InventoryHosts() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useHostsFilters();
   const tableColumns = useInventoriesHostsColumns();
   const params = useParams<{ id: string; inventory_type: string }>();
@@ -48,7 +51,7 @@ export function InventoryHosts() {
       ? t('Please create a host by using the button below.')
       : t('Please contact your organization administrator if there is an issue with your access.');
   } else {
-    emptyStateTitle = t('No hosts Found');
+    emptyStateTitle = t('No hosts found');
     emptyStateDescription = t('Please add hosts to populate this list');
   }
 
@@ -62,18 +65,26 @@ export function InventoryHosts() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading inventory hosts')}
-        emptyStateTitle={emptyStateTitle}
-        emptyStateDescription={emptyStateDescription}
-        emptyStateIcon={canCreateHost ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateHost ? t('Create host') : undefined}
-        emptyStateButtonClick={
-          canCreateHost
-            ? () =>
-                pageNavigate(AwxRoute.InventoryHostAdd, {
+        emptyState={
+          canCreateHost ? (
+            <PageTableEmptyState title={emptyStateTitle} description={emptyStateDescription}>
+              <ButtonLink
+                variant={ButtonVariant.primary}
+                icon={<PlusCircleIcon />}
+                href={getPageUrl(AwxRoute.InventoryHostAdd, {
                   params: { id: params.id, inventory_type: params.inventory_type },
-                })
-            : undefined
+                })}
+              >
+                {t('Create host')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={emptyStateTitle}
+              description={emptyStateDescription}
+            />
+          )
         }
         {...view}
       />

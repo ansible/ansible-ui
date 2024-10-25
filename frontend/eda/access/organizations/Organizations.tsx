@@ -10,21 +10,21 @@ import {
   PageLayout,
   PageTable,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaOrganization } from '../../interfaces/EdaOrganization';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
-import { useEdaView } from '../../common/useEventDrivenView';
-import { edaAPI } from '../../common/eda-utils';
-import { useOrganizationsFilters } from './hooks/useOrganizationsFilters';
 import { useOrganizationColumns } from './hooks/useOrganizationColumns';
+import { useOrganizationsFilters } from './hooks/useOrganizationsFilters';
 
 export function Organizations() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('EDA');
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   usePersistentFilters('organizations');
   const toolbarFilters = useOrganizationsFilters();
@@ -110,11 +110,20 @@ export function Organizations() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
-        emptyStateTitle={t('There are currently no organizations created.')}
-        emptyStateDescription={t('Please create an organization by using the button below.')}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create organization')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateOrganization)}
+        emptyState={
+          <PageTableEmptyState
+            title={t('There are currently no organizations created.')}
+            description={t('Please create an organization by using the button below.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(EdaRoute.CreateOrganization)}
+            >
+              {t('Create organization')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         {...view}
         defaultSubtitle={t('Organization')}
       />

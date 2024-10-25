@@ -1,19 +1,22 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, ExclamationTriangleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useParams } from 'react-router-dom';
-import { PageTable, useGetPageUrl, usePageNavigate } from '../../../../framework';
+import { PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { JobTemplate } from '../../interfaces/JobTemplate';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Schedule } from '../../interfaces/Schedule';
+import { missingResources } from '../../resources/templates/hooks/useTemplateColumns';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
 import { useScheduleToolbarActions } from './hooks/useSchedulesToolbarActions';
-import { missingResources } from '../../resources/templates/hooks/useTemplateColumns';
-import { JobTemplate } from '../../interfaces/JobTemplate';
 
 /**
  * @param {string} createSchedulePageId -  param used to build the create schedule url.
@@ -40,7 +43,6 @@ export function SchedulesList(props: {
   resourceType?: string;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const pageUrl = useGetPageUrl();
   const params = useParams<{ inventory_type?: string; id?: string; source_id?: string }>();
   const resourceId = params.source_id ?? params.id;
@@ -78,6 +80,21 @@ export function SchedulesList(props: {
     onScheduleToggleCompleted: view.updateItem,
     sublistEndpoint: apiEndPoint,
   });
+
+  let emptyStateTitle = '';
+  let emptyStateDescription = '';
+
+  if (isMissingResource) {
+    emptyStateTitle = t('Resources are missing from this template.');
+  } else if (canCreateSchedule) {
+    emptyStateTitle = t('No schedules yet');
+    emptyStateDescription = t('Please create a schedule by using the button below.');
+  } else {
+    emptyStateTitle = t('You do not have permission to create a schedule');
+    emptyStateDescription = t(
+      'Please contact your organization administrator if there is an issue with your access.'
+    );
+  }
   return (
     <PageTable<Schedule>
       id="awx-schedules-table"
@@ -86,33 +103,30 @@ export function SchedulesList(props: {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading schedules')}
-      emptyStateTitle={
-        canCreateSchedule
-          ? isMissingResource
-            ? t('Resources are missing from this template.')
-            : t('No schedules yet')
-          : t('You do not have permission to create a schedule')
-      }
-      emptyStateDescription={
-        canCreateSchedule
-          ? isMissingResource
-            ? undefined
-            : t('Please create a schedule by using the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateNoDataIcon={
-        canCreateSchedule ? (isMissingResource ? ExclamationTriangleIcon : undefined) : CubesIcon
-      }
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={
-        canCreateSchedule && !isMissingResource ? t('Create schedule') : undefined
-      }
-      emptyStateButtonClick={
-        canCreateSchedule && !isMissingResource
-          ? () => pageNavigate(props.createSchedulePageId, { params })
-          : undefined
+      emptyState={
+        canCreateSchedule ? (
+          <PageTableEmptyState
+            title={emptyStateTitle}
+            description={emptyStateDescription}
+            icon={isMissingResource ? ExclamationTriangleIcon : undefined}
+          >
+            {!isMissingResource && (
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={pageUrl(props.createSchedulePageId, { params })}
+              >
+                {t('Create schedule')}
+              </ButtonLink>
+            )}
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            icon={CubesIcon}
+            title={emptyStateTitle}
+            description={emptyStateDescription}
+          />
+        )
       }
       {...view}
     />

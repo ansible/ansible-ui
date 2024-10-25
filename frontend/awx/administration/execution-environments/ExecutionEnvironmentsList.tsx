@@ -1,16 +1,19 @@
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageTable, usePageNavigate } from '../../../../framework';
+import { PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { useOptions } from '../../../common/crud/useOptions';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { awxAPI } from '../../common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useExecutionEnvRowActions } from './hooks/useExecutionEnvRowActions';
+import { useExecutionEnvToolbarActions } from './hooks/useExecutionEnvToolbarActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
 import { useExecutionEnvironmentsFilters } from './hooks/useExecutionEnvironmentsFilters';
-import { useOptions } from '../../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
-import { useExecutionEnvToolbarActions } from './hooks/useExecutionEnvToolbarActions';
 
 export function ExecutionEnvironmentsList({
   url,
@@ -20,7 +23,7 @@ export function ExecutionEnvironmentsList({
   hideOrgColumn: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useExecutionEnvironmentsFilters({ url: url });
   const tableColumns = useExecutionEnvironmentsColumns();
   const filteredColumns = hideOrgColumn
@@ -49,26 +52,29 @@ export function ExecutionEnvironmentsList({
       tableColumns={filteredColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading execution environments')}
-      emptyStateTitle={
-        canCreateExecutionEnvironment
-          ? t('No execution environments yet')
-          : t('You do not have permission to create an execution environment.')
-      }
-      emptyStateDescription={
-        canCreateExecutionEnvironment
-          ? t('To get started, create an execution environment.')
-          : t(
+      emptyState={
+        canCreateExecutionEnvironment ? (
+          <PageTableEmptyState
+            title={t('No execution environments yet')}
+            description={t('To get started, create an execution environment.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(AwxRoute.CreateExecutionEnvironment)}
+            >
+              {t('Create execution environment')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            icon={CubesIcon}
+            title={t('You do not have permission to create an execution environment.')}
+            description={t(
               'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={
-        canCreateExecutionEnvironment ? t('Create execution environment') : undefined
-      }
-      emptyStateButtonClick={
-        canCreateExecutionEnvironment
-          ? () => pageNavigate(AwxRoute.CreateExecutionEnvironment)
-          : undefined
+            )}
+          />
+        )
       }
       {...view}
       defaultSubtitle={t('Execution environment')}

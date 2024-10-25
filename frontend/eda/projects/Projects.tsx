@@ -1,20 +1,23 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../framework';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
+import { useOptions } from '../../common/crud/useOptions';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaProject } from '../interfaces/EdaProject';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { EdaRoute } from '../main/EdaRoutes';
 import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import { useProjectFilters } from './hooks/useProjectFilters';
 import { useProjectsActions } from './hooks/useProjectsActions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useOptions } from '../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function Projects() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useProjectFilters();
   const tableColumns = useProjectColumns();
   const view = useEdaView<EdaProject>({
@@ -41,23 +44,29 @@ export function Projects() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading projects')}
-        emptyStateTitle={
-          canCreateProject
-            ? t('There are currently no projects created for your organization.')
-            : t('You do not have permission to create a project.')
-        }
-        emptyStateDescription={
-          canCreateProject
-            ? t('Please create a project by using the button below.')
-            : t(
+        emptyState={
+          canCreateProject ? (
+            <PageTableEmptyState
+              title={t('There are currently no projects created for your organization.')}
+              description={t('Please create a project by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(EdaRoute.CreateProject)}
+              >
+                {t('Create project')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a project.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateProject ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateProject ? t('Create project') : undefined}
-        emptyStateButtonClick={
-          canCreateProject ? () => pageNavigate(EdaRoute.CreateProject) : undefined
+              )}
+            />
+          )
         }
         {...view}
         defaultSubtitle={t('Project')}

@@ -1,12 +1,10 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  useDashboardColumns,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
@@ -23,7 +21,6 @@ export function AwxRecentProjectsCard() {
     defaultSortDirection: 'desc',
   });
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/projects/`);
@@ -47,20 +44,29 @@ export function AwxRecentProjectsCard() {
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading projects')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no projects')}
-        emptyStateDescription={
-          canCreateProject
-            ? t('Create a project by clicking the button below.')
-            : t(
+        emptyState={
+          canCreateProject ? (
+            <PageTableEmptyState
+              title={t('There are currently no projects')}
+              description={t('Create a project by clicking the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.CreateProject)}
+              >
+                {t('Create project')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={PlusCircleIcon}
+              title={t('You do not have permission to create a project')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateButtonText={canCreateProject ? t('Create project') : undefined}
-        emptyStateButtonClick={
-          canCreateProject ? () => pageNavigate(AwxRoute.CreateProject) : undefined
+              )}
+            />
+          )
         }
         {...view}
         compact

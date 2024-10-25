@@ -24,6 +24,8 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserTokensColumns } from '../hooks/useAAPUserTokensColumns';
 import { useUserTokensFilters } from '../hooks/useAAPUserTokensFilters';
 import { useDeleteUserTokens } from '../hooks/useDeleteAAPUserTokens';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 
 export function AAPUserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();
@@ -107,10 +109,20 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
       <PageTable<Token>
         id="aap-user-tokens"
         errorStateTitle={t('Error loading tokens')}
-        emptyStateTitle={t('There are currently no tokens.')}
-        emptyStateDescription={t('Create tokens by clicking the button below.')}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateActions={toolbarActions.slice(0, 1)}
+        emptyState={
+          <PageTableEmptyState
+            title={t('There are currently no tokens.')}
+            description={t('Create tokens by clicking the button below.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(PlatformRoute.CreateAapUserToken, { params: { id: user.id } })}
+            >
+              {t('Create token')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         tableColumns={tableColumns}
         toolbarFilters={toolbarFilters}
         toolbarActions={toolbarActions}

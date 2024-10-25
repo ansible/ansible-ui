@@ -268,6 +268,6 @@ describe('Empty list', () => {
     cy.mount(<EventStreams />);
     cy.contains(/^There are currently no event streams created for your organization.$/);
     cy.contains(/^Please create an event stream by using the button below.$/);
-    cy.contains('button', /^Create event stream$/).should('be.visible');
+    cy.contains(/^Create event stream$/).should('be.visible');
   });
 });

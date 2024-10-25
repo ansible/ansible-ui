@@ -11,6 +11,7 @@ export async function createHost(options: { name?: string; inventoryName?: strin
   const inventoryName = options.inventoryName ?? 'Demo Inventory';
   await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Infrastructure', 'Hosts');
   await page.getByRole('button', { name: 'Create host' }).click();
+  // await page.getByLabel('Create host').click();
   await page.getByPlaceholder('Enter host name').fill(hostName);
   await page.getByLabel('Inventory *').click();
   await page.getByLabel('Search input').fill(inventoryName);

@@ -97,10 +97,19 @@ describe('Remote Registry', () => {
   });
 
   it('create, search and delete a remote registry', () => {
+    cy.intercept('GET', hubAPI`/_ui/v1/execution-environments/registries/*`).as('remoteRegistries');
     const remoteRegistryName = generateRemoteRegistryName();
     cy.navigateTo('hub', RemoteRegistry.url);
     cy.verifyPageTitle(RemoteRegistry.title);
-    cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
+    cy.wait('@remoteRegistries')
+      .its('response.body.data.length')
+      .then((count) => {
+        if (count === 0) {
+          cy.clickLink('Create remote registry');
+        } else {
+          cy.get('[data-cy="create-remote-registry"]').should('be.visible').click();
+        }
+      });
     cy.url().should('include', RemoteRegistry.urlCreate);
     cy.get('[data-cy="name"]').type(remoteRegistryName);
     cy.get('[data-cy="url"]').type(RemoteRegistry.remoteURL);

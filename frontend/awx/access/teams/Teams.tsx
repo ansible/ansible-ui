@@ -1,8 +1,12 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useOptions } from '../../../common/crud/useOptions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -14,11 +18,10 @@ import { useTeamActions } from './hooks/useTeamActions';
 import { useTeamToolbarActions } from './hooks/useTeamToolbarActions';
 import { useTeamsColumns } from './hooks/useTeamsColumns';
 import { useTeamsFilters } from './hooks/useTeamsFilters';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Teams() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({ url: awxAPI`/teams/`, toolbarFilters, tableColumns });
@@ -58,24 +61,32 @@ export function Teams() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading teams')}
-        emptyStateTitle={
-          canCreateTeam
-            ? t('There are currently no teams added to your organization.')
-            : t('You do not have permission to create a team')
-        }
-        emptyStateDescription={
-          canCreateTeam
-            ? t('Please create a team by using the button below.')
-            : t(
+        emptyState={
+          canCreateTeam ? (
+            <PageTableEmptyState
+              title={t('No teams found')}
+              description={t('There are currently no teams added to your organization.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.CreateTeam)}
+              >
+                {t('Create team')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('No teams found')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
+              )}
+            />
+          )
         }
-        emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
-        emptyStateButtonClick={canCreateTeam ? () => pageNavigate(AwxRoute.CreateTeam) : undefined}
-        {...view}
         defaultSubtitle={t('Team')}
+        {...view}
       />
     </PageLayout>
   );

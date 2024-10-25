@@ -113,7 +113,7 @@ describe('TemplateSurvey', () => {
       cy.mount(<TemplateSurvey resourceType="job_templates" />);
       cy.contains(/^There are currently no survey questions.$/);
       cy.contains(/^Create a survey question by clicking the button below.$/);
-      cy.contains('button', /^Create survey question$/).should('be.visible');
+      cy.contains('Create survey question').should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create survey', () => {
@@ -141,7 +141,7 @@ describe('TemplateSurvey', () => {
         }
       );
       cy.mount(<TemplateSurvey resourceType="job_templates" />);
-      cy.contains(/^You do not have permission to create a survey.$/);
+      cy.contains('No survey questions found');
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );

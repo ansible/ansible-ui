@@ -1,5 +1,9 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
@@ -8,8 +12,6 @@ import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
 
 export interface HubRemote {
   auth_url?: string | null;
@@ -37,6 +39,7 @@ export function Remotes() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
+  const getPageUrl = useGetPageUrl();
   const view = useHubView<HubRemote>({
     url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
@@ -46,7 +49,6 @@ export function Remotes() {
   const toolbarActions = useRemoteToolbarActions(view);
   const rowActions = useRemoteActions({ onRemotesDeleted: view.unselectItemsAndRefresh });
 
-  const pageNavigate = usePageNavigate();
   return (
     <PageLayout>
       <PageHeader
@@ -62,14 +64,22 @@ export function Remotes() {
       <PageTable<HubRemote>
         id="hub-remotes-table"
         defaultSubtitle={t('Remote')}
-        emptyStateButtonClick={() => pageNavigate(HubRoute.CreateRemote)}
-        emptyStateButtonText={t('Create remote')}
-        emptyStateButtonIcon={
-          <Icon>
-            <PlusCircleIcon />
-          </Icon>
+        emptyState={
+          <PageTableEmptyState
+            title={t('No remotes yet')}
+            description={t(
+              'You can create a remote to manage configurations for remote execution environments.'
+            )}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(HubRoute.CreateRemote)}
+            >
+              {t('Create remote')}
+            </ButtonLink>
+          </PageTableEmptyState>
         }
-        emptyStateTitle={t('No remotes yet')}
         errorStateTitle={t('Error loading remotes')}
         rowActions={rowActions}
         tableColumns={tableColumns}

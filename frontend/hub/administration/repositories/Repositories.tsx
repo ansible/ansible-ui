@@ -1,5 +1,9 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
@@ -9,14 +13,12 @@ import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryActions } from './hooks/useRepositoryActions';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
 import { useRepositoryToolbarActions } from './hooks/useRepositoryToolbarActions';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
 
 export function Repositories() {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoriesColumns();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const view = useHubView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -43,15 +45,21 @@ export function Repositories() {
       <PageTable<Repository>
         id="hub-repositories-table"
         defaultSubtitle={t('Repository')}
-        emptyStateButtonClick={() => pageNavigate(HubRoute.CreateRepository)}
-        emptyStateButtonText={t('Create repository')}
-        emptyStateButtonIcon={
-          <Icon>
-            <PlusCircleIcon />
-          </Icon>
-        }
-        emptyStateTitle={t('No repositories yet')}
         errorStateTitle={t('Error loading repositories')}
+        emptyState={
+          <PageTableEmptyState
+            title={t('No repositories yet')}
+            description={t('You can create a repository to store and share Ansible content.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(HubRoute.CreateRepository)}
+            >
+              {t('Create repository')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         rowActions={rowActions}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}

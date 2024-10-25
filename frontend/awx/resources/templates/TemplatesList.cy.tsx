@@ -45,7 +45,7 @@ describe('TemplatesList', () => {
       cy.mount(<TemplatesList />);
       cy.contains(/^No templates yet$/);
       cy.contains(/^Please create a template by using the button below.$/);
-      cy.contains('button', /^Create template$/).should('be.visible');
+      cy.contains(/^Create template$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create template', () => {

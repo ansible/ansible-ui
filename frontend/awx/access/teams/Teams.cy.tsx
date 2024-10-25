@@ -114,20 +114,20 @@ describe('Teams.cy.ts', () => {
       }));
       cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
+      cy.contains(/^No teams found$/);
       cy.contains(/^There are currently no teams added to your organization.$/);
-      cy.contains(/^Please create a team by using the button below.$/);
-      cy.contains('button', /^Create team$/).should('be.visible');
+      cy.contains('Create team').should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({ data: { actions: {} } }));
       cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'emptyList.json' });
       cy.mount(<Teams />);
-      cy.contains(/^You do not have permission to create a team$/);
+      cy.contains(/^No teams found$/);
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create team$/).should('not.exist');
+      cy.contains('Create team').should('not.exist');
     });
   });
 });

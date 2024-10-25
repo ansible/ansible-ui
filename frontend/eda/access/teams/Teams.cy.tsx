@@ -109,8 +109,8 @@ describe('Empty list', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<Teams />);
-    cy.contains(/^There are currently no teams created.$/);
-    cy.contains(/^Please create a team by using the button below.$/);
-    cy.contains('button', /^Create team$/).should('be.visible');
+    cy.contains(/^No teams found$/);
+    cy.contains(/^There are currently no teams added to your organization$/);
+    cy.contains(/^Create team$/).should('be.visible');
   });
 });

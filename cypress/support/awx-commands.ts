@@ -1681,8 +1681,12 @@ Cypress.Commands.add(
     cy.wait('@getQuestions')
       .its('response.body')
       .then((survey: Survey) => {
-        if (survey?.spec?.length > 0) cy.clickButton('create-survey-question');
-        else cy.clickButton('Create survey question');
+        cy.log(JSON.stringify(survey), null, 2);
+        if (survey?.spec?.length > 0) {
+          cy.clickButton('create-survey-question');
+        } else {
+          cy.clickLink('Create survey question');
+        }
       });
 
     cy.contains('Question');

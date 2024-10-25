@@ -1,7 +1,7 @@
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable, usePageNavigate } from '../../../../framework';
+import { PageTable, useGetPageUrl } from '../../../../framework';
 import { AwxError } from '../../../../frontend/awx/common/AwxError';
 import {
   ActionsResponse,
@@ -22,12 +22,15 @@ import {
   useOrganizationTeamsRowActions,
   useOrganizationTeamsToolbarActions,
 } from '../hooks/useOrganizationTeamsActions';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { ButtonVariant } from '@patternfly/react-core';
 
 export function PlatformOrganizationTeams() {
   const { t } = useTranslation();
   const toolbarFilters = useTeamFilters();
   const tableColumns = useTeamColumns();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string }>();
   const {
     data: organization,
@@ -61,23 +64,29 @@ export function PlatformOrganizationTeams() {
       tableColumns={tableColumns.slice(0, 1)}
       rowActions={rowActions}
       errorStateTitle={t('Error loading teams')}
-      emptyStateTitle={
-        canCreateTeam
-          ? t('There are currently no teams created in this organization.')
-          : t('You do not have permission to create teams.')
-      }
-      emptyStateDescription={
-        canCreateTeam
-          ? t('Create a team by clicking the button below.')
-          : t(
+      emptyState={
+        canCreateTeam ? (
+          <PageTableEmptyState
+            title={t('No teams found')}
+            description={t('There are currently no teams created in this organization.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(PlatformRoute.CreateTeam)}
+            >
+              {t('Create team')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            icon={CubesIcon}
+            title={t('You do not have permission to create teams.')}
+            description={t(
               'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateIcon={canCreateTeam ? undefined : CubesIcon}
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={canCreateTeam ? t('Create team') : undefined}
-      emptyStateButtonClick={
-        canCreateTeam ? () => pageNavigate(PlatformRoute.CreateTeam) : undefined
+            )}
+          />
+        )
       }
       {...view}
     />

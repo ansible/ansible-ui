@@ -1,6 +1,9 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import {
   ActionsResponse,
   OptionsResponse,
@@ -21,7 +24,7 @@ export function AuthenticatorsList() {
   const { t } = useTranslation();
   const toolbarFilters = useAuthenticatorsFilters();
   const tableColumns = useAuthenticatorsColumns();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const view = usePlatformView<Authenticator>({
     url: gatewayAPI`/authenticators/`,
@@ -53,23 +56,29 @@ export function AuthenticatorsList() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading authentications')}
-        emptyStateTitle={
-          canCreateAuthenticator
-            ? t('There are currently no authentications added.')
-            : t('You do not have permission to create an authentication')
-        }
-        emptyStateDescription={
-          canCreateAuthenticator
-            ? t('Please create an authentication by using the button below.')
-            : t(
+        emptyState={
+          canCreateAuthenticator ? (
+            <PageTableEmptyState
+              title={t('There are currently no authentications added.')}
+              description={t('Please create an authentication by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(PlatformRoute.CreateAuthenticator)}
+              >
+                {t('Create authentication')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create an authentication')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateAuthenticator ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateAuthenticator ? t('Create authentication') : undefined}
-        emptyStateButtonClick={
-          canCreateAuthenticator ? () => pageNavigate(PlatformRoute.CreateAuthenticator) : undefined
+              )}
+            />
+          )
         }
         {...view}
       />

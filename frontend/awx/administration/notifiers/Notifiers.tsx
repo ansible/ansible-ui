@@ -1,21 +1,24 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { useOptions } from '../../../common/crud/useOptions';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useNotifiersFilters } from './hooks/useNotifiersFilters';
-import { useNotifiersColumns } from './hooks/useNotifiersColumns';
-import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
+import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { useNotifiersToolbarActions } from './hooks/useNotifiersToolbarActions';
-import { useNotifiersRowActions } from './hooks/useNotifiersRowActions';
-import { useOptions } from '../../../common/crud/useOptions';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useNotificationsWatch } from './hooks/useNotificationsWatch';
-import { useEffect } from 'react';
+import { useNotifiersColumns } from './hooks/useNotifiersColumns';
+import { useNotifiersFilters } from './hooks/useNotifiersFilters';
+import { useNotifiersRowActions } from './hooks/useNotifiersRowActions';
+import { useNotifiersToolbarActions } from './hooks/useNotifiersToolbarActions';
 
 export function Notifiers() {
   const { t } = useTranslation();
@@ -28,7 +31,7 @@ export function Notifiers() {
     tableColumns,
   });
   const config = useAwxConfig();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const toolbarActions = useNotifiersToolbarActions(view.unselectItemsAndRefresh);
 
@@ -73,24 +76,29 @@ export function Notifiers() {
         toolbarActions={toolbarActions}
         rowActions={rowActions}
         errorStateTitle={t('Error loading notifiers')}
-        emptyStateTitle={
-          canAddNotificationTemplate
-            ? t('No notifiers found.')
-            : t('You do not have permission to create notifiers.')
-        }
-        emptyStateDescription={
-          canAddNotificationTemplate
-            ? t('Please create notifiers to populate this list.')
-            : t(
+        emptyState={
+          canAddNotificationTemplate ? (
+            <PageTableEmptyState
+              title={t('No notifiers found.')}
+              description={t('Please create notifiers to populate this list.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.AddNotificationTemplate)}
+              >
+                {t('Create notifier')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create notifiers.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canAddNotificationTemplate ? t('Create notifier') : undefined}
-        emptyStateButtonClick={
-          canAddNotificationTemplate
-            ? () => pageNavigate(AwxRoute.AddNotificationTemplate)
-            : undefined
+              )}
+            />
+          )
         }
         {...view}
       />

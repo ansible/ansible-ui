@@ -326,7 +326,7 @@ describe('projects.cy.ts', () => {
       cy.mount(<Projects />);
       cy.contains(/^There are currently no projects added to your organization.$/);
       cy.contains(/^Please create a project by using the button below.$/);
-      cy.contains('button', /^Create project$/).should('be.visible');
+      cy.contains(/^Create project$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create projects', () => {
@@ -340,7 +340,7 @@ describe('projects.cy.ts', () => {
       cy.contains(
         /^Please contact your organization administrator if there is an issue with your access.$/
       );
-      cy.contains('button', /^Create project$/).should('not.exist');
+      cy.contains(/^Create project$/).should('not.exist');
     });
   });
 });

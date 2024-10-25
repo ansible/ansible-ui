@@ -117,6 +117,6 @@ describe('Empty list with POST permission', () => {
     cy.mount(<Projects />);
     cy.contains(/^There are currently no projects created for your organization.$/);
     cy.contains(/^Please create a project by using the button below.$/);
-    cy.contains('button', /^Create project$/).should('be.visible');
+    cy.contains(/^Create project$/).should('be.visible');
   });
 });

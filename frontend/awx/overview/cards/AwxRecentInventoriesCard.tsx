@@ -1,12 +1,10 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  useDashboardColumns,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
@@ -17,7 +15,6 @@ import { useInventoriesColumns } from '../../resources/inventories/hooks/useInve
 
 export function AwxRecentInventoriesCard() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
 
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
@@ -48,20 +45,29 @@ export function AwxRecentInventoriesCard() {
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading inventories')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no inventories')}
-        emptyStateDescription={
-          canCreateInventory
-            ? t('Create a inventory by clicking the button below..')
-            : t(
+        emptyState={
+          canCreateInventory ? (
+            <PageTableEmptyState
+              title={t('There are currently no inventories')}
+              description={t('Create a inventory by clicking the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUrl(AwxRoute.CreateInventory)}
+              >
+                {t('Create inventory')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={PlusCircleIcon}
+              title={t('You do not have permission to create an inventory')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateButtonText={canCreateInventory ? t('Create inventory') : undefined}
-        emptyStateButtonClick={
-          canCreateInventory ? () => pageNavigate(AwxRoute.CreateInventory) : undefined
+              )}
+            />
+          )
         }
         {...view}
         compact

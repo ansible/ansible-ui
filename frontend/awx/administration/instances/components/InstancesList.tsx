@@ -1,16 +1,19 @@
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, ITableColumn, PageTable, usePageNavigate } from '../../../../../framework';
+import { IPageAction, ITableColumn, PageTable, useGetPageUrl } from '../../../../../framework';
+import { ButtonLink } from '../../../../../framework/components/ButtonLink';
+import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
+import { useOptions } from '../../../../common/crud/useOptions';
 import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { IAwxView, useAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
-import { useInstancesFilters } from '../hooks/useInstancesFilter';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useAssociateInstanceToIG } from '../../instance-groups/InstanceGroupPage/hooks/useAssociateInstanceToIG';
 import { useAssociateInstanceModal } from '../../instance-groups/InstanceGroupPage/hooks/useAssociateInstanceModal';
+import { useAssociateInstanceToIG } from '../../instance-groups/InstanceGroupPage/hooks/useAssociateInstanceToIG';
+import { useInstancesFilters } from '../hooks/useInstancesFilter';
 
 export function InstancesList(props: {
   useToolbarActions: (view: IAwxView<Instance>) => IPageAction<Instance>[];
@@ -20,7 +23,7 @@ export function InstancesList(props: {
 }) {
   const toolbarFilters = useInstancesFilters();
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
 
   const { useToolbarActions, useRowActions, tableColumns, instanceGroupId } = props;
 
@@ -48,6 +51,21 @@ export function InstancesList(props: {
   );
   const openAssociateInstanceModal = useAssociateInstanceModal();
 
+  let emptyStateTitle = '';
+  let emptyStateDescription = '';
+
+  if (canCreateInstance) {
+    emptyStateTitle = t('There are currently no instances added');
+    emptyStateDescription = instanceGroupId
+      ? t('Please associate an instance by using the button below.')
+      : t('Please create an instance by using the button below.');
+  } else {
+    emptyStateTitle = t('You do not have permission to create an instance.');
+    emptyStateDescription = t(
+      'Please contact your organization administrator if there is an issue with your access.'
+    );
+  }
+
   return (
     <PageTable<Instance>
       id="awx-instances-table"
@@ -56,38 +74,39 @@ export function InstancesList(props: {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading instances')}
-      emptyStateTitle={
-        canCreateInstance
-          ? t('There are currently no instances added')
-          : t('You do not have permission to create an instance.')
-      }
-      emptyStateDescription={
-        canCreateInstance
-          ? instanceGroupId
-            ? t('Please associate an instance by using the button below.')
-            : t('Please create an instance by using the button below.')
-          : t(
-              'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={
-        canCreateInstance
-          ? instanceGroupId
-            ? t('Associate instance')
-            : t('Create instance')
-          : undefined
-      }
-      emptyStateButtonClick={
-        canCreateInstance
-          ? instanceGroupId
-            ? () =>
-                openAssociateInstanceModal({
-                  onAssociate: associateInstance,
-                  instanceGroupId: instanceGroupId,
-                })
-            : () => pageNavigate(AwxRoute.AddInstance)
-          : undefined
+      emptyState={
+        canCreateInstance ? (
+          <PageTableEmptyState
+            title={emptyStateTitle}
+            description={emptyStateDescription}
+            icon={instanceGroupId ? undefined : PlusCircleIcon}
+          >
+            {canCreateInstance && instanceGroupId ? (
+              <Button
+                variant={ButtonVariant.primary}
+                icon={<PlusCircleIcon />}
+                onClick={() =>
+                  openAssociateInstanceModal({
+                    onAssociate: associateInstance,
+                    instanceGroupId: instanceGroupId,
+                  })
+                }
+              >
+                {t('Associate instance')}
+              </Button>
+            ) : (
+              <ButtonLink
+                variant={ButtonVariant.primary}
+                icon={<PlusCircleIcon />}
+                href={getPageUrl(AwxRoute.AddInstance)}
+              >
+                {t('Create instance')}
+              </ButtonLink>
+            )}
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState title={emptyStateTitle} description={emptyStateDescription} />
+        )
       }
       {...view}
     />

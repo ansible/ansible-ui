@@ -1,5 +1,9 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { hubAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
@@ -9,8 +13,6 @@ import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Icon } from '@patternfly/react-core';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
@@ -22,7 +24,7 @@ export function RemoteRegistries() {
     toolbarFilters,
     tableColumns,
   });
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarActions = useRemoteRegistriesToolbarActions(view);
   const rowActions = useRemoteRegistryActions({
     onRemoteRegistryDeleted: view.unselectItemsAndRefresh,
@@ -43,16 +45,22 @@ export function RemoteRegistries() {
       <PageTable<RemoteRegistry>
         id="hub-remote-registries-table"
         defaultSubtitle={t('Remote Registry')}
-        emptyStateButtonClick={() => {
-          pageNavigate(HubRoute.CreateRemoteRegistry);
-        }}
-        emptyStateButtonText={t('Create remote registry')}
-        emptyStateButtonIcon={
-          <Icon>
-            <PlusCircleIcon />
-          </Icon>
+        emptyState={
+          <PageTableEmptyState
+            title={t('No remote registries yet')}
+            description={t(
+              'You can create a remote registry to provide a central location for users to search, retrieve, and install Ansible roles and collections.'
+            )}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(HubRoute.CreateRemoteRegistry)}
+            >
+              {t('Create remote registry')}
+            </ButtonLink>
+          </PageTableEmptyState>
         }
-        emptyStateTitle={t('No remote registries yet')}
         errorStateTitle={t('Error loading remote registries')}
         rowActions={rowActions}
         tableColumns={tableColumns}

@@ -1,12 +1,10 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  useDashboardColumns,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
@@ -21,7 +19,6 @@ export function EdaRulebookActivationsCard() {
   });
 
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   let columns = useRulebookActivationColumns();
   columns = useDashboardColumns(columns);
@@ -42,13 +39,20 @@ export function EdaRulebookActivationsCard() {
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading activations')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no rulebook activations')}
-        emptyStateDescription={t('Create a rulebook activation by clicking the button below.')}
-        emptyStateButtonText={t('Create rulebook activation')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateRulebookActivation)}
+        emptyState={
+          <PageTableEmptyState
+            title={t('There are currently no rulebook activations')}
+            description={t('Create a rulebook activation by clicking the button below.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(EdaRoute.CreateRulebookActivation)}
+            >
+              {t('Create rulebook activation')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

@@ -106,8 +106,9 @@ describe('Organizations list', () => {
         },
       }));
       cy.mount(<PlatformOrganizationList />);
+      cy.contains(/^No organizations found$/);
       cy.contains(/^There are currently no organizations added.$/);
-      cy.contains(/^Please create an organization by using the button below.$/);
+      cy.contains(/^Create organization$/).should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({

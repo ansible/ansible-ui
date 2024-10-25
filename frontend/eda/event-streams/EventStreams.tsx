@@ -1,20 +1,22 @@
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../framework';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
+import { useOptions } from '../../common/crud/useOptions';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaEventStream } from '../interfaces/EdaEventStream';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { EdaRoute } from '../main/EdaRoutes';
 import { useEventStreamActions } from './hooks/useEventStreamActions';
 import { useEventStreamColumns } from './hooks/useEventStreamColumns';
 import { useEventStreamFilters } from './hooks/useEventStreamFilters';
 import { useEventStreamsActions } from './hooks/useEventStreamsActions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useOptions } from '../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function EventStreams() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const toolbarFilters = useEventStreamFilters();
   const tableColumns = useEventStreamColumns();
   const view = useEdaView<EdaEventStream>({
@@ -42,23 +44,29 @@ export function EventStreams() {
         toolbarFilters={toolbarFilters}
         rowActions={rowActions}
         errorStateTitle={t('Error loading event streams')}
-        emptyStateTitle={
-          canCreateEventStream
-            ? t('There are currently no event streams created for your organization.')
-            : t('You do not have permission to create an event stream.')
-        }
-        emptyStateDescription={
-          canCreateEventStream
-            ? t('Please create an event stream by using the button below.')
-            : t(
+        emptyState={
+          canCreateEventStream ? (
+            <PageTableEmptyState
+              title={t('There are currently no event streams created for your organization.')}
+              description={t('Please create an event stream by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant="primary"
+                href={getPageUrl(EdaRoute.CreateEventStream)}
+              >
+                {t('Create event stream')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create an event stream')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateEventStream ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateEventStream ? t('Create event stream') : undefined}
-        emptyStateButtonClick={
-          canCreateEventStream ? () => pageNavigate(EdaRoute.CreateEventStream) : undefined
+              )}
+            />
+          )
         }
         {...view}
         defaultSubtitle={t('Event stream')}

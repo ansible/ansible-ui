@@ -8,20 +8,21 @@ import {
   PageActionType,
   PageTable,
   useGetPageUrl,
-  usePageNavigate,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { useOptions } from '../../../common/crud/useOptions';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useDeleteTemplates } from './hooks/useDeleteTemplates';
 import { useTemplateActions } from './hooks/useTemplateActions';
 import { useTemplateColumns } from './hooks/useTemplateColumns';
 import { useTemplateFilters } from './hooks/useTemplateFilters';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { awxAPI } from '../../common/api/awx-utils';
 
 export function TemplatesList(props: {
   url?: string;
@@ -31,7 +32,6 @@ export function TemplatesList(props: {
   executionEnvironmentId?: string;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters({
     url: props.url,
@@ -149,6 +149,8 @@ export function TemplatesList(props: {
     onTemplateCopied: view.refresh,
   });
 
+  const canCreateJobs = canCreateJobTemplate || canCreateWFJobTemplate;
+
   return (
     <PageTable<JobTemplate | WorkflowJobTemplate>
       id="awx-job-templates-table"
@@ -157,24 +159,28 @@ export function TemplatesList(props: {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading templates')}
-      emptyStateTitle={
-        canCreateJobTemplate || canCreateWFJobTemplate
-          ? t('No templates yet')
-          : t('You do not have permission to create a template')
-      }
-      emptyStateDescription={
-        canCreateJobTemplate || canCreateWFJobTemplate
-          ? t('Please create a template by using the button below.')
-          : t(
+      emptyState={
+        canCreateJobs ? (
+          <PageTableEmptyState
+            title={t('No templates yet')}
+            description={t('Please create a template by using the button below.')}
+          >
+            <ButtonLink
+              href={getPageUrl(AwxRoute.CreateJobTemplate)}
+              variant={ButtonVariant.primary}
+              icon={<PlusCircleIcon />}
+            >
+              {t('Create template')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        ) : (
+          <PageTableEmptyState
+            title={t('You do not have permission to create a template')}
+            description={t(
               'Please contact your organization administrator if there is an issue with your access.'
-            )
-      }
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={
-        canCreateJobTemplate || canCreateWFJobTemplate ? t('Create template') : undefined
-      }
-      emptyStateButtonClick={
-        canCreateJobTemplate ? () => pageNavigate(AwxRoute.CreateJobTemplate) : undefined
+            )}
+          />
+        )
       }
       {...view}
       defaultSubtitle={t('Template')}

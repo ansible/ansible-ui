@@ -357,7 +357,7 @@ describe('Credentials', () => {
       cy.filterTableByMultiSelect('name', [machineCredential.name]);
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('Job Templates', true);
-      cy.getByDataCy('create-template').click();
+      cy.clickLink(/^Create template$/);
       cy.verifyPageTitle('Create job template');
       cy.getByDataCy('name').type(jobTemplateName);
       cy.getBy('[data-cy="inventory-form-group"]').click();

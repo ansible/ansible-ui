@@ -1,12 +1,10 @@
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import {
-  PageTable,
-  useDashboardColumns,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../framework';
+import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { useDecisionEnvironmentColumns } from '../../decision-environments/hooks/useDecisionEnvironmentColumns';
@@ -20,7 +18,6 @@ export function EdaDecisionEnvironmentsCard() {
     disableQueryString: true,
   });
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   let columns = useDecisionEnvironmentColumns();
   columns = useDashboardColumns(columns);
@@ -41,13 +38,20 @@ export function EdaDecisionEnvironmentsCard() {
         tableColumns={columns}
         autoHidePagination={true}
         errorStateTitle={t('Error loading decision environments')}
-        emptyStateIcon={PlusCircleIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateVariant={'light'}
-        emptyStateTitle={t('There are currently no decision environments')}
-        emptyStateDescription={t('Create a decision environment by clicking the button below.')}
-        emptyStateButtonText={t('Create decision environment')}
-        emptyStateButtonClick={() => pageNavigate(EdaRoute.CreateDecisionEnvironment)}
+        emptyState={
+          <PageTableEmptyState
+            title={t('There are currently no decision environments')}
+            description={t('Create a decision environment by clicking the button below.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(EdaRoute.CreateDecisionEnvironment)}
+            >
+              {t('Create decision environment')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         {...view}
         compact
         itemCount={view.itemCount !== undefined ? Math.min(view.itemCount, 7) : undefined}

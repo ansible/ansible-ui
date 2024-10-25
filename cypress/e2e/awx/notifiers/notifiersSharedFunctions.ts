@@ -12,7 +12,7 @@ export function testNotification(
   const orgName = randomE2Ename();
   cy.createAwxOrganization({ name: orgName }).then(() => {
     cy.navigateTo('awx', 'notification-templates');
-    cy.getByDataCy('create-notifier').click();
+    cy.clickLink('Create notifier');
     cy.verifyPageTitle('Create notifier');
 
     selectOrganization(orgName);

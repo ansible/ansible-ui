@@ -1,21 +1,24 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, usePageNavigate } from '../../../framework';
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../framework';
+import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
 import { PageTableViewTypeE } from '../../../framework/PageToolbar/PageTableViewType';
+import { ButtonLink } from '../../../framework/components/ButtonLink';
+import { useOptions } from '../../common/crud/useOptions';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { EdaRoute } from '../main/EdaRoutes';
 import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentActions';
 import { useDecisionEnvironmentsColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useOptions } from '../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUr = useGetPageUrl();
   const toolbarFilters = useDecisionEnvironmentFilters();
   const tableColumns = useDecisionEnvironmentsColumns();
   const view = useEdaView<EdaDecisionEnvironment>({
@@ -43,23 +46,31 @@ export function DecisionEnvironments() {
         defaultTableView={PageTableViewTypeE.Cards}
         rowActions={rowActions}
         errorStateTitle={t('Error loading decision environments')}
-        emptyStateTitle={
-          canCreateDE
-            ? t('There are currently no decision environments created for your organization.')
-            : t('You do not have permission to create a decision environment.')
-        }
-        emptyStateDescription={
-          canCreateDE
-            ? t('Please create a decision environment by using the button below.')
-            : t(
+        emptyState={
+          canCreateDE ? (
+            <PageTableEmptyState
+              title={t(
+                'There are currently no decision environments created for your organization.'
+              )}
+              description={t('Please create a decision environment by using the button below.')}
+            >
+              <ButtonLink
+                icon={<PlusCircleIcon />}
+                variant={ButtonVariant.primary}
+                href={getPageUr(EdaRoute.CreateDecisionEnvironment)}
+              >
+                {t('Create decision environment')}
+              </ButtonLink>
+            </PageTableEmptyState>
+          ) : (
+            <PageTableEmptyState
+              icon={CubesIcon}
+              title={t('You do not have permission to create a decision environment.')}
+              description={t(
                 'Please contact your organization administrator if there is an issue with your access.'
-              )
-        }
-        emptyStateIcon={canCreateDE ? undefined : CubesIcon}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={canCreateDE ? t('Create decision environment') : undefined}
-        emptyStateButtonClick={
-          canCreateDE ? () => pageNavigate(EdaRoute.CreateDecisionEnvironment) : undefined
+              )}
+            />
+          )
         }
         {...view}
         defaultSubtitle={t('Decision Environment')}

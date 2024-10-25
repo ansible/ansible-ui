@@ -244,7 +244,7 @@ export function getContainerPulpType(item: ExecutionEnvironment) {
   }
 }
 
-function useEEPush() {
+export function useEEPush() {
   const [_, setDialog] = usePageDialog();
   const onClose = useCallback(() => setDialog(undefined), [setDialog]);
 

@@ -214,6 +214,6 @@ describe('Empty list with POST permission', () => {
     cy.mount(<DecisionEnvironments />);
     cy.contains(/^There are currently no decision environments created for your organization.$/);
     cy.contains(/^Please create a decision environment by using the button below.$/);
-    cy.contains('button', /^Create decision environment$/).should('be.visible');
+    cy.contains(/^Create decision environment$/).should('be.visible');
   });
 });

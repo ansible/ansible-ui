@@ -210,7 +210,7 @@ describe('schedules .cy.ts', () => {
       cy.mount(<Schedules />);
       cy.contains(/^No schedules yet$/);
       cy.contains(/^Please create a schedule by using the button below.$/);
-      cy.contains('button', /^Create schedule$/).should('be.visible');
+      cy.contains(/^Create schedule$/).should('be.visible');
     });
 
     it('Empty state is displayed correctly for user without permission to create schedules ', () => {

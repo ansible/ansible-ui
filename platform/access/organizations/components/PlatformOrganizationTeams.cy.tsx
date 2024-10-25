@@ -83,8 +83,9 @@ describe('Organization teams list', () => {
         path: '/access/organizations/:id/*',
         initialEntries: ['/access/organizations/1/teams'],
       });
+      cy.contains('No teams found');
       cy.contains(/^There are currently no teams created in this organization.$/);
-      cy.contains(/^Create a team by clicking the button below.$/);
+      cy.contains('Create team').should('be.visible');
     });
     it('Empty state is displayed correctly for user without permission to create teams', () => {
       cy.stub(useOptions, 'useOptions').callsFake(() => ({

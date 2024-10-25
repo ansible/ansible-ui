@@ -13,6 +13,8 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
 import { usePersistentFilters } from '../../../common/PersistentFilters';
 import {
   useCreatedColumn,
@@ -40,7 +42,6 @@ import { useDeleteOrganizations } from './hooks/useDeleteOrganizations';
 export function Organizations() {
   const { t } = useTranslation();
   const product: string = process.env.PRODUCT ?? t('AWX');
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   usePersistentFilters('organizations');
   const config = useAwxConfig();
@@ -175,11 +176,20 @@ export function Organizations() {
         tableColumns={tableColumns}
         rowActions={rowActions}
         errorStateTitle={t('Error loading organizations')}
-        emptyStateTitle={t('No organizations yet')}
-        emptyStateDescription={t('To get started, create an organization.')}
-        emptyStateButtonIcon={<PlusCircleIcon />}
-        emptyStateButtonText={t('Create organization')}
-        emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateOrganization)}
+        emptyState={
+          <PageTableEmptyState
+            title={t('No organizations yet')}
+            description={t('To get started, create an organization.')}
+          >
+            <ButtonLink
+              icon={<PlusCircleIcon />}
+              variant={ButtonVariant.primary}
+              href={getPageUrl(AwxRoute.CreateOrganization)}
+            >
+              {t('Create organization')}
+            </ButtonLink>
+          </PageTableEmptyState>
+        }
         {...view}
         defaultSubtitle={t('Organization')}
       />

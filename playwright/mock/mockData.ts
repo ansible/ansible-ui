@@ -133,7 +133,7 @@ export const mockData: IApiData = {
         unified_jobs: [],
         'execution-environments': [],
         instance_groups: [],
-        hosts: [],
+        hosts: [{ id: 1, name: 'localhost' }],
         labels: [],
         unified_job_templates: [],
         dashboard: {

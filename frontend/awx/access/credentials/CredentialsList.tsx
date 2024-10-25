@@ -1,5 +1,10 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageTable, usePageNavigate } from '../../../../framework';
+import { PageTable, useGetPageUrl } from '../../../../framework';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useAwxView } from '../../common/useAwxView';
 import { Credential } from '../../interfaces/Credential';
 import { AwxRoute } from '../../main/AwxRoutes';
@@ -7,12 +12,10 @@ import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialToolbarActions } from './hooks/useCredentialToolbarActions';
 import { useCredentialsColumns } from './hooks/useCredentialsColumns';
 import { useCredentialsFilters } from './hooks/useCredentialsFilters';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 
 export function CredentialsList(props: { url: string }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const tableColumns = useCredentialsColumns();
 
   usePersistentFilters('credentials');
@@ -37,11 +40,20 @@ export function CredentialsList(props: { url: string }) {
       tableColumns={tableColumns}
       rowActions={rowActions}
       errorStateTitle={t('Error loading credentials')}
-      emptyStateTitle={t('No credentials yet')}
-      emptyStateDescription={t('To get started, create an credential.')}
-      emptyStateButtonIcon={<PlusCircleIcon />}
-      emptyStateButtonText={t('Create credential')}
-      emptyStateButtonClick={() => pageNavigate(AwxRoute.CreateCredential)}
+      emptyState={
+        <PageTableEmptyState
+          title={t('No credentials yet')}
+          description={t('To get started, create an credential.')}
+        >
+          <ButtonLink
+            icon={<PlusCircleIcon />}
+            variant={ButtonVariant.primary}
+            href={getPageUrl(AwxRoute.CreateCredential)}
+          >
+            {t('Create credential')}
+          </ButtonLink>
+        </PageTableEmptyState>
+      }
       {...view}
       defaultSubtitle={t('Credential')}
     />
