@@ -43,6 +43,32 @@ End-to-End tests for our project are located in the `cypress/e2e` directory. The
    - This includes data creation, user logins, and any other setup or teardown tasks.
    - Leveraging the `before` and `after` hooks in Cypress can help manage resource creation and cleanup.
 
+4. **Deployments**:
+
+   - SaaS Deployment (GA in Nov 2024) does not include EDA components/features. If new EDA tests are written, a conditional needs to be added to the spec file to check and see whether the deployment is OCP-B (SaaS). The following lines of code need to be implemented:
+
+```javascript
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
+
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet <
+      Settings >
+      awxAPI`/settings/system/`.then((data) => {
+        const saasBaseUrl = data.TOWER_URL_BASE;
+        const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+        if (parseSaas === SAAS_URL) {
+          this.skip();
+        } else {
+          cy.log('Run these tests');
+        }
+      });
+  });
+});
+```
+
 ### Test Implementation
 
 1. **Element Selection**:

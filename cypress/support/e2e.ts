@@ -28,6 +28,8 @@ export const galaxykitUsername: string = `e2e_${randomString(4)}`;
 export const galaxykitPassword: string = randomString(9);
 export let galaxyE2EUserID: string = '';
 
+export const SAAS_URL: string = 'aws.ansiblecloud.com';
+
 function hubCleanup() {
   const oneHourAgo = new Date();
   oneHourAgo.setHours(oneHourAgo.getHours() - 1);

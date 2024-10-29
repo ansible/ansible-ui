@@ -3,9 +3,23 @@ import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaEventStream } from '../../../../frontend/eda/interfaces/EdaEventStream';
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { cyLabel } from '../../../support/cyLabel';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
-cyLabel(['aaas-unsupported'], function () {
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
+
   describe('Event Streams List', () => {
     let EdaEventStream1: EdaEventStream;
     let EdaEventStream2: EdaEventStream;

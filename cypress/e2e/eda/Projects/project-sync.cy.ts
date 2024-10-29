@@ -1,16 +1,33 @@
-import { cyLabel } from '../../../support/cyLabel';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-let edaOrg: EdaOrganization;
-before(() => {
-  cy.createEdaOrganization().then((organization) => {
-    edaOrg = organization;
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
+
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
   });
-});
-after(() => {
-  cy.deleteEdaOrganization(edaOrg);
-});
-cyLabel(['aaas-unsupported'], function () {
+
   describe('EDA Projects Syncing', () => {
+    let edaOrg: EdaOrganization;
+    before(() => {
+      cy.createEdaOrganization().then((organization) => {
+        edaOrg = organization;
+      });
+    });
+
+    after(() => {
+      cy.deleteEdaOrganization(edaOrg);
+    });
+
     it('can sync a single project', () => {
       cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.navigateTo('eda', 'projects');
