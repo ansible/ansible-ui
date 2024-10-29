@@ -5,7 +5,10 @@ import { Credential } from '../../../interfaces/Credential';
 import { requestGet } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 
-export function useCredentialsValidate(allowDuplicateCredentialTypes = false) {
+export function useCredentialsValidate(
+  allowDuplicateCredentialTypes = false,
+  preventCredentialsThatNeedPasswordsOnLaunch?: boolean
+) {
   const { t } = useTranslation();
   return useCallback(
     async (selectedCredentials: PromptFormValues['credentials']) => {
@@ -29,6 +32,9 @@ export function useCredentialsValidate(allowDuplicateCredentialTypes = false) {
         .filter((credential) => credential.kind !== 'vault')
         .map((nonVaultCred) => nonVaultCred.summary_fields.credential_type.name);
 
+      const credentialsThatRequirePasswords: Credential[] = allCredentials.filter((credential) =>
+        Object.values(credential.inputs).some((input) => input === 'ASK')
+      );
       const hasDuplicateVaultIds: boolean =
         vaultIds.filter(
           (vaultId, _index, array) => array.indexOf(vaultId) !== array.lastIndexOf(vaultId)
@@ -40,7 +46,14 @@ export function useCredentialsValidate(allowDuplicateCredentialTypes = false) {
           )
         ),
       ];
-
+      if (
+        credentialsThatRequirePasswords.length > 0 &&
+        preventCredentialsThatNeedPasswordsOnLaunch
+      ) {
+        return t(
+          `Cannot assign the following credentials that require a password: ${credentialsThatRequirePasswords.map((c) => c.name).join(' ')}`
+        );
+      }
       if (duplicateCredentialTypes.length > 0 && !allowDuplicateCredentialTypes) {
         return t(
           `Cannot assign multiple credentials of the same type. Duplicated credential types are: ${duplicateCredentialTypes.join(', ')}`
@@ -50,6 +63,6 @@ export function useCredentialsValidate(allowDuplicateCredentialTypes = false) {
         return t(`Cannot assign multiple vault credentials of the same vault id.`);
       }
     },
-    [t, allowDuplicateCredentialTypes]
+    [t, allowDuplicateCredentialTypes, preventCredentialsThatNeedPasswordsOnLaunch]
   );
 }

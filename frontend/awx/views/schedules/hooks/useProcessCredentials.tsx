@@ -6,6 +6,8 @@ import { getAddedAndRemoved } from '../../../common/util/getAddedAndRemoved';
 import { Credential } from '../../../interfaces/Credential';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { requestGet } from '../../../../common/crud/Data';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export const useProcessCredentials = () => {
   const abortController = useAbortController();
@@ -18,37 +20,36 @@ export const useProcessCredentials = () => {
       credentials: PromptFormValues['credentials'],
       launch_config: LaunchConfiguration | null
     ) => {
-      const promptCredentials = credentials || [];
-      const templateCredentials = launch_config?.defaults.credentials || [];
+      const existingCredentials = await requestGet<AwxItemsResponse<Credential>>(
+        awxAPI`/schedules/${scheduleId.toString()}/credentials/`
+      );
+      const { added, removed } = getAddedAndRemoved(
+        [...(launch_config?.defaults.credentials || []), ...(existingCredentials.results || [])],
+        credentials || []
+      );
 
-      if (promptCredentials) {
-        const { added, removed } = getAddedAndRemoved(
-          promptCredentials.length ? promptCredentials : ([] as { id: number }[]),
-          templateCredentials
-        );
-        const disassociationPromises = removed.map((credential: { id: number }) =>
-          postDisassociate(
-            awxAPI`/schedules/${scheduleId.toString()}/credentials/`,
-            {
-              id: credential.id,
-              disassociate: true,
-            },
-            abortController.signal
-          )
-        );
+      const disassociationPromises = removed.map((credential: { id: number }) =>
+        postDisassociate(
+          awxAPI`/schedules/${scheduleId.toString()}/credentials/`,
+          {
+            id: credential.id,
+            disassociate: true,
+          },
+          abortController.signal
+        )
+      );
 
-        const associationPromises = added.map((credential) =>
-          postAssociateCredential(
-            awxAPI`/schedules/${scheduleId.toString()}/credentials/`,
-            {
-              id: credential.id,
-            },
-            abortController.signal
-          )
-        );
+      const associationPromises = added.map((credential) =>
+        postAssociateCredential(
+          awxAPI`/schedules/${scheduleId.toString()}/credentials/`,
+          {
+            id: credential.id,
+          },
+          abortController.signal
+        )
+      );
 
-        await Promise.all([...disassociationPromises, ...associationPromises]);
-      }
+      await Promise.all([...disassociationPromises, ...associationPromises]);
     },
     [postDisassociate, postAssociateCredential, abortController]
   );

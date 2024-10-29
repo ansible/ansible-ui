@@ -26,7 +26,11 @@ type NodePromptStepData = {
   launch_config: LaunchConfiguration;
 };
 
-export function NodePromptsStep() {
+export function NodePromptsStep({
+  preventCredentialsThatNeedPasswordsOnLaunch = false,
+}: {
+  readonly preventCredentialsThatNeedPasswordsOnLaunch?: boolean;
+}) {
   const { t } = useTranslation();
 
   const config = useWatch<NodePromptStepData, 'launch_config'>({ name: 'launch_config' });
@@ -47,6 +51,7 @@ export function NodePromptsStep() {
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_credential_on_launch}>
         <PageFormCredentialSelect<WizardFormValues>
+          preventCredentialsThatNeedPasswordsOnLaunch={preventCredentialsThatNeedPasswordsOnLaunch}
           name="prompt.credentials"
           label={t('Credentials')}
           placeholder={t('Select credentials')}

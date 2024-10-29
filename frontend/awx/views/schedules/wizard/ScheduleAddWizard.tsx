@@ -1,35 +1,18 @@
 import { DateTime } from 'luxon';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  PageHeader,
-  PageLayout,
-  PageWizard,
-  PageWizardStep,
-  usePageNavigate,
-} from '../../../../../framework';
+import { PageHeader, PageLayout, PageWizard, usePageNavigate } from '../../../../../framework';
 import { useGetPageUrl } from '../../../../../framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
-import { postRequest } from '../../../../common/crud/Data';
 import { RequestError } from '../../../../common/crud/RequestError';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { SurveyStep } from '../../../common/SurveyStep';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
-import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { NodePromptsStep as SchedulePromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
 import { useProcessSchedule } from '../hooks/useProcessSchedules';
-import { useSetRRuleItemToRuleSet } from '../hooks/useSetRRuleItemToRuleSet';
-import { RuleFields, ScheduleFormWizard, schedulePageUrl } from '../types';
+import { ScheduleFormWizard, schedulePageUrl } from '../types';
 import { RULES_DEFAULT_VALUES } from './constants';
-import { ExceptionsStep } from './ExceptionsStep';
-import { RulesStep } from './RulesStep';
-import { ScheduleReviewStep } from './ScheduleReviewStep';
-import { ScheduleSelectStep } from './ScheduleSelectStep';
+import { useScheduleSteps } from '../hooks/useScheduleSteps';
 
 export type StandardizedFormData = Omit<ScheduleFormWizard, 'rules' | 'exceptions'> & {
   rrule: string;
@@ -53,8 +36,7 @@ export function ScheduleAddWizard(props: {
   const navigate = useNavigate();
   const processSchedules = useProcessSchedule();
   const getScheduleUrl = useGetScheduleUrl();
-  const getRuleSet = useSetRRuleItemToRuleSet();
-
+  const steps = useScheduleSteps();
   const now = DateTime.now();
   const closestQuarterHour: DateTime = DateTime.fromMillis(
     Math.ceil(now.toMillis() / 900000) * 900000
@@ -62,19 +44,12 @@ export function ScheduleAddWizard(props: {
 
   const [currentDate, time]: string[] = dateToInputDateTime(closestQuarterHour.toISO() as string);
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
-    const { rules, exceptions, ...rest } = formValues;
-    const ruleset = getRuleSet(rules, exceptions);
-
-    const data: StandardizedFormData = {
-      rrule: ruleset.toString().split('\n').join(' '),
-      ...rest,
-    };
     try {
       const {
         schedule,
       }: {
         schedule: Schedule;
-      } = await processSchedules(data);
+      } = await processSchedules(formValues);
 
       const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
       pageNavigate(pageUrl.pageId, { params: pageUrl.params });
@@ -92,99 +67,6 @@ export function ScheduleAddWizard(props: {
 
   const onCancel = () => navigate(location.pathname.replace('create', ''));
 
-  const steps: PageWizardStep[] = useMemo(() => {
-    return [
-      {
-        id: 'details',
-        label: t('Details'),
-        inputs: <ScheduleSelectStep {...props} />,
-      },
-      {
-        id: 'promptStep',
-        label: t('Prompts'),
-        inputs: <SchedulePromptsStep />,
-        hidden: (wizardData: Partial<ScheduleFormWizard>) => {
-          const { resource, schedule_type, launch_config } = wizardData;
-          const isTemplate =
-            schedule_type === 'job_template' ||
-            schedule_type === 'workflow_job_template' ||
-            resource?.type === 'job_template' ||
-            resource?.type === 'workflow_job_template';
-          if (isTemplate && resource && launch_config) {
-            return shouldHideOtherStep(launch_config);
-          }
-          return true;
-        },
-      },
-      {
-        id: 'survey',
-        label: t('Survey'),
-        inputs: <SurveyStep />,
-        hidden: (wizardData: Partial<WizardFormValues>) => {
-          if (Object.keys(wizardData).length === 0) {
-            return true;
-          }
-          if (wizardData.launch_config?.survey_enabled) {
-            return false;
-          }
-          return true;
-        },
-      },
-      {
-        id: 'rules',
-        label: t('Rules'),
-        inputs: <RulesStep />,
-        validate: (formData: Partial<RuleFields>) => {
-          if (!formData?.rules?.length) {
-            const errors = {
-              __all__: [t('Schedules must have at least one rule.')],
-            };
-
-            throw new RequestError('', '', 400, '', errors);
-          }
-        },
-      },
-      {
-        id: 'exceptions',
-        label: t('Exceptions'),
-        inputs: <ExceptionsStep />,
-      },
-      {
-        id: 'review',
-        label: t('Review'),
-        inputs: <ScheduleReviewStep />,
-
-        validate: async (_formData: object, wizardData: Partial<ScheduleFormWizard>) => {
-          if (!wizardData?.rules?.length) {
-            const errors = {
-              __all__: [t('Schedules must have at least one rule.')],
-            };
-
-            throw new RequestError('', '', 400, '', errors);
-          }
-
-          const ruleset = getRuleSet(wizardData.rules, wizardData.exceptions ?? []);
-          const { utc, local } = await postRequest<{ utc: string[]; local: string[] }>(
-            awxAPI`/schedules/preview/`,
-            {
-              rrule: ruleset.toString().split('\n').join(' '),
-            }
-          );
-          if (!local.length && !utc.length) {
-            const errors = {
-              __all__: [
-                t(
-                  'This schedule will never run.  If you have defined exceptions it is likely that the exceptions cancel out all the rules defined in the rules step.'
-                ),
-              ],
-            };
-
-            throw new RequestError('', '', 400, '', errors);
-          }
-        },
-      },
-    ];
-  }, [getRuleSet, t, props]);
   const initialValues: { [stepId: string]: Partial<ScheduleFormWizard> } = {
     details: {
       name: '',
@@ -210,7 +92,7 @@ export function ScheduleAddWizard(props: {
         ]}
       />
       <PageWizard<ScheduleFormWizard>
-        steps={steps}
+        steps={steps(props.resourceEndPoint, props.isTopLevelSchedule)}
         singleColumn={false}
         onCancel={onCancel}
         stepDefaults={initialValues}
