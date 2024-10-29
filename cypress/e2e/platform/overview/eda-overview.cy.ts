@@ -1,10 +1,24 @@
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
 import { EdaRuleAudit } from '../../../../frontend/eda/interfaces/EdaRuleAudit';
 import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
-cyLabel(['aaas-unsupported'], () => {
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
+
   describe('Overview - EDA Cards', () => {
     it('verify the titles, subtitles and info icons on cards', () => {
       cy.navigateTo('platform', 'overview');

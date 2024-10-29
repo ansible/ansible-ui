@@ -2,11 +2,25 @@
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '../../../../framework/utils/random-string';
 import { EdaCredentialCreate } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
-cyLabel(['aaas-unsupported'], function () {
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
+
   describe('EDA Credentials Types', () => {
     let edaOrg: EdaOrganization;
 

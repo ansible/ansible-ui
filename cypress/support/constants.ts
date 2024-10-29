@@ -12,6 +12,8 @@ export enum SERVER_NAME {
   GALAXY_SERVER = 'Galaxy Server',
 }
 
+export const SAAS_URL: string = 'aws.ansiblecloud.com';
+
 export interface AccessTabResource {
   name: string;
   roles_tab_name: string;

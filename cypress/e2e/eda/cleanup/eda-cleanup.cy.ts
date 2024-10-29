@@ -1,9 +1,23 @@
 import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
 import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
-import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
-cyLabel(['aaas-unsupported'], function () {
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
+
   function isOldResource(prefix: string, resource: { name?: string; created_at?: string }) {
     if (!resource.name) return false;
     if (!resource.name.startsWith(prefix)) return false;

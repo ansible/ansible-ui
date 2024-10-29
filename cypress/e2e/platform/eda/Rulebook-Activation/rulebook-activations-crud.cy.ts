@@ -9,11 +9,25 @@ import {
   ActivationRead,
   LogLevelEnum,
 } from '../../../../../frontend/eda/interfaces/generated/eda-api';
-import { cyLabel } from '../../../../support/cyLabel';
 import { edaAPI } from '../../../../support/formatApiPathForEDA';
 import { EdaOrganization } from '../../../../../frontend/eda/interfaces/EdaOrganization';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../../support/constants';
 
-cyLabel(['aaas-unsupported'], () => {
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
+
   describe('EDA RBA', () => {
     let edaOrganization: EdaOrganization;
 

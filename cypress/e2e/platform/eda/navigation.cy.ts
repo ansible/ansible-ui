@@ -1,8 +1,21 @@
 //Tests a user's ability to perform certain actions on the Navigation toolbar in the EDA UI.
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
-import { cyLabel } from '../../../support/cyLabel';
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
 
-cyLabel(['aaas-unsupported'], () => {
   describe('EDA Navigation Bar Functionality', () => {
     it('can visit the dashboard page and assert the data there', () => {
       cy.get('[data-cy="platform-overview"]').contains('Overview');

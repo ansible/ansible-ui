@@ -3,10 +3,11 @@ import { NotificationTemplate } from '../../../../frontend/awx/interfaces/Notifi
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { cyLabel } from '../../../support/cyLabel';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../support/utils';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
   const organizationName = `e2e org ${randomE2Ename()}`;
@@ -129,25 +130,37 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
   });
 });
 
-describe('Platform Organizations - Users, Admins, Teams and EE tabs', function () {
-  let organization: PlatformOrganization;
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
 
-  beforeEach(() => {
-    cy.createPlatformOrganization().then((org) => {
-      organization = org;
+  describe('Platform Organizations - Users, Admins, Teams and EE tabs', function () {
+    let organization: PlatformOrganization;
+
+    beforeEach(() => {
+      cy.createPlatformOrganization().then((org) => {
+        organization = org;
+      });
+
+      cy.navigateTo('platform', 'organizations');
+      cy.verifyPageTitle('Organizations');
+      cy.setTableView('table');
     });
 
-    cy.navigateTo('platform', 'organizations');
-    cy.verifyPageTitle('Organizations');
-    cy.setTableView('table');
-  });
+    afterEach(() => {
+      cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
+    });
 
-  afterEach(() => {
-    cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
-  });
-
-  // Organizations Users tab -  add roles to Users
-  cyLabel(['aaas-unsupported'], function () {
+    // Organizations Users tab -  add roles to Users
     it('can add a user and apply the roles to the users of an organization via the users tab', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.createPlatformUser().then((createdUser2) => {
@@ -220,10 +233,8 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
         });
       });
     });
-  });
 
-  //Organizations Users tab - users row item modal check
-  cyLabel(['aaas-unsupported'], function () {
+    //Organizations Users tab - users row item modal check
     it('verifies the modal displayed when no organization roles are added to a user', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
@@ -255,46 +266,44 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
         cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
       });
     });
-  });
 
-  // Organizations Administrators tab
-  it('can add and remove users from an org using the administrators tab', function () {
-    cy.createPlatformUser().then((user) => {
-      // Organization Page
-      cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
-      cy.clickTableRowLink('name', organization.name, { disableFilter: true });
+    // Organizations Administrators tab
+    it('can add and remove users from an org using the administrators tab', function () {
+      cy.createPlatformUser().then((user) => {
+        // Organization Page
+        cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+        cy.clickTableRowLink('name', organization.name, { disableFilter: true });
 
-      // Organization - Administrators Tab
-      cy.clickTab('Administrators', true);
+        // Organization - Administrators Tab
+        cy.clickTab('Administrators', true);
 
-      // Add Administrator
-      cy.getByDataCy('add-administrators').click();
-      cy.contains('h1', 'Add administrators');
-      cy.getModal().within(() => {
-        cy.selectTableRowByCheckbox('username', user.username);
-        cy.getBy('#submit').click();
+        // Add Administrator
+        cy.getByDataCy('add-administrators').click();
+        cy.contains('h1', 'Add administrators');
+        cy.getModal().within(() => {
+          cy.selectTableRowByCheckbox('username', user.username);
+          cy.getBy('#submit').click();
+        });
+        cy.getModal().should('not.exist');
+
+        // Remove Administrator
+        cy.clickTableRowAction('username', user.username, 'remove-administrator', {
+          inKebab: false,
+        });
+        cy.getModal().within(() => {
+          cy.getBy('#confirm').click();
+          cy.getBy('#submit').click();
+          cy.clickButton(/^Close$/);
+        });
+        cy.clickButton(/^Clear all filters$/);
+        cy.getModal().should('not.exist');
+
+        // Clean up
+        cy.deletePlatformUser(user, { failOnStatusCode: false });
       });
-      cy.getModal().should('not.exist');
-
-      // Remove Administrator
-      cy.clickTableRowAction('username', user.username, 'remove-administrator', {
-        inKebab: false,
-      });
-      cy.getModal().within(() => {
-        cy.getBy('#confirm').click();
-        cy.getBy('#submit').click();
-        cy.clickButton(/^Close$/);
-      });
-      cy.clickButton(/^Clear all filters$/);
-      cy.getModal().should('not.exist');
-
-      // Clean up
-      cy.deletePlatformUser(user, { failOnStatusCode: false });
     });
-  });
 
-  //Organizations teams tab - add roles to team
-  cyLabel(['aaas-unsupported'], function () {
+    //Organizations teams tab - add roles to team
     it("can add a team and apply and remove the roles from an organization's team via the teams tab", function () {
       cy.createPlatformTeam({ organization: organization.id }).then((team) => {
         const createdPlatformTeam = team.name;
@@ -399,9 +408,7 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
         cy.deletePlatformTeam(team, { failOnStatusCode: false });
       });
     });
-  });
 
-  cyLabel(['aaas-unsupported'], function () {
     //Organizations teams tab - teams row item modal check
     it('verifies the modal displayed when organization roles are not added to the team', function () {
       cy.createPlatformTeam({ organization: organization.id }).then((team) => {
@@ -422,40 +429,40 @@ describe('Platform Organizations - Users, Admins, Teams and EE tabs', function (
         cy.deletePlatformTeam(team, { failOnStatusCode: false });
       });
     });
-  });
 
-  // Create team from teams tab
-  it('can create a team from the teams tab of an organization then delete team from details page', function () {
-    // Organization Page
-    cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
-    cy.clickTableRowLink('name', organization.name, { disableFilter: true });
+    // Create team from teams tab
+    it('can create a team from the teams tab of an organization then delete team from details page', function () {
+      // Organization Page
+      cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', organization.name, { disableFilter: true });
 
-    // Organization - Teams Tab
-    cy.clickTab('Teams', true);
+      // Organization - Teams Tab
+      cy.clickTab('Teams', true);
 
-    // Create Team
-    const teamName = `E2E PlatformTeam ${randomString(4)}`;
-    cy.intercept('POST', gatewayAPI`/teams/`).as('createTeam');
-    cy.clickLink(/^Create team$/);
-    cy.get('[data-cy="name"]').type(teamName);
-    cy.singleSelectByDataCy('organization', organization.name);
-    cy.clickButton(/^Create team$/);
+      // Create Team
+      const teamName = `E2E PlatformTeam ${randomString(4)}`;
+      cy.intercept('POST', gatewayAPI`/teams/`).as('createTeam');
+      cy.clickLink(/^Create team$/);
+      cy.get('[data-cy="name"]').type(teamName);
+      cy.singleSelectByDataCy('organization', organization.name);
+      cy.clickButton(/^Create team$/);
 
-    // Team Details
-    cy.verifyPageTitle(teamName);
-    cy.hasDetail('Organization', organization.name);
+      // Team Details
+      cy.verifyPageTitle(teamName);
+      cy.hasDetail('Organization', organization.name);
 
-    // Delete Team
-    cy.clickPageAction('delete-team');
-    cy.get('#confirm').click();
-    cy.clickButton(/^Delete team/);
+      // Delete Team
+      cy.clickPageAction('delete-team');
+      cy.get('#confirm').click();
+      cy.clickButton(/^Delete team/);
 
-    // Clean up
-    cy.wait('@createTeam')
-      .its('response.body')
-      .then((team: PlatformTeam) => {
-        cy.deletePlatformTeam(team, { failOnStatusCode: false });
-      });
+      // Clean up
+      cy.wait('@createTeam')
+        .its('response.body')
+        .then((team: PlatformTeam) => {
+          cy.deletePlatformTeam(team, { failOnStatusCode: false });
+        });
+    });
   });
 });
 

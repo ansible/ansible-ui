@@ -8,11 +8,25 @@ import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-
 import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
 import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
-import { cyLabel } from '../../../support/cyLabel';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { SAAS_URL } from '../../../support/constants';
 
-cyLabel(['aaas-unsupported'], () => {
+describe('If SaaS Build', () => {
+  before(function () {
+    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+      const saasBaseUrl = data.TOWER_URL_BASE;
+      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
+      if (parseSaas === SAAS_URL) {
+        this.skip();
+      } else {
+        cy.log('Run these tests');
+      }
+    });
+  });
+
   describe('Users: RBAC', () => {
     let edaProject: EdaProject;
     let edaRuleBook: EdaRulebook;
