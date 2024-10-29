@@ -47,7 +47,7 @@ export interface RuleFields {
 export interface ScheduleFormWizard {
   resourceInventory?: number;
   name: string;
-  description?: string | null;
+  description?: string;
   schedule_type: string;
   resource: ScheduleResources;
   startDateTime: { date: string; time: string };
@@ -59,19 +59,6 @@ export interface ScheduleFormWizard {
   schedule_days_to_keep: number;
   survey: { [key: string]: string };
   enabled: boolean;
-}
-
-export type ScheduleResourceType =
-  | 'job-template'
-  | 'workflow-job-template'
-  | 'project_update'
-  | 'inventory_update'
-  | 'system_job';
-
-export interface PreviewSchedule {
-  local?: string[];
-  utc?: string[];
-  rrule: string;
 }
 
 export enum RuleType {
@@ -88,3 +75,41 @@ export interface schedulePageUrl {
     inventory_type?: string;
   };
 }
+
+export type BaseSchedulePayload = {
+  name: string;
+  description?: string;
+  timezone: string;
+  rrule: string;
+  unified_job_template?: number;
+  extra_data?: { [x: string]: string };
+};
+
+export type ScheduleAccessoriesPayload = BaseSchedulePayload & {
+  inventory?: number;
+  scm_branch?: string;
+  job_type?: string;
+  job_tags?: string;
+  skip_tags?: string;
+  limit?: string;
+  diff_mode?: boolean;
+  verbosity?: number;
+  enabled: boolean;
+  execution_environment?: number | null;
+  organization?: number | null;
+  forks?: number;
+  job_slice_count?: number;
+  timeout?: number;
+  credentials?: (
+    | Credential
+    | {
+        id: number;
+        name: string;
+        credential_type: number;
+        passwords_needed?: string[];
+        vault_id?: string;
+      }
+  )[];
+  labels?: { name: string; id: number }[];
+  instance_groups?: { id: number; name: string }[];
+};

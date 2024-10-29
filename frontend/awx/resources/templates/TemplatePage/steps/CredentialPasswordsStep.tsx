@@ -40,8 +40,9 @@ export function CredentialPasswordsStep<T extends LaunchConfiguration | Relaunch
   } else if (credentials) {
     credentials.forEach((credential) => {
       if (!('inputs' in credential) && 'defaults' in config) {
+        const { id } = credential;
         const launchConfigCredential = config.defaults.credentials.find(
-          (defaultCred) => defaultCred.id === credential.id
+          (defaultCred) => defaultCred.id === id
         );
 
         if (launchConfigCredential && launchConfigCredential?.passwords_needed.length > 0) {

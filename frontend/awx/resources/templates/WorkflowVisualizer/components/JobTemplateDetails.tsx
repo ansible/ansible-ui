@@ -239,7 +239,7 @@ export function JobTemplateDetails({
         />
       </PromptDetail>
       <CredentialsDetail
-        credentials={credentials}
+        credentials={credentials || []}
         templateCredentials={templateCredentials?.results ?? []}
       />
       <InstanceGroupsDetail
@@ -353,7 +353,7 @@ function CredentialsDetail({
   credentials = [],
   templateCredentials = [],
 }: {
-  credentials: Credential[] | PromptFormValues['credentials'];
+  credentials: PromptFormValues['credentials'];
   templateCredentials: Credential[];
 }) {
   const { t } = useTranslation();

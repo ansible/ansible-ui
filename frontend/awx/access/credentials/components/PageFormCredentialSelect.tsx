@@ -25,12 +25,16 @@ export function PageFormCredentialSelect<
   placeholder?: string;
   queryParams?: QueryParams;
   allowDuplicateCredentialTypes?: boolean;
+  preventCredentialsThatNeedPasswordsOnLaunch?: boolean;
 }) {
   const { t } = useTranslation();
 
   const credentialColumns = useCredentialsColumns({ disableLinks: true });
   const credentialFilters = useCredentialsFilters();
-  const validateCredentials = useCredentialsValidate(!!props?.allowDuplicateCredentialTypes);
+  const validateCredentials = useCredentialsValidate(
+    !!props?.allowDuplicateCredentialTypes,
+    props?.preventCredentialsThatNeedPasswordsOnLaunch
+  );
 
   return props.isMultiple ? (
     <PageFormMultiSelectAwxResource<Credential>

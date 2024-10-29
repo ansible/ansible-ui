@@ -4,55 +4,34 @@ import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
-import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
-import { StandardizedFormData } from '../wizard/ScheduleAddWizard';
-import { useProcessCredentials } from './useProcessCredentials';
-import { useProcessInstanceGroups } from './useProcessInstanceGroups';
-import { useProcessLabels } from './useProcessLabels';
-import { parseVariableField } from '../../../../../framework/utils/codeEditorUtils';
-
-export type CreateSchedulePayload = {
-  name: string;
-  description?: string | null;
-  timezone: string;
-  rrule: string;
-  inventory?: number;
-  extra_data?: object;
-  scm_branch?: string;
-  job_type?: string;
-  job_tags?: string;
-  skip_tags?: string;
-  limit?: string;
-  diff_mode?: boolean;
-  verbosity?: number;
-  execution_environment?: number | null;
-  organization?: number | null;
-  forks?: number;
-  job_slice_count?: number;
-  timeout?: number;
-  credentials?:
-    | Credential[]
-    | {
-        id: number;
-        name: string;
-        credential_type: number;
-        passwords_needed?: string[];
-        vault_id?: string;
-      }[];
-  labels?: { name: string; id: number }[];
-  instance_groups?: { id: number; name: string }[];
-  unified_job_template?: number;
-};
+import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
+import { BaseSchedulePayload, ScheduleAccessoriesPayload, ScheduleFormWizard } from '../types';
+import { usePostAccessories } from './usePostScheduleAccessories';
+import { mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
 
 export const useProcessSchedule = () => {
   const params = useParams<{ id?: string; schedule_id: string }>();
   const postAccessories = usePostAccessories();
-  const postSchedule = usePostRequest<CreateSchedulePayload, Schedule>();
-  const updateSchedule = usePatchRequest<CreateSchedulePayload, Schedule>();
+  const postSchedule = usePostRequest<BaseSchedulePayload | ScheduleAccessoriesPayload, Schedule>();
+  const updateSchedule = usePatchRequest<
+    BaseSchedulePayload | ScheduleAccessoriesPayload,
+    Schedule
+  >();
+  const getRuleSet = useSetRRuleItemToRuleSet();
   return useCallback(
-    async (payloadData: StandardizedFormData) => {
-      const { resource, prompt, schedule_days_to_keep, survey, enabled, ...rest } = payloadData;
-      const request = (endPoint: string, payload: CreateSchedulePayload) => {
+    async (payloadData: ScheduleFormWizard) => {
+      const { resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
+      const ruleset = getRuleSet(rules, exceptions);
+
+      const payload = {
+        ...rest,
+        rrule: ruleset.toString().split('\n').join(' '),
+      };
+
+      function request(
+        endPoint: string,
+        payload: BaseSchedulePayload | ScheduleAccessoriesPayload
+      ) {
         if (params.schedule_id && params.id) {
           return updateSchedule(awxAPI`/schedules/${params.schedule_id.toString()}/`, {
             ...payload,
@@ -61,38 +40,10 @@ export const useProcessSchedule = () => {
         }
 
         return postSchedule(endPoint, payload);
-      };
+      }
 
-      const {
-        execution_environment,
-        credentials,
-        job_tags,
-        skip_tags,
-        inventory,
-        ...restOfPrompt
-      } = prompt || { execution_environment: null, job_tags: '', skip_tags: '' };
       const { type, id } = resource;
       let schedule: Schedule;
-      const extraDataObject: { [key: string]: string } = {};
-      const hasJobTags = job_tags && job_tags?.length > 0;
-      const hasSkipTags = prompt && prompt?.skip_tags && prompt?.skip_tags?.length > 0;
-      const extraData = parseVariableField(prompt?.extra_vars ?? '');
-
-      survey &&
-        Object.keys(survey).forEach((k: string) => {
-          extraDataObject[k] = survey[k];
-        });
-      schedule_days_to_keep && Object.assign(extraData, { days: schedule_days_to_keep });
-      const payload = {
-        ...rest,
-        ...restOfPrompt,
-        inventory: inventory?.id,
-        execution_environment: execution_environment?.id,
-        skip_tags: hasSkipTags ? stringifyTags(prompt?.skip_tags) : undefined,
-        job_tags: hasJobTags ? stringifyTags(job_tags) : undefined,
-        enabled: enabled,
-        extra_data: { ...extraData, ...survey },
-      };
       switch (type) {
         case 'inventory_source':
           return {
@@ -105,65 +56,54 @@ export const useProcessSchedule = () => {
           return {
             schedule: await request(awxAPI`/projects/${id.toString()}/schedules/`, payload),
           };
-        case 'system_job_template':
+        case 'system_job_template': {
+          const extraDataObject: { [key: string]: string } = {};
+
+          if (payloadData.schedule_days_to_keep !== undefined) {
+            Object.assign(extraDataObject, { days: payloadData.schedule_days_to_keep });
+          }
           return {
-            schedule: await request(
-              awxAPI`/system_job_templates/${id.toString()}/schedules/`,
-              payload
-            ),
+            schedule: await request(awxAPI`/system_job_templates/${id.toString()}/schedules/`, {
+              ...payload,
+              extra_data: extraDataObject,
+            }),
           };
-        case 'workflow_job_template':
-          schedule = await request(
-            awxAPI`/workflow_job_templates/${id.toString()}/schedules/`,
-            payload
-          );
-          await postAccessories(schedule, payload);
+        }
+        case 'workflow_job_template': {
+          const promptData = mungePromptData(prompt);
+          schedule = await request(awxAPI`/workflow_job_templates/${id.toString()}/schedules/`, {
+            ...payload,
+            ...promptData,
+            extra_data: mungeSurveyAndExtraVarsData(survey, prompt.extra_vars),
+          });
+          await postAccessories(schedule, {
+            ...payload,
+            ...promptData,
+          });
           return {
             schedule,
           };
-        default:
-          schedule = await request(awxAPI`/job_templates/${id.toString()}/schedules/`, payload);
-          await postAccessories(schedule, payload);
+        }
+        default: {
+          const promptData = mungePromptData(prompt);
+          schedule = await request(awxAPI`/job_templates/${id.toString()}/schedules/`, {
+            ...payload,
+            ...promptData,
+            extra_data: mungeSurveyAndExtraVarsData(survey, prompt.extra_vars),
+          });
+          if (prompt !== undefined && payload.launch_config !== null) {
+            await postAccessories(schedule, {
+              ...payload,
+              ...promptData,
+            });
+          }
 
           return {
             schedule,
           };
+        }
       }
     },
-    [params.schedule_id, updateSchedule, postSchedule, params.id, postAccessories]
+    [params.schedule_id, updateSchedule, postSchedule, getRuleSet, params.id, postAccessories]
   );
 };
-
-export function usePostAccessories() {
-  const processCredentials = useProcessCredentials();
-  const processInstanceGroups = useProcessInstanceGroups();
-  const processLabels = useProcessLabels();
-  return useCallback(
-    async (
-      schedule: Schedule,
-      payload: Pick<StandardizedFormData, 'launch_config'> &
-        Partial<
-          Pick<
-            StandardizedFormData['prompt'],
-            'credentials' | 'instance_groups' | 'labels' | 'organization'
-          >
-        >
-    ) => {
-      if (payload.credentials) {
-        await processCredentials(schedule.id, payload.credentials, payload.launch_config);
-      }
-      if (payload.instance_groups) {
-        await processInstanceGroups(schedule.id, payload.instance_groups, payload.launch_config);
-      }
-      if (payload.labels) {
-        await processLabels(
-          schedule.id,
-          payload.labels,
-          payload.launch_config,
-          payload.organization
-        );
-      }
-    },
-    [processCredentials, processInstanceGroups, processLabels]
-  );
-}

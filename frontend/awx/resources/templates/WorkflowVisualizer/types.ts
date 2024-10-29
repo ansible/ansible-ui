@@ -115,15 +115,17 @@ export interface NodeResource {
 
 export interface PromptFormValues {
   inventory?: Partial<Inventory> | SummaryFieldInventory | null;
-  credentials?:
-    | Credential[]
+  credentials: (
+    | Credential
     | {
         id: number;
         name: string;
         credential_type: number;
-        passwords_needed?: string[];
+        passwords_needed: string[];
         vault_id?: string;
-      }[];
+        inputs: { [key: string]: string };
+      }
+  )[];
   credential_passwords?: { [key: string]: string };
   instance_groups: InstanceGroup[];
   execution_environment: { name: string; id: number } | Record<string, never>;

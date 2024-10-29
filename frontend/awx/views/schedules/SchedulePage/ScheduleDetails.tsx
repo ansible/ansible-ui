@@ -9,7 +9,7 @@ import {
 } from '../../../../../framework';
 import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxError } from '../../../common/AwxError';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -23,6 +23,9 @@ import { RulesList } from '../components/RulesList';
 import { ScheduleSummary } from '../components/ScheduleSummary';
 import { TimezoneToggle } from './TimezoneToggle';
 import { useState } from 'react';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { CredentialLabel } from '../../../common/CredentialLabel';
+import { Credential } from '../../../interfaces/Credential';
 
 /**
  *
@@ -42,6 +45,9 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
     error,
     refresh,
   } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
+  const { data: credentialResponse } = useGet<AwxItemsResponse<Credential>>(
+    awxAPI`/schedules/${params.schedule_id || ''}/credentials/`
+  );
   const jobTags =
     typeof schedule?.job_tags === 'string'
       ? parseStringToTagArray(schedule?.job_tags)
@@ -105,6 +111,13 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
         )}
         <PageDetail fullWidth>
           <Divider />
+        </PageDetail>
+        <PageDetail label={t('Credentials')}>
+          <LabelGroup>
+            {credentialResponse?.results?.map((credential: Credential) => (
+              <CredentialLabel credential={credential} key={credential.id} />
+            ))}
+          </LabelGroup>
         </PageDetail>
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>
         <PageDetail label={t('Execution Envionment')}>

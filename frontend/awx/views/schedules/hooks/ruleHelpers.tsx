@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Frequency, RRule } from 'rrule';
+import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
+import { parseVariableField } from '../../../../../framework/utils/codeEditorUtils';
 
 export function useGetFrequencyOptions() {
   const { t } = useTranslation();
@@ -46,26 +49,6 @@ export function useGetWeekdayOptions() {
     },
   ];
   return weekdayOptions;
-}
-export function useGetBySetPosOptions() {
-  const { t } = useTranslation();
-  return [
-    { value: '', label: 'None' },
-    { value: '1', label: t('First') },
-    {
-      value: '2',
-
-      label: t('Second'),
-    },
-    { value: '3', label: t('Third') },
-    {
-      value: '4',
-
-      label: t('Fourth'),
-    },
-    { value: '5', label: t('Fifth') },
-    { value: '-1', label: t('Last') },
-  ];
 }
 
 export function useGetMonthOptions() {
@@ -120,4 +103,27 @@ export function useGetMonthOptions() {
       label: t('December'),
     },
   ];
+}
+
+export function mungePromptData(prompt: PromptFormValues) {
+  if (prompt === undefined) return {};
+
+  return {
+    ...prompt,
+    inventory: prompt?.inventory?.id,
+    execution_environment: prompt.execution_environment.id ?? null,
+    skip_tags: stringifyTags(prompt.skip_tags) ?? '',
+    job_tags: stringifyTags(prompt.job_tags) ?? '',
+  };
+}
+
+export function mungeSurveyAndExtraVarsData(survey: { [key: string]: string }, extra_vars: string) {
+  if (!survey && !extra_vars) return {};
+
+  const extraData: { [key: string]: string } = {};
+  Object.keys(survey).forEach((k: string) => {
+    extraData[k] = survey[k];
+  });
+
+  return { ...extraData, ...parseVariableField(extra_vars) };
 }

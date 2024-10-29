@@ -10,6 +10,9 @@ import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
 import { ScheduleFormWizard, ScheduleResources } from '../types';
 import { useParams } from 'react-router-dom';
 import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Credential } from '../../../interfaces/Credential';
+import { mergeArraysByCredentialType } from '../../../access/credentials/hooks/mergeArraysByCredentialType';
 
 /**
  *
@@ -27,7 +30,7 @@ export function ScheduleSelectStep(props: {
   const resource = useWatch<ScheduleFormWizard, 'resource'>({ name: 'resource' });
   const params = useParams<{ id?: string; source_id: string; schedule_id?: string }>();
   const { setValue } = useFormContext();
-  const { setStepData } = usePageWizard<ScheduleFormWizard>();
+  const { setStepData, setWizardData } = usePageWizard<ScheduleFormWizard>();
 
   // When the resource changes,
   // we need to set the promptStep default values to the launch configuration defaults
@@ -44,7 +47,11 @@ export function ScheduleSelectStep(props: {
           `${props.resourceEndPoint ?? ''}${params?.id}/`
         );
       }
-
+      setWizardData((prev) => ({
+        ...prev,
+        schedule_type: scheduleResource.type,
+        resource: scheduleResource,
+      }));
       setStepData((prev) => ({
         ...prev,
         details: {
@@ -57,7 +64,7 @@ export function ScheduleSelectStep(props: {
     };
 
     void getResource();
-  }, [params, resource, props.resourceEndPoint, setStepData, setValue]);
+  }, [params, resource, props.resourceEndPoint, setStepData, setWizardData, setValue]);
 
   useEffect(() => {
     async function updatePromptStep() {
@@ -72,6 +79,13 @@ export function ScheduleSelectStep(props: {
           ? awxAPI`/job_templates/${resource.id.toString()}/launch/`
           : awxAPI`/workflow_job_templates/${resource.id.toString()}/launch/`;
       const launchConfig = await requestGet<LaunchConfiguration>(endPoint);
+      let credentials: Credential[] = [];
+      if (launchConfig.ask_credential_on_launch && params.schedule_id) {
+        const response = await requestGet<AwxItemsResponse<Credential>>(
+          awxAPI`/schedules/${params.schedule_id}/credentials/`
+        );
+        credentials = response.results;
+      }
       const defaults = launchConfig.defaults;
       const readOnlyLabels = defaults?.labels?.map((label) => ({
         ...label,
@@ -83,7 +97,7 @@ export function ScheduleSelectStep(props: {
           promptStep: {
             prompt: {
               inventory: defaults?.inventory?.id ? defaults.inventory : null,
-              credentials: defaults?.credentials,
+              credentials: mergeArraysByCredentialType(defaults?.credentials || [], credentials),
               execution_environment: defaults.execution_environment,
               instance_groups: defaults.instance_groups,
               diff_mode: defaults.diff_mode,
@@ -110,7 +124,7 @@ export function ScheduleSelectStep(props: {
       setValue('launch_config', launchConfig);
     }
     void updatePromptStep();
-  }, [props.resourceEndPoint, resource, setStepData, setValue]);
+  }, [props.resourceEndPoint, resource, setStepData, params.schedule_id, setValue]);
   return (
     <>
       {isTopLevelScheduleForm ? (
