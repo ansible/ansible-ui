@@ -1,6 +1,6 @@
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { IToolbarFilter } from '../../../../../framework';
 import { useJobsFilters } from './useJobsFilters';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TestInner(props: { filters: IToolbarFilter[] }) {
@@ -30,6 +30,6 @@ describe('useJobsFilters', () => {
     cy.mount(<Test />);
     cy.wait('@getOptions');
     cy.waitForReact(10000, '#root');
-    cy.getReact('TestInner').getProps('filters').should('have.length', 24);
+    cy.getReact('TestInner').getProps('filters').should('have.length', 25);
   });
 });
