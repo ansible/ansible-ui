@@ -237,7 +237,7 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
         ).should('not.exist');
         cy.contains(
           '.pf-v5-c-empty-state__body',
-          'You can create a token from your user page.'
+          'When a user authorizes using an OAuth application, a token will be created and displayed here.'
         ).should('not.exist');
         cy.selectTableRow(currentPlatformUser.username);
       });
