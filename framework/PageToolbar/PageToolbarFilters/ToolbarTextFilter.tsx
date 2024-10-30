@@ -18,7 +18,7 @@ export interface IToolbarSingleTextFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleText;
 
   /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
-  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'iregex';
 }
 
 /** Filter for filtering by user text input with multiple values. */
@@ -27,7 +27,7 @@ export interface IToolbarMultiTextFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.MultiText;
 
   /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
-  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'iregex';
 }
 
 export function ToolbarTextMultiFilter(props: {
@@ -36,7 +36,7 @@ export function ToolbarTextMultiFilter(props: {
   placeholder?: string;
 
   /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
-  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'iregex';
 }) {
   const { t } = useTranslation();
   const [value, setValue] = useState('');
@@ -54,6 +54,9 @@ export function ToolbarTextMultiFilter(props: {
         break;
       case 'equals':
         placeholder = t('equals');
+        break;
+      case 'iregex':
+        placeholder = t('iregex');
         break;
     }
   }
@@ -117,7 +120,7 @@ export function ToolbarSingleTextFilter(props: {
   placeholder?: string;
 
   /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
-  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals';
+  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'iregex';
   setValue: (value: string) => void;
   value: string;
   hasKey: boolean;
@@ -138,6 +141,9 @@ export function ToolbarSingleTextFilter(props: {
         break;
       case 'equals':
         placeholder = t('equals');
+        break;
+      case 'iregex':
+        placeholder = t('iregex');
         break;
     }
   }

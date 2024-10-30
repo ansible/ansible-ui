@@ -8,10 +8,17 @@ export function useHostMetricsFilters() {
     () => [
       {
         key: 'hostname__icontains',
-        label: t('Hostname'),
-        type: ToolbarFilterType.MultiText,
+        label: t('Hostname contains'),
+        type: ToolbarFilterType.SingleText,
         query: 'hostname__icontains',
         comparison: 'contains',
+      },
+      {
+        key: 'hostname__iregex',
+        label: t('Hostname (iregex)'),
+        type: ToolbarFilterType.SingleText,
+        query: 'hostname__iregex',
+        comparison: 'iregex',
       },
     ],
     [t]
