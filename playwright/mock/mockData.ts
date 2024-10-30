@@ -40,7 +40,6 @@ interface IGatewayData {
 }
 
 interface IControllerData {
-  'execution-environments': DeepPartial<ExecutionEnvironment>[];
   config: DeepPartial<AwxConfig>;
   credential_types: DeepPartial<CredentialType>[];
   credentials: DeepPartial<Credential>[];
@@ -62,6 +61,7 @@ interface IControllerData {
   labels: object[];
   dashboard: object;
   unified_job_templates: object[];
+  execution_environments: DeepPartial<ExecutionEnvironment>[];
 }
 
 export interface IApiData {
@@ -133,7 +133,13 @@ export const mockData: IApiData = {
         users: [],
         workflow_approvals: [],
         unified_jobs: [],
-        'execution-environments': [],
+        execution_environments: [
+          {
+            id: 1,
+            name: 'Default',
+            description: 'Default execution environment',
+          },
+        ],
         instance_groups: [],
         hosts: [{ id: 1, name: 'localhost' }],
         labels: [],
