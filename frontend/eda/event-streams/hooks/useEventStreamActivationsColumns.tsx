@@ -1,10 +1,15 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
+import {
+  ColumnTableOption,
+  ITableColumn,
+  PFColorE,
+  TextCell,
+  useGetPageUrl,
+} from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
-import { Label } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { StatusCell } from '../../../common/Status';
 
@@ -38,9 +43,11 @@ export function useEventStreamActivationsColumns() {
         header: t('Status'),
         cell: (activation) =>
           activation?.status === StatusEnum.Deleting ? (
-            <Label color="red" icon={<InfoCircleIcon />}>
-              {t('Pending delete')}
-            </Label>
+            <TextCell
+              text={t('Pending delete')}
+              color={PFColorE.Danger}
+              icon={<InfoCircleIcon />}
+            />
           ) : (
             <StatusCell status={activation?.status} />
           ),

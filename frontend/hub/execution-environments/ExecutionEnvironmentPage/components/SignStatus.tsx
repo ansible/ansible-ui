@@ -1,22 +1,20 @@
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { PFColorE, TextCell } from '../../../../../framework';
 
 export const SignStatus = ({ state }: { state: 'signed' | 'unsigned' | undefined }) => {
   const { t } = useTranslation();
 
   switch (state) {
     case 'signed':
-      return (
-        <Label icon={<CheckCircleIcon />} variant="outline" color="green">
-          {' ' + t('Signed')}
-        </Label>
-      );
+      return <TextCell text={t('Signed')} color={PFColorE.Success} icon={<CheckCircleIcon />} />;
     case 'unsigned':
       return (
-        <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
-          {' ' + t('Unsigned')}
-        </Label>
+        <TextCell
+          text={t('Unsigned')}
+          color={PFColorE.Warning}
+          icon={<ExclamationTriangleIcon />}
+        />
       );
   }
 

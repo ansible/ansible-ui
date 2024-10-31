@@ -1,4 +1,4 @@
-import { Button, Label } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
@@ -10,6 +10,8 @@ import {
   PageActions,
   PageHeader,
   PageLayout,
+  PFColorE,
+  TextCell,
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
@@ -314,13 +316,13 @@ export function CollectionPage() {
             {collection &&
               display_signatures &&
               (collection.is_signed ? (
-                <Label icon={<CheckCircleIcon />} variant="outline" color="green">
-                  {' ' + t('Signed')}
-                </Label>
+                <TextCell text={t('Signed')} color={PFColorE.Success} icon={<CheckCircleIcon />} />
               ) : (
-                <Label icon={<ExclamationTriangleIcon />} variant="outline" color="orange">
-                  {' ' + t('Unsigned')}
-                </Label>
+                <TextCell
+                  text={t('Unsigned')}
+                  color={PFColorE.Warning}
+                  icon={<ExclamationTriangleIcon />}
+                />
               ))}
           </div>
         }
