@@ -349,6 +349,8 @@ export function AutomationCalculatorInternal(props: {
         'total_cluster_count',
         'successful_hosts_total',
         'successful_elapsed_total',
+        'failed_hosts_total',
+        'total_inventory_count',
       ],
       group_by: 'template',
       group_by_time: false,
