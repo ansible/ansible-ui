@@ -16,34 +16,43 @@ interface Props {
 
 export const ExpandedRowContents: FunctionComponent<Props> = ({ template }) => {
   const { t } = useTranslation();
+
   return (
     <Td colSpan={5}>
       <ExpandableRowContent>
         <DescriptionList columnModifier={{ default: '3Col' }}>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Elapsed')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Run time')}</DescriptionListTerm>
             <DescriptionListDescription>
               {t(`${template.elapsed} seconds`)}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Host count')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Successful host count')}</DescriptionListTerm>
             <DescriptionListDescription>{template.host_count}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Total count')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Failed host count')}</DescriptionListTerm>
+            {template?.failed_hosts_total ? (
+              <DescriptionListDescription>{template.failed_hosts_total}</DescriptionListDescription>
+            ) : (
+              <DescriptionListDescription>{'0'}</DescriptionListDescription>
+            )}
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('Job count')}</DescriptionListTerm>
             <DescriptionListDescription>{template.total_count}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Total org count')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Organization count')}</DescriptionListTerm>
             <DescriptionListDescription>{template.total_org_count}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Total cluster count')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Cluster count')}</DescriptionListTerm>
             <DescriptionListDescription>{template.total_cluster_count}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Total inventory count')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Inventory count')}</DescriptionListTerm>
             <DescriptionListDescription>
               {template.total_inventory_count}
             </DescriptionListDescription>
@@ -51,27 +60,13 @@ export const ExpandedRowContents: FunctionComponent<Props> = ({ template }) => {
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Template success rate')}</DescriptionListTerm>
             <DescriptionListDescription>
-              {parseInt(template.template_success_rate.toString()).toFixed(2)}
+              {`${parseInt(template.template_success_rate.toString()).toFixed(2)}%`}
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Savings from successful hosts')}</DescriptionListTerm>
             <DescriptionListDescription>
               {currencyFormatter(parseInt(template.successful_hosts_savings.toString()))}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Costs from failed hosts')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              {currencyFormatter(parseInt(template.failed_hosts_costs.toString()))}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Monetary gain')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              {template?.monetary_gain
-                ? currencyFormatter(parseInt(template.monetary_gain.toString()))
-                : ''}
             </DescriptionListDescription>
           </DescriptionListGroup>
         </DescriptionList>
