@@ -1,4 +1,3 @@
-import { Label } from '@patternfly/react-core';
 import {
   AnsibleTowerIcon,
   BanIcon,
@@ -11,6 +10,7 @@ import {
   ColumnCardOption,
   ColumnTableOption,
   ITableColumn,
+  PFColorE,
   TextCell,
   useGetPageUrl,
 } from '../../../../framework';
@@ -53,9 +53,7 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
                 }
               />
               {collection.is_deprecated && (
-                <Label icon={<BanIcon />} color="red" variant="outline">
-                  {t('Deprecated')}
-                </Label>
+                <TextCell text={t('Deprecated')} color={PFColorE.Danger} icon={<BanIcon />} />
               )}
             </>
           );
@@ -159,25 +157,19 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
             switch (collection.is_signed) {
               case true:
                 return (
-                  <Label
-                    data-cy="label-signed"
+                  <TextCell
+                    text={t('Signed')}
+                    color={PFColorE.Success}
                     icon={<CheckCircleIcon />}
-                    variant="outline"
-                    color="green"
-                  >
-                    {t('Signed')}
-                  </Label>
+                  />
                 );
               case false:
                 return (
-                  <Label
-                    data-cy="label-unsigned"
+                  <TextCell
+                    text={t('Unsigned')}
+                    color={PFColorE.Warning}
                     icon={<ExclamationTriangleIcon />}
-                    variant="outline"
-                    color="orange"
-                  >
-                    {t('Unsigned')}
-                  </Label>
+                  />
                 );
             }
           } else {

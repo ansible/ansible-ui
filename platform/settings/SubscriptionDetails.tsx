@@ -1,10 +1,11 @@
-import { ButtonVariant, Label } from '@patternfly/react-core';
+import { ButtonVariant } from '@patternfly/react-core';
 import { CheckIcon, ExclamationCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   LoadingPage,
+  PFColorE,
   PageActionSelection,
   PageActionType,
   PageActions,
@@ -12,6 +13,7 @@ import {
   PageDetails,
   PageHeader,
   PageLayout,
+  TextCell,
   usePageNavigate,
 } from '../../framework';
 import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
@@ -81,13 +83,13 @@ export function SubscriptionDetails() {
           isEmpty={systemConfig.data?.SUBSCRIPTION_USAGE_MODEL !== 'unique_managed_hosts'}
         >
           {license_info.compliant ? (
-            <Label color="green" icon={<CheckIcon />}>
-              {t`Compliant`}
-            </Label>
+            <TextCell text={t('Compliant')} color={PFColorE.Success} icon={<CheckIcon />} />
           ) : (
-            <Label color="red" icon={<ExclamationCircleIcon />}>
-              {t`Out of compliance`}
-            </Label>
+            <TextCell
+              text={t('Out of compliance')}
+              color={PFColorE.Danger}
+              icon={<ExclamationCircleIcon />}
+            />
           )}
         </PageDetail>
         <PageDetail
