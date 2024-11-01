@@ -1,13 +1,9 @@
 import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
-import {
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-} from '@patternfly/react-core';
+import { DescriptionList } from '@patternfly/react-core';
 import { ExpandableRowContent, Td } from '@patternfly/react-table';
 import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PageDetail } from '../../../../../framework/PageDetails/PageDetail';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 
 interface Props {
@@ -21,54 +17,71 @@ export const ExpandedRowContents: FunctionComponent<Props> = ({ template }) => {
     <Td colSpan={5}>
       <ExpandableRowContent>
         <DescriptionList columnModifier={{ default: '3Col' }}>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Run time')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              {t(`${template.elapsed} seconds`)}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Successful host count')}</DescriptionListTerm>
-            <DescriptionListDescription>{template.host_count}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Failed host count')}</DescriptionListTerm>
-            {template?.failed_hosts_total ? (
-              <DescriptionListDescription>{template.failed_hosts_total}</DescriptionListDescription>
-            ) : (
-              <DescriptionListDescription>{'0'}</DescriptionListDescription>
+          <PageDetail
+            label={t('Run time')}
+            helpText={t('The amount of time that it took for the job template to run.')}
+            id="run-time"
+          >
+            {t(`${template.elapsed} seconds`)}
+          </PageDetail>
+          <PageDetail
+            label={t('Successful host count')}
+            helpText={t(
+              'The number of successful hosts in the inventory that the template runs on.'
             )}
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Job count')}</DescriptionListTerm>
-            <DescriptionListDescription>{template.total_count}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Organization count')}</DescriptionListTerm>
-            <DescriptionListDescription>{template.total_org_count}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Cluster count')}</DescriptionListTerm>
-            <DescriptionListDescription>{template.total_cluster_count}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Inventory count')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              {template.total_inventory_count}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Template success rate')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              {`${parseInt(template.template_success_rate.toString()).toFixed(2)}%`}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Savings from successful hosts')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              {currencyFormatter(parseInt(template.successful_hosts_savings.toString()))}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
+            id="successful-host-count"
+          >
+            {template.successful_hosts_total}
+          </PageDetail>
+          <PageDetail
+            label={t('Failed host count')}
+            helpText={t('The number of failed hosts in the inventory that the template runs on.')}
+            id="failed-host-count"
+          >
+            {template?.failed_hosts_total ? template.failed_hosts_total : '0'}
+          </PageDetail>
+          <PageDetail
+            label={t('Job count')}
+            helpText={t('The number of jobs associated with the job template.')}
+            id="job-count"
+          >
+            {template.total_count}
+          </PageDetail>
+          <PageDetail
+            label={t('Organization count')}
+            helpText={t('The number of organizations associated with the job template.')}
+            id="org-count"
+          >
+            {template.total_org_count}
+          </PageDetail>
+          <PageDetail
+            label={t('Cluster count')}
+            helpText={t('The number of clusters associated with the job template.')}
+            id="cluster-count"
+          >
+            {template.total_cluster_count}
+          </PageDetail>
+          <PageDetail
+            label={t('Inventory count')}
+            helpText={t('The number of inventories associated with the template.')}
+            id="inventory-count"
+          >
+            {template.total_inventory_count}
+          </PageDetail>
+          <PageDetail
+            label={t('Template success rate')}
+            helpText={t('The success rate percentage of the template.')}
+            id="success-rate"
+          >
+            {`${parseInt(template.template_success_rate.toString()).toFixed(2)}%`}
+          </PageDetail>
+          <PageDetail
+            label={t('Savings from successful hosts')}
+            helpText={t('The amount of savings generated by hosts in the template.')}
+            id="savings"
+          >
+            {currencyFormatter(parseInt(template.successful_hosts_savings.toString()))}
+          </PageDetail>
         </DescriptionList>
       </ExpandableRowContent>
     </Td>
