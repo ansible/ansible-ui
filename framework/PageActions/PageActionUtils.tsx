@@ -6,21 +6,22 @@ export function isPageActionHidden<T extends object>(
   action: IPageAction<T>,
   selectedItem: T | undefined
 ): boolean {
-  if ('selection' in action) {
-    switch (action.selection) {
-      case PageActionSelection.None:
-        if (action.isHidden) {
-          return action.isHidden();
-        }
-        break;
+  if (!('selection' in action)) {
+    return false;
+  }
+  switch (action.selection) {
+    case PageActionSelection.None:
+      if (action.isHidden) {
+        return action.isHidden();
+      }
+      break;
 
-      case PageActionSelection.Single:
-        if (action.isHidden) {
-          if (!selectedItem) return true;
-          return action.isHidden(selectedItem);
-        }
-        break;
-    }
+    case PageActionSelection.Single:
+      if (action.isHidden) {
+        if (!selectedItem) return true;
+        return action.isHidden(selectedItem);
+      }
+      break;
   }
   return false;
 }
@@ -33,37 +34,27 @@ export function usePageActionDisabled<T extends object>() {
       selectedItem: T | undefined,
       selectedItems?: T[] | undefined
     ): string | undefined => {
-      if ('selection' in action) {
-        switch (action.selection) {
-          case PageActionSelection.None:
-            if (typeof action.isDisabled === 'string') {
-              return action.isDisabled;
-            }
-            if (action.isDisabled) {
-              return action.isDisabled();
-            }
-            break;
+      if (!('selection' in action)) {
+        return;
+      }
+      if (typeof action.isDisabled === 'string') {
+        return action.isDisabled;
+      }
+      if (!action.isDisabled) {
+        return;
+      }
 
-          case PageActionSelection.Single:
-            if (typeof action.isDisabled === 'string') {
-              return action.isDisabled;
-            }
-            if (action.isDisabled) {
-              if (!selectedItem) return translations.noSelection;
-              return action.isDisabled(selectedItem);
-            }
-            break;
+      switch (action.selection) {
+        case PageActionSelection.None:
+          return action.isDisabled();
 
-          case PageActionSelection.Multiple:
-            if (typeof action.isDisabled === 'string') {
-              return action.isDisabled;
-            }
-            if (action.isDisabled) {
-              if (!selectedItems) return translations.noSelections;
-              return action.isDisabled(selectedItems);
-            }
-            break;
-        }
+        case PageActionSelection.Single:
+          if (!selectedItem) return translations.noSelection;
+          return action.isDisabled(selectedItem);
+
+        case PageActionSelection.Multiple:
+          if (!selectedItems) return translations.noSelections;
+          return action.isDisabled(selectedItems);
       }
     },
     [translations.noSelection, translations.noSelections]
