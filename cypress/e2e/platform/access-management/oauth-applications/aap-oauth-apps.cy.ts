@@ -220,7 +220,10 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
       cy.verifyPageTitle(platformApplication.name);
       cy.clickTab('Tokens', true);
       cy.contains('h4', 'There are currently no tokens associated with this OAuth application');
-      cy.contains('.pf-v5-c-empty-state__body', 'You can create a token from your user page.');
+      cy.contains(
+        '.pf-v5-c-empty-state__body',
+        'When a user authorizes using an OAuth application, a token will be created and displayed here.'
+      );
       cy.getCurrentPlatformUser().then((currentPlatformUser: PlatformUser) => {
         cy.createPlatformToken({ application: platformApplication.id, scope: 'write' }).then(
           (createdPlatformToken: Token) => {

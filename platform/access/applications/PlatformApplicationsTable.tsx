@@ -52,7 +52,7 @@ export function PlatformApplicationsTable() {
   const toolbarActions = useMemo<IPageAction<Application>[]>(
     () => [
       {
-        type: PageActionType.Button,
+        type: PageActionType.Link,
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         isPinned: true,
@@ -64,7 +64,7 @@ export function PlatformApplicationsTable() {
             : t(
                 'You do not have permission to create an OAuth application. Please contact your system administrator if there is an issue with your access.'
               ),
-        onClick: () => pageNavigate(PlatformRoute.CreateApplication),
+        href: getPageUrl(PlatformRoute.CreateApplication),
       },
       { type: PageActionType.Seperator },
       {
@@ -81,7 +81,7 @@ export function PlatformApplicationsTable() {
         isDanger: true,
       },
     ],
-    [t, activePlatformUser?.is_superuser, canCreateApplication, deleteApplications, pageNavigate]
+    [t, activePlatformUser?.is_superuser, canCreateApplication, deleteApplications, getPageUrl]
   );
 
   const rowActions = useMemo<IPageAction<Application>[]>(
