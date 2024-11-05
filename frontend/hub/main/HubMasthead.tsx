@@ -1,5 +1,4 @@
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { DropdownItem } from '@patternfly/react-core/deprecated';
+import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

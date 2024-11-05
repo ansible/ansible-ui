@@ -1,5 +1,4 @@
-import { Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { DropdownItem } from '@patternfly/react-core/deprecated';
+import { DropdownItem, Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +49,7 @@ export function AwxMasthead() {
               id="documentation"
               icon={<ExternalLinkAltIcon />}
               component="a"
-              href={useGetDocsUrl(config, 'index')}
+              to={useGetDocsUrl(config, 'index')}
               target="_blank"
               data-cy="masthead-documentation"
             >

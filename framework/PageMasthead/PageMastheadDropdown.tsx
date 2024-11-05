@@ -1,6 +1,14 @@
-import { Flex, FlexItem } from '@patternfly/react-core';
-import { Dropdown, DropdownToggle } from '@patternfly/react-core/deprecated';
-import { ReactNode, useCallback, useState } from 'react';
+import {
+  Dropdown,
+  DropdownList,
+  DropdownPopperProps,
+  Flex,
+  FlexItem,
+  Icon,
+  MenuToggle,
+  MenuToggleElement,
+} from '@patternfly/react-core';
+import { ReactNode, Ref, useCallback, useState } from 'react';
 import { useBreakpoint } from '../components/useBreakPoint';
 
 export function PageMastheadDropdown(props: {
@@ -9,10 +17,10 @@ export function PageMastheadDropdown(props: {
   label?: string;
   children: ReactNode;
 }) {
-  const showLabel = useBreakpoint('md');
-  const [open, setOpen] = useState(false);
-  const onSelect = useCallback(() => setOpen((open) => !open), []);
-  const onToggle = useCallback(() => setOpen((open) => !open), []);
+  const [isOpen, setIsOpen] = useState(false);
+  const onSelect = useCallback(() => setIsOpen(false), []);
+  const onToggle = useCallback(() => setIsOpen((open) => !open), []);
+  const onOpenChange = useCallback((open: boolean) => setIsOpen(open), []);
   const children = Array.isArray(props.children) ? props.children : [props.children];
 
   return (
@@ -20,23 +28,55 @@ export function PageMastheadDropdown(props: {
       id={props.id}
       ouiaId={props.id}
       onSelect={onSelect}
-      toggle={
-        <DropdownToggle toggleIndicator={null} onToggle={onToggle}>
-          <Flex
-            alignItems={{ default: 'alignItemsCenter' }}
-            flexWrap={{ default: 'nowrap' }}
-            spaceItems={{ default: 'spaceItemsSm' }}
-          >
-            <FlexItem>{props.icon}</FlexItem>
-            {showLabel && props.label && <FlexItem wrap="nowrap">{props.label}</FlexItem>}
-          </Flex>
-        </DropdownToggle>
-      }
-      isOpen={open}
+      onOpenChange={onOpenChange}
+      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        <Toggle
+          icon={props.icon}
+          id={`${props.id}-menu-toggle`}
+          isOpen={isOpen}
+          label={props.label}
+          onToggle={onToggle}
+          toggleRef={toggleRef}
+        />
+      )}
+      isOpen={isOpen}
       isPlain
-      dropdownItems={children}
-      position="right"
+      popperProps={
+        {
+          appendTo: () => document.body,
+          preventOverflow: true,
+          enableFlip: true,
+          position: 'right',
+        } as DropdownPopperProps
+      }
       data-cy={props.id}
-    />
+    >
+      <DropdownList>{children}</DropdownList>
+    </Dropdown>
+  );
+}
+
+interface ToggleProps {
+  icon: ReactNode;
+  id: string;
+  isOpen: boolean;
+  label?: string;
+  onToggle: () => void;
+  toggleRef: Ref<MenuToggleElement>;
+}
+
+function Toggle({ icon, id, isOpen, label, onToggle, toggleRef }: ToggleProps) {
+  const showLabel = useBreakpoint('md');
+  return (
+    <MenuToggle id={id} isExpanded={isOpen} onClick={onToggle} ref={toggleRef} variant="plain">
+      <Flex
+        alignItems={{ default: 'alignItemsCenter' }}
+        flexWrap={{ default: 'nowrap' }}
+        spaceItems={{ default: 'spaceItemsSm' }}
+      >
+        <FlexItem>{<Icon>{icon}</Icon>}</FlexItem>
+        {showLabel && label && <FlexItem wrap="nowrap">{label}</FlexItem>}
+      </Flex>
+    </MenuToggle>
   );
 }
