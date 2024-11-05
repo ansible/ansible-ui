@@ -23,15 +23,7 @@ interface IGatewayData {
   me: DeepPartial<AwxUser>[];
   login: object;
   legacy_auth: object;
-  ui_auth: {
-    show_login_form: boolean;
-    passwords: { name: string; type: string }[];
-    ssos: unknown[];
-    login_redirect_override: string;
-    custom_login_info: string;
-    custom_logo: string;
-    managed_cloud_install: boolean;
-  };
+  ui_auth: object;
   session: object;
   organizations: DeepPartial<PlatformOrganization>[];
   users: DeepPartial<PlatformUser>[];
@@ -72,6 +64,7 @@ export interface IApiData {
     controller: {
       v2: IControllerData;
     };
+    galaxy: object;
   };
 }
 
@@ -102,6 +95,9 @@ export const mockData: IApiData = {
           custom_login_info: '',
           custom_logo: '',
           managed_cloud_install: false,
+          legacy_controller_sso_url: 'https://legacy_controller',
+          legacy_automation_hub_sso_url: 'https://legacy_hub',
+          legacy_auth_enabled: true,
         },
         session: {},
         organizations: [{ id: 1, name: 'Default' }],
@@ -223,6 +219,55 @@ export const mockData: IApiData = {
           job_templates: {
             url: '/api/controller/v2/job_templates/',
             total: 1,
+          },
+        },
+      },
+    },
+    galaxy: {
+      _ui: {
+        v1: {
+          settings: {
+            GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_ACCESS: false,
+            GALAXY_ENABLE_UNAUTHENTICATED_COLLECTION_DOWNLOAD: false,
+            GALAXY_FEATURE_FLAGS: {
+              legacy_roles: false,
+              external_authentication: true,
+              display_repositories: true,
+              execution_environments: true,
+              ai_deny_index: false,
+              dab_resource_registry: true,
+              collection_signing: true,
+              require_upload_signatures: false,
+              signatures_enabled: true,
+              can_upload_signatures: false,
+              can_create_signatures: true,
+              collection_auto_sign: true,
+              display_signatures: true,
+              container_signing: true,
+              _messages: [],
+            },
+            GALAXY_TOKEN_EXPIRATION: 1440,
+            GALAXY_REQUIRE_CONTENT_APPROVAL: true,
+            GALAXY_COLLECTION_SIGNING_SERVICE: 'ansible-default',
+            GALAXY_AUTO_SIGN_COLLECTIONS: true,
+            GALAXY_SIGNATURE_UPLOAD_ENABLED: false,
+            GALAXY_REQUIRE_SIGNATURE_FOR_APPROVAL: false,
+            GALAXY_MINIMUM_PASSWORD_LENGTH: null,
+            GALAXY_AUTH_LDAP_ENABLED: null,
+            GALAXY_CONTAINER_SIGNING_SERVICE: 'container-default',
+            GALAXY_LDAP_MIRROR_ONLY_EXISTING_GROUPS: false,
+            GALAXY_LDAP_DISABLE_REFERRALS: null,
+            KEYCLOAK_URL: 'https://keycloak',
+            ANSIBLE_BASE_JWT_VALIDATE_CERT: true,
+            ANSIBLE_BASE_JWT_KEY: 'https://3.86.39.249:443',
+            ALLOW_LOCAL_RESOURCE_MANAGEMENT: true,
+            ANSIBLE_BASE_ROLES_REQUIRE_VIEW: false,
+            DYNACONF_AFTER_GET_HOOKS: ['read_settings_from_cache_or_db', 'alter_hostname_settings'],
+            ANSIBLE_API_HOSTNAME: 'https://3.86.39.249:443',
+            ANSIBLE_CONTENT_HOSTNAME: 'https://3.86.39.249:443',
+            CONTENT_ORIGIN: 'https://3.86.39.249:443',
+            TOKEN_SERVER: 'https://3.86.39.249:443/token/',
+            TOKEN_AUTH_DISABLED: null,
           },
         },
       },

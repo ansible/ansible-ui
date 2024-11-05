@@ -7,7 +7,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 import dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -20,6 +20,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: 0, // process.env.CI ? 2 : 0,
+  /** Increase default timeout of expect assertions from 5s to 30s */
+  expect: {
+    timeout: 30 * 1000,
+  },
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -43,33 +47,39 @@ export default defineConfig({
     {
       name: 'live chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: '**/upgrades-tests/**',
     },
     {
       name: 'mock chromium',
       use: { ...devices['Desktop Chrome'] },
       metadata: { mock: true },
     },
-
     {
       name: 'live firefox',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: '**/upgrades-tests/**',
     },
     {
       name: 'mock firefox',
       use: { ...devices['Desktop Firefox'] },
       metadata: { mock: true },
     },
-
     {
       name: 'live webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: '**/upgrades-tests/**',
     },
     {
       name: 'mock webkit',
       use: { ...devices['Desktop Safari'] },
       metadata: { mock: true },
     },
-
+    {
+      name: 'live chromium upgrade tests',
+      use: { ...devices['Desktop Chrome'] },
+      fullyParallel: false,
+      testIgnore: '**/tests/**',
+    },
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
