@@ -56,6 +56,7 @@ export function RemoteRegistries() {
               icon={<PlusCircleIcon />}
               variant={ButtonVariant.primary}
               href={getPageUrl(HubRoute.CreateRemoteRegistry)}
+              data-cy="create-remote-registry"
             >
               {t('Create remote registry')}
             </ButtonLink>
