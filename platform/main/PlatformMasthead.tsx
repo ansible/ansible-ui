@@ -1,5 +1,4 @@
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { DropdownItem } from '@patternfly/react-core/deprecated';
+import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -89,7 +88,7 @@ export function PlatformMasthead() {
               id="documentation"
               icon={<ExternalLinkAltIcon />}
               component="a"
-              href={`https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform`}
+              to={`https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform`}
               target="_blank"
               data-cy="masthead-documentation"
             >
