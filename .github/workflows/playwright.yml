@@ -57,7 +57,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: text-results-${{ matrix.shardIndex }}
+        name: playwright-${{ matrix.shardIndex }}
         path: test-results
         retention-days: 1
         overwrite: true

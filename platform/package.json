@@ -6,6 +6,8 @@
     "e2e": "cd .. && cypress open --browser chrome --e2e --config-file=cypress.platform.config.ts",
     "e2e-upgrades": "cd .. && cypress open --browser chrome --e2e --config-file=cypress.upgrades.config.ts",
     "e2e-upgrades:run": "cd .. && cypress run --e2e --config-file=cypress.upgrades.config.ts",
+    "playwright-upgrades:run": "cd ../playwright && npx playwright test --grep @upgrade --project='mock chromium'",
+    "playwright-nightly:run": "cd ../playwright && npx playwright test --grep-invert @not_e2e --project='mock chromium'",
     "e2e:run": "cd .. && CYPRESS_LABELS='!upstream' cypress run --e2e --config-file=cypress.platform.config.ts",
     "e2e:openshift:run": "cd .. && cypress run --e2e --config-file=cypress.platform.config.ts",
     "e2e:aaas:run": "cd .. && CYPRESS_LABELS='!aaas-unsupported' cypress run --e2e --config-file=cypress.platform.config.ts",

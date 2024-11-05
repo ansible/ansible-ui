@@ -1,46 +1,64 @@
-/* eslint-disable no-console */
-import { BrowserContext, Route, test } from '@playwright/test';
+import { BrowserContext, test } from '@playwright/test';
 import chalk from 'chalk';
 import getValue from 'get-value';
 import { Project } from '../../frontend/awx/interfaces/Project';
+import { platformUI, platformURL } from '../commands/login';
 import { IApiData, mockData } from './mockData';
 import { mockOptions } from './mockOptions';
 
 export function mock({ context }: { context: BrowserContext }) {
   const mockEnabled = (test.info().project.metadata as { mock?: boolean }).mock;
   if (!mockEnabled) return;
-  const apiMock = mockApi(); // create the mock API handler per test
-  return context.route('**/*', (route) => mockRoute(route, apiMock));
-}
-
-export function mockRoute(route: Route, apiMock: MockApiHandler) {
-  const url = new URL(route.request().url());
-  if (!url.pathname.startsWith('/api/')) return route.continue();
-  const response = apiMock({
-    url,
-    method: route.request().method(),
-    body: route.request().postDataJSON() as object,
+  const data = JSON.parse(JSON.stringify(mockData)) as IApiData;
+  const apiMock = mockApi(data); // create the mock API handler per test
+  const keycloakMock = mockKeycloak(data); // create the mock Keycloak handler per test
+  return context.route('**/*', (route) => {
+    const url = new URL(route.request().url());
+    let response: MockResponse | undefined = undefined;
+    switch (url.hostname) {
+      case platformURL.hostname: {
+        if (!url.pathname.startsWith('/api/')) return route.continue();
+        response = apiMock({
+          url,
+          method: route.request().method(),
+          body: route.request().postDataJSON() as object,
+        });
+        break;
+      }
+      case 'legacy_hub': {
+        response = keycloakMock({
+          url,
+          method: route.request().method(),
+          body: route.request().postDataJSON() as object,
+        });
+        break;
+      }
+    }
+    if (!response) {
+      response = { status: 404 };
+    }
+    if (response.body) {
+      return route.fulfill({
+        status: response.status || 200,
+        contentType: 'application/json',
+        body: JSON.stringify(response.body),
+        headers: response.headers,
+      });
+    } else {
+      return route.fulfill({ status: response.status || 404, headers: response.headers });
+    }
   });
-  if (response.body) {
-    return route.fulfill({
-      status: response.status || 200,
-      contentType: 'application/json',
-      body: JSON.stringify(response.body),
-    });
-  } else {
-    return route.fulfill({ status: response.status || 404 });
-  }
 }
 
 interface MockResponse {
   status?: number;
   body?: object;
+  headers?: Record<string, string>;
 }
 
 type MockApiHandler = (options: { url: URL; method: string; body?: object }) => MockResponse;
 
-export function mockApi(): MockApiHandler {
-  const data = JSON.parse(JSON.stringify(mockData)) as IApiData;
+export function mockApi(data: IApiData): MockApiHandler {
   return ({ url, method, body }) => {
     let response: MockResponse | undefined;
 
@@ -87,9 +105,89 @@ export function mockApi(): MockApiHandler {
       }
 
       case '/api/gateway/v1/ui_auth/':
+      case '/api/galaxy/_ui/v1/settings/':
+      case '/api/gateway/v1/legacy_auth/':
         // always available even if not logged in
         break;
-
+      case '/api/gateway/v1/legacy_auth/finalize/': {
+        const user = {
+          id: 1,
+          username: 'mock',
+          is_superuser: true,
+          summary_fields: { resource: { ansible_id: '1' } },
+        };
+        data.api.gateway.v1.me = [user];
+        data.api.gateway.v1.legacy_auth = {
+          id: user.id,
+          username: user.username,
+          is_authenticated: true,
+          needs_rename: false,
+          is_migrated: true,
+          linked_accounts: [],
+        };
+        data.api.controller.v2.me = [user];
+        data.api.gateway.v1.legacy_auth = {
+          id: 84,
+          username: 'mock',
+          is_authenticated: false,
+          needs_rename: false,
+          is_migrated: true,
+          linked_accounts: [
+            {
+              service: 3,
+              service_type: 'hub',
+              original_username: 'mock',
+              user: 84,
+              gateway_username: 'mock',
+              ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+              backend_classification: null,
+            },
+          ],
+          needs_aap_password: false,
+          allow_rename: true,
+          allow_aap_password: false,
+          is_sso_account: true,
+        };
+        response = { status: 200, body: {} };
+        break;
+      }
+      case '/api/gateway/v1/legacy_auth/controller_password/': {
+        response = {
+          status: 200,
+          body: {
+            id: 84,
+            username: 'mock',
+            is_authenticated: false,
+            needs_rename: false,
+            is_migrated: true,
+            linked_accounts: [
+              {
+                service: 3,
+                service_type: 'hub',
+                original_username: 'mock',
+                user: 84,
+                gateway_username: 'mock',
+                ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+                backend_classification: null,
+              },
+              {
+                service: 1,
+                service_type: 'controller',
+                original_username: 'controller_user',
+                user: 55,
+                gateway_username: 'controller_user',
+                ansible_id: '22850eee-122f-4a4b-a551-e8b64967455',
+                backend_classification: null,
+              },
+            ],
+            needs_aap_password: false,
+            allow_rename: true,
+            allow_aap_password: false,
+            is_sso_account: true,
+          },
+        };
+        break;
+      }
       default: {
         // otherwise return 401 if not logged in
         const me = data.api.gateway.v1.me;
@@ -148,6 +246,56 @@ export function mockApi(): MockApiHandler {
     }
 
     logResponse(method, url, response);
+
+    if (!response) {
+      response = { status: 501 }; // Not Implemented
+    }
+
+    return response;
+  };
+}
+
+export function mockKeycloak(data: IApiData): MockApiHandler {
+  return ({ url, method: _method, body: _body }) => {
+    let response: MockResponse | undefined;
+    switch (url.pathname) {
+      case '/login/keycloak/': {
+        data.api.gateway.v1.legacy_auth = {
+          id: 84,
+          username: 'hub_keycloak_ui_user_2',
+          is_authenticated: false,
+          needs_rename: false,
+          is_migrated: false,
+          linked_accounts: [
+            {
+              service: 3,
+              service_type: 'hub',
+              original_username: 'hub_keycloak_ui_user_2',
+              user: 84,
+              gateway_username: 'hub_keycloak_ui_user_2',
+              ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+              backend_classification: null,
+            },
+          ],
+          needs_aap_password: false,
+          allow_rename: true,
+          allow_aap_password: false,
+          is_sso_account: true,
+        };
+        response = {
+          status: 301,
+          headers: { Location: platformUI },
+        };
+        break;
+      }
+
+      default:
+        break;
+    }
+
+    if (!response) {
+      response = { status: 501 }; // Not Implemented
+    }
 
     return response;
   };
@@ -306,6 +454,7 @@ function logResponse(method: string, url: URL, response: MockResponse) {
   }
 
   if (!process.env.CI) {
+    // eslint-disable-next-line no-console
     console.log(chalkMethod, chalk.cyan(url.pathname), status, httpStatus[response.status || 500]);
   }
 }
