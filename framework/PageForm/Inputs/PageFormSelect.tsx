@@ -1,7 +1,7 @@
 import { ButtonVariant } from '@patternfly/react-core';
 import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
 import getValue from 'get-value';
-import { ChangeEvent, ReactNode, useCallback, useState } from 'react';
+import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   Controller,
   FieldPath,
@@ -135,6 +135,7 @@ export function PageFormSelect<
   const {
     control,
     setValue,
+    getValues,
     formState: { isSubmitting, isValidating, defaultValues },
     resetField,
   } = useFormContext<TFieldValues>();
@@ -150,6 +151,15 @@ export function PageFormSelect<
     TFieldName
   >;
 
+  useEffect(() => {
+    const value = getValues(props.name);
+    if (!value) {
+      if (options.length === 1 && isRequired) {
+        setValue(props.name, options[0].value as PathValue<TFieldValues, TFieldName>);
+      }
+    }
+  }, [getValues, isRequired, options, props.name, setValue]);
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -157,11 +167,6 @@ export function PageFormSelect<
       defaultValue={props.defaultValue}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        if (value === '') {
-          if (options.length === 1 && isRequired) {
-            onChange(options[0].value);
-          }
-        }
         const onSelectHandler = (
           _event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
           label: string | SelectOptionObject
