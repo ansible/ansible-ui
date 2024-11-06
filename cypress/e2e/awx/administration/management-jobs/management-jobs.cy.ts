@@ -382,7 +382,7 @@ describe('Management Jobs - Notifications Tab', function () {
       cy.navigateTo('awx', 'notification-templates');
       cy.verifyPageTitle('Notifiers');
       cy.wait('@getNotifiers');
-      cy.clickLink('Create notifier');
+      cy.contains('Create notifier').click();
       cy.verifyPageTitle('Create notifier');
       cy.getByDataCy('name').type(notifierName);
       cy.getByDataCy('description').type('AWX Notifier Description');
