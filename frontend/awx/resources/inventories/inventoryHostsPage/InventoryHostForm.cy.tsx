@@ -1,7 +1,7 @@
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import type { IHostInput } from './InventoryHostForm';
 import { CreateHost, EditHost } from './InventoryHostForm';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Inventory/Standalone Host Form', () => {
   const payload = {
@@ -9,6 +9,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
     variables: 'hello: world',
     description: 'mock host description',
     inventory: 1,
+    enabled: true,
   };
 
   describe('Create Host', () => {
@@ -68,12 +69,7 @@ describe('Create Edit Inventory/Standalone Host Form', () => {
         cy.wait('@createHost')
           .its('request.body')
           .then((createdHost: IHostInput) => {
-            expect(createdHost).to.deep.equal({
-              name: payload.name,
-              description: payload.description,
-              variables: payload.variables,
-              inventory: payload.inventory,
-            });
+            expect(createdHost).to.deep.equal(payload);
           });
       });
     });

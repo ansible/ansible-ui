@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
+  PageFormCheckbox,
   PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextInput,
@@ -30,6 +31,7 @@ export interface IHostInput {
   description?: string;
   variables?: string;
   inventory?: { name?: string; id?: number };
+  enabled?: boolean;
 }
 
 export function CreateHost() {
@@ -148,6 +150,7 @@ export function CreateHost() {
           name: '',
           description: '',
           variables: '---\n',
+          enabled: true,
         }}
       >
         <HostInputs edit_mode={false} inventory_host={params.inventory_host} />
@@ -233,6 +236,7 @@ export function EditHost() {
     description: host.description,
     variables: host.variables,
     inventory: { name: host.summary_fields?.inventory?.name },
+    enabled: host.enabled,
   };
 
   let breadcrumbs: ICatalogBreadcrumb[] = [];
@@ -319,6 +323,11 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
           labelHelp={t('Select the inventory that this host will belong to.')}
         />
       )}
+      <PageFormCheckbox<IHostInput>
+        name="enabled"
+        label={t('Enabled')}
+        labelHelp={t('Whether this host is enabled for use.')}
+      />
       <PageFormSection singleColumn>
         <PageFormDataEditor<IHostInput> format="yaml" name="variables" label={t('Variables')} />
       </PageFormSection>
