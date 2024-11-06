@@ -391,6 +391,26 @@ describe('Inventory Groups', () => {
       cy.deleteAwxInventory(thisInventory, { failOnStatusCode: false });
     });
 
+    it('can add an existing host to a group', () => {
+      const newGroupName = 'E2E Inventory Group' + randomString(4);
+      cy.filterTableBySingleSelect('name', thisInventory.name);
+      cy.clickTableRowLink('name', thisInventory.name, { disableFilter: true });
+      cy.verifyPageTitle(thisInventory.name);
+      cy.clickTab(/^Groups$/, true);
+      cy.createInventoryGroup(thisInventory, newGroupName).then((group) => {
+        cy.clickTableRowLink('name', group.name, { disableFilter: true });
+        cy.clickTab(/^Hosts$/, true);
+        cy.clickButton(/^Add existing host$/);
+        cy.getModal().within(() => {
+          cy.filterTableByMultiSelect('name', [thisHost.name]);
+          cy.get('[data-cy="checkbox-column-cell"]').first().click();
+          cy.clickButton('Add host');
+        });
+        cy.filterTableBySingleSelect('name', thisHost.name).should('be.visible');
+        cy.requestDelete(awxAPI`/groups/${group.id.toString()}`);
+      });
+    });
+
     it('can add a new host to a group and then delete it', () => {
       const newHostName = 'New test host' + randomString(4);
       cy.filterTableBySingleSelect('name', thisInventory.name);
