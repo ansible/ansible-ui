@@ -74,8 +74,8 @@ describe('NodeAddWizard', () => {
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Workflow Job Template');
     });
-    cy.get('[data-cy="job-template-select-form-group"]').within(() => {
-      cy.get('div.pf-v5-c-select__toggle-wrapper').should(
+    cy.getBy('button[id="job-template-select"]').within(() => {
+      cy.get('span.pf-v5-c-menu-toggle__text').should(
         'have.text',
         'Select a workflow job template'
       );

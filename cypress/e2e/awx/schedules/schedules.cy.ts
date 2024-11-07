@@ -6,7 +6,11 @@ import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Project } from '../../../../frontend/awx/interfaces/Project';
 import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-
+const getId = (name: string) =>
+  name
+    .split(' ')
+    .map((i) => i.toLowerCase())
+    .join('-');
 describe('Schedules - Create and Delete', () => {
   describe('Schedules - Create schedule of resource type Job template', () => {
     let organization: Organization;
@@ -48,14 +52,10 @@ describe('Schedules - Create and Delete', () => {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
-        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
-        cy.getBy('button[data-cy="apply-filter"]').click();
-        cy.wait('@jtSearch');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+      const templateID = getId(jobTemplate.name);
+      cy.get('div#job-template-select-select').within(() => {
+        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
+        cy.get(`button#${templateID}`).click();
       });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
@@ -84,14 +84,10 @@ describe('Schedules - Create and Delete', () => {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
-        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
-        cy.getBy('button[data-cy="apply-filter"]').click();
-        cy.wait('@jtSearch');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+      const templateID = getId(jobTemplate.name);
+      cy.get('div#job-template-select-select').within(() => {
+        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
+        cy.get(`button#${templateID}`).click();
       });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
@@ -125,14 +121,10 @@ describe('Schedules - Create and Delete', () => {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
-        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
-        cy.getBy('button[data-cy="apply-filter"]').click();
-        cy.wait('@jtSearch');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+      const templateID = getId(jobTemplate.name);
+      cy.get('div#job-template-select-select').within(() => {
+        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
+        cy.get(`button#${templateID}`).click();
       });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
@@ -161,31 +153,38 @@ describe('Schedules - Create and Delete', () => {
 
     it("can't create a schedule with missing resources", () => {
       const scheduleName = 'E2E Schedule With Missing Resources' + randomString(4);
-      cy.deleteAwxInventory(inventory);
-      cy.navigateTo('awx', 'schedules');
-      cy.verifyPageTitle('Schedules');
-      cy.getByDataCy('create-schedule').click();
-      cy.verifyPageTitle('Create schedule');
-      cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
-        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
-        cy.getBy('button[data-cy="apply-filter"]').click();
-        cy.wait('@jtSearch');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+
+      cy.deleteAwxInventory(inventory).then(() => {
+        cy.navigateTo('awx', 'schedules');
+        cy.verifyPageTitle('Schedules');
+        cy.getByDataCy('create-schedule').click();
+        cy.verifyPageTitle('Create schedule');
+        cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
+        cy.getBy('button[id="job-template-select"]').click();
+        const templateID = getId(jobTemplate.name);
+        cy.get('div#job-template-select-select').within(() => {
+          cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
+          cy.get(`button#${templateID}`).click();
+        });
+        cy.getByDataCy('name').type(`${scheduleName}`);
+        cy.clickButton('Next');
+        cy.selectDropdownOptionByResourceName('freq', 'Hourly');
+        cy.getByDataCy('interval').clear().type('100');
+        cy.clickButton('Save rule');
+        cy.clickButton('Next');
+        cy.clickButton('Next');
+        // cy.intercept('GET', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
+        //   'fetchTemplate'
+        // );
+        cy.intercept(awxAPI`/schedules/preview/`).as('preview');
+        cy.wait('@preview');
+        cy.clickButton('Finish');
+        // cy.wait('@fetchTemplate');
+        cy.get('div.pf-v5-c-alert__description').should(
+          'have.text',
+          'Job Template inventory is missing or undefined.'
+        );
       });
-      cy.getByDataCy('name').type(`${scheduleName}`);
-      cy.clickButton('Next');
-      cy.selectDropdownOptionByResourceName('freq', 'Hourly');
-      cy.getByDataCy('interval').clear().type('100');
-      cy.clickButton('Save rule');
-      cy.clickButton('Next');
-      cy.clickButton('Next');
-      cy.clickButton('Finish');
-      cy.contains('Job Template inventory is missing or undefined.');
     });
   });
 
@@ -433,14 +432,10 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.getBy('[data-cy="text-input"]').type(jobTemplate.name);
-        cy.intercept('GET', awxAPI`/job_templates/?name*`).as('jtSearch');
-        cy.getBy('button[data-cy="apply-filter"]').click();
-        cy.wait('@jtSearch');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+      const templateID = getId(jobTemplate.name);
+      cy.get('div#job-template-select-select').within(() => {
+        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
+        cy.get(`button#${templateID}`).click();
       });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
@@ -957,27 +952,32 @@ describe('Schedules - Edit', () => {
           rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
         }).then((sched: Schedule) => {
           schedule = sched;
-          cy.deleteAwxInventory(inv);
-
-          cy.navigateTo('awx', 'templates');
-          cy.verifyPageTitle('Templates');
-          cy.filterTableByMultiSelect('name', [jt.name]);
-          cy.get('[data-cy="name-column-cell"]').within(() => {
-            cy.get('a').click();
+          cy.deleteAwxInventory(inv).then(() => {
+            cy.navigateTo('awx', 'templates');
+            cy.verifyPageTitle('Templates');
+            cy.filterTableByMultiSelect('name', [jt.name]);
+            cy.get('[data-cy="name-column-cell"]').within(() => {
+              cy.get('a').click();
+            });
+            cy.verifyPageTitle(jt.name);
+            cy.clickTab('Schedules', true);
+            cy.get('[data-cy="create-schedule"]').should('have.attr', 'aria-disabled', 'true');
+            cy.get('[data-cy="name-column-cell"]').within(() => {
+              cy.get('a').click();
+            });
+            cy.clickLink('Edit schedule');
+            cy.verifyPageTitle('Edit Schedule');
+            cy.clickButton('Next');
+            cy.clickButton('Next');
+            cy.clickButton('Next');
+            cy.intercept(awxAPI`/schedules/preview/`).as('preview');
+            cy.clickButton('Finish');
+            cy.wait('@preview');
+            cy.get('div.pf-v5-c-alert__description').should(
+              'have.text',
+              'Job Template inventory is missing or undefined.'
+            );
           });
-          cy.verifyPageTitle(jt.name);
-          cy.clickTab('Schedules', true);
-          cy.get('[data-cy="create-schedule"]').should('have.attr', 'aria-disabled', 'true');
-          cy.get('[data-cy="name-column-cell"]').within(() => {
-            cy.get('a').click();
-          });
-          cy.clickLink('Edit schedule');
-          cy.verifyPageTitle('Edit Schedule');
-          cy.clickButton('Next');
-          cy.clickButton('Next');
-          cy.clickButton('Next');
-          cy.clickButton('Finish');
-          cy.contains('Job Template inventory is missing or undefined.');
         });
       });
     });

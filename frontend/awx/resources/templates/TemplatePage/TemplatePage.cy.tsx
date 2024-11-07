@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { Organization } from '../../../interfaces/Organization';
 import { TemplatePage } from './TemplatePage';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
@@ -11,13 +9,6 @@ describe('TemplatePage', () => {
       { method: 'GET', url: awxAPI`/job_templates/*`, hostname: 'localhost' },
       { fixture: 'jobTemplate.json' }
     );
-    cy.fixture('organizations').then((organizations: AwxItemsResponse<Organization[]>) => {
-      cy.intercept(
-        'GET',
-        'api/v2/organizations/?role_level=notification_admin_role',
-        organizations
-      );
-    });
     cy.intercept(
       { method: 'GET', url: awxAPI`/job_templates/1/instance_groups`, hostname: 'localhost' },
       { fixture: 'instance_groups.json' }
@@ -25,6 +16,14 @@ describe('TemplatePage', () => {
   });
 
   it('Component renders and displays jobTemplate', () => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
+        hostname: 'localhost',
+      },
+      { fixture: 'organizations.json' }
+    );
     cy.mount(<TemplatePage />);
     cy.get('h1').should('have.text', 'JT with Default Cred');
   });

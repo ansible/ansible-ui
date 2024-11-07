@@ -44,7 +44,14 @@ describe('Create job template ', () => {
   it('Should update fields properly', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
+    cy.getBy('button[id="inventory"]').click();
+    cy.get('button[data-cy="browse-button"]').scrollIntoView().click({
+      force: true,
+    });
+    cy.getModal().within(() => {
+      cy.get('[data-cy="checkbox-column-cell"]').first().click();
+      cy.clickButton('Confirm');
+    });
     cy.clickButton('Create workflow job template');
     cy.intercept('POST', awxAPI`/workflow_job_templates/`, (req) => {
       expect(req.body).to.contain({

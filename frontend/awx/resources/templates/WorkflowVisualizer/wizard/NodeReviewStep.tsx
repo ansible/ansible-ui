@@ -1,23 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AwxRoute } from '../../../../main/AwxRoutes';
-import {
-  PageDetail,
-  PageDetails,
-  PageWizardStep,
-  useGetPageUrl,
-} from '../../../../../../framework';
+import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../../framework';
 import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { useGet } from '../../../../../common/crud/useGet';
+import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { WizardFormValues, UnifiedJobType, AllResources, NodeResource } from '../types';
 import { Survey } from '../../../../interfaces/Survey';
-import { hasDaysToKeep, getValueBasedOnJobType } from './helpers';
+import { hasDaysToKeep, getValueBasedOnJobType, getResourceURL } from './helpers';
 import { PromptReviewDetails } from './PromptReviewDetails';
 import { RESOURCE_TYPE } from '../constants';
 import { useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
+import { LoadingState } from '../../../../../../framework/components/LoadingState';
+import { AwxError } from '../../../../common/AwxError';
+import { useEffect } from 'react';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -78,25 +76,33 @@ export function NodeReviewStep() {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
-  const { wizardData, visibleSteps } = usePageWizard() as {
-    wizardData: WizardFormValues;
-    visibleSteps: PageWizardStep[];
-  };
+  const { wizardData, visibleSteps, setWizardData } = usePageWizard<WizardFormValues>();
+
   const {
     approval_name,
     approval_description,
     node_type,
-    resource,
+    resourceId,
     approval_timeout,
     node_alias,
     node_convergence,
     node_days_to_keep,
     survey,
   } = wizardData;
-
+  const url = getResourceURL(node_type);
+  const { data: resource, isLoading, error } = useGetItem<AllResources>(url, resourceId);
   const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(resource ?? null));
+  useEffect(() => {
+    if (!resource) return;
+    setWizardData((prev) => ({ ...prev, resource, resourceId: resource.id }));
+  }, [setWizardData, resource]);
   const hasPromptDetails = Boolean(visibleSteps.find((step) => step.id === 'nodePromptsStep'));
   const nodeTypeDetail = useGetNodeTypeDetail(node_type);
+  const timeoutString = useGetTimeoutString(approval_timeout);
+
+  if (isLoading || (!error && resource === undefined)) return <LoadingState />;
+  if (error) return <AwxError error={error} />;
+
   const nameDetail = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
   const descriptionDetail = getValueBasedOnJobType(
     node_type,
@@ -104,9 +110,9 @@ export function NodeReviewStep() {
     approval_description
   );
   const convergenceDetail = node_convergence === 'all' ? t('All') : t('Any');
-  const timeoutString = useGetTimeoutString(approval_timeout);
   const timeoutDetail = getValueBasedOnJobType(node_type, '', timeoutString);
-  const showDaysToKeep = node_type === RESOURCE_TYPE.system_job && hasDaysToKeep(resource);
+  const showDaysToKeep =
+    node_type === RESOURCE_TYPE.system_job && resource && hasDaysToKeep(resource);
   const extraVarsDetail = showDaysToKeep
     ? jsonToYaml(JSON.stringify({ days: node_days_to_keep }))
     : '';

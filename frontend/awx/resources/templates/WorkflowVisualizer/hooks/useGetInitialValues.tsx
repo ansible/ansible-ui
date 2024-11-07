@@ -47,6 +47,7 @@ export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValue
       node_convergence: nodeConvergence ?? defaultMapper.node_convergence,
       node_days_to_keep: nodeDaysToKeep ?? defaultMapper.node_days_to_keep,
       resource: nodeUJT ?? defaultMapper.resource,
+      resourceId: nodeUJT?.id ?? defaultMapper.resource?.id,
       node_type: nodeType || defaultMapper.node_type,
     };
   }, []);
@@ -61,6 +62,7 @@ const defaultMapper: CommonNodeValues = {
   node_convergence: 'any',
   node_days_to_keep: 30,
   resource: null,
+  resourceId: undefined,
   node_type: RESOURCE_TYPE.job,
   node_status_type: EdgeStatus.info,
 };

@@ -30,6 +30,14 @@ describe('WorflowJobTemplatePage', () => {
   });
 
   it('Component renders and displays workflow job template', () => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/organizations/?role_level=notification_admin_role`,
+        hostname: 'localhost',
+      },
+      { fixture: 'organizations.json' }
+    );
     cy.mount(<WorkflowJobTemplatePage />);
     cy.get('h1').should('have.text', 'E2E 6GDe');
   });

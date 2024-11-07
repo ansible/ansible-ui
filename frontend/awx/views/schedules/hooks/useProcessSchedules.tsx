@@ -20,7 +20,7 @@ export const useProcessSchedule = () => {
   const getRuleSet = useSetRRuleItemToRuleSet();
   return useCallback(
     async (payloadData: ScheduleFormWizard) => {
-      const { resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
+      const { resourceId, resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
       const ruleset = getRuleSet(rules, exceptions);
 
       const payload = {
@@ -43,6 +43,7 @@ export const useProcessSchedule = () => {
       }
 
       const { type, id } = resource;
+
       let schedule: Schedule;
       switch (type) {
         case 'inventory_source':
@@ -74,7 +75,7 @@ export const useProcessSchedule = () => {
           schedule = await request(awxAPI`/workflow_job_templates/${id.toString()}/schedules/`, {
             ...payload,
             ...promptData,
-            extra_data: mungeSurveyAndExtraVarsData(survey, prompt.extra_vars),
+            extra_data: mungeSurveyAndExtraVarsData(survey ?? {}, prompt?.extra_vars ?? ''),
           });
           await postAccessories(schedule, {
             ...payload,
@@ -89,7 +90,7 @@ export const useProcessSchedule = () => {
           schedule = await request(awxAPI`/job_templates/${id.toString()}/schedules/`, {
             ...payload,
             ...promptData,
-            extra_data: mungeSurveyAndExtraVarsData(survey, prompt.extra_vars),
+            extra_data: mungeSurveyAndExtraVarsData(survey ?? {}, prompt?.extra_vars ?? ''),
           });
           if (prompt !== undefined && payload.launch_config !== null) {
             await postAccessories(schedule, {

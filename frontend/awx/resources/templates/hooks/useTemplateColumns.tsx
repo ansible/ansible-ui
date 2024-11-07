@@ -1,5 +1,4 @@
-import { Icon, Split, Tooltip } from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { Split } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -49,11 +48,6 @@ function useActivityColumn() {
   );
   return column;
 }
-
-export const missingResources = (template: JobTemplate | WorkflowJobTemplate) =>
-  template.type === 'job_template' &&
-  (!template?.summary_fields.project ||
-    (!template?.summary_fields.inventory && !template?.ask_inventory_on_launch));
 
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -107,13 +101,6 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
                 { params: { id: template.id } }
               )}
             />
-            {missingResources(template) && (
-              <Tooltip content={t`Resources are missing from this template.`} position="right">
-                <Icon status="danger" style={{ paddingTop: '6px' }}>
-                  <ExclamationTriangleIcon />
-                </Icon>
-              </Tooltip>
-            )}
           </Split>
         ),
         card: 'name',

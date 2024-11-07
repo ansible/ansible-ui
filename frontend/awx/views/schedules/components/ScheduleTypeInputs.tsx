@@ -45,10 +45,10 @@ export function ScheduleTypeInputs() {
         {scheduleType &&
           {
             job_template: (
-              <PageFormJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />
+              <PageFormJobTemplateSelect<ScheduleFormWizard> isRequired name="resourceId" />
             ),
             workflow_job_template: (
-              <PageFormWorkflowJobTemplateSelect<ScheduleFormWizard> isRequired name="resource" />
+              <PageFormWorkflowJobTemplateSelect<ScheduleFormWizard> isRequired name="resourceId" />
             ),
             inventory_source: (
               <>

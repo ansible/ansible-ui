@@ -50,6 +50,7 @@ export interface ScheduleFormWizard {
   description?: string;
   schedule_type: string;
   resource: ScheduleResources;
+  resourceId?: number;
   startDateTime: { date: string; time: string };
   timezone: string;
   rules: RuleListItemType[];

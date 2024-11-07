@@ -27,8 +27,8 @@ import { PageFormProjectSelect } from '../../../projects/components/PageFormProj
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { RESOURCE_TYPE } from '../constants';
-import type { PromptFormValues, WizardFormValues } from '../types';
-import { shouldHideOtherStep } from './helpers';
+import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
+import { getResourceURL, shouldHideOtherStep } from './helpers';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -36,7 +36,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
 
   const { defaultValues } = formState;
 
-  const { setWizardData, setStepData, steps: allSteps } = usePageWizard<WizardFormValues>();
+  const { setWizardData, setStepData } = usePageWizard<WizardFormValues>();
 
   // Register form fields
   register('node_type');
@@ -49,8 +49,8 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     control,
     defaultValue: defaultValues?.node_type,
   });
-  const nodeResource = useWatch<WizardFormValues, 'resource'>({
-    name: 'resource',
+  const resourceId = useWatch<WizardFormValues, 'resourceId'>({
+    name: 'resourceId',
   });
 
   useEffect(() => {
@@ -67,36 +67,30 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
       setWizardData({ ...currentFormValues, launch_config: null });
       setStepData({ nodeTypeStep: currentFormValues });
     }
-  }, [nodeType, getFieldState, setValue, reset, allSteps, setWizardData, setStepData, getValues]);
+  }, [nodeType, getFieldState, setValue, reset, setWizardData, setStepData, getValues]);
 
   useEffect(() => {
+    // Once we finish AAP-34015 fetchResource could probably be removed.
+    const fetchResource = async () => {
+      const nodeResourceUrl = getResourceURL(nodeType);
+      return requestGet<AllResources>(`${nodeResourceUrl}/${resourceId?.toString() ?? ''}`);
+    };
+
     const setLaunchToWizardData = async () => {
       let launchConfigValue = {} as PromptFormValues;
-      let template = getValues('resource');
-
-      if (!template && nodeResource) {
-        template = nodeResource;
-      }
-
-      if (!template) return;
-      let templateType;
-      if ('type' in template) {
-        templateType = template.type;
-      } else if ('unified_job_type' in template) {
-        templateType = template.unified_job_type;
-      }
-
+      if (!resourceId || !nodeType) return;
+      setValue('resourceId', resourceId);
       let launchConfigResults = {} as LaunchConfiguration;
-      if (templateType === RESOURCE_TYPE.job || templateType === 'job_template') {
+
+      const nodeResource = await fetchResource();
+
+      if (nodeType === RESOURCE_TYPE.job) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
-          awxAPI`/job_templates/${template.id.toString()}/launch/`
+          awxAPI`/job_templates/${resourceId.toString()}/launch/`
         );
-      } else if (
-        templateType === RESOURCE_TYPE.workflow_job ||
-        templateType === 'workflow_job_template'
-      ) {
+      } else if (nodeType === RESOURCE_TYPE.workflow_job) {
         launchConfigResults = await requestGet<LaunchConfiguration>(
-          awxAPI`/workflow_job_templates/${template.id.toString()}/launch/`
+          awxAPI`/workflow_job_templates/${resourceId?.toString()}/launch/`
         );
       }
       const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults?.defaults || {};
@@ -115,12 +109,14 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
         setWizardData((prev) => ({
           ...prev,
           launch_config: shouldShowPromptStep ? launchConfigResults : null,
+          resourceId,
           resource: nodeResource,
         }));
         setStepData((prev) => ({
           ...prev,
           nodePromptsStep: {
             launch_config: launchConfigResults,
+            resourceId,
             resource: nodeResource,
             prompt: launchConfigValue,
           },
@@ -131,17 +127,7 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
     if (nodeType === RESOURCE_TYPE.job || nodeType === RESOURCE_TYPE.workflow_job) {
       void setLaunchToWizardData();
     }
-  }, [
-    allSteps,
-    defaultValues,
-    getFieldState,
-    getValues,
-    nodeResource,
-    nodeType,
-    setValue,
-    setWizardData,
-    setStepData,
-  ]);
+  }, [resourceId, nodeType, setWizardData, setValue, setStepData]);
 
   return (
     <>
@@ -212,7 +198,7 @@ function NodeResourceInput() {
             return (
               <PageFormJobTemplateSelect<WizardFormValues>
                 templateType="job_templates"
-                name="resource"
+                name="resourceId"
                 isRequired
               />
             );
@@ -220,7 +206,7 @@ function NodeResourceInput() {
             return (
               <PageFormJobTemplateSelect<WizardFormValues>
                 templateType="workflow_job_templates"
-                name="resource"
+                name="resourceId"
                 isRequired
               />
             );

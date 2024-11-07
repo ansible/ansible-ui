@@ -46,7 +46,7 @@ export function NodeAddWizard() {
   const state = controller.getState<ControllerState>();
   const nodeTypeStepDefaults = useNodeTypeStepDefaults();
 
-  const initialValues = {
+  const initialValues: { [stepId: string]: Partial<WizardFormValues> } = {
     nodeTypeStep: nodeTypeStepDefaults(),
   };
 
@@ -88,13 +88,12 @@ export function NodeAddWizard() {
       label: t('Prompts'),
       inputs: <NodePromptsStep />,
       hidden: (wizardData: Partial<WizardFormValues>) => {
-        const { launch_config, resource, node_type } = wizardData;
+        const { launch_config, node_type } = wizardData;
         if (Object.keys(wizardData).length === 0) {
           return true;
         }
         if (
           (node_type === RESOURCE_TYPE.workflow_job || node_type === RESOURCE_TYPE.job) &&
-          resource &&
           launch_config
         ) {
           return shouldHideOtherStep(launch_config);
@@ -133,6 +132,7 @@ export function NodeAddWizard() {
       launch_config,
       node_type,
       resource,
+      resourceId,
       approval_timeout,
       node_alias,
       node_convergence,
@@ -175,7 +175,7 @@ export function NodeAddWizard() {
           },
           summary_fields: {
             unified_job_template: {
-              id: Number(resource?.id || 0),
+              id: resourceId ?? Number(resource?.id || 0),
               name: nodeName,
               description: getValueBasedOnJobType(
                 node_type,

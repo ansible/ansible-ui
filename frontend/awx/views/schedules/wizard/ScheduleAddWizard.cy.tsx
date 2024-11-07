@@ -25,6 +25,11 @@ describe('ScheduleAddWizard', () => {
     type: 'job_template',
     _enabled: false,
     ask_credential_on_launch: true,
+    ask_inventory_on_launch: false,
+    summary_fields: {
+      project: { id: 1, name: 'mock project' },
+      inventory: { id: 1, name: 'mock inventory' },
+    },
     credentials: [],
     unified_job_type: 'job',
   };
@@ -100,9 +105,11 @@ describe('ScheduleAddWizard', () => {
         count: 1,
         results: [mockTemplateCredential],
       });
+      cy.intercept(awxAPI`/workflow_job_templates/*`, {
+        ...mockTemplate,
+        type: 'workflow_job_template',
+      });
       cy.intercept(awxAPI`/workflow_job_templates/*/launch/`, launchConfig);
-      cy.intercept(awxAPI`/workflow_job_templates/*/`, mockTemplate);
-      cy.intercept(awxAPI`/job_templates/*/launch/`, launchConfig);
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/workflow_job_templates/`} />, {
         initialEntries: ['/templates/workflow-job-templates/266/schedules/create'],
         path: '/templates/workflow-job-templates/:id/schedules/create',
@@ -319,7 +326,14 @@ describe('ScheduleAddWizard', () => {
         });
       });
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.selectDropdownOptionByResourceName('job-template-select', 'Mock Job Template');
+      cy.getBy('button[id="job-template-select"]').click();
+      cy.get('button#browse').scrollIntoView().click({
+        force: true,
+      });
+      cy.getModal().within(() => {
+        cy.get('[data-cy="checkbox-column-cell"]').first().click();
+        cy.clickButton('Confirm');
+      });
       cy.get('[data-cy="name"]').type('Test Schedule');
       cy.selectSingleSelectOption('[data-cy="timezone"]', 'Zulu');
       cy.clickButton(/^Next$/);

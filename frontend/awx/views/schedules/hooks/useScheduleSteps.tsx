@@ -34,13 +34,14 @@ export function useScheduleSteps() {
         label: t('Prompts'),
         inputs: <PromptsStep preventCredentialsThatNeedPasswordsOnLaunch />,
         hidden: (wizardData: Partial<ScheduleFormWizard>) => {
-          const { launch_config, resource, schedule_type } = wizardData;
+          const { launch_config, resource, resourceId, schedule_type } = wizardData;
+
           const isTemplate =
             schedule_type === 'job_template' ||
             schedule_type === 'workflow_job_template' ||
             resource?.type === 'job_template' ||
             resource?.type === 'workflow_job_template';
-          if (isTemplate && resource && launch_config) {
+          if (isTemplate && (resource || resourceId) && launch_config) {
             return shouldHideOtherStep(launch_config);
           }
           return true;
