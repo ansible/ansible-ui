@@ -53,7 +53,7 @@ describe('If SaaS Build', () => {
     it('can create RBA without credentials', () => {
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.clickButton(/^Create rulebook activation$/);
+      cy.contains(`Create rulebook activation`).click();
       cy.get('h1').should('contain', 'Create rulebook activation');
       cy.get('[data-cy="name"]').type(name);
       cy.get('[data-cy="description"]').type('This is a new rulebook activation.');
@@ -66,8 +66,24 @@ describe('If SaaS Build', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
-      cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
+      cy.get('[data-cy="project_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaProject.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
+      cy.get('[data-cy="rulebook_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaRuleBook.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
       cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
       cy.selectDropdownOptionByResourceName('restart-policy', 'Always');
       cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
@@ -131,7 +147,7 @@ describe('If SaaS Build', () => {
       cy.clickButton(/^Create decision environment$/);
       cy.verifyPageTitle(de_name);
       cy.navigateTo('eda', 'rulebook-activations');
-      cy.clickButton(/^Create rulebook activation$/);
+      cy.contains('Create rulebook activation').click();
       cy.get('h1').should('contain', 'Create rulebook activation');
       const name = 'E2E Rulebook Activation ' + randomString(4);
       cy.get('[data-cy="name"]').type(name);
@@ -145,8 +161,24 @@ describe('If SaaS Build', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
-      cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
+      cy.get('[data-cy="project_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaProject.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
+      cy.get('[data-cy="rulebook_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaRuleBook.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
       cy.selectDropdownOptionByResourceName('decision-environment-id', de_name);
       cy.selectDropdownOptionByResourceName('restart-policy', 'Always');
       cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');

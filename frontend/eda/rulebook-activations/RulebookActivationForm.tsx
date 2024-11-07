@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,12 +10,10 @@ import {
   PageFormTextInput,
   PageHeader,
   PageLayout,
-  compareStrings,
   useGetPageUrl,
   usePageNavigate,
   PageFormCheckbox,
 } from '../../../framework';
-import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
 import { requestGet, swrOptions } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
@@ -25,7 +23,6 @@ import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
-import { EdaProject } from '../interfaces/EdaProject';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import {
@@ -34,7 +31,6 @@ import {
 } from '../interfaces/EdaRulebookActivation';
 import { LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
-import { EdaProjectCell } from '../projects/components/EdaProjectCell';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import useSWR from 'swr';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
@@ -43,6 +39,8 @@ import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup'
 import jsyaml from 'js-yaml';
 import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
 import { EdaEventStream } from '../interfaces/EdaEventStream';
+import { PageFormRulebookSelect } from './components/PageFormRulebooksSelect';
+import { PageFormProjectSelect } from '../projects/components/PageFormProjectsSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();
@@ -60,19 +58,17 @@ export function CreateRulebookActivation() {
       ? organizations.results[0]
       : undefined;
 
-  const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async ({
-    rulebook,
-    ...rulebookActivation
-  }) => {
-    rulebookActivation?.organization_id, (rulebookActivation.rulebook_id = rulebook?.id);
-    rulebookActivation.eda_credentials = rulebookActivation.credential_refs
-      ? rulebookActivation.credential_refs.map((credential) => credential?.id)
-      : undefined;
-    delete rulebookActivation.credential_refs;
-    const newRulebookActivation = await postEdaRulebookActivation(
-      edaAPI`/activations/`,
-      rulebookActivation
-    );
+  const onSubmit: PageFormSubmitHandler<IEdaRulebookActivationInputs> = async (
+    rulebookActivation
+  ) => {
+    const eda_credentials: EdaCredential[] = rulebookActivation?.eda_credentials as EdaCredential[];
+    const credential_refs: number[] = eda_credentials
+      ? eda_credentials.map((credential) => credential?.id)
+      : [];
+    const newRulebookActivation = await postEdaRulebookActivation(edaAPI`/activations/`, {
+      ...rulebookActivation,
+      eda_credentials: credential_refs,
+    });
     pageNavigate(EdaRoute.RulebookActivationPage, { params: { id: newRulebookActivation.id } });
   };
 
@@ -136,7 +132,6 @@ export function RulebookActivationInputs() {
       </p>
     </>
   );
-  const { data: projects } = useGet<EdaResult<EdaProject>>(edaAPI`/projects/?page=1&page_size=200`);
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
     edaAPI`/decision-environments/?page=1&page_size=200`
   );
@@ -179,20 +174,8 @@ export function RulebookActivationInputs() {
   }) as number;
 
   const rulebook = useWatch<IEdaRulebookActivationInputs>({
-    name: 'rulebook',
-  }) as EdaRulebook;
-
-  const query = useCallback(async () => {
-    const response = await requestGet<EdaResult<EdaRulebook>>(
-      projectId !== undefined
-        ? edaAPI`/rulebooks/?project_id=${projectId.toString()}&page=1&page_size=200`
-        : edaAPI`/rulebooks/?page=1&page_size=200`
-    );
-    return Promise.resolve({
-      total: response.count,
-      values: response.results?.sort((l, r) => compareStrings(l.name, r.name)) ?? [],
-    });
-  }, [projectId]);
+    name: 'rulebook_id',
+  }) as string;
 
   useEffect(() => {
     setValue('source_mappings', jsyaml.dump(sourceMappings));
@@ -218,43 +201,18 @@ export function RulebookActivationInputs() {
         placeholder={t('Enter description')}
       />
       <PageFormSelectOrganization<IEdaRulebookActivationInputs> name="organization_id" isRequired />
-      <PageFormSelect<IEdaRulebookActivationInputs>
-        name="project_id"
-        label={t('Project')}
-        placeholderText={t('Select project')}
-        options={
-          projects?.results
-            ? projects.results.map((item: { name: string; id: number }) => ({
-                label: item.name,
-                value: item.id,
-              }))
-            : []
-        }
-        labelHelp={t('A project is a logical collection of rulebooks.')}
-        labelHelpTitle={t('Project')}
-      />
-      <PageFormAsyncSelect<IEdaRulebookActivationInputs>
-        name="rulebook"
-        label={t('Rulebook')}
-        placeholder={t('Select project rulebook')}
-        loadingPlaceholder={t('Loading project rulebooks')}
-        loadingErrorText={t('Error loading project rulebooks')}
-        query={query}
-        valueToString={(rulebook: EdaRulebook) => rulebook.name}
-        valueToDescription={(rulebook: EdaRulebook) => (
-          <EdaProjectCell id={rulebook.project_id} disableLink />
-        )}
-        limit={200}
+      <PageFormProjectSelect isRequired name={'project_id'} />
+      <PageFormRulebookSelect
         isRequired
-        labelHelp={t('Rulebooks will be shown according to the project selected.')}
-        labelHelpTitle={t('Rulebook')}
+        name={'rulebook_id'}
+        projectId={projectId ? String(projectId) : '0'}
       />
       <PageFormEventSourceSelect
         name={'source_mappings'}
         label={t('Event streams')}
         selectTitle={t('Event streams')}
         placeholder={t('Select event streams')}
-        rulebook={rulebook}
+        rulebookId={rulebook}
         sourceMappings={sourceMappings || []}
         setSourceMappings={setSourceMappings}
         labelHelp={t(
@@ -263,8 +221,8 @@ export function RulebookActivationInputs() {
         labelHelpTitle={t('Event streams')}
         isDisabled={!rulebook || !eventStreams || eventStreams.count < 1}
       />
-      <PageFormCredentialSelect<{ credential_refs: string; id: string }>
-        name="credential_refs"
+      <PageFormCredentialSelect<IEdaRulebookActivationInputs>
+        name="eda_credentials"
         credentialKinds={['vault,cloud']}
         labelHelp={t(`Select the credentials for this rulebook activation.`)}
       />
@@ -348,6 +306,6 @@ type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_str
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
-  credential_refs?: EdaCredential[] | null;
+  eda_credentials?: number[] | EdaCredential[] | null;
   source_mappings: EdaSourceEventMapping[];
 };

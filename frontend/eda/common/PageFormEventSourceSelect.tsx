@@ -1,5 +1,4 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
-import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
 import { Button, Chip, ChipGroup, InputGroup, TextInput, Tooltip } from '@patternfly/react-core';
@@ -28,7 +27,7 @@ export function PageFormEventSourceSelect<
   labelHelp: string;
   labelHelpTitle: string;
   isRequired?: boolean;
-  rulebook: EdaRulebook;
+  rulebookId: string;
   sourceMappings: EdaSourceEventMapping[];
   setSourceMappings: (sourceMappings: EdaSourceEventMapping[]) => void;
   placeholder?: string;
@@ -49,7 +48,7 @@ export function PageFormEventSourceSelect<
     }
   };
   const selectEventStreams = useSelectEventStreams(
-    props?.rulebook,
+    props?.rulebookId,
     props?.sourceMappings,
     props?.setSourceMappings
   );

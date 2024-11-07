@@ -69,8 +69,24 @@ describe('If SaaS Build', () => {
         cy.get('tbody tr input').click();
         cy.clickButton('Confirm');
       });
-      cy.selectDropdownOptionByResourceName('project-id', edaProject.name);
-      cy.selectDropdownOptionByResourceName('rulebook', edaRuleBook.name);
+      cy.get('[data-cy="project_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaProject.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
+      cy.get('[data-cy="rulebook_id"]').click();
+      cy.clickButton('Browse');
+      cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
+        cy.get('table').should('exist');
+        cy.getBy('[data-cy="text-input"] input').type(edaRuleBook.name);
+        cy.getBy('button[data-cy="apply-filter"]').click();
+        cy.get('tbody tr input').click();
+        cy.clickButton('Confirm');
+      });
       cy.selectDropdownOptionByResourceName('decision-environment-id', edaDecisionEnvironment.name);
       cy.intercept('POST', edaAPI`/activations/`).as('edaRBA');
       cy.clickButton(/^Create rulebook activation$/);
