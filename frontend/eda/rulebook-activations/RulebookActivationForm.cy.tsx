@@ -69,8 +69,10 @@ describe('Create rulebook activation ', () => {
     cy.mount(<CreateRulebookActivation />);
     cy.get('[data-cy="name"]').type('Test');
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
-    cy.selectDropdownOptionByResourceName('project-id', 'Project 4');
-    cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
+    cy.get('[data-cy="project_id"]').click();
+    cy.get('#project-4 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('[data-cy="rulebook_id"]').click();
+    cy.get('#hello-echo-yml > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get('[data-cy="k8s_service_name"]').type('sample');
@@ -96,8 +98,10 @@ describe('Create rulebook activation ', () => {
     cy.mount(<CreateRulebookActivation />);
     cy.get('[data-cy="name"]').type('Test');
     cy.selectDropdownOptionByResourceName('decision-environment-id', 'EDA Decision Environment 3');
-    cy.selectDropdownOptionByResourceName('project-id', 'Project 4');
-    cy.selectDropdownOptionByResourceName('rulebook', 'hello_echo.yml');
+    cy.get('[data-cy="project_id"]').click();
+    cy.get('#project-4 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('[data-cy="rulebook_id"]').click();
+    cy.get('#hello-echo-yml > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get('[data-cy="organization_id"]').click();
     cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
     cy.get(

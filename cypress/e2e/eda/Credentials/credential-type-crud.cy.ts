@@ -45,9 +45,9 @@ describe('If SaaS Build', () => {
           `{selectAll}{del}	{{}	"fields": [{{}	"id": "username","type": "string","label": "Username"}]}`
         );
         cy.clickButton(/^Generate extra vars$/);
-        cy.getByDataCy('injectors-g').should(
-          'contain',
-          '{"extra_vars": { "username" : "{{username}}"}}'
+        cy.dataEditorShouldContain(
+          '[data-cy="injectors"]',
+          'extra_vars:\n' + "  username: '{{username}}'"
         );
         cy.clickButton(/^Create credential type$/);
         cy.hasDetail('Name', name);
@@ -68,7 +68,6 @@ describe('If SaaS Build', () => {
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
         cy.get('[data-cy="inputs-form-group"]').type('random');
-        cy.clickButton(/^Generate extra vars$/);
         cy.clickButton(/^Create credential type$/);
         cy.contains('schema must be in dict format');
       });
@@ -219,7 +218,6 @@ describe('If SaaS Build', () => {
         cy.get('[data-cy="name"]').type(name);
         cy.get('[data-cy="description"]').type('This is a custom Credential Type.');
         cy.get('[data-cy="inputs-form-group"]').type('random');
-        cy.clickButton(/^Generate extra vars$/);
         cy.clickButton(/^Create credential type$/);
         cy.contains('schema must be in dict format');
       });
