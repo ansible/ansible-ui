@@ -83,15 +83,15 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.hasDetail(/^Retained version count$/, '1');
       navigateToRepositories();
       //* Edit Repository *//
-      const editDescripiption = 'repositoryDescription edited';
+      const editDescription = 'repositoryDescription edited';
       const RetainedNumber = '10';
       cy.clickTableRowAction('name', repositoryName, 'edit-repository', { inKebab: false });
       cy.verifyPageTitle(`Edit ${repositoryName}`);
       // Edit description
-      cy.getByDataCy('description').clear().type(editDescripiption);
+      cy.getByDataCy('description').clear().type(editDescription);
       // Edit Retained version count
       cy.getByDataCy('retain-repo-versions-form-group').clear().type(RetainedNumber);
-      // Edit Pipeline\Lables
+      // Edit Pipeline\Labels
       cy.getByDataCy('pipeline-form-group').click().getByDataCy('approved').click();
       // Edit Remote
       cy.get('[id="remote"]').click();
@@ -99,12 +99,13 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.getByDataCy('Submit').click();
       cy.verifyPageTitle(repositoryName);
       cy.hasDetail('Name', repositoryName);
-      cy.hasDetail('Description', editDescripiption);
+      cy.contains('Description').should('be.visible');
+      cy.get('[data-cy="description"]').should('contain', editDescription);
       cy.hasDetail('Retained version count', RetainedNumber);
       cy.hasDetail('Labels', 'approved');
       cy.hasDetail('Remote', remote.name);
       navigateToRepositories();
-      // Delete Rpository
+      // Delete Repository
       cy.clickTableRowLink('name', repositoryName);
       // Repository Details
       cy.verifyPageTitle(repositoryName);
