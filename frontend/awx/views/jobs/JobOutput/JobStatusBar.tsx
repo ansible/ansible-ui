@@ -4,7 +4,7 @@ import { DateTime, Duration } from 'luxon';
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { StatusLabel } from '../../../../common/Status';
+import { StatusCell } from '../../../../common/Status';
 import { Job } from '../../../interfaces/Job';
 import {
   PageActionType,
@@ -25,7 +25,7 @@ const HeaderTitle = styled.div`
   }
 `;
 
-export function JobStatusBar(props: { job: Job }) {
+export function JobStatusBar(props: Readonly<{ job: Job }>) {
   const { job } = props;
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -80,7 +80,7 @@ export function JobStatusBar(props: { job: Job }) {
       <SplitItem isFilled>
         <HeaderTitle>
           <h1>{job.name}</h1>
-          <StatusLabel status={job.status} dataCy="job-status-label" />
+          <StatusCell status={job.status} />
         </HeaderTitle>
       </SplitItem>
       <SplitItem>
@@ -100,7 +100,7 @@ export function JobStatusBar(props: { job: Job }) {
   );
 }
 
-function Count(props: { label: string; count?: number }) {
+function Count(props: Readonly<{ label: string; count?: number }>) {
   const { label, count } = props;
   if (!count) {
     return null;

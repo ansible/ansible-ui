@@ -207,7 +207,7 @@ describe('Collections Details', () => {
       cy.clickButton(/^Close$/);
       cy.getModal().should('not.exist');
       // Verify collection has been signed
-      cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+      cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
     });
 
     // https://issues.redhat.com/browse/AAP-31186
@@ -283,18 +283,18 @@ describe('Collections Details', () => {
       cy.clickButton(/^Close$/);
       cy.getModal().should('not.exist');
       // Verify collection has been deprecated
-      cy.contains('span', 'Deprecated').should('exist');
+      cy.getByDataCy('deprecated-status').should('exist');
       // Undeprecate collection
       cy.selectDetailsPageKebabAction('undeprecate-collection');
       cy.clickButton(/^Close$/);
       // Verify collection has been undeprecated
-      cy.contains('span', 'Deprecated').should('not.exist');
+      cy.get('[data-cy="deprecated-status"]').should('not.exist');
 
       // deprecate collection again
       cy.selectDetailsPageKebabAction('deprecate-collection');
       cy.clickButton(/^Close$/);
       // Verify collection has been deprecated
-      cy.contains('span', 'Deprecated');
+      cy.getByDataCy('deprecated-status').should('exist');
 
       cy.contains('a', namespace.name).click();
       cy.contains(`[role="tab"]`, 'Collections').click();
@@ -315,7 +315,7 @@ describe('Collections Details', () => {
       cy.getModal().should('not.exist');
 
       cy.get(`[aria-label="Simple table"]`).within(() => {
-        cy.contains('span', 'Deprecated').should('not.exist');
+        cy.get('[data-cy="deprecated-status"]').should('not.exist');
       });
     });
   });

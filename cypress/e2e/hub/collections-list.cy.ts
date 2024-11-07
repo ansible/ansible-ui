@@ -54,7 +54,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.getModal().should('not.exist');
         cy.reload();
         // Verify collection has been signed
-        cy.get('[data-cy="label-signed"]').contains(Collections.signedStatus);
+        cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
         cy.deleteCollectionsInNamespace(namespace.name);
       });
     });
@@ -79,7 +79,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.contains('3.0.0').should('be.visible');
         cy.get('a[href*="/content/collections/validated/"]').click();
         cy.url().should('contain', '/details');
-        cy.getBy('[data-cy="label-signed"]').contains(Collections.signedStatus);
+        cy.getBy('[data-cy="signed-status"]').contains(Collections.signedStatus);
         cy.clickKebabAction('actions-dropdown', 'delete-entire-collection-from-system');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete collections/);

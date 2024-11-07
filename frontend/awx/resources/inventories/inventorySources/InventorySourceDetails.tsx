@@ -21,7 +21,7 @@ import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageD
 import { StandardPopover } from '../../../../../framework/components/StandardPopover';
 import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { StatusLabel } from '../../../../common/Status';
+import { StatusCell } from '../../../../common/Status';
 import { useGetItem } from '../../../../common/crud/useGet';
 import { useOptions } from '../../../../common/crud/useOptions';
 import { AwxError } from '../../../common/AwxError';
@@ -39,10 +39,12 @@ export type WebsocketInventorySource = {
   status: string;
 } & InventorySource;
 
-export function InventorySourceDetails(props: {
-  inventorySourceId?: string;
-  disableScroll?: boolean;
-}) {
+export function InventorySourceDetails(
+  props: Readonly<{
+    inventorySourceId?: string;
+    disableScroll?: boolean;
+  }>
+) {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ source_id: string; id: string }>();
@@ -197,7 +199,7 @@ export function InventorySourceDetails(props: {
                 params: { id: lastJob.id, job_type: 'inventory' },
               })}
             >
-              <StatusLabel status={lastJob.status} />
+              <StatusCell status={lastJob.status} />
             </Link>
           </Tooltip>
         </PageDetail>

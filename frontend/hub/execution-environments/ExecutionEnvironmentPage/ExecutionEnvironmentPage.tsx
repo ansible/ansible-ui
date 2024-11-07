@@ -11,7 +11,7 @@ import {
   useGetPageUrl,
 } from '../../../../framework';
 import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
-import { StatusLabel } from '../../../common/Status';
+import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { HelperText } from '../../common/HelperText';
 import { HubError } from '../../common/HubError';
@@ -31,8 +31,7 @@ export function ExecutionEnvironmentPage() {
     isLoading,
     refresh,
   } = useGet<ExecutionEnvironment>(
-    hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`,
-    undefined
+    hubAPI`/v3/plugin/execution-environments/repositories/${params.id ?? ''}/`
   );
 
   const getPageUrl = useGetPageUrl();
@@ -73,7 +72,7 @@ export function ExecutionEnvironmentPage() {
                   </Trans>
                 </FlexItem>
                 <FlexItem>
-                  <StatusLabel status={lastSyncTask?.state} />
+                  <StatusCell status={lastSyncTask?.state} />
                 </FlexItem>
                 {lastSyncTask?.error && (
                   <FlexItem>
