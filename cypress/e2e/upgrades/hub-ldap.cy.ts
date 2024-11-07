@@ -7,7 +7,10 @@ describe('Authenticate and migrate a Hub LDAP account', () => {
   let controllerUsername: string;
   let controllerPassword: string;
 
-  beforeEach(() => {
+  beforeEach(function () {
+    if (!Cypress.env('HUB_LDAP') || Cypress.env('HUB_LDAP') === 'false') {
+      this.skip();
+    }
     cy.getUserForMigration(UpgradeUserType.controllerLegacy).then((user) => {
       controllerUsername = user.username;
       controllerPassword = user.password;
@@ -50,7 +53,10 @@ describe('Authenticate and migrate a Hub LDAP account', () => {
 describe('Negative paths for hub legacy authentication', () => {
   const hubLdapUsername = usersForMigration[UpgradeUserType.hubLdap][0].username;
 
-  beforeEach(() => {
+  beforeEach(function () {
+    if (!Cypress.env('HUB_LDAP') || Cypress.env('HUB_LDAP') === 'false') {
+      this.skip();
+    }
     cy.platformLogout();
   });
 

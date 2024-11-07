@@ -13,6 +13,26 @@ on:
       TAGS:
         type: string
         required: false
+      CTRL_LDAP:
+        type: boolean
+        required: false
+        default: false
+      HUB_LDAP:
+        type: boolean
+        required: false
+        default: false
+      HUB_KEYCLOAK:
+        type: boolean
+        required: false
+        default: false
+      CTRL_OIDC:
+        type: boolean
+        required: false
+        default: false
+      CTRL_SAML:
+        type: boolean
+        required: false
+        default: false
     secrets:
       PLATFORM_PASSWORD:
         required: true
@@ -91,3 +111,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           CYPRESS_LABELS: '!upstream'
+          CTRL_LDAP: ${{ inputs.CTRL_LDAP }}
+          HUB_LDAP: ${{ inputs.HUB_LDAP }}
+          HUB_KEYCLOAK: ${{ inputs.HUB_KEYCLOAK }}
+          CTRL_OIDC: ${{ inputs.CTRL_OIDC }}
+          CTRL_SAML: ${{ inputs.CTRL_SAML }}

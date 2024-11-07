@@ -1,14 +1,16 @@
 import { randomString } from '../../../framework/utils/random-string';
 import { UpgradeUserType, usersForMigration } from '../../support/constants';
 
-// is flakey due to https://issues.redhat.com/browse/AAP-32355
-describe.skip('Controller LDAP user migration flow', () => {
+describe('Controller LDAP user migration flow', () => {
   let hubPassword: string;
   let hubUsername: string;
   let controllerLdapUsername: string;
   let controllerLdapPassword: string;
 
-  before(() => {
+  before(function () {
+    if (!Cypress.env('CTRL_LDAP') || Cypress.env('CTRL_LDAP') === 'false') {
+      this.skip();
+    }
     cy.getUserForMigration(UpgradeUserType.hubLegacy).then((user) => {
       hubUsername = user.username;
       hubPassword = user.password;
@@ -70,11 +72,13 @@ describe.skip('Controller LDAP user migration flow', () => {
   });
 });
 
-// is flakey due to https://issues.redhat.com/browse/AAP-32355
-describe.skip('Negative paths for controller LDAP authentication', () => {
+describe('Negative paths for controller LDAP authentication', () => {
   const controllerLdapUsername = usersForMigration[UpgradeUserType.controllerLdap][0].username;
 
-  before(() => {
+  before(function () {
+    if (!Cypress.env('CTRL_LDAP') || Cypress.env('CTRL_LDAP') === 'false') {
+      this.skip();
+    }
     cy.platformLogin();
   });
 
