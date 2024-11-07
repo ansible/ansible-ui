@@ -1,14 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { PageDetail, PageDetails, PageWizardStep, useGetPageUrl } from '../../../../../framework';
+import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
 import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisualizer/wizard/PromptReviewDetails';
-import { ScheduleFormWizard } from '../types';
+import { ScheduleFormWizard, ScheduleResources } from '../types';
 import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RulesList } from '../components/RulesList';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getResourceURL } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
+import { useGetItem } from '../../../../common/crud/useGet';
+import { LoadingState } from '../../../../../framework/components/LoadingState';
+import { AwxError } from '../../../common/AwxError';
 
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -24,13 +28,11 @@ export function ScheduleReviewStep() {
   const getPageUrl = useGetPageUrl();
   const [isLocal, setIsLocal] = useState(true);
 
-  const { wizardData, visibleSteps } = usePageWizard() as {
-    wizardData: ScheduleFormWizard;
-    visibleSteps: PageWizardStep[];
-  };
+  const { wizardData, visibleSteps, setWizardData } = usePageWizard<ScheduleFormWizard>();
   const {
     schedule_type,
-    resource,
+    resourceId,
+    resource: nodeResource,
     schedule_days_to_keep,
     name,
     description,
@@ -39,11 +41,27 @@ export function ScheduleReviewStep() {
     exceptions,
     rules,
   } = wizardData;
+  const url = getResourceURL(schedule_type);
+  const resourceTypeDetail = useGetScheduleTypeDetail(schedule_type);
 
+  const {
+    data: resource,
+    isLoading,
+    error,
+  } = useGetItem<ScheduleResources>(url, resourceId ?? nodeResource.id);
+  useEffect(() => {
+    if (!resource) return;
+    setWizardData((prev) => ({ ...prev, resource, resourceId: resource.id }));
+  }, [setWizardData, resource]);
+  if (isLoading || !resource) {
+    return <LoadingState />;
+  }
+  if (error) {
+    return <AwxError error={error} />;
+  }
   const hasPromptDetails = Boolean(
     visibleSteps.find((step) => step.id === 'promptStep' || step.id === 'survey')
   );
-  const resourceTypeDetail = useGetScheduleTypeDetail(schedule_type);
 
   let resourceDetailsLink = getPageUrl(ResourceLink[schedule_type], {
     params: { id: resource?.id },

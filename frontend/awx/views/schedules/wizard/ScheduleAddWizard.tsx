@@ -71,7 +71,7 @@ export function ScheduleAddWizard(props: {
     details: {
       name: '',
       description: '',
-      schedule_type: '',
+      schedule_type: getScheduleType(props.resourceEndPoint),
       startDateTime: { date: currentDate, time: time },
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
@@ -101,4 +101,13 @@ export function ScheduleAddWizard(props: {
       />
     </PageLayout>
   );
+}
+
+function getScheduleType(url = '') {
+  if (url.includes('job_templates')) return 'job_template';
+  if (url.includes('workflow_job_templates')) return 'workflow_job_template';
+  if (url.includes('inventory_sources')) return 'inventory_update';
+  if (url.includes('projects')) return 'project';
+  if (url.includes('system_job_templates')) return 'management_job_template';
+  return '';
 }

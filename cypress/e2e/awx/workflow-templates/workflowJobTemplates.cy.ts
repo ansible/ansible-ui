@@ -741,10 +741,15 @@ describe('Workflow Job Templates Tests', () => {
       const scheduleName = 'E2E Simple Schedule WFJT' + randomString(4);
       cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Workflow job template');
-      cy.selectDropdownOptionByResourceName(
-        'workflow-job-template-select',
-        `${workflowTemplate.name}`
-      );
+      const templateID = workflowTemplate.name
+        .split(' ')
+        .map((i) => i.toLowerCase())
+        .join('-');
+      cy.getBy('button[id="workflow-job-template-select"]').click();
+      cy.get('div#workflow-job-template-select-select').within(() => {
+        cy.get("input[aria-label='Search input']").type(`${workflowTemplate.name}`);
+        cy.get(`button#${templateID}`).click();
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);

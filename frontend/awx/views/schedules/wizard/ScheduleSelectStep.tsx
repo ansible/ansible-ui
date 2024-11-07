@@ -27,6 +27,8 @@ export function ScheduleSelectStep(props: {
   isTopLevelSchedule?: boolean;
 }) {
   const isTopLevelScheduleForm = props.isTopLevelSchedule;
+  const scheduleType = useWatch<ScheduleFormWizard, 'schedule_type'>({ name: 'schedule_type' });
+  const resourceId = useWatch<ScheduleFormWizard, 'resourceId'>({ name: 'resourceId' });
   const resource = useWatch<ScheduleFormWizard, 'resource'>({ name: 'resource' });
   const params = useParams<{ id?: string; source_id: string; schedule_id?: string }>();
   const { setValue } = useFormContext();
@@ -35,7 +37,7 @@ export function ScheduleSelectStep(props: {
   // When the resource changes,
   // we need to set the promptStep default values to the launch configuration defaults
   useEffect(() => {
-    if (resource || !params?.id || props.resourceEndPoint === undefined) return;
+    if (!params?.id || props.resourceEndPoint === undefined) return;
     const getResource = async () => {
       let scheduleResource: ScheduleResources;
       if (params.source_id) {
@@ -51,6 +53,7 @@ export function ScheduleSelectStep(props: {
         ...prev,
         schedule_type: scheduleResource.type,
         resource: scheduleResource,
+        resourceId: scheduleResource.id,
       }));
       setStepData((prev) => ({
         ...prev,
@@ -58,27 +61,31 @@ export function ScheduleSelectStep(props: {
           ...prev.details,
           schedule_type: scheduleResource.type,
           resource: scheduleResource,
+          resourceId: scheduleResource.id,
         },
       }));
       setValue('resource', scheduleResource);
+      setValue('resourceId', scheduleResource.id);
+      setValue('schedule_type', scheduleResource.type);
     };
 
     void getResource();
-  }, [params, resource, props.resourceEndPoint, setStepData, setWizardData, setValue]);
+  }, [params, resourceId, props.resourceEndPoint, setStepData, setWizardData, setValue]);
 
   useEffect(() => {
     async function updatePromptStep() {
       if (
-        !resource?.id ||
-        (resource.type !== 'job_template' && resource.type !== 'workflow_job_template')
+        !resourceId ||
+        (scheduleType !== 'job_template' && scheduleType !== 'workflow_job_template')
       ) {
         return;
       }
       const endPoint =
-        resource.type === 'job_template'
-          ? awxAPI`/job_templates/${resource.id.toString()}/launch/`
-          : awxAPI`/workflow_job_templates/${resource.id.toString()}/launch/`;
-      const launchConfig = await requestGet<LaunchConfiguration>(endPoint);
+        scheduleType === 'job_template'
+          ? awxAPI`/job_templates/${resourceId.toString()}/`
+          : awxAPI`/workflow_job_templates/${resourceId.toString()}/`;
+      const resource = await requestGet<ScheduleResources>(endPoint);
+      const launchConfig = await requestGet<LaunchConfiguration>(`${endPoint}/launch/`);
       let credentials: Credential[] = [];
       if (launchConfig.ask_credential_on_launch && params.schedule_id) {
         const response = await requestGet<AwxItemsResponse<Credential>>(
@@ -95,6 +102,7 @@ export function ScheduleSelectStep(props: {
         return {
           ...prev,
           promptStep: {
+            ...prev.promptStep,
             prompt: {
               inventory: defaults?.inventory?.id ? defaults.inventory : null,
               credentials: mergeArraysByCredentialType(defaults?.credentials || [], credentials),
@@ -116,21 +124,21 @@ export function ScheduleSelectStep(props: {
             resource,
             launch_config: launchConfig,
           },
-          resource,
+          details: { ...prev.details, resourceId, resource },
         };
       });
 
-      setValue('schedule_type', resource.type);
+      setValue('schedule_type', scheduleType);
       setValue('launch_config', launchConfig);
     }
     void updatePromptStep();
-  }, [props.resourceEndPoint, resource, setStepData, params.schedule_id, setValue]);
+  }, [props.resourceEndPoint, resourceId, scheduleType, setStepData, params.schedule_id, setValue]);
   return (
     <>
       {isTopLevelScheduleForm ? (
         <>
           <ScheduleTypeInputs />
-          {resource && <ScheduleResourceInputs />}
+          {(resourceId || resource?.id) && <ScheduleResourceInputs />}
         </>
       ) : (
         <ScheduleResourceInputs />

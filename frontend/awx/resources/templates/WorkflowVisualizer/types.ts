@@ -164,7 +164,9 @@ export type AllResources =
   | Project
   | SystemJobTemplate
   | WorkflowApproval
-  | WorkflowJobTemplate;
+  | WorkflowJobTemplate
+  | NodeResource
+  | null;
 
 export interface WizardFormValues {
   approval_description: string;
@@ -173,7 +175,8 @@ export interface WizardFormValues {
   node_alias: string;
   node_convergence: 'any' | 'all';
   node_days_to_keep: number;
-  resource: AllResources | NodeResource | null;
+  resource: AllResources;
+  resourceId?: number;
   node_type: UnifiedJobType;
   node_status_type?: EdgeStatus;
   launch_config: LaunchConfiguration | null;

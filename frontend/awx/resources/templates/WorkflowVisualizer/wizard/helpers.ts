@@ -1,9 +1,10 @@
 import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import type { AllResources, NodeResource, UnifiedJobType } from '../types';
+import type { AllResources, UnifiedJobType } from '../types';
 import { RESOURCE_TYPE } from '../constants';
 import { Survey } from '../../../../interfaces/Survey';
 import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
+import { awxAPI } from '../../../../common/api/awx-utils';
 
 export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {
@@ -15,7 +16,29 @@ export function replaceIdentifier(identifier: string, alias: string): string {
   return identifier;
 }
 
-export function hasDaysToKeep(node: NodeResource | AllResources | null) {
+export function getResourceURL(resourceType: string): string {
+  switch (resourceType) {
+    case 'job':
+    case 'job_template':
+      return awxAPI`/job_templates/`;
+    case 'workflow_job':
+    case 'workflow_job_template':
+      return awxAPI`/workflow_job_templates/`;
+    case 'inventory_update':
+    case 'inventory_source':
+      return awxAPI`/inventory_sources`;
+    case 'project':
+    case 'project_update':
+      return awxAPI`/projects`;
+    case 'system_job':
+    case 'management_job_template':
+      return awxAPI`/system_job_templates/`;
+    default:
+      return '';
+  }
+}
+
+export function hasDaysToKeep(node: AllResources) {
   if (!node || !('job_type' in node) || !node.job_type) return false;
   return ['cleanup_jobs', 'cleanup_activitystream'].includes(node.job_type);
 }
