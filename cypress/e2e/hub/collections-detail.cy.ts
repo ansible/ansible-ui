@@ -53,20 +53,20 @@ describe('Collections Details', () => {
           firstVersion
         );
         cy.waitForAllTasks();
-
-        cy.uploadCollection(collectionName, namespace.name, latestVersion);
-        cy.waitForAllTasks();
       });
+      cy.uploadCollection(collectionName, namespace.name, latestVersion);
+      cy.waitForAllTasks();
     });
 
-    //https://issues.redhat.com/browse/AAP-33916
-    it.skip('user can delete version from repository', () => {
+    it('user can delete version from repository', () => {
       // Delete version from repository
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName, true);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
       // refreshing the page to force UI to update and cypress to wait
+      cy.get('[data-cy="refresh"]').click();
+      cy.clickTab(/^Details$/, true);
       cy.get('[data-cy="refresh"]').click();
       cy.contains('Loading').should('not.exist');
       cy.get(`[data-cy="browse-collection-version"] button`).as('versionButton');
@@ -91,6 +91,7 @@ describe('Collections Details', () => {
       cy.filterTableBySingleText(collectionName);
       cy.clickLink(collectionName);
       cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
+      cy.clickTab(/^Details$/, true);
       cy.url().should(
         'contain',
         `/collections/validated/${namespace.name}/${collectionName}/details`
