@@ -1,7 +1,8 @@
 const AWX_PROTOCOL = process.env.AWX_PROTOCOL || 'http';
 const AWX_HOST = process.env.AWX_HOST || 'localhost:8043';
-const AWX_SERVER =
+let AWX_SERVER =
   process.env.AWX_SERVER || process.env.CYPRESS_AWX_SERVER || `${AWX_PROTOCOL}://${AWX_HOST}`;
+if (AWX_SERVER.endsWith('/')) AWX_SERVER = AWX_SERVER.slice(0, -1);
 const AWX_USERNAME = process.env.AWX_USERNAME || process.env.CYPRESS_AWX_USERNAME || 'admin';
 const AWX_PASSWORD = process.env.AWX_PASSWORD || process.env.CYPRESS_AWX_PASSWORD || 'password';
 const AWX_API_PREFIX = process.env.AWX_API_PREFIX || '/api/v2';
@@ -9,8 +10,9 @@ const AWX_WEBSOCKET_PREFIX = process.env.AWX_WEBSOCKET_PREFIX || '/websocket/';
 
 const EDA_PROTOCOL = process.env.EDA_PROTOCOL || 'http';
 const EDA_HOST = process.env.EDA_HOST || 'localhost:8000';
-const EDA_SERVER =
+let EDA_SERVER =
   process.env.EDA_SERVER || process.env.CYPRESS_EDA_SERVER || `${EDA_PROTOCOL}://${EDA_HOST}`;
+if (EDA_SERVER.endsWith('/')) EDA_SERVER = EDA_SERVER.slice(0, -1);
 const EDA_SERVER_UUID = process.env.EDA_SERVER_UUID || process.env.CYPRESS_EDA_SERVER_UUID || ``;
 const EDA_WEBHOOK_SERVER =
   process.env.EDA_WEBHOOK_SERVER || process.env.CYPRESS_EDA_WEBHOOK_SERVER || ``;
@@ -20,8 +22,9 @@ const EDA_API_PREFIX = process.env.EDA_API_PREFIX || '/api/eda/v1';
 
 const HUB_PROTOCOL = process.env.HUB_PROTOCOL || 'http';
 const HUB_HOST = process.env.HUB_HOST || 'localhost:5001';
-const HUB_SERVER =
+let HUB_SERVER =
   process.env.HUB_SERVER || process.env.CYPRESS_HUB_SERVER || `${HUB_PROTOCOL}://${HUB_HOST}`;
+if (HUB_SERVER.endsWith('/')) HUB_SERVER = HUB_SERVER.slice(0, -1);
 const HUB_USERNAME = process.env.HUB_USERNAME || process.env.CYPRESS_HUB_USERNAME || 'admin';
 const HUB_PASSWORD = process.env.HUB_PASSWORD || process.env.CYPRESS_HUB_PASSWORD || 'password';
 const HUB_API_PREFIX = process.env.HUB_API_PREFIX || process.env.HUB_API_BASE_PATH || '/api/galaxy';
