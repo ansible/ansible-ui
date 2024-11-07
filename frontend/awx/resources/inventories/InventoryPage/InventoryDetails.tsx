@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   Label,
   LabelGroup,
@@ -6,9 +5,10 @@ import {
   TextListItem,
   TextListItemVariants,
   TextListVariants,
+  Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useOutletContext } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
@@ -27,12 +27,10 @@ import { ConstructedInventory, Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxError } from '../../../common/AwxError';
-import { Tooltip } from '@patternfly/react-core';
 import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
-import { StatusLabel } from '../../../../common/Status';
+import { StatusCell } from '../../../../common/Status';
 import { useInventoryFormDetailLabels } from '../InventoryForm';
 import { LabelHelp } from '../components/LabelHelp';
-import { useOutletContext } from 'react-router-dom';
 import { useInventoryTypes } from '../hooks/useInventoryTypes';
 import { INVENTORYURLPATHS } from '../constants';
 
@@ -55,13 +53,13 @@ export function InventoryDetails() {
 
 export type InventoryWithSource = Inventory & { source?: InventorySource };
 
-export function InventoryDetailsInner(props: { inventory: InventoryWithSource }) {
+export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWithSource }>) {
   const { t } = useTranslation();
   const inventoryTypes = useInventoryTypes();
   const inventory = props.inventory;
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string; inventory_type: string }>();
-  const instanceGroups = useInstanceGroups(params.id || '0');
+  const instanceGroups = useInstanceGroups(params.id ?? '0');
   const verbosityString = useVerbosityString(inventory.verbosity);
   const getPageUrl = useGetPageUrl();
 
@@ -270,20 +268,22 @@ export function InventoryDetailsInner(props: { inventory: InventoryWithSource })
   );
 }
 
-function PageDetailJobStatus(props: {
-  job:
-    | {
-        description: string;
-        failed: boolean;
-        finished: string;
-        id: number;
-        license_error: boolean;
-        name: string;
-        status: string;
-      }
-    | undefined;
-  isEmpty?: boolean;
-}) {
+function PageDetailJobStatus(
+  props: Readonly<{
+    job:
+      | {
+          description: string;
+          failed: boolean;
+          finished: string;
+          id: number;
+          license_error: boolean;
+          name: string;
+          status: string;
+        }
+      | undefined;
+    isEmpty?: boolean;
+  }>
+) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const lastJob = props.job;
@@ -303,7 +303,7 @@ function PageDetailJobStatus(props: {
             params: { id: lastJob.id, job_type: 'inventory' },
           })}
         >
-          <StatusLabel status={lastJob.status} />
+          <StatusCell status={lastJob.status} />
         </Link>
       </Tooltip>
     </PageDetail>

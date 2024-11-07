@@ -16,7 +16,7 @@ export interface TextCellProps {
   maxWidth?: number;
   disableLinks?: boolean;
 }
-export function TextCell(props: TextCellProps) {
+export function TextCell(props: Readonly<TextCellProps>) {
   const navigate = useNavigate();
   return (
     <Flex
@@ -37,7 +37,7 @@ export function TextCell(props: TextCellProps) {
           </FlexItem>
         )}
       {props.text && (
-        <FlexItem style={{ maxWidth: '100%' }}>
+        <FlexItem style={{ maxWidth: '100%' }} data-cy={props.text.toLocaleLowerCase() + '-status'}>
           <div
             style={{
               maxWidth: props.maxWidth ?? '100%',

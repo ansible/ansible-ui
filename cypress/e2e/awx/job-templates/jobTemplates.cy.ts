@@ -153,7 +153,7 @@ describe('Job Templates Tests', function () {
               .then((jobId: string) => {
                 cy.waitForTemplateStatus(jobId);
               });
-            cy.getByDataCy('job-status-label').should('not.contain', 'Running');
+            cy.get('[data-cy="running-status"]').should('not.exist');
           });
       });
     });
@@ -217,7 +217,7 @@ describe('Job Templates Tests', function () {
               .then((jobId: string) => {
                 cy.waitForTemplateStatus(jobId);
               });
-            cy.getByDataCy('job-status-label').should('not.contain', 'Running');
+            cy.get('[data-cy="running-status"]').should('not.exist');
           });
       });
     });
