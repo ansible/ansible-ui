@@ -10,7 +10,9 @@ export function getUnifiedTemplates({ data }: RouteOptions): MockResponse {
     status: 200,
     body: {
       count: jobTemplates.length + workflowJobTemplates.length,
-      results: klona([...jobTemplates, ...workflowJobTemplates]).map(controllerRelations),
+      results: klona([...jobTemplates, ...workflowJobTemplates]).map((item) =>
+        controllerRelations(item, data)
+      ),
     },
   };
 }
