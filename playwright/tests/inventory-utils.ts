@@ -16,7 +16,7 @@ export async function createInventory(options: { name?: string }, page: Page) {
   await page.getByLabel('Search input').fill('Default');
   await page.getByRole('option', { name: 'Default' }).click();
   await page.getByRole('button', { name: 'Create inventory' }).click();
-  await expect(page.getByRole('heading')).toContainText(inventoryName);
+  await expect(page.getByRole('heading').first()).toContainText(inventoryName);
   await expect(page.locator('#name')).toContainText(inventoryName);
   return inventoryName;
 }

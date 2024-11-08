@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '../commands/setup';
 
-test.beforeEach(setupBefore);
+test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
 test('overview shows the right dashboard cards', async ({ page }) => {

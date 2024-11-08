@@ -9,7 +9,7 @@ export async function createExecutionEnvironment(
 ) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
   await page.getByRole('button', { name: 'Create execution environment' }).click();
-  const executionEnvName = options.executionEnvName ?? 'e2e-' + createE2EName();
+  const executionEnvName = options.executionEnvName ?? createE2EName();
   await page.getByPlaceholder('Enter execution environment').fill(executionEnvName);
   await page.getByPlaceholder('Enter image').fill('myimage');
   await page.getByRole('button', { name: 'Create execution environment' }).click();

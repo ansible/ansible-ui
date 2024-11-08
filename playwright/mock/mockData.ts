@@ -20,7 +20,7 @@ import { PlatformUser } from '../../platform/interfaces/PlatformUser';
 
 interface IGatewayData {
   ping: object;
-  me: DeepPartial<AwxUser>[];
+  me: DeepPartial<PlatformUser>[];
   login: object;
   legacy_auth: object;
   ui_auth: object;
@@ -52,7 +52,6 @@ interface IControllerData {
   hosts: object[];
   labels: object[];
   dashboard: object;
-  unified_job_templates: object[];
   execution_environments: DeepPartial<ExecutionEnvironment>[];
 }
 
@@ -104,7 +103,8 @@ export const mockData: IApiData = {
         users: [
           {
             id: 1,
-            username: 'admin',
+            username: process.env.PLATFORM_USERNAME,
+            password: process.env.PLATFORM_PASSWORD,
           },
         ],
         teams: [],
@@ -117,10 +117,10 @@ export const mockData: IApiData = {
         config: { license_info: { compliant: true } },
         inventory_sources: [],
         inventories: [{ id: 1, name: 'Demo Inventory' }],
-        job_templates: [],
         jobs: [],
         projects: [{ id: 1, name: 'Demo Project' }],
         schedules: [],
+        job_templates: [{ id: 1, name: 'Demo Job Template' }],
         workflow_job_templates: [],
         organizations: [{ id: 1, name: 'Default' }],
         teams: [],
@@ -129,21 +129,12 @@ export const mockData: IApiData = {
         users: [],
         workflow_approvals: [],
         unified_jobs: [],
-        execution_environments: [
-          {
-            id: 1,
-            name: 'Default',
-            description: 'Default execution environment',
-          },
-        ],
+        execution_environments: [{ id: 1, name: 'Default' }],
         instance_groups: [],
         hosts: [{ id: 1, name: 'localhost' }],
         labels: [],
-        unified_job_templates: [],
         dashboard: {
-          related: {
-            jobs_graph: '/api/controller/v2/dashboard/graphs/jobs/',
-          },
+          related: { jobs_graph: '/api/controller/v2/dashboard/graphs/jobs/' },
           inventories: {
             url: '/api/controller/v2/inventories/',
             total: 1,

@@ -1,8 +1,8 @@
-import { useGet } from '../../frontend/common/crud/useGet';
 import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
 import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
-import { PlatformResource } from '../interfaces/PlatformResource';
 import { requestGet } from '../../frontend/common/crud/Data';
+import { useGet } from '../../frontend/common/crud/useGet';
+import { PlatformResource } from '../interfaces/PlatformResource';
 
 export function useAwxResource<T extends object>(url: string, platformResource?: PlatformResource) {
   const { data, isLoading, error, refresh } = useGet<AwxItemsResponse<T>>(

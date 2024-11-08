@@ -22,5 +22,8 @@
     "eslint:fix": "eslint --fix .",
     "prettier": "prettier --check !**/*.scss .",
     "prettier:fix": "prettier --write ."
+  },
+  "dependencies": {
+    "path-to-regexp": "^8.2.0"
   }
 }
