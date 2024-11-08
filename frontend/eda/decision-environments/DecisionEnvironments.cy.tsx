@@ -82,17 +82,12 @@ describe('DecisionEnvironments.cy.ts', () => {
 
   it('can delete a Decision Environment not in use', () => {
     cy.mount(<DecisionEnvironments />);
-    cy.intercept(
-      { method: 'DELETE', url: edaAPI`/decision-environments/1/` },
-      {
-        statusCode: 204,
-      }
-    );
+    cy.intercept({ method: 'DELETE', url: edaAPI`/decision-environments/1/` }, { statusCode: 204 });
     cy.intercept(
       { method: 'GET', url: edaAPI`/activations/?decision_environment_id=1` },
       { count: 0, next: null, previous: null, page_size: 20, page: 1, results: [] }
     );
-    cy.get('input[id="check-1"]').first().click();
+    cy.getBy('#card-1-checkbox').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-decision-environments"]').click();
     cy.get('div[role="dialog"]').within(() => {
@@ -148,7 +143,7 @@ describe('DecisionEnvironments.cy.ts', () => {
         ],
       }
     );
-    cy.get('input[id="check-1"]').first().click();
+    cy.getBy('#card-1-checkbox').click();
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="delete-decision-environments"]').click();
     cy.get('div[role="dialog"]').within(() => {
