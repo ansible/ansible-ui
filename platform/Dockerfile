@@ -18,12 +18,11 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/cert.key 
 FROM nginx:alpine AS base
 COPY --from=certificate /certs/cert.pem /certs/cert.pem
 COPY --from=certificate /certs/cert.key /certs/cert.key
+COPY --from=certificate /certs/cert.pem /certs/CA.pem
 RUN chmod g+rwx /etc/nginx/nginx.conf /etc/nginx/conf.d /etc/nginx/conf.d/default.conf /var/cache/nginx /var/run /var/log/nginx /etc/ssl /certs
-ENV SSL_CERTIFICATE=/certs/cert.pem
-ENV SSL_CERTIFICATE_KEY=/certs/cert.key
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 443
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx", "-g", "daemon off;"]
 
 # platform-ui
 FROM base AS platform-ui
