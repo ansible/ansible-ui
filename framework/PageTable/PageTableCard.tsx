@@ -6,7 +6,6 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Checkbox,
   DescriptionList,
   FlexItem,
   Label,
@@ -135,19 +134,17 @@ export function PageTableCard<T extends object>(props: {
     }
   }, [isSelected, item, selectItem, unselectItem]);
 
-  const showDropdown = itemActions !== undefined && itemActions.length > 0;
-  const showActions = showSelect || showDropdown;
-
   return (
     <Card
-      id={card.id as string}
+      id={`card-${card.id}`}
       ouiaId={card.id as string}
       key={card.id ?? card.title}
       isFlat
       isLarge
       isRounded
-      isSelectable={isItemSelected}
+      isSelectable={showSelect}
       isSelected={isItemSelected}
+      isClickable={showSelect}
       style={{
         transition: 'box-shadow 0.25s',
         cursor: 'default',
@@ -155,25 +152,14 @@ export function PageTableCard<T extends object>(props: {
       }}
     >
       <CardHeader
-        {...(showActions && {
-          actions: {
-            actions: (
-              <>
-                {showSelect && (
-                  <Checkbox
-                    isChecked={isSelected?.(item)}
-                    onChange={onSelectClick}
-                    // aria-label="card checkbox example"
-                    id="check-1"
-                    // name="check1"
-                  />
-                )}
-              </>
-            ),
-            hasNoOffset: true,
-            className: undefined,
-          },
-        })}
+        selectableActions={
+          showSelect
+            ? {
+                selectableActionId: `card-${card.id}-checkbox`,
+                onChange: onSelectClick,
+              }
+            : undefined
+        }
         style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}
       >
         <CardHeaderDiv>
