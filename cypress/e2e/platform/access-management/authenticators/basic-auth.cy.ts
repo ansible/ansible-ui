@@ -34,6 +34,8 @@ describe('Platform Basic Authentication', () => {
     cy.platformLogout();
     cy.get('.pf-v5-c-login').should('be.visible');
     cy.intercept('GET', gatewayAPI`/ui_auth/`).as('getUIAuthRequest');
+    // Login
+    cy.platformLogin();
     cy.wait('@getUIAuthRequest')
       .its('response.body')
       .then((responseBody: UIAuth) => {
@@ -45,8 +47,6 @@ describe('Platform Basic Authentication', () => {
           .be.true;
         expect(responseBody.passwords).to.deep.include(localDbAuth);
       });
-    // Login
-    cy.platformLogin();
     // Authentication List Page
     cy.navigateTo('platform', 'authentications');
     cy.verifyPageTitle('Authentication Methods');
