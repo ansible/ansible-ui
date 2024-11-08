@@ -67,11 +67,11 @@ Cypress.Commands.add('platformLogin', () => {
 /* The `Cypress.Commands.add('platformLogout', () => { ... })` function is a custom Cypress command
 that handles the logout process for a platform application. Here's a breakdown of what it does: */
 Cypress.Commands.add('platformLogout', () => {
-  cy.get('[data-ouia-component-id="account-menu"]')
+  cy.get('#account-menu-menu-toggle')
     .click()
     .then(() => {
       cy.intercept('POST', gatewayAPI`/logout/`).as('logout');
-      cy.contains('a', 'Logout').click();
+      cy.contains('Logout').click();
       cy.wait('@logout');
       cy.then(Cypress.session.clearAllSavedSessions);
     });
