@@ -5,7 +5,7 @@ import {
   deleteExecutionEnvironment,
 } from './execution-environment-utils';
 
-test.beforeEach(setupBefore);
+test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
 test('create and delete an execution environment', async ({ page }) => {

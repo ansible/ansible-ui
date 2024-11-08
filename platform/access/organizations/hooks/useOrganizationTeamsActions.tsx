@@ -61,7 +61,7 @@ export function useOrganizationTeamsRowActions() {
     params.id
   );
   const { resource: awxOrganization, error: errorRetrievingAwxOrg } = useAwxResource<Organization>(
-    '/organizations/',
+    'organizations/',
     organization
   );
   const { resource: edaOrganization, error: errorRetrievingEdaOrg } =

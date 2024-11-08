@@ -29,7 +29,7 @@ describe('PlatformOrganizationDetails', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: awxAPI`/organizations%2F?resource__ansible_id=*`,
+        url: awxAPI`/organizations/?resource__ansible_id=*`,
       },
       {
         count: 1,

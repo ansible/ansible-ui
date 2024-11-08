@@ -38,13 +38,13 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.intercept('GET', awxAPI`/role_definitions/?content_type__model=organization*`, {
       fixture: 'platformAwxOrganizationRoles.json',
     });
-    cy.intercept('GET', awxAPI`/%2Fusers%2F?resource__ansible_id*`, {
+    cy.intercept('GET', awxAPI`/users/?resource__ansible_id*`, {
       count: 1,
       next: null,
       previous: null,
       results: [mockAwxUser],
     });
-    cy.intercept('GET', awxAPI`/%2Forganizations%2F?resource__ansible_id*`, {
+    cy.intercept('GET', awxAPI`/organizations/?resource__ansible_id*`, {
       count: 1,
       next: null,
       previous: null,
@@ -58,13 +58,13 @@ describe('PlatformOrganizationManageUserRoles', () => {
     cy.intercept('GET', edaAPI`/role_definitions/?content_type__model=organization*`, {
       fixture: 'platformEdaOrganizationRoles.json',
     });
-    cy.intercept('GET', edaAPI`/users%2F*`, {
+    cy.intercept('GET', edaAPI`/users/*`, {
       count: 1,
       next: null,
       previous: null,
       results: [mockEdaUser],
     });
-    cy.intercept('GET', edaAPI`/organizations%2F*`, {
+    cy.intercept('GET', edaAPI`/organizations/*`, {
       count: 1,
       next: null,
       previous: null,

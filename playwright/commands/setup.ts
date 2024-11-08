@@ -1,12 +1,15 @@
-import { BrowserContext, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { mock } from '../mock/mock';
-import { login } from './login';
+import { login, platformUI } from './login';
 
-export async function setupBefore({ context, page }: { context: BrowserContext; page: Page }) {
-  await mock({ context });
-  await login(page);
+export function setupBefore(options?: { path?: string }) {
+  return async ({ page }: { page: Page }) => {
+    await mock(page);
+    await login(page, options?.path ? platformUI + options.path : undefined);
+  };
 }
 
-export async function setupAfter({ page }: { context: BrowserContext; page: Page }) {
+export async function setupAfter({ page }: { page: Page }) {
+  await page.goto('about:blank');
   await page.unrouteAll({ behavior: 'ignoreErrors' });
 }

@@ -4,13 +4,13 @@ export const platformUI = process.env.PLATFORM_UI ?? 'https://localhost:4100';
 export const platformURL = new URL(platformUI);
 
 /**
- * Logs into AWX.
+ * Logs into the Ansible Automation Platform UI.
  */
-export async function login(page: Page) {
-  // Go to the AWX login page
-  await page.goto(platformUI);
+export async function login(page: Page, url: string = platformUI) {
+  // Go to the login page
+  await page.goto(url);
 
-  // Verify we are on the AWX page
+  // Verify we are on the page
   await expect(page).toHaveTitle(/Ansible Automation Platform/);
 
   // Enter the username
@@ -21,7 +21,4 @@ export async function login(page: Page) {
 
   // Click the login button
   await page.click('button[type="submit"]');
-
-  // Verify we are on the AWX dashboard
-  await expect(page.getByText('Welcome to the Ansible Automation Platform')).toBeVisible();
 }

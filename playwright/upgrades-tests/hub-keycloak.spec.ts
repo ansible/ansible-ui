@@ -3,7 +3,9 @@ import { randomString } from '../../framework/utils/random-string';
 import { login, platformUI } from '../commands/login';
 import { logout } from '../commands/logout';
 import { setupAfter } from '../commands/setup';
+import { handleRoute } from '../mock/handlers/handleRoute';
 import { mock } from '../mock/mock';
+import { Router } from '../mock/router/Router';
 import { UpgradeUserType } from '../utils/constants';
 import { getUserForMigration } from '../utils/getUserForMigration';
 
@@ -11,11 +13,11 @@ let hubKeyCloakUser: { username: string; password: string };
 
 let controllerUser: { username: string; password: string };
 
-test.beforeEach(mock);
+test.beforeEach(({ page }) => mock(page));
+
 test.beforeEach(async ({ page }) => {
-  const mockEnabled = (test.info().project.metadata as { mock?: boolean }).mock;
   // Get a user to test with
-  if (!mockEnabled) {
+  if (!page.mock.enabled) {
     // Login as administrator
     await login(page);
     // Get credentials of an unmigrated keycloak user
@@ -30,6 +32,106 @@ test.beforeEach(async ({ page }) => {
     })) as { username: string; password: string };
     // Logout as administrator
     await logout(page);
+  } else {
+    // Mock out legacy_hub server
+    const mockData = page.mock.data;
+    mockData.api.gateway.v1.ui_auth = {
+      show_login_form: true,
+      passwords: [
+        {
+          name: 'Local Database Authenticator',
+          type: 'ansible_base.authentication.authenticator_plugins.local',
+        },
+      ],
+      ssos: [],
+      login_redirect_override: '',
+      custom_login_info: '',
+      custom_logo: '',
+      managed_cloud_install: false,
+      legacy_controller_sso_url: 'https://legacy_controller',
+      legacy_automation_hub_sso_url: 'https://legacy_hub',
+      legacy_auth_enabled: true,
+    };
+
+    const mockOptions = page.mock.options;
+
+    const legacyHubRouter = new Router();
+    legacyHubRouter.GET('/login/keycloak/', () => {
+      mockData.api.gateway.v1.legacy_auth = {
+        id: 84,
+        username: 'hub_keycloak_ui_user_2',
+        is_authenticated: false,
+        needs_rename: false,
+        is_migrated: false,
+        linked_accounts: [
+          {
+            service: 3,
+            service_type: 'hub',
+            original_username: 'hub_keycloak_ui_user_2',
+            user: 84,
+            gateway_username: 'hub_keycloak_ui_user_2',
+            ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+            backend_classification: null,
+          },
+        ],
+        needs_aap_password: false,
+        allow_rename: true,
+        allow_aap_password: false,
+        is_sso_account: true,
+      };
+      return {
+        status: 301,
+        headers: { Location: platformUI },
+      };
+    });
+    await page
+      .context()
+      .route(`https://legacy_hub/**/*`, (route) =>
+        handleRoute(route, legacyHubRouter, mockData, mockOptions)
+      );
+
+    const router = page.mock.router;
+    router.POST('/api/gateway/v1/legacy_auth/finalize/', () => {
+      const user = {
+        id: 1,
+        username: 'mock',
+        is_superuser: true,
+        summary_fields: { resource: { ansible_id: '1' } },
+      };
+      mockData.api.gateway.v1.me = [user];
+      mockData.api.gateway.v1.legacy_auth = {
+        id: user.id,
+        username: user.username,
+        is_authenticated: true,
+        needs_rename: false,
+        is_migrated: true,
+        linked_accounts: [],
+      };
+      mockData.api.controller.v2.me = [user];
+      mockData.api.gateway.v1.legacy_auth = {
+        id: 84,
+        username: 'mock',
+        is_authenticated: false,
+        needs_rename: false,
+        is_migrated: true,
+        linked_accounts: [
+          {
+            service: 3,
+            service_type: 'hub',
+            original_username: 'mock',
+            user: 84,
+            gateway_username: 'mock',
+            ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+            backend_classification: null,
+          },
+        ],
+        needs_aap_password: false,
+        allow_rename: true,
+        allow_aap_password: false,
+        is_sso_account: true,
+      };
+      return { status: 200, body: {} };
+    });
   }
 });
 
@@ -39,13 +141,11 @@ test(
   'Log in using Hub OIDC Keycloak account, link accounts and be directed to the Platform UI dashboard',
   { tag: ['@upgrade', '@not_e2e'] },
   async ({ page }) => {
-    const mockEnabled = (test.info().project.metadata as { mock?: boolean }).mock;
-
     await page.goto(platformUI);
     await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
     await page.getByRole('link', { name: 'Keycloak' }).click();
 
-    if (!mockEnabled) {
+    if (!page.mock.enabled) {
       // use the real keycloak and hub login pages
       await page.getByLabel('Username or email').fill(hubKeyCloakUser?.username);
       await page.getByLabel('Password', { exact: true }).fill(hubKeyCloakUser?.password);
@@ -74,13 +174,11 @@ test(
   'Link additional accounts from User Details page',
   { tag: ['@upgrade', '@not_e2e'] },
   async ({ page }) => {
-    const mockEnabled = (test.info().project.metadata as { mock?: boolean }).mock;
-
     await page.goto(platformUI);
     await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
     await page.getByRole('link', { name: 'Keycloak' }).click();
 
-    if (!mockEnabled) {
+    if (!page.mock.enabled) {
       // use the real keycloak and hub login pages
       await page.getByLabel('Username or email').fill(hubKeyCloakUser?.username);
       await page.getByLabel('Password', { exact: true }).fill(hubKeyCloakUser?.password);
@@ -115,13 +213,12 @@ test.describe('Negative paths for hub Keycloak authentication', () => {
     { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
     async ({ page }) => {
       const erroneousPassword = 'E2Epass ' + randomString(4);
-      const mockEnabled = (test.info().project.metadata as { mock?: boolean }).mock;
 
       await page.goto(platformUI);
       await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
       await page.getByRole('link', { name: 'Keycloak' }).click();
 
-      if (!mockEnabled) {
+      if (!page.mock.enabled) {
         // use the real keycloak and hub login pages
         await page.getByLabel('Username or email').fill(hubKeyCloakUser?.username);
         await page.getByLabel('Password', { exact: true }).fill(erroneousPassword);
@@ -136,13 +233,12 @@ test.describe('Negative paths for hub Keycloak authentication', () => {
     async ({ page }) => {
       const nonExistentUsername = 'E2Euser ' + randomString(4);
       const erroneousPassword = 'E2Epass ' + randomString(4);
-      const mockEnabled = (test.info().project.metadata as { mock?: boolean }).mock;
 
       await page.goto(platformUI);
       await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
       await page.getByRole('link', { name: 'Keycloak' }).click();
 
-      if (!mockEnabled) {
+      if (!page.mock.enabled) {
         // use the real keycloak and hub login pages
         await page.getByLabel('Username or email').fill(nonExistentUsername);
         await page.getByLabel('Password', { exact: true }).fill(erroneousPassword);

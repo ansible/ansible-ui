@@ -1,14 +1,14 @@
-import { useGatewayService } from '../../../main/GatewayServices';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { useAwxResource } from '../../../hooks/useAwxResource';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { useMemo } from 'react';
 import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { useMemo } from 'react';
-import { PlatformTeam } from '../../../interfaces/PlatformTeam';
-import { TeamAssignment } from '../../../../frontend/common/access/interfaces/TeamAssignment';
+import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { Team } from '../../../../frontend/awx/interfaces/Team';
+import { TeamAssignment } from '../../../../frontend/common/access/interfaces/TeamAssignment';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { useAwxResource } from '../../../hooks/useAwxResource';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { useGatewayService } from '../../../main/GatewayServices';
 
 interface RemoveRole {
   remove?: boolean;
@@ -21,11 +21,11 @@ export function useGetAwxOrganizationRolesForTeam(
 ) {
   const awxService = useGatewayService('controller');
   const { resource: awxTeam, isLoading: isLoadingAwxTeam } = useAwxResource<Team>(
-    '/teams/',
+    'teams/',
     platformTeam
   );
   const { resource: awxOrganization, isLoading: isLoadingAwxOrg } = useAwxResource<Organization>(
-    '/organizations/',
+    'organizations/',
     platformOrg
   );
   const awxApiUrl = awxAPI`/role_team_assignments/?team_id=${awxTeam?.id.toString() ?? ''}&object_id=${awxOrganization?.id.toString() ?? ''}`;

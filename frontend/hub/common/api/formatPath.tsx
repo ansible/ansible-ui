@@ -10,7 +10,10 @@ export function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   strings.forEach((fragment, index) => {
     url += fragment;
     if (index !== strings.length - 1) {
-      url += encodeURIComponent(`${values.shift() ?? ''}`);
+      // url += encodeURIComponent(`${values.shift() ?? ''}`);
+      // The above line is causing issues in the url generation
+      // Slashes in in url are getting encoded and causing issues
+      url += `${values.shift() ?? ''}`;
     }
   });
 

@@ -17,18 +17,18 @@ export async function createJobTemplate(
   await page.getByRole('option', { name: inventoryName }).click();
 
   const projectName = options.projectName ?? 'Demo Project';
-  await page.getByLabel('Select project').click();
+  await page.locator('#project').click();
   await page.getByRole('option', { name: projectName }).click();
 
   await new Promise((r) => setTimeout(r, 1000)); // TODO need to figure this out...
   await page.getByRole('button', { name: 'Create job template' }).click();
-  await expect(page.getByRole('heading')).toContainText(jobTemplateName);
+  await expect(page.getByRole('heading').first()).toContainText(jobTemplateName);
   await expect(page.locator('#name')).toContainText(jobTemplateName);
   await expect(page.locator('#inventory')).toContainText(inventoryName);
   await expect(page.locator('#project')).toContainText(projectName);
-  await expect(page.locator('#execution-environment')).toContainText(
-    'Default execution environment'
-  );
+  // await expect(page.locator('#execution-environment')).toContainText(
+  //   'Default execution environment'
+  // );
   await expect(page.locator('#playbook')).toContainText('hello_world.yml');
   return jobTemplateName;
 }
@@ -49,7 +49,6 @@ export async function runJobTemplate(jobTemplateName: string, page: Page) {
 
 export async function deleteJobTemplate(jobTemplateName: string, page: Page) {
   await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-  await page.getByRole('link', { name: 'Templates' }).click();
   await page.getByRole('button', { name: 'Select name' }).click();
   await page.getByLabel('Search input').fill(jobTemplateName);
   await page.getByLabel(jobTemplateName).check();

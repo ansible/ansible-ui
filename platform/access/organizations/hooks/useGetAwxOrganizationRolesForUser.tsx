@@ -1,14 +1,14 @@
-import { useGatewayService } from '../../../main/GatewayServices';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { useAwxResource } from '../../../hooks/useAwxResource';
+import { useMemo } from 'react';
+import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
 import { Organization } from '../../../../frontend/awx/interfaces/Organization';
 import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { useMemo } from 'react';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { useAwxResource } from '../../../hooks/useAwxResource';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useGatewayService } from '../../../main/GatewayServices';
 
 interface RemoveRole {
   remove?: boolean;
@@ -21,11 +21,11 @@ export function useGetAwxOrganizationRolesForUser(
 ) {
   const awxService = useGatewayService('controller');
   const { resource: awxUser, isLoading: isLoadingAwxUser } = useAwxResource<AwxUser>(
-    '/users/',
+    'users/',
     platformUser
   );
   const { resource: awxOrganization, isLoading: isLoadingAwxOrg } = useAwxResource<Organization>(
-    '/organizations/',
+    'organizations/',
     platformOrg
   );
   const awxApiUrl = awxAPI`/role_user_assignments/?user_id=${awxUser?.id.toString() ?? ''}&object_id=${awxOrganization?.id.toString() ?? ''}`;

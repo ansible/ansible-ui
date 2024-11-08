@@ -9,7 +9,7 @@ import { navigateTo } from '../commands/navigateTo';
 import { setupAfter, setupBefore } from '../commands/setup';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 
-test.beforeEach(setupBefore);
+test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
 test('create, sync, and delete a project', async ({ page }) => {

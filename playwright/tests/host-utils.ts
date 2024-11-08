@@ -17,7 +17,7 @@ export async function createHost(options: { name?: string; inventoryName?: strin
   await page.getByLabel('Search input').fill(inventoryName);
   await page.getByRole('option', { name: inventoryName }).click();
   await page.getByRole('button', { name: 'Create host' }).click();
-  await expect(page.getByRole('heading')).toContainText(hostName);
+  await expect(page.getByRole('heading').first()).toContainText(hostName);
   await expect(page.locator('#name')).toContainText(hostName);
   // await expect(page.locator('#inventory')).toContainText(options.inventoryName); // TODO - does not work in mock yet
   return hostName;

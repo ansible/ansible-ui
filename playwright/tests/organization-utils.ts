@@ -9,7 +9,7 @@ import { navigateTo } from '../commands/navigateTo';
 export async function createOrganization(page: Page, options: { organizationName?: string } = {}) {
   await navigateTo(page, 'Access Management', 'Organizations');
   await page.getByRole('link', { name: 'Create organization', exact: true }).click();
-  const organizationName = options.organizationName ?? 'e2e-' + createE2EName();
+  const organizationName = options.organizationName ?? createE2EName();
   await page.getByLabel('Name').fill(organizationName);
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   await page.getByRole('button', { name: 'Finish', exact: true }).click();
