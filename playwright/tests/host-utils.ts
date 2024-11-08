@@ -11,15 +11,15 @@ export async function createHost(options: { name?: string; inventoryName?: strin
   const inventoryName = options.inventoryName ?? 'Demo Inventory';
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
   await page.getByRole('button', { name: 'Create host' }).click();
-  // await page.getByLabel('Create host').click();
   await page.getByPlaceholder('Enter host name').fill(hostName);
   await page.getByLabel('Inventory *').click();
   await page.getByLabel('Search input').fill(inventoryName);
   await page.getByRole('option', { name: inventoryName }).click();
+  await page.getByLabel('Enabled').click();
   await page.getByRole('button', { name: 'Create host' }).click();
   await expect(page.getByRole('heading').first()).toContainText(hostName);
   await expect(page.locator('#name')).toContainText(hostName);
-  // await expect(page.locator('#inventory')).toContainText(options.inventoryName); // TODO - does not work in mock yet
+  await expect(page.locator('#inventory')).toContainText(inventoryName);
   return hostName;
 }
 
