@@ -105,7 +105,7 @@ describe('If SaaS Build', () => {
       cy.get('#pf-login-username-id').type(edaUser.username);
       cy.get('#pf-login-password-id').type('pass');
       cy.contains('button', 'Log in').click();
-      cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser.username}`);
+      cy.contains('button', `${edaUser.username}`).should('be.visible');
       cy.navigateTo('eda', 'rulebook-activations');
       cy.verifyPageTitle('Rulebook Activations');
       // verify that the user can read but not create a project
@@ -155,7 +155,7 @@ describe('If SaaS Build', () => {
       cy.get('#pf-login-username-id').type(edaUser.username);
       cy.get('#pf-login-password-id').type('pass');
       cy.contains('button', 'Log in').click();
-      cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser.username}`);
+      cy.contains('button', `${edaUser.username}`).should('be.visible');
       cy.navigateTo('eda', 'decision-environments');
       cy.verifyPageTitle('Decision Environments');
       // verify that the user can read but not create a decision environment
@@ -205,7 +205,7 @@ describe('If SaaS Build', () => {
       cy.get('#pf-login-username-id').type(edaUser.username);
       cy.get('#pf-login-password-id').type('pass');
       cy.contains('button', 'Log in').click();
-      cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser.username}`);
+      cy.contains('button', `${edaUser.username}`).should('be.visible');
       cy.navigateTo('eda', 'projects');
       cy.verifyPageTitle('Projects');
       // verify that the user can read but not create a project
@@ -248,7 +248,7 @@ describe('If SaaS Build', () => {
       cy.get('#pf-login-username-id').type(edaUser.username);
       cy.get('#pf-login-password-id').type('pass');
       cy.contains('button', 'Log in').click();
-      cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser.username}`);
+      cy.contains('button', `${edaUser.username}`).should('be.visible');
       cy.navigateTo('eda', 'credentials');
       cy.verifyPageTitle('Credentials');
       // verify that the user can read but not create a credential
@@ -290,7 +290,7 @@ describe('If SaaS Build', () => {
       cy.get('#pf-login-username-id').type(edaUser.username);
       cy.get('#pf-login-password-id').type('pass');
       cy.contains('button', 'Log in').click();
-      cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser.username}`);
+      cy.contains('button', `${edaUser.username}`).should('be.visible');
       cy.navigateTo('eda', 'credentials');
       cy.verifyPageTitle('Credentials');
       // verify that the user can read but not create a credential

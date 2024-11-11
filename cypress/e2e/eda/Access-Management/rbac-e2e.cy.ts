@@ -131,7 +131,7 @@ describe('If SaaS Build', () => {
         cy.get('input[id*="login-username-id"]').type(edaUser1.username);
         cy.get('input[id*="login-password-id"]').type('pass');
         cy.clickButton('Log in');
-        cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser1.username}`);
+        cy.contains('button', `${edaUser1.username}`).should('be.visible');
         cy.navigateTo('eda', 'rulebook-activations');
         cy.getTableRowByText(RBA.name).within(() => {
           cy.get('.pf-v5-c-switch__toggle').click();
@@ -155,7 +155,7 @@ describe('If SaaS Build', () => {
         cy.get('input[id*="login-username-id"]').type(edaUser2.username);
         cy.get('input[id*="login-password-id"]').type('pass');
         cy.clickButton('Log in');
-        cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser2.username}`);
+        cy.contains('button', `${edaUser2.username}`).should('be.visible');
         cy.navigateTo('eda', 'rulebook-activations');
         cy.contains('You do not have permission to create a rulebook activation.');
         cy.get('table.page-table').should('not.exist');
@@ -220,7 +220,7 @@ describe('If SaaS Build', () => {
         cy.get('input[id*="login-username-id"]').type(edaUser1.username);
         cy.get('input[id*="login-password-id"]').type('pass');
         cy.clickButton('Log in');
-        cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser1.username}`);
+        cy.contains('button', `${edaUser1.username}`).should('be.visible');
         cy.navigateTo('eda', 'projects');
         cy.verifyPageTitle('Projects');
         cy.getBy('[data-cy="text-input"] input').type(edaProject.name);
@@ -244,7 +244,7 @@ describe('If SaaS Build', () => {
         cy.get('#pf-login-password-id').type('pass');
         cy.contains('button', 'Log in').click();
         cy.getByDataCy('nav-toggle').should('exist');
-        cy.get('[data-ouia-component-id="account-menu"]').should('contain', `${edaUser2.username}`);
+        cy.contains('button', `${edaUser2.username}`).should('be.visible');
         cy.navigateTo('eda', 'projects');
         cy.verifyPageTitle('Projects');
         cy.get('.pf-v5-c-empty-state').should('be.visible');

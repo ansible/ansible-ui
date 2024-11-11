@@ -149,7 +149,7 @@ Cypress.Commands.add('awxLoginTestUser', (username: string, password: string) =>
 });
 
 Cypress.Commands.add('awxLogout', () => {
-  cy.getByDataCy('account-menu')
+  cy.get('#account-menu-menu-toggle')
     .click()
     .then(() => {
       cy.intercept('GET', `/api/logout/`).as('logout');

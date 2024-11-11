@@ -58,7 +58,7 @@ describe('Controller LDAP user migration flow', () => {
     cy.clickButton('Submit');
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
 
-    cy.getByDataCy('account-menu').click();
+    cy.get('#account-menu-menu-toggle').click();
     cy.get('#user-details').click();
     cy.clickKebabAction('actions-dropdown', 'link-user-accounts');
     cy.verifyPageTitle('Link user accounts');
