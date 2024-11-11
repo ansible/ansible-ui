@@ -42,7 +42,7 @@ describe('If SaaS Build', () => {
     it('can create an event stream, and assert the information showing on the details page', () => {
       cy.navigateTo('eda', 'event-streams');
       cy.verifyPageTitle('Event Streams');
-      cy.clickLink(/^Create event stream$/);
+      cy.contains('Create event stream').click();
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');
@@ -74,7 +74,7 @@ describe('If SaaS Build', () => {
       const name = 'E2E Event Stream validation check' + randomString(4);
       cy.navigateTo('eda', 'event-streams');
       cy.verifyPageTitle('Event Streams');
-      cy.clickButton(/^Create event stream$/);
+      cy.contains('Create event stream').click();
       cy.getByDataCy('name').type(name);
       cy.getBy('[data-cy="organization_id"]').click();
       cy.clickButton('Browse');

@@ -167,10 +167,7 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         cy.get('[data-cy="username"]').type(createdNormalUser.username);
         cy.get('[data-cy="password"]').type(password);
         cy.get('[data-cy="Submit"]').click();
-        cy.get('[data-ouia-component-id="account-menu"]').should(
-          'contain',
-          `${createdNormalUser.username}`
-        );
+        cy.contains('button', `${createdNormalUser.username}`).should('be.visible');
         cy.navigateTo('platform', 'users');
         cy.verifyPageTitle('Users');
         cy.intercept('GET', gatewayAPI`/users/${createdNormalUser.id.toString()}/`).as(
