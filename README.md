@@ -40,19 +40,19 @@ Access Cypress test dashboard [here](https://cloud.cypress.io/projects/iq7cj4/ru
    cd platform
    ```
 
-5. Set ```PLATFORM_SERVER``` variable and then run ```npm run start``` to stand up the UI
+5. Set `PLATFORM_SERVER` variable and then run `npm run start` to stand up the UI
 
 ## Environment Variables
 
-|    Environment Variable | Description                                                      |
-| ----------------------- | ---------------------------------------------------------------- |
-|        `AWX_API_PREFIX` | The AWX server API prefix.                                       |
-|        `EDA_API_PREFIX` | The EDA server API prefix.                                       |
-|        `HUB_API_PREFIX` | The HUB server API prefix.                                       |
-|       `CYPRESS_baseUrl` | Base URL of the Jenkins deployment Remove trailing slash.        |
-|     `PLATFORM_USERNAME` | Username to log in with (ie: 'e2e' or 'dev').                    |
-|     `PLATFORM_PASSWORD` | The password of your user. Find E2E pwd in AAP-UI Slack Canvas.  |
-|       `PLATFORM_SERVER` | If using a Jenkins build, same as baseUrl above.                 |  
+| Environment Variable | Description                                                     |
+| -------------------- | --------------------------------------------------------------- |
+| `AWX_API_PREFIX`     | The AWX server API prefix.                                      |
+| `EDA_API_PREFIX`     | The EDA server API prefix.                                      |
+| `HUB_API_PREFIX`     | The HUB server API prefix.                                      |
+| `CYPRESS_baseUrl`    | Base URL of the Jenkins deployment Remove trailing slash.       |
+| `PLATFORM_USERNAME`  | Username to log in with (ie: 'e2e' or 'dev').                   |
+| `PLATFORM_PASSWORD`  | The password of your user. Find E2E pwd in AAP-UI Slack Canvas. |
+| `PLATFORM_SERVER`    | If using a Jenkins build, same as baseUrl above.                |
 
 ```zsh
 export AWX_API_PREFIX='/api/controller/v2'
@@ -67,20 +67,20 @@ export PLATFORM_PASSWORD='nomeetingsfriday'
 
 ### From the root of AAP-UI
 
-| NPM Script                  | Description                             |
-| --------------------------- | --------------------------------------- |
-|               `npm run tsc` | Run Typescript compiler checks          |
+| NPM Script    | Description                    |
+| ------------- | ------------------------------ |
+| `npm run tsc` | Run Typescript compiler checks |
 
 ### From the platform directory of AAP-UI
 
-| NPM Script                  | Description                             |
-| --------------------------- | --------------------------------------- |
-|               `npm run e2e` | Run Cypress GUI                         |
-|             `npm run start` | Start Platform. Must run local build.   |
-|          `npm run prettier` | Run prettier format checks              |
-|      `npm run prettier:fix` | Fix prettier format of files            |
-|            `npm run eslint` | Run eslint checks                       |
-|        `npm run eslint:fix` | Fix linting errors                      |
+| NPM Script             | Description                           |
+| ---------------------- | ------------------------------------- |
+| `npm run e2e`          | Run Cypress GUI                       |
+| `npm run start`        | Start Platform. Must run local build. |
+| `npm run prettier`     | Run prettier format checks            |
+| `npm run prettier:fix` | Fix prettier format of files          |
+| `npm run eslint`       | Run eslint checks                     |
+| `npm run eslint:fix`   | Fix linting errors                    |
 
 ## Documentation
 
