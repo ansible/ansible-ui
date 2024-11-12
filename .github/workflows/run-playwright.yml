@@ -5,7 +5,7 @@ on:
     inputs:
       PLATFORM_UI:
         type: string
-        required: false
+        required: true
         description: "Server URL"
       TAGS: 
         type: string
@@ -22,9 +22,8 @@ on:
         description: "Parallel Tests"
         default: 2
       PROJECT:
-        type: string
-        required: false
-        description: "Project"
+        type: choice
+        description: "Playwright Project"
         default: "live chromium"
         options:
           - "live chromium"
