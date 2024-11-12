@@ -18,7 +18,7 @@ jobs:
       upload-artifact: true
 
   playwright:
-    name: Playwright
+    name: Playwright mock
     needs:
       - platform-ui-image
     uses: ./.github/workflows/playwright.yml
