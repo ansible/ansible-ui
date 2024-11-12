@@ -1,0 +1,56 @@
+name: Run Playwright
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_UI:
+        type: string
+        required: false
+        description: "Server URL"
+      TAGS: 
+        type: string
+        required: false
+        description: "Include Tags"
+      NOT_TAGS: 
+        type: string
+        required: false
+        description: "Exclude Tags"
+        default: "@not-mock"
+      PARALLEL_TESTS:
+        type: number
+        required: false
+        description: "Parallel Tests"
+        default: 2
+      PROJECT:
+        type: string
+        required: false
+        description: "Project"
+        default: "live chromium"
+        options:
+          - "live chromium"
+          - "live firefox"
+          - "live webkit"
+
+jobs:
+  platform-ui-image:
+    name: Platform UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+
+  playwright:
+    name: Playwright
+    needs:
+      - platform-ui-image
+    uses: ./.github/workflows/playwright.yml
+    with:
+      PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
+      TAGS: ${{ inputs.TAGS }}
+      NOT_TAGS: ${{ inputs.NOT_TAGS }}
+      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
+    

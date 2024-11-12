@@ -87,6 +87,8 @@ jobs:
     needs:
       - platform-ui-image
     uses: ./.github/workflows/playwright.yml
+    with:
+      PARALLEL_TESTS: 2
 
   awx-component:
     name: AWX Component
