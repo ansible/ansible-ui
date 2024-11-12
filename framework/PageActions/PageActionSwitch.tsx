@@ -3,6 +3,27 @@ import { ComponentClass, Fragment, FunctionComponent, useId } from 'react';
 import { IPageActionSwitch, IPageActionSwitchSingle, PageActionSelection } from './PageAction';
 import { usePageActionDisabled } from './PageActionUtils';
 
+function getTooltip<T extends object>(
+  action: IPageActionSwitch | IPageActionSwitchSingle<T>,
+  isDisabled: string | undefined,
+  iconOnly: boolean,
+  isChecked: boolean
+): string | undefined {
+  if (isDisabled) {
+    return isDisabled;
+  }
+
+  if (action.tooltip) {
+    return action.tooltip;
+  }
+
+  if (iconOnly) {
+    return isChecked ? action.label : (action.labelOff ?? action.label);
+  }
+
+  return undefined;
+}
+
 export function PageActionSwitch<T extends object>(props: {
   action: IPageActionSwitch | IPageActionSwitchSingle<T>;
   wrapper?: ComponentClass | FunctionComponent;
@@ -16,17 +37,9 @@ export function PageActionSwitch<T extends object>(props: {
 
   const Wrapper = wrapper ?? Fragment;
 
-  const isChecked = selectedItem ? action.isSwitchOn(selectedItem) : false;
+  const isChecked = selectedItem && action.isSwitchOn ? action.isSwitchOn(selectedItem) : false;
 
-  const tooltip = isDisabled
-    ? isDisabled
-    : action.tooltip
-      ? action.tooltip
-      : iconOnly
-        ? isChecked
-          ? action.label
-          : (action.labelOff ?? action.label)
-        : undefined;
+  const tooltipContent = getTooltip<T>(action, isDisabled, iconOnly ?? false, isChecked);
 
   const id = useId();
 
@@ -46,7 +59,7 @@ export function PageActionSwitch<T extends object>(props: {
         data-cy="toggle-switch"
         style={{ marginLeft: iconOnly ? 16 : undefined, marginRight: iconOnly ? 16 : undefined }}
       >
-        <Tooltip content={tooltip} trigger={tooltip ? undefined : 'manual'}>
+        <Tooltip content={tooltipContent} trigger={tooltipContent ? undefined : 'manual'}>
           <Switch
             id={id}
             aria-label={action.ariaLabel(isChecked)}
