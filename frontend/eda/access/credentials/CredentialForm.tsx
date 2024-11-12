@@ -30,6 +30,7 @@ import { CredentialDetails } from './CredentialPage/CredentialDetails';
 import { Alert } from '@patternfly/react-core';
 import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { NoAutofillDiv } from '../../../common/components/NoAutofill';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {
@@ -108,6 +109,7 @@ function CredentialInputs(props: { editMode: boolean }) {
       />
       {credentialType !== undefined && (
         <PageFormSection title={t('Type Details')}>
+          <NoAutofillDiv />
           <CredentialFormInputs credentialType={credentialType} />
         </PageFormSection>
       )}
@@ -230,6 +232,7 @@ export function EditCredential() {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
+            autoComplete={'off'}
             defaultValue={{
               ...credential,
               organization_id: credential?.organization?.id,
