@@ -187,7 +187,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": ":playwright: Playwright ${{ inputs.PROJECT }}: :done-circle-check: Success\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  "text": ":playwright: Playwright ${{ inputs.PROJECT }}: :done-circle-check: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success>""
                 }
               }
             ]
@@ -207,7 +207,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": ":playwright: Playwright ${{ inputs.PROJECT }}: :failure: Failure\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  "text": ":playwright: Playwright ${{ inputs.PROJECT }}: :failure: *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>*"
                 }
               }
             ]
