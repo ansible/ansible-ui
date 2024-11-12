@@ -15,7 +15,6 @@ on:
         type: string
         required: false
         description: "Exclude Tags"
-        default: "@not-mock"
       PARALLEL_TESTS:
         type: number
         required: false
