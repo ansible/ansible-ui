@@ -3,7 +3,7 @@ name: Nightly Playwright Browsers
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 2 * * 1-5'
 
 jobs:
   platform-ui-image:
@@ -32,4 +32,5 @@ jobs:
     with:
       PROJECT: mock ${{ matrix.project }}
       BROWSER: ${{ matrix.project }}
+      SLACK_NOTIFICATION: true
     
