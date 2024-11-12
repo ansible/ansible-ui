@@ -48,11 +48,13 @@ export default defineConfig({
       name: 'live chromium',
       use: { ...devices['Desktop Chrome'] },
       testIgnore: '**/upgrades-tests/**',
+      dependencies: ['coverage setup'],
     },
     {
       name: 'mock chromium',
       use: { ...devices['Desktop Chrome'] },
       metadata: { mock: true },
+      dependencies: ['coverage setup'],
     },
     {
       name: 'live firefox',
@@ -80,6 +82,21 @@ export default defineConfig({
       fullyParallel: false,
       testIgnore: '**/tests/**',
     },
+    {
+      name: 'global setup',
+      testMatch: /global\.setup\.ts/,
+    },
+    {
+      name: 'coverage setup',
+      testMatch: /coverage\.setup\.ts/,
+      teardown: 'coverage teardown',
+      dependencies: ['global setup'],
+    },
+    {
+      name: 'coverage teardown',
+      testMatch: /coverage\.teardown\.ts/,
+    },
+
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
