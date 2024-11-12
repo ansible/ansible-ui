@@ -18,7 +18,7 @@ export default defineConfig({
         '@patternfly/react-icons',
         '@patternfly/patternfly',
         '@patternfly/react-table',
-        'monaco-editor',
+        // 'monaco-editor',
       ],
       output: {
         dir: 'publish',
@@ -30,7 +30,7 @@ export default defineConfig({
           '@patternfly/react-icons': 'PatternflyReactIcons',
           '@patternfly/react-table': 'PatternflyReactTable',
           '@patternfly/patternfly': 'Patternfly',
-          'monaco-editor': 'MonacoEditor',
+          // 'monaco-editor': 'MonacoEditor',
         },
       },
     },
