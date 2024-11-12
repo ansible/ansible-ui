@@ -180,6 +180,18 @@ jobs:
       if: ${{ inputs.SLACK_NOTIFICATION == true  }}
       uses: slackapi/slack-github-action@v1.24.0
       with:
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Playwright ${{ inputs.PROJECT }}: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                }
+              }
+            ]
+          }      
         slack-message: "Playwright ${{ inputs.PROJECT }}: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
