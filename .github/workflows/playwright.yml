@@ -158,20 +158,20 @@ jobs:
         merge-multiple: true
 
     - name: Merge into JUint Report
-      run: npx playwright merge-reports --reporter junit ./all-blob-reports > junit.xml
+      run: npx playwright merge-reports --reporter junit ./all-blob-reports > ${{ inputs.BROWSER }}-junit.xml
 
     - name: Upload JUint report
       uses: actions/upload-artifact@v4
       with:
         name: junit-report
-        path: junit.xml
+        path: ${{ inputs.BROWSER }}-junit.xml
         retention-days: 1
 
     - name: Test Summary
       if: always()
       uses: test-summary/action@v2
       with:
-        paths: junit.xml
+        paths: ${{ inputs.BROWSER }}-junit.xml
 
     - name: Slack Notification
       if: ${{ inputs.SLACK_NOTIFICATION == true  }}
