@@ -27,6 +27,9 @@ on:
         type: string
         required: false
         default: chromium
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: false
 
 jobs:
   matrix:
@@ -163,7 +166,7 @@ jobs:
     - name: Upload JUint report
       uses: actions/upload-artifact@v4
       with:
-        name: junit-report
+        name: ${{ inputs.BROWSER }}-junit-report
         path: ${{ inputs.BROWSER }}-junit.xml
         retention-days: 1
 

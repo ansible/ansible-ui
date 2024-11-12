@@ -33,4 +33,6 @@ jobs:
       PROJECT: mock ${{ matrix.project }}
       BROWSER: ${{ matrix.project }}
       SLACK_NOTIFICATION: true
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     
