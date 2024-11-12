@@ -29,6 +29,23 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'list',
 
+  // Split TAGS by comma and create a regular expression that matches any of the tags
+  grep: process.env.TAGS
+    ? new RegExp(
+        process.env.TAGS.split(',')
+          .map((i) => i.trim())
+          .join('|')
+      )
+    : undefined,
+
+  grepInvert: process.env.NOT_TAGS
+    ? new RegExp(
+        process.env.NOT_TAGS.split(',')
+          .map((i) => i.trim())
+          .join('|')
+      )
+    : undefined,
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */

@@ -2,32 +2,76 @@ name: Playwright
 
 on:
   workflow_call:
+    inputs:
+      PLATFORM_UI:
+        type: string
+        required: false
+      TAGS: 
+        type: string
+        required: false
+      NOT_TAGS: 
+        type: string
+        required: false
+      PARALLEL_TESTS:
+        type: number
+        required: false
+        default: 2
+      PROJECT:
+        type: string
+        default: "mock chromium"
+      SLACK_NOTIFICATION:
+        type: boolean
+        required: false
+        default: false
 
 jobs:
+  matrix:
+    name: Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      shardIndex: ${{ steps.matrix.outputs.shardIndex }}
+      shardTotal: ${{ steps.matrix.outputs.shardTotal }}
+    steps:
+      - id: matrix
+        run: |
+          echo "shardIndex=${{ format('[1, {0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
+          echo "shardTotal=${{ format('[{0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
+
   playwright:
     name: Playwright
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    needs: matrix
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+        shardIndex: ${{ fromJSON(needs.matrix.outputs.shardIndex) }}
+        shardTotal: ${{ fromJSON(needs.matrix.outputs.shardTotal) }}
+
     steps:
     - name: Download image
+      if: ${{ inputs.PLATFORM_UI == '' }}
       uses: actions/download-artifact@v4
       with:
         name: platform-ui.tar
+
     - name: Load image
+      if: ${{ inputs.PLATFORM_UI == '' }}
       run: docker load --input platform-ui.tar
+
     - name: Run container
+      if: ${{ inputs.PLATFORM_UI == '' }}
       run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=http://localhost platform-ui
+
     - uses: actions/checkout@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
     - name: PreCache
       run: npm version 0.0.0 --no-git-tag-version
+
     - name: Cache dependencies
       id: cache
       uses: actions/cache@v4
@@ -36,17 +80,24 @@ jobs:
           ./node_modules
           /home/runner/.cache/Cypress
         key: modules-${{ hashFiles('package-lock.json') }}
+
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
+
     - name: Run Playwright tests
       working-directory: playwright
-      run: npx playwright test --project="mock chromium" --grep-invert @not-mock --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
+        PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
         PLATFORM_USERNAME: mock
         PLATFORM_PASSWORD: mock
+        TAGS: ${{ inputs.TAGS }}
+        NOT_TAGS: ${{ inputs.NOT_TAGS }}
+
     - name: Upload blob report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
@@ -54,6 +105,7 @@ jobs:
         name: blob-report-${{ matrix.shardIndex }}
         path: blob-report
         retention-days: 1
+
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -62,6 +114,7 @@ jobs:
         retention-days: 1
         overwrite: true
         if-no-files-found: ignore
+
     - name: Stop container
       run: docker stop platform-ui
 
@@ -72,11 +125,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
     - name: PreCache
       run: npm version 0.0.0 --no-git-tag-version
+
     - name: Cache dependencies
       id: cache
       uses: actions/cache@v4
@@ -85,25 +141,39 @@ jobs:
           ./node_modules
           /home/runner/.cache/Cypress
         key: modules-${{ hashFiles('package-lock.json') }}
+
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm ci
+
     - name: Download blob reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
         path: all-blob-reports
         pattern: blob-report-*
         merge-multiple: true
+
     - name: Merge into JUint Report
       run: npx playwright merge-reports --reporter junit ./all-blob-reports > junit.xml
+
     - name: Upload JUint report
       uses: actions/upload-artifact@v4
       with:
         name: junit-report
         path: junit.xml
         retention-days: 1
+
     - name: Test Summary
       if: always()
       uses: test-summary/action@v2
       with:
         paths: junit.xml
+
+    - name: Slack Notification
+      if: ${{ inputs.SLACK_NOTIFICATION == true  }}
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        slack-message: "Playwright ${{ inputs.PROJECT }}: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
