@@ -86,7 +86,7 @@ jobs:
       run: npm ci
 
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps chromium
+      run: npx playwright install --with-deps
 
     - name: Run Playwright tests
       working-directory: playwright
@@ -102,7 +102,7 @@ jobs:
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
-        name: blob-report-${{ matrix.shardIndex }}
+        name: ${{ runner.workspace }}-blob-report-${{ matrix.shardIndex }}
         path: blob-report
         retention-days: 1
 
@@ -150,7 +150,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: all-blob-reports
-        pattern: blob-report-*
+        pattern: ${{ runner.workspace }}-blob-report-*
         merge-multiple: true
 
     - name: Merge into JUint Report
