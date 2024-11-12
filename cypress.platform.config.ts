@@ -4,8 +4,9 @@ import setValue from 'set-value';
 import { baseConfig } from './cypress.base.config';
 
 let PLATFORM_SERVER = process.env.PLATFORM_SERVER;
-if (!PLATFORM_SERVER) throw new Error('PLATFORM_SERVER is not defined');
-if (PLATFORM_SERVER.endsWith('/')) PLATFORM_SERVER = PLATFORM_SERVER.slice(0, -1);
+if (PLATFORM_SERVER && PLATFORM_SERVER.endsWith('/')) {
+  PLATFORM_SERVER = PLATFORM_SERVER.slice(0, -1);
+}
 
 baseConfig.e2e!.specPattern = [
   'cypress/e2e/platform/**/*.cy.ts',
