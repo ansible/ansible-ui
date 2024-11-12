@@ -5,7 +5,7 @@ const { DefinePlugin } = pkg;
 
 export const baseConfig: Cypress.ConfigOptions = {
   experimentalMemoryManagement: true,
-  numTestsKeptInMemory: 6,
+  numTestsKeptInMemory: 3,
   viewportWidth: 1600,
   viewportHeight: 1120,
   pageLoadTimeout: 120000,
@@ -21,7 +21,10 @@ export const baseConfig: Cypress.ConfigOptions = {
             launchOptions.args.push('--disable-gl-drawing-for-tests');
             launchOptions.args.push('--disable-gpu');
           }
-          launchOptions.args.push('--js-flags=--max-old-space-size=3500');
+          launchOptions.args.push('--js-flags=--max-old-space-size=4096');
+          launchOptions.args.push('--disable-renderer-backgrounding');
+          launchOptions.args.push('--disable-background-timer-throttling');
+          launchOptions.args.push('--force-device-scale-factor=1');
         }
         return launchOptions;
       });
