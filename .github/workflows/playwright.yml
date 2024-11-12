@@ -193,7 +193,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": ":playwright: Playwright *${{ inputs.PROJECT }}*: :done-circle-check: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success>"
+                  "text": ":playwright: *Playwright* `${{ inputs.PROJECT }}`: :done-circle-check: *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success>*"
                 }
               }
             ]
@@ -219,7 +219,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": ":playwright: Playwright *${{ inputs.PROJECT }}*: :failed: *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>*"
+                  "text": ":playwright: *Playwright* `${{ inputs.PROJECT }}`: :failed: *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>*"
                 }
               }
             ]
