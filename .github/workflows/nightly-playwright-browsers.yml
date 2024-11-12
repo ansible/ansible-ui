@@ -1,4 +1,4 @@
-name: Nightly Playwright
+name: Nightly Playwright Browsers
 
 on:
   workflow_dispatch:
@@ -26,9 +26,10 @@ jobs:
       fail-fast: false
       matrix:
         project: 
-          - "mock chromium"
-          - "mock firefox"
-          - "mock webkit"
+          - "chromium"
+          - "firefox"
+          - "webkit"
     with:
-      PROJECT: ${{ matrix.project }}
+      PROJECT: mock ${{ matrix.project }}
+      BROWSER: ${{ matrix.project }}
     
