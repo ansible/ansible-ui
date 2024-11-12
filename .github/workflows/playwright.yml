@@ -176,9 +176,9 @@ jobs:
       with:
         paths: ${{ inputs.BROWSER }}-junit.xml
 
-    - name: Slack Notification
-      if: ${{ inputs.SLACK_NOTIFICATION == true  }}
-      uses: slackapi/slack-github-action@v1.24.0
+    - name: Slack Success Notification
+      if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
+      uses: slackapi/slack-github-action@v1.27.0
       with:
         payload: |
           {
@@ -187,12 +187,31 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "Playwright ${{ inputs.PROJECT }}: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  "text": ":playwright: Playwright ${{ inputs.PROJECT }}: :done-circle-check: Success\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
                 }
               }
             ]
           }      
-        slack-message: "Playwright ${{ inputs.PROJECT }}: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+    - name: Slack Success Notification
+      if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
+      uses: slackapi/slack-github-action@v1.27.0
+      with:
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": ":playwright: Playwright ${{ inputs.PROJECT }}: :failure: Failure\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                }
+              }
+            ]
+          }      
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
