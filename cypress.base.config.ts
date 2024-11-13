@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import pkg from 'webpack';
 import env from './webpack/environment.cjs';
 const { DefinePlugin } = pkg;
@@ -86,6 +87,19 @@ export const baseConfig: Cypress.ConfigOptions = {
           },
         },
         plugins: [
+          new MonacoWebpackPlugin({
+            languages: ['yaml', 'json', 'markdown'],
+            customLanguages: [
+              {
+                label: 'yaml',
+                entry: 'monaco-yaml',
+                worker: {
+                  id: 'monaco-yaml/yamlWorker',
+                  entry: 'monaco-yaml/yaml.worker',
+                },
+              },
+            ],
+          }),
           new DefinePlugin({
             'process.env.E2E_MODE': JSON.stringify(env.E2E_MODE),
             'process.env.AWX_API_PREFIX': JSON.stringify(env.AWX_API_PREFIX),
