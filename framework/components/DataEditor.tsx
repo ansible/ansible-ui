@@ -1,5 +1,5 @@
 import useResizeObserver from '@react-hook/resize-observer';
-import * as monaco from 'monaco-editor';
+import monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -185,46 +185,19 @@ const EditorPaddingTop = 6;
 const EditorPaddingBottom = 6;
 const EditorPadding = EditorPaddingTop + EditorPaddingBottom;
 
-// workers are singletons at a global level
-// this solves the problem of creating multiple workers for the same language
-// when multiple editors are created
-let editorWorkerService: Worker;
-let jsonWorker: Worker;
-let yamlWorker: Worker;
-function getWorker(moduleId: string, label: string) {
+function getWorkerUrl(moduleId: string, label: string): string {
   switch (label) {
     case 'editorWorkerService':
-      if (!editorWorkerService) {
-        editorWorkerService = new Worker(
-          new URL('../../node_modules/monaco-editor/esm/vs/editor/editor.worker', import.meta.url),
-          { type: 'module' }
-        );
-      }
-      return editorWorkerService;
+      return '/editor.worker.js';
     case 'json':
-      if (!jsonWorker) {
-        jsonWorker = new Worker(
-          new URL(
-            '../../node_modules/monaco-editor/esm/vs/language/json/json.worker',
-            import.meta.url
-          ),
-          { type: 'module' }
-        );
-      }
-      return jsonWorker;
+      return '/json.worker.js';
     case 'yaml':
-      if (!yamlWorker) {
-        yamlWorker = new Worker(
-          new URL('../../node_modules/monaco-yaml/yaml.worker', import.meta.url),
-          { type: 'module' }
-        );
-      }
-      return yamlWorker;
+      return '/yaml.worker.js';
     default:
       throw new Error(`Unknown label ${label}`);
   }
 }
-window.MonacoEnvironment = { getWorker };
+window.MonacoEnvironment = { getWorkerUrl };
 
 // Set up Monaco editor json language support
 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({ validate: true });

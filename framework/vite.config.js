@@ -19,6 +19,7 @@ export default defineConfig({
         '@patternfly/patternfly',
         '@patternfly/react-table',
         'monaco-editor',
+        'monaco-yaml',
       ],
       output: {
         dir: 'publish',
@@ -31,6 +32,7 @@ export default defineConfig({
           '@patternfly/react-table': 'PatternflyReactTable',
           '@patternfly/patternfly': 'Patternfly',
           'monaco-editor': 'MonacoEditor',
+          'monaco-yaml': 'MonacoYaml',
         },
       },
     },

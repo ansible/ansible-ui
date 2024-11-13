@@ -36,6 +36,7 @@
     "@patternfly/react-table": "^5.4",
     "react": "^17 || ^18",
     "react-dom": "^17 || ^18",
-    "monaco-editor": "^0.52.0"
+    "monaco-editor": "^0.52.0",
+    "monaco-yaml": "^5.2.2"
   }
 }
