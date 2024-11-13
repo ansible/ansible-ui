@@ -2,13 +2,13 @@
 import { Text } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
   PageDashboardGettingStarted,
   PageDashboardGettingStartedStep,
 } from '../../../../framework';
 import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { ExternalLink } from '../../../hub/common/ExternalLink';
 
 export function AwxGettingStartedCard(props: {
   hasInventory: boolean;
@@ -46,10 +46,8 @@ export function AwxGettingStartedCard(props: {
     <PageDashboardGettingStarted steps={steps}>
       <Text>
         To learn how to get started, view the{' '}
-        <Link to="https://docs.ansible.com" target="_blank">
-          documentation
-        </Link>
-        , or follow the steps below.
+        <ExternalLink href="https://docs.ansible.com">documentation</ExternalLink>, or follow the
+        steps below.
       </Text>
     </PageDashboardGettingStarted>
   );

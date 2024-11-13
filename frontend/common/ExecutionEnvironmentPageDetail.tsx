@@ -8,6 +8,7 @@ import { useAwxConfig } from '../awx/common/useAwxConfig';
 import { useTranslation } from 'react-i18next';
 import { useGetDocsUrl } from '../awx/common/util/useGetDocsUrl';
 import { PageDetail } from '../../framework';
+import { ExternalLink } from '../hub/common/ExternalLink';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-global--warning-color--100);
@@ -60,9 +61,7 @@ export function ExecutionEnvironmentDetail(props: {
                   {t(`
                     Custom virtual environment {virtualEnvironment} must be replaced by an execution
                     environment. For more information about migrating to execution environments see `)}
-                  <a href={docsLink} target="_blank" rel="noopener noreferrer">
-                    {t('the documentation.')}
-                  </a>
+                  <ExternalLink href={docsLink}>{t('the documentation.')}</ExternalLink>
                 </div>
               }
               position="right"

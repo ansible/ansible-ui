@@ -1,5 +1,5 @@
 import { DropdownItem, Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageMasthead, useGetPageUrl, usePageNavigate } from '../../../framework';
@@ -47,10 +47,9 @@ export function AwxMasthead() {
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
             <DropdownItem
               id="documentation"
-              icon={<ExternalLinkAltIcon />}
+              isExternalLink
               component="a"
               to={useGetDocsUrl(config, 'index')}
-              target="_blank"
               data-cy="masthead-documentation"
             >
               {t('Documentation')}

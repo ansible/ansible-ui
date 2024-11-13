@@ -14,6 +14,7 @@ import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/Page
 import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
 import { TFunction } from 'i18next';
 import { FieldPathByValue } from 'react-hook-form';
+import { ExternalLink } from '../../../hub/common/ExternalLink';
 
 export function InnerForm(props: { notification_type: string }) {
   const notification_type = props.notification_type;
@@ -122,13 +123,9 @@ function EmailForm() {
         label={t('Email options ')}
         labelHelpTitle={t('Email options')}
         labelHelp={
-          <Trans>
-            See Django{' '}
-            <a href="https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-EMAIL_USE_TLS">
-              documentation
-            </a>{' '}
-            for more information.
-          </Trans>
+          <ExternalLink href="https://docs.djangoproject.com/en/4.0/ref/settings/#std:setting-EMAIL_USE_TLS">
+            {t('See Django documentation for more information.')}
+          </ExternalLink>
         }
       >
         <PageFormCheckbox<NotificationTemplate>
@@ -520,8 +517,9 @@ export function getLabelHelp(
         start a thread to a specific message add the parent message Id to the channel where the
         parent message Id is 16 digits. A dot (.) must be manually inserted after the 10th digit.
         ie:#destination-channel, 1231257890.006423. See Slack{' '}
-        <a href="https://api.slack.com/messaging/retrieving#individual_messages">documentation</a>{' '}
-        for more information.
+        <ExternalLink href="https://api.slack.com/messaging/retrieving#individual_messages">
+          documentation for more information.
+        </ExternalLink>
       </Trans>
     );
   }

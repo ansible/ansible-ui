@@ -33,9 +33,9 @@ export function Lightspeed() {
             <Button
               variant="primary"
               icon={<ExternalLinkAltIcon />}
-              href="https://developers.redhat.com/products/ansible/lightspeed"
               component="a"
               target="_blank"
+              iconPosition="end"
             >
               {t('Get started')}
             </Button>

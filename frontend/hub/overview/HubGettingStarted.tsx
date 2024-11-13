@@ -2,13 +2,13 @@
 import { Text } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
   PageDashboardGettingStarted,
   PageDashboardGettingStartedStep,
   useGetPageUrl,
 } from '../../../framework';
 import { HubRoute } from '../main/HubRoutes';
+import { ExternalLink } from '../common/ExternalLink';
 
 export function HubGettingStartedCard(props: {
   hasNamespace: boolean;
@@ -47,10 +47,8 @@ export function HubGettingStartedCard(props: {
     <PageDashboardGettingStarted steps={steps}>
       <Text>
         To learn how to get started, view the{' '}
-        <Link to="https://docs.ansible.com" target="_blank">
-          documentation
-        </Link>
-        , or follow the steps below.
+        <ExternalLink href="https://docs.ansible.com">documentation</ExternalLink>, or follow the
+        steps below.
       </Text>
     </PageDashboardGettingStarted>
   );

@@ -22,6 +22,7 @@ import styled from 'styled-components';
 import { useEffect } from 'react';
 import { useGetDocsUrl } from './util/useGetDocsUrl';
 import { useAwxConfig } from './useAwxConfig';
+import { ExternalLink } from '../../hub/common/ExternalLink';
 
 const DividerWithSpace = styled(Divider)`
   padding-top: var(--pf-v5-global--spacer--md);
@@ -95,11 +96,8 @@ export function MultipleChoiceField(props: IProps) {
       label={t('Multiple Choice Options')}
       labelHelp={
         <Trans>
-          Refer to the{' '}
-          <a href={docsURL} target="_blank" rel="noreferrer">
-            documentation
-          </a>{' '}
-          for more information.
+          Refer to the <ExternalLink href={docsURL}>documentation</ExternalLink> for more
+          information.
         </Trans>
       }
       isRequired={true}

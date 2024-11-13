@@ -42,17 +42,6 @@ export function HubMasthead() {
         </ToolbarItem>
         <ToolbarItem>
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
-            {/* <DropdownItem
-              id="documentation"
-              icon={<ExternalLinkAltIcon />}
-              component="a"
-              href={`${useGetDocsUrl(config)}/html/userguide/index.html`}
-              target="_blank"
-              data-cy="masthead-documentation"
-            >
-              {t('Documentation')}
-            </DropdownItem> */}
-            <></>
             <DropdownItem
               id="about"
               onClick={() => openAnsibleAboutModal({ brandImageSrc: '/assets/galaxy-logo.svg' })}
@@ -68,12 +57,6 @@ export function HubMasthead() {
             icon={<UserCircleIcon />}
             label={activeHubUser?.username}
           >
-            {/* <DropdownItem
-              id="user-details"
-              label={t('User details')}
-              onClick={() => pageNavigate(HubRoute.UserPage, { params: { id: activeUser?.id } })}
-            /> */}
-            <></>
             <DropdownItem id="logout" onClick={() => void logout()}>
               {t('Logout')}
             </DropdownItem>

@@ -15,6 +15,8 @@ import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import { RuleAuditChart } from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLink } from '../../hub/common/ExternalLink';
 
 export function EdaOverview() {
   const { t } = useTranslation();
@@ -61,19 +63,15 @@ export function EdaOverview() {
               <Stack hasGutter>
                 <Text>
                   {t('To learn how to get started, ')}
-                  <Link
-                    to="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
-                    target="_blank"
-                  >
-                    {t('view the documentation, ')}
-                  </Link>
-                  <Link
-                    to="https://www.redhat.com/en/engage/event-driven-ansible-20220907"
-                    target="_blank"
-                  >
+                  <ExternalLink href="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index">
+                    {t`Documentation.`}
+                  </ExternalLink>
+                  <ExternalLink href="https://www.redhat.com/en/engage/event-driven-ansible-20220907">
                     {t('check out our instruct guides')}
-                  </Link>
-                  {t(', or follow the steps below.')}
+                  </ExternalLink>
+                  <>
+                    {t(', or follow the steps below.')} <ExternalLinkAltIcon />
+                  </>
                 </Text>
                 <ProgressStepper>
                   <ProgressStep

@@ -159,6 +159,7 @@ export function PageHeader(props: PageHeaderProps) {
                             variant="link"
                             onClick={() => window.open(props.titleDocLink, '_blank')}
                             isInline
+                            iconPosition="end"
                           >
                             {translations.documentation}
                           </Button>

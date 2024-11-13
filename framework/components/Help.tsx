@@ -31,6 +31,7 @@ export function Help(props: {
                 onClick={() => window.open(docLink, '_blank')}
                 isInline
                 type="button"
+                iconPosition="end"
               >
                 {translations.documentation}
               </Button>

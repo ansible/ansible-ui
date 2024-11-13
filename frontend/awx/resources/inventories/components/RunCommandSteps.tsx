@@ -29,6 +29,7 @@ import { useOptions } from '../../../../common/crud/useOptions';
 import { LoadingState } from '../../../../../framework/components/LoadingState';
 import { AwxError } from '../../../common/AwxError';
 import { PageSelectOption } from '../../../../../framework/PageInputs/PageSelectOption';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();
@@ -94,13 +95,9 @@ export function RunCommandDetailStep() {
               Ansible&aposs host patterns{' '}
             </Trans>
             <Trans>
-              <Link
-                to="https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <ExternalLink href="https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html">
                 here
-              </Link>
+              </ExternalLink>
             </Trans>
           </>
         }
@@ -119,13 +116,9 @@ export function RunCommandDetailStep() {
               can find more information{' '}
             </Trans>
             <Trans>
-              <Link
-                to="https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html#the-ansible-configuration-file"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <ExternalLink href="https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html#the-ansible-configuration-file">
                 here
-              </Link>
+              </ExternalLink>
             </Trans>
           </>
         }
