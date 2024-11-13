@@ -16,6 +16,7 @@ import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
 import { RuleListItemType } from '../types';
 import { ScheduleSummary } from './ScheduleSummary';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function RulesList(props: {
   setIsOpen?: (isOpen: boolean | number) => void;
@@ -92,14 +93,9 @@ export function RulesList(props: {
           headerActions={
             <>
               {t('iCalendar RFC ')}
-              <a
-                key="refDocLink"
-                target="_blank"
-                href="https://datatracker.ietf.org/doc/html/rfc5545"
-                rel="noreferrer"
-              >
+              <ExternalLink key="refDocLink" href="https://datatracker.ietf.org/doc/html/rfc5545">
                 {t('documentation')}
-              </a>
+              </ExternalLink>
             </>
           }
         />

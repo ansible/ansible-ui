@@ -1,6 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { ansibleDocUrls } from '../../../main/ansibleDocsUrls';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function LabelHelp(props: { inventoryKind: string }) {
   const { t } = useTranslation();
@@ -38,29 +38,22 @@ export function LabelHelp(props: { inventoryKind: string }) {
       <pre>{yamlExample}</pre>
       <br />
       <Trans>
-        View JSON examples at{' '}
-        <Link to="https://www.json.org" target="_blank" rel="noopener noreferrer">
-          www.json.org
-        </Link>
+        View JSON examples at <ExternalLink href="https://www.json.org">www.json.org</ExternalLink>
       </Trans>
       <br />
       <Trans>
         View YAML examples at{' '}
-        <Link
-          to="https://docs.ansible.com/YAMLSyntax.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <ExternalLink href="https://docs.ansible.com/YAMLSyntax.html">
           docs.ansible.com
-        </Link>
+        </ExternalLink>
       </Trans>
     </>
   );
 
   const labelHelpVarsSmartInventory = (
     <>
-      {t(`Enter inventory variables using either JSON or YAML syntax. 
-  Use the radio button to toggle between the two. 
+      {t(`Enter inventory variables using either JSON or YAML syntax.
+  Use the radio button to toggle between the two.
   Refer to the Ansible Controller documentation for example syntax.
   `)}
     </>
@@ -71,10 +64,8 @@ export function LabelHelp(props: { inventoryKind: string }) {
       <Trans>
         Variables used to configure the constructed inventory plugin. For a detailed description of
         how to configure this plugin, see{' '}
-        <a href={ansibleDocUrls.constructed} target="_blank" rel="noopener noreferrer">
-          constructed inventory
-        </a>{' '}
-        plugin configuration guide.
+        <ExternalLink href={ansibleDocUrls.constructed}>constructed inventory</ExternalLink> plugin
+        configuration guide.
       </Trans>
       <br />
       <br />

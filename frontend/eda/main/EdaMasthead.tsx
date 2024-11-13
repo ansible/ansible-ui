@@ -1,5 +1,5 @@
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageMasthead, usePageNavigate } from '../../../framework';
@@ -38,10 +38,9 @@ export function EdaMasthead() {
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
             <DropdownItem
               id="documentation"
-              icon={<ExternalLinkAltIcon />}
+              isExternalLink
               component="a"
               href="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
-              target="_blank"
               data-cy="masthead-documentation"
             >
               {t('Documentation')}

@@ -7,7 +7,6 @@ import {
   CompressAltIcon,
   EllipsisVIcon,
   ExpandAltIcon,
-  ExternalLinkAltIcon,
   MinusCircleIcon,
   RocketIcon,
 } from '@patternfly/react-icons';
@@ -249,10 +248,9 @@ export const WorkflowVisualizerToolbar = observer(() => {
         >
           <DropdownList>
             <DropdownItem
-              icon={<ExternalLinkAltIcon />}
+              isExternalLink
               data-cy="workflow-documentation"
               to={useGetDocsUrl(config, 'workflowVisualizer')}
-              target="_blank"
             >
               {t('Documentation')}
             </DropdownItem>

@@ -30,6 +30,7 @@ import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { InnerForm } from './NotifierFormInner';
 import { NotifierFormMessages, areMessagesEmpty } from './NotifierFormMessages';
+import { ExternalLink } from '../../../hub/common/ExternalLink';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;
@@ -269,9 +270,9 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
                 <br />
                 You may apply a number of possible variables in the message. For more information,
                 refer to the{' '}
-                <a href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications">
+                <ExternalLink href="https://docs.ansible.com/automation-controller/latest/html/userguide/notifications.html#create-custom-notifications">
                   Ansible Controller Documentation.
-                </a>
+                </ExternalLink>
               </Trans>
             }
             name={'customize_messages'}

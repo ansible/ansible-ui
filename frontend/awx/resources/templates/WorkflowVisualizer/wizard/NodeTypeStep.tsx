@@ -29,6 +29,7 @@ import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateS
 import { RESOURCE_TYPE } from '../constants';
 import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
 import { getResourceURL, shouldHideOtherStep } from './helpers';
+import { ExternalLink } from '../../../../../hub/common/ExternalLink';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -359,7 +360,9 @@ function ConvergenceInput() {
       labelHelp={
         <>
           {t('Preconditions for running this node when there are multiple parents')}{' '}
-          <a href={useGetDocsUrl(config, 'workflowVisBuild')}>{t('documentation.')}</a>
+          <ExternalLink href={useGetDocsUrl(config, 'workflowVisBuild')}>
+            {t('documentation.')}
+          </ExternalLink>
         </>
       }
       options={[

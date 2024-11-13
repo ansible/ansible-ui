@@ -20,6 +20,7 @@ import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 import { ILicenseInfo } from '../../frontend/awx/interfaces/Config';
 import { postRequest, requestPatch } from '../../frontend/common/crud/Data';
+import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'username';
@@ -138,10 +139,9 @@ function SubscriptionStep() {
         </Text>
         <Text component="p">
           {t('If you do not have a subscription, you can visit Red Hat to obtain a ')}
-          <a href="https://www.ansible.com/license" target="_blank" rel="noreferrer">
+          <ExternalLink href="https://www.ansible.com/license">
             {t('trial subscription')}
-          </a>
-          .
+          </ExternalLink>
         </Text>
       </TextContent>
       <Divider />
@@ -166,13 +166,9 @@ function SubscriptionStep() {
             {t(
               'Upload a Red Hat Subscription Manifest containing your subscription. To generate your subscription manifest, go to '
             )}
-            <a
-              href="https://access.redhat.com/management/subscription_allocations"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <ExternalLink href="https://access.redhat.com/management/subscription_allocations">
               {t('subscription allocations')}
-            </a>
+            </ExternalLink>
             {t(' on the Red Hat Customer Portal.')}
           </Text>
         </TextContent>

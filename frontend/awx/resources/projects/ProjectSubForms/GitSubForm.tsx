@@ -7,6 +7,7 @@ import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { ScmTypeOptions } from './ScmTypeOptions';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function GitSubForm() {
   const { t } = useTranslation();
@@ -58,13 +59,9 @@ export function GitSubForm() {
         <br />
         <br />
         {t`For more information, refer to the`}{' '}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={useGetDocsUrl(config, 'managePlaybooksSC')}
-        >
+        <ExternalLink href={useGetDocsUrl(config, 'managePlaybooksSC')}>
           {t`Documentation.`}
-        </a>
+        </ExternalLink>
       </span>
     </Trans>
   );

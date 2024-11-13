@@ -7,6 +7,7 @@ import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubNamespace } from '../HubNamespace';
 import { PageMarkdownDetail } from '../../../../framework/PageForm/Inputs/PageMarkdownDetail';
+import { ExternalLink } from '../../common/ExternalLink';
 
 function useNamespaceDetails(id: string) {
   return useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${id}/`);
@@ -38,14 +39,9 @@ export function HubNamespaceDetails() {
           keyColumn={t('Link text')}
           title={t('Useful links')}
           renderValue={(item) => (
-            <a
-              data-cy={`item-value-${item.value}`}
-              href={item.value}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {item.value}
-            </a>
+            <ExternalLink data-cy={`item-value-${item.value}`} href={item.value}>
+              {item.value}{' '}
+            </ExternalLink>
           )}
           keyValue={keyValuePairs || []}
         />

@@ -33,6 +33,7 @@ import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function ProjectDetails(props: { projectId?: string; disableScroll?: boolean }) {
   const { t } = useTranslation();
@@ -105,13 +106,9 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
       <br />
       <br />
       {t`For more information, refer to the`}{' '}
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href={useGetDocsUrl(config, 'managePlaybooksSC')}
-      >
+      <ExternalLink href={useGetDocsUrl(config, 'managePlaybooksSC')}>
         {t`Documentation.`}
-      </a>
+      </ExternalLink>
     </span>
   );
   const basePathHelpBlock = (

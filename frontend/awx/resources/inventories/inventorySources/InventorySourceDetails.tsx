@@ -34,6 +34,7 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ansibleDocUrls } from '../../../main/ansibleDocsUrls';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export type WebsocketInventorySource = {
   status: string;
@@ -142,20 +143,16 @@ export function InventorySourceDetails(
         <Trans>
           Variables used to configure the inventory source. For a detailed description of how to
           configure this plugin, see{' '}
-          <a
+          <ExternalLink
             href={
               'https://docs.ansible.com/ansible/latest/plugins/inventory.html#inventory-plugins'
             }
-            target="_blank"
-            rel="noopener noreferrer"
           >
             Inventory Plugins
-          </a>{' '}
+          </ExternalLink>{' '}
           in the documentation and the{' '}
-          <a href={ansibleDocUrls[source]} target="_blank" rel="noopener noreferrer">
-            {sourceType}
-          </a>{' '}
-          plugin configuration guide.
+          <ExternalLink href={ansibleDocUrls[source]}>{sourceType}</ExternalLink> plugin
+          configuration guide.
         </Trans>
         <br />
         <br />

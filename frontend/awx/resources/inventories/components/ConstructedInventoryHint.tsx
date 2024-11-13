@@ -19,6 +19,7 @@ import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
+import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function ConstructedInventoryHint() {
   const config = useAwxConfig();
@@ -36,17 +37,19 @@ export function ConstructedInventoryHint() {
           component="a"
           target="_blank"
           rel="noopener noreferrer"
+          icon={<ExternalLinkAltIcon />}
+          iconPosition="end"
         >
-          {t`View constructed inventory documentation here`} <ExternalLinkAltIcon />
+          {t`View constructed inventory documentation here`}
         </AlertActionLink>
       }
     >
       <span>
         {t`This table gives a few useful parameters of the constructed
                inventory plugin. For the full list of parameters `}{' '}
-        <a
+        <ExternalLink
           href={t`https://docs.ansible.com/ansible/latest/collections/ansible/builtin/constructed_inventory.html`}
-        >{t`view the constructed inventory plugin docs here.`}</a>
+        >{t`view the constructed inventory plugin docs here.`}</ExternalLink>
       </span>
       <br />
       <br />
@@ -155,9 +158,9 @@ groups:
             text: t`Construct 2 groups, limit to intersection`,
             id: 'intersection-example',
           }}
-          titleDescription={t`This constructed inventory input 
-            creates a group for both of the categories and uses 
-            the limit (host pattern) to only return hosts that 
+          titleDescription={t`This constructed inventory input
+            creates a group for both of the categories and uses
+            the limit (host pattern) to only return hosts that
             are in the intersection of those two groups.`}
         />
       }

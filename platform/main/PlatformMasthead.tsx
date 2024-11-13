@@ -1,5 +1,5 @@
 import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -86,10 +86,9 @@ export function PlatformMasthead() {
           <PageMastheadDropdown id="help-menu" icon={<QuestionCircleIcon />}>
             <DropdownItem
               id="documentation"
-              icon={<ExternalLinkAltIcon />}
+              isExternalLink
               component="a"
               to={`https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform`}
-              target="_blank"
               data-cy="masthead-documentation"
             >
               {t('Documentation')}

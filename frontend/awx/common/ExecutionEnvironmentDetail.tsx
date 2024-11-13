@@ -9,6 +9,7 @@ import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/
 import { AwxRoute } from '../main/AwxRoutes';
 import { useAwxConfig } from './useAwxConfig';
 import { useGetDocsUrl } from './util/useGetDocsUrl';
+import { ExternalLink } from '../../hub/common/ExternalLink';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-v5-global--warning-color--100);
@@ -64,9 +65,7 @@ function ExecutionEnvironmentDetail(props: {
                 <Trans>
                   Custom virtual environment {virtualEnvironment} must be replaced by an execution
                   environment. For more information about migrating to execution environments see{' '}
-                  <a href={docsLink} target="_blank" rel="noopener noreferrer">
-                    the documentation.
-                  </a>
+                  <ExternalLink href={docsLink}>the documentation.</ExternalLink>
                 </Trans>
               </div>
             }
