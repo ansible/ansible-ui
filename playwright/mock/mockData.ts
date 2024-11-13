@@ -32,6 +32,7 @@ interface IGatewayData {
 }
 
 interface IControllerData {
+  auth: DeepPartial<object>;
   config: DeepPartial<AwxConfig>;
   credential_types: DeepPartial<CredentialType>[];
   credentials: DeepPartial<Credential>[];
@@ -114,6 +115,17 @@ export const mockData: IApiData = {
     controller: {
       v2: {
         me: [],
+        auth: {
+          oidc: {
+            login_url: '/sso/login/oidc/',
+            complete_url: `https://localhost:4100/sso/complete/oidc/`,
+          },
+          'saml:keycloak': {
+            login_url: '/sso/login/saml/?idp=keycloak',
+            complete_url: 'https://localhost:4100/sso/complete/saml/',
+            metadata_url: '/sso/metadata/saml/',
+          },
+        },
         config: { license_info: { compliant: true } },
         inventory_sources: [],
         inventories: [{ id: 1, name: 'Demo Inventory' }],

@@ -45,6 +45,7 @@ export async function mock(page: Page) {
     .GET('/api/gateway/v1/legacy_auth', getData())
     .GET('/api/gateway/v1/ping', () => ({ status: 200 }))
     .GET('/api/galaxy/_ui/v1/settings', getData())
+    .GET('/api/controller/v2/auth', getData())
 
     // --- Only routes before this can be accessed unauthenticated ---
     .GET('/api/*subpath', authenticatedGuard)

@@ -9,9 +9,9 @@ import { Router } from '../mock/router/Router';
 import { UpgradeUserType } from '../utils/constants';
 import { getUserForMigration } from '../utils/getUserForMigration';
 
-let hubKeyCloakUser: { username: string; password: string };
+let controllerKeyCloakUser: { username: string; password: string };
 
-let controllerUser: { username: string; password: string };
+let hubUser: { username: string; password: string };
 
 test.beforeEach(({ page }) => mock(page));
 
@@ -22,19 +22,19 @@ test.beforeEach(async ({ page }) => {
     await login(page);
     await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
     // Get credentials of an unmigrated keycloak user
-    hubKeyCloakUser = await getUserForMigration({
-      userType: UpgradeUserType.hubKeycloak,
+    controllerKeyCloakUser = await getUserForMigration({
+      userType: UpgradeUserType.controllerOIDC,
       request: page.request, // page.request: API testing helper associated with this page
     });
-    // Get credentials of an unmigrated controller user
-    controllerUser = (await getUserForMigration({
-      userType: UpgradeUserType.controllerLegacy,
+    // Get credentials of an unmigrated hub user
+    hubUser = (await getUserForMigration({
+      userType: UpgradeUserType.hubLegacy,
       request: page.request, // page.request: API testing helper associated with this page
     })) as { username: string; password: string };
     // Logout as administrator
     await logout(page);
   } else {
-    // Mock out legacy_hub server
+    // Mock out legacy_controller server
     const mockData = page.mock.data;
     mockData.api.gateway.v1.ui_auth = {
       show_login_form: true,
@@ -54,24 +54,36 @@ test.beforeEach(async ({ page }) => {
       legacy_auth_enabled: true,
     };
 
+    mockData.api.controller.v2.auth = {
+      oidc: {
+        login_url: '/sso/login/oidc/',
+        complete_url: `https://localhost:4100/sso/complete/oidc/`,
+      },
+      'saml:keycloak': {
+        login_url: '/sso/login/saml/?idp=keycloak',
+        complete_url: 'https://localhost:4100/sso/complete/saml/',
+        metadata_url: '/sso/metadata/saml/',
+      },
+    };
+
     const mockOptions = page.mock.options;
 
-    const legacyHubRouter = new Router();
-    legacyHubRouter.GET('/login/keycloak/', () => {
+    const legacyControllerRouter = new Router();
+    legacyControllerRouter.GET('/sso/login/oidc/', () => {
       mockData.api.gateway.v1.legacy_auth = {
         id: 84,
-        username: 'hub_keycloak_ui_user_2',
+        username: 'ctlr_oidc_ui_user_1',
         is_authenticated: false,
         needs_rename: false,
         is_migrated: false,
         linked_accounts: [
           {
             service: 3,
-            service_type: 'hub',
-            original_username: 'hub_keycloak_ui_user_2',
+            service_type: 'controller',
+            original_username: 'ctlr_oidc_ui_user_1',
             user: 84,
-            gateway_username: 'hub_keycloak_ui_user_2',
-            ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+            gateway_username: 'ctlr_oidc_ui_user_1',
+            ansible_id: 'ac8bb7bb-eaf5-45d0-a126-c249408ab27d',
             backend_classification: null,
           },
         ],
@@ -87,8 +99,8 @@ test.beforeEach(async ({ page }) => {
     });
     await page
       .context()
-      .route(`https://legacy_hub/**/*`, (route) =>
-        handleRoute(route, legacyHubRouter, mockData, mockOptions)
+      .route(`https://legacy_controller/**/*`, (route) =>
+        handleRoute(route, legacyControllerRouter, mockData, mockOptions)
       );
 
     const router = page.mock.router;
@@ -108,7 +120,6 @@ test.beforeEach(async ({ page }) => {
         is_migrated: true,
         linked_accounts: [],
       };
-      mockData.api.controller.v2.me = [user];
       mockData.api.gateway.v1.legacy_auth = {
         id: 84,
         username: 'mock',
@@ -118,11 +129,11 @@ test.beforeEach(async ({ page }) => {
         linked_accounts: [
           {
             service: 3,
-            service_type: 'hub',
+            service_type: 'controller',
             original_username: 'mock',
             user: 84,
             gateway_username: 'mock',
-            ansible_id: '22850eee-122f-4a4b-a551-e8b649674669',
+            ansible_id: 'ac8bb7bb-eaf5-45d0-a126-c249408ab27d',
             backend_classification: null,
           },
         ],
@@ -139,30 +150,30 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(setupAfter);
 
 test(
-  'Log in using Hub OIDC Keycloak account, link accounts and be directed to the Platform UI dashboard',
+  'Log in using Controller OIDC Keycloak account, link accounts and be directed to the Platform UI dashboard',
   { tag: ['@upgrade', '@not_e2e'] },
   async ({ page }) => {
     await page.goto(platformUI);
-    await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
-    await page.getByRole('link', { name: 'Keycloak' }).click();
+    await page.getByRole('link', { name: 'I have an Automation Controller account' }).click();
+    await page.getByRole('link', { name: 'OIDC' }).click();
 
     if (!page.mock.enabled) {
-      // use the real keycloak and hub login pages
-      await page.getByLabel('Username or email').fill(hubKeyCloakUser?.username);
-      await page.getByLabel('Password', { exact: true }).fill(hubKeyCloakUser?.password);
+      // use the real keycloak and controller login pages
+      await page.getByLabel('Username or email').fill(controllerKeyCloakUser?.username);
+      await page.getByLabel('Password', { exact: true }).fill(controllerKeyCloakUser?.password);
       await page.getByRole('button', { name: 'Sign In' }).click();
     }
 
     await expect(page.getByText('Link your Ansible Automation')).toBeVisible();
 
     await page
-      .getByLabel('Link your Automation Controller account')
+      .getByLabel('Link your Automation Hub account')
       .getByLabel('Username')
-      .fill(controllerUser?.username || 'controller_user');
+      .fill(hubUser?.username || 'hub_user');
     await page
-      .getByLabel('Link your Automation Controller account')
+      .getByLabel('Link your Automation Hub account')
       .getByLabel('Password')
-      .fill(controllerUser?.password || 'controller_pw');
+      .fill(hubUser?.password || 'hub_pw');
 
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByLabel('Username').click();
@@ -176,13 +187,13 @@ test(
   { tag: ['@upgrade', '@not_e2e'] },
   async ({ page }) => {
     await page.goto(platformUI);
-    await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
-    await page.getByRole('link', { name: 'Keycloak' }).click();
+    await page.getByRole('link', { name: 'I have an Automation Controller account' }).click();
+    await page.getByRole('link', { name: 'OIDC' }).click();
 
     if (!page.mock.enabled) {
-      // use the real keycloak and hub login pages
-      await page.getByLabel('Username or email').fill(hubKeyCloakUser?.username);
-      await page.getByLabel('Password', { exact: true }).fill(hubKeyCloakUser?.password);
+      // use the real keycloak and controller login pages
+      await page.getByLabel('Username or email').fill(controllerKeyCloakUser?.username);
+      await page.getByLabel('Password', { exact: true }).fill(controllerKeyCloakUser?.password);
       await page.getByRole('button', { name: 'Sign In' }).click();
     }
 
@@ -193,22 +204,22 @@ test(
     await page.getByRole('button', { name: 'Submit' }).click();
     await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
 
-    await page.getByRole('button', { name: hubKeyCloakUser?.username || 'mock' }).click();
+    await page.getByRole('button', { name: controllerKeyCloakUser?.username || 'mock' }).click();
     await page.getByRole('menuitem', { name: 'User details' }).click();
     await page.getByLabel('kebab dropdown toggle').click();
     await page.getByRole('menuitem', { name: 'Link user accounts' }).click();
     await page
-      .getByLabel('Link your Automation Controller account')
+      .getByLabel('Link your Automation Hub account')
       .getByLabel('Username')
-      .fill(controllerUser?.username || 'controller_user');
-    await page.getByLabel('Password').fill(controllerUser?.password || 'controller_pw');
+      .fill(hubUser?.username || 'hub_user');
+    await page.getByLabel('Password').fill(hubUser?.password || 'hub_pw');
     await page.getByRole('button', { name: 'Link', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Linked', exact: true }).first()).toBeVisible();
   }
 );
 
 // Since the assertions in the following tests occur within the Keycloak UI, they are not applicable for testing against the mock API
-test.describe('Negative paths for hub Keycloak authentication', () => {
+test.describe('Negative paths for controller Keycloak authentication', () => {
   test(
     'fails to authenticate with incorrect password',
     { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
@@ -216,12 +227,12 @@ test.describe('Negative paths for hub Keycloak authentication', () => {
       const erroneousPassword = 'E2Epass ' + randomString(4);
 
       await page.goto(platformUI);
-      await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
+      await page.getByRole('link', { name: 'I have an Automation Controller account' }).click();
       await page.getByRole('link', { name: 'Keycloak' }).click();
 
       if (!page.mock.enabled) {
-        // use the real keycloak and hub login pages
-        await page.getByLabel('Username or email').fill(hubKeyCloakUser?.username);
+        // use the real keycloak and controller login pages
+        await page.getByLabel('Username or email').fill(controllerKeyCloakUser?.username);
         await page.getByLabel('Password', { exact: true }).fill(erroneousPassword);
         await page.getByRole('button', { name: 'Sign In' }).click();
         await expect(page.getByText('Invalid username or password.')).toBeVisible();
@@ -236,11 +247,11 @@ test.describe('Negative paths for hub Keycloak authentication', () => {
       const erroneousPassword = 'E2Epass ' + randomString(4);
 
       await page.goto(platformUI);
-      await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
+      await page.getByRole('link', { name: 'I have an Automation Controller account' }).click();
       await page.getByRole('link', { name: 'Keycloak' }).click();
 
       if (!page.mock.enabled) {
-        // use the real keycloak and hub login pages
+        // use the real keycloak and controller login pages
         await page.getByLabel('Username or email').fill(nonExistentUsername);
         await page.getByLabel('Password', { exact: true }).fill(erroneousPassword);
         await page.getByRole('button', { name: 'Sign In' }).click();
