@@ -1,6 +1,7 @@
 import plugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.json';
 import authenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
 import { Authenticator } from '../../../interfaces/Authenticator';
+import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import {
@@ -9,7 +10,6 @@ import {
   buildTriggers,
   parseTrigger,
 } from './AuthenticatorForm';
-import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 
 describe('AuthenticatorForm', () => {
   const voidFn = async () => {};
@@ -58,6 +58,7 @@ describe('AuthenticatorForm', () => {
         mappings={[]}
       />
     );
+    cy.wait(5000);
 
     cy.getByDataCy('name').should('have.value', 'Dev LDAP Container');
     cy.getByDataCy('configuration-input-SERVER_URI').should(
