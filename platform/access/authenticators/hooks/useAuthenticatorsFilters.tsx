@@ -1,7 +1,7 @@
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGet } from '../../../../frontend/common/crud/useGet';
 import { AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

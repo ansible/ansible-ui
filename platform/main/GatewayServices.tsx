@@ -1,12 +1,12 @@
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { setAwxApiPath } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
 import { setHubApiPath } from '@ansible/hub-ui/common/api/formatPath';
 import { Page } from '@patternfly/react-core';
 import { ReactNode, createContext, useContext, useLayoutEffect, useState } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../../frontend/common/crud/Data';
 
 interface GatewayServices {
   gateway?: string;

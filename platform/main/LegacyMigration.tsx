@@ -1,5 +1,6 @@
 import { PageLayout } from '@ansible/ansible-ui-framework';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import {
   Button,
   Card,
@@ -13,7 +14,6 @@ import {
 import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { usePostRequest } from '../../frontend/common/crud/usePostRequest';
 import AAPLogo from '../assets/aap-logo.svg';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useLegacyAuth } from './LegacyAuthProvider';

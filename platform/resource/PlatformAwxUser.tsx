@@ -3,10 +3,10 @@ import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/Empty
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useGetItem } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformAwxUser(props: { route?: string }) {

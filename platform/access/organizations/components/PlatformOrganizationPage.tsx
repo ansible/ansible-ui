@@ -7,10 +7,10 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useGatewayService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

@@ -7,10 +7,10 @@ import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
 import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useGetItem } from '../../../../../frontend/common/crud/useGet';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
 
 export function OrganizationReviewStep(props: { controllerOrganization?: ControllerOrganization }) {

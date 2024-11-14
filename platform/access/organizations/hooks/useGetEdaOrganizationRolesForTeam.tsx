@@ -1,10 +1,10 @@
+import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
 import { EdaTeam } from '@ansible/eda-ui/interfaces/EdaTeam';
 import { useMemo } from 'react';
-import { TeamAssignment } from '../../../../frontend/common/access/interfaces/TeamAssignment';
-import { useGet } from '../../../../frontend/common/crud/useGet';
 import { useEdaResource } from '../../../hooks/useEdaResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';

@@ -1,7 +1,7 @@
 import { TextCell, compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUsersColumns } from './useUserColumns';

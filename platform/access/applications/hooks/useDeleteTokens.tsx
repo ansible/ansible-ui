@@ -1,9 +1,9 @@
 import { compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNameColumn } from '../../../../frontend/common/columns';
-import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTokensColumns } from './useTokensColumns';
 

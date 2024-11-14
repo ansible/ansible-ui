@@ -1,13 +1,13 @@
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { requestPatch } from '../../../../frontend/common/crud/Data';
-import { useGet } from '../../../../frontend/common/crud/useGet';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { useEdaResource } from '../../../hooks/useEdaResource';
 import { useHubResource } from '../../../hooks/useHubResource';

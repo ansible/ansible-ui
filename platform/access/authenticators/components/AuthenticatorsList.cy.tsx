@@ -5,7 +5,7 @@ Authenticators list test cases
 3. Handle empty state
 */
 
-import * as useOptions from '../../../../frontend/common/crud/useOptions';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { AuthenticatorsList } from './AuthenticatorsList';
 

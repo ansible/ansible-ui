@@ -16,11 +16,11 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
 import { CredentialType } from '@ansible/awx-ui/interfaces/CredentialType';
 import { SystemSettings } from '@ansible/awx-ui/interfaces/SystemSettings';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CheckIcon, ExclamationCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGet } from '../../frontend/common/crud/useGet';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';
 

@@ -1,10 +1,6 @@
 import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useExpiresColumn, useNameColumn, useScopeColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
-import {
-  useExpiresColumn,
-  useNameColumn,
-  useScopeColumn,
-} from '../../../../frontend/common/columns';
 import { Token } from '../../../interfaces/Token';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 

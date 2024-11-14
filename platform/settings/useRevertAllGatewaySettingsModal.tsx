@@ -1,8 +1,8 @@
 import { usePageAlertToaster, usePageDialogs } from '@ansible/ansible-ui-framework';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDeleteRequest } from '../../frontend/common/crud/useDeleteRequest';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export interface RevertAllModalProps {

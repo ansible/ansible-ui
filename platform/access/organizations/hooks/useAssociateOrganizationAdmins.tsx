@@ -1,8 +1,8 @@
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

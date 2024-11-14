@@ -1,8 +1,8 @@
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { postRequest, requestPatch } from '../../../frontend/common/crud/Data';
-import { useGet } from '../../../frontend/common/crud/useGet';
 import type { Authenticator } from '../../interfaces/Authenticator';
 import type { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';
 import { PlatformRoute } from '../../main/PlatformRoutes';

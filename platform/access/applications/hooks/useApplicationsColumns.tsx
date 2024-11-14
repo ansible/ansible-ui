@@ -1,13 +1,13 @@
 import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { useCallback, useMemo } from 'react';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../../frontend/common/columns';
+} from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function useApplicationsColumns(options?: {

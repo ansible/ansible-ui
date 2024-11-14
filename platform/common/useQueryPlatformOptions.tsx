@@ -3,8 +3,8 @@ import {
   PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
 } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
-import { requestGet } from '../../frontend/common/crud/Data';
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 
 export function useQueryPlatformOptions<

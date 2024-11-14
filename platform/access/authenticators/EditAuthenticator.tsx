@@ -1,15 +1,10 @@
 import { LoadingPage, usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { postRequest, requestDelete, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  postRequest,
-  requestDelete,
-  requestGet,
-  requestPatch,
-} from '../../../frontend/common/crud/Data';
-import { useGet } from '../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../interfaces/Authenticator';
 import { AuthenticatorMap } from '../../interfaces/AuthenticatorMap';
 import { AuthenticatorPlugins } from '../../interfaces/AuthenticatorPlugin';

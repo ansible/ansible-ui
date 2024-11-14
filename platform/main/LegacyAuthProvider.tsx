@@ -1,6 +1,6 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../../frontend/common/crud/Data';
 import { LegacyAuth } from '../interfaces/LegacyAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 

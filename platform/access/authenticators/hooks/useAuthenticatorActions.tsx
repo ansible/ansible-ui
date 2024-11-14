@@ -8,13 +8,13 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { requestPatch } from '../../../../frontend/common/crud/Data';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { IPlatformView } from '../../../hooks/usePlatformView';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { PageSection } from '@patternfly/react-core';
 import { useState } from 'react';
-import { idKeyFn } from '../../../frontend/common/utils/nameKeyFn';
 import { PageToolbar } from '../PageToolbar';
 import {
   IFilterState,

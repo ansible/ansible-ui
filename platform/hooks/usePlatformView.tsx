@@ -6,10 +6,10 @@ import {
   useSelected,
   useView,
 } from '@ansible/ansible-ui-framework';
+import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { getItemKey, swrOptions, useFetcher } from '../../frontend/common/crud/Data';
-import { RequestError } from '../../frontend/common/crud/RequestError';
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 
 export type IPlatformView<T extends { id: number }> = IView &

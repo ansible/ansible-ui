@@ -1,7 +1,7 @@
 import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn } from '@ansible/common-ui/columns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';

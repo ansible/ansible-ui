@@ -1,12 +1,12 @@
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { HubTeam } from '@ansible/hub-ui/interfaces/expanded/HubTeam';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useGetItem } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformHubTeam(props: { route?: string }) {

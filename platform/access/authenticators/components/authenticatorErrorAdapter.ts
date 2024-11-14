@@ -3,7 +3,7 @@ import {
   FieldErrorDetail,
   GenericErrorDetail,
 } from '@ansible/ansible-ui-framework/PageForm/typesErrorAdapter';
-import { isRequestError } from '../../../../frontend/common/crud/RequestError';
+import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 import { PluginConfiguration } from '../../../interfaces/AuthenticatorPlugin';
 
 export const authenticatorErrorAdapter = (error: unknown): ErrorOutput => {

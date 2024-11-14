@@ -10,10 +10,10 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
