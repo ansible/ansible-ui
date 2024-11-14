@@ -1,5 +1,5 @@
+import { MultiSelectDialog, usePageDialog } from '@ansible/ansible-ui-framework';
 import { useCallback } from 'react';
-import { MultiSelectDialog, usePageDialog } from '../../../../framework';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

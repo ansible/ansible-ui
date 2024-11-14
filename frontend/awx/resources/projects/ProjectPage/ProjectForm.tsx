@@ -1,7 +1,3 @@
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -10,11 +6,15 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { requestPatch } from '../../../../common/crud/Data';
-import { useGet } from '../../../../common/crud/useGet';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';

@@ -1,12 +1,12 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { nameKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { nameKeyFn } from '../../../common/utils/nameKeyFn';
 import { hubAPI } from '../../common/api/formatPath';
 import { hubAPIDelete } from '../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
-import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();

@@ -1,12 +1,12 @@
+import { ITableColumn, IToolbarFilter, usePageDialog } from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
+import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
+import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
-import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
-import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { useID } from '../../../framework/hooks/useID';
-import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
-import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';
 

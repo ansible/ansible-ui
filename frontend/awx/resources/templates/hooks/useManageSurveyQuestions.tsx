@@ -1,11 +1,11 @@
+import { useManageItems } from '@ansible/ansible-ui-framework/components/useManagedItems';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useManageItems } from '../../../../../framework/components/useManagedItems';
-import { useGet } from '../../../../common/crud/useGet';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Spec, Survey } from '../../../interfaces/Survey';
-import { useParams } from 'react-router-dom';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 
 export function useManageSurveyQuestions(isJobTemplate: boolean) {
   const { t } = useTranslation();

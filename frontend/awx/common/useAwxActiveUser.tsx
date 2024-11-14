@@ -1,6 +1,6 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../../common/crud/Data';
 import { AwxUser } from '../interfaces/User';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { awxAPI } from './api/awx-utils';

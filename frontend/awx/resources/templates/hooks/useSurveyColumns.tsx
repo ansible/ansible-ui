@@ -1,8 +1,8 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { Chip, ChipGroup, Flex, Icon, Tooltip } from '@patternfly/react-core';
+import { AsteriskIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Chip, ChipGroup, Icon, Flex, Tooltip } from '@patternfly/react-core';
-import { AsteriskIcon } from '@patternfly/react-icons';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import type { Spec } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

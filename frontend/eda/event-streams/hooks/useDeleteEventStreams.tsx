@@ -1,13 +1,13 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { useNameColumn } from '../../../common/columns';
-import { requestDelete } from '../../../common/crud/Data';
-import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useEventStreamColumns } from './useEventStreamColumns';
-import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 
 export function useDeleteEventStreams(onComplete?: (eventStreams: EdaEventStream[]) => void) {
   const { t } = useTranslation();

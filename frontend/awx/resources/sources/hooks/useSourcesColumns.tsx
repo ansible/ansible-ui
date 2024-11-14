@@ -1,13 +1,13 @@
-import { useCallback, useMemo } from 'react';
-import { usePageNavigate, ITableColumn } from '../../../../../framework';
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
 import {
-  useNameColumn,
-  useDescriptionColumn,
   useCreatedColumn,
+  useDescriptionColumn,
   useModifiedColumn,
-} from '../../../../common/columns';
-import { AwxRoute } from '../../../main/AwxRoutes';
+  useNameColumn,
+} from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
 import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useSourcesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();

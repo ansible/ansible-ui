@@ -1,14 +1,16 @@
 {
-  "name": "@ansible/ansible-ui",
-  "description": "Ansible UI",
-  "version": "1.0.0-16",
+  "name": "@ansible/ui",
   "author": "Red Hat",
   "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ansible/ansible-ui.git"
-  },
-  "homepage": "https://github.com/ansible/ansible-ui#readme",
+  "version": "0.0.1",
+  "workspaces": [
+    "frontend/awx",
+    "frontend/hub",
+    "frontend/eda",
+    "frontend/common",
+    "framework",
+    "platform"
+  ],
   "scripts": {
     "start": "echo Usage: npm run [awx:hub:eda]",
     "awx": "UI_MODE=AWX webpack serve --mode development --config ./webpack/webpack.awx.cjs --port 4101 --open https://localhost:4101",

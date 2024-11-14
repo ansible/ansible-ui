@@ -1,10 +1,10 @@
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useDeleteRequest } from '../../../../common/crud/useDeleteRequest';
-import { useGet } from '../../../../common/crud/useGet';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import type { Spec, Survey } from '../../../interfaces/Survey';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import type { Spec, Survey } from '../../../interfaces/Survey';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 export function useDeleteSurvey(props: {

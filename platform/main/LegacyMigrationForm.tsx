@@ -1,13 +1,13 @@
+import { getPatternflyColor, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { genericErrorAdapter } from '@ansible/ansible-ui-framework/PageForm/genericErrorAdapter';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Button, ButtonVariant, Divider, GridItem } from '@patternfly/react-core';
 import { CheckCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { getPatternflyColor, PageFormTextInput } from '../../framework';
-import { genericErrorAdapter } from '../../framework/PageForm/genericErrorAdapter';
-import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
-import { AwxPageForm } from '../../frontend/awx/common/AwxPageForm';
 import { usePostRequest } from '../../frontend/common/crud/usePostRequest';
 import { Account, LegacyAuth } from '../interfaces/LegacyAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';

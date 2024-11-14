@@ -1,12 +1,12 @@
-import { useMemo, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ITableColumn, CopyCell, DateTimeCell, BytesCell } from '../../../../../framework';
+import { BytesCell, CopyCell, DateTimeCell, ITableColumn } from '@ansible/ansible-ui-framework';
 import { LabelGroup } from '@patternfly/react-core';
-import { TagLink, ShaLink, TagLabel, ShaLabel } from '../components/ImageLabels';
+import { Fragment, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { getContainersURL } from '../../../common/utils/getContainersURL';
 import { isManifestList } from '../../../common/utils/isManifestList';
-import { ImageLayer, ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
+import { ShaLabel, ShaLink, TagLabel, TagLink } from '../components/ImageLabels';
+import { ExecutionEnvironmentImage as Image, ImageLayer } from '../ExecutionEnvironmentImage';
 
 const DigestAndCopyCell = styled.div`
   display: flex;

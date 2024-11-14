@@ -1,7 +1,7 @@
+import { LoadingPage } from '@ansible/ansible-ui-framework';
+import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router-dom';
-import { LoadingPage } from '../../../../framework';
-import { TeamAccess } from '../../../common/access/components/TeamAccess';
-import { useGet } from '../../../common/crud/useGet';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { HubRoute } from '../../main/HubRoutes';

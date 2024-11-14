@@ -1,13 +1,13 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { Title } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
-import { Team } from '../../../interfaces/Team';
-import { Title } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
+import { Team } from '../../../interfaces/Team';
+import { useTeamsFilters } from '../../teams/hooks/useTeamsFilters';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;

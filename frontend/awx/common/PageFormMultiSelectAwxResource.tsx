@@ -1,11 +1,16 @@
+import {
+  ITableColumn,
+  IToolbarFilter,
+  MultiSelectDialog,
+  usePageDialog,
+} from '@ansible/ansible-ui-framework';
+import { PageFormAsyncMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncMultiSelect';
+import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
+import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, MultiSelectDialog, usePageDialog } from '../../../framework';
-import { PageFormAsyncMultiSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
-import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { useID } from '../../../framework/hooks/useID';
-import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
-import { requestGet } from '../../common/crud/Data';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { QueryParams, useAwxView } from './useAwxView';
 

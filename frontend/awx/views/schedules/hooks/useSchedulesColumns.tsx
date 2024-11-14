@@ -1,10 +1,15 @@
+import {
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useDescriptionColumn, useNameColumn, useTypeColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell, usePageNavigate } from '../../../../../framework';
-import { useDescriptionColumn, useNameColumn, useTypeColumn } from '../../../../common/columns';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetScheduleUrl } from './useGetScheduleUrl';
 import { schedulePageUrl } from '../types';
+import { useGetScheduleUrl } from './useGetScheduleUrl';
 
 export function useSchedulesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

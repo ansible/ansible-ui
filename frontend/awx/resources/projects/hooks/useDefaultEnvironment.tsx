@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

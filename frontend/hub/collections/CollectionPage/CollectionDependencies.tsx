@@ -1,8 +1,3 @@
-import { Button, PageSection, Title } from '@patternfly/react-core';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
-import styled from 'styled-components';
 import {
   ITableColumn,
   IToolbarFilter,
@@ -13,8 +8,13 @@ import {
   ToolbarFilterType,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { requestGet } from '../../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { Button, PageSection, Title } from '@patternfly/react-core';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router-dom';
+import styled from 'styled-components';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse, useHubView } from '../../common/useHubView';

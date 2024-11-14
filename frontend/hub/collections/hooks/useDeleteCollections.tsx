@@ -1,15 +1,15 @@
+import { compareStrings, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, usePageNavigate } from '../../../../framework';
-import { requestGet } from '../../../common/crud/Data';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { collectionKeyFn, hubAPIDelete } from '../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { PulpItemsResponse } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { HubRoute } from '../../main/HubRoutes';
-import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteCollections(
   onComplete?: (collections: CollectionVersionSearch[]) => void,

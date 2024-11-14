@@ -1,7 +1,7 @@
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { useQueryPlatformOptions } from '@ansible/platform-ui/common/useQueryPlatformOptions';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../framework';
-import { useQueryPlatformOptions } from '../../../platform/common/useQueryPlatformOptions';
 import { Label } from '../interfaces/Label';
 import { awxAPI } from './api/awx-utils';
 

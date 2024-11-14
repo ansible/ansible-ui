@@ -1,12 +1,12 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
-import { randomString } from '../../../../framework/utils/random-string';
-import { EdaCredentialCreate } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaCredentialCreate } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

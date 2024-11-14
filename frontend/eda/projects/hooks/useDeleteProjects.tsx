@@ -1,8 +1,8 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
-import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaProject } from '../../interfaces/EdaProject';

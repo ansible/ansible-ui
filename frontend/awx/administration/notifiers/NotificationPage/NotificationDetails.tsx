@@ -1,4 +1,3 @@
-import { useOutletContext, Link } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
@@ -6,13 +5,14 @@ import {
   Scrollable,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { useTranslation } from 'react-i18next';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { t } from 'i18next';
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { TextArea } from '@patternfly/react-core';
-import { StatusCell } from '../../../../common/Status';
+import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import { Link, useOutletContext } from 'react-router-dom';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { getLabelHelp } from '../NotifierFormInner';
 
 export function NotificationDetails() {

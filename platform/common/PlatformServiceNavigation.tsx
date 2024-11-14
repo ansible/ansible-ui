@@ -1,7 +1,7 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageRoutedTabs } from '../../frontend/common/PageRoutedTabs';
 import { useGatewayService } from '../main/GatewayServices';
-import { useMemo } from 'react';
 
 export function PlatformServiceNavigation(props: { awx?: string; eda?: string; hub?: string }) {
   const { t } = useTranslation();

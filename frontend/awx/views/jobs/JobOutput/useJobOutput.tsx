@@ -1,6 +1,6 @@
+import type { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { IFilterState, IToolbarFilter } from '../../../../../framework';
-import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';

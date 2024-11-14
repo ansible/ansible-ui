@@ -1,7 +1,7 @@
-import { randomString } from '../../framework/utils/random-string';
-import { AwxHost } from '../../frontend/awx/interfaces/AwxHost';
-import { Inventory } from '../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../frontend/awx/interfaces/Organization';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { AwxHost } from '@ansible/awx-ui/interfaces/AwxHost';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from './formatApiPathForAwx';
 
 /////////////// Assisting functions ///////////////

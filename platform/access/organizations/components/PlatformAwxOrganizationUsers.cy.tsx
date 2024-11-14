@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { PlatformAwxOrganizationUsers } from './PlatformAwxOrganizationUsers';
 
 describe('Platform organization users controller list', () => {

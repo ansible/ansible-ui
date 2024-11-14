@@ -1,11 +1,11 @@
 //Tests a user's ability to perform necessary actions on the Event Streams list in the EDA UI.
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaEventStream } from '../../../../frontend/eda/interfaces/EdaEventStream';
-import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaEventStream } from '@ansible/eda-ui/interfaces/EdaEventStream';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

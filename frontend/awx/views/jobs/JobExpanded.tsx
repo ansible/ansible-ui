@@ -1,16 +1,16 @@
+import { PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { Chip, ChipGroup, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
 import { CredentialLabel } from '../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useGetLaunchedByDetails, useGetScheduleUrl, isJobRunning } from './jobUtils';
+import { isJobRunning, useGetLaunchedByDetails, useGetScheduleUrl } from './jobUtils';
 
 export function JobExpanded(job: UnifiedJob) {
   const getLaunchedByDetails = useGetLaunchedByDetails();

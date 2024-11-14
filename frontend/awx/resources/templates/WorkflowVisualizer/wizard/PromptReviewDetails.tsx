@@ -1,10 +1,10 @@
+import { PageDetail, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageDetail, useGetPageUrl } from '../../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';

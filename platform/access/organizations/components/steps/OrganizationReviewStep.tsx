@@ -1,15 +1,15 @@
+import { PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { CredentialLabel } from '@ansible/awx-ui/common/CredentialLabel';
+import { ExecutionEnvironmentDetail } from '@ansible/awx-ui/common/ExecutionEnvironmentDetail';
+import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
+import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
+import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { Label, LabelGroup, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { awxAPI } from '../../../../../frontend/awx/common/api/awx-utils';
-import { CredentialLabel } from '../../../../../frontend/awx/common/CredentialLabel';
-import { ExecutionEnvironmentDetail } from '../../../../../frontend/awx/common/ExecutionEnvironmentDetail';
-import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
-import { ExecutionEnvironment } from '../../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
-import { AwxRoute } from '../../../../../frontend/awx/main/AwxRoutes';
 import { useGetItem } from '../../../../../frontend/common/crud/useGet';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
 

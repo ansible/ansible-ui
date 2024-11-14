@@ -1,31 +1,31 @@
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import {
   Alert,
-  Button,
-  Modal,
-  ModalVariant,
-  InputGroup,
-  TextInput,
-  ModalBoxBody,
-  Stack,
-  LabelGroup,
   AlertProps,
+  Button,
+  InputGroup,
+  LabelGroup,
+  Modal,
+  ModalBoxBody,
+  ModalVariant,
+  Stack,
+  TextInput,
 } from '@patternfly/react-core';
-import { ExecutionEnvironment } from '../../ExecutionEnvironment';
-import { ExecutionEnvironmentImage } from '../ExecutionEnvironmentImage';
-import { ExecutionEnvironmentTag } from '../../ExecutionEnvironmentTag';
-import { usePageDialog } from '../../../../../framework';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { LoadingState } from '../../../../../framework/components/LoadingState';
-import { TagLabel } from '../components/ImageLabels';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Task } from '../../../administration/tasks/Task';
 import { HubError } from '../../../common/HubError';
 import { hubAPI } from '../../../common/api/formatPath';
-import { useGet } from '../../../../common/crud/useGet';
-import { requestGet } from '../../../../common/crud/Data';
 import { hubAPIPost } from '../../../common/api/hub-api-utils';
 import { HubItemsResponse } from '../../../common/useHubView';
-import { Task } from '../../../administration/tasks/Task';
+import { ExecutionEnvironment } from '../../ExecutionEnvironment';
+import { ExecutionEnvironmentTag } from '../../ExecutionEnvironmentTag';
+import { ExecutionEnvironmentImage } from '../ExecutionEnvironmentImage';
+import { TagLabel } from '../components/ImageLabels';
 
 const VALID_TAG_REGEX = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 

@@ -1,28 +1,28 @@
+import { secondsToHHMMSS } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import {
-  TopologyControlBar,
-  TopologyView as PFTopologyView,
   action,
   createTopologyControlButtons,
-  useVisualizationController,
   defaultControlButtonsOptions,
-  VisualizationSurface,
   NodeStatus,
   observer,
+  TopologyView as PFTopologyView,
+  TopologyControlBar,
+  useVisualizationController,
+  VisualizationSurface,
 } from '@patternfly/react-topology';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { Job } from '../../../interfaces/Job';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import {
   ViewOptionsContext,
   ViewOptionsProvider,
 } from '../../../resources/templates/WorkflowVisualizer/ViewOptionsProvider';
 import { Legend } from '../../../resources/templates/WorkflowVisualizer/components';
 import { useWorkflowOutput } from './hooks/useWorkflowOutput';
-import { useEffect } from 'react';
-import styled from 'styled-components';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { WorkflowNode } from '../../../interfaces/WorkflowNode';
-import { useTranslation } from 'react-i18next';
-import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
-import { Job } from '../../../interfaces/Job';
-import { useGet } from '../../../../common/crud/useGet';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {

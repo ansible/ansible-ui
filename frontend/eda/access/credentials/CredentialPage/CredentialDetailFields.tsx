@@ -1,7 +1,7 @@
-import { PageDetail } from '../../../../../framework';
-import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { PageDetail } from '@ansible/ansible-ui-framework';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
 import { useTranslation } from 'react-i18next';
-import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
+import { EdaCredential } from '../../../interfaces/EdaCredential';
 
 export function CredentialDetailFields(props: { credential: EdaCredential }) {
   const { t } = useTranslation();

@@ -1,31 +1,31 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework';
-import { AwxRoleDetails } from '../../frontend/awx/access/roles/AwxRoleDetails';
-import { AwxRolePage } from '../../frontend/awx/access/roles/AwxRolePage';
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
+import { AwxRoleDetails } from '@ansible/awx-ui/access/roles/AwxRoleDetails';
+import { AwxRolePage } from '@ansible/awx-ui/access/roles/AwxRolePage';
 import {
   CreateRole as CreateAwxRole,
   EditRole as EditAwxRole,
-} from '../../frontend/awx/access/roles/RoleForm';
-import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
-import { EdaRoleDetails } from '../../frontend/eda/access/roles/EdaRoleDetails';
-import { EdaRolePage } from '../../frontend/eda/access/roles/EdaRolePage';
-import { CreateRole, EditRole } from '../../frontend/eda/access/roles/RoleForm';
-import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
+} from '@ansible/awx-ui/access/roles/RoleForm';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { EdaRoleDetails } from '@ansible/eda-ui/access/roles/EdaRoleDetails';
+import { EdaRolePage } from '@ansible/eda-ui/access/roles/EdaRolePage';
+import { CreateRole, EditRole } from '@ansible/eda-ui/access/roles/RoleForm';
+import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
+import { HubRoleDetails } from '@ansible/hub-ui/access/roles/RolePage/HubRoleDetails';
 import {
   CreateRole as CreateRoleHub,
   EditRole as EditRoleHub,
-} from '../../frontend/hub/access/roles/RolePage/HubRoleForm';
-import { HubRoute } from '../../frontend/hub/main/HubRoutes';
+} from '@ansible/hub-ui/access/roles/RolePage/HubRoleForm';
+import { HubRolePage } from '@ansible/hub-ui/access/roles/RolePage/HubRolePage';
+import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
 import { PlatformAwxRoles } from '../access/roles/PlatformAwxRoles';
 import { PlatformEdaRoles } from '../access/roles/PlatformEdaRoles';
 import { PlatformHubRoles } from '../access/roles/PlatformHubRoles';
 import { PlatformRoles } from '../access/roles/PlatformRoles';
-import { PlatformRoute } from '../main/PlatformRoutes';
 import { useGatewayService } from '../main/GatewayServices';
-import { HubRoleDetails } from '../../frontend/hub/access/roles/RolePage/HubRoleDetails';
-import { HubRolePage } from '../../frontend/hub/access/roles/RolePage/HubRolePage';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformRolesRoutes() {
   const { t } = useTranslation();

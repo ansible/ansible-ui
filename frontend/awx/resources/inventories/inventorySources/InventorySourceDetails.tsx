@@ -1,5 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
+  DateTimeCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { StandardPopover } from '@ansible/ansible-ui-framework/components/StandardPopover';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import {
   TextList,
   TextListItem,
   TextListItemVariants,
@@ -9,21 +24,6 @@ import {
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import {
-  DateTimeCell,
-  LoadingPage,
-  PageDetail,
-  PageDetails,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { StandardPopover } from '../../../../../framework/components/StandardPopover';
-import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { StatusCell } from '../../../../common/Status';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';

@@ -1,4 +1,4 @@
-import { useGet } from '../../../../common/crud/useGet';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { hubAPI } from '../../../common/api/formatPath';
 import { HubItemsResponse } from '../../../common/useHubView';
 import { Repository } from '../Repository';

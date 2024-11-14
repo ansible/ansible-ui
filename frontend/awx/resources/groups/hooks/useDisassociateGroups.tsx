@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { useNameColumn } from '../../../../common/columns';
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { compareStrings } from '../../../../../framework';
-import { getItemKey, postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useGroupsColumns } from './useGroupsColumns';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { useGroupsColumns } from './useGroupsColumns';
 
 export function useDisassociateGroups(onComplete: (groups: InventoryGroup[]) => void) {
   const { t } = useTranslation();

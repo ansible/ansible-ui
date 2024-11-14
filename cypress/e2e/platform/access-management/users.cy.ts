@@ -1,7 +1,7 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
-import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 
 describe('Users - Create, Edit and Delete', () => {

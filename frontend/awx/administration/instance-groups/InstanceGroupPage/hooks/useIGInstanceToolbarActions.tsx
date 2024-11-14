@@ -1,20 +1,20 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { t } from 'i18next';
 import { useMemo } from 'react';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../../framework';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { IAwxView } from '../../../../common/useAwxView';
 import { Instance } from '../../../../interfaces/Instance';
-import { useRunHealthCheckToolbarAction } from '../../../instances/hooks/useInstanceToolbarActions';
-import { ButtonVariant } from '@patternfly/react-core';
-import { t } from 'i18next';
-import { useAssociateInstanceToIG } from './useAssociateInstanceToIG';
-import { useParams } from 'react-router-dom';
-import { useAssociateInstanceModal } from './useAssociateInstanceModal';
-import { useDisassociateInstanceFromIG } from './useDisassociateInstanceFromIG';
-import { useGetItem } from '../../../../../common/crud/useGet';
-import { awxAPI } from '../../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
-import { useOptions } from '../../../../../common/crud/useOptions';
-import { OptionsResponse, ActionsResponse } from '../../../../interfaces/OptionsResponse';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
+import { useRunHealthCheckToolbarAction } from '../../../instances/hooks/useInstanceToolbarActions';
+import { useAssociateInstanceModal } from './useAssociateInstanceModal';
+import { useAssociateInstanceToIG } from './useAssociateInstanceToIG';
+import { useDisassociateInstanceFromIG } from './useDisassociateInstanceFromIG';
 
 export function useIGInstanceToolbarActions(view: IAwxView<Instance>) {
   const healthCheckAction = useRunHealthCheckToolbarAction(view, true);

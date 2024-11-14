@@ -1,20 +1,20 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon, ImportIcon, KeyIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../framework';
-import { HubRoute } from '../../main/HubRoutes';
-import { HubNamespace } from '../HubNamespace';
-import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
-import { useWindowLocation } from '../../../../framework/components/useWindowLocation';
+} from '@ansible/ansible-ui-framework';
+import { useWindowLocation } from '@ansible/ansible-ui-framework/components/useWindowLocation';
+import { ButtonVariant } from '@patternfly/react-core';
+import { ImportIcon, KeyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSignAllCollections } from '../../collections/hooks/useSignAllCollections';
 import { useHubContext } from '../../common/useHubContext';
 import { useCanSignNamespace } from '../../common/utils/canSign';
+import { HubRoute } from '../../main/HubRoutes';
+import { HubNamespace } from '../HubNamespace';
+import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 
 export function useHubNamespaceActions(options?: {
   onHubNamespacesDeleted: (namespaces: HubNamespace[]) => void;

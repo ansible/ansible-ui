@@ -1,38 +1,38 @@
-import { randomString } from '../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { TeamAssignment } from '@ansible/eda-ui/access/interfaces/TeamAssignment';
+import { UserAssignment } from '@ansible/eda-ui/access/interfaces/UserAssignment';
 import {
   EdaControllerToken,
   EdaControllerTokenCreate,
-} from '../../frontend/eda/interfaces/EdaControllerToken';
-import { EdaCredential, EdaCredentialCreate } from '../../frontend/eda/interfaces/EdaCredential';
+} from '@ansible/eda-ui/interfaces/EdaControllerToken';
+import { EdaCredential, EdaCredentialCreate } from '@ansible/eda-ui/interfaces/EdaCredential';
 import {
   EdaCredentialType,
   EdaCredentialTypeCreate,
-} from '../../frontend/eda/interfaces/EdaCredentialType';
-import { EdaDecisionEnvironment } from '../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaProject } from '../../frontend/eda/interfaces/EdaProject';
-import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaRbacRole } from '../../frontend/eda/interfaces/EdaRbacRole';
-import { EdaRulebook } from '../../frontend/eda/interfaces/EdaRulebook';
+} from '@ansible/eda-ui/interfaces/EdaCredentialType';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
+import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
+import { EdaResult } from '@ansible/eda-ui/interfaces/EdaResult';
+import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
   EdaRulebookActivationCreate,
-} from '../../frontend/eda/interfaces/EdaRulebookActivation';
-import { TeamAssignment } from '../../frontend/eda/access/interfaces/TeamAssignment';
-import { UserAssignment } from '../../frontend/eda/access/interfaces/UserAssignment';
+} from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
 
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import {
-  ImportStateEnum,
-  RestartPolicyEnum,
-  StatusEnum,
-  RoleDefinition,
   ContentTypeEnum,
-  PermissionsEnum,
   EventStreamIn,
   EventStreamOut,
-} from '../../frontend/eda/interfaces/generated/eda-api';
+  ImportStateEnum,
+  PermissionsEnum,
+  RestartPolicyEnum,
+  RoleDefinition,
+  StatusEnum,
+} from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { edaAPI } from './formatApiPathForEDA';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
-import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
 
 /*  EDA related custom command implementation  */
 

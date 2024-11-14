@@ -1,5 +1,5 @@
+import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails } from '../../../../framework';
 import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
 import { ImportStatusIndicator } from './ImportStatusIndicator';
 

@@ -1,6 +1,6 @@
-import { ManagementJobs } from './ManagementJobsList';
-import * as useOptions from '../../../common/crud/useOptions';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { ManagementJobs } from './ManagementJobsList';
 
 describe('ManagementJobs Empty State test', () => {
   before(() => {

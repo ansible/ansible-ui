@@ -1,6 +1,6 @@
+import { DateTimeCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, PageDetail, PageDetails } from '../../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 
 export function SystemJobNodeDetails(props: {

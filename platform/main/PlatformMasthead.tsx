@@ -1,30 +1,30 @@
-import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
-import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   PageMasthead,
   PageNotificationsIcon,
   useBreakpoint,
   usePageDialog,
   usePageNavigate,
-} from '../../framework';
-import { PageMastheadDropdown } from '../../framework/PageMasthead/PageMastheadDropdown';
-import { PageThemeSwitcher } from '../../framework/PageMasthead/PageThemeSwitcher';
-import { useAwxNotifications } from '../../frontend/awx/main/AwxMasthead';
+} from '@ansible/ansible-ui-framework';
+import { PageMastheadDropdown } from '@ansible/ansible-ui-framework/PageMasthead/PageMastheadDropdown';
+import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/PageThemeSwitcher';
+import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
+import { useAwxNotifications } from '@ansible/awx-ui/main/AwxMasthead';
+import { useEdaActiveUser } from '@ansible/eda-ui/common/useEdaActiveUser';
+import { useHubActiveUser } from '@ansible/hub-ui/common/useHubActiveUser';
+import { useHubNotifications } from '@ansible/hub-ui/main/HubMasthead';
+import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
 import { postRequest } from '../../frontend/common/crud/Data';
-import { useHubNotifications } from '../../frontend/hub/main/HubMasthead';
 import AAPLogo from '../assets/aap-logo.svg';
 import RedHatIcon from '../assets/redhat-icon.svg';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';
 import { gatewayAPI } from '../utils/gateway-api-utils';
-import { PlatformAbout } from './PlatformAbout';
-import { useAwxActiveUser } from '../../frontend/awx/common/useAwxActiveUser';
-import { useEdaActiveUser } from '../../frontend/eda/common/useEdaActiveUser';
-import { useHubActiveUser } from '../../frontend/hub/common/useHubActiveUser';
-import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { useLegacyAuth } from './LegacyAuthProvider';
+import { PlatformAbout } from './PlatformAbout';
+import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 
 export function PlatformMasthead() {

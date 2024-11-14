@@ -1,8 +1,8 @@
-import { ToolbarFilterType } from '../../../../framework';
-import * as useOptions from '../../../common/crud/useOptions';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Inventory } from '../../interfaces/Inventory';
 import { Inventories } from './Inventories';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Inventories', () => {
   describe('Non-empty list', () => {

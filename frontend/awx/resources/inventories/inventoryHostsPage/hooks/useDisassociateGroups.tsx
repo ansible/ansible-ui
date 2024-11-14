@@ -1,12 +1,12 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../../framework';
-import { useNameColumn } from '../../../../../common/columns';
-import { getItemKey, postRequest } from '../../../../../common/crud/Data';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
-import { useHostsGroupsColumns } from './useHostsGroupsColumns';
 import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
+import { useHostsGroupsColumns } from './useHostsGroupsColumns';
 
 export function useDisassociateGroups(
   onComplete: (groups: InventoryGroup[]) => void,

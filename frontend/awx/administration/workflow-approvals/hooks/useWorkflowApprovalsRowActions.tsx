@@ -1,14 +1,14 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useApproveWorkflowApprovals } from './useApproveWorkflowApprovals';
 import { useDeleteWorkflowApprovals } from './useDeleteWorkflowApprovals';
 import { useDenyWorkflowApprovals } from './useDenyWorkflowApprovals';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 
 export function useWorkflowApprovalsRowActions(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void

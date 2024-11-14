@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { randomString } from '../../../../../framework/utils/random-string';
-import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../../frontend/awx/interfaces/Project';
-import { Team } from '../../../../../frontend/awx/interfaces/Team';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { cyLabel } from '../../../../support/cyLabel';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';

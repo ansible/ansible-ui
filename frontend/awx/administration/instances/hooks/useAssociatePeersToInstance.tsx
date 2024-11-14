@@ -1,10 +1,10 @@
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { requestPatch } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
 import { Instance, Peer } from '../../../interfaces/Instance';
-import { useGetItem } from '../../../../common/crud/useGet';
 
 export function useAssociatePeersToInstance(
   onComplete: (peers: Peer[]) => void,

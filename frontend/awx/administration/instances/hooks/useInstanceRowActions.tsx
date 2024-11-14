@@ -1,20 +1,20 @@
-import { useCallback, useMemo } from 'react';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../../framework';
-import { Instance } from '../../../interfaces/Instance';
-import { ButtonVariant, AlertProps } from '@patternfly/react-core';
+} from '@ansible/ansible-ui-framework';
+import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { HeartbeatIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { Settings } from '../../../interfaces/Settings';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { requestPatch, postRequest } from '../../../../common/crud/Data';
-import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { Instance } from '../../../interfaces/Instance';
+import { Settings } from '../../../interfaces/Settings';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   cannotRunHealthCheckDueToManagedInstance,

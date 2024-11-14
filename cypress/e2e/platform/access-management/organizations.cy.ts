@@ -1,13 +1,13 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
-import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { SAAS_URL } from '../../../support/constants';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../support/utils';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
-import { SAAS_URL } from '../../../support/constants';
 
 describe('Platform Organizations - Create, Edit and Delete', () => {
   const organizationName = `e2e org ${randomE2Ename()}`;

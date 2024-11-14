@@ -1,6 +1,6 @@
-import * as useOptions from '../../../common/crud/useOptions';
-import { CredentialTypes } from './CredentialTypes';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { CredentialTypes } from './CredentialTypes';
 
 describe('Credential Types List', () => {
   describe('Non-empty list', () => {

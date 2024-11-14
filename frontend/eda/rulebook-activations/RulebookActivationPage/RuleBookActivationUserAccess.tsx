@@ -1,6 +1,6 @@
+import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { useParams } from 'react-router-dom';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { UserAccess } from '../../../common/access/components/UserAccess';
 
 export function RulebookActivationUserAccess() {
   const params = useParams<{ id: string }>();

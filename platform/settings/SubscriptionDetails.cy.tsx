@@ -1,4 +1,4 @@
-import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
+import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
 import { SubscriptionDetails } from './SubscriptionDetails';
 
 const awxConfig = {

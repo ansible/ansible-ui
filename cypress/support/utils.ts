@@ -1,4 +1,4 @@
-import { randomString } from '../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 
 /**
  * Utility function to escape arguments for safe inclusion in shell commands.

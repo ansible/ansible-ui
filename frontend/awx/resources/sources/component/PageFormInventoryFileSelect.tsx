@@ -1,11 +1,11 @@
+import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ReactElement, ReactNode, useCallback } from 'react';
 import { FieldPath, FieldValues, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { Project } from '../../../interfaces/Project';
-import { requestGet } from '../../../../common/crud/Data';
 
 export function PageFormInventoryFileSelect<
   TFieldValues extends FieldValues = FieldValues,

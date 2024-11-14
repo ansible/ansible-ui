@@ -1,21 +1,21 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { cannotDeleteResources } from '@ansible/common-ui/utils/RBAChelpers';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
-  usePageNavigate,
-} from '../../../../../framework';
-import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { IAwxView } from '../../../common/useAwxView';
-import { useDeleteHosts } from './useDeleteHosts';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
+import { IAwxView } from '../../../common/useAwxView';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useDeleteHosts } from './useDeleteHosts';
 
 export function useHostsToolbarActions(view: IAwxView<AwxHost>) {
   const { t } = useTranslation();

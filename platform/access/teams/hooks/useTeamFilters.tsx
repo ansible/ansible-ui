@@ -1,6 +1,6 @@
+import { IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { useNameToolbarFilter } from '@ansible/awx-ui/common/awx-toolbar-filters';
 import { useMemo } from 'react';
-import { IToolbarFilter } from '../../../../framework';
-import { useNameToolbarFilter } from '../../../../frontend/awx/common/awx-toolbar-filters';
 
 export function useTeamFilters() {
   const nameToolbarFilter = useNameToolbarFilter();

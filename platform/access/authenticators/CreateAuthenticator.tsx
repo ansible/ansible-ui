@@ -1,6 +1,6 @@
+import { LoadingPage, usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LoadingPage, usePageAlertToaster, usePageNavigate } from '../../../framework';
 import { postRequest, requestPatch } from '../../../frontend/common/crud/Data';
 import { useGet } from '../../../frontend/common/crud/useGet';
 import type { Authenticator } from '../../interfaces/Authenticator';

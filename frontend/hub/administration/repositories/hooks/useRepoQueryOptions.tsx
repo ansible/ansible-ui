@@ -1,6 +1,6 @@
+import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { useCallback } from 'react';
-import { PageAsyncSelectOptionsFn } from '../../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { useGetRequest } from '../../../../common/crud/useGet';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';

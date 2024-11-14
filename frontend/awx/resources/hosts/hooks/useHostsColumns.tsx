@@ -1,13 +1,13 @@
-import { useCallback, useMemo } from 'react';
-import { usePageNavigate, ITableColumn, ColumnTableOption } from '../../../../../framework';
+import { ColumnTableOption, ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
 import {
-  useNameColumn,
   useDescriptionColumn,
   useInventoryNameColumn,
-} from '../../../../common/columns';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxHost } from '../../../interfaces/AwxHost';
+  useNameColumn,
+} from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../../templates/components/Sparkline';
 
 function useActivityColumn() {

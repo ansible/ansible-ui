@@ -1,22 +1,22 @@
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
-} from '../../../../../framework';
-import { requestPatch } from '../../../../common/crud/Data';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { cannotDeleteResource, cannotEditResource } from '../../../../common/utils/RBAChelpers';
+} from '@ansible/ansible-ui-framework';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { cannotDeleteResource, cannotEditResource } from '@ansible/common-ui/utils/RBAChelpers';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useGetScheduleUrl } from './useGetScheduleUrl';
-import { useDeleteSchedules } from './useDeleteSchedules';
 import { schedulePageUrl } from '../types';
-import { ButtonVariant } from '@patternfly/react-core';
+import { useDeleteSchedules } from './useDeleteSchedules';
+import { useGetScheduleUrl } from './useGetScheduleUrl';
 
 export function useSchedulesActions(options: {
   onScheduleDeleteCompleted: (schedules: Schedule[]) => void;

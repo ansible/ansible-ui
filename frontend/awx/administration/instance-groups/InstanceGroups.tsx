@@ -1,8 +1,12 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
+import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import {
   useDisableCreateInstanceGroup,
@@ -10,10 +14,6 @@ import {
   useInstanceGroupToolbarActions,
 } from './hooks/useInstanceGroupActions';
 import { useInstanceGroupsColumns } from './hooks/useInstanceGroupColumns';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
-import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
 
 export function InstanceGroups() {
   const { t } = useTranslation();

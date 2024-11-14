@@ -1,4 +1,4 @@
-import { randomString } from '../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { Namespaces } from './constants';
 
 function visitImports(namespace: string) {

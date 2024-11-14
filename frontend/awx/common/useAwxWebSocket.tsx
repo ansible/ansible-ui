@@ -1,3 +1,4 @@
+import { getCookie } from '@ansible/common-ui/crud/cookie';
 import {
   createContext,
   Dispatch,
@@ -9,7 +10,6 @@ import {
 } from 'react';
 import useReactWebSocket, { ReadyState } from 'react-use-websocket';
 import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
-import { getCookie } from '../../common/crud/cookie';
 
 interface Subscriptions {
   [group: string]: { [event: string]: number };

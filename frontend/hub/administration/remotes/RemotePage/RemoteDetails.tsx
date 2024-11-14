@@ -1,16 +1,16 @@
+import { CopyCell, PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CopyCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGet } from '../../../../common/crud/useGet';
+import { useOutletContext } from 'react-router-dom';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
+import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../../repositories/Repository';
 import { HubRemote } from '../Remotes';
-import { useOutletContext } from 'react-router-dom';
-import { HubRoute } from '../../../main/HubRoutes';
 
 function useErrorHandlerAndLoading<T>(
   data: T | undefined,

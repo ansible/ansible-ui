@@ -1,9 +1,9 @@
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { ReorderItems } from '@ansible/ansible-ui-framework/components/ReorderItems';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants } from '@patternfly/react-core';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { ReorderItems } from '../../../../../framework/components/ReorderItems';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
-import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
 
 export function OrganizationGalaxyCredentialsOrderStep() {
   const { wizardData, setWizardData, setStepData } = usePageWizard();

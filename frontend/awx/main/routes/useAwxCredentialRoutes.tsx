@@ -1,16 +1,16 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../../../framework';
+import { CredentialAddTeams } from '../../access/credentials/components/CredentialAddTeams';
+import { CredentialAddUsers } from '../../access/credentials/components/CredentialAddUsers';
 import { CreateCredential, EditCredential } from '../../access/credentials/CredentialForm';
 import { CredentialDetails } from '../../access/credentials/CredentialPage/CredentialDetails';
-import { CredentialPage } from '../../access/credentials/CredentialPage/CredentialPage';
-import { Credentials } from '../../access/credentials/Credentials';
-import { AwxRoute } from '../AwxRoutes';
 import { CredentialJobTemplates } from '../../access/credentials/CredentialPage/CredentialJobTemplates';
-import { CredentialAddUsers } from '../../access/credentials/components/CredentialAddUsers';
-import { CredentialAddTeams } from '../../access/credentials/components/CredentialAddTeams';
+import { CredentialPage } from '../../access/credentials/CredentialPage/CredentialPage';
 import { CredentialTeamAccess } from '../../access/credentials/CredentialPage/CredentialTeamAccess';
 import { CredentialUserAccess } from '../../access/credentials/CredentialPage/CredentialUserAccess';
+import { Credentials } from '../../access/credentials/Credentials';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxCredentialRoutes() {
   const { t } = useTranslation();

@@ -1,8 +1,8 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Execution Environments: User/Team access', () => {

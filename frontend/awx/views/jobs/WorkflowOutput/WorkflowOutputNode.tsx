@@ -1,5 +1,4 @@
-import { ElementType, LegacyRef } from 'react';
-import styled from 'styled-components';
+import { usePageNavigate } from '@ansible/ansible-ui-framework';
 import {
   ClipboardCheckIcon,
   ClockIcon,
@@ -9,22 +8,23 @@ import {
   SyncAltIcon,
   TrashIcon,
 } from '@patternfly/react-icons';
+import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import {
   DefaultNode,
   ElementModel,
-  Layer,
-  TOP_LAYER,
   GraphElement,
+  Layer,
   NodeStatus,
+  TOP_LAYER,
   WithSelectionProps,
   observer,
   useHover,
 } from '@patternfly/react-topology';
-import { usePageNavigate } from '../../../../../framework';
+import { ElementType, LegacyRef } from 'react';
+import styled from 'styled-components';
+import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useStatusDecorator } from './hooks/useStatusDecorator';
-import type { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
-import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 const StyledNode = styled(DefaultNode)`
   &.pf-m-hover {

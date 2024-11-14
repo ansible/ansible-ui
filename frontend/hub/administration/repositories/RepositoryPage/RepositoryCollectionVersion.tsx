@@ -1,24 +1,21 @@
+import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
-import { PageTable } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { useCollectionColumns } from '../../../collections/hooks/useCollectionColumns';
+import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 import { hubAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useHubView } from '../../../common/useHubView';
+import { useAddCollections } from '../hooks/useAddCollections';
 import { useCollectionVersionsActionsRemove } from '../hooks/useRepositoryActions';
 import { useRepositoryCollectionVersionFiltersRemove } from '../hooks/useRepositorySelector';
-import { useState } from 'react';
-import { Button, ButtonVariant } from '@patternfly/react-core';
-import { deleteCollectionFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 import { Repository } from '../Repository';
-import { useMemo } from 'react';
-import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
-import { useCallback } from 'react';
-import { ITableColumn } from '../../../../../framework';
-import { useAddCollections } from '../hooks/useAddCollections';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 
 export function RepositoryCollectionVersion() {
   const { t } = useTranslation();

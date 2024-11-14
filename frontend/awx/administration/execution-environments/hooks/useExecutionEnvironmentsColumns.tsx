@@ -1,14 +1,14 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import {
+  useCreatedColumn,
+  useDescriptionColumn,
+  useIdColumn,
+  useModifiedColumn,
+  useNameColumn,
+  useOrganizationNameColumn,
+} from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageNavigate, ITableColumn } from '../../../../../framework';
-import {
-  useNameColumn,
-  useIdColumn,
-  useDescriptionColumn,
-  useOrganizationNameColumn,
-  useCreatedColumn,
-  useModifiedColumn,
-} from '../../../../common/columns';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

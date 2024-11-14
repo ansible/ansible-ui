@@ -1,6 +1,6 @@
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useTranslation } from 'react-i18next';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { Project } from '../../../interfaces/Project';
 import { ScmTypeOptions } from './ScmTypeOptions';

@@ -1,16 +1,16 @@
+import { PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageLayout, PageTable } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useAwxView } from '../../common/useAwxView';
-import { useNotificationFilters } from './hooks/useNotificationFilters';
+import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { useNotificationActions } from './hooks/useNotificationActions';
 import { useNotificationsColumns } from './hooks/useNotificationColumns';
-import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
-import { useGet } from '../../../common/crud/useGet';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import { useNotificationFilters } from './hooks/useNotificationFilters';
 
 interface ResourceTypeMapper {
   inventory_sources?: string;

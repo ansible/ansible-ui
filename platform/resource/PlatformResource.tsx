@@ -1,10 +1,10 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { Page } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../framework';
-import { EmptyStateCustom } from '../../framework/components/EmptyStateCustom';
-import { LoadingState } from '../../framework/components/LoadingState';
-import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';

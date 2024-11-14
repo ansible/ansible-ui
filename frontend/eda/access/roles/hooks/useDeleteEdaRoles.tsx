@@ -1,13 +1,13 @@
+import { ITableColumn, TextCell, compareStrings } from '@ansible/ansible-ui-framework';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, compareStrings } from '../../../../../framework';
-import { requestDelete } from '../../../../common/crud/Data';
-import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
-import { useRoleColumns } from './useRoleColumns';
-import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
-import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
 import { edaAPI } from '../../../common/eda-utils';
-import { idKeyFn } from '../../../../common/utils/nameKeyFn';
+import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
+import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { useRoleColumns } from './useRoleColumns';
 
 export function useDeleteEdaRoles(onComplete: (roles: EdaRbacRole[]) => void) {
   const { t } = useTranslation();

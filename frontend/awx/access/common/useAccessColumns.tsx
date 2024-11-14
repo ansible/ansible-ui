@@ -1,3 +1,4 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   Chip,
   ChipGroup,
@@ -8,7 +9,6 @@ import {
 } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { AccessRole, AwxUser } from '../../interfaces/User';
 import { AwxRoute } from '../../main/AwxRoutes';
 

@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { AwxRoute } from '../../../main/AwxRoutes';

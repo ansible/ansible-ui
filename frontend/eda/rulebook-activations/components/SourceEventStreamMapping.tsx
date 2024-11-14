@@ -1,23 +1,23 @@
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import React, { useCallback, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   PageDetail,
   PageDetails,
   PageFormSubmitHandler,
   usePageDialog,
-} from '../../../../framework';
-import { SourceEventMapFields } from './SourceEventMapFields';
+} from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useEffect } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { edaAPI } from '../../common/eda-utils';
+import { EdaPageForm } from '../../common/EdaPageForm';
+import { EdaEventStream } from '../../interfaces/EdaEventStream';
+import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 import { EdaSource, EdaSourceEventMapping } from '../../interfaces/EdaSource';
-import { EdaPageForm } from '../../common/EdaPageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useFieldArray, useFormContext } from 'react-hook-form';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useGet } from '../../../common/crud/useGet';
-import { EdaResult } from '../../interfaces/EdaResult';
-import { edaAPI } from '../../common/eda-utils';
-import { EdaEventStream } from '../../interfaces/EdaEventStream';
+import { SourceEventMapFields } from './SourceEventMapFields';
 
 export interface EventStreamMappingProps {
   rulebook: EdaRulebook;

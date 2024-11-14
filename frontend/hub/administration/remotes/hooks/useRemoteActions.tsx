@@ -1,17 +1,17 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { DownloadIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { downloadTextFile } from '@ansible/ansible-ui-framework/utils/download-file';
+import { ButtonVariant } from '@patternfly/react-core';
+import { DownloadIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { HubRoute } from '../../../main/HubRoutes';
 import { HubRemote } from '../Remotes';
 import { useDeleteRemotes } from './useDeleteRemotes';
-import { downloadTextFile } from '../../../../../framework/utils/download-file';
 
 export function useRemoteActions(options: { onRemotesDeleted: (remotes: HubRemote[]) => void }) {
   const { onRemotesDeleted } = options;

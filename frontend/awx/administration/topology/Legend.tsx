@@ -1,3 +1,4 @@
+import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '@ansible/ansible-ui-framework';
 import {
   DescriptionList,
   DescriptionListDescription,
@@ -17,7 +18,6 @@ import {
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../framework';
 import { getNodeIcon } from './components/MeshNode';
 
 const Panel = styled(PFPanel)`

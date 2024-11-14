@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   LoadingPage,
@@ -8,14 +6,16 @@ import {
   PageLayout,
   Scrollable,
   useGetPageUrl,
-} from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 
-import { EdaRolePermissions } from './components/EdaRolePermissions';
 import { EdaError } from '../../common/EdaError';
 import { EdaRoute } from '../../main/EdaRoutes';
+import { EdaRolePermissions } from './components/EdaRolePermissions';
 
 export function EdaRoleDetails() {
   const { t } = useTranslation();

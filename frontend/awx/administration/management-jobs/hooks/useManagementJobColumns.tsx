@@ -1,9 +1,8 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
-import { ITableColumn, useGetPageUrl } from '../../../../../framework';
+import { useTranslation } from 'react-i18next';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { TextCell } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
 
 export function useManagementJobColumns(): ITableColumn<SystemJobTemplate>[] {
   const { t } = useTranslation();

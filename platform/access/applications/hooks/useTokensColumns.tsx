@@ -1,5 +1,5 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { useCallback, useMemo } from 'react';
-import { ITableColumn, usePageNavigate } from '../../../../framework';
 import {
   useExpiresColumn,
   useNameColumn,

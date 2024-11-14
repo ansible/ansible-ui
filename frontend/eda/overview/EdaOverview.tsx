@@ -1,9 +1,9 @@
+import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageDashboard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboard';
+import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
 import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../../framework';
-import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
-import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';

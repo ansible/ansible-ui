@@ -1,3 +1,4 @@
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import {
   Dropdown,
   DropdownItem,
@@ -12,7 +13,6 @@ import { MouseEvent, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RequestError } from '../../../../../frontend/common/crud/RequestError';
 import { useGet } from '../../../../../frontend/common/crud/useGet';
 import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';

@@ -1,18 +1,18 @@
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { Tooltip } from '@patternfly/react-core';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { type WebSocketInventory } from '../Inventories';
-import { Tooltip } from '@patternfly/react-core';
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const pageNavigate = usePageNavigate();

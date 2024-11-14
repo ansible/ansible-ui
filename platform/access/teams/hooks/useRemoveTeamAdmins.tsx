@@ -1,7 +1,7 @@
+import { TextCell, compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { TextCell, compareStrings, useBulkConfirmation } from '../../../../framework';
 import { getItemKey, postRequest } from '../../../../frontend/common/crud/Data';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';

@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   DateTimeCell,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../../main/EdaRoutes';
 

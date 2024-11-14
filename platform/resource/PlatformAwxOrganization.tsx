@@ -1,11 +1,11 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../framework';
-import { EmptyStateCustom } from '../../framework/components/EmptyStateCustom';
-import { LoadingState } from '../../framework/components/LoadingState';
-import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
-import { Organization } from '../../frontend/awx/interfaces/Organization';
 import { useGetItem } from '../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../main/PlatformRoutes';
 

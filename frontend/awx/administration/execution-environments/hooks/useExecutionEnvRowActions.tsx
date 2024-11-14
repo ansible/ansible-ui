@@ -1,24 +1,24 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import {
+  cannotCopyResource,
+  cannotDeleteResource,
+  cannotEditResource,
+} from '@ansible/common-ui/utils/RBAChelpers';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  usePageNavigate,
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
-  usePageAlertToaster,
-} from '../../../../../framework';
-import {
-  cannotEditResource,
-  cannotDeleteResource,
-  cannotCopyResource,
-} from '../../../../common/utils/RBAChelpers';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteExecutionEnvironments } from './useDeleteExecutionEnvironments';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 
 type ExecutionEnvironmentActionOptions = {
   onDelete: (executionEnvironments: ExecutionEnvironment[]) => void;

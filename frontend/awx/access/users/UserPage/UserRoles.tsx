@@ -1,6 +1,6 @@
+import { ResourceAccess } from '@ansible/common-ui/access/components/ResourceAccess';
 import { useParams } from 'react-router-dom';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ResourceAccess } from '../../../../common/access/components/ResourceAccess';
 
 export function UserRoles(props: { id?: string; addRolesRoute?: string }) {
   const params = useParams<{ id: string }>();

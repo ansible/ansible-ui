@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { Tooltip, Label } from '@patternfly/react-core';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { Label, Tooltip } from '@patternfly/react-core';
 import TagIcon from '@patternfly/react-icons/dist/esm/icons/tag-icon';
+import { Link } from 'react-router-dom';
 import { truncateSha } from '../../../common/utils/truncateSha';
-import { useGetPageUrl } from '../../../../../framework';
 import { HubRoute } from '../../../main/HubRoutes';
 
 export const ShaLabel = ({

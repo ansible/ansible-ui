@@ -1,13 +1,13 @@
+import { compareStrings, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { nameKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, usePageNavigate } from '../../../../../framework';
-import { nameKeyFn } from '../../../../common/utils/nameKeyFn';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { hubAPIDelete, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
+import { HubRoute } from '../../../main/HubRoutes';
 import { HubRemote } from '../Remotes';
 import { useRemoteColumns } from './useRemoteColumns';
-import { HubRoute } from '../../../main/HubRoutes';
-import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteRemotes(onComplete: (remotes: HubRemote[]) => void) {
   const { t } = useTranslation();

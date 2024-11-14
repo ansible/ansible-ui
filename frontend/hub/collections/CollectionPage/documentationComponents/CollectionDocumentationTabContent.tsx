@@ -1,14 +1,14 @@
+import { PFColorE } from '@ansible/ansible-ui-framework';
 import { CodeBlock, PageSection, Stack, StackItem, TextInput, Title } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PFColorE } from '../../../../../framework';
 import { IContents, IContentsOption } from '../../Collection';
 
+import { useGetPageUrl, usePageSettings } from '@ansible/ansible-ui-framework';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/ExpandableSection/expandable-section';
-import { useGetPageUrl, usePageSettings } from '../../../../../framework';
 import { CollectionVersionSearch, ISample } from '../../Collection';
 
 import { applyDocFormatters, renderPluginConfiguration } from './DocumentationParsers';

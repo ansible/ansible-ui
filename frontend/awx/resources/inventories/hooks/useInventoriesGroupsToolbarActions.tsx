@@ -1,23 +1,22 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IAwxView } from '../../../common/useAwxView';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';
-import { useParams } from 'react-router-dom';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { cannotDeleteResources } from '@ansible/common-ui/utils/RBAChelpers';
 import { ButtonVariant } from '@patternfly/react-core';
-import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
-import { useCallback } from 'react';
+import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { IAwxView } from '../../../common/useAwxView';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useDeleteGroups } from '../../groups/hooks/useDeleteGroups';
 
 export function useInventoriesGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const { t } = useTranslation();

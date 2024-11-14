@@ -1,9 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { Bullseye, Button, ButtonVariant } from '@patternfly/react-core';
 
-import { CogIcon } from '@patternfly/react-icons';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   PageActionSelection,
   PageActionType,
@@ -11,8 +8,11 @@ import {
   PageDashboard,
   PageHeader,
   PageLayout,
-} from '../../../framework';
-import { EmptyStateNoData } from '../../../framework/components/EmptyStateNoData';
+} from '@ansible/ansible-ui-framework';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { CogIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CollectionCategoryCarousel } from './CollectionCategories';
 import { CategorizedCollections } from './CollectionCategory';
 import { useCategorizeCollections } from './hooks/useCategorizeCollections';

@@ -1,5 +1,5 @@
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
-import { useGet } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';

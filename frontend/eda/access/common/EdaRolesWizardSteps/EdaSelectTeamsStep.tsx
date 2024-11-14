@@ -1,12 +1,12 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { Title } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
+import styled from 'styled-components';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
-import { Title } from '@patternfly/react-core';
-import styled from 'styled-components';
 import { useEdaTeamFilters } from '../../teams/hooks/useEdaTeamFilters';
 
 const StyledTitle = styled(Title)`

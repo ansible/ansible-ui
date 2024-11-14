@@ -1,10 +1,10 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { useCreatedColumn, useModifiedColumn } from '../../../../frontend/common/columns';
-import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 
 export function useAuthenticatorsColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();

@@ -1,13 +1,13 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { useNameColumn } from '../../../common/columns';
-import { idKeyFn } from '../../../common/utils/nameKeyFn';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { useEventStreamColumns } from './useEventStreamColumns';
-import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 
 export function useDisableEventStreams(onComplete?: (eventStreams: EdaEventStream[]) => void) {
   const { t } = useTranslation();

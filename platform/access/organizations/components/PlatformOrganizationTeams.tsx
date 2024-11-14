@@ -1,19 +1,19 @@
+import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable, useGetPageUrl } from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
-import { LoadingState } from '../../../../framework/components/LoadingState';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { ButtonVariant } from '@patternfly/react-core';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { useTeamColumns } from '../../teams/hooks/useTeamColumns';
@@ -22,9 +22,6 @@ import {
   useOrganizationTeamsRowActions,
   useOrganizationTeamsToolbarActions,
 } from '../hooks/useOrganizationTeamsActions';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { ButtonVariant } from '@patternfly/react-core';
 
 export function PlatformOrganizationTeams() {
   const { t } = useTranslation();

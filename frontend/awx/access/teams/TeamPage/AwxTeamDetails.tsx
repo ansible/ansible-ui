@@ -1,7 +1,7 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { TeamDetails, TeamDetailsType } from '@ansible/common-ui/access/TeamDetails';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../../../../framework';
-import { TeamDetails, TeamDetailsType } from '../../../../common/access/TeamDetails';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';

@@ -6,7 +6,7 @@
  * process.env variable
  */
 
-import { apiTag } from '../../frontend/hub/common/api/formatPath';
+import { apiTag } from '@ansible/hub-ui/common/api/formatPath';
 
 function getBaseAPIPath() {
   const base = (Cypress.env('HUB_API_PREFIX') as string) || '/api/galaxy';

@@ -1,24 +1,24 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon, CogIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useDeleteSurveyDialog } from './useDeleteSurveyDialog';
-import type { ISurveyView } from './useSurveyView';
-import type { Spec } from '../../../interfaces/Survey';
-import { AwxRoute } from '../../../main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CogIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useManageSurveyQuestions } from './useManageSurveyQuestions';
-import type { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import type { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import type { Spec } from '../../../interfaces/Survey';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useDeleteSurveyDialog } from './useDeleteSurveyDialog';
+import { useManageSurveyQuestions } from './useManageSurveyQuestions';
+import type { ISurveyView } from './useSurveyView';
 
 export function useSurveyToolbarActions(
   view: ISurveyView,

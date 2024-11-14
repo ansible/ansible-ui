@@ -1,11 +1,11 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
 import { t } from 'i18next';
 import React from 'react';
-import { usePageDialog } from '../../framework';
-import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
 import { useGet } from '../../frontend/common/crud/useGet';
-import { edaAPI } from '../../frontend/eda/common/eda-utils';
-import { hubAPI } from '../../frontend/hub/common/api/formatPath';
 
 export const PlatformAbout: React.FunctionComponent = () => {
   const awxInfo = useGet<{ version: string }>(awxAPI`/ping/`);

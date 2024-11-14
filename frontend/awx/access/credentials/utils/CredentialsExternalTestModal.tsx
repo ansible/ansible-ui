@@ -1,17 +1,17 @@
-import { AlertProps, Modal } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { AwxPageForm } from '../../../common/AwxPageForm';
-import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import {
   IPageAlertToaster,
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { AlertProps, Modal } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { AwxPageForm } from '../../../common/AwxPageForm';
 import { Credential } from '../../../interfaces/Credential';
+import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 
 export interface CredentialsExternalTestModalProps {
   credential?: Credential;

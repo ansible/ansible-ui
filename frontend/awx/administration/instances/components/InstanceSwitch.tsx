@@ -1,13 +1,13 @@
-import { PageActionSwitch } from '../../../../../framework/PageActions/PageActionSwitch';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { Instance } from '../../../interfaces/Instance';
-import { useInstanceActions } from '../hooks/useInstanceActions';
 import {
   IPageActionSwitchSingle,
   PageActionSelection,
   PageActionType,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { PageActionSwitch } from '@ansible/ansible-ui-framework/PageActions/PageActionSwitch';
 import { useTranslation } from 'react-i18next';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { Instance } from '../../../interfaces/Instance';
+import { useInstanceActions } from '../hooks/useInstanceActions';
 
 export function InstanceSwitch(props: { instance: Instance }) {
   const { t } = useTranslation();

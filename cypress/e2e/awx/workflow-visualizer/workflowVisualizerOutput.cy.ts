@@ -1,11 +1,11 @@
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
-import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
+import { Job } from '@ansible/awx-ui/interfaces/Job';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
+import { WorkflowNode } from '@ansible/awx-ui/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Workflow Visualizer', () => {

@@ -1,18 +1,18 @@
-import { Label, Split } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
-} from '../../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { Label, Split } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

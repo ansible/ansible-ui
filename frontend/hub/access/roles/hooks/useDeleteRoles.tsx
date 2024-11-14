@@ -1,12 +1,12 @@
+import { ITableColumn, TextCell, compareStrings } from '@ansible/ansible-ui-framework';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, compareStrings } from '../../../../../framework';
-import { requestDelete } from '../../../../common/crud/Data';
 import { hubAPI } from '../../../common/api/formatPath';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useHubContext } from '../../../common/useHubContext';
-import { useRoleColumns } from './useRoleColumns';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { useRoleColumns } from './useRoleColumns';
 
 export function useDeleteRoles(onComplete: (roles: HubRbacRole[]) => void) {
   const { t } = useTranslation();

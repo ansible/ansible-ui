@@ -1,32 +1,32 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormDataEditor,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useGet } from '../../../common/crud/useGet';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { EdaRoute } from '../../main/EdaRoutes';
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Alert, Button } from '@patternfly/react-core';
+import { useCallback } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
+import { EdaPageForm } from '../../common/EdaPageForm';
 import {
   EdaCredentialType,
   EdaCredentialTypeCreate,
   EdaCredentialTypeInputs,
 } from '../../interfaces/EdaCredentialType';
-import { EdaPageForm } from '../../common/EdaPageForm';
-import { Alert, Button } from '@patternfly/react-core';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useCallback } from 'react';
-import { CredentialTypeDetails } from './CredentialTypePage/CredentialTypeDetails';
-import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { EdaRoute } from '../../main/EdaRoutes';
+import { CredentialTypeDetails } from './CredentialTypePage/CredentialTypeDetails';
 
 export function CreateCredentialType() {
   const { t } = useTranslation();

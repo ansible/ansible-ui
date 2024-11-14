@@ -1,6 +1,6 @@
-import { randomString } from '../../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
 
 describe('Automation Execution: Roles', () => {
   describe('Automation Execution: Verify Role Permissions', () => {

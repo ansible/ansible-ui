@@ -1,7 +1,7 @@
+import { PageFormMultiInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiInput';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
-import { EdaCredential } from '../../../../eda/interfaces/EdaCredential';
+import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useSelectCredentials } from '../hooks/useSelectCredentials';
 
 export function PageFormCredentialSelect<

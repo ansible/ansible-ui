@@ -1,9 +1,9 @@
+import { PageDashboardChart } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
+import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
-import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
-import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { awxAPI } from '../../common/api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';

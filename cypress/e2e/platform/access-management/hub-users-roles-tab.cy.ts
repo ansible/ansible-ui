@@ -1,12 +1,12 @@
 //Tests a user's ability to give permissions to a user from the roles tab.
-import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import { HubRbacRole } from '@ansible/hub-ui/interfaces/expanded/HubRbacRole';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { hub_resources_roles_tab } from '../../../support/constants';
-import { Repository } from '../../../../frontend/hub/administration/repositories/Repository';
-import { HubRemote } from '../../../../frontend/hub/administration/remotes/Remotes';
-import { HubNamespace } from '../../../../frontend/hub/namespaces/HubNamespace';
-import { randomString } from '../../../../framework/utils/random-string';
-import { ContentTypeEnum } from '../../../../frontend/hub/interfaces/expanded/ContentType';
-import { HubRbacRole } from '../../../../frontend/hub/interfaces/expanded/HubRbacRole';
 import { hubAPI } from '../../../support/formatApiPathForHub';
 
 hub_resources_roles_tab.forEach((resource) => {

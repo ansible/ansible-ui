@@ -1,14 +1,14 @@
-import { useCallback, useMemo, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import {
   PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
-} from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { DateRangeFilterPresets } from '../../../framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
-import { AsyncQueryLabel } from '../../common/AsyncQueryLabel';
-import { requestGet } from '../../common/crud/Data';
-import { useOptions } from '../../common/crud/useOptions';
+} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { DateRangeFilterPresets } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
+import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useCallback, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';

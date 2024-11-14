@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useSWR from 'swr';
 import {
   ISelected,
   ITableColumn,
@@ -7,9 +5,11 @@ import {
   IView,
   useSelected,
   useView,
-} from '../../../framework';
-import { useFetcher } from '../../common/crud/Data';
-import { RequestError } from '../../common/crud/RequestError';
+} from '@ansible/ansible-ui-framework';
+import { useFetcher } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useSWR from 'swr';
 import { QueryParams, getQueryString, serverlessURL } from './api/hub-api-utils';
 import { url2keys } from './api/query-string';
 

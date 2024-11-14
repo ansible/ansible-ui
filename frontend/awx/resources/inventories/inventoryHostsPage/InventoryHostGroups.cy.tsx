@@ -1,8 +1,8 @@
-import * as useOptions from '../../../../common/crud/useOptions';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { InventoryHostGroups } from './InventoryHostGroups';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Inventory Host Groups List', () => {
   const types = ['inventory', 'host'];

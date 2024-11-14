@@ -1,14 +1,14 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { ListIcon, PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { ListIcon, PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../../common/api/formatPath';
 import { hubAPIPost } from '../../../common/api/hub-api-utils';
 import { HubRoute } from '../../../main/HubRoutes';

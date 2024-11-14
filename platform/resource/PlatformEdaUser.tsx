@@ -1,14 +1,14 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../framework';
-import { EmptyStateCustom } from '../../framework/components/EmptyStateCustom';
-import { LoadingState } from '../../framework/components/LoadingState';
-import { edaAPI } from '../../frontend/eda/common/eda-utils';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import { useGetItem } from '../../frontend/common/crud/useGet';
-import { PlatformRoute } from '../main/PlatformRoutes';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformEdaUser(props: { route?: string }) {
   const { t } = useTranslation();

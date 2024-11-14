@@ -1,5 +1,5 @@
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Approvals, Collections, MyImports } from './constants';
 

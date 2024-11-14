@@ -1,10 +1,10 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { useNameColumn } from '../../../../common/columns';
-import { getItemKey, requestDelete } from '../../../../common/crud/Data';
-import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 import { edaAPI } from '../../../common/eda-utils';
+import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 import { EdaTeam } from '../../../interfaces/EdaTeam';
 import { useTeamColumns } from './useTeamColumns';
 

@@ -1,7 +1,7 @@
 // using PlatformOrganizationForm.cy.tsx as a reference, generate tests for PlatformOrganizationDetails.cy.tsx
 
+import * as useAwxConfig from '@ansible/awx-ui/common/useAwxConfig';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
-import * as useAwxConfig from '../../../../frontend/awx/common/useAwxConfig';
 import { GatewayServicesContext } from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationDetails } from './PlatformOrganizationDetails';

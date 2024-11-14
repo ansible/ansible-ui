@@ -1,5 +1,5 @@
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { TeamAccess } from './TeamAccess';
-import { edaAPI } from '../../../eda/common/eda-utils';
 
 describe('TeamAccess.cy.ts', () => {
   beforeEach(() => {

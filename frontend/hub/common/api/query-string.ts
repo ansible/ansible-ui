@@ -1,4 +1,4 @@
-import { normalizeQueryString } from '../../../common/crud/normalizeQueryString';
+import { normalizeQueryString } from '@ansible/common-ui/crud/normalizeQueryString';
 
 const sortKeys = {
   '/pulp/api/v3/': 'ordering',

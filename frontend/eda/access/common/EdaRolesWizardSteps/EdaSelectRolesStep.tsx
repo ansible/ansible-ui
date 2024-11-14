@@ -1,13 +1,13 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { SelectRolesStep } from '@ansible/common-ui/access/RolesWizard/steps/SelectRolesStep';
 import { useMemo } from 'react';
-import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
-import { useEdaRolesFilters } from '../../roles/hooks/useEdaRolesFilters';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
-import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
-import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { QueryParams } from '../../../common/useEventDrivenView';
+import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
+import { useEdaRolesFilters } from '../../roles/hooks/useEdaRolesFilters';
 
 export function EdaSelectRolesStep(props: {
   contentType?: string;

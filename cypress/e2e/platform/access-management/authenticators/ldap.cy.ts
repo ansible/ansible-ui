@@ -1,5 +1,5 @@
+import { Ldap } from '@ansible/platform-ui/interfaces/LdapAuthenticator';
 import { randomE2Ename } from '../../../../support/utils';
-import { Ldap } from '../../../../../platform/interfaces/LdapAuthenticator';
 
 describe('LDAP Authentication form - create, edit, update and delete', () => {
   it('creates an LDAP authenticator', () => {

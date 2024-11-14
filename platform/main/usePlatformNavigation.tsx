@@ -1,21 +1,21 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
 import {
   PageNavigationItem,
   findNavigationItemById,
   removeNavigationItemById,
-} from '../../framework';
-import { PageSettingsDetails } from '../../framework/PageSettings/PageSettingsDetails';
-import { PageSettingsForm } from '../../framework/PageSettings/PageSettingsForm';
-import { AwxSettingsCategoryDetailsPage } from '../../frontend/awx/administration/settings/AwxSettingsCategoryDetails';
-import { AwxSettingsCategoryForm } from '../../frontend/awx/administration/settings/AwxSettingsCategoryForm';
-import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
-import { useAwxNavigation } from '../../frontend/awx/main/useAwxNavigation';
-import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
-import { useEdaNavigation } from '../../frontend/eda/main/useEdaNavigation';
-import { HubRoute } from '../../frontend/hub/main/HubRoutes';
-import { useHubNavigation } from '../../frontend/hub/main/useHubNavigation';
+} from '@ansible/ansible-ui-framework';
+import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
+import { AwxSettingsCategoryDetailsPage } from '@ansible/awx-ui/administration/settings/AwxSettingsCategoryDetails';
+import { AwxSettingsCategoryForm } from '@ansible/awx-ui/administration/settings/AwxSettingsCategoryForm';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { useAwxNavigation } from '@ansible/awx-ui/main/useAwxNavigation';
+import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
+import { useEdaNavigation } from '@ansible/eda-ui/main/useEdaNavigation';
+import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
+import { useHubNavigation } from '@ansible/hub-ui/main/useHubNavigation';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Lightspeed } from '../lightspeed/Lightspeed';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';

@@ -1,13 +1,13 @@
+import { compareStrings, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { nameKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, usePageNavigate } from '../../../../../framework';
-import { nameKeyFn } from '../../../../common/utils/nameKeyFn';
 import { hubAPI } from '../../../common/api/formatPath';
 import { hubAPIDelete, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
+import { HubRoute } from '../../../main/HubRoutes';
 import { RemoteRegistry } from '../RemoteRegistry';
 import { useRemoteRegistriesColumns } from './useRemoteRegistriesColumns';
-import { HubRoute } from '../../../main/HubRoutes';
-import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteRemoteRegistries(onComplete: (remoteRegistry: RemoteRegistry[]) => void) {
   const { t } = useTranslation();

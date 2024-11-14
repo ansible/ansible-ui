@@ -1,4 +1,4 @@
-import { apiTag } from '../../../hub/common/api/formatPath';
+import { apiTag } from '@ansible/hub-ui/common/api/formatPath';
 
 export let awxApiPath = process.env.AWX_API_PREFIX || '/api/v2';
 

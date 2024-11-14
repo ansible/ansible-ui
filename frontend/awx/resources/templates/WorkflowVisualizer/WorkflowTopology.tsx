@@ -1,15 +1,19 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
 import {
   ComponentFactory,
   DagreLayout,
   DefaultGroup,
+  Edge,
   EdgeModel,
+  ElementModel,
   Graph,
   GraphComponent,
+  LabelPosition,
   Model,
   ModelKind,
   NodeShape,
+  NodeStatus,
+  TopologyView as PFTopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
   Visualization,
@@ -21,32 +25,28 @@ import {
   withContextMenu,
   withPanZoom,
   withSelection,
-  TopologyView as PFTopologyView,
-  ElementModel,
-  Edge,
-  NodeStatus,
-  LabelPosition,
 } from '@patternfly/react-topology';
-import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { styled } from 'styled-components';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { greyBadgeLabel } from '../../../views/jobs/WorkflowOutput/WorkflowOutput';
 import {
   AddNodeButton,
   CustomEdge,
   EdgeContextMenu,
   Legend,
-  WorkflowVisualizerToolbar,
-  ToolbarHeader,
   Sidebar,
+  ToolbarHeader,
+  WorkflowVisualizerToolbar,
 } from './components';
+import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
+import { useCreateEdge, useDedupeOldNodes } from './hooks';
+import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
 import { EdgeStatus } from './types';
 import { ViewOptionsContext, ViewOptionsProvider } from './ViewOptionsProvider';
-import { useCreateEdge, useDedupeOldNodes } from './hooks';
 import { getNodeLabel } from './wizard/helpers';
-import { GRAPH_ID, NODE_DIAMETER, START_NODE_ID } from './constants';
-import { useCreateNodeComponent } from './hooks/useCreateNodeComponent';
-import { styled } from 'styled-components';
-import { greyBadgeLabel } from '../../../views/jobs/WorkflowOutput/WorkflowOutput';
 
 const TopologyView = styled(PFTopologyView)`
   .pf-v5-c-divider {

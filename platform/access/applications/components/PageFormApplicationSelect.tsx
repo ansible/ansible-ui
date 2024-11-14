@@ -1,9 +1,9 @@
+import { useApplicationsColumns } from '@ansible/awx-ui/administration/applications/hooks/useApplicationsColumns';
+import { useApplicationsFilters } from '@ansible/awx-ui/administration/applications/hooks/useApplicationsFilters';
+import { PageFormSingleSelectAwxResource } from '@ansible/awx-ui/common/PageFormSingleSelectAwxResource';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useApplicationsColumns } from '../../../../frontend/awx/administration/applications/hooks/useApplicationsColumns';
-import { useApplicationsFilters } from '../../../../frontend/awx/administration/applications/hooks/useApplicationsFilters';
-import { PageFormSingleSelectAwxResource } from '../../../../frontend/awx/common/PageFormSingleSelectAwxResource';
-import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
 export function PageFormApplicationSelect<

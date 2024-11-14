@@ -1,4 +1,4 @@
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 export function runCommand(params: {

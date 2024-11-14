@@ -1,6 +1,6 @@
+import { EdaRolesTable } from '@ansible/eda-ui/access/roles/EdaRoles';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { EdaRolesTable } from '../../../frontend/eda/access/roles/EdaRoles';
 
 export function PlatformEdaRoles() {
   const { t } = useTranslation();

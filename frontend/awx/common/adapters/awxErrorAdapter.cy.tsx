@@ -1,4 +1,4 @@
-import { RequestError } from '../../../common/crud/RequestError';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { awxErrorAdapter, useAwxErrorMessageParser } from './awxErrorAdapter';
 
 describe('awxErrorAdapter', () => {

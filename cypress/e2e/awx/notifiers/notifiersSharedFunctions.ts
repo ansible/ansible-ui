@@ -1,6 +1,6 @@
-import { getDefaultMessages } from '../../../../frontend/awx/administration/notifiers/notifierFormMessagesHelpers';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { Notification } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
+import { getDefaultMessages } from '@ansible/awx-ui/administration/notifiers/notifierFormMessagesHelpers';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { Notification } from '@ansible/awx-ui/interfaces/generated-from-swagger/api';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 

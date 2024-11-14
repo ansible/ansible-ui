@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ITableColumn,
   IToolbarFilter,
   TextCell,
   ToolbarFilterType,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AsyncSelectFilterBuilderProps,
   useAsyncMultiSelectFilterBuilder,

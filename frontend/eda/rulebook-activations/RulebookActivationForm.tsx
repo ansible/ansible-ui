@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
+  PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
   PageFormSubmitHandler,
@@ -12,35 +9,38 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-  PageFormCheckbox,
-} from '../../../framework';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, swrOptions } from '../../common/crud/Data';
-import { useGet } from '../../common/crud/useGet';
-import { usePostRequest } from '../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import jsyaml from 'js-yaml';
+import { useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
+import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
+import { EdaEventStream } from '../interfaces/EdaEventStream';
+import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import {
   EdaRulebookActivation,
   EdaRulebookActivationCreate,
 } from '../interfaces/EdaRulebookActivation';
+import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 import { LogLevelEnum, RestartPolicyEnum } from '../interfaces/generated/eda-api';
 import { EdaRoute } from '../main/EdaRoutes';
-import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
-import useSWR from 'swr';
-import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { EdaSourceEventMapping } from '../interfaces/EdaSource';
-import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import jsyaml from 'js-yaml';
-import { PageFormEventSourceSelect } from '../common/PageFormEventSourceSelect';
-import { EdaEventStream } from '../interfaces/EdaEventStream';
-import { PageFormRulebookSelect } from './components/PageFormRulebooksSelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectsSelect';
+import { PageFormRulebookSelect } from './components/PageFormRulebooksSelect';
 
 export function CreateRulebookActivation() {
   const { t } = useTranslation();

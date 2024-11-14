@@ -1,9 +1,9 @@
+import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Project } from '../../../interfaces/Project';
 

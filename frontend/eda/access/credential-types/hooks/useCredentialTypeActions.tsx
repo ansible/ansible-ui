@@ -1,19 +1,19 @@
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
-import { EdaRoute } from '../../../main/EdaRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../common/eda-utils';
+import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { EdaRoute } from '../../../main/EdaRoutes';
+import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
 
 export function useCredentialTypeToolbarActions(
   onCredentialTypesDeleted: (credentialType: EdaCredentialType[]) => void

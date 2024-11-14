@@ -1,7 +1,3 @@
-import { CodeBlock, DescriptionList, Divider, capitalize } from '@patternfly/react-core';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDashboard,
@@ -10,12 +6,16 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-} from '../../../../framework';
-import { PageDetail } from '../../../../framework/PageDetails/PageDetail';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { StatusCell } from '../../../common/Status';
-import { requestGet } from '../../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { PageDetail } from '@ansible/ansible-ui-framework/PageDetails/PageDetail';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { CodeBlock, DescriptionList, Divider, capitalize } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { pulpAPI } from '../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../common/api/hub-api-utils';

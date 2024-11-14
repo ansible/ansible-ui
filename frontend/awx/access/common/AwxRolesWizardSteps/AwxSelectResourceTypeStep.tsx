@@ -1,7 +1,7 @@
+import { LoadingPage, PageFormSelect } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useTranslation } from 'react-i18next';
-import { LoadingPage, PageFormSelect } from '../../../../../framework';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
 import { awxAPI } from '../../../common/api/awx-utils';
 
 type ContentTypeOption = [string, string];

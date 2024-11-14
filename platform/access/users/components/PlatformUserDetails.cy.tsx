@@ -1,5 +1,5 @@
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { PlatformUserDetails } from './PlatformUserDetails';
 
 const mockUser = {

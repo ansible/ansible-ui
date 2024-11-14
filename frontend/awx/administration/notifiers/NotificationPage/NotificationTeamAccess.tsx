@@ -1,6 +1,6 @@
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useParams } from 'react-router-dom';
-import { TeamAccess } from '../../../../common/access/components/TeamAccess';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function NotificationTeamAccess() {
   const params = useParams<{ id: string }>();

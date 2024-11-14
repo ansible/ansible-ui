@@ -1,19 +1,19 @@
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { stringIsUUID } from '../../../../common/util/strings';
-import { requestGet } from '../../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
-import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import { stringIsUUID } from '../../../../common/util/strings';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { Label } from '../../../../interfaces/Label';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { Survey } from '../../../../interfaces/Survey';
 import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
+import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus, GraphNode, NodeResource, PromptFormValues, WizardFormValues } from '../types';
 import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { RESOURCE_TYPE } from '../constants';
 
 interface WizardStepState {
   nodeTypeStep: Partial<WizardFormValues>;

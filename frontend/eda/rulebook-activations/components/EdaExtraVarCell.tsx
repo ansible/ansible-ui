@@ -1,4 +1,4 @@
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 
 export function EdaExtraVarsCell(props: {
   text?: string | null;

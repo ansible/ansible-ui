@@ -1,3 +1,4 @@
+import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '@ansible/ansible-ui-framework';
 import {
   BuilderImageIcon,
   CheckCircleIcon,
@@ -19,7 +20,6 @@ import {
   getDefaultShapeDecoratorCenter,
 } from '@patternfly/react-topology';
 import { useMemo } from 'react';
-import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '../../../../../framework';
 import { CustomNodeProps } from '../types';
 
 function getStatusIcon(nodeType: string) {

@@ -1,8 +1,8 @@
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/deprecated';
 import React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
 
 interface FieldOptions {
   id: string;

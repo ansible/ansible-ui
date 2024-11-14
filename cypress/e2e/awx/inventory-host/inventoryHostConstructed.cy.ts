@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { InventoryGroup } from '../../../../frontend/awx/interfaces/InventoryGroup';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { InventoryGroup } from '@ansible/awx-ui/interfaces/InventoryGroup';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { checkHiddenButton, checkHiddenTab, launchHostJob } from '../../../support/hostsfunctions';
 import { runCommand } from './runCommandFunction';

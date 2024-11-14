@@ -1,7 +1,7 @@
+import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster } from '../../../../framework';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AccessRole, AwxUser } from '../../interfaces/User';
 

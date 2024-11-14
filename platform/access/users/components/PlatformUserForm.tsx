@@ -1,9 +1,3 @@
-import { Checkbox, Tooltip } from '@patternfly/react-core';
-import { useCallback, useEffect, useMemo } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import {
   LoadingPage,
   PFColorE,
@@ -18,12 +12,18 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { awxErrorAdapter } from '../../../../frontend/awx/common/adapters/awxErrorAdapter';
+} from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
+import { Checkbox, Tooltip } from '@patternfly/react-core';
+import { useCallback, useEffect, useMemo } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { postRequest } from '../../../../frontend/common/crud/Data';
 import { useDeleteRequest } from '../../../../frontend/common/crud/useDeleteRequest';
@@ -31,6 +31,7 @@ import { useGet, useGetRequest } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import {
@@ -43,7 +44,6 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationsSelect } from '../../organizations/components/PageFormPlatformOrganizationsSelect';
 import { useGetOrganizationsForUser } from '../hooks/useGetOrganizationsForUser';
 import { useGetPlatformAndServiceUsers } from '../hooks/useGetPlatformAndServiceUsers';
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 
 const ServiceAdminCheckbox = styled(PageFormCheckbox)`
   margin-bottom: 8px;

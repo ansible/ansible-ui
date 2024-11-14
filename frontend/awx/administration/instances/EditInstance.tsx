@@ -1,10 +1,15 @@
+import {
+  PageFormCheckbox,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { PageFormSlider } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSlider';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR, { useSWRConfig } from 'swr';
-import { PageFormCheckbox, PageHeader, PageLayout, useGetPageUrl } from '../../../../framework';
-import { PageFormSlider } from '../../../../framework/PageForm/Inputs/PageFormSlider';
-import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';

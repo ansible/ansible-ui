@@ -1,14 +1,14 @@
 // //Tests a user's ability to perform certain actions on the Rule Audits list in the EDA UI.
 
-import { EdaDecisionEnvironment } from '../../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaOrganization } from '../../../../../frontend/eda/interfaces/EdaOrganization';
-import { EdaProject } from '../../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { LogLevelEnum } from '../../../../../frontend/eda/interfaces/generated/eda-api';
-import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
+import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
+import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { SAAS_URL } from '../../../../support/constants';
+import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 describe('If SaaS Build', () => {
   before(function () {

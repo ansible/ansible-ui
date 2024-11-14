@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
 import {
   PageAsyncSelectOptionsFn,
   PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
-} from '../../framework/PageInputs/PageAsyncSelectOptions';
+} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { useCallback } from 'react';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 

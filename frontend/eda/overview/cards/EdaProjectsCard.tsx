@@ -1,15 +1,15 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import {
   PageTable,
   useDashboardColumns,
   useGetPageUrl,
   useVisibleModalColumns,
-} from '../../../../framework';
-import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
+} from '@ansible/ansible-ui-framework';
+import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';

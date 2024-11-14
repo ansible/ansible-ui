@@ -1,21 +1,21 @@
-import { useTranslation } from 'react-i18next';
-import { ITableColumn, IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useMemo } from 'react';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
+import { ITableColumn, IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { Title } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+import { edaAPI } from '../../../common/eda-utils';
+import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
 import { EdaActivationInstance } from '../../../interfaces/EdaActivationInstance';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { EdaDecisionEnvironment } from '../../../interfaces/EdaDecisionEnvironment';
+import { EdaEventStream } from '../../../interfaces/EdaEventStream';
+import { EdaProject } from '../../../interfaces/EdaProject';
+import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
 import { EdaRulebook } from '../../../interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '../../../interfaces/EdaRulebookActivation';
-import { EdaRuleAudit } from '../../../interfaces/EdaRuleAudit';
-import { EdaProject } from '../../../interfaces/EdaProject';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
-import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
-import { edaAPI } from '../../../common/eda-utils';
-import styled from 'styled-components';
-import { EdaEventStream } from '../../../interfaces/EdaEventStream';
 
 export type EdaResourceType =
   | EdaActivationInstance

@@ -1,9 +1,9 @@
+import { CopyCell, PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { ScmType } from '@ansible/common-ui/scm';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, CopyCell, TextCell, useGetPageUrl } from '../../../../../../framework';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { AwxRoute } from '../../../../main/AwxRoutes';
 import { Project } from '../../../../interfaces/Project';
-import { ScmType } from '../../../../../common/scm';
+import { AwxRoute } from '../../../../main/AwxRoutes';
 
 export function ProjectDetails({ project }: { project: Project }) {
   const { t } = useTranslation();

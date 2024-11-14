@@ -1,9 +1,10 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { useOptions } from '../../../common/crud/useOptions';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -15,7 +16,6 @@ import { useInventoriesColumns } from './hooks/useInventoriesColumns';
 import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 import { useInventoriesToolbarActions } from './hooks/useInventoriesToolbarActions';
 import { useInventoryActions } from './hooks/useInventoryActions';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export type WebSocketInventory = {
   status: string;

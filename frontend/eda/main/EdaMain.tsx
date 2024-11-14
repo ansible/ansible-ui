@@ -3,9 +3,9 @@ import '@patternfly/patternfly/patternfly-charts.css';
 
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
+import { PageFramework } from '@ansible/ansible-ui-framework';
+import '@ansible/common-ui/i18n';
 import { BrowserRouter } from 'react-router-dom';
-import { PageFramework } from '../../../framework';
-import '../../common/i18n';
 import { EdaActiveUserProvider } from '../common/useEdaActiveUser';
 import { EdaApp } from './EdaApp';
 import { EdaLogin } from './EdaLogin';

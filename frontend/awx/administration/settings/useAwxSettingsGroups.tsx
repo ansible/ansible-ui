@@ -1,6 +1,6 @@
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOptions } from '../../../common/crud/useOptions';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxSettingsOptionsAction, AwxSettingsOptionsResponse } from './AwxSettingsForm';
 

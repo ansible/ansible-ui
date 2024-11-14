@@ -1,6 +1,6 @@
+import { compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';

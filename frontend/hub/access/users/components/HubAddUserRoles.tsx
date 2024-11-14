@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   ITableColumn,
   LoadingPage,
@@ -9,14 +7,18 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../../common/crud/Data';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { hubErrorAdapter } from '../../../common/adapters/hubErrorAdapter';
 import { hubAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkActionDialog } from '../../../common/useHubBulkActionDialog';
+import { ExecutionEnvironment } from '../../../execution-environments/ExecutionEnvironment';
+import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubUser } from '../../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../../main/HubRoutes';
@@ -26,8 +28,6 @@ import {
 } from '../../common/HubRoleWizardSteps/HubSelectResourcesStep';
 import { HubSelectResourceTypeStep } from '../../common/HubRoleWizardSteps/HubSelectResourceTypeStep';
 import { HubSelectRolesStep } from '../../common/HubRoleWizardSteps/HubSelectRolesStep';
-import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
-import { ExecutionEnvironment } from '../../../execution-environments/ExecutionEnvironment';
 
 type ResourceTypeWithID = { id: number | string };
 type ResourceTypeWithPulpHref = { pulp_href: string };

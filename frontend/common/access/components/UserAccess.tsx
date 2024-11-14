@@ -1,9 +1,9 @@
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { useTranslation } from 'react-i18next';
 import { UserAssignment } from '../interfaces/UserAssignment';
 import { Access } from './Access';
-import { edaAPI } from '../../../eda/common/eda-utils';
-import { awxAPI } from '../../../awx/common/api/awx-utils';
-import { hubAPI } from '../../../hub/common/api/formatPath';
 
 export function UserAccess(props: {
   service: 'awx' | 'eda' | 'hub';

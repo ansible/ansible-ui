@@ -1,14 +1,14 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { useNameColumn } from '../../../../common/columns';
-import { requestDelete } from '../../../../common/crud/Data';
-import { idKeyFn } from '../../../../common/utils/nameKeyFn';
 import { InUseResourceRefs } from '../../../common/EdaResourcesCommon';
 import { edaAPI } from '../../../common/eda-utils';
+import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from './useCredentialColumns';
-import { useEdaBulkConfirmation } from '../../../common/useEdaBulkConfirmation';
 
 export function useDeleteCredentials(onComplete?: (credentials: EdaCredential[]) => void) {
   const { t } = useTranslation();

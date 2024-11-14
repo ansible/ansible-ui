@@ -1,10 +1,10 @@
-import { ISelected, ITableColumn, IToolbarFilter, IView, TextCell } from '../../../../../framework';
-import { useMemo } from 'react';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { Label, LabelGroup, Split, SplitItem, Title } from '@patternfly/react-core';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { ISelected, ITableColumn, IToolbarFilter, IView, TextCell } from '../../../../../framework';
 
 interface SelectRolesStepProps<T extends object> {
   view: IView & ISelected<T> & { itemCount?: number; pageItems: T[] | undefined; error?: Error };

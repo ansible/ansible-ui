@@ -2,12 +2,12 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useEventStreamActivationsColumns } from '../hooks/useEventStreamActivationsColumns';
 import { useEventStreamActivationsFilters } from '../hooks/useEventStreamActivationsFilters';
-import { useEdaView } from '../../common/useEventDrivenView';
-import { edaAPI } from '../../common/eda-utils';
-import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { PageLayout, PageTable } from '../../../../framework';
 
 export function EventStreamActivations() {
   const params = useParams<{ id: string }>();

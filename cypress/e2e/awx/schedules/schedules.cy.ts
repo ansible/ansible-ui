@@ -1,10 +1,10 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { Schedule } from '@ansible/awx-ui/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 const getId = (name: string) =>
   name

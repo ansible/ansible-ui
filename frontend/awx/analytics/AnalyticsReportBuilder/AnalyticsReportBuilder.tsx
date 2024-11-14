@@ -44,10 +44,6 @@ modify filters, add some new columns contents into the table. If more flexibilit
 
 */
 
-import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
-import { PerPageOptions, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import {
   ITableColumn,
   ITableColumnTypeText,
@@ -55,17 +51,22 @@ import {
   PageHeader,
   PageLayout,
   usePageNavigate,
-} from '../../../../framework';
-import { PageTable } from '../../../../framework/PageTable/PageTable';
-import { ColumnTableOption } from '../../../../framework/PageTable/PageTableColumn';
+} from '@ansible/ansible-ui-framework';
+import { PageTable } from '@ansible/ansible-ui-framework/PageTable/PageTable';
+import { ColumnTableOption } from '@ansible/ansible-ui-framework/PageTable/PageTableColumn';
 import {
   IToolbarFilter,
   ToolbarFilterType,
-} from '../../../../framework/PageToolbar/PageToolbarFilter';
-import { IToolbarMultiSelectFilter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
-import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
-import { useGetRequest } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilter';
+import { IToolbarMultiSelectFilter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarMultiSelectFilter';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
+import { useGetRequest } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { ChartFunctions, ChartSchemaElement } from '@ansible/react-json-chart-builder';
+import { PerPageOptions, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { AnalyticsErrorState } from '../Reports/ErrorStates';
 import { Chart } from '../components/Chart';
 import { hydrateSchema } from '../components/Chart/hydrateSchema';
@@ -77,7 +78,6 @@ import {
   renderAllTasksStatus,
 } from './AnalyticsReportBuilderUtils';
 import { reportDefaultParams } from './constants';
-import { useTranslation } from 'react-i18next';
 
 type KeyValue = { key: string; value: string };
 

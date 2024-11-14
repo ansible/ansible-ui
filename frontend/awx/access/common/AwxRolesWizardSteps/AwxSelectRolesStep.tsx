@@ -1,8 +1,8 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { SelectRolesStep } from '@ansible/common-ui/access/RolesWizard/steps/SelectRolesStep';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
 import { QueryParams } from '../../../common/useAwxView';

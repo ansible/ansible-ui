@@ -1,15 +1,15 @@
-import { useTranslation } from 'react-i18next';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormSelect, PageFormTextArea, PageFormTextInput } from '../../../framework';
-import { usePageWizard } from '../../../framework/PageWizard/PageWizardProvider';
-import { useGet } from '../../common/crud/useGet';
-import { awxAPI } from './api/awx-utils';
-import { Spec, Survey } from '../interfaces/Survey';
-import { PageSelectOption } from '../../../framework/PageInputs/PageSelectOption';
-import { PageFormMultiSelect } from '../../../framework/PageForm/Inputs/PageFormMultiSelect';
-import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
+import { PageFormSelect, PageFormTextArea, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { Spec, Survey } from '../interfaces/Survey';
+import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
+import { awxAPI } from './api/awx-utils';
 
 function getJobType(resource: WizardFormValues['resource']) {
   if (!resource) return;

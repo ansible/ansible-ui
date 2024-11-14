@@ -1,15 +1,15 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   PageDetail,
   PageDetails,
   PageDetailsFromColumns,
   useGetPageUrl,
-} from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { Label, LabelGroup } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../../common/api/awx-utils';

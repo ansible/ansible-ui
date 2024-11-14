@@ -1,0 +1,9 @@
+{
+  "name": "@ansible/hub-ui",
+  "type": "module",
+  "version": "0.0.0",
+  "dependencies": {
+    "@ansible/common-ui": "^0.0.0",
+    "@ansible/ansible-ui-framework": "^0.0.0"
+  }
+}

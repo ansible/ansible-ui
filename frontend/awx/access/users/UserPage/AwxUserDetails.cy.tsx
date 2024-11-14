@@ -1,7 +1,7 @@
-import { AwxUserDetails } from './AwxUserDetails';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import mockAwxUser from '../../../../../cypress/fixtures/awxUser.json';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { AwxUserDetails } from './AwxUserDetails';
 
 describe('User details', () => {
   it('Renders first & last name, username, email, orgs, last login, auth type, created & modified timestamps', () => {

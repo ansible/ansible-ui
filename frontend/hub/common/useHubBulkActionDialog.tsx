@@ -1,4 +1,4 @@
-import { useBulkActionDialog } from '../../../framework/PageDialogs/BulkActionDialog';
+import { useBulkActionDialog } from '@ansible/ansible-ui-framework/PageDialogs/BulkActionDialog';
 import { hubErrorAdapter } from './adapters/hubErrorAdapter';
 import { useHubBulkActionStatusParser } from './useHubBulkActionStatusParser';
 

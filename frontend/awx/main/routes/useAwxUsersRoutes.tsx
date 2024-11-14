@@ -1,22 +1,22 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
 import { CreateUser, EditUser } from '../../access/users/UserForm';
 import { AwxUserDetails } from '../../access/users/UserPage/AwxUserDetails';
 import { UserOrganizations } from '../../access/users/UserPage/UserOrganizations';
 import { UserPage } from '../../access/users/UserPage/UserPage';
 import { UserRoles } from '../../access/users/UserPage/UserRoles';
 import { UserTeams } from '../../access/users/UserPage/UserTeams';
-import { UserTokens } from '../../access/users/UserPage/UserTokens';
 import { UserTokenDetails } from '../../access/users/UserPage/UserTokenDetails';
+import { UserTokenPage } from '../../access/users/UserPage/UserTokenPage';
+import { UserTokenSecretsModal } from '../../access/users/UserPage/UserTokenSecretsModal';
+import { UserTokens } from '../../access/users/UserPage/UserTokens';
+import { CreateUserToken } from '../../access/users/UserTokenForm';
 import { Users } from '../../access/users/Users';
 import { AddRolesToUser } from '../../access/users/components/AddRolesToUser';
-import { AwxRoute } from '../AwxRoutes';
-import { UserTokenPage } from '../../access/users/UserPage/UserTokenPage';
-import { CreateUserToken } from '../../access/users/UserTokenForm';
 import { Token } from '../../interfaces/Token';
-import { UserTokenSecretsModal } from '../../access/users/UserPage/UserTokenSecretsModal';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxUsersRoutes() {
   const { t } = useTranslation();

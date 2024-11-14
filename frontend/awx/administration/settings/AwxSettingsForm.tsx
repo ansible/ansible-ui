@@ -1,18 +1,18 @@
-import { Button, FormGroup } from '@patternfly/react-core';
-import { t } from 'i18next';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
   PageFormTextInput,
-} from '../../../../framework';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { Button, FormGroup } from '@patternfly/react-core';
+import { t } from 'i18next';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
-import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 import { useRevertAllSettingsModal } from './useRevertAllSettingsModal';
 
 export interface AwxSettingsOptionsResponse {

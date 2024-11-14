@@ -1,10 +1,10 @@
-import { ToolbarFilterType } from '../../../../framework';
-import * as useOptions from '../../../common/crud/useOptions';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxHost } from '../../interfaces/AwxHost';
-import { Hosts } from './Hosts';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { InventoryHosts } from '../inventories/InventoryPage/InventoryHosts';
+import { Hosts } from './Hosts';
 
 const hosts = 'hosts';
 const inventory_hosts = 'inventory_hosts';

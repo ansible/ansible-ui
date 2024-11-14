@@ -1,9 +1,13 @@
+import {
+  PageFormCheckbox,
+  PageFormDataEditor,
+  PageFormTextInput,
+} from '@ansible/ansible-ui-framework';
+import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormCheckbox, PageFormDataEditor, PageFormTextInput } from '../../../../framework';
-import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';

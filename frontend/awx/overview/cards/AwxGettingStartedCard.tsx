@@ -1,14 +1,14 @@
 /* eslint-disable i18next/no-literal-string */
-import { Text } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   PageDashboardGettingStarted,
   PageDashboardGettingStartedStep,
-} from '../../../../framework';
-import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
-import { AwxRoute } from '../../main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
+import { Text } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '../../../hub/common/ExternalLink';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function AwxGettingStartedCard(props: {
   hasInventory: boolean;

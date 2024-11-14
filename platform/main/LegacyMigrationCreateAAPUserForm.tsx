@@ -1,16 +1,16 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { Button, GridItem } from '@patternfly/react-core';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../framework';
-import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
-import { AwxPageForm } from '../../frontend/awx/common/AwxPageForm';
 import { usePostRequest } from '../../frontend/common/crud/usePostRequest';
 import { Account, LegacyAuth } from '../interfaces/LegacyAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useLegacyAuth } from './LegacyAuthProvider';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
-import { useAwxActiveUser } from '../../frontend/awx/common/useAwxActiveUser';
 
 interface CreateAAPUserRequest {
   new_username: string | undefined;

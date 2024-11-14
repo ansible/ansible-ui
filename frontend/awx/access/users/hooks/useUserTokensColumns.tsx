@@ -1,9 +1,9 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn } from '@ansible/common-ui/columns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
 import { Token } from '../../../interfaces/Token';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
 
 export function useUserTokensColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();

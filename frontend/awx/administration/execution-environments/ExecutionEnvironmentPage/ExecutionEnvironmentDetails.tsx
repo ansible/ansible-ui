@@ -1,6 +1,3 @@
-import { Label } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
@@ -8,9 +5,12 @@ import {
   TextCell,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { Label } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { AwxRoute } from '../../../main/AwxRoutes';

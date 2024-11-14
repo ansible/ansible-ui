@@ -1,9 +1,6 @@
 /* eslint-disable react/prop-types */
 import { ButtonVariant } from '@patternfly/react-core';
 
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
@@ -13,10 +10,13 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaActiveUser } from '../../../common/useEdaActiveUser';
 import { EdaUser } from '../../../interfaces/EdaUser';

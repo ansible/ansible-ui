@@ -1,5 +1,5 @@
-import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
+import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
+import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
 
 export function getAddedAndRemovedRoles(
   originalRoles: (EdaRbacRole | AwxRbacRole)[],

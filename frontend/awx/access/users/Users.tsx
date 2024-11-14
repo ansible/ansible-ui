@@ -1,3 +1,17 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageHeader,
+  PageLayout,
+  PageTable,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import {
   CubesIcon,
@@ -8,20 +22,6 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
-  PageHeader,
-  PageLayout,
-  PageTable,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../framework';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
-import { useOptions } from '../../../common/crud/useOptions';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';

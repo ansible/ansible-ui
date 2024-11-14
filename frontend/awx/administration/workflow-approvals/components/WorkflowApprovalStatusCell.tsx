@@ -1,3 +1,4 @@
+import { TextCell } from '@ansible/ansible-ui-framework';
 import {
   CheckCircleIcon,
   ClockIcon,
@@ -5,7 +6,6 @@ import {
   ExclamationTriangleIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { TextCell } from '../../../../../framework';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { WorkflowApprovalTimeRemaining } from './WorkflowApprovalTimeRemaining';
 

@@ -1,10 +1,10 @@
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';

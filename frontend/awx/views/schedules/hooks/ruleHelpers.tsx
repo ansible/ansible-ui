@@ -1,8 +1,8 @@
+import { parseVariableField } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useTranslation } from 'react-i18next';
 import { Frequency, RRule } from 'rrule';
-import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
-import { parseVariableField } from '../../../../../framework/utils/codeEditorUtils';
+import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 
 export function useGetFrequencyOptions() {
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
 import { StopCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { Task } from '../Task';
 import { useStopTasks } from './useTasksToolbarActions';
 

@@ -1,12 +1,12 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormDateTimePicker } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormDateTimePicker';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useGetTimezones } from '../hooks/useGetTimezones';
-import { useEffect, useState } from 'react';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormTextInput } from '../../../../../framework';
 import { ScheduleFormWizard } from '../types';
-import { PageFormDateTimePicker } from '../../../../../framework/PageForm/Inputs/PageFormDateTimePicker';
-import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
 
 export function ScheduleResourceInputs() {
   const { t } = useTranslation();

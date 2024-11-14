@@ -1,9 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
 
-import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,18 +10,22 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
-import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
-import { postRequest } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { EdaProject } from '../../interfaces/EdaProject';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { ImportStateEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteProjects } from '../hooks/useDeleteProjects';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function ProjectPage() {
   const { t } = useTranslation();

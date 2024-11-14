@@ -1,12 +1,12 @@
+import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { Modal, Tab, TabTitleText, Tabs } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
 
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { EmptyStateNoData } from '../../../../../framework/components/EmptyStateNoData';
-import { JobEvent } from '../../../interfaces/JobEvent';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
 import { useState } from 'react';
+import { JobEvent } from '../../../interfaces/JobEvent';
 
 const processCodeEditorValue = (value: JobEvent) => {
   let codeEditorValue;

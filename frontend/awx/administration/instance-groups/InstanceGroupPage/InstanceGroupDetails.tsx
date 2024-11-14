@@ -1,16 +1,16 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   LoadingPage,
   PageDetail,
   PageDetails,
   useGetPageUrl,
-} from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { Unavailable } from '../../../../../framework/components/Unavailable';
-import { useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { Unavailable } from '@ansible/ansible-ui-framework/components/Unavailable';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { Label, LabelGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';

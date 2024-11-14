@@ -1,9 +1,9 @@
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ExpandableRowContent } from '@patternfly/react-table';
-import { HubRolePermissions } from './HubRolePermissions';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { useGet } from '../../../../common/crud/useGet';
-import { hubAPI } from '../../../common/api/formatPath';
 import { useTranslation } from 'react-i18next';
+import { hubAPI } from '../../../common/api/formatPath';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { HubRolePermissions } from './HubRolePermissions';
 
 interface HubRoleExpandedRowProps {
   role: HubRbacRole;

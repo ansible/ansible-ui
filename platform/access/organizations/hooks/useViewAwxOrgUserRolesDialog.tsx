@@ -1,8 +1,8 @@
+import { ITableColumn, PageTable, TextCell, usePageDialog } from '@ansible/ansible-ui-framework';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-core';
-import { usePageDialog, ITableColumn, PageTable, TextCell } from '../../../../framework';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
 import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 

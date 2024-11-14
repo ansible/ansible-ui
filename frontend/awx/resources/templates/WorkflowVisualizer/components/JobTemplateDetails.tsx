@@ -1,3 +1,6 @@
+import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import {
   Label,
   LabelGroup,
@@ -8,9 +11,6 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PageDetail, TextCell, useGetPageUrl } from '../../../../../../framework';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { useGet, useGetItem } from '../../../../../common/crud/useGet';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { CredentialLabel } from '../../../../common/CredentialLabel';

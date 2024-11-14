@@ -1,10 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { t } from 'i18next';
-import jsyaml from 'js-yaml';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   IPageAction,
   LoadingPage,
@@ -15,8 +8,15 @@ import {
   PageDetails,
   PageHeader,
   PageLayout,
-} from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { t } from 'i18next';
+import jsyaml from 'js-yaml';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxSettingsOptionsAction } from './AwxSettingsForm';

@@ -1,7 +1,7 @@
-import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
+import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
+import { awxAPI } from '../../cypress/support/formatApiPathForAwx';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformApp } from './PlatformApp';
-import { awxAPI } from '../../cypress/support/formatApiPathForAwx';
 
 describe('Platform Subscription and Session Validation Tests', () => {
   it('should not display a banner if AWC config or License info is not available', () => {

@@ -1,7 +1,7 @@
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { ReusableTemplateSurveyTestSuite } from '../job-templates/sharedTemplateSurvey';
 
 describe('Job Templates Surveys', function () {

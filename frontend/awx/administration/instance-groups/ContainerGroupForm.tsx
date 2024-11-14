@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -9,23 +8,24 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxRoute } from '../../main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxError } from '../../common/AwxError';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { InstanceGroup as ContainerGroup } from '../../interfaces/InstanceGroup';
-import { awxAPI } from '../../common/api/awx-utils';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useGetItem } from '../../../common/crud/useGet';
-import { useParams } from 'react-router-dom';
-import { AwxError } from '../../common/AwxError';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { useWatch } from 'react-hook-form';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormHidden } from '../../../../framework/PageForm/Utils/PageFormHidden';
-import { useOptions } from '../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { jsonToYaml } from '../../../../framework/utils/codeEditorUtils';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 type ContainerGroupForm = {
   credential: number | null;

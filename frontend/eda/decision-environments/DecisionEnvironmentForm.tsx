@@ -1,6 +1,3 @@
-import { Trans, useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -9,10 +6,17 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { useGet } from '../../common/crud/useGet';
-import { usePatchRequest } from '../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Alert } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
+import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
 import { EdaCredential } from '../interfaces/EdaCredential';
@@ -20,15 +24,11 @@ import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,
 } from '../interfaces/EdaDecisionEnvironment';
-import { EdaResult } from '../interfaces/EdaResult';
-import { EdaRoute } from '../main/EdaRoutes';
-import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
-import { requestGet, swrOptions } from '../../common/crud/Data';
-import { useOptions } from '../../common/crud/useOptions';
+import { EdaResult } from '../interfaces/EdaResult';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
+import { EdaRoute } from '../main/EdaRoutes';
 import { DecisionEnvironmentDetails } from './DecisionEnvironmentPage/DecisionEnvironmentDetails';
-import { Alert } from '@patternfly/react-core';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();

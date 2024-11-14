@@ -1,25 +1,25 @@
-import { Button, ClipboardCopy, Title } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import {
   LoadingPage,
   PageDetail,
   PageDetails,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { useClipboard } from '../../../../framework/hooks/useClipboard';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { useClipboard } from '@ansible/ansible-ui-framework/hooks/useClipboard';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { Button, ClipboardCopy, Title } from '@patternfly/react-core';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { HubError } from '../../common/HubError';
 import { MarkdownEditor } from '../../common/MarkdownEditor';
 import { hubAPI } from '../../common/api/formatPath';
 import { hubAPIPut } from '../../common/api/hub-api-utils';
 import { getContainersURL } from '../../common/utils/getContainersURL';
 import { HubRoute } from '../../main/HubRoutes';
-import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 const ControlButtons = styled.div`
   display: flex;

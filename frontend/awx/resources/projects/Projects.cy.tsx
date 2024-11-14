@@ -1,7 +1,7 @@
-import { ToolbarFilterType } from '../../../../framework';
-import * as useOptions from '../../../common/crud/useOptions';
-import { Projects } from './Projects';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { Projects } from './Projects';
 
 /*
 Projects list test cases

@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageFormSubmitHandler,
@@ -8,13 +6,15 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { PageFormMarkdown } from '../../../framework/PageForm/Inputs/PageFormMarkdown';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { useGet } from '../../common/crud/useGet';
-import { usePostRequest } from '../../common/crud/usePostRequest';
-import { usePutRequest } from '../../common/crud/usePutRequest';
-import { useClearCache } from '../../common/useInvalidateCache/useInvalidateCache';
+} from '@ansible/ansible-ui-framework';
+import { PageFormMarkdown } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMarkdown';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { usePutRequest } from '@ansible/common-ui/crud/usePutRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
 import { hubAPI } from '../common/api/formatPath';

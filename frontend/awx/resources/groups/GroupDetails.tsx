@@ -1,9 +1,14 @@
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails, usePageNavigate } from '../../../../framework';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { useGetItem } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../main/AwxRoutes';

@@ -1,18 +1,18 @@
+import { PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { AwxError } from '../../../common/AwxError';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { PageDetail, PageDetails, useGetPageUrl } from '../../../../../framework';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { getResourceURL } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisualizer/wizard/PromptReviewDetails';
-import { ScheduleFormWizard, ScheduleResources } from '../types';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { RulesList } from '../components/RulesList';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
-import { useEffect, useState } from 'react';
-import { getResourceURL } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { LoadingState } from '../../../../../framework/components/LoadingState';
-import { AwxError } from '../../../common/AwxError';
+import { ScheduleFormWizard, ScheduleResources } from '../types';
 
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,

@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
-import { SourceEventStreamMappingModal } from '../../rulebook-activations/components/SourceEventStreamMapping';
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useCallback } from 'react';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 import { EdaSourceEventMapping } from '../../interfaces/EdaSource';
-import { usePageDialog } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
+import { SourceEventStreamMappingModal } from '../../rulebook-activations/components/SourceEventStreamMapping';
 
 export function useSelectEventStreams(
   rulebookId: string,

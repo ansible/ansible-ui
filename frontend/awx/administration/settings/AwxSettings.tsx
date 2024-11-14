@@ -1,4 +1,11 @@
 import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  Scrollable,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import {
   Card,
   CardBody,
   CardHeader,
@@ -11,13 +18,6 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import {
-  LoadingPage,
-  PageHeader,
-  PageLayout,
-  Scrollable,
-  useGetPageUrl,
-} from '../../../../framework';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { AwxError } from '../../common/AwxError';
 import { AwxRoute } from '../../main/AwxRoutes';

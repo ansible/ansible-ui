@@ -1,5 +1,5 @@
-import { requestGet } from '../../common/crud/Data';
-import { poll } from '../../common/poll';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { poll } from '@ansible/common-ui/poll';
 import { AwxItemsResponse } from './AwxItemsResponse';
 
 export async function pollAwxItemsResponseItem<T>(

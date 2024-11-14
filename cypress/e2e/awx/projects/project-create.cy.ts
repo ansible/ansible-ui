@@ -1,6 +1,6 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Projects', () => {

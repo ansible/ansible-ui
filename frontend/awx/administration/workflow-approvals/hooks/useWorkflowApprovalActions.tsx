@@ -1,11 +1,11 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
 import { ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
+import { useApproveWorkflowApprovals } from './useApproveWorkflowApprovals';
 import { useDeleteWorkflowApprovals } from './useDeleteWorkflowApprovals';
 import { useDenyWorkflowApprovals } from './useDenyWorkflowApprovals';
-import { useApproveWorkflowApprovals } from './useApproveWorkflowApprovals';
-import { useMemo } from 'react';
 
 export function useWorkflowApprovalActions(
   onComplete: (workflow_approvals: WorkflowApproval[]) => void

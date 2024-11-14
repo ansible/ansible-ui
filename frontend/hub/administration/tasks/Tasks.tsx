@@ -1,13 +1,13 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { pulpAPI } from '../../common/api/formatPath';
-import { Task } from './Task';
-import { useTasksToolbarActions } from './hooks/useTasksToolbarActions';
-import { useTasksRowActions } from './hooks/useTasksRowActions';
-import { useTasksFilters } from './hooks/useTasksFilters';
-import { useTasksColumns } from './hooks/useTasksColumns';
+import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
+import { Task } from './Task';
+import { useTasksColumns } from './hooks/useTasksColumns';
+import { useTasksFilters } from './hooks/useTasksFilters';
+import { useTasksRowActions } from './hooks/useTasksRowActions';
+import { useTasksToolbarActions } from './hooks/useTasksToolbarActions';
 
 export function Tasks() {
   const { t } = useTranslation();

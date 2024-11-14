@@ -1,6 +1,6 @@
+import { useAbortController } from '@ansible/ansible-ui-framework/hooks/useAbortController';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
-import { useAbortController } from '../../../../../framework/hooks/useAbortController';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';

@@ -1,7 +1,7 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { HostMetric } from '../../../interfaces/HostMetric';
 import { useDeleteHostMetrics } from './useDeleteHostMetrics';
 

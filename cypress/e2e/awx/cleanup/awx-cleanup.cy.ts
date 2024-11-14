@@ -1,12 +1,12 @@
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
-import { getJobsAPIUrl } from '../../../../frontend/awx/views/jobs/jobUtils';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Job } from '@ansible/awx-ui/interfaces/Job';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { WorkflowApproval } from '@ansible/awx-ui/interfaces/WorkflowApproval';
+import { getJobsAPIUrl } from '@ansible/awx-ui/views/jobs/jobUtils';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();

@@ -1,23 +1,23 @@
-import { Progress, Tooltip } from '@patternfly/react-core';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   BytesCell,
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
   usePageNavigate,
-} from '../../../../../framework';
-import { Dotted } from '../../../../../framework/components/Dotted';
-import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
+} from '@ansible/ansible-ui-framework';
+import { Dotted } from '@ansible/ansible-ui-framework/components/Dotted';
+import { Unavailable } from '@ansible/ansible-ui-framework/components/Unavailable';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { Progress, Tooltip } from '@patternfly/react-core';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Instance } from '../../../interfaces/Instance';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 import { InstanceForksSlider } from '../components/InstanceForksSlider';
-import { StatusCell } from '../../../../common/Status';
-import { Unavailable } from '../../../../../framework/components/Unavailable';
 import { computeForks } from './useInstanceActions';
+import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 
 export function useInstancesColumns(
   options?: { disableSort?: boolean; disableLinks?: boolean },

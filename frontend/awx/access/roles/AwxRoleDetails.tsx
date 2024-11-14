@@ -1,17 +1,17 @@
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
-  PageDetails,
-  PageDetail,
-  PageDetailsFromColumns,
   LoadingPage,
-} from '../../../../framework';
-import { useGetItem } from '../../../common/crud/useGet';
-import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
-import { useAwxRoleColumns } from './hooks/useAwxRoleColumns';
-import { AwxRolePermissions } from './components/AwxRolePermissions';
+  PageDetail,
+  PageDetails,
+  PageDetailsFromColumns,
+} from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxRolePermissions } from './components/AwxRolePermissions';
+import { useAwxRoleColumns } from './hooks/useAwxRoleColumns';
 
 export function AwxRoleDetails() {
   const { t } = useTranslation();

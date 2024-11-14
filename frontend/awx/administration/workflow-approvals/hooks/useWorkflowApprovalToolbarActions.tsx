@@ -1,7 +1,7 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
 import { ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { IAwxView } from '../../../common/useAwxView';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useApproveWorkflowApprovals } from './useApproveWorkflowApprovals';

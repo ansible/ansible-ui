@@ -1,4 +1,4 @@
-import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { PlatformAAPUserTokenDetails } from './PlatformAAPUserTokenDetails';
 
 describe('PlatformAAPUserTokenDetails', () => {

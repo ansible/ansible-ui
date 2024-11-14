@@ -1,8 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   MultiSelectDialog,
@@ -14,7 +9,12 @@ import {
   useBulkConfirmation,
   usePageAlertToaster,
   usePageDialog,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { getItemKey, postRequest } from '../../../../frontend/common/crud/Data';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { IPlatformView, usePlatformView } from '../../../hooks/usePlatformView';

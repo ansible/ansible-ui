@@ -1,9 +1,9 @@
+import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
+import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { CardBody, Flex, FlexItem } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { PageSingleSelect } from '../../../../framework/PageInputs/PageSingleSelect';
-import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { DashboardJobPeriod, DashboardJobType, JobsChart } from '../charts/JobsChart';
 

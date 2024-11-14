@@ -1,14 +1,13 @@
+import { compareStrings, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { nameKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, usePageNavigate } from '../../../../../framework';
 import { pulpAPI } from '../../../common/api/formatPath';
-import { hubAPIDelete } from '../../../common/api/hub-api-utils';
+import { hubAPIDelete, parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
+import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useRepositoriesColumns } from './useRepositoriesColumns';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
-import { nameKeyFn } from '../../../../common/utils/nameKeyFn';
-import { HubRoute } from '../../../main/HubRoutes';
-import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useDeleteRepositories(onComplete?: (collections: Repository[]) => void) {
   const { t } = useTranslation();

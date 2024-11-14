@@ -1,12 +1,12 @@
-import { useParams } from 'react-router-dom';
-import { InstancesList } from '../../instances/components/InstancesList';
-import { useIGInstanceToolbarActions } from './hooks/useIGInstanceToolbarActions';
-import { useIGInstanceRowActions } from './hooks/useIGInstanceRowActions';
-import { useInstancesColumns } from '../../instances/hooks/useInstancesColumns';
+import { usePageNavigate } from '@ansible/ansible-ui-framework';
 import { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { Instance } from '../../../interfaces/Instance';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { usePageNavigate } from '../../../../../framework';
+import { InstancesList } from '../../instances/components/InstancesList';
+import { useInstancesColumns } from '../../instances/hooks/useInstancesColumns';
+import { useIGInstanceRowActions } from './hooks/useIGInstanceRowActions';
+import { useIGInstanceToolbarActions } from './hooks/useIGInstanceToolbarActions';
 
 export function InstanceGroupInstances() {
   const pageNavigate = usePageNavigate();

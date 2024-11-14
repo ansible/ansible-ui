@@ -2,8 +2,8 @@ import {
   ErrorOutput,
   FieldErrorDetail,
   GenericErrorDetail,
-} from '../../../framework/PageForm/typesErrorAdapter';
-import { isRequestError } from '../../common/crud/RequestError';
+} from '@ansible/ansible-ui-framework/PageForm/typesErrorAdapter';
+import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 
 export const edaErrorAdapter = (error: unknown): ErrorOutput => {
   const genericErrors: GenericErrorDetail[] = [];

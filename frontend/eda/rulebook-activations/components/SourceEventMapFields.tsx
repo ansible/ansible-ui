@@ -1,13 +1,13 @@
+import { PageFormTextArea } from '@ansible/ansible-ui-framework';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { Button, FormFieldGroup, FormFieldGroupHeader } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { PageFormTextArea } from '../../../../framework';
-import { EdaSource, EdaSourceEventMapping } from '../../interfaces/EdaSource';
-import { EdaRulebook } from '../../interfaces/EdaRulebook';
+import { useTranslation } from 'react-i18next';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import React, { useCallback, useEffect } from 'react';
+import { EdaRulebook } from '../../interfaces/EdaRulebook';
+import { EdaSource, EdaSourceEventMapping } from '../../interfaces/EdaSource';
 
 export function FormSingleSelectEventStream(props: {
   name: string;

@@ -1,6 +1,6 @@
+import { MultiSelectDialog, usePageDialog } from '@ansible/ansible-ui-framework';
 import { t } from 'i18next';
-import { useState, useEffect } from 'react';
-import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
+import { useEffect, useState } from 'react';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';

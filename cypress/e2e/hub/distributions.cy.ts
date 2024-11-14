@@ -1,8 +1,8 @@
-import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
-import { Distribution } from '../../../frontend/hub/collections/UploadCollection';
-import { PulpItemsResponse } from '../../../frontend/hub/common/useHubView';
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
+import { Distribution } from '@ansible/hub-ui/collections/UploadCollection';
+import { PulpItemsResponse } from '@ansible/hub-ui/common/useHubView';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections, Repositories } from './constants';

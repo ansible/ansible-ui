@@ -1,15 +1,15 @@
+import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageActions, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { useGet } from '../../../../common/crud/useGet';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
 import { HubRoute } from '../../../main/HubRoutes';
 import { HubRemote } from './../Remotes';
 import { useRemoteActions } from './../hooks/useRemoteActions';
-import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
 
 function useErrorHandlerAndLoading<T>(
   data: T | undefined,

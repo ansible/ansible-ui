@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
   PageFormSubmitHandler,
@@ -7,16 +6,17 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxRoute } from '../../main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxError } from '../../common/AwxError';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { awxAPI } from '../../common/api/awx-utils';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useGetItem } from '../../../common/crud/useGet';
-import { useParams } from 'react-router-dom';
-import { AwxError } from '../../common/AwxError';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+import { AwxRoute } from '../../main/AwxRoutes';
 type InstanceGroupPayload = Partial<
   Pick<
     InstanceGroup,

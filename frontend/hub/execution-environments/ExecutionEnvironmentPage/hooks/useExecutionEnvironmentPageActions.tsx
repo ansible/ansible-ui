@@ -1,22 +1,22 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ButtonVariant } from '@patternfly/react-core';
-import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { HubRoute } from '../../../main/HubRoutes';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useCanSignEE } from '../../../common/utils/canSign';
+import { HubRoute } from '../../../main/HubRoutes';
 import { ExecutionEnvironment } from '../../ExecutionEnvironment';
+import { useController } from '../../hooks/useController';
 import {
   useDeleteExecutionEnvironments,
-  useSyncExecutionEnvironments,
   useSignExecutionEnvironments,
+  useSyncExecutionEnvironments,
 } from '../../hooks/useExecutionEnvironmentsActions';
-import { useController } from '../../hooks/useController';
-import { useCanSignEE } from '../../../common/utils/canSign';
 
 export function useExecutionEnvironmentPageActions(options: { refresh?: () => undefined }) {
   const { t } = useTranslation();

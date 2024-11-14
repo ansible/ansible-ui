@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { UserDetails, UserDetailsType } from '@ansible/common-ui/access/UserDetails';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../../../../framework';
-import { UserDetails, UserDetailsType } from '../../../../common/access/UserDetails';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Organization } from '../../../interfaces/Organization';

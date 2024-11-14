@@ -1,8 +1,8 @@
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Instance } from '@ansible/awx-ui/interfaces/Instance';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import * as path from 'path';
-import { randomString } from '../../../../../framework/utils/random-string';
-import { Instance } from '../../../../../frontend/awx/interfaces/Instance';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
 
 describe('Instances K8S', () => {
   let isK8S = false;

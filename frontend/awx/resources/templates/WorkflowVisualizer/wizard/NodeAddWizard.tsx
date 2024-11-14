@@ -1,7 +1,7 @@
+import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { NodeModel, NodeShape, useVisualizationController } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
-import { PageWizard, PageWizardStep } from '../../../../../../framework';
-import { RequestError } from '../../../../../common/crud/RequestError';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { SurveyStep } from '../../../../common/SurveyStep';
 import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';

@@ -1,7 +1,7 @@
-import { TemplatesList } from './TemplatesList';
-import * as useOptions from '../../../common/crud/useOptions';
-import { ToolbarFilterType } from '../../../../framework';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { TemplatesList } from './TemplatesList';
 
 describe('TemplatesList', () => {
   describe('ErrorList', () => {

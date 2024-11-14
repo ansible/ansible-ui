@@ -1,11 +1,11 @@
+import { MultiSelectDialog, usePageDialogs } from '@ansible/ansible-ui-framework';
 import { useEffect, useState } from 'react';
-import { MultiSelectDialog, usePageDialogs } from '../../../../../../framework';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxView } from '../../../../common/useAwxView';
 import { Instance } from '../../../../interfaces/Instance';
 import { useInstancesColumns } from '../../../instances/hooks/useInstancesColumns';
 import { useInstancesFilters } from '../../../instances/hooks/useInstancesFilter';
-import { awxAPI } from '../../../../common/api/awx-utils';
-import { useTranslation } from 'react-i18next';
 
 export interface AssociateInstanceModalProps {
   instanceGroupId: string;

@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -7,10 +5,12 @@ import {
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
 export function useEventStreamColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();

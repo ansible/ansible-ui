@@ -1,7 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CheckIcon, ExclamationCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   LoadingPage,
@@ -15,11 +11,15 @@ import {
   PageLayout,
   TextCell,
   usePageNavigate,
-} from '../../framework';
-import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
-import { useAwxConfig } from '../../frontend/awx/common/useAwxConfig';
-import { CredentialType } from '../../frontend/awx/interfaces/CredentialType';
-import { SystemSettings } from '../../frontend/awx/interfaces/SystemSettings';
+} from '@ansible/ansible-ui-framework';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
+import { CredentialType } from '@ansible/awx-ui/interfaces/CredentialType';
+import { SystemSettings } from '@ansible/awx-ui/interfaces/SystemSettings';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CheckIcon, ExclamationCircleIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../main/PlatformRoutes';

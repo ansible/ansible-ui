@@ -1,9 +1,9 @@
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { ReorderItems } from '@ansible/ansible-ui-framework/components/ReorderItems';
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants } from '@patternfly/react-core';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { ReorderItems } from '../../../../../framework/components/ReorderItems';
 import { OrganizationWizardFormValues } from '../PlatformOrganizationForm';
-import { InstanceGroup } from '../../../../../frontend/awx/interfaces/InstanceGroup';
 
 export function OrganizationInstanceGroupsOrderStep() {
   const { wizardData, setWizardData, setStepData } = usePageWizard();

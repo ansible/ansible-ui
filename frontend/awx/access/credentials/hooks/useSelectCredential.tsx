@@ -1,7 +1,7 @@
+import { IToolbarFilter, usePageDialog, useSelectDialog } from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, usePageDialog, useSelectDialog } from '../../../../../framework';
-import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,

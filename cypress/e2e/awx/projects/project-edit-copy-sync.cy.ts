@@ -1,5 +1,5 @@
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Project Edit, Copy, Sync', () => {

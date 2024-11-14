@@ -1,15 +1,15 @@
-import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   CopyCell,
   ITableColumn,
   PageHeader,
   PageTable,
-} from '../../../../../framework';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { Button } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';

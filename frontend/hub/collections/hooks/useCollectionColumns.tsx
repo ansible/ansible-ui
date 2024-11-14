@@ -1,4 +1,12 @@
 import {
+  ColumnCardOption,
+  ColumnTableOption,
+  ITableColumn,
+  PFColorE,
+  TextCell,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import {
   AnsibleTowerIcon,
   BanIcon,
   CheckCircleIcon,
@@ -6,18 +14,10 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ColumnCardOption,
-  ColumnTableOption,
-  ITableColumn,
-  PFColorE,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../framework';
+import { useParams } from 'react-router-dom';
 import { useHubContext } from '../../common/useHubContext';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
-import { useParams } from 'react-router-dom';
 
 export function useCollectionColumns(_options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

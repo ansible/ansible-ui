@@ -1,11 +1,11 @@
+import { LoadingPage, PageDetail, PageDetails, Scrollable } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetail, PageDetails, Scrollable } from '../../../../framework';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { AwxItemsResponse } from '../../../awx/common/AwxItemsResponse';
-import { StatusCell } from '../../../common/Status';
-import { useGet, useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../../interfaces/EdaActivationInstanceLog';

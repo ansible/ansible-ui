@@ -1,5 +1,5 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useCallback } from 'react';
-import { useGetPageUrl } from '../../../../framework';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';
 

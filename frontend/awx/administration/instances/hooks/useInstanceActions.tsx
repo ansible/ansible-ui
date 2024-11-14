@@ -1,27 +1,27 @@
-import { MinusCircleIcon } from '@patternfly/react-icons';
-import pDebounce from 'p-debounce';
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { requestGet, requestPatch } from '../../../../common/crud/Data';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { MinusCircleIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
+import pDebounce from 'p-debounce';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Instance } from '../../../interfaces/Instance';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Settings } from '../../../interfaces/Settings';
-import { useRemoveInstances } from './useRemoveInstances';
-import { useEditInstanceRowAction, useRunHealthCheckRowAction } from './useInstanceRowActions';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { TFunction } from 'i18next';
 import { AwxUser } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useEditInstanceRowAction, useRunHealthCheckRowAction } from './useInstanceRowActions';
+import { useRemoveInstances } from './useRemoveInstances';
 
 export function useInstanceActions(instanceId: string) {
   const { refresh, data: instanceRes } = useGetItem<Instance>(awxAPI`/instances/`, instanceId);

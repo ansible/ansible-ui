@@ -1,12 +1,12 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageFormCredentialSelect } from '@ansible/awx-ui/access/credentials/components/PageFormCredentialSelect';
+import { PageFormSelectExecutionEnvironment } from '@ansible/awx-ui/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
+import { PageFormInstanceGroupSelect } from '@ansible/awx-ui/administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
+import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormCredentialSelect } from '../../../../../frontend/awx/access/credentials/components/PageFormCredentialSelect';
-import { PageFormSelectExecutionEnvironment } from '../../../../../frontend/awx/administration/execution-environments/components/PageFormSelectExecutionEnvironment';
-import { PageFormInstanceGroupSelect } from '../../../../../frontend/awx/administration/instance-groups/components/PageFormInstanceGroupSelect';
-import { useAwxConfig } from '../../../../../frontend/awx/common/useAwxConfig';
-import { Organization as ControllerOrganization } from '../../../../../frontend/awx/interfaces/Organization';
 import { useHasAwxService } from '../../../../main/GatewayServices';
 
 export function OrganizationDetailsStep(props: {

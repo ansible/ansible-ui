@@ -1,4 +1,4 @@
-import { GithubAuthenticator } from '../../../../../platform/interfaces/GithubAuthenticator';
+import { GithubAuthenticator } from '@ansible/platform-ui/interfaces/GithubAuthenticator';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('GitHub Authentication form - create, edit, update and delete', () => {

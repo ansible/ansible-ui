@@ -1,12 +1,12 @@
 //Tests a user's ability to perform certain actions on the Dashboard of the EDA UI.
 //Implementation of Visual Tests makes sense here at some point
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaRuleAudit } from '../../../../frontend/eda/interfaces/EdaRuleAudit';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaRuleAudit } from '@ansible/eda-ui/interfaces/EdaRuleAudit';
+import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

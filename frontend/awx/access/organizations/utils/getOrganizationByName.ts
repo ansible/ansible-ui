@@ -1,4 +1,4 @@
-import { requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';

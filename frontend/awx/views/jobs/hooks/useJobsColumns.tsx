@@ -1,7 +1,3 @@
-import { LabelGroup } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
   ColumnModalOption,
   ColumnTableOption,
@@ -9,10 +5,14 @@ import {
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
-import { ElapsedTimeCell } from '../../../../../framework/PageCells/ElapsedTimeCell';
-import { StatusCell } from '../../../../common/Status';
-import { useOptions } from '../../../../common/crud/useOptions';
+} from '@ansible/ansible-ui-framework';
+import { ElapsedTimeCell } from '@ansible/ansible-ui-framework/PageCells/ElapsedTimeCell';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { LabelGroup } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';

@@ -1,6 +1,6 @@
-import { randomString } from '../../framework/utils/random-string';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { HubTeam } from '../../frontend/hub/interfaces/expanded/HubTeam';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubTeam } from '@ansible/hub-ui/interfaces/expanded/HubTeam';
+import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 
 Cypress.Commands.add('createHubUser', (hubUser?: Partial<HubUser>) => {
   cy.createPlatformUser({

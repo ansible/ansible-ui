@@ -1,7 +1,7 @@
-import { requestGet } from '../../../../common/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { edaAPI } from '../../../common/eda-utils';
 import { EdaItemsResponse } from '../../../common/EdaItemsResponse';
 import { EdaOrganization } from '../../../interfaces/EdaOrganization';
-import { edaAPI } from '../../../common/eda-utils';
 
 export async function getOrganizationByName(organizationName: string) {
   const itemsResponse = await requestGet<EdaItemsResponse<EdaOrganization>>(

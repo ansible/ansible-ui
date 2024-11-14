@@ -1,11 +1,11 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { UnifiedJobList } from '../../../../frontend/awx/interfaces/generated-from-swagger/api';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { InventorySource } from '../../../../frontend/awx/interfaces/InventorySource';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { UnifiedJobList } from '@ansible/awx-ui/interfaces/generated-from-swagger/api';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
+import { Job } from '@ansible/awx-ui/interfaces/Job';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Jobs', () => {

@@ -1,7 +1,3 @@
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActions,
@@ -11,15 +7,19 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
-import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaActiveUser } from '../../common/useEdaActiveUser';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteEdaRoles } from './hooks/useDeleteEdaRoles';
-import { ButtonVariant } from '@patternfly/react-core';
 
 export function EdaRolePage(props: {
   breadcrumbLabelForPreviousPage?: string;

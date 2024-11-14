@@ -1,21 +1,21 @@
-import { useTranslation } from 'react-i18next';
 import {
   PageFormSubmitHandler,
   PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
-} from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormExternalCredentialSelect } from './components/PageFormExternalCredentialSelect';
-import { AwxPageForm } from '../../../common/AwxPageForm';
+} from '@ansible/ansible-ui-framework';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { CredentialType } from '../../../interfaces/CredentialType';
-import { PageFormSingleSelect } from '../../../../../framework/PageForm/Inputs/PageFormSingleSelect';
+import { AwxPageForm } from '../../../common/AwxPageForm';
 import { Credential } from '../../../interfaces/Credential';
+import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialsTestButton } from '../utils/CredentialsTestButton';
+import { PageFormExternalCredentialSelect } from './components/PageFormExternalCredentialSelect';
 
 export interface CredentialPluginsForm {
   source_credential: number;

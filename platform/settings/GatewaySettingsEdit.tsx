@@ -1,6 +1,3 @@
-import { Button } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { useOutletContext } from 'react-router-dom';
 import {
   PageForm,
   PageFormSelect,
@@ -8,9 +5,12 @@ import {
   PageHeader,
   PageLayout,
   usePageNavigate,
-} from '../../framework';
-import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormSection } from '../../framework/PageForm/Utils/PageFormSection';
+} from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router-dom';
 import { requestPut } from '../../frontend/common/crud/Data';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';

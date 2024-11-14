@@ -1,6 +1,6 @@
-import { EdaItemsResponse } from './EdaItemsResponse';
-import { requestGet } from '../../common/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { EdaCredential } from '../interfaces/EdaCredential';
+import { EdaItemsResponse } from './EdaItemsResponse';
 
 export function ResourceInUse<T extends { id: number | string; name: string }>(
   item: T,

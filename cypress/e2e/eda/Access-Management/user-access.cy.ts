@@ -1,18 +1,17 @@
 //Tests a user's ability to perform certain actions on the Resources toolbar in the EDA UI.
-import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { user_team_access_tab_resources } from '../../../support/constants';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { EdaEventStream } from '../../../../frontend/eda/interfaces/EdaEventStream';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaEventStream } from '@ansible/eda-ui/interfaces/EdaEventStream';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
+import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
+import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
+import { SAAS_URL, user_team_access_tab_resources } from '../../../support/constants';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
-import { SAAS_URL } from '../../../support/constants';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

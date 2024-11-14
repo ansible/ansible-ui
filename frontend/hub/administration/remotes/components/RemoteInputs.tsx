@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { useIsValidUrl } from '../../../../common/validation/useIsValidUrl';
-import { useWatch, useFormContext, useForm } from 'react-hook-form';
-import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
-import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormCheckbox, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
+import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import { Alert } from '@patternfly/react-core';
-import { PageFormSecret } from '../../../../../framework/PageForm/Inputs/PageFormSecret';
 import { useEffect, useMemo, useState } from 'react';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { REMOTE_COMMUNITY_COLLECTIONS_URL } from '../constants';
+import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
 
 interface IRemoteInputs {
   isCommunityRemote?: boolean;

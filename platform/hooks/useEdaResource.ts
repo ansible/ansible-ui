@@ -1,7 +1,7 @@
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { EdaItemsResponse } from '@ansible/eda-ui/common/EdaItemsResponse';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { useGet } from '../../frontend/common/crud/useGet';
-import { edaAPI } from '../../frontend/eda/common/eda-utils';
-import { EdaItemsResponse } from '../../frontend/eda/common/EdaItemsResponse';
 import { PlatformResource } from '../interfaces/PlatformResource';
 
 export function useEdaResource<T extends object>(url: string, platformResource?: PlatformResource) {

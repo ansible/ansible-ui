@@ -1,7 +1,7 @@
+import { LoadingPage, PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageHeader, PageLayout } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxSettingsForm, AwxSettingsOptionsAction } from './AwxSettingsForm';

@@ -1,12 +1,12 @@
-import { Modal, ModalVariant } from '@patternfly/react-core';
-import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   PageFormSwitch,
   errorToAlertProps,
   usePageAlertToaster,
   usePageDialog,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { Modal, ModalVariant } from '@patternfly/react-core';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { HubPageForm } from '../../../common/HubPageForm';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';

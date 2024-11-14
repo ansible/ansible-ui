@@ -1,6 +1,6 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../../common/crud/Data';
 import { EdaUser } from '../interfaces/EdaUser';
 import { edaAPI } from './eda-utils';
 

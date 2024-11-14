@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import mockCredentialType from '../../../../../cypress/fixtures/credential_type.json';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetailInner as CredentialTypeDetails } from './CredentialTypeDetails';
 

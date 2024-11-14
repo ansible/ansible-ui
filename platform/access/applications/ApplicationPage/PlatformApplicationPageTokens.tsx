@@ -1,15 +1,15 @@
-import { TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageLayout,
   PageTable,
-} from '../../../../framework';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
+} from '@ansible/ansible-ui-framework';
+import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteTokens } from '../hooks/useDeleteTokens';

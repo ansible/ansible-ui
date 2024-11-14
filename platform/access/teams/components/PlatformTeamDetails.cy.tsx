@@ -1,5 +1,5 @@
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformTeamDetails } from './PlatformTeamDetails';
 

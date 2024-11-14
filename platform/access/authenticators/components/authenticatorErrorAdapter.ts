@@ -1,9 +1,9 @@
-import { isRequestError } from '../../../../frontend/common/crud/RequestError';
 import {
   ErrorOutput,
-  GenericErrorDetail,
   FieldErrorDetail,
-} from '../../../../framework/PageForm/typesErrorAdapter';
+  GenericErrorDetail,
+} from '@ansible/ansible-ui-framework/PageForm/typesErrorAdapter';
+import { isRequestError } from '../../../../frontend/common/crud/RequestError';
 import { PluginConfiguration } from '../../../interfaces/AuthenticatorPlugin';
 
 export const authenticatorErrorAdapter = (error: unknown): ErrorOutput => {

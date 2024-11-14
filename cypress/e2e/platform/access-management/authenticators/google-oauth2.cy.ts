@@ -1,4 +1,4 @@
-import { GoogleOAuth2 } from '../../../../../platform/interfaces/GoogleOAuth2Authenticator';
+import { GoogleOAuth2 } from '@ansible/platform-ui/interfaces/GoogleOAuth2Authenticator';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('Google OAuth2 Authentication form - create, edit, update and delete', () => {

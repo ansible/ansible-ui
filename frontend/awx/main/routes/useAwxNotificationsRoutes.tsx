@@ -1,7 +1,7 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
 import { Notifiers } from '../../administration/notifiers/Notifiers';
 import { AwxRoute } from '../AwxRoutes';
 
@@ -11,8 +11,8 @@ import { NotificationDetails } from '../../administration/notifiers/Notification
 import { NotificationPage } from '../../administration/notifiers/NotificationPage/NotificationPage';
 import { NotificationTeamAccess } from '../../administration/notifiers/NotificationPage/NotificationTeamAccess';
 import { NotificationUserAccess } from '../../administration/notifiers/NotificationPage/NotificationUserAccess';
-import { NotifierAddUsers } from '../../administration/notifiers/components/NotifierAddUsers';
 import { NotifierAddTeams } from '../../administration/notifiers/components/NotifierAddTeams';
+import { NotifierAddUsers } from '../../administration/notifiers/components/NotifierAddUsers';
 
 export function useAwxNotificationsRoutes() {
   const { t } = useTranslation();

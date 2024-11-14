@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
-import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { FormHelperText, HelperTextItem } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { FormHelperText, HelperTextItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 interface GCEFileContents {
   project_id?: string;

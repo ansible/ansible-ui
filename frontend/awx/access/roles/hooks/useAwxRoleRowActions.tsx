@@ -1,17 +1,17 @@
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
-} from '../../../../../framework';
-import { useDeleteAwxRoles } from './useDeleteAwxRoles';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { ButtonVariant } from '@patternfly/react-core';
+import { useDeleteAwxRoles } from './useDeleteAwxRoles';
 
 export function useAwxRoleToolbarActions(onComplete: (roles: AwxRbacRole[]) => void) {
   const { t } = useTranslation();

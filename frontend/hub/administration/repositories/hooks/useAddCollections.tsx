@@ -1,5 +1,5 @@
+import { usePageDialogs } from '@ansible/ansible-ui-framework';
 import { Modal } from '@patternfly/react-core';
-import { usePageDialogs } from '../../../../../framework';
 import { CollectionVersionSearch } from '../../../collections/Collection';
 import { hubAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';
@@ -7,26 +7,26 @@ import { useHubView } from '../../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse as AnsibleRepository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { Repository } from '../Repository';
 
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import { useSelectRepositorySingle } from './useRepositorySelector';
 
+import { ITableColumn, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { singleSelectBrowseAdapter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { ReactNode } from 'react';
-import { ITableColumn, PageTable, useGetPageUrl } from '../../../../../framework';
-import { singleSelectBrowseAdapter } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { collectionId } from '../RepositoryPage/RepositoryCollectionVersion';
 import { useRepoQueryOptions } from './useRepoQueryOptions';
 
 import { AnsibleTowerIcon } from '@patternfly/react-icons';
 
-import { TextCell } from '../../../../../framework';
+import { TextCell } from '@ansible/ansible-ui-framework';
 
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { Button } from '@patternfly/react-core';
-import { useURLSearchParams } from '../../../../../framework/components/useURLSearchParams';
 import { HubRoute } from '../../../main/HubRoutes';
 
-import { postRequest, requestGet } from '../../../../common/crud/Data';
+import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL, waitForTask } from '../../../common/api/hub-api-utils';

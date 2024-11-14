@@ -1,16 +1,16 @@
+import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
-import { PageWizard, PageWizardStep } from '../../../../framework';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
+import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaSelectResourceTypeStep } from '../common/EdaRolesWizardSteps/EdaSelectResourceTypeStep';
 import {
   EdaResourceType,
   EdaSelectResourcesStep,
 } from '../common/EdaRolesWizardSteps/EdaSelectResourcesStep';
 import { EdaSelectRolesStep } from '../common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { useEdaBulkActionDialog } from '../../common/useEdaBulkActionDialog';
-import { postRequest } from '../../../common/crud/Data';
 
 interface WizardFormValues {
   resourceType: string;

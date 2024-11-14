@@ -1,5 +1,3 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
-import { Link, useOutletContext } from 'react-router-dom';
 import {
   DateTimeCell,
   PageDetail,
@@ -7,16 +5,18 @@ import {
   PageDetailsFromColumns,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { useJobsColumns } from './hooks/useJobsColumns';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
+} from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { StatusCell } from '../../../common/Status';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { Job } from '../../interfaces/Job';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useVerbosityString } from '../../common/useVerbosityString';
+import { Job } from '../../interfaces/Job';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { useJobsColumns } from './hooks/useJobsColumns';
 
 export function JobDetails() {
   const { t } = useTranslation();

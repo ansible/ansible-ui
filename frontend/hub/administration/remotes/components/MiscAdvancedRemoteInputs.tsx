@@ -1,5 +1,5 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework';
 import { RemoteFormProps } from '../RemoteForm';
 
 export function MiscAdvancedRemoteInputs() {

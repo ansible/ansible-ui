@@ -1,12 +1,12 @@
-import { useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { usePageNavigate, ITableColumn, DateTimeCell } from '../../../../../../framework';
-import { StatusCell } from '../../../../../common/Status';
+import { DateTimeCell, ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import {
   useInventoryNameColumn,
   useNameColumn,
   useProjectNameColumn,
-} from '../../../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   useJobExecutionEnvColumn,
   useJobLaunchedByColumn,

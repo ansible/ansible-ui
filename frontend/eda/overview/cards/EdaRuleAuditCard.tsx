@@ -1,7 +1,7 @@
+import { PageTable, useDashboardColumns, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageTable, useDashboardColumns, useGetPageUrl } from '../../../../framework';
-import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';

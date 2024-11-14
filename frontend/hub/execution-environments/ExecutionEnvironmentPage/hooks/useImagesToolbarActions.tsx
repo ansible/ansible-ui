@@ -1,12 +1,12 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TrashIcon } from '@patternfly/react-icons';
-import { IPageAction, PageActionType, PageActionSelection } from '../../../../../framework';
+import { ExecutionEnvironment } from '../../ExecutionEnvironment';
+import { useController } from '../../hooks/useController';
 import { ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentImage';
 import { useDeleteImages } from './useDeleteImages';
 import { useExecutionEnvironmentManageTags } from './useExecutionEnvironmentManageTags';
-import { useController } from '../../hooks/useController';
-import { ExecutionEnvironment } from '../../ExecutionEnvironment';
 
 export function useImagesToolbarActions({
   id,

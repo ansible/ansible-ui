@@ -1,8 +1,8 @@
-import { randomString } from '../../../framework/utils/random-string';
-import { RemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
-import { HubItemsResponse } from '../../../frontend/hub/common/useHubView';
-import { ExecutionEnvironment } from '../../../frontend/hub/execution-environments/ExecutionEnvironment';
-import { ExecutionEnvironmentImage } from '../../../frontend/hub/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImage';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { RemoteRegistry } from '@ansible/hub-ui/administration/remote-registries/RemoteRegistry';
+import { HubItemsResponse } from '@ansible/hub-ui/common/useHubView';
+import { ExecutionEnvironment } from '@ansible/hub-ui/execution-environments/ExecutionEnvironment';
+import { ExecutionEnvironmentImage } from '@ansible/hub-ui/execution-environments/ExecutionEnvironmentPage/ExecutionEnvironmentImage';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { ExecutionEnvironments } from './constants';
 

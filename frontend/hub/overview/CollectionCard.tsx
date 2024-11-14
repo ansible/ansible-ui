@@ -1,11 +1,15 @@
+import { LabelColor, PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useCarouselContext } from '@ansible/ansible-ui-framework/PageCarousel/PageCarousel';
+import {
+  PageDetailDiv,
+  PageTableCard,
+  Small,
+} from '@ansible/ansible-ui-framework/PageTable/PageTableCard';
 import { CardBody, Truncate } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { CSSProperties } from 'styled-components';
-import { LabelColor, PageDetail, TextCell, useGetPageUrl } from '../../../framework';
-import { useCarouselContext } from '../../../framework/PageCarousel/PageCarousel';
-import { PageDetailDiv, PageTableCard, Small } from '../../../framework/PageTable/PageTableCard';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { Logo } from '../common/Logo';
 import { HubRoute } from '../main/HubRoutes';

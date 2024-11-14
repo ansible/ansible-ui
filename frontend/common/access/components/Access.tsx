@@ -1,27 +1,27 @@
+import { useAwxBulkConfirmation } from '@ansible/awx-ui/common/useAwxBulkConfirmation';
+import { useEdaBulkConfirmation } from '@ansible/eda-ui/common/useEdaBulkConfirmation';
+import { useEdaView } from '@ansible/eda-ui/common/useEventDrivenView';
+import { useHubBulkConfirmation } from '@ansible/hub-ui/common/useHubBulkConfirmation';
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import {
+  ColumnPriority,
   IPageAction,
   ITableColumn,
+  IToolbarFilter,
   PageActionSelection,
   PageActionType,
   PageTable,
-  IToolbarFilter,
   ToolbarFilterType,
   useGetPageUrl,
-  ColumnPriority,
 } from '../../../../framework';
-import { useCallback, useMemo } from 'react';
-import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { idKeyFn } from '../../../common/utils/nameKeyFn';
-import { requestDelete } from '../../../common/crud/Data';
+import { requestDelete } from '../../crud/Data';
+import { idKeyFn } from '../../utils/nameKeyFn';
+import { useMapContentTypeToDisplayName } from '../hooks/useMapContentTypeToDisplayName';
 import { Assignment } from '../interfaces/Assignment';
-import { useMapContentTypeToDisplayName } from '../../../common/access/hooks/useMapContentTypeToDisplayName';
-import { useEdaView } from '../../../eda/common/useEventDrivenView';
-import { useEdaBulkConfirmation } from '../../../eda/common/useEdaBulkConfirmation';
-import { useAwxBulkConfirmation } from '../../../awx/common/useAwxBulkConfirmation';
-import { useHubBulkConfirmation } from '../../../hub/common/useHubBulkConfirmation';
-import { useParams } from 'react-router-dom';
 
 type QueryParams = {
   [key: string]: string;

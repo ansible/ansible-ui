@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -8,21 +6,23 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
-import { HubUserGroup } from '../../interfaces/expanded/HubUser';
-import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
-import { hubAPI } from '../../common/api/formatPath';
-import { HubItemsResponse } from '../../common/useHubView';
-import { HubNamespace } from '../HubNamespace';
-import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
-import { HubError } from '../../common/HubError';
-import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
-import { HubRoute } from '../../main/HubRoutes';
-import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
+} from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
+import { HubSelectTeamsStep } from '../../access/common/HubRoleWizardSteps/HubSelectTeamsStep';
+import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
+import { hubAPI } from '../../common/api/formatPath';
+import { HubError } from '../../common/HubError';
+import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
+import { HubUserGroup } from '../../interfaces/expanded/HubUser';
+import { HubRoute } from '../../main/HubRoutes';
+import { HubNamespace } from '../HubNamespace';
 
 interface WizardFormValues {
   teams: HubUserGroup[]; // Assuming groups will map to team

@@ -1,13 +1,13 @@
-import { FieldPath, FieldValues } from 'react-hook-form';
-import { EdaSourceEventMapping } from '../interfaces/EdaSource';
-import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
+import { useFrameworkTranslations } from '@ansible/ansible-ui-framework';
+import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { Button, Chip, ChipGroup, InputGroup, TextInput, Tooltip } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
-import { useFrameworkTranslations } from '../../../framework';
-import { useID } from '../../../framework/hooks/useID';
+import { FieldPath, FieldValues } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useSelectEventStreams } from '../event-streams/hooks/useSelectEventStreams';
-import { useTranslation } from 'react-i18next';
+import { EdaSourceEventMapping } from '../interfaces/EdaSource';
 
 interface ChipHolderProps {
   readonly $isDisabled: boolean;

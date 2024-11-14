@@ -1,17 +1,17 @@
-import { Button, CodeBlock, CodeBlockCode, Label, Title } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
-import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { Link, useOutletContext } from 'react-router-dom';
 import {
   CopyCell,
   LoadingPage,
   PageDetail,
   PageDetails,
   useGetPageUrl,
-} from '../../../../framework';
-import { requestGet } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Button, CodeBlock, CodeBlockCode, Label, Title } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
+import React, { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useOutletContext } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { useRepositoryBasePath } from '../../common/api/hub-api-utils';

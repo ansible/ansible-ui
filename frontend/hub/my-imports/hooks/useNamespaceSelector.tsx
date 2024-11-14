@@ -1,6 +1,11 @@
+import {
+  ITableColumn,
+  IToolbarFilter,
+  TextCell,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, IToolbarFilter, TextCell, ToolbarFilterType } from '../../../../framework';
 import {
   AsyncSelectFilterBuilderProps,
   useAsyncSingleSelectFilterBuilder,

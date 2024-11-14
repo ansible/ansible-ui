@@ -1,11 +1,11 @@
+import { PageFormCheckbox } from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormCheckbox } from '../../../../../framework';
-import { PageFormSecret } from '../../../../../framework/PageForm/Inputs/PageFormSecret';
-import { PageFormFileUpload } from '../../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { useFormContext } from 'react-hook-form';
-import { useState } from 'react';
 
 export function CertificatesAdvancedRemoteInputs() {
   const { t } = useTranslation();

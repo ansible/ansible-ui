@@ -1,7 +1,7 @@
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
 import { ExecutionEnvironmentDetailInner as ExecutionEnvironmentDetails } from './ExecutionEnvironmentDetails';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { formatDateString } from '../../../../../framework/utils/dateTimeHelpers';
 
 describe('ExecutionEnvironmentDetails', () => {
   it('Component renders and displays Execution Environment Details', () => {

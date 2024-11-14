@@ -1,20 +1,20 @@
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { useDeleteNotifiers } from './useDeleteNotifiers';
-import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { cannotDeleteResources } from '@ansible/common-ui/utils/RBAChelpers';
 import { ButtonVariant } from '@patternfly/react-core';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useDeleteNotifiers } from './useDeleteNotifiers';
 
 export function useNotifiersToolbarActions(
   onComplete: (notification: NotificationTemplate[]) => void

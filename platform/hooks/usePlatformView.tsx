@@ -1,4 +1,3 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ISelected,
   ITableColumn,
@@ -6,11 +5,12 @@ import {
   IView,
   useSelected,
   useView,
-} from '../../framework';
-import { getItemKey, swrOptions, useFetcher } from '../../frontend/common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
+import { getItemKey, swrOptions, useFetcher } from '../../frontend/common/crud/Data';
 import { RequestError } from '../../frontend/common/crud/RequestError';
+import { PlatformItemsResponse } from '../interfaces/PlatformItemsResponse';
 
 export type IPlatformView<T extends { id: number }> = IView &
   ISelected<T> & {

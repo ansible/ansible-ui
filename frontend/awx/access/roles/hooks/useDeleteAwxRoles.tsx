@@ -1,13 +1,13 @@
+import { ITableColumn, TextCell, compareStrings } from '@ansible/ansible-ui-framework';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, compareStrings } from '../../../../../framework';
-import { requestDelete } from '../../../../common/crud/Data';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { useAwxRoleColumns } from './useAwxRoleColumns';
-import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { idKeyFn } from '../../../../common/utils/nameKeyFn';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { useAwxRoleColumns } from './useAwxRoleColumns';
 
 export function useDeleteAwxRoles(onComplete: (roles: AwxRbacRole[]) => void) {
   const { t } = useTranslation();

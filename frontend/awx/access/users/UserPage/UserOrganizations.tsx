@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Button, ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
-} from '../../../../../framework';
-import { DetailInfo } from '../../../../../framework/components/DetailInfo';
-import { useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { DetailInfo } from '@ansible/ansible-ui-framework/components/DetailInfo';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Organization } from '../../../interfaces/Organization';
@@ -22,7 +23,6 @@ import {
 } from '../../organizations/Organizations';
 import { useRemoveOrganizationsFromUsers } from '../../organizations/hooks/useRemoveOrganizationsFromUsers';
 import { useSelectOrganizationsAddUsers } from '../../organizations/hooks/useSelectOrganizationsAddUsers';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
 
 export function UserOrganizations() {
   const params = useParams<{ id: string }>();

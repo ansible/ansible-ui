@@ -1,9 +1,9 @@
-import { useFormContext } from 'react-hook-form';
-import { PageFormTextArea } from '../../../../framework';
-import { useTranslation } from 'react-i18next';
+import { PageFormTextArea } from '@ansible/ansible-ui-framework';
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
-import { PageFormTextInput } from '../../../../framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
 
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { NotificationTemplateEdit } from './NotifierForm';

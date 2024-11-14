@@ -1,16 +1,16 @@
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ColumnPriority, LoadingPage, ToolbarFilterType } from '../../../../framework';
+import { useOptions } from '../../crud/useOptions';
+import { useGetLinkToResourcePage } from '../hooks/useGetLinkToResourcePage';
+import { useMapContentTypeToDisplayName } from '../hooks/useMapContentTypeToDisplayName';
 import { TeamAssignment } from '../interfaces/TeamAssignment';
 import { UserAssignment } from '../interfaces/UserAssignment';
-import { useMapContentTypeToDisplayName } from '../../../common/access/hooks/useMapContentTypeToDisplayName';
-import { ColumnPriority, LoadingPage, ToolbarFilterType } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
-import { useMemo } from 'react';
-import { edaAPI } from '../../../eda/common/eda-utils';
-import { awxAPI } from '../../../awx/common/api/awx-utils';
 import { Access } from './Access';
-import { useGetLinkToResourcePage } from '../hooks/useGetLinkToResourcePage';
-import { PageSelectOption } from '../../../../framework/PageInputs/PageSelectOption';
-import { hubAPI } from '../../../hub/common/api/formatPath';
 
 interface ContentTypeOption {
   value: string;

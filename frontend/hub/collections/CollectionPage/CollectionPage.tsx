@@ -1,9 +1,3 @@
-import { Button } from '@patternfly/react-core';
-import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { DateTime } from 'luxon';
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams, useSearchParams } from 'react-router-dom';
 import {
   IPageAction,
   LoadingPage,
@@ -15,17 +9,23 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
 import {
   PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
-} from '../../../../framework/PageInputs/PageAsyncSelectOptions';
-import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
-import { PageSingleSelectContext } from '../../../../framework/PageInputs/PageSingleSelect';
-import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
-import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
-import { requestGet } from '../../../common/crud/Data';
-import { useGet, useGetRequest } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { PageAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect';
+import { PageSingleSelectContext } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
+import { singleSelectBrowseAdapter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
+import { Button } from '@patternfly/react-core';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { DateTime } from 'luxon';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { useHubContext } from '../../common/useHubContext';

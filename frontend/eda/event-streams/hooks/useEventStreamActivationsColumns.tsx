@@ -1,17 +1,17 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnTableOption,
   ITableColumn,
   PFColorE,
   TextCell,
   useGetPageUrl,
-} from '../../../../framework';
-import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
-import { EdaRoute } from '../../main/EdaRoutes';
-import { StatusEnum } from '../../interfaces/generated/eda-api';
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { StatusCell } from '../../../common/Status';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { StatusEnum } from '../../interfaces/generated/eda-api';
+import { EdaRoute } from '../../main/EdaRoutes';
 
 export function useEventStreamActivationsColumns() {
   const { t } = useTranslation();

@@ -1,6 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormSubmitHandler,
   PageFormSwitch,
@@ -9,28 +6,31 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { requestGet, swrOptions } from '../../common/crud/Data';
-import { useGet, useGetItem } from '../../common/crud/useGet';
-import { usePatchRequest } from '../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Alert } from '@patternfly/react-core';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
 import { EdaPageForm } from '../common/EdaPageForm';
 import { edaAPI } from '../common/eda-utils';
+import { EdaCredentialType } from '../interfaces/EdaCredentialType';
+import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
 import { EdaOrganization } from '../interfaces/EdaOrganization';
 import { EdaResult } from '../interfaces/EdaResult';
-import { EdaEventStream, EdaEventStreamCreate } from '../interfaces/EdaEventStream';
-import { EdaRoute } from '../main/EdaRoutes';
-import { PageFormSelectEventStreamType } from './components/PageFormEventStreamTypeSelect';
-import { PageFormSelectEventStreamCredential } from './components/PageFormEventStreamCredentialSelect';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { EdaCredentialType } from '../interfaces/EdaCredentialType';
-import { useEffect } from 'react';
-import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
-import { useOptions } from '../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
-import { Alert } from '@patternfly/react-core';
+import { EdaRoute } from '../main/EdaRoutes';
 import { EventStreamDetails } from './EventStreamPage/EventStreamDetails';
+import { PageFormSelectEventStreamCredential } from './components/PageFormEventStreamCredentialSelect';
+import { PageFormSelectEventStreamType } from './components/PageFormEventStreamTypeSelect';
 
 // eslint-disable-next-line react/prop-types
 function EventStreamInputs() {

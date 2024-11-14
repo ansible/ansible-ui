@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { useGatewayService } from '../../../main/GatewayServices';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function PlatformOrganizationUsers() {
   const { t } = useTranslation();

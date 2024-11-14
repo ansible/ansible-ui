@@ -1,17 +1,17 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { IHubView } from '../../../common/useHubView';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
-import { IHubView } from '../../../common/useHubView';
 
 export function useRepositoryToolbarActions(view: IHubView<Repository>) {
   const { t } = useTranslation();

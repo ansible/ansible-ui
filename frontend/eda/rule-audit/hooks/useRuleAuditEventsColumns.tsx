@@ -1,7 +1,7 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
 import { useEventPayloadDialog } from '../EventPayloadDialog';
 

@@ -1,8 +1,3 @@
-import { useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import { ButtonVariant, Switch } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon, CubesIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   PageActionSelection,
@@ -10,23 +5,28 @@ import {
   PageTable,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { ButtonVariant, Switch } from '@patternfly/react-core';
+import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { requestPatch } from '../../../../common/crud/Data';
 
-import type { Spec } from '../../../interfaces/Survey';
 import type { JobTemplate } from '../../../interfaces/JobTemplate';
+import type { Spec } from '../../../interfaces/Survey';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
-import { useDeleteSurveyDialog } from '../hooks/useDeleteSurveyDialog';
-import { useSurveyView } from '../hooks/useSurveyView';
-import { useSurveyColumns } from '../hooks/useSurveyColumns';
-import { useSurveyToolbarActions } from '../hooks/useSurveyToolbarActions';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import styled from 'styled-components';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../../framework/components/ButtonLink';
+import { useDeleteSurveyDialog } from '../hooks/useDeleteSurveyDialog';
+import { useSurveyColumns } from '../hooks/useSurveyColumns';
+import { useSurveyToolbarActions } from '../hooks/useSurveyToolbarActions';
+import { useSurveyView } from '../hooks/useSurveyView';
 
 const SurveySwitch = styled(Switch)`
   margin: 0 16px;

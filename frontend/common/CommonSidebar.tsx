@@ -1,3 +1,4 @@
+import { usePageNavSideBar } from '@ansible/ansible-ui-framework/PageNavigation/PageNavSidebar';
 import {
   Nav,
   NavItemSeparator,
@@ -6,7 +7,6 @@ import {
   PageSidebarBody,
 } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { usePageNavSideBar } from '../../framework/PageNavigation/PageNavSidebar';
 
 export function CommonSidebar(props: { children?: ReactNode }) {
   const navBar = usePageNavSideBar();

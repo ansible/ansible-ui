@@ -6,7 +6,7 @@
  * process.env variable
  */
 
-import { apiTag } from '../../frontend/hub/common/api/formatPath';
+import { apiTag } from '@ansible/hub-ui/common/api/formatPath';
 
 export function awxAPI(strings: TemplateStringsArray, ...values: string[]) {
   const base = (Cypress.env('AWX_API_PREFIX') as string) || '/api/v2';

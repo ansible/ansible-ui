@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { usePageDialogs } from '../../../../../framework';
+import { usePageDialogs } from '@ansible/ansible-ui-framework';
+import { useEffect, useState } from 'react';
 import {
-  ManagementJobsRetainDataModalProps,
   ManagementJobsRetainDataModal,
+  ManagementJobsRetainDataModalProps,
 } from '../components/ManagementJobsRetainDataModal';
 
 export function useManagementJobPrompt() {

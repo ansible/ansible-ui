@@ -1,16 +1,16 @@
-import { useMemo, useState } from 'react';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { Badge, Divider, ExpandableSection, Title } from '@patternfly/react-core';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import {
   ITableColumn,
-  PageDetails,
   PageDetail,
+  PageDetails,
   PageTable,
   TextCell,
   useInMemoryView,
 } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { useMapContentTypeToDisplayName } from '../../hooks/useMapContentTypeToDisplayName';
 
 type ResourceTypeWithID = {

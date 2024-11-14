@@ -1,8 +1,8 @@
+import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster } from '../../../../../framework';
-import { requestGet } from '../../../../common/crud/Data';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 import { awxAPI } from '../../../common/api/awx-utils';

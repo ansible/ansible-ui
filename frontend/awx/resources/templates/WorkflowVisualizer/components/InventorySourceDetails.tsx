@@ -1,10 +1,10 @@
+import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, TextCell, useGetPageUrl } from '../../../../../../framework';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { useOptions } from '../../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
-import { InventorySource } from '../../../../interfaces/InventorySource';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
+import { InventorySource } from '../../../../interfaces/InventorySource';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 
 export function InventorySourceDetails({ source }: { source: InventorySource }) {

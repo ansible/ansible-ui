@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next';
 import {
   IPageAlertToaster,
   PageFormSubmitHandler,
   usePageAlertToaster,
   usePageDialogs,
-} from '../../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import { AlertProps, Modal, ModalVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
-import { CredentialType } from '../../../../interfaces/CredentialType';
-import { CredentialPluginsForm, CredentialPlugins } from '../CredentialPlugins';
-import { CredentialInputSource } from '../../../../interfaces/CredentialInputSource';
-import { postRequest } from '../../../../../common/crud/Data';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import { CredentialInputSource } from '../../../../interfaces/CredentialInputSource';
+import { CredentialType } from '../../../../interfaces/CredentialType';
+import { CredentialPlugins, CredentialPluginsForm } from '../CredentialPlugins';
 
 export interface CredentialPluginsInputSource
   extends Omit<CredentialInputSource, 'target_credential' | 'summary_fields'> {}

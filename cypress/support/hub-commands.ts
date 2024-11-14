@@ -1,24 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
-import { randomLowercaseString, randomString } from '../../framework/utils/random-string';
-import { Role } from '../../frontend/hub/access/roles/Role';
-import { RemoteRegistry } from '../../frontend/hub/administration/remote-registries/RemoteRegistry';
-import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
-import { Repository } from '../../frontend/hub/administration/repositories/Repository';
-import { Task } from '../../frontend/hub/administration/tasks/Task';
-import { CollectionVersionSearch } from '../../frontend/hub/collections/Collection';
-import { parsePulpIDFromURL } from '../../frontend/hub/common/api/hub-api-utils';
-import { HubItemsResponse, PulpItemsResponse } from '../../frontend/hub/common/useHubView';
-import { ExecutionEnvironment as HubExecutionEnvironment } from '../../frontend/hub/execution-environments/ExecutionEnvironment';
-import { PayloadDataType as HubExecutionEnvironmentPayload } from '../../frontend/hub/execution-environments/ExecutionEnvironmentForm';
-import { HubDistribution } from '../../frontend/hub/interfaces/expanded/HubDistribution';
-import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
+import {
+  randomLowercaseString,
+  randomString,
+} from '@ansible/ansible-ui-framework/utils/random-string';
+import { Role } from '@ansible/hub-ui/access/roles/Role';
+import { RemoteRegistry } from '@ansible/hub-ui/administration/remote-registries/RemoteRegistry';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
+import { Task } from '@ansible/hub-ui/administration/tasks/Task';
+import { CollectionVersionSearch } from '@ansible/hub-ui/collections/Collection';
+import { parsePulpIDFromURL } from '@ansible/hub-ui/common/api/hub-api-utils';
+import { HubItemsResponse, PulpItemsResponse } from '@ansible/hub-ui/common/useHubView';
+import { ExecutionEnvironment as HubExecutionEnvironment } from '@ansible/hub-ui/execution-environments/ExecutionEnvironment';
+import { PayloadDataType as HubExecutionEnvironmentPayload } from '@ansible/hub-ui/execution-environments/ExecutionEnvironmentForm';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import { HubDistribution } from '@ansible/hub-ui/interfaces/expanded/HubDistribution';
+import { HubRbacRole } from '@ansible/hub-ui/interfaces/expanded/HubRbacRole';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
+import { SetRequired } from 'type-fest';
 import { ExecutionEnvironments } from '../e2e/hub/constants';
 import { galaxykitPassword, galaxykitUsername } from './e2e';
 import { hubAPI, pulpAPI } from './formatApiPathForHub';
 import { escapeForShellCommand, randomE2Ename } from './utils';
-import { SetRequired } from 'type-fest';
-import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
-import { HubRbacRole } from '../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 

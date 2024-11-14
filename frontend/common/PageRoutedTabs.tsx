@@ -1,9 +1,9 @@
+import { usePageBreadcrumbs } from '@ansible/ansible-ui-framework/PageTabs/PageBreadcrumbs';
 import { Tab, TabProps, TabTitleText, Tabs } from '@patternfly/react-core';
 import { CaretLeftIcon } from '@patternfly/react-icons';
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { PageLayout, useGetPageUrl, usePageNavigate } from '../../framework';
-import { usePageBreadcrumbs } from '../../framework/PageTabs/PageBreadcrumbs';
 import { getPersistentFilters } from './PersistentFilters';
 
 export function PageRoutedTabs(props: {

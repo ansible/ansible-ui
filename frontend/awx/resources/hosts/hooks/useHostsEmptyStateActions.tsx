@@ -1,6 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { useCallback, useMemo } from 'react';
 import {
   IPageAction,
   PageActionSelection,
@@ -8,17 +5,20 @@ import {
   usePageAlertToaster,
   usePageDialog,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useParams } from 'react-router-dom';
-import { HostSelectDialog } from './useHostSelectDialog';
-import { IAwxView } from '../../../common/useAwxView';
-import { postRequest } from '../../../../common/crud/Data';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { IAwxView } from '../../../common/useAwxView';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { HostSelectDialog } from './useHostSelectDialog';
 
 export function useHostsEmptyStateActions(view: IAwxView<AwxHost>) {
   const [_, setDialog] = usePageDialog();

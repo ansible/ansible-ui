@@ -1,15 +1,15 @@
-import { ClipboardCopyButton, LabelGroup, Stack, StackItem } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   BytesCell,
   LoadingPage,
   PageHeader,
   PageLayout,
   useGetPageUrl,
-} from '../../../../framework';
-import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { ClipboardCopyButton, LabelGroup, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubRoute } from '../../main/HubRoutes';

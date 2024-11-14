@@ -1,17 +1,17 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../../../framework';
+import { HostJobs } from '../../resources/hosts/HostPage/HostJobs';
 import { HostPage } from '../../resources/hosts/HostPage/HostPage';
 import { Hosts } from '../../resources/hosts/Hosts';
-import { AwxRoute } from '../AwxRoutes';
-import { HostJobs } from '../../resources/hosts/HostPage/HostJobs';
+import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
+import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
 import {
   CreateHost,
   EditHost,
 } from '../../resources/inventories/inventoryHostsPage/InventoryHostForm';
-import { InventoryHostDetails } from '../../resources/inventories/inventoryHostsPage/InventoryHostDetails';
 import { InventoryHostGroups } from '../../resources/inventories/inventoryHostsPage/InventoryHostGroups';
-import { InventoryHostFacts } from '../../resources/inventories/inventoryHostsPage/InventoryHostFacts';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxHostRoutes() {
   const { t } = useTranslation();

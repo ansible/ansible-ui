@@ -1,10 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
-import { ToolbarFilterType } from '../../../../framework';
-import * as useOptions from '../../../common/crud/useOptions';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Schedule } from '../../interfaces/Schedule';
 import { Schedules } from './Schedules';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('schedules .cy.ts', () => {
   describe('Non-empty list', () => {

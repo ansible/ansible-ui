@@ -1,15 +1,15 @@
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { InventorySource } from '../../../interfaces/InventorySource';
+} from '@ansible/ansible-ui-framework';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IAwxView } from '../../../common/useAwxView';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteSources } from './useDeleteSources';
 
 export function useSourcesActions(view: IAwxView<InventorySource>) {

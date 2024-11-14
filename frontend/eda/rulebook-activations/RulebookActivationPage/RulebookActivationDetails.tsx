@@ -1,4 +1,18 @@
 import {
+  CopyCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  Scrollable,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { StandardPopover } from '@ansible/ansible-ui-framework/components/StandardPopover';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import {
   Alert,
   DescriptionListGroup,
   DescriptionListTerm,
@@ -6,30 +20,16 @@ import {
   LabelGroup,
   Tooltip,
 } from '@patternfly/react-core';
+import { SelectVariant } from '@patternfly/react-core/deprecated';
+import jsyaml from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import {
-  CopyCell,
-  LoadingPage,
-  PageDetail,
-  PageDetails,
-  Scrollable,
-  useGetPageUrl,
-} from '../../../../framework';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { StatusCell } from '../../../common/Status';
-import { useGetItem } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { EdaSourceEventMapping } from '../../interfaces/EdaSource';
 import { LogLevelEnum, RestartPolicyEnum, StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
-import { SelectVariant } from '@patternfly/react-core/deprecated';
-import { StandardPopover } from '../../../../framework/components/StandardPopover';
-import jsyaml from 'js-yaml';
-import { EdaSourceEventMapping } from '../../interfaces/EdaSource';
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();

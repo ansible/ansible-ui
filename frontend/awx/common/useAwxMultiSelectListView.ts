@@ -1,7 +1,7 @@
+import { ITableColumn, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { IToolbarFilter, ITableColumn } from '../../../framework';
-import { usePageWizard } from '../../../framework/PageWizard/PageWizardProvider';
 import { QueryParams, useAwxView } from './useAwxView';
 
 /**

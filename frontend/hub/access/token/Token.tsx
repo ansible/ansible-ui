@@ -1,8 +1,8 @@
+import { CopyCell, PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CopyCell, PageHeader, PageLayout } from '../../../../framework';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { hubAPI } from '../../common/api/formatPath';
 
 export function Token() {

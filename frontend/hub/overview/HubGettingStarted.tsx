@@ -1,14 +1,14 @@
 /* eslint-disable i18next/no-literal-string */
-import { Text } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   PageDashboardGettingStarted,
   PageDashboardGettingStartedStep,
   useGetPageUrl,
-} from '../../../framework';
-import { HubRoute } from '../main/HubRoutes';
+} from '@ansible/ansible-ui-framework';
+import { Text } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '../common/ExternalLink';
+import { HubRoute } from '../main/HubRoutes';
 
 export function HubGettingStartedCard(props: {
   hasNamespace: boolean;

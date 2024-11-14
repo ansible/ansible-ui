@@ -1,10 +1,10 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 

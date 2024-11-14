@@ -1,9 +1,9 @@
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { Page } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LoadingState } from '../../framework/components/LoadingState';
-import { AwxError } from '../../frontend/awx/common/AwxError';
-import { useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
 import { useHasAwxService } from './GatewayServices';
 

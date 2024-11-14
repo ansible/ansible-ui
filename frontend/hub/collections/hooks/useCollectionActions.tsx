@@ -1,14 +1,15 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { BanIcon, CopyIcon, TrashIcon, UploadIcon, KeyIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { BanIcon, CopyIcon, KeyIcon, TrashIcon, UploadIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHubContext } from '../../common/useHubContext';
+import { useCanSignNamespace } from '../../common/utils/canSign';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCopyToRepository } from './useCopyToRepository';
@@ -17,7 +18,6 @@ import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRe
 import { useDeprecateOrUndeprecateCollections } from './useDeprecateOrUndeprecateCollections';
 import { useSignCollection } from './useSignCollection';
 import { useUploadSignature } from './useUploadSignature';
-import { useCanSignNamespace } from '../../common/utils/canSign';
 
 export function useCollectionActions(
   callback: (collections: CollectionVersionSearch[]) => void,

@@ -1,5 +1,5 @@
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../../../framework';
 import { ReportCard } from './ReportCard';
 
 export function ReportsList() {

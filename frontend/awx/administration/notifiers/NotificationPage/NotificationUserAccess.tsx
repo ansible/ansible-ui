@@ -1,6 +1,6 @@
-import { AwxRoute } from '../../../main/AwxRoutes';
+import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
 import { useParams } from 'react-router-dom';
-import { UserAccess } from '../../../../common/access/components/UserAccess';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function NotificationUserAccess() {
   const params = useParams<{ id: string }>();

@@ -1,10 +1,10 @@
+import { PageFormGrid, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useTranslation } from 'react-i18next';
-import { PageFormGrid, PageFormTextInput } from '../../../../../../framework';
-import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import type { TemplateLaunch } from '../TemplateLaunchWizard';
-import { ConditionalField } from './ConditionalField';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { RelaunchConfig } from '../RelaunchTemplateWithPasswords';
+import type { TemplateLaunch } from '../TemplateLaunchWizard';
+import { ConditionalField } from './ConditionalField';
 
 export function CredentialPasswordsStep<T extends LaunchConfiguration | RelaunchConfig>(props: {
   config: T;

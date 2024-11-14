@@ -1,17 +1,17 @@
+import { IToolbarFilter, usePageDialog } from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, usePageDialog } from '../../../../../framework';
-import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxView } from '../../../common/useAwxView';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { useTemplateColumns } from './useTemplateColumns';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
+import { useAwxView } from '../../../common/useAwxView';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { useTemplateColumns } from './useTemplateColumns';
 
 function SelectJobTemplate(props: { title: string; onSelect: (template: JobTemplate) => void }) {
   const nameToolbarFilter = useNameToolbarFilter();

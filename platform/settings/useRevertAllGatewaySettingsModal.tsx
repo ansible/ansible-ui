@@ -1,7 +1,7 @@
+import { usePageAlertToaster, usePageDialogs } from '@ansible/ansible-ui-framework';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageAlertToaster, usePageDialogs } from '../../framework';
 import { useDeleteRequest } from '../../frontend/common/crud/useDeleteRequest';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 

@@ -1,9 +1,9 @@
+import { ITableColumn, LoadingPage, TextCell } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { ITableColumn, LoadingPage, TextCell } from '../../../../framework';
-import { PageMultiSelectList } from '../../../../framework/PageTable/PageMultiSelectList';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

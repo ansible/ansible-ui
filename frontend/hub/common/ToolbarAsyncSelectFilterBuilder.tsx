@@ -1,8 +1,13 @@
+import {
+  ISelected,
+  ITableColumn,
+  IToolbarFilter,
+  usePageDialog,
+} from '@ansible/ansible-ui-framework';
+import { MultiSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/MultiSelectDialog';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
+import { IView, ViewExtendedOptions } from '@ansible/ansible-ui-framework/useView';
 import { useCallback } from 'react';
-import { ISelected, ITableColumn, IToolbarFilter, usePageDialog } from '../../../framework';
-import { MultiSelectDialog } from '../../../framework/PageDialogs/MultiSelectDialog';
-import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
-import { IView, ViewExtendedOptions } from '../../../framework/useView';
 import { MultiDialogs } from '../administration/repositories/hooks/useAddCollections';
 
 type BaseView<T extends object> = IView &

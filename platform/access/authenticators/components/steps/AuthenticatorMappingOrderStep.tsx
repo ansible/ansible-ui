@@ -1,7 +1,7 @@
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { ReorderItems } from '@ansible/ansible-ui-framework/components/ReorderItems';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextContent, Text, TextVariants } from '@patternfly/react-core';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { ReorderItems } from '../../../../../framework/components/ReorderItems';
 import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 
 export function AuthenticatorMappingOrderStep() {

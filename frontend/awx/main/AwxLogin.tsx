@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
+import type { AuthOption } from '@ansible/common-ui/SocialAuthLogin';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { Page } from '@patternfly/react-core';
+import { ReactNode } from 'react';
 import useSWR, { mutate } from 'swr';
-import { LoadingState } from '../../../framework/components/LoadingState';
-import { AnsibleLogin } from '../../common/AnsibleLogin/AnsibleLogin';
-import type { AuthOption } from '../../common/SocialAuthLogin';
-import { requestGet } from '../../common/crud/Data';
 import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';

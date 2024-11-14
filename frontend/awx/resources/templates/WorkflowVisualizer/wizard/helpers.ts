@@ -1,10 +1,10 @@
+import { jsonToYaml, yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import type { AllResources, UnifiedJobType } from '../types';
-import { RESOURCE_TYPE } from '../constants';
 import { Survey } from '../../../../interfaces/Survey';
-import { jsonToYaml, yamlToJson } from '../../../../../../framework/utils/codeEditorUtils';
-import { awxAPI } from '../../../../common/api/awx-utils';
+import { RESOURCE_TYPE } from '../constants';
+import type { AllResources, UnifiedJobType } from '../types';
 
 export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {

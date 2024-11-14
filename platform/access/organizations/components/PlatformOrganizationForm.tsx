@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
 import {
   PageHeader,
   PageLayout,
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
-} from '../../../../framework';
-import { Credential as ControllerCredential } from '../../../../frontend/awx/interfaces/Credential';
-import { InstanceGroup as ControllerInstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
-import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
+} from '@ansible/ansible-ui-framework';
+import { Credential as ControllerCredential } from '@ansible/awx-ui/interfaces/Credential';
+import { InstanceGroup as ControllerInstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
+import { useTranslation } from 'react-i18next';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

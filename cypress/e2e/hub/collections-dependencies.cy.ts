@@ -1,4 +1,4 @@
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';

@@ -1,10 +1,10 @@
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { NotificationTemplate } from '../../../../frontend/awx/interfaces/NotificationTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { Schedule } from '../../../../frontend/awx/interfaces/Schedule';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Job } from '@ansible/awx-ui/interfaces/Job';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { Schedule } from '@ansible/awx-ui/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 

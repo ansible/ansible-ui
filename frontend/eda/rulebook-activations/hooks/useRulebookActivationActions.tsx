@@ -1,15 +1,16 @@
-import { AlertProps } from '@patternfly/react-core';
-import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
-} from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { AlertProps } from '@patternfly/react-core';
+import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
@@ -18,7 +19,6 @@ import {
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();

@@ -1,8 +1,8 @@
+import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { useState } from 'react';
-import { RunningNotificationsType } from './useNotifiersRowActions';
-import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { usePageAlertToaster } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { RunningNotificationsType } from './useNotifiersRowActions';
 
 export function useNotificationsWatch() {
   // key:value = notification_template_id:notification_id

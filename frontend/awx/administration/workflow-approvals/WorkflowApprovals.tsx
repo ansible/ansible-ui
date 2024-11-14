@@ -1,7 +1,8 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -12,7 +13,6 @@ import { useWorkflowApprovalToolbarActions } from './hooks/useWorkflowApprovalTo
 import { useWorkflowApprovalsColumns } from './hooks/useWorkflowApprovalsColumns';
 import { useWorkflowApprovalsFilters } from './hooks/useWorkflowApprovalsFilters';
 import { useWorkflowApprovalsRowActions } from './hooks/useWorkflowApprovalsRowActions';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function WorkflowApprovals() {
   const { t } = useTranslation();

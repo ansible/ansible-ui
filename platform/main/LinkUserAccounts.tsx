@@ -1,8 +1,8 @@
+import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Button, PageSection } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl } from '../../framework';
-import { LoadingState } from '../../framework/components/LoadingState';
 import { useLegacyAuth } from './LegacyAuthProvider';
 import { LegacyMigrationForm } from './LegacyMigrationForm';
 import { PlatformRoute } from './PlatformRoutes';

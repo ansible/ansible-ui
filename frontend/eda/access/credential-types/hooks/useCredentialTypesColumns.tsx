@@ -1,16 +1,16 @@
-import { Label, Split } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
-import { useDescriptionColumn } from '../../../../common/columns';
-import { EdaRoute } from '../../../main/EdaRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useDescriptionColumn } from '@ansible/common-ui/columns';
+import { Label, Split } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
+import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function useCredentialTypesColumns(options?: { disableLinks?: boolean }) {
   const { t } = useTranslation();

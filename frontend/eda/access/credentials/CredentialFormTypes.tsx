@@ -1,7 +1,7 @@
-import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '../../../../framework';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
+import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
-import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
 
 export interface OptionsResponse {
   actions: {

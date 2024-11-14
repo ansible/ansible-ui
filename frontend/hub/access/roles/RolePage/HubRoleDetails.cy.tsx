@@ -1,6 +1,6 @@
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import mockHubBuiltInRole from '../../../../../cypress/fixtures/hubBuiltInRoleDefinition.json';
 import mockHubCustomRole from '../../../../../cypress/fixtures/hubCustomRoleDefinition.json';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { hubAPI } from '../../../common/api/formatPath';
 import { HubRoleDetails } from './HubRoleDetails';
 

@@ -1,12 +1,12 @@
+import { LoadingPage } from '@ansible/ansible-ui-framework';
+import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
+import { HubError } from '@ansible/hub-ui/common/HubError';
+import { HubTeam } from '@ansible/hub-ui/interfaces/expanded/HubTeam';
 import { Page } from '@patternfly/react-core';
 import { ReactElement, ReactNode, cloneElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage } from '../../../../framework';
-import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { HubError } from '../../../../frontend/hub/common/HubError';
-import { HubTeam } from '../../../../frontend/hub/interfaces/expanded/HubTeam';
 import { useHubResource } from '../../../hooks/useHubResource';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

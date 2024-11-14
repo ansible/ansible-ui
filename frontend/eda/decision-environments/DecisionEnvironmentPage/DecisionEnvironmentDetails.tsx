@@ -1,8 +1,13 @@
+import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { DateTimeCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { EdaRoute } from '../../main/EdaRoutes';

@@ -1,7 +1,7 @@
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { singleSelectBrowseAdapter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
-import { singleSelectBrowseAdapter } from '../../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { useRepoQueryOptions } from '../../repositories/hooks/useRepoQueryOptions';
 import { useSelectRepositorySingle } from '../../repositories/hooks/useRepositorySelector';

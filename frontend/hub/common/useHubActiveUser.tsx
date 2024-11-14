@@ -1,6 +1,6 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../../common/crud/Data';
 import { HubUser } from '../interfaces/expanded/HubUser';
 import { hubAPI } from './api/formatPath';
 

@@ -1,10 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { PageDashboard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboard';
 import { Bullseye, Button, PageSection, Spinner } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { PageHeader, PageLayout } from '../../../framework';
-import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { awxAPI } from '../common/api/awx-utils';
 import { AwxCountsCard } from './cards/AwxCountsCard';
 import { AwxJobActivityCard } from './cards/AwxJobActivityCard';

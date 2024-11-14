@@ -20,6 +20,12 @@ import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import '@4tw/cypress-drag-drop';
+import { AwxActiveUserContext } from '@ansible/awx-ui/common/useAwxActiveUser';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { EdaActiveUserProvider } from '@ansible/eda-ui/common/useEdaActiveUser';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
+import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
+import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 import '@cypress/code-coverage/support';
 import { Page } from '@patternfly/react-core';
 import 'cypress-react-selector';
@@ -27,11 +33,7 @@ import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { PageFramework } from '../../framework';
-import { AwxActiveUserContext } from '../../frontend/awx/common/useAwxActiveUser';
-import { AwxUser } from '../../frontend/awx/interfaces/User';
 import '../../frontend/common/i18n';
-import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
-import { EdaUser } from '../../frontend/eda/interfaces/EdaUser';
 import './auth';
 import './awx-access-commands';
 import './awx-commands';
@@ -41,11 +43,9 @@ import './core-commands';
 import './e2e';
 import './eda-commands';
 import { edaAPI } from './formatApiPathForEDA';
+import { hubAPI } from './formatApiPathForHub';
 import './hub-commands';
 import './rest-commands';
-import { hubAPI } from './formatApiPathForHub';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
-import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

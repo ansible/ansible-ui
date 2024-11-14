@@ -1,10 +1,10 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
-import { RoleDefinition } from '../../../../frontend/eda/interfaces/generated/eda-api';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
+import { RoleDefinition } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

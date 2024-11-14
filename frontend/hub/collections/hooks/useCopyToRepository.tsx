@@ -1,4 +1,9 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { PageTable } from '@ansible/ansible-ui-framework/PageTable/PageTable';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,15 +14,10 @@ import { HubError } from '../../common/HubError';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { hubAPIPost, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { HubContext, useHubContext } from '../../common/useHubContext';
-import { PulpItemsResponse, HubItemsResponse, useHubView } from '../../common/useHubView';
+import { HubItemsResponse, PulpItemsResponse, useHubView } from '../../common/useHubView';
 import { AnsibleAnsibleRepositoryResponse } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
 import { SigningServiceResponse } from '../../interfaces/generated/SigningServiceResponse';
 import { CollectionVersionSearch } from '../Collection';
-import { usePageDialog } from './../../../../framework';
-import { PageTable } from './../../../../framework/PageTable/PageTable';
-import { requestGet } from './../../../common/crud/Data';
-import { useGetRequest } from './../../../common/crud/useGet';
-import { TFunction } from 'i18next';
 
 export function useCopyToRepository(refresh: (collections: CollectionVersionSearch[]) => void) {
   const [_, setDialog] = usePageDialog();

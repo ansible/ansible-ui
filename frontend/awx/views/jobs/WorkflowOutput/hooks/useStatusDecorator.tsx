@@ -1,3 +1,4 @@
+import { pfDanger, pfInfo, pfSuccess, pfWarning } from '@ansible/ansible-ui-framework';
 import {
   CheckCircleIcon,
   ClockIcon,
@@ -16,7 +17,6 @@ import {
 } from '@patternfly/react-topology';
 import { useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { pfDanger, pfInfo, pfSuccess, pfWarning } from '../../../../../../framework';
 
 export function useStatusDecorator() {
   return useCallback((element: GraphElement) => {

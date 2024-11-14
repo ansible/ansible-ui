@@ -1,3 +1,12 @@
+import { DateTimeCell, IFilterState, PageToolbar } from '@ansible/ansible-ui-framework';
+import { PageAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect';
+import { PagePagination } from '@ansible/ansible-ui-framework/PageTable/PagePagination';
+import { singleSelectBrowseAdapter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
+import { EmptyStateFilter } from '@ansible/ansible-ui-framework/components/EmptyStateFilter';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { getItemKey, requestGet } from '@ansible/common-ui/crud/Data';
 import {
   Button,
   DataList,
@@ -12,15 +21,6 @@ import {
 import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { DateTimeCell, IFilterState, PageToolbar } from '../../../../framework';
-import { PageAsyncSingleSelect } from '../../../../framework/PageInputs/PageAsyncSingleSelect';
-import { PagePagination } from '../../../../framework/PageTable/PagePagination';
-import { singleSelectBrowseAdapter } from '../../../../framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
-import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
-import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { LoadingState } from '../../../../framework/components/LoadingState';
-import { getItemKey, requestGet } from '../../../common/crud/Data';
 import { CollectionImport } from '../../collections/Collection';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';

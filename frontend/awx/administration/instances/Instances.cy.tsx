@@ -1,5 +1,5 @@
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
-import * as useOptions from '../../../common/crud/useOptions';
 import { Instances } from './Instances';
 
 describe('Instances list', () => {

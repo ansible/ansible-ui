@@ -1,8 +1,8 @@
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceDetails } from './InstanceDetails';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Instance Details', () => {
   beforeEach(() => {

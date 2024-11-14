@@ -1,17 +1,17 @@
 import {
+  DateTimeCell,
+  ITableColumn,
+  PFColorE,
+  TextCell,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  DateTimeCell,
-  ITableColumn,
-  PFColorE,
-  TextCell,
-  useGetPageUrl,
-} from '../../../../../framework';
 import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';

@@ -1,20 +1,20 @@
-import { Alert } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IToolbarFilter,
   PageHeader,
   PageLayout,
   PageTable,
   ToolbarFilterType,
-} from '../../../../framework';
-import { useAwxView } from '../../common/useAwxView';
+} from '@ansible/ansible-ui-framework';
+import { Alert } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
-import { useAwxRoleColumns } from './hooks/useAwxRoleColumns';
-import { useAwxRoleToolbarActions } from './hooks/useAwxRoleToolbarActions';
-import { useAwxRoleRowActions } from './hooks/useAwxRoleRowActions';
-import { AwxRoleExpandedRow } from './components/AwxRoleExpandedRow';
+import { useAwxView } from '../../common/useAwxView';
 import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
+import { AwxRoleExpandedRow } from './components/AwxRoleExpandedRow';
+import { useAwxRoleColumns } from './hooks/useAwxRoleColumns';
+import { useAwxRoleRowActions } from './hooks/useAwxRoleRowActions';
+import { useAwxRoleToolbarActions } from './hooks/useAwxRoleToolbarActions';
 
 export function AwxRoles() {
   const { t } = useTranslation();

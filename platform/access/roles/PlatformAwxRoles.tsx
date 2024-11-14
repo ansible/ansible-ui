@@ -1,6 +1,6 @@
+import { AwxRolesTable } from '@ansible/awx-ui/access/roles/AwxRoles';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { AwxRolesTable } from '../../../frontend/awx/access/roles/AwxRoles';
 
 export function PlatformAwxRoles() {
   const { t } = useTranslation();

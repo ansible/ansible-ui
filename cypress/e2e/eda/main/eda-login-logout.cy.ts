@@ -1,10 +1,10 @@
 //Tests a user's ability to log into and out of the EDA UI.
 //Note that EDA Actions do not have any CRUD functionality.
-import { randomString } from '../../../../framework/utils/random-string';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {
