@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { Page } from '@patternfly/react-core';
+import { ReactNode } from 'react';
 import useSWR, { mutate } from 'swr';
-import { LoadingState } from '../../../framework/components/LoadingState';
-import { AnsibleLogin } from '../../common/AnsibleLogin/AnsibleLogin';
-import { requestGet } from '../../common/crud/Data';
-import { useHubActiveUser } from '../../hub/common/useHubActiveUser';
 import { hubAPI } from '../common/api/formatPath';
+import { useHubActiveUser } from '../common/useHubActiveUser';
 import { HubContextProvider } from '../common/useHubContext';
 
 type HubAuthOptions = {

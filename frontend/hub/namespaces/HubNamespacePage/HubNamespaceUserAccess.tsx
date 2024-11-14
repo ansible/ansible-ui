@@ -1,12 +1,12 @@
+import { LoadingPage } from '@ansible/ansible-ui-framework';
+import { UserAccess } from '@ansible/common-ui/access/components/UserAccess';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router-dom';
 import { hubAPI } from '../../common/api/formatPath';
-import { HubItemsResponse } from '../../common/useHubView';
-import { HubNamespace } from '../HubNamespace';
-import { useGet } from '../../../common/crud/useGet';
-import { UserAccess } from '../../../common/access/components/UserAccess';
-import { HubRoute } from '../../main/HubRoutes';
-import { LoadingPage } from '../../../../framework';
 import { HubError } from '../../common/HubError';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubRoute } from '../../main/HubRoutes';
+import { HubNamespace } from '../HubNamespace';
 
 export function HubNamespaceUserAccess() {
   const params = useParams<{ id: string }>();

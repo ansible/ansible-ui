@@ -1,7 +1,7 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { requestGet, requestPatch } from '../../../common/crud/Data';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';

@@ -1,7 +1,12 @@
+import {
+  ColumnModalOption,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
 import { RedhatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubNamespace } from '../HubNamespace';
 

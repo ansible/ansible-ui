@@ -1,7 +1,3 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
 import {
   DateTimeCell,
   PageDetail,
@@ -9,10 +5,14 @@ import {
   TextCell,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';

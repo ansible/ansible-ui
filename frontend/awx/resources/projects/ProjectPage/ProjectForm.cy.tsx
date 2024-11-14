@@ -1,8 +1,8 @@
-import * as useOptions from '../../../../common/crud/useOptions';
-import * as useAwxConfig from '../../../common/useAwxConfig';
-import { CreateProject, EditProject } from './ProjectForm';
-import { Project } from '../../../interfaces/Project';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import * as useAwxConfig from '../../../common/useAwxConfig';
+import { Project } from '../../../interfaces/Project';
+import { CreateProject, EditProject } from './ProjectForm';
 
 describe('ProjectForm.cy.ts', () => {
   beforeEach(() => {

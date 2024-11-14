@@ -1,24 +1,24 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
 import { ProjectDetails } from '../../resources/projects/ProjectPage/ProjectDetails';
 import { CreateProject, EditProject } from '../../resources/projects/ProjectPage/ProjectForm';
 import { ProjectJobTemplates } from '../../resources/projects/ProjectPage/ProjectJobTemplates';
 import { ProjectPage } from '../../resources/projects/ProjectPage/ProjectPage';
-import { Projects } from '../../resources/projects/Projects';
-import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
-import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
-import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { AwxRoute } from '../AwxRoutes';
-import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
-import { SchedulesList } from '../../views/schedules/SchedulesList';
-import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
 import { ProjectTeams } from '../../resources/projects/ProjectPage/ProjectTeams';
 import { ProjectUsers } from '../../resources/projects/ProjectPage/ProjectUsers';
-import { AwxProjectAddUsers } from '../../resources/projects/components/AwxProjectAddUsers';
+import { Projects } from '../../resources/projects/Projects';
 import { AwxProjectAddTeams } from '../../resources/projects/components/AwxProjectAddTeams';
+import { AwxProjectAddUsers } from '../../resources/projects/components/AwxProjectAddUsers';
+import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
+import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxProjectRoutes() {
   const { t } = useTranslation();

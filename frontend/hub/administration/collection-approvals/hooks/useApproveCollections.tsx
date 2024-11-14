@@ -1,8 +1,8 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { requestGet } from '../../../../common/crud/Data';
 import { copyToRepositoryAction } from '../../../collections/hooks/useCopyToRepository';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { collectionKeyFn } from '../../../common/api/hub-api-utils';

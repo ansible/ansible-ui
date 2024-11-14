@@ -1,11 +1,11 @@
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../../framework';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
-import { SchedulesList } from './SchedulesList';
-import { awxAPI } from '../../common/api/awx-utils';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { SchedulesList } from './SchedulesList';
 
 export function Schedules(props: { sublistEndpoint?: string }) {
   const { t } = useTranslation();

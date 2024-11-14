@@ -1,18 +1,18 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
   useGetPageUrl,
-} from '../../../../framework';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { useOptions } from '../../../common/crud/useOptions';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+} from '@ansible/ansible-ui-framework';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';

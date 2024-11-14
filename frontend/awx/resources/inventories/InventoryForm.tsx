@@ -1,5 +1,3 @@
-import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -8,35 +6,36 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { postRequest, requestPatch } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+  valueToObject,
+} from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { TFunction } from 'i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
+import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
+import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
 import { awxAPI } from '../../common/api/awx-utils';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { requestGet } from '../../../common/crud/Data';
-import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
-import { useInventoriesColumns } from './hooks/useInventoriesColumns';
-import { useInventoriesFilters } from './hooks/useInventoriesFilters';
-import { TFunction } from 'i18next';
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import { AwxError } from '../../common/AwxError';
 import { ConstructedInventoryHint } from './components/ConstructedInventoryHint';
 import { LabelHelp } from './components/LabelHelp';
-import { valueToObject } from '../../../../framework';
+import { useInventoriesColumns } from './hooks/useInventoriesColumns';
+import { useInventoriesFilters } from './hooks/useInventoriesFilters';
 
 export type InventoryCreate = Inventory & {
   instanceGroups: InstanceGroup[];

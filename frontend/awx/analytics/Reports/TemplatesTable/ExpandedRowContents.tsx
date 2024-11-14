@@ -1,9 +1,9 @@
+import { PageDetail } from '@ansible/ansible-ui-framework/PageDetails/PageDetail';
 import { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 import { DescriptionList } from '@patternfly/react-core';
 import { ExpandableRowContent, Td } from '@patternfly/react-table';
 import { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDetail } from '../../../../../framework/PageDetails/PageDetail';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 
 interface Props {

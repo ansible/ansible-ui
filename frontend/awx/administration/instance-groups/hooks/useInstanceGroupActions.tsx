@@ -1,20 +1,20 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { useOptions } from '../../../../common/crud/useOptions';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
-import { useParams } from 'react-router-dom';
 
 export function useDisableCreateInstanceGroup() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/instance_groups/`);

@@ -1,20 +1,20 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { edaAPI } from '../../common/eda-utils';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { useDeleteEventStreams } from './useDeleteEventStreams';
-import { edaAPI } from '../../common/eda-utils';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { useDisableEventStreams } from './useDisableEventStreams';
 
 export function useEventStreamActions(view: IEdaView<EdaEventStream>) {

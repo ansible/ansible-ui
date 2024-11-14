@@ -1,10 +1,10 @@
 //Tests a user's ability to create, edit, and delete Users in the EDA UI.
-import { randomString } from '../../../../framework/utils/random-string';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

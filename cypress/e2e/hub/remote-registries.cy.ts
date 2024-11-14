@@ -1,6 +1,6 @@
-import { randomString } from '../../../framework/utils/random-string';
-import { RemoteRegistry as IRemoteRegistry } from '../../../frontend/hub/administration/remote-registries/RemoteRegistry';
-import { HubItemsResponse } from '../../../frontend/hub/common/useHubView';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { RemoteRegistry as IRemoteRegistry } from '@ansible/hub-ui/administration/remote-registries/RemoteRegistry';
+import { HubItemsResponse } from '@ansible/hub-ui/common/useHubView';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { RemoteRegistry } from './constants';
 

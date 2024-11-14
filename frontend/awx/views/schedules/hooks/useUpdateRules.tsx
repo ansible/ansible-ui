@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { RuleListItemType, ScheduleFormWizard } from '../types';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { DateTime } from 'luxon';
-import { useGet24HourTime } from './useGet24HourTime';
+import { useCallback } from 'react';
 import { datetime, RRule } from 'rrule';
+import { RuleListItemType, ScheduleFormWizard } from '../types';
+import { useGet24HourTime } from './useGet24HourTime';
 
 export function useUpdateRules() {
   const { wizardData } = usePageWizard();

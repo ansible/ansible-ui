@@ -1,9 +1,9 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { ReactNode, createContext, useContext, useMemo } from 'react';
 import useSWR from 'swr';
-import { requestGet } from '../../common/crud/Data';
 import { Config } from '../interfaces/Config';
 import { awxAPI } from './api/awx-utils';
-import { RequestError } from '../../common/crud/RequestError';
 
 const AwxConfigContext = createContext<{
   awxConfig?: Config | null | undefined;

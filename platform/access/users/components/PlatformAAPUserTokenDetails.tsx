@@ -1,7 +1,7 @@
+import { LoadingPage, PageDetails, PageDetailsFromColumns } from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { Token } from '@ansible/awx-ui/interfaces/Token';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageDetails, PageDetailsFromColumns } from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

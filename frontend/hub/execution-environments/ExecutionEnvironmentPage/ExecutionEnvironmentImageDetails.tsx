@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { useOutletContext, Link, useParams } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
-import { Scrollable, useGetPageUrl } from '../../../../framework';
-import { ExecutionEnvironmentImage } from './ExecutionEnvironmentImage';
+import { Scrollable, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
-  DataList,
-  DataListItemRow,
-  DataListCell,
-  DataListItem,
-  DataListItemCells,
-  Flex,
-  FlexItem,
   Card,
   CardBody,
   CardTitle,
+  DataList,
+  DataListCell,
+  DataListItem,
+  DataListItemCells,
+  DataListItemRow,
+  Flex,
+  FlexItem,
   PageSection,
   Title,
 } from '@patternfly/react-core';
-import { HubRoute } from '../../main/HubRoutes';
+import React, { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, useOutletContext, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { HubRoute } from '../../main/HubRoutes';
+import { ExecutionEnvironmentImage } from './ExecutionEnvironmentImage';
 
 const DataListWrapper = styled(FlexItem)`
   max-width: 45%;

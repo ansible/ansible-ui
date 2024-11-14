@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
   PageHeader,
@@ -7,18 +6,19 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { Team } from '../../../interfaces/Team';
+} from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../../common/crud/useGet';
-import { Project } from '../../../interfaces/Project';
-import { postRequest } from '../../../../common/crud/Data';
-import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
 import { AwxSelectTeamsStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectTeamsStep';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { Project } from '../../../interfaces/Project';
+import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
 
 interface AwxRole {
   id: string;

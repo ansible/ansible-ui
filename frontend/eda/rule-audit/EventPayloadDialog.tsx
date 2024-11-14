@@ -1,9 +1,9 @@
+import { PageDetail, PageDetails, Scrollable, usePageDialog } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, PageDetails, Scrollable, usePageDialog } from '../../../framework';
-import { PageDetailCodeEditor } from '../../../framework/PageDetails/PageDetailCodeEditor';
-import { formatDateString } from '../../../framework/utils/formatDateString';
 import { EdaRuleAuditEvent } from '../interfaces/EdaRuleAuditEvent';
 
 export interface EventPayloadModalProps {

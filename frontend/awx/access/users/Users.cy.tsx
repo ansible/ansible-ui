@@ -1,7 +1,7 @@
-import { AwxUser } from '../../interfaces/User';
-import * as useOptions from '../../../common/crud/useOptions';
-import { Users } from './Users';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { AwxUser } from '../../interfaces/User';
+import { Users } from './Users';
 
 describe('Users.cy.ts', () => {
   beforeEach(() => {

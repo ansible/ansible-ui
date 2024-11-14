@@ -1,9 +1,9 @@
+import { PageNotImplemented } from '@ansible/ansible-ui-framework';
+import { PageNavigationItem } from '@ansible/ansible-ui-framework/PageNavigation/PageNavigationItem';
+import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNotImplemented } from '../../../framework';
-import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
-import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
-import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
 import { HubRoles } from '../access/roles/HubRoles';
 import { HubRoleDetails } from '../access/roles/RolePage/HubRoleDetails';
 import { CreateRole, EditRole } from '../access/roles/RolePage/HubRoleForm';

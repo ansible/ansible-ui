@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import {
   IPageAction,
   PageActionSelection,
@@ -7,18 +5,20 @@ import {
   usePageAlertToaster,
   usePageDialog,
   usePageNavigate,
-} from '../../../../../framework';
-import { useCallback, useMemo } from 'react';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useParams } from 'react-router-dom';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { GroupSelectDialog } from './useGroupSelectDialog';
-import { postRequest } from '../../../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
-import { IAwxView } from '../../../common/useAwxView';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { IAwxView } from '../../../common/useAwxView';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { GroupSelectDialog } from './useGroupSelectDialog';
 
 export function useRelatedGroupsEmptyStateActions(view: IAwxView<InventoryGroup>) {
   const [_, setDialog] = usePageDialog();

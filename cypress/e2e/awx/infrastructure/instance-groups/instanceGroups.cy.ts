@@ -1,12 +1,12 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { InstanceGroup } from '../../../../../frontend/awx/interfaces/InstanceGroup';
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Job } from '../../../../../frontend/awx/interfaces/Job';
-import { JobTemplate } from '../../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../../frontend/awx/interfaces/Project';
-import { Team } from '../../../../../frontend/awx/interfaces/Team';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Job } from '@ansible/awx-ui/interfaces/Job';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 

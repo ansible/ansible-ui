@@ -1,8 +1,8 @@
+import { usePageNavigate } from '@ansible/ansible-ui-framework';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { pollAwxItemsResponseItem } from '@ansible/awx-ui/common/pollAwxItemsResponseItem';
+import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { useTranslation } from 'react-i18next';
-import { usePageNavigate } from '../../../../framework';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { pollAwxItemsResponseItem } from '../../../../frontend/awx/common/pollAwxItemsResponseItem';
-import { Organization as ControllerOrganization } from '../../../../frontend/awx/interfaces/Organization';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

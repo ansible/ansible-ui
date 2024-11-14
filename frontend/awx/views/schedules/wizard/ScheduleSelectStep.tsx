@@ -1,18 +1,18 @@
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { requestGet } from '../../../../common/crud/Data';
+import { useParams } from 'react-router-dom';
+import { mergeArraysByCredentialType } from '../../../access/credentials/hooks/mergeArraysByCredentialType';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Credential } from '../../../interfaces/Credential';
+import { InventorySource } from '../../../interfaces/InventorySource';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { parseStringToTagArray } from '../../../resources/templates/JobTemplateFormHelpers';
 import { ScheduleResourceInputs } from '../components/ScheduleResourceInputs';
 import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
 import { ScheduleFormWizard, ScheduleResources } from '../types';
-import { useParams } from 'react-router-dom';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { Credential } from '../../../interfaces/Credential';
-import { mergeArraysByCredentialType } from '../../../access/credentials/hooks/mergeArraysByCredentialType';
 
 /**
  *

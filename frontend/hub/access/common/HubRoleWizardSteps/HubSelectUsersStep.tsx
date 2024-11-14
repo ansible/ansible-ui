@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
-import styled from 'styled-components';
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { Title } from '@patternfly/react-core';
-import { useHubUserFilters } from '../hooks/useHubUserFilters';
-import { HubUser } from '../../../interfaces/expanded/HubUser';
-import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { hubAPI } from '../../../common/api/formatPath';
+import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
+import { HubUser } from '../../../interfaces/expanded/HubUser';
+import { useHubUserFilters } from '../hooks/useHubUserFilters';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;

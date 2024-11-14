@@ -1,10 +1,3 @@
-import { Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
-import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -13,14 +6,21 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useDeleteRequest } from '../../../common/crud/useDeleteRequest';
-import { useGet, useGetItem } from '../../../common/crud/useGet';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
+import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { AwxPageForm } from '../../common/AwxPageForm';

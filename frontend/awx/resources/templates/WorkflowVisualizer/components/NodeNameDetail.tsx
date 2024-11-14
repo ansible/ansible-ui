@@ -1,13 +1,13 @@
+import { PageDetail, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { AwxRoute } from '../../../../main/AwxRoutes';
-import { PageDetail, useGetPageUrl } from '../../../../../../framework';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { useGet } from '../../../../../common/crud/useGet';
-import { RESOURCE_TYPE } from '../constants';
 import { InventorySource } from '../../../../interfaces/InventorySource';
 import { WorkflowNode } from '../../../../interfaces/WorkflowNode';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import { RESOURCE_TYPE } from '../constants';
 import { UnifiedJobType } from '../types';
 
 const ResourceLink: Record<UnifiedJobType, AwxRoute> = {

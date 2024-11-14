@@ -1,18 +1,18 @@
-import { Badge, Flex, FlexItem, Split, SplitItem, ButtonVariant } from '@patternfly/react-core';
+import {
+  IPageActionButton,
+  PageActionSelection,
+  PageActionType,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageActionButton } from '@ansible/ansible-ui-framework/PageActions/PageActionButton';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { Badge, ButtonVariant, Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
 import { ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { StatusCell } from '../../../../common/Status';
 import { Job } from '../../../interfaces/Job';
-import {
-  PageActionType,
-  IPageActionButton,
-  usePageNavigate,
-  PageActionSelection,
-} from '../../../../../framework';
-import { PageActionButton } from '../../../../../framework/PageActions/PageActionButton';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 const HeaderTitle = styled.div`

@@ -1,8 +1,8 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn } from '@ansible/common-ui/columns';
 import { Progress } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

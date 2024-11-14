@@ -1,15 +1,15 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormDataEditor,
   PageFormSubmitHandler,
   PageFormTextInput,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useGetItem } from '../../../common/crud/useGet';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventoryGroup, InventoryGroupCreate } from '../../interfaces/InventoryGroup';

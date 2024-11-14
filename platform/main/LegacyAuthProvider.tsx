@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { requestGet } from '../../frontend/common/crud/Data';
-import { gatewayAPI } from '../utils/gateway-api-utils';
 import { LegacyAuth } from '../interfaces/LegacyAuth';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 interface LegacyAuthState {
   legacyAuth?: LegacyAuth | null | undefined;

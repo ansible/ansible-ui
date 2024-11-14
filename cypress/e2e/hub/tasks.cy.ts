@@ -1,6 +1,6 @@
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
 import { Repositories, Tasks } from './constants';
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
-import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
 
 describe('Tasks', () => {
   let repository: Repository;

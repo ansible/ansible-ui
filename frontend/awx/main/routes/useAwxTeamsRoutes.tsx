@@ -1,16 +1,16 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
+import { AwxAddTeamRoles } from '../../access/teams/AwxAddTeamRoles';
 import { CreateTeam, EditTeam } from '../../access/teams/TeamForm';
 import { AwxTeamDetails } from '../../access/teams/TeamPage/AwxTeamDetails';
+import { AwxTeamRoles } from '../../access/teams/TeamPage/AwxTeamRoles';
 import { TeamAccess } from '../../access/teams/TeamPage/TeamAccess';
 import { TeamPage } from '../../access/teams/TeamPage/TeamPage';
 import { Teams } from '../../access/teams/Teams';
-import { AwxRoute } from '../AwxRoutes';
-import { AwxAddTeamRoles } from '../../access/teams/AwxAddTeamRoles';
-import { AwxTeamRoles } from '../../access/teams/TeamPage/AwxTeamRoles';
 import { TeamMembersAdd } from '../../access/teams/components/TeamMembersAdd';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxTeamsRoutes() {
   const { t } = useTranslation();

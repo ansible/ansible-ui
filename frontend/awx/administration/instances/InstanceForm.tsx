@@ -1,6 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSWRConfig } from 'swr';
 import {
   PageFormCheckbox,
   PageFormSelect,
@@ -9,17 +6,20 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPatch } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSWRConfig } from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useWatch } from 'react-hook-form';
 
 export function AddInstance() {
   const { t } = useTranslation();

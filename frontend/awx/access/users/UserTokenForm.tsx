@@ -1,24 +1,24 @@
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextInput,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { useAwxActiveUser } from '../../common/useAwxActiveUser';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { AwxUser } from '../../interfaces/User';
-import { Token } from '../../interfaces/Token';
-import { AwxPageForm } from '../../common/AwxPageForm';
-import { PageFormTextInput } from '../../../../framework';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { awxAPI } from '../../common/api/awx-utils';
+} from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormApplicationSelect } from '../../administration/applications/components/PageFormApplicationSelect';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxPageForm } from '../../common/AwxPageForm';
+import { useAwxActiveUser } from '../../common/useAwxActiveUser';
+import { Token } from '../../interfaces/Token';
+import { AwxUser } from '../../interfaces/User';
+import { AwxRoute } from '../../main/AwxRoutes';
 
 export function CreateUserToken(props: { onSuccessfulCreate: (newToken: Token) => void }) {
   const params = useParams<{ id: string }>();

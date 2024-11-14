@@ -1,13 +1,13 @@
+import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { LoadingPage, PageHeader, PageLayout, useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { useParams } from 'react-router-dom';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxError } from '../../../common/AwxError';
 import { Inventory } from '../../../interfaces/Inventory';
-import { GroupCreate } from '../../groups/GroupCreate';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { GroupCreate } from '../../groups/GroupCreate';
 import { GroupEdit } from '../../groups/GroupEdit';
 
 interface GroupFormPageHeaderProps {

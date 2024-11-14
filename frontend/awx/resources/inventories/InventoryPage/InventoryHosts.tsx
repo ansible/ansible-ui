@@ -1,12 +1,12 @@
+import { PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageLayout, PageTable, useGetPageUrl } from '../../../../../framework';
-import { ButtonLink } from '../../../../../framework/components/ButtonLink';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { AwxHost } from '../../../interfaces/AwxHost';

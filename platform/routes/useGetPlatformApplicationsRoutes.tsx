@@ -1,18 +1,18 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../framework';
-import { PlatformRoute } from '../main/PlatformRoutes';
-import { PlatformGatewayApplications } from '../access/applications/PlatformGatewayApplications';
-import { Application } from '../../frontend/awx/interfaces/Application';
+import { ApplicationClientSecretModal } from '../access/applications/ApplicationPage/ApplicationClientSecretModal';
+import { PlatformApplicationPage } from '../access/applications/ApplicationPage/PlatformApplicationPage';
+import { PlatformApplicationPageDetails } from '../access/applications/ApplicationPage/PlatformApplicationPageDetails';
+import { PlatformApplicationPageTokens } from '../access/applications/ApplicationPage/PlatformApplicationPageTokens';
 import {
   CreatePlatformApplication,
   EditPlatformApplication,
 } from '../access/applications/PlatformApplicationForm';
-import { ApplicationClientSecretModal } from '../access/applications/ApplicationPage/ApplicationClientSecretModal';
-import { PlatformApplicationPageDetails } from '../access/applications/ApplicationPage/PlatformApplicationPageDetails';
-import { PlatformApplicationPageTokens } from '../access/applications/ApplicationPage/PlatformApplicationPageTokens';
-import { PlatformApplicationPage } from '../access/applications/ApplicationPage/PlatformApplicationPage';
+import { PlatformGatewayApplications } from '../access/applications/PlatformGatewayApplications';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function useGetPlatformApplicationsRoutes() {
   const { t } = useTranslation();

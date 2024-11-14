@@ -1,16 +1,16 @@
-import { CollectionVersionSearch } from '../Collection';
-import { LoadingPage, usePageDialog } from './../../../../framework';
+import { LoadingPage, usePageDialog } from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { getCookie } from '@ansible/common-ui/crud/cookie';
 import { Modal, ModalVariant } from '@patternfly/react-core';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useState, useCallback } from 'react';
-import { useHubContext, HubContext } from '../../common/useHubContext';
+import { HubPageForm } from '../..//common/HubPageForm';
+import { TaskResponse } from '../../administration/tasks/Task';
 import { HubError } from '../../common/HubError';
 import { pulpAPI } from '../../common/api/formatPath';
-import { HubPageForm } from '../..//common/HubPageForm';
-import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { getCookie } from '../../../common/crud/cookie';
-import { TaskResponse } from '../../administration/tasks/Task';
 import { parseTaskResponse } from '../../common/api/hub-api-utils';
+import { HubContext, useHubContext } from '../../common/useHubContext';
+import { CollectionVersionSearch } from '../Collection';
 
 export function useUploadSignature() {
   const [_, setDialog] = usePageDialog();

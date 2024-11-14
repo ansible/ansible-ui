@@ -1,19 +1,24 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType, PageTable } from '../../../../framework';
-import { useGetItem } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
 import { Instance, Peer } from '../../interfaces/Instance';
 import { usePeersTabFilters } from './Instances';
-import { PeerColumnId, usePeersColumns } from './hooks/usePeersColumns';
-import { useAwxView } from '../../common/useAwxView';
-import { useMemo } from 'react';
-import { usePeerInstanceModal } from './hooks/useSelectAssociatePeers';
-import { useDisassociatePeer } from './hooks/useDisassociatePeer';
 import { useAssociatePeersToInstance } from './hooks/useAssociatePeersToInstance';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { useDisassociatePeer } from './hooks/useDisassociatePeer';
+import { PeerColumnId, usePeersColumns } from './hooks/usePeersColumns';
+import { usePeerInstanceModal } from './hooks/useSelectAssociatePeers';
 
 export function InstancePeers() {
   const params = useParams<{ id: string }>();

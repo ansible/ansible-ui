@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageActions,
@@ -10,9 +7,12 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';

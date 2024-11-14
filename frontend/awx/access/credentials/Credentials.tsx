@@ -1,11 +1,11 @@
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { CredentialsList } from './CredentialsList';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 
 export function Credentials() {
   const { t } = useTranslation();

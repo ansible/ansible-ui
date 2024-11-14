@@ -49,7 +49,7 @@ End-to-End tests for our project are located in the `cypress/e2e` directory. The
 
 ```javascript
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { SAAS_URL } from '../../../support/constants';
 
 describe('If SaaS Build', () => {

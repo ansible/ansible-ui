@@ -1,9 +1,9 @@
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import { HubRbacRole } from '@ansible/hub-ui/interfaces/expanded/HubRbacRole';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { Remotes } from './constants';
-import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
-import { randomString } from '../../../framework/utils/random-string';
-import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
-import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 describe('Remotes User Access tab', () => {
   let remote: HubRemote;

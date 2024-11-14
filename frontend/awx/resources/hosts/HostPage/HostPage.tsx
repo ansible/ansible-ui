@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   PageActions,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
+} from '@ansible/ansible-ui-framework';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { AwxHost } from '../../../interfaces/AwxHost';

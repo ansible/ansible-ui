@@ -1,4 +1,18 @@
 import {
+  PageFormCheckbox,
+  PageFormTextInput,
+  PageWizard,
+  PageWizardStep,
+} from '@ansible/ansible-ui-framework';
+import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormToggleGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormToggleGroup';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
+import { ILicenseInfo } from '@ansible/awx-ui/interfaces/Config';
+import {
   Divider,
   ProgressStep,
   ProgressStepper,
@@ -10,15 +24,6 @@ import {
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { PageFormCheckbox, PageFormTextInput, PageWizard, PageWizardStep } from '../../framework';
-import { PageFormAsyncSingleSelect } from '../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageFormFileUpload } from '../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormToggleGroup } from '../../framework/PageForm/Inputs/PageFormToggleGroup';
-import { PageFormHidden } from '../../framework/PageForm/Utils/PageFormHidden';
-import { awxErrorAdapter } from '../../frontend/awx/common/adapters/awxErrorAdapter';
-import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
-import { useAwxConfig, useAwxConfigState } from '../../frontend/awx/common/useAwxConfig';
-import { ILicenseInfo } from '../../frontend/awx/interfaces/Config';
 import { postRequest, requestPatch } from '../../frontend/common/crud/Data';
 import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 

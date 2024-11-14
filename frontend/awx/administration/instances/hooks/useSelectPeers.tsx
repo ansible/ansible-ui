@@ -1,11 +1,10 @@
+import { MultiSelectDialog, usePageDialog } from '@ansible/ansible-ui-framework';
 import { useCallback, useMemo } from 'react';
-import { usePageDialog } from '../../../../../framework';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Instance } from '../../../interfaces/Instance';
 import { usePeersFilters } from '../Instances';
-import { MultiSelectDialog } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
 import { useInstancesColumns } from './useInstancesColumns';
 
 function SelectPeers(props: {

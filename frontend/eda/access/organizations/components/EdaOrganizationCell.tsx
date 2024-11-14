@@ -1,5 +1,5 @@
-import { TextCell, useGetPageUrl } from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
+import { TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { EdaOrganization } from '../../../interfaces/EdaOrganization';
 import { EdaRoute } from '../../../main/EdaRoutes';
 

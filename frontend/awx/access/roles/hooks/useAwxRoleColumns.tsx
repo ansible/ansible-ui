@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
+  ColumnModalOption,
+  DateTimeCell,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-  ColumnModalOption,
-  DateTimeCell,
-} from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useAwxRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();

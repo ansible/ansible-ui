@@ -1,18 +1,18 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionType, PageActionSelection } from '../../../../../../framework';
-import { useOptions } from '../../../../../common/crud/useOptions';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { OptionsResponse, ActionsResponse } from '../../../../interfaces/OptionsResponse';
-import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
 import { IAwxView } from '../../../../common/useAwxView';
-import { useDisassociateGroups } from './useDisassociateGroups';
+import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
+import { useRunCommandAction } from '../../hooks/useInventoriesGroupsToolbarActions';
 import { useInventoryHostGroupsAddModal } from '../InventoryHostGroupsModal';
 import { useAssociateGroupsToHost } from './useAssociateGroupsToHost';
-import { useRunCommandAction } from '../../hooks/useInventoriesGroupsToolbarActions';
-import { useParams } from 'react-router-dom';
+import { useDisassociateGroups } from './useDisassociateGroups';
 
 export function useHostsGroupsToolbarActions(
   view: IAwxView<InventoryGroup>,

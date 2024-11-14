@@ -1,6 +1,6 @@
+import { errorToAlertProps, usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { SetStateAction, useCallback, useEffect } from 'react';
-import { errorToAlertProps, usePageAlertToaster } from '../../../../framework';
-import { requestGet } from '../../../common/crud/Data';
 import { CollectionVersionSearch } from '../../collections/Collection';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';

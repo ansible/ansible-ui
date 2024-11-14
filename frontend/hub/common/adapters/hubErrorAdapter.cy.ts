@@ -1,4 +1,4 @@
-import { RequestError } from '../../../common/crud/RequestError';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { hubErrorAdapter, useHubErrorMessageParser } from './hubErrorAdapter';
 
 describe('hubErrorAdapter Unit Tests', () => {

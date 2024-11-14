@@ -1,18 +1,18 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
 import { CreateOrganization, EditOrganization } from '../../access/organizations/OrganizationForm';
-import { OrganizationUserAccess } from '../../access/organizations/OrganizationPage/OrganizationUserAccess';
 import { OrganizationDetails } from '../../access/organizations/OrganizationPage/OrganizationDetails';
+import { OrganizationExecutionEnvironments } from '../../access/organizations/OrganizationPage/OrganizationExecutionEnvironments';
 import { OrganizationPage } from '../../access/organizations/OrganizationPage/OrganizationPage';
 import { OrganizationTeamsAccess } from '../../access/organizations/OrganizationPage/OrganizationTeamsAccess';
+import { OrganizationUserAccess } from '../../access/organizations/OrganizationPage/OrganizationUserAccess';
 import { Organizations } from '../../access/organizations/Organizations';
-import { AwxRoute } from '../AwxRoutes';
-import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
-import { OrganizationExecutionEnvironments } from '../../access/organizations/OrganizationPage/OrganizationExecutionEnvironments';
-import { OrganizationAddUsers } from '../../access/organizations/components/OrganizationAddUsers';
 import { OrganizationAddTeams } from '../../access/organizations/components/OrganizationAddTeams';
+import { OrganizationAddUsers } from '../../access/organizations/components/OrganizationAddUsers';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxOrganizationRoutes() {
   const { t } = useTranslation();

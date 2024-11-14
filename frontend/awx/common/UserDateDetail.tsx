@@ -1,5 +1,5 @@
-import { DateTimeCell, usePageNavigate } from '../../../framework';
-import { PageDetail } from '../../../framework/PageDetails/PageDetail';
+import { DateTimeCell, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { PageDetail } from '@ansible/ansible-ui-framework/PageDetails/PageDetail';
 import { AwxRoute } from '../main/AwxRoutes';
 
 interface User {

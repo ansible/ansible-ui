@@ -1,4 +1,11 @@
 import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import {
   CopyIcon,
   PencilAltIcon,
   ProjectDiagramIcon,
@@ -7,19 +14,12 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ButtonVariant } from '@patternfly/react-core';
-import {
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
-  useGetPageUrl,
-} from '../../../../../framework';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteTemplates } from '../hooks/useDeleteTemplates';
-import { useLaunchTemplate } from './useLaunchTemplate';
 import { useCopyTemplate } from './useCopyTemplate';
+import { useLaunchTemplate } from './useLaunchTemplate';
 
 type Template = JobTemplate | WorkflowJobTemplate;
 type TemplateActionOptions = {

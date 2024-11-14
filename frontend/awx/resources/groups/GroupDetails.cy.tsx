@@ -1,7 +1,7 @@
-import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { GroupDetails } from './GroupDetails';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('GroupDetails', () => {
   beforeEach(() => {

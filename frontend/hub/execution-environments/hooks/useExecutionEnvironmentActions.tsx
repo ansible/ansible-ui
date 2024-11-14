@@ -1,21 +1,21 @@
-import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { CheckIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useCanSignEE } from '../../common/utils/canSign';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
+import { useController } from './useController';
 import {
   useDeleteExecutionEnvironments,
   useSignExecutionEnvironments,
   useSyncExecutionEnvironments,
 } from './useExecutionEnvironmentsActions';
-import { useController } from './useController';
-import { useCanSignEE } from '../../common/utils/canSign';
 
 export function useExecutionEnvironmentActions(callback?: (ees: ExecutionEnvironment[]) => void) {
   const { t } = useTranslation();

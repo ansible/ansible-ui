@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next';
-import { InventoryGroup } from '../../interfaces/InventoryGroup';
-import { PageTable } from '../../../../framework';
+import { PageTable } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubeIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useGroupsFilters } from './hooks/useGroupsFilters';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useRelatedGroupsToolbarActions } from './hooks/useRelatedGroupsToolbarActions';
-import { useInventoriesGroupsActions } from '../inventories/hooks/useInventoriesGroupsActions';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { InventoryGroup } from '../../interfaces/InventoryGroup';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
+import { useInventoriesGroupsActions } from '../inventories/hooks/useInventoriesGroupsActions';
+import { useGroupsFilters } from './hooks/useGroupsFilters';
 import { useRelatedGroupsColumns } from './hooks/useRelatedGroupsColumns';
 import { useRelatedGroupsEmptyStateActions } from './hooks/useRelatedGroupsEmptyStateActions';
+import { useRelatedGroupsToolbarActions } from './hooks/useRelatedGroupsToolbarActions';
 
 export function GroupRelatedGroups() {
   const { t } = useTranslation();

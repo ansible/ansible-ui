@@ -1,6 +1,11 @@
+import {
+  ColumnTableOption,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { EdaRoute } from '../../main/EdaRoutes';
 

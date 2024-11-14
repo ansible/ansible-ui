@@ -1,4 +1,4 @@
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
 import { hubAPI } from '../../support/formatApiPathForHub';
 
 describe('Repositories user and team access tests', () => {

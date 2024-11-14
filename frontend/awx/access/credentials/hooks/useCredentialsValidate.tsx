@@ -1,9 +1,9 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
-import { Credential } from '../../../interfaces/Credential';
-import { requestGet } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { Credential } from '../../../interfaces/Credential';
+import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 
 export function useCredentialsValidate(
   allowDuplicateCredentialTypes = false,

@@ -1,15 +1,19 @@
 import { FormSection } from '@patternfly/react-core';
 
+import {
+  PageFormDataEditor,
+  PageFormSelect,
+  PageFormTextArea,
+} from '@ansible/ansible-ui-framework';
+import { PageFormCheckbox } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCheckbox';
+import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
+import { PageFormSwitch } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSwitch';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormDataEditor, PageFormSelect, PageFormTextArea } from '../../../../framework';
-import { PageFormCheckbox } from '../../../../framework/PageForm/Inputs/PageFormCheckbox';
-import { PageFormCreatableSelect } from '../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { PageFormSwitch } from '../../../../framework/PageForm/Inputs/PageFormSwitch';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet } from '../../../common/crud/Data';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';

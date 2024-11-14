@@ -1,8 +1,8 @@
-import { Repository } from '../../frontend/hub/administration/repositories/Repository';
-import { HubNamespace } from '../../frontend/hub/namespaces/HubNamespace';
-import { HubRemote } from '../../frontend/hub/administration/remotes/Remotes';
-import { randomString } from '../../framework/utils/random-string';
-import { ContentTypeEnum } from '../../frontend/hub/interfaces/expanded/ContentType';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 
 export enum SERVER_NAME {
   PLATFORM_SERVER = 'Platform Server',

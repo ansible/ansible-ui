@@ -1,6 +1,7 @@
 {
   "name": "@ansible/ansible-ui-framework",
   "type": "module",
+  "version": "0.0.0",
   "main": "./index.ts",
   "scripts": {
     "clean": "rm -rf publish",

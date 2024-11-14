@@ -1,5 +1,5 @@
-import { randomString } from '../../../framework/utils/random-string';
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { MyImports, Namespaces } from './constants';

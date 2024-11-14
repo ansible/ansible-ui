@@ -1,14 +1,14 @@
-import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
-import { useGatewayService } from '../../../main/GatewayServices';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { PlatformUser } from '../../../interfaces/PlatformUser';
-import { useEdaResource } from '../../../hooks/useEdaResource';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { useMemo } from 'react';
+import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
+import { useGet } from '../../../../frontend/common/crud/useGet';
+import { useEdaResource } from '../../../hooks/useEdaResource';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { useGatewayService } from '../../../main/GatewayServices';
 
 interface RemoveRole {
   remove?: boolean;

@@ -1,3 +1,4 @@
+import { ITableColumn, TextCell, useBulkConfirmation } from '@ansible/ansible-ui-framework';
 import { Label } from '@patternfly/react-core';
 import {
   action,
@@ -11,7 +12,6 @@ import {
 } from '@patternfly/react-topology';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useBulkConfirmation } from '../../../../../../framework';
 import { START_NODE_ID } from '../constants';
 import { EdgeStatus, GraphNode, type GraphEdgeData, type GraphNodeData } from '../types';
 import { useCreateEdge } from './useCreateEdge';

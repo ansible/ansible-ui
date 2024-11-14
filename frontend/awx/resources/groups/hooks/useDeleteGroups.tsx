@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
-import { usePageDialog } from '../../../../../framework';
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import {
   Button,
   HelperText,
@@ -10,10 +10,10 @@ import {
   Radio,
 } from '@patternfly/react-core';
 import { useState } from 'react';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useDeleteRequest } from '../../../../common/crud/useDeleteRequest';
 import { AwxError } from '../../../common/AwxError';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 
 function DeleteGroupsDialog(props: {
   groups: InventoryGroup[];

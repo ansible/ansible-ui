@@ -1,8 +1,8 @@
-import { FC, LegacyRef } from 'react';
-import { useSize, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';
-import { getPatternflyColor, pfDisabled } from '../../../../../../framework';
-import type { CustomLabelProps, EdgeStatus } from '../types';
+import { getPatternflyColor, pfDisabled } from '@ansible/ansible-ui-framework';
 import { EllipsisVIcon } from '@patternfly/react-icons';
+import { useSize, WithContextMenuProps, WithSelectionProps } from '@patternfly/react-topology';
+import { FC, LegacyRef } from 'react';
+import type { CustomLabelProps, EdgeStatus } from '../types';
 
 const getEdgeStyles = (
   status: EdgeStatus

@@ -1,28 +1,28 @@
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import {
   Button,
-  Grid,
-  GridItem,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  TextInput,
-  ValidatedOptions,
+  Checkbox,
   Divider,
-  Stack,
-  Radio,
   Flex,
   FlexItem,
-  Checkbox,
+  FormHelperText,
+  Grid,
+  GridItem,
+  HelperText,
+  HelperTextItem,
+  Radio,
+  Stack,
+  TextInput,
+  ValidatedOptions,
 } from '@patternfly/react-core';
-import { Trans, useTranslation } from 'react-i18next';
-import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import styled from 'styled-components';
 import { useEffect } from 'react';
-import { useGetDocsUrl } from './util/useGetDocsUrl';
-import { useAwxConfig } from './useAwxConfig';
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { Trans, useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { ExternalLink } from '../../hub/common/ExternalLink';
+import { useAwxConfig } from './useAwxConfig';
+import { useGetDocsUrl } from './util/useGetDocsUrl';
 
 const DividerWithSpace = styled(Divider)`
   padding-top: var(--pf-v5-global--spacer--md);

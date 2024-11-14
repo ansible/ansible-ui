@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next';
-import { Dispatch, SetStateAction } from 'react';
+import { usePageNavigate } from '@ansible/ansible-ui-framework';
 import {
   DrawerHead,
   DrawerPanelBody,
@@ -10,10 +9,11 @@ import {
   NavList,
   SearchInput,
 } from '@patternfly/react-core';
-import { IContents } from '../../Collection';
+import { Dispatch, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { HubRoute } from '../../../main/HubRoutes';
-import { usePageNavigate } from '../../../../../framework';
+import { IContents } from '../../Collection';
 
 export function CollectionDocumentationTabPanel(props: {
   setSearchText: Dispatch<SetStateAction<string>>;

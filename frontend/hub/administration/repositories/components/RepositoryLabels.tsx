@@ -1,6 +1,6 @@
+import { TextCell } from '@ansible/ansible-ui-framework';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TextCell } from '../../../../../framework';
 import { Repository } from '../Repository';
 
 export function RepositoryLabels(props: { repository: Repository }) {

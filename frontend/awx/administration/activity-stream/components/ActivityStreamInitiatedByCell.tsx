@@ -1,8 +1,8 @@
+import { TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import React from 'react';
-import { TextCell, useGetPageUrl } from '../../../../../framework';
+import { useTranslation } from 'react-i18next';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useTranslation } from 'react-i18next';
 
 interface ActivityStreamInitiatedByCellProps {
   item: ActivityStream;

@@ -1,7 +1,7 @@
+import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
+import { PulpItemsResponse } from '@ansible/hub-ui/common/useHubView';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { useGet } from '../../frontend/common/crud/useGet';
-import { hubAPI } from '../../frontend/hub/common/api/formatPath';
-import { PulpItemsResponse } from '../../frontend/hub/common/useHubView';
 import { PlatformResource } from '../interfaces/PlatformResource';
 
 export function useHubResource<T extends object>(url: string, platformResource?: PlatformResource) {

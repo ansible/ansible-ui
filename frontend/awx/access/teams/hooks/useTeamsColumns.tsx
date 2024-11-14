@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from 'react';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -7,7 +6,8 @@ import {
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
 import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

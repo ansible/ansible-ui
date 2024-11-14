@@ -1,20 +1,20 @@
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { useOptions } from '../../../../common/crud/useOptions';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { CredentialType } from '../../../interfaces/CredentialType';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteCredentialTypes } from './useDeleteCredentialTypes';
-import { CredentialType } from '../../../interfaces/CredentialType';
-import { ButtonVariant } from '@patternfly/react-core';
 
 export function useCredentialTypeToolbarActions(
   onCredentialTypesDeleted: (credentialType: CredentialType[]) => void

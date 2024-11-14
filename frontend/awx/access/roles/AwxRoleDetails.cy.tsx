@@ -1,8 +1,8 @@
-import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import mockBuiltInRole from '../../../../cypress/fixtures/awxBuiltInRoleDefinition.json';
 import mockCustomRole from '../../../../cypress/fixtures/awxCustomRoleDefinition.json';
-import { AwxRoleDetails } from './AwxRoleDetails';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { AwxRoleDetails } from './AwxRoleDetails';
 
 describe('AwxRoleDetails', () => {
   it('should display team details for built in roles', () => {

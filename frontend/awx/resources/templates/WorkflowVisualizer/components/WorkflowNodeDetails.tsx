@@ -1,7 +1,9 @@
-import { ElementType } from 'react';
-import { useTranslation } from 'react-i18next';
+import { DateTimeCell, PageDetail, PageDetails, Scrollable } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { ActionList, Button, PageSection } from '@patternfly/react-core';
-import { useVisualizationController } from '@patternfly/react-topology';
 import {
   ClipboardCheckIcon,
   ClockIcon,
@@ -11,22 +13,20 @@ import {
   SyncAltIcon,
 } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
-import { DateTimeCell, PageDetail, PageDetails, Scrollable } from '../../../../../../framework';
+import { useVisualizationController } from '@patternfly/react-topology';
+import { ElementType } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../../common/api/awx-utils';
-import { useGet } from '../../../../../common/crud/useGet';
-import { LastModifiedPageDetail } from '../../../../../common/LastModifiedPageDetail';
-import { PageDetailCodeEditor } from '../../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { Project } from '../../../../interfaces/Project';
-import { JobTemplate } from '../../../../interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { InventorySource } from '../../../../interfaces/InventorySource';
+import { JobTemplate } from '../../../../interfaces/JobTemplate';
+import { Project } from '../../../../interfaces/Project';
+import { SummaryFieldUnifiedJobTemplate } from '../../../../interfaces/summary-fields/summary-fields';
 import { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { WorkflowApproval } from '../../../../interfaces/WorkflowApproval';
-import { SummaryFieldUnifiedJobTemplate } from '../../../../interfaces/summary-fields/summary-fields';
+import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { useCloseSidebar, useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
 import { ControllerState, GraphNode } from '../types';
 import { useViewOptions } from '../ViewOptionsProvider';
-import { useCloseSidebar, useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
 import { InventorySourceDetails } from './InventorySourceDetails';
 import { JobTemplateDetails } from './JobTemplateDetails';
 import { NodeNameDetail } from './NodeNameDetail';

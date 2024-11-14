@@ -1,7 +1,7 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../framework';
 import { AccessRole, AwxUser } from '../../interfaces/User';
 
 export interface DeleteRoleConfirmationProps {

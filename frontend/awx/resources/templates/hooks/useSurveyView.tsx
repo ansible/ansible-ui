@@ -1,8 +1,8 @@
-import useSWR from 'swr';
+import { ISelected, IView, useSelected, useView } from '@ansible/ansible-ui-framework';
+import { swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ISelected, IView, useView, useSelected } from '../../../../../framework';
-import { swrOptions, useFetcher } from '../../../../common/crud/Data';
-import { RequestError } from '../../../../common/crud/RequestError';
+import useSWR from 'swr';
 import type { Spec } from '../../../interfaces/Survey';
 
 export type ISurveyView = IView &

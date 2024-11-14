@@ -1,3 +1,11 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import {
   CopyIcon,
@@ -8,14 +16,6 @@ import {
 } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
-  usePageAlertToaster,
-  usePageNavigate,
-} from '../../../../../framework';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';

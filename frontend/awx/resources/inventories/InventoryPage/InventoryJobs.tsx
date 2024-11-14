@@ -1,5 +1,5 @@
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useParams } from 'react-router-dom';
-import { usePersistentFilters } from '../../../../common/PersistentFilters';
 import { JobsList } from '../../../views/jobs/JobsList';
 import { useHostsJobsColumns } from '../../inventories/inventoryHostsPage/hooks/useHostsJobsColumns';
 

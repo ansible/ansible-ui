@@ -1,7 +1,7 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn, getRepositoryBasePath, hubAPIPost } from '../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';

@@ -1,9 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Alert, TextContent } from '@patternfly/react-core';
-import { useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   CopyCell,
   PageFormSelect,
@@ -12,11 +7,16 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { PageFormTextInput } from '../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSection } from '../../../framework/PageForm/Utils/PageFormSection';
-import { AwxPageForm } from '../../../frontend/awx/common/AwxPageForm';
-import { Application } from '../../../frontend/awx/interfaces/Application';
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { Alert, TextContent } from '@patternfly/react-core';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { requestGet, requestPatch, swrOptions } from '../../../frontend/common/crud/Data';
 import { usePostRequest } from '../../../frontend/common/crud/usePostRequest';
 import { PlatformRoute } from '../../main/PlatformRoutes';

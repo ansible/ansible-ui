@@ -1,4 +1,4 @@
-import { apiTag } from '../../hub/common/api/formatPath';
+import { apiTag } from '@ansible/hub-ui/common/api/formatPath';
 
 export let edaApiPath = process.env.EDA_API_PREFIX;
 

@@ -1,6 +1,6 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaView } from '../common/useEventDrivenView';
 import { EdaRuleAuditItem } from '../interfaces/EdaRuleAudit';

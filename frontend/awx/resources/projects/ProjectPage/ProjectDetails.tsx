@@ -1,5 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
+  CopyCell,
+  DateTimeCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { StandardPopover } from '@ansible/ansible-ui-framework/components/StandardPopover';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { ScmType } from '@ansible/common-ui/scm';
+import {
   LabelGroup,
   TextList,
   TextListItem,
@@ -9,21 +24,6 @@ import {
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import {
-  CopyCell,
-  DateTimeCell,
-  LoadingPage,
-  PageDetail,
-  PageDetails,
-  TextCell,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../../framework';
-import { StandardPopover } from '../../../../../framework/components/StandardPopover';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { StatusCell } from '../../../../common/Status';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { ScmType } from '../../../../common/scm';
 import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';

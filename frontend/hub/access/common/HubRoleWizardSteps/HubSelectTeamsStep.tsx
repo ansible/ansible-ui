@@ -1,13 +1,13 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { Title } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
-import { Title } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { useHubTeamFilters } from '../hooks/useHubTeamFilters';
-import { HubTeam } from '../../../interfaces/expanded/HubTeam';
 import { hubAPI } from '../../../common/api/formatPath';
 import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
+import { HubTeam } from '../../../interfaces/expanded/HubTeam';
+import { useHubTeamFilters } from '../hooks/useHubTeamFilters';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;

@@ -1,6 +1,6 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { MultiSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/MultiSelectDialog';
 import { useCallback } from 'react';
-import { usePageDialog } from '../../../../../framework';
-import { MultiSelectDialog } from '../../../../../framework/PageDialogs/MultiSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { Team } from '../../../interfaces/Team';

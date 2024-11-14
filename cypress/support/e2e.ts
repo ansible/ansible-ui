@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 // import 'cypress-axe';
 import '@4tw/cypress-drag-drop';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 import '@cypress/code-coverage/support';
-import { randomString } from '../../framework/utils/random-string';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
 import './auth';
 import './awx-access-commands';
 import './awx-commands';

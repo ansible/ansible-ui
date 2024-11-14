@@ -1,8 +1,8 @@
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
-import * as useOptions from '../../../common/crud/useOptions';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Notifiers } from './Notifiers';
 import { useNotifiersFilters } from './hooks/useNotifiersFilters';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TestInner(props: { filters: IToolbarFilter[] }) {

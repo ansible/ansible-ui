@@ -1,13 +1,26 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { JobTemplateAddTeams } from '../../resources/templates/JobTemplateAddTeams';
+import { JobTemplateAddUsers } from '../../resources/templates/JobTemplateAddUsers';
 import { CreateJobTemplate, EditJobTemplate } from '../../resources/templates/TemplateForm';
 import { TemplateDetails } from '../../resources/templates/TemplatePage/TemplateDetails';
+import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
 import { LaunchTemplate } from '../../resources/templates/TemplatePage/TemplateLaunchWizard';
 import { TemplatePage } from '../../resources/templates/TemplatePage/TemplatePage';
+import { TemplateSurvey } from '../../resources/templates/TemplatePage/TemplateSurvey';
+import {
+  AddTemplateSurveyForm,
+  EditTemplateSurveyForm,
+} from '../../resources/templates/TemplatePage/TemplateSurveyForm';
+import { TemplateTeamAccess } from '../../resources/templates/TemplatePage/TemplateTeamAccess';
+import { TemplateUserAccess } from '../../resources/templates/TemplatePage/TemplateUserAccess';
 import { Templates } from '../../resources/templates/Templates';
+import { WorkflowJobTemplateAddTeams } from '../../resources/templates/WorkflowJobTemplateAddTeams';
+import { WorkflowJobTemplateAddUsers } from '../../resources/templates/WorkflowJobTemplateAddUsers';
 import {
   CreateWorkflowJobTemplate,
   EditWorkflowJobTemplate,
@@ -16,26 +29,13 @@ import { WorkflowJobTemplateDetails } from '../../resources/templates/WorkflowJo
 import { WorkflowJobTemplatePage } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplatePage';
 import { WorkflowJobTemplateTeamAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateTeamAccess';
 import { WorkflowJobTemplateUserAccess } from '../../resources/templates/WorkflowJobTemplatePage/WorkflowJobTemplateUserAccess';
-import { WorkflowJobTemplateAddTeams } from '../../resources/templates/WorkflowJobTemplateAddTeams';
-import { WorkflowJobTemplateAddUsers } from '../../resources/templates/WorkflowJobTemplateAddUsers';
 import { WorkflowVisualizer } from '../../resources/templates/WorkflowVisualizer/WorkflowVisualizer';
-import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
 import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { AwxRoute } from '../AwxRoutes';
-import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
-import { TemplateTeamAccess } from '../../resources/templates/TemplatePage/TemplateTeamAccess';
-import { TemplateUserAccess } from '../../resources/templates/TemplatePage/TemplateUserAccess';
-import { JobTemplateAddTeams } from '../../resources/templates/JobTemplateAddTeams';
-import { JobTemplateAddUsers } from '../../resources/templates/JobTemplateAddUsers';
-import { TemplateJobs } from '../../resources/templates/TemplatePage/TemplateJobs';
-import { TemplateSurvey } from '../../resources/templates/TemplatePage/TemplateSurvey';
 import { SchedulesList } from '../../views/schedules/SchedulesList';
+import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
-import {
-  EditTemplateSurveyForm,
-  AddTemplateSurveyForm,
-} from '../../resources/templates/TemplatePage/TemplateSurveyForm';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxTemplateRoutes() {
   const { t } = useTranslation();

@@ -1,24 +1,24 @@
-import { useCallback, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../framework';
-import { hubAPI } from '../../common/api/formatPath';
-import { getRepositoryBasePath, hubAPIPost } from '../../common/api/hub-api-utils';
-import { HubNamespace } from '../../namespaces/HubNamespace';
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import {
-  Modal,
-  ModalVariant,
   Button,
-  Grid,
-  GridItem,
-  Split,
-  SplitItem,
   FormGroup,
   FormSelect,
   FormSelectOption,
+  Grid,
+  GridItem,
+  Modal,
+  ModalVariant,
+  Split,
+  SplitItem,
 } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
+import { useCallback, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { hubAPI } from '../../common/api/formatPath';
+import { getRepositoryBasePath, hubAPIPost } from '../../common/api/hub-api-utils';
 import { HubError } from '../../common/HubError';
-import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
+import { HubNamespace } from '../../namespaces/HubNamespace';
 
 export interface SignAllCollectionsModalProps {
   namespace: HubNamespace;

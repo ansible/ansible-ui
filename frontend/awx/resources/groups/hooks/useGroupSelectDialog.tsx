@@ -1,11 +1,11 @@
+import { ITableColumn, MultiSelectDialog } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, MultiSelectDialog } from '../../../../../framework';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { useGroupsFilters } from './useGroupsFilters';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
-import { useMemo } from 'react';
 
 export interface GroupSelectModalProps {
   groupId: string;

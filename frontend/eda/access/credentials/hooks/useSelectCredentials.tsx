@@ -1,11 +1,11 @@
+import { MultiSelectDialog, usePageDialog } from '@ansible/ansible-ui-framework';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { edaAPI } from '../../../../eda/common/eda-utils';
-import { useCredentialFilters } from './useCredentialFilters';
-import { useCredentialColumns } from './useCredentialColumns';
-import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { edaAPI } from '../../../common/eda-utils';
 import { useEdaView } from '../../../common/useEventDrivenView';
-import { MultiSelectDialog, usePageDialog } from '../../../../../framework';
+import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { useCredentialColumns } from './useCredentialColumns';
+import { useCredentialFilters } from './useCredentialFilters';
 
 export function useSelectCredentials(credentialKinds?: string[], title?: string) {
   const [_, setDialog] = usePageDialog();

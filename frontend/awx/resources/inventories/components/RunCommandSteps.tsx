@@ -1,7 +1,3 @@
-import { LabelGroup } from '@patternfly/react-core';
-import { useWatch } from 'react-hook-form';
-import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
   PageDetail,
   PageDetails,
@@ -11,25 +7,29 @@ import {
   PageFormSwitch,
   PageFormTextInput,
   useGetPageUrl,
-} from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
+import { LabelGroup } from '@patternfly/react-core';
+import { useWatch } from 'react-hook-form';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { Credential } from '../../../interfaces/Credential';
-import { RunCommandWizard } from '../../../interfaces/Inventory';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { ExecutionEnvironment } from '../../../interfaces/ExecutionEnvironment';
+import { RunCommandWizard } from '../../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { LoadingState } from '../../../../../framework/components/LoadingState';
-import { AwxError } from '../../../common/AwxError';
-import { PageSelectOption } from '../../../../../framework/PageInputs/PageSelectOption';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function RunCommandDetailStep() {
   const { t } = useTranslation();

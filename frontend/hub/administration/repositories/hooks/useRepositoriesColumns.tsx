@@ -1,8 +1,8 @@
+import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { Label } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 

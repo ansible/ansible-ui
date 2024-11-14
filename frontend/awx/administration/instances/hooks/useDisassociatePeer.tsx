@@ -1,14 +1,14 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useAddressColumn } from '@ansible/common-ui/columns';
+import { getItemKey, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { useAddressColumn } from '../../../../common/columns';
-import { getItemKey, requestPatch } from '../../../../common/crud/Data';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { usePeersColumns } from './usePeersColumns';
-import { useParams } from 'react-router-dom';
 import { Instance, Peer } from '../../../interfaces/Instance';
-import { useGetItem } from '../../../../common/crud/useGet';
+import { usePeersColumns } from './usePeersColumns';
 
 export function useDisassociatePeer(onComplete: (peers: Peer[]) => void, instanceId: string) {
   const params = useParams<{ id?: string }>();

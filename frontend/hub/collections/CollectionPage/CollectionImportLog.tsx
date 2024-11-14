@@ -1,10 +1,16 @@
+import {
+  LoadingPage,
+  PFColorE,
+  PageDetail,
+  PageDetails,
+  Scrollable,
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { CodeBlock, PageSection, Stack } from '@patternfly/react-core';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
-import { LoadingPage, PFColorE, PageDetail, PageDetails, Scrollable } from '../../../../framework';
-import { StatusCell } from '../../../common/Status';
-import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { NavigationArrow } from '../../common/ImportLogNavigationArrow';
 import { hubAPI } from '../../common/api/formatPath';

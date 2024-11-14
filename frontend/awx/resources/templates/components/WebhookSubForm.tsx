@@ -1,12 +1,12 @@
+import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 import { Button } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useParams } from 'react-router-dom';
-import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { postRequest, requestGet } from '../../../../common/crud/Data';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { JobTemplateForm } from '../../../interfaces/JobTemplateForm';

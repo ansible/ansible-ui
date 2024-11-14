@@ -1,11 +1,11 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useGet, useGetItem } from '../../../../common/crud/useGet';
+import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Instance, Peer } from '../../../interfaces/Instance';
-import { useParams } from 'react-router-dom';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export interface ReceptorAddresses {
   results: [

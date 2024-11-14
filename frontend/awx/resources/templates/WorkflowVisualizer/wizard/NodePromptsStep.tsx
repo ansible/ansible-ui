@@ -1,13 +1,13 @@
-import { useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import {
   PageFormDataEditor,
   PageFormGrid,
   PageFormSelect,
   PageFormSwitch,
   PageFormTextInput,
-} from '../../../../../../framework';
-import { PageFormCreatableSelect } from '../../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+} from '@ansible/ansible-ui-framework';
+import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
+import { useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../../administration/instance-groups/components/PageFormInstanceGroupSelect';

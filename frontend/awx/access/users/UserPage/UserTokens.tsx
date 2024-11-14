@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
+  IPageAction,
+  LoadingPage,
+  PageActionSelection,
+  PageActionType,
   PageLayout,
   PageTable,
-  usePageNavigate,
-  LoadingPage,
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
   useGetPageUrl,
-} from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { useAwxView } from '../../../common/useAwxView';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxUser } from '../../../interfaces/User';
-import { Token } from '../../../interfaces/Token';
-import { useUserTokensColumns } from '../hooks/useUserTokensColumns';
-import { DetailInfo } from '../../../../../framework/components/DetailInfo';
-import { useUserTokensFilters } from '../hooks/useUserTokensFilters';
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { DetailInfo } from '@ansible/ansible-ui-framework/components/DetailInfo';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { useAwxView } from '../../../common/useAwxView';
+import { Token } from '../../../interfaces/Token';
+import { AwxUser } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDeleteUserTokens } from '../hooks/useDeleteUserTokens';
+import { useUserTokensColumns } from '../hooks/useUserTokensColumns';
+import { useUserTokensFilters } from '../hooks/useUserTokensFilters';
 
 export function UserTokens(props: {
   id?: string;

@@ -1,5 +1,5 @@
-import { awxAPI } from '../../frontend/awx/common/api/awx-utils';
-import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { useGet } from '../../frontend/common/crud/useGet';
 import { PlatformResource } from '../interfaces/PlatformResource';

@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { PageTable, usePageAlertToaster, usePageDialog } from '@ansible/ansible-ui-framework';
+import { usePaged } from '@ansible/ansible-ui-framework/PageTable/useTableItems';
 import { Button, Checkbox, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
-import { usePageDialog, PageTable, usePageAlertToaster } from '../../../../../framework';
-import { usePaged } from '../../../../../framework/PageTable/useTableItems';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { JobTemplate } from '../../../interfaces/JobTemplate';
+import type { Spec } from '../../../interfaces/Survey';
+import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { useDeleteSurvey } from './useDeleteSurvey';
 import { useSurveyColumns } from './useSurveyColumns';
-import type { Spec } from '../../../interfaces/Survey';
-import { useParams } from 'react-router-dom';
-import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 
 const ModalBodyDiv = styled.div`
   display: flex;

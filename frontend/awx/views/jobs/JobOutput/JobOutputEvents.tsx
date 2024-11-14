@@ -1,7 +1,8 @@
+import { type IFilterState, type IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { type IFilterState, type IToolbarFilter } from '../../../../../framework';
 import { Job } from '../../../interfaces/Job';
+import { HostEventModal } from './HostEventModal';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
 import { IJobOutputRow, JobOutputRow, jobEventToRows, tracebackToRows } from './JobOutputRow';
@@ -14,7 +15,6 @@ import {
 import { useScrollControls } from './useScrollControls';
 import { useVirtualizedList } from './useVirtualized';
 import { isHostEvent, isJobRunning } from './util';
-import { HostEventModal } from './HostEventModal';
 
 export interface ICollapsed {
   [uuid: string]: boolean;

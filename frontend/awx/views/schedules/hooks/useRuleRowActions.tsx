@@ -1,14 +1,13 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { dateToInputDateTime } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
 import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { PageActionSelection, PageActionType } from '../../../../../framework';
-import { useTranslation } from 'react-i18next';
-import { RuleListItemType } from '../types';
 import { useMemo } from 'react';
-import { IPageAction } from '../../../../../framework';
 import { useFormContext } from 'react-hook-form';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { RULES_DEFAULT_VALUES } from '../wizard/constants';
-import { dateToInputDateTime } from '../../../../../framework/utils/dateTimeHelpers';
+import { useTranslation } from 'react-i18next';
 import { RRule } from 'rrule';
+import { RuleListItemType } from '../types';
+import { RULES_DEFAULT_VALUES } from '../wizard/constants';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],

@@ -1,8 +1,8 @@
+import { compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
+import { useApplicationsColumns } from '@ansible/awx-ui/administration/applications/hooks/useApplicationsColumns';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { useApplicationsColumns } from '../../../../frontend/awx/administration/applications/hooks/useApplicationsColumns';
-import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { useNameColumn } from '../../../../frontend/common/columns';
 import { getItemKey, requestDelete } from '../../../../frontend/common/crud/Data';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

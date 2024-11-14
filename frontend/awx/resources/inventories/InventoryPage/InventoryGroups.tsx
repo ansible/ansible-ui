@@ -1,11 +1,11 @@
+import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubeIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable, useGetPageUrl } from '../../../../../framework';
-import { ButtonLink } from '../../../../../framework/components/ButtonLink';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';

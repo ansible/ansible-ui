@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageHeader,
   PageLayout,
@@ -7,10 +5,12 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
-import { postRequest } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Inventory, RunCommandWizard } from '../../interfaces/Inventory';

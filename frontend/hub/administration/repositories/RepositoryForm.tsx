@@ -1,9 +1,3 @@
-import { Label } from '@patternfly/react-core';
-import { ReactNode, useCallback } from 'react';
-import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
-import { useNavigate } from 'react-router-dom';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -13,11 +7,17 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormAsyncSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormWatch } from '../../../../framework/PageForm/Utils/PageFormWatch';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Label } from '@patternfly/react-core';
+import { ReactNode, useCallback } from 'react';
+import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { pulpAPI } from '../../common/api/formatPath';

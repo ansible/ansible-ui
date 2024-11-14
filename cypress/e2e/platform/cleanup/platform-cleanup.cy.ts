@@ -1,8 +1,8 @@
-import { Authenticator } from '../../../../platform/interfaces/Authenticator';
-import { PlatformItemsResponse } from '../../../../platform/interfaces/PlatformItemsResponse';
-import { PlatformOrganization } from '../../../../platform/interfaces/PlatformOrganization';
-import { PlatformTeam } from '../../../../platform/interfaces/PlatformTeam';
-import { PlatformUser } from '../../../../platform/interfaces/PlatformUser';
+import { Authenticator } from '@ansible/platform-ui/interfaces/Authenticator';
+import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 
 const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();

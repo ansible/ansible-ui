@@ -1,8 +1,8 @@
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
 import { useMemo } from 'react';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Team } from '../../../../frontend/awx/interfaces/Team';
 import { TeamAssignment } from '../../../../frontend/common/access/interfaces/TeamAssignment';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { useAwxResource } from '../../../hooks/useAwxResource';

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { LoadingPage, PageLayout } from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageLayout } from '../../../../framework';
-import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
-import { useGet } from '../../../common/crud/useGet';
 import { AwxError } from '../../common/AwxError';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Job } from '../../interfaces/Job';

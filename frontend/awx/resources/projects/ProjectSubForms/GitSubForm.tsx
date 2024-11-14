@@ -1,7 +1,7 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Trans, useTranslation } from 'react-i18next';
-import { PageFormTextInput } from '../../../../../framework';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';

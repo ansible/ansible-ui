@@ -1,9 +1,9 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ButtonVariant } from '@patternfly/react-core';
-import { ThumbsDownIcon, ThumbsUpIcon, UploadIcon, ImportIcon } from '@patternfly/react-icons';
+import { ImportIcon, ThumbsDownIcon, ThumbsUpIcon, UploadIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { requestGet } from '../../../../common/crud/Data';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { PulpItemsResponse } from '../../../common/useHubView';
 import { Repository } from '../../repositories/Repository';
@@ -13,14 +13,14 @@ import {
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { TFunction } from 'i18next';
+import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
 import { useHubContext } from '../../../common/useHubContext';
 import { HubRoute } from '../../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Approval';
 import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
 import { useRejectCollections } from './useRejectCollections';
-import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
-import { TFunction } from 'i18next';
 
 export function useApprovalActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();

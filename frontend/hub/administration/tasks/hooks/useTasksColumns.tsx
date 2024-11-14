@@ -1,7 +1,12 @@
+import {
+  DateTimeCell,
+  ITableColumn,
+  TextCell,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell, usePageNavigate } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { HubRoute } from '../../../main/HubRoutes';
 import { Task } from '../Task';

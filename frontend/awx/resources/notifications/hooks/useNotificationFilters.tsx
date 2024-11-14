@@ -1,15 +1,15 @@
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
+import { awxAPI } from '../../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
 
 export function useNotificationFilters() {
   const { t } = useTranslation();

@@ -1,10 +1,10 @@
+import { PageDetail } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { ChipGroup } from '@patternfly/react-core';
 import React from 'react';
-import { PageDetail } from '../../../../../framework';
-import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
-import { CredentialLabel } from '../../../common/CredentialLabel';
 import { useTranslation } from 'react-i18next';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
+import { CredentialLabel } from '../../../common/CredentialLabel';
+import { CredentialInputSource } from '../../../interfaces/CredentialInputSource';
 
 export function CredentialTypeDetail(props: {
   inputs: Record<string, string | number>;

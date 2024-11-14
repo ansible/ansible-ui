@@ -1,13 +1,17 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import {
+  useCreatedColumn,
+  useInventoryNameColumn,
+  useModifiedColumn,
+  useNameColumn,
+} from '@ansible/common-ui/columns';
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageNavigate, ITableColumn } from '../../../../../framework';
-import { useNameColumn, useCreatedColumn, useModifiedColumn } from '../../../../common/columns';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxHost } from '../../../interfaces/AwxHost';
 import { useParams } from 'react-router-dom';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { Sparkline } from '../../templates/components/Sparkline';
-import { useInventoryNameColumn } from '../../../../common/columns';
 
 function useActivityColumn(name: 'Activity' | 'Recent jobs') {
   const { t } = useTranslation();

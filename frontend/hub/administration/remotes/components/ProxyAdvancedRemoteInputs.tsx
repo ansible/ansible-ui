@@ -1,10 +1,10 @@
+import { PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
+import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
+import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
-import { useIsValidUrl } from '../../../../common/validation/useIsValidUrl';
-import { PageFormTextInput } from '../../../../../framework';
-import { PageFormSecret } from '../../../../../framework/PageForm/Inputs/PageFormSecret';
-import { useFormContext } from 'react-hook-form';
-import { useState } from 'react';
 
 export function ProxyAdvancedRemoteInputs() {
   const { t } = useTranslation();

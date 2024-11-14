@@ -1,4 +1,14 @@
 import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  compareStrings,
+  usePageDialog,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import {
   Button,
   ButtonVariant,
   ClipboardCopy,
@@ -13,28 +23,18 @@ import { CheckIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  IPageAction,
-  PageActionSelection,
-  PageActionType,
-  compareStrings,
-  usePageDialog,
-  usePageNavigate,
-} from '../../../../framework';
-import { ExternalLink } from '../../common/ExternalLink';
-import { requestGet } from '../../../common/crud/Data';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { hubAPIDelete, hubAPIPost } from '../../common/api/hub-api-utils';
+import { AAPDocsURL } from '../../common/constants';
+import { ExternalLink } from '../../common/ExternalLink';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
 import { HubContext, useHubContext } from '../../common/useHubContext';
 import { PulpItemsResponse } from '../../common/useHubView';
+import { useCanSignEE } from '../../common/utils/canSign';
 import { SigningServiceResponse } from '../../interfaces/generated/SigningServiceResponse';
 import { HubRoute } from '../../main/HubRoutes';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { useExecutionEnvironmentsColumns } from './useExecutionEnvironmentsColumns';
-import { AAPDocsURL } from '../../common/constants';
-import { useCanSignEE } from '../../common/utils/canSign';
-import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
 
 export function useEmptyEEsActions() {
   const { t } = useTranslation();

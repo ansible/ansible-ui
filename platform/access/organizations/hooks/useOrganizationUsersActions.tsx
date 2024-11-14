@@ -1,27 +1,24 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CogIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../framework';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+} from '@ansible/ansible-ui-framework';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CogIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useManageOrgRoles } from '../../../../frontend/common/access/hooks/useManageOrgRolesDialog';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
 import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { IPlatformView } from '../../../hooks/usePlatformView';

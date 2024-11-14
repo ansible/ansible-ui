@@ -1,6 +1,6 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../framework';
 import { AuthenticatorPage } from '../access/authenticators/AuthenticatorPage/AuthenticatorPage';
 import { PlatformAuthenticatorDetails } from '../access/authenticators/AuthenticatorPage/PlatformAuthenticatorDetails';
 import { CreateAuthenticator } from '../access/authenticators/CreateAuthenticator';

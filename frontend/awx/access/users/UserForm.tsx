@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxUser } from '../../interfaces/User';

@@ -1,18 +1,18 @@
-import { useState, useMemo } from 'react';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   MenuToggle,
   MenuToggleElement,
   Select,
-  SelectOption,
   SelectGroup,
   SelectList,
+  SelectOption,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-import { Link, useParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { stringIsUUID } from '../../common/util/strings';
 import type { WorkflowJobNode } from '../../interfaces/WorkflowNode';
-import { useGetPageUrl } from '../../../../framework';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { jobPaths } from './WorkflowOutput/WorkflowOutputNode';
 

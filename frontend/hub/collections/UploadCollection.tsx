@@ -1,7 +1,3 @@
-import { Radio } from '@patternfly/react-core';
-import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   ITableColumn,
   IToolbarFilter,
@@ -11,14 +7,18 @@ import {
   TextCell,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { ToolbarFilterType } from '../../../framework/PageToolbar/PageToolbarFilter';
-import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { useURLSearchParams } from '../../../framework/components/useURLSearchParams';
-import { requestGet } from '../../common/crud/Data';
-import { useGetRequest } from '../../common/crud/useGet';
-import { nameKeyFn } from '../../common/utils/nameKeyFn';
+} from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilter';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGetRequest } from '@ansible/common-ui/crud/useGet';
+import { nameKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
+import { Radio } from '@patternfly/react-core';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useRepositories } from '../administration/repositories/hooks/useRepositories';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';

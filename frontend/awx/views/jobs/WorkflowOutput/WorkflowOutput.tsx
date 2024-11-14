@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ComponentFactory,
   DagreLayout,
@@ -7,33 +5,35 @@ import {
   EdgeModel,
   Graph,
   GraphComponent,
+  LabelPosition,
   Model,
   ModelKind,
   NodeShape,
+  NodeStatus,
   Visualization,
   VisualizationProvider,
   withPanZoom,
   withSelection,
-  LabelPosition,
-  NodeStatus,
 } from '@patternfly/react-topology';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
-import { EdgeStatus } from '../../../resources/templates/WorkflowVisualizer/types';
+import { secondsToHHMMSS } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { Job } from '../../../interfaces/Job';
 import { CustomEdge, CustomNode } from '../../../resources/templates/WorkflowVisualizer/components';
-import { getNodeLabel } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
-import { WorkflowOutputGraph } from './WorkflowOutputGraph';
 import {
   GRAPH_ID,
   NODE_DIAMETER,
   START_NODE_ID,
 } from '../../../resources/templates/WorkflowVisualizer/constants';
 import { useCreateEdge } from '../../../resources/templates/WorkflowVisualizer/hooks';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
-import { secondsToHHMMSS } from '../../../../../framework/utils/dateTimeHelpers';
-import { Job } from '../../../interfaces/Job';
+import { EdgeStatus } from '../../../resources/templates/WorkflowVisualizer/types';
+import { getNodeLabel } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
+import { WorkflowOutputGraph } from './WorkflowOutputGraph';
 import { WorkflowOutputNode } from './WorkflowOutputNode';
 
 export const graphModel: Model = {

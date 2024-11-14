@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormExpandableSection } from '../../../../framework/PageForm/PageFormExpandableSection';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { useGet } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
+} from '@ansible/ansible-ui-framework';
+import { PageFormExpandableSection } from '@ansible/ansible-ui-framework/PageForm/PageFormExpandableSection';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { pulpAPI } from '../../common/api/formatPath';

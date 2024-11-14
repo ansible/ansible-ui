@@ -1,13 +1,13 @@
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
+import { EmptyStateUnauthorized } from '@ansible/ansible-ui-framework/components/EmptyStateUnauthorized';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { TopologyViewLayer } from './Visualizer';
-import { EmptyStateUnauthorized } from '../../../../framework/components/EmptyStateUnauthorized';
-import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
 
 export function Topology() {
   const { t } = useTranslation();

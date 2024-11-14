@@ -1,17 +1,17 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
 import { ManagementJobPage } from '../../administration/management-jobs/ManagementJobPage/ManagementJobPage';
 import { ManagementJobs } from '../../administration/management-jobs/ManagementJobsList';
-import { AwxRoute } from '../AwxRoutes';
+import { awxAPI } from '../../common/api/awx-utils';
+import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
+import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
+import { SchedulesList } from '../../views/schedules/SchedulesList';
 import { ScheduleAddWizard } from '../../views/schedules/wizard/ScheduleAddWizard';
 import { ScheduleEditWizard } from '../../views/schedules/wizard/ScheduleEditWizard';
-import { SchedulesList } from '../../views/schedules/SchedulesList';
-import { awxAPI } from '../../common/api/awx-utils';
-import { SchedulePage } from '../../views/schedules/SchedulePage/SchedulePage';
-import { ScheduleDetails } from '../../views/schedules/SchedulePage/ScheduleDetails';
-import { ResourceNotifications } from '../../resources/notifications/ResourceNotifications';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxManagementJobsRoutes() {
   const { t } = useTranslation();

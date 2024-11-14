@@ -1,7 +1,7 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../../framework';
-import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
 import { InventorySource } from '../../../interfaces/InventorySource';

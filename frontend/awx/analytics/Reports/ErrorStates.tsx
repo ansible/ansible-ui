@@ -1,9 +1,9 @@
+import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { Button } from '@patternfly/react-core';
 import { KeyIcon, MonitoringIcon } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EmptyStateCustom } from '../../../../framework/components/EmptyStateCustom';
-import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 
 export function AnalyticsErrorState(props: { error?: string }) {

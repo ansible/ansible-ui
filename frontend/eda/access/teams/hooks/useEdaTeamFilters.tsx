@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function useEdaTeamFilters() {
   const { t } = useTranslation();

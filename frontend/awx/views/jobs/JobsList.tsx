@@ -1,7 +1,7 @@
+import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, PageTable } from '../../../../framework';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';

@@ -1,8 +1,12 @@
+import {
+  errorToAlertProps,
+  useGetPageUrl,
+  usePageAlertToaster,
+} from '@ansible/ansible-ui-framework';
+import { PageDashboardCarousel } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCarousel';
 import { CogIcon } from '@patternfly/react-icons';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { errorToAlertProps, useGetPageUrl, usePageAlertToaster } from '../../../framework';
-import { PageDashboardCarousel } from '../../../framework/PageDashboard/PageDashboardCarousel';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { useSelectCollectionsDialog } from '../collections/hooks/useSelectCollections';
 import { hubAPI } from '../common/api/formatPath';

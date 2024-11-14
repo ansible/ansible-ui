@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { BuilderImageIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
-  PageActionType,
   PageActionSelection,
+  PageActionType,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxRoute } from '../../../awx/main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { BuilderImageIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { ExecutionEnvironmentImage as Image } from '../ExecutionEnvironmentPage/ExecutionEnvironmentImage';
 

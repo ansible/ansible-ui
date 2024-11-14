@@ -1,25 +1,25 @@
-import { CopyIcon, PencilAltIcon, BellIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../../framework';
-import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { useDeleteNotifiers } from './useDeleteNotifiers';
-import { useCopyNotifier } from './useCopyNotifier';
-import { AwxRoute } from '../../../main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import {
   cannotCopyResource,
   cannotDeleteResource,
   cannotEditResource,
-} from '../../../../common/utils/RBAChelpers';
-import { postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
+} from '@ansible/common-ui/utils/RBAChelpers';
 import { ButtonVariant } from '@patternfly/react-core';
+import { BellIcon, CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useCopyNotifier } from './useCopyNotifier';
+import { useDeleteNotifiers } from './useDeleteNotifiers';
 
 export type RunningNotificationsType = { [key: string]: string };
 

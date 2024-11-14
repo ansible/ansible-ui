@@ -1,8 +1,8 @@
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 import { testDelete } from './notifiersSharedFunctions';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 

@@ -1,13 +1,13 @@
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { Alert, CodeBlock, Stack, StackItem } from '@patternfly/react-core';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, CodeBlock, Stack, StackItem } from '@patternfly/react-core';
-import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
-import { ImportStatusBar } from './ImportStatusBar';
 import styled from 'styled-components';
-import { LoadingState } from '../../../../framework/components/LoadingState';
-import { EmptyStateError } from '../../../../framework/components/EmptyStateError';
-import { getLogMessageColor } from '../../common/utils/getLogMessageColor';
+import { CollectionImport, CollectionVersionSearch } from '../../collections/Collection';
 import { NavigationArrow } from '../../common/ImportLogNavigationArrow';
+import { getLogMessageColor } from '../../common/utils/getLogMessageColor';
+import { ImportStatusBar } from './ImportStatusBar';
 
 const EmptyImportConsole = styled.div`
   height: 500px;

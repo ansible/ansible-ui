@@ -1,10 +1,10 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
 import { edaAPI } from '../../common/eda-utils';
-import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
+import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
 
 export function useDeleteRulebookActivations(

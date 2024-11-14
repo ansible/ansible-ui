@@ -1,14 +1,14 @@
-import styled from 'styled-components';
+import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { Divider, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Divider, TextContent, Text, TextVariants } from '@patternfly/react-core';
-import { PageDetail, PageDetails } from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+import styled from 'styled-components';
 import { Authenticator } from '../../../../interfaces/Authenticator';
 import { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
-import { AuthenticatorFormValues } from '../AuthenticatorForm';
-import { textInputTypes, dataInputTypes } from './AuthenticatorDetailsStep';
 import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
+import { AuthenticatorFormValues } from '../AuthenticatorForm';
+import { dataInputTypes, textInputTypes } from './AuthenticatorDetailsStep';
 
 type Field = {
   label: string;

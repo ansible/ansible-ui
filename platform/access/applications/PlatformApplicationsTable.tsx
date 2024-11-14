@@ -1,7 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   IToolbarFilter,
@@ -10,15 +6,19 @@ import {
   PageTable,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { ButtonLink } from '../../../framework/components/ButtonLink';
-import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
+} from '@ansible/ansible-ui-framework';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import {
   useNameToolbarFilter,
   useOrganizationToolbarFilter,
-} from '../../../frontend/awx/common/awx-toolbar-filters';
-import { Application } from '../../../frontend/awx/interfaces/Application';
-import { ActionsResponse, OptionsResponse } from '../../../frontend/awx/interfaces/OptionsResponse';
+} from '@ansible/awx-ui/common/awx-toolbar-filters';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useOptions } from '../../../frontend/common/crud/useOptions';
 import { usePersistentFilters } from '../../../frontend/common/PersistentFilters';
 import { usePlatformView } from '../../hooks/usePlatformView';

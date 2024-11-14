@@ -1,7 +1,3 @@
-import { Button, Label, PageSection, Progress, Skeleton, Tooltip } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   BytesCell,
   PageDetail,
@@ -9,26 +5,30 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { Dotted } from '../../../../framework/components/Dotted';
-import { LoadingPage } from '../../../../framework/components/LoadingPage';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { StatusCell } from '../../../common/Status';
-import { useGetItem } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { Dotted } from '@ansible/ansible-ui-framework/components/Dotted';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { Unavailable } from '@ansible/ansible-ui-framework/components/Unavailable';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { Button, Label, PageSection, Progress, Skeleton, Tooltip } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { AwxError } from '../../common/AwxError';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { InstanceForksSlider } from './components/InstanceForksSlider';
+import { InstanceSwitch } from './components/InstanceSwitch';
 import { useInstanceActions } from './hooks/useInstanceActions';
 import { useNodeTypeTooltip } from './hooks/useNodeTypeTooltip';
-import { InstanceForksSlider } from './components/InstanceForksSlider';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
-import { InstanceSwitch } from './components/InstanceSwitch';
-import { Unavailable } from '../../../../framework/components/Unavailable';
 
 export function InstanceDetails() {
   const params = useParams<{ id?: string; instance_id?: string }>();

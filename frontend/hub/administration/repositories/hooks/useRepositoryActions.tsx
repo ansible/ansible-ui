@@ -1,24 +1,23 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { CopyIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { useClipboard } from '@ansible/ansible-ui-framework/hooks/useClipboard';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { CopyIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CollectionVersionSearch } from '../../../collections/Collection';
+import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
+import { getRepositoryBasePath, getRepoURL } from '../../../common/api/hub-api-utils';
 import { PROTECTED_REPOSITORIES } from '../../../common/constants';
+import { HubRoute } from '../../../main/HubRoutes';
 import { Repository } from '../Repository';
 import { useDeleteRepositories } from './useDeleteRepositories';
-import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
-import { getRepoURL } from '../../../common/api/hub-api-utils';
-import { useClipboard } from '../../../../../framework/hooks/useClipboard';
-import { HubRoute } from '../../../main/HubRoutes';
 import { useSyncRepositories } from './useSyncRepositories';
-import { useDeleteCollectionsFromRepository } from '../../../collections/hooks/useDeleteCollectionsFromRepository';
 
 export function useRepositoryActions(options: {
   onRepositoriesDeleted: (repositories: Repository[]) => void;

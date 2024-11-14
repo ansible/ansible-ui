@@ -1,8 +1,8 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
-import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { useTemplateColumns } from '../hooks/useTemplateColumns';
 import { useTemplateFilters } from '../hooks/useTemplateFilters';
 

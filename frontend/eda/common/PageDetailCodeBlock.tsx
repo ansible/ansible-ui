@@ -1,3 +1,5 @@
+import { PageDetail } from '@ansible/ansible-ui-framework';
+import { useClipboard } from '@ansible/ansible-ui-framework/hooks/useClipboard';
 import {
   ClipboardCopyButton,
   CodeBlock,
@@ -7,8 +9,6 @@ import {
 import React, { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail } from '../../../framework';
-import { useClipboard } from '../../../framework/hooks/useClipboard';
 
 export function PageDetailCodeBlock(props: {
   label?: string;

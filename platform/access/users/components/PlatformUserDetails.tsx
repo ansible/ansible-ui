@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LabelsCell,
   LoadingPage,
@@ -7,7 +5,9 @@ import {
   PageDetails,
   PageDetailsFromColumns,
   useGetPageUrl,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';

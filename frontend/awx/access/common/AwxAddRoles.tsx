@@ -1,16 +1,16 @@
+import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
-import { PageWizard, PageWizardStep } from '../../../../framework';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../common/crud/Data';
+import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxBulkActionDialog } from '../../common/useAwxBulkActionDialog';
+import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 import { AwxSelectResourceTypeStep } from './AwxRolesWizardSteps/AwxSelectResourceTypeStep';
 import {
   AwxResourceType,
   AwxSelectResourcesStep,
 } from './AwxRolesWizardSteps/AwxSelectResourcesStep';
 import { AwxSelectRolesStep } from './AwxRolesWizardSteps/AwxSelectRolesStep';
-import { awxAPI } from '../../common/api/awx-utils';
-import { AwxRbacRole } from '../../interfaces/AwxRbacRole';
 
 interface WizardFormValues {
   resourceType: string;

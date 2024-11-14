@@ -2,12 +2,12 @@
 /// <reference types="cypress" />
 
 //Tests a user's ability to create, edit, and delete a Project in the EDA UI.
-import { randomString } from '../../../../framework/utils/random-string';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

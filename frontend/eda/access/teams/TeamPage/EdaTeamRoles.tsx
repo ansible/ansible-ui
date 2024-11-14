@@ -1,5 +1,5 @@
+import { ResourceAccess } from '@ansible/common-ui/access/components/ResourceAccess';
 import { useParams } from 'react-router-dom';
-import { ResourceAccess } from '../../../../common/access/components/ResourceAccess';
 import { EdaRoute } from '../../../main/EdaRoutes';
 
 export function EdaTeamRoles(props: { id?: string; addRolesRoute?: string }) {

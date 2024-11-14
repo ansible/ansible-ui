@@ -1,3 +1,4 @@
+import { ErrorBoundary } from '@ansible/ansible-ui-framework/components/ErrorBoundary';
 import {
   BackgroundImage,
   Brand,
@@ -17,7 +18,6 @@ import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useFrameworkTranslations } from '../../../framework';
-import { ErrorBoundary } from '../../../framework/components/ErrorBoundary';
 import { getCookie } from '../crud/cookie';
 import { createRequestError, RequestError } from '../crud/RequestError';
 import { AuthOption, SocialAuthLogin } from '../SocialAuthLogin';

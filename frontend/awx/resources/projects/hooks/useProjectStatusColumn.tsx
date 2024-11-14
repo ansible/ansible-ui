@@ -1,8 +1,8 @@
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { Tooltip } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, useGetPageUrl } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useProjectStatusColumn(options?: {

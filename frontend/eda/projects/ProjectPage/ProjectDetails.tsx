@@ -1,22 +1,22 @@
-import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   CopyCell,
   LoadingPage,
   PageDetail,
   PageDetails,
   useGetPageUrl,
-} from '../../../../framework';
-import { StandardPopover } from '../../../../framework/components/StandardPopover';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { StatusCell } from '../../../common/Status';
-import { useGetItem } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { StandardPopover } from '@ansible/ansible-ui-framework/components/StandardPopover';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { DescriptionListGroup, DescriptionListTerm } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaProjectRead } from '../../interfaces/EdaProject';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { capitalizeFirstLetter } from '../../../../framework/utils/strings';
 
 export function ProjectDetails() {
   const { t } = useTranslation();

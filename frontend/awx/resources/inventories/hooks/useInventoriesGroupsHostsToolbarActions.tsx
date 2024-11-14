@@ -1,24 +1,24 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+  usePageDialog,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
-  usePageNavigate,
-  usePageAlertToaster,
-  usePageDialog,
-} from '../../../../../framework';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
 import { IAwxView } from '../../../common/useAwxView';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useDisassociateHosts } from '../../hosts/hooks/useDisassociateHosts';
-import { postRequest } from '../../../../common/crud/Data';
 import { HostSelectDialog } from '../../hosts/hooks/useHostSelectDialog';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 

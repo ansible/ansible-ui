@@ -1,13 +1,13 @@
+import { PageTable } from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxView } from '../../common/useAwxView';
+import { Instance, Peer } from '../../interfaces/Instance';
 import { usePeersFilters } from './Instances';
 import { usePeersColumns } from './hooks/usePeersColumns';
-import { useAwxView } from '../../common/useAwxView';
-import { useMemo } from 'react';
-import { Instance, Peer } from '../../interfaces/Instance';
-import { useGetItem } from '../../../common/crud/useGet';
 
 export function InstanceListenerAddresses() {
   const { t } = useTranslation();

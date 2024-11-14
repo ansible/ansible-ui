@@ -1,13 +1,13 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { SelectRolesStep } from '@ansible/common-ui/access/RolesWizard/steps/SelectRolesStep';
 import { useMemo } from 'react';
-import { ITableColumn, TextCell } from '../../../../../framework';
 import { useTranslation } from 'react-i18next';
-import { SelectRolesStep } from '../../../../common/access/RolesWizard/steps/SelectRolesStep';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useHubRoleFilters } from '../hooks/useHubRoleFilters';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
 import { hubAPI } from '../../../common/api/formatPath';
+import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { useManagedRolesWithDescription } from '../../roles/hooks/useManagedRolesWithDescription';
+import { useHubRoleFilters } from '../hooks/useHubRoleFilters';
 
 export function HubSelectRolesStep(props: {
   contentType?: string;

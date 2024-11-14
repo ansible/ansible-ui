@@ -1,13 +1,13 @@
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
-import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
 import { BaseSchedulePayload, ScheduleAccessoriesPayload, ScheduleFormWizard } from '../types';
-import { usePostAccessories } from './usePostScheduleAccessories';
 import { mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
+import { usePostAccessories } from './usePostScheduleAccessories';
+import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
 
 export const useProcessSchedule = () => {
   const params = useParams<{ id?: string; schedule_id: string }>();

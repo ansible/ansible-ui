@@ -1,13 +1,13 @@
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  PageLayout,
-  PageHeader,
-  usePageNavigate,
-  LoadingPage,
-  useGetPageUrl,
-} from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRoute } from '../../main/EdaRoutes';
 

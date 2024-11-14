@@ -1,11 +1,10 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useOrganizationNameColumn } from '@ansible/common-ui/columns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../../framework';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { StatusCell } from '../../../../common/Status';
-import { useOrganizationNameColumn } from '../../../../common/columns';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useGetPageUrl } from '../../../../../framework';
 import { RunningNotificationsType } from './useNotifiersRowActions';
 
 export function useNotifiersColumns(params?: { runningNotifications?: RunningNotificationsType }) {

@@ -1,19 +1,19 @@
+import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Button, FormFieldGroup, FormFieldGroupHeader } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormCheckbox, PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
+import styled from 'styled-components';
+import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
+import { PlatformRole } from '../../../../interfaces/PlatformRole';
 import { PageFormPlatformOrganizationNameSelect } from '../../../organizations/components/PageFormPlatformOrganizationNameSelect';
 import { PageFormPlatformTeamNameSelect } from '../../../organizations/components/PageFormPlatformTeamNameSelect';
 import { PageFormPlatformRoleNameSelect } from '../../../roles/components/PageFormPlatformRoleNameSelect';
 import type { AuthenticatorFormValues, AuthenticatorMapValues } from '../AuthenticatorForm';
 import { MapAttributesSubform } from './MapAttributesSubform';
-import { AuthenticatorMapType } from '../../../../interfaces/AuthenticatorMap';
-import { PlatformRole } from '../../../../interfaces/PlatformRole';
-import styled from 'styled-components';
 
 const FieldsWrapper = styled.div`
   margin-right: 78px;

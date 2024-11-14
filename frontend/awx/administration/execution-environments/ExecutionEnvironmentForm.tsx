@@ -1,6 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -8,11 +5,14 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
-import { requestGet, requestPatch, swrOptions } from '../../../common/crud/Data';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
+import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { AwxPageForm } from '../../common/AwxPageForm';

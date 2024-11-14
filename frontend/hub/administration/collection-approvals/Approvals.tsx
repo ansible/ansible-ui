@@ -1,5 +1,5 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';

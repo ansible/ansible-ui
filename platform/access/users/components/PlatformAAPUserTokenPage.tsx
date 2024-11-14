@@ -1,7 +1,3 @@
-import { TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   LoadingPage,
@@ -12,9 +8,13 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
+} from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

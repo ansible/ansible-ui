@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   CopyCell,
   LoadingPage,
@@ -7,15 +5,17 @@ import {
   PageDetails,
   Scrollable,
   useGetPageUrl,
-} from '../../../../framework';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { LastModifiedPageDetail } from '../../../common/LastModifiedPageDetail';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
+import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaEventStream } from '../../interfaces/EdaEventStream';
-import { Alert } from '@patternfly/react-core';
 import { EdaRoute } from '../../main/EdaRoutes';
-import { PageDetailCodeBlock } from '../../common/PageDetailCodeBlock';
 
 export function EventStreamDetails() {
   const { t } = useTranslation();

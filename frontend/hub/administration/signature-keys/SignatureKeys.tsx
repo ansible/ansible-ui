@@ -1,7 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { DownloadIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   CopyCell,
   DateTimeCell,
@@ -15,8 +11,12 @@ import {
   PageTable,
   TextCell,
   ToolbarFilterType,
-} from '../../../../framework';
-import { downloadTextFile } from '../../../../framework/utils/download-file';
+} from '@ansible/ansible-ui-framework';
+import { downloadTextFile } from '@ansible/ansible-ui-framework/utils/download-file';
+import { ButtonVariant } from '@patternfly/react-core';
+import { DownloadIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';

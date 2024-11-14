@@ -1,4 +1,4 @@
-import { useBulkConfirmation } from '../../../framework/PageDialogs/BulkConfirmationDialog';
+import { useBulkConfirmation } from '@ansible/ansible-ui-framework/PageDialogs/BulkConfirmationDialog';
 import { hubErrorAdapter } from './adapters/hubErrorAdapter';
 import { useHubBulkActionStatusParser } from './useHubBulkActionStatusParser';
 

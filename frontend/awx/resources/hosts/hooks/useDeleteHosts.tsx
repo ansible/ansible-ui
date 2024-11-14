@@ -1,11 +1,11 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { useNameColumn } from '../../../../common/columns';
-import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxHost } from '../../../interfaces/AwxHost';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { AwxHost } from '../../../interfaces/AwxHost';
 import { useHostsColumns } from './useHostsColumns';
 
 export function useDeleteHosts(onComplete: (hosts: AwxHost[]) => void) {

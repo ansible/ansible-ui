@@ -1,3 +1,15 @@
+import {
+  IFilterState,
+  IToolbarFilter,
+  PageToolbar,
+  Scrollable,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
+import { PageTableSortOption } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarSort';
+import { EmptyStateFilter } from '@ansible/ansible-ui-framework/components/EmptyStateFilter';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
+import { postRequest as requestPost } from '@ansible/common-ui/crud/Data';
 import { ChartLegendEntry, ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import {
   Card,
@@ -15,18 +27,6 @@ import {
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import {
-  IFilterState,
-  IToolbarFilter,
-  PageToolbar,
-  Scrollable,
-  ToolbarFilterType,
-} from '../../../../framework';
-import { PageTableSortOption } from '../../../../framework/PageToolbar/PageToolbarSort';
-import { EmptyStateFilter } from '../../../../framework/components/EmptyStateFilter';
-import { LoadingState } from '../../../../framework/components/LoadingState';
-import { useURLSearchParams } from '../../../../framework/components/useURLSearchParams';
-import { postRequest as requestPost } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Chart } from '../components/Chart';
 import { hydrateSchema } from '../components/Chart/hydrateSchema';

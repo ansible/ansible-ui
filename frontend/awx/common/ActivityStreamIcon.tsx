@@ -1,8 +1,8 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { Button } from '@patternfly/react-core';
-import { useGetPageUrl } from '../../../framework';
+import { HistoryIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 import { AwxRoute } from '../main/AwxRoutes';
-import { HistoryIcon } from '@patternfly/react-icons';
 
 interface ActivityStreamIconProps {
   type: string;

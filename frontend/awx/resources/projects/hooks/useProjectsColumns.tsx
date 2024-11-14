@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, CopyCell, ITableColumn } from '../../../../../framework';
+import { ColumnModalOption, CopyCell, ITableColumn } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useOrganizationNameColumn,
-} from '../../../../common/columns';
-import { ScmType } from '../../../../common/scm';
+} from '@ansible/common-ui/columns';
+import { ScmType } from '@ansible/common-ui/scm';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useExecutionEnvironmentColumn } from './useDefaultEnvironment';

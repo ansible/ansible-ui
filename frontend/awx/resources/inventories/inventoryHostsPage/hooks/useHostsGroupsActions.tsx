@@ -1,18 +1,18 @@
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../../framework';
-import { cannotEditResource } from '../../../../../common/utils/RBAChelpers';
-import { AwxRoute } from '../../../../main/AwxRoutes';
-import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
-import { useGetItem } from '../../../../../common/crud/useGet';
-import { Inventory } from '../../../../interfaces/generated-from-swagger/api';
+} from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { cannotEditResource } from '@ansible/common-ui/utils/RBAChelpers';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import { Inventory } from '../../../../interfaces/generated-from-swagger/api';
+import { InventoryGroup } from '../../../../interfaces/InventoryGroup';
+import { AwxRoute } from '../../../../main/AwxRoutes';
 
 export function useHostsGroupsActions(inventoryId: string) {
   const { t } = useTranslation();

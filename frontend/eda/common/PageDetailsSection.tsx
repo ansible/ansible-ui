@@ -1,6 +1,6 @@
+import { usePageSettings } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsProvider';
 import { DescriptionList, PageSection } from '@patternfly/react-core';
 import { ReactNode } from 'react';
-import { usePageSettings } from '../../../framework/PageSettings/PageSettingsProvider';
 
 export function PageDetailsSection(props: { children?: ReactNode; disablePadding?: boolean }) {
   const { disablePadding } = props;

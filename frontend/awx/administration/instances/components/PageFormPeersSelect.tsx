@@ -1,8 +1,8 @@
+import { PageFormMultiInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiInput';
 import { TFunction } from 'i18next';
 import { ReactNode } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormMultiInput } from '../../../../../framework/PageForm/Inputs/PageFormMultiInput';
 import { Instance } from '../../../interfaces/Instance';
 import { useMultiSelectPeer } from '../hooks/useSelectPeers';
 

@@ -1,6 +1,6 @@
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
 import { ReusableTemplateSurveyTestSuite } from '../job-templates/sharedTemplateSurvey';
 
 describe('Workflow Job Templates Surveys', function () {

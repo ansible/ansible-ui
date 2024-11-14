@@ -1,14 +1,14 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { HeartbeatIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { ButtonVariant } from '@patternfly/react-core';
+import { HeartbeatIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { IAwxView } from '../../../common/useAwxView';

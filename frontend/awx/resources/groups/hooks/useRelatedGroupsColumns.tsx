@@ -1,9 +1,9 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import { useParams } from 'react-router-dom';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
-import { useParams } from 'react-router-dom';
 
 export function useRelatedGroupsColumns(options?: {
   disableSort?: boolean;

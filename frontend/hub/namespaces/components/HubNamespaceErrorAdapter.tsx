@@ -1,4 +1,4 @@
-import { ErrorOutput } from '../../../../framework/PageForm/typesErrorAdapter';
+import { ErrorOutput } from '@ansible/ansible-ui-framework/PageForm/typesErrorAdapter';
 import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
 
 export const HubNamespaceErrorAdapter = (

@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { StatusCell } from '../../../../common/Status';
+import styled from 'styled-components';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';
-import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 
 const Wrapper = styled.div`
   display: inline-flex;

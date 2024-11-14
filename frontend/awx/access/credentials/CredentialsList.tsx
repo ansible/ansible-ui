@@ -1,10 +1,10 @@
+import { PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageTable, useGetPageUrl } from '../../../../framework';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { useAwxView } from '../../common/useAwxView';
 import { Credential } from '../../interfaces/Credential';
 import { AwxRoute } from '../../main/AwxRoutes';

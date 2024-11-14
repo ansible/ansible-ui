@@ -1,14 +1,14 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ButtonVariant } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
-import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { useNavigate } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { useManagementJobPrompt } from './useManagementJobPrompt';
 
 export function useManagementJobRowActions() {

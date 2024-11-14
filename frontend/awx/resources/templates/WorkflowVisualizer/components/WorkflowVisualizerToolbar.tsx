@@ -1,15 +1,4 @@
-import React, { useCallback, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import {
-  CheckCircleIcon,
-  CloseIcon,
-  CompressAltIcon,
-  EllipsisVIcon,
-  ExpandAltIcon,
-  MinusCircleIcon,
-  RocketIcon,
-} from '@patternfly/react-icons';
+import { usePageAlertToaster, usePageNavigate } from '@ansible/ansible-ui-framework';
 import {
   Badge,
   Button,
@@ -25,18 +14,29 @@ import {
   Title,
   ToolbarItem,
 } from '@patternfly/react-core';
+import {
+  CheckCircleIcon,
+  CloseIcon,
+  CompressAltIcon,
+  EllipsisVIcon,
+  ExpandAltIcon,
+  MinusCircleIcon,
+  RocketIcon,
+} from '@patternfly/react-icons';
 import { observer, useVisualizationController } from '@patternfly/react-topology';
-import { usePageNavigate, usePageAlertToaster } from '../../../../../../framework';
-import { AwxRoute } from '../../../../main/AwxRoutes';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
-import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { useViewOptions } from '../ViewOptionsProvider';
-import { AddNodeButton } from './AddNodeButton';
+import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
+import { AwxRoute } from '../../../../main/AwxRoutes';
+import { useLaunchTemplate } from '../../hooks/useLaunchTemplate';
+import { START_NODE_ID } from '../constants';
 import { useRemoveGraphElements, useSaveVisualizer } from '../hooks';
 import type { ControllerState, GraphNode } from '../types';
-import { START_NODE_ID } from '../constants';
-import { useLaunchTemplate } from '../../hooks/useLaunchTemplate';
+import { useViewOptions } from '../ViewOptionsProvider';
+import { AddNodeButton } from './AddNodeButton';
 
 export const ToolbarHeader = observer(() => {
   const { t } = useTranslation();

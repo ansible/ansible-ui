@@ -1,16 +1,16 @@
-import { useTranslation } from 'react-i18next';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { useMemo } from 'react';
+} from '@ansible/ansible-ui-framework';
+import { cannotEditResource } from '@ansible/common-ui/utils/RBAChelpers';
 import { PencilAltIcon } from '@patternfly/react-icons';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useRunCommandAction } from './useInventoriesGroupsToolbarActions';
 
 export function useInventoriesGroupsActions() {

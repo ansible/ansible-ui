@@ -1,9 +1,9 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
 import { EdaRoleExpandedRow } from './components/EdaRoleExpandedRow';
-import { useEdaView } from '../../common/useEventDrivenView';
 import { useEdaRoleRowActions, useEdaRoleToolbarActions } from './hooks/useEdaRoleActions';
 import { useRoleColumns } from './hooks/useRoleColumns';
 import { useRoleFilters } from './hooks/useRoleFilters';

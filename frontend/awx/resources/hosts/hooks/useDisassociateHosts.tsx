@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { useNameColumn } from '../../../../common/columns';
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
-import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { compareStrings } from '../../../../../framework';
-import { getItemKey, postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useHostsColumns } from './useHostsColumns';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { AwxHost } from '../../../interfaces/AwxHost';
+import { useHostsColumns } from './useHostsColumns';
 
 export function useDisassociateHosts(onComplete: (hosts: AwxHost[]) => void) {
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
+import { PageFormSelect } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageFormSelect } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import type { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin';
 import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 

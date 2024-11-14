@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import { LoadingPage } from '../../../../../framework/components/LoadingPage';
-import { UserDetails, UserDetailsType } from '../../../../common/access/UserDetails';
-import { useGet } from '../../../../common/crud/useGet';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { UserDetails, UserDetailsType } from '@ansible/common-ui/access/UserDetails';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaUser } from '../../../interfaces/EdaUser';
 

@@ -1,11 +1,11 @@
-import { InstanceDetailsTab } from '../instances/InstanceDetails';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { awxAPI } from '../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Instance } from '../../interfaces/Instance';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
-import { useInstanceActions } from '../instances/hooks/useInstanceActions';
-import { useGetItem } from '../../../common/crud/useGet';
-import { awxAPI } from '../../common/api/awx-utils';
 import { SidebarHeader } from '../../resources/templates/WorkflowVisualizer/components';
+import { useInstanceActions } from '../instances/hooks/useInstanceActions';
+import { InstanceDetailsTab } from '../instances/InstanceDetails';
 
 export function InstanceDetailInner(props: {
   instance: Instance;

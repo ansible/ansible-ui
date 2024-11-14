@@ -1,8 +1,8 @@
-import { Organization } from '../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../frontend/awx/interfaces/User';
-import { Team } from '../../../frontend/awx/interfaces/Team';
-import { ExecutionEnvironment } from '../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { randomString } from '../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../support/formatApiPathForAwx';
 
 // There's an issue with upstream which prevents testing but everything is working on downstream so for now this test is moved to downstream only folder

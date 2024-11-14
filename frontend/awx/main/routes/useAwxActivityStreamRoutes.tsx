@@ -1,8 +1,8 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../../../framework';
-import { AwxRoute } from '../AwxRoutes';
 import { ActivityStreams } from '../../administration/activity-stream/ActivityStream';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxActivityStreamRoutes() {
   const { t } = useTranslation();

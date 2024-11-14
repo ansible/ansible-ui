@@ -1,27 +1,27 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../../framework';
-import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
-import { AwxRoute } from '../AwxRoutes';
-import { InstanceGroupInstances } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstances';
-import { InstanceDetails } from '../../administration/instances/InstanceDetails';
-import { InstanceGroupInstancesPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstancesPage/InstanceGroupInstancesPage';
-import { InstanceGroupTeamAccess } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupTeamAccess';
-import { InstanceGroupUserAccess } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupUserAccess';
-import {
-  CreateInstanceGroup,
-  EditInstanceGroup,
-} from '../../administration/instance-groups/InstanceGroupForm';
-import { InstanceGroupAddTeams } from '../../administration/instance-groups/InstanceGroupAddTeams';
-import { InstanceGroupAddUsers } from '../../administration/instance-groups/InstanceGroupAddUsers';
-import { InstanceGroupDetails } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupDetails';
-import { InstanceGroupJobs } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupJobs';
 import {
   CreateContainerGroup,
   EditContainerGroup,
 } from '../../administration/instance-groups/ContainerGroupForm';
+import { InstanceGroupAddTeams } from '../../administration/instance-groups/InstanceGroupAddTeams';
+import { InstanceGroupAddUsers } from '../../administration/instance-groups/InstanceGroupAddUsers';
+import {
+  CreateInstanceGroup,
+  EditInstanceGroup,
+} from '../../administration/instance-groups/InstanceGroupForm';
+import { InstanceGroupDetails } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupDetails';
+import { InstanceGroupInstances } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstances';
+import { InstanceGroupInstancesPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupInstancesPage/InstanceGroupInstancesPage';
+import { InstanceGroupJobs } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupJobs';
 import { InstanceGroupPage } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupPage';
+import { InstanceGroupTeamAccess } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupTeamAccess';
+import { InstanceGroupUserAccess } from '../../administration/instance-groups/InstanceGroupPage/InstanceGroupUserAccess';
+import { InstanceGroups } from '../../administration/instance-groups/InstanceGroups';
+import { InstanceDetails } from '../../administration/instances/InstanceDetails';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxInstanceGroupsRoutes() {
   const { t } = useTranslation();

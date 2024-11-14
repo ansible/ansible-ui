@@ -1,27 +1,27 @@
-import { AlertProps, ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { AlertProps, ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();

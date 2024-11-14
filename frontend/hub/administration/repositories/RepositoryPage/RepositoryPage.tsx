@@ -1,5 +1,3 @@
-import { Trans, useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   LoadingPage,
@@ -7,10 +5,12 @@ import {
   PageHeader,
   PageLayout,
   useGetPageUrl,
-} from '../../../../../framework';
-import { PageRoutedTabs } from '../../../../common/PageRoutedTabs';
-import { StatusCell } from '../../../../common/Status';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { Trans, useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { HubError } from '../../../common/HubError';
 import { pulpAPI } from '../../../common/api/formatPath';
 import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';

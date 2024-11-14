@@ -1,12 +1,12 @@
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { Role } from '@ansible/awx-ui/interfaces/Role';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
 import '@cypress/code-coverage/support';
-import { AwxItemsResponse } from '../../frontend/awx/common/AwxItemsResponse';
-import { Credential } from '../../frontend/awx/interfaces/Credential';
-import { Inventory } from '../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../frontend/awx/interfaces/Organization';
-import { Project } from '../../frontend/awx/interfaces/Project';
-import { Role } from '../../frontend/awx/interfaces/Role';
-import { Team } from '../../frontend/awx/interfaces/Team';
-import { WorkflowJobTemplate } from '../../frontend/awx/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../support/formatApiPathForAwx';
 
 Cypress.Commands.add('giveUserWfjtAccess', (wfjtName: string, userId: number, roleName: string) => {

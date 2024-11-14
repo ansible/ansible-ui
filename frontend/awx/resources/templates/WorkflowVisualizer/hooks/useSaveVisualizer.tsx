@@ -1,11 +1,11 @@
+import { useAbortController } from '@ansible/ansible-ui-framework/hooks/useAbortController';
+import { parseVariableField } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useCallback } from 'react';
-import { useAbortController } from '../../../../../../framework/hooks/useAbortController';
-import { parseVariableField } from '../../../../../../framework/utils/codeEditorUtils';
-import { requestGet } from '../../../../../common/crud/Data';
-import { useDeleteRequest } from '../../../../../common/crud/useDeleteRequest';
-import { usePatchRequest } from '../../../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../../../common/crud/usePostRequest';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';

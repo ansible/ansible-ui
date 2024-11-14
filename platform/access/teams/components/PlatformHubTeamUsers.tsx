@@ -1,21 +1,21 @@
-import { useMemo, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { CubesIcon, MinusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import {
   IPageAction,
   ITableColumn,
+  IToolbarFilter,
   PageActionSelection,
   PageActionType,
   PageTable,
-  IToolbarFilter,
   ToolbarFilterType,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
+import { useHubBulkConfirmation } from '@ansible/hub-ui/common/useHubBulkConfirmation';
+import { CubesIcon, MinusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { requestDelete } from '../../../../frontend/common/crud/Data';
 import { idKeyFn } from '../../../../frontend/common/utils/nameKeyFn';
-import { hubAPI } from '../../../../frontend/hub/common/api/formatPath';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { useHubBulkConfirmation } from '../../../../frontend/hub/common/useHubBulkConfirmation';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
 export function PlatformHubTeamUsers(props: { id?: string }) {

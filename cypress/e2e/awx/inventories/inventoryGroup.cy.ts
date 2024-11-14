@@ -1,9 +1,9 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { AwxHost } from '../../../../frontend/awx/interfaces/AwxHost';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { AwxHost } from '@ansible/awx-ui/interfaces/AwxHost';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { runCommand } from '../inventory-host/runCommandFunction';
 

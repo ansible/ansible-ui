@@ -1,6 +1,6 @@
+import { DateCell, ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateCell, ITableColumn, TextCell } from '../../../../../framework';
 import { HostMetric } from '../../../interfaces/HostMetric';
 
 export function useHostMetricsColumns() {

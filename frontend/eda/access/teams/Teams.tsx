@@ -1,7 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
@@ -10,10 +6,14 @@ import {
   PageLayout,
   PageTable,
   useGetPageUrl,
-} from '../../../../framework';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
 import { useEdaView } from '../../common/useEventDrivenView';
 import { EdaTeam } from '../../interfaces/EdaTeam';

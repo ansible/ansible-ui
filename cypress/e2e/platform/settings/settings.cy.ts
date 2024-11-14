@@ -1,7 +1,7 @@
-import { ILicenseInfo } from '../../../../frontend/awx/interfaces/Config';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { ILicenseInfo } from '@ansible/awx-ui/interfaces/Config';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('If SaaS Build', () => {
   before(function () {

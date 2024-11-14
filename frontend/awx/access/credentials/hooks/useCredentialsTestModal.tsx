@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { usePageAlertToaster, usePageDialogs } from '../../../../../framework';
+import { usePageAlertToaster, usePageDialogs } from '@ansible/ansible-ui-framework';
+import { useEffect, useState } from 'react';
 import {
-  CredentialsExternalTestModalProps,
   CredentialsExternalTestModal,
+  CredentialsExternalTestModalProps,
 } from '../utils/CredentialsExternalTestModal';
 
 export function useCredentialsTestModal() {

@@ -1,4 +1,4 @@
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';

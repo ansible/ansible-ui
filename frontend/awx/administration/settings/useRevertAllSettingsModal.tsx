@@ -1,8 +1,8 @@
+import { usePageAlertToaster, usePageDialogs } from '@ansible/ansible-ui-framework';
+import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import { usePageAlertToaster, usePageDialogs } from '../../../../framework';
-import { useDeleteRequest } from '../../../common/crud/useDeleteRequest';
 import { awxErrorAdapter } from '../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../common/api/awx-utils';
 

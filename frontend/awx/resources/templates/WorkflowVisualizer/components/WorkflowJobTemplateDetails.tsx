@@ -1,3 +1,6 @@
+import { PageDetail, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import {
   TextList,
   TextListItem,
@@ -5,9 +8,6 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageDetail, TextCell, useGetPageUrl } from '../../../../../../framework';
-import { jsonToYaml } from '../../../../../../framework/utils/codeEditorUtils';
-import { useGet } from '../../../../../common/crud/useGet';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { Label as ILabel } from '../../../../interfaces/Label';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';

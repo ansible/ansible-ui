@@ -1,13 +1,13 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
-import { WorkflowApproval } from '../../../../frontend/awx/interfaces/WorkflowApproval';
-import { WorkflowJob } from '../../../../frontend/awx/interfaces/WorkflowJob';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
-import { WorkflowNode } from '../../../../frontend/awx/interfaces/WorkflowNode';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { WorkflowApproval } from '@ansible/awx-ui/interfaces/WorkflowApproval';
+import { WorkflowJob } from '@ansible/awx-ui/interfaces/WorkflowJob';
+import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
+import { WorkflowNode } from '@ansible/awx-ui/interfaces/WorkflowNode';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 

@@ -1,16 +1,21 @@
-import { PageActions, PageHeader, useGetPageUrl, usePageNavigate } from '../../../../framework';
-import { useJobHeaderActions } from './hooks/useJobHeaderActions';
-import { Job } from '../../interfaces/Job';
-import { AwxRoute } from '../../main/AwxRoutes';
-import { useTranslation } from 'react-i18next';
-import { useGetJob } from './JobPage';
-import { useParams } from 'react-router-dom';
-import { WorkflowOutputNavigation } from './WorkflowOutputNavigation';
+import {
+  PageActions,
+  PageHeader,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Flex, FlexItem } from '@patternfly/react-core';
-import { useGet } from '../../../common/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { awxAPI } from '../../common/api/awx-utils';
+import { Job } from '../../interfaces/Job';
 import { WorkflowJobNode } from '../../interfaces/WorkflowNode';
+import { AwxRoute } from '../../main/AwxRoutes';
+import { useGetJob } from './JobPage';
+import { WorkflowOutputNavigation } from './WorkflowOutputNavigation';
+import { useJobHeaderActions } from './hooks/useJobHeaderActions';
 
 export function JobHeader() {
   const { t } = useTranslation();

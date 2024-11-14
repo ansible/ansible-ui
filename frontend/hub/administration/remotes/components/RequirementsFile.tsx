@@ -1,8 +1,8 @@
+import { PageFormDataEditor } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Trans, useTranslation } from 'react-i18next';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormDataEditor } from '../../../../../framework';
-import { RemoteFormProps } from '../RemoteForm';
 import { Link } from 'react-router-dom';
+import { RemoteFormProps } from '../RemoteForm';
 
 interface IRequirementsFile {
   isCommunityRemote: boolean | undefined;

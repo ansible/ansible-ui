@@ -1,8 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { Fragment, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useOutletContext } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -12,7 +7,12 @@ import {
   PageDetails,
   PageHeader,
   PageLayout,
-} from '../../framework';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { Fragment, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { GatewaySettingsOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 

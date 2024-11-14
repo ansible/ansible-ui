@@ -1,21 +1,25 @@
+import {
+  IFilterState,
+  ToolbarFilterType,
+  type IToolbarFilter,
+} from '@ansible/ansible-ui-framework';
 import { PageSection, Skeleton } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { IFilterState, ToolbarFilterType, type IToolbarFilter } from '../../../../../framework';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { Job } from '../../../interfaces/Job';
+import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useGetJob } from '../JobPage';
-import { HostStatusBar, WorkflowNodesStatusBar } from './StatusBar';
+import { WorkflowOutput } from '../WorkflowOutput/WorkflowOutput';
 import './JobOutput.css';
 import { JobOutputEvents } from './JobOutputEvents';
 import { JobOutputToolbar } from './JobOutputToolbar';
 import { JobStatusBar } from './JobStatusBar';
+import { HostStatusBar, WorkflowNodesStatusBar } from './StatusBar';
 import { isJobRunning } from './util';
-import { WorkflowOutput } from '../WorkflowOutput/WorkflowOutput';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
-import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 
 const Section = styled(PageSection)`
   display: flex;

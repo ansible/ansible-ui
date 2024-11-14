@@ -1,7 +1,7 @@
+import { PageFormCheckbox, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useTranslation } from 'react-i18next';
-import { PageFormCheckbox, PageFormTextInput } from '../../../../../framework';
-import { PageFormHidden } from '../../../../../framework/PageForm/Utils/PageFormHidden';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
 import { Project } from '../../../interfaces/Project';
 
 export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {

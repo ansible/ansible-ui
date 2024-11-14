@@ -1,9 +1,9 @@
+import { LabelsCell, PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { LabelsCell, PageDetail, PageDetails, useGetPageUrl } from '../../../../framework';
-import { formatDateString } from '../../../../framework/utils/formatDateString';
-import { StatusCell } from '../../../common/Status';
-import { useGet } from '../../../common/crud/useGet';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRoute } from '../../main/EdaRoutes';

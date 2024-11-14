@@ -1,9 +1,9 @@
-import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
-import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaControllerToken } from '@ansible/eda-ui/interfaces/EdaControllerToken';
+import { EdaResult } from '@ansible/eda-ui/interfaces/EdaResult';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {

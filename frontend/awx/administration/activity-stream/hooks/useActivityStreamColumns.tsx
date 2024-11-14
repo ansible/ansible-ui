@@ -1,6 +1,6 @@
+import { ColumnModalOption, DateTimeCell, ITableColumn } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnModalOption, DateTimeCell, ITableColumn } from '../../../../../framework';
 import { ActivityStream } from '../../../interfaces/ActivityStream';
 import { ActivityDescription } from '../components/ActivityDescription';
 import { ActivityStreamInitiatedByCell } from '../components/ActivityStreamInitiatedByCell';

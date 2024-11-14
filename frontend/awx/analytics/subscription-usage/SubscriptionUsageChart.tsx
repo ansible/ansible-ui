@@ -1,8 +1,8 @@
+import { IFilterState } from '@ansible/ansible-ui-framework';
+import { PageDashboardChart } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
+import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import useSWR from 'swr';
-import { IFilterState } from '../../../../framework';
-import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
-import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { awxAPI } from '../../common/api/awx-utils';
 
 interface ISubscriptionUsageChartData {

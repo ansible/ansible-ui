@@ -1,13 +1,10 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../framework';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { IPlatformView } from '../../../hooks/usePlatformView';

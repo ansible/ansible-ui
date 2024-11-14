@@ -1,11 +1,11 @@
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageDetails,
   PageDetailsFromColumns,
   PageNotFound,
-} from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
+} from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

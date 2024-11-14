@@ -1,11 +1,11 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey } from '@ansible/common-ui/crud/Data';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { useNameColumn } from '../../../../common/columns';
-import { getItemKey } from '../../../../common/crud/Data';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { getJobsAPIUrl, isJobRunning } from '../jobUtils';
 import { useJobsColumns } from './useJobsColumns';
 

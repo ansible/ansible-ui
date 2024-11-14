@@ -1,6 +1,6 @@
-import { downloadTextFile } from '../../../../../framework/utils/download-file';
-import { requestCommon } from '../../../../common/crud/requestCommon';
-import { createRequestError } from '../../../../common/crud/RequestError';
+import { downloadTextFile } from '@ansible/ansible-ui-framework/utils/download-file';
+import { requestCommon } from '@ansible/common-ui/crud/requestCommon';
+import { createRequestError } from '@ansible/common-ui/crud/RequestError';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 
 export function useDownloadJobOutput() {

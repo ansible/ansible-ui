@@ -1,8 +1,9 @@
-import { PageHeader, PageLayout } from '../../../../framework';
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
@@ -11,7 +12,6 @@ import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';
-import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { JobsList } from './JobsList';
 
 export function Jobs() {

@@ -1,16 +1,16 @@
-import { CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IFilterState,
   PageDashboard,
   PageHeader,
   PageLayout,
   PageToolbar,
-} from '../../../../framework';
-import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { getItemKey } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
+import { getItemKey } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Settings } from '../../interfaces/Settings';
 import { SubscriptionUsageChart } from '../subscription-usage/SubscriptionUsageChart';

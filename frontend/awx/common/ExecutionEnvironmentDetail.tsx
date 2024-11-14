@@ -1,9 +1,9 @@
+import { PageDetail, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { Popover, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { PageDetail, useGetPageUrl } from '../../../framework';
 import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../main/AwxRoutes';

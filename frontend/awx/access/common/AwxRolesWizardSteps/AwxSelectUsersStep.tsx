@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
-import { ITableColumn, TextCell } from '../../../../../framework';
-import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
-import styled from 'styled-components';
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { Title } from '@patternfly/react-core';
-import { useUsersFilters } from '../../users/hooks/useUsersFilters';
-import { AwxUser } from '../../../interfaces/User';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';
+import { AwxUser } from '../../../interfaces/User';
+import { useUsersFilters } from '../../users/hooks/useUsersFilters';
 
 const StyledTitle = styled(Title)`
   margin-bottom: 1rem;

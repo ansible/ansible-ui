@@ -1,13 +1,13 @@
+import { MultiSelectDialog, usePageDialogs } from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultiSelectDialog, usePageDialogs } from '../../../../../framework';
-import { usePeersTabFilters } from '../Instances';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { QueryParams, useAwxView } from '../../../common/useAwxView';
-import { usePeersColumns } from './usePeersColumns';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { Peer, Instance } from '../../../interfaces/Instance';
 import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
+import { QueryParams, useAwxView } from '../../../common/useAwxView';
+import { Instance, Peer } from '../../../interfaces/Instance';
+import { usePeersTabFilters } from '../Instances';
+import { usePeersColumns } from './usePeersColumns';
 
 export interface PeerInstanceModalProps {
   instanceId: string;

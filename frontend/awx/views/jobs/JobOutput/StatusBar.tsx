@@ -1,13 +1,13 @@
-import { Badge, Tooltip } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import {
   pfDanger,
   pfInfo,
   pfSuccess,
   pfUnreachable,
   pfWarning,
-} from '../../../../../framework/components/pfcolors';
+} from '@ansible/ansible-ui-framework/components/pfcolors';
+import { Badge, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import type { HostStatusCounts } from '../../../interfaces/Job';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { JobStatus } from './util';

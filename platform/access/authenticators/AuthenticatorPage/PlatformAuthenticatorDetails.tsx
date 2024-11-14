@@ -1,15 +1,15 @@
+import { LoadingPage, PageDetail, PageDetails, Scrollable } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { Divider, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { Divider, TextContent, Text, TextVariants } from '@patternfly/react-core';
 import styled from 'styled-components';
-import { PageDetails, PageDetail, LoadingPage, Scrollable } from '../../../../framework';
 import { useGet, useGetItem } from '../../../../frontend/common/crud/useGet';
-import { PageDetailCodeEditor } from '../../../../framework/PageDetails/PageDetailCodeEditor';
-import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
-import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import type { Authenticator } from '../../../interfaces/Authenticator';
-import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import type { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
+import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
+import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
+import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
 
 type Field = {
   label: string;

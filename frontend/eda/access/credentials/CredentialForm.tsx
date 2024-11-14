@@ -1,8 +1,3 @@
-import { useCallback, useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import useSWR, { useSWRConfig } from 'swr';
 import {
   PageFormSelect,
   PageFormSubmitHandler,
@@ -11,26 +6,31 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { requestGet, swrOptions } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { NoAutofillDiv } from '@ansible/common-ui/components/NoAutofill';
+import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { Alert } from '@patternfly/react-core';
+import { useCallback, useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import useSWR, { useSWRConfig } from 'swr';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCredential, EdaCredentialCreate } from '../../interfaces/EdaCredential';
 import { EdaCredentialType, EdaCredentialTypeField } from '../../interfaces/EdaCredentialType';
 import { EdaOrganization } from '../../interfaces/EdaOrganization';
 import { EdaResult } from '../../interfaces/EdaResult';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { PageFormSelectOrganization } from '../organizations/components/PageFormOrganizationSelect';
 import { CredentialFormInputs } from './CredentialFormTypes';
 import { CredentialDetails } from './CredentialPage/CredentialDetails';
-import { Alert } from '@patternfly/react-core';
-import { useOptions } from '../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
-import { NoAutofillDiv } from '../../../common/components/NoAutofill';
 
 // eslint-disable-next-line react/prop-types
 function CredentialInputs(props: { editMode: boolean }) {

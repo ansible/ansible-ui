@@ -1,12 +1,9 @@
+import { LoadingPage, PageTable } from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { LoadingPage, PageTable } from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { usePlatformView } from '../../../hooks/usePlatformView';

@@ -1,8 +1,8 @@
-import { Modal, ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
+import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { ClipboardCopy, ClipboardCopyVariant, Modal } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { SetStateAction } from 'react';
-import { PageDetails, PageDetail } from '../../../../framework';
-import { Application } from '../../../../frontend/awx/interfaces/Application';
 
 export function ApplicationClientSecretModal(props: {
   onClose: (value: SetStateAction<Application | undefined>) => void;

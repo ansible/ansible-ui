@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   PageFormDataEditor,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useGet } from '../../../common/crud/useGet';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CredentialType } from '../../interfaces/CredentialType';

@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   CopyCell,
   DateTimeCell,
@@ -7,9 +5,11 @@ import {
   PageDetail,
   PageDetails,
   TextCell,
-} from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { HubError } from '../../../common/HubError';
 import { hubAPI } from '../../../common/api/formatPath';
 import { HubItemsResponse } from '../../../common/useHubView';

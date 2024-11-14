@@ -1,18 +1,18 @@
-import { PencilAltIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
-import { cannotEditResource } from '../../../../common/utils/RBAChelpers';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { AwxHost } from '../../../interfaces/AwxHost';
-import { usePatchRequest } from '../../../../common/crud/usePatchRequest';
+} from '@ansible/ansible-ui-framework';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { cannotEditResource } from '@ansible/common-ui/utils/RBAChelpers';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxHost } from '../../../interfaces/AwxHost';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useInventoriesGroupsHostsActions(onToggle: (() => Promise<void>) | (() => void)) {
   const { t } = useTranslation();

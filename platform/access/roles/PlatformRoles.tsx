@@ -1,9 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
+import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../framework';
-import { AwxRoute } from '../../../frontend/awx/main/AwxRoutes';
-import { EdaRoute } from '../../../frontend/eda/main/EdaRoutes';
-import { HubRoute } from '../../../frontend/hub/main/HubRoutes';
 import { PlatformServiceNavigation } from '../../common/PlatformServiceNavigation';
 
 export function PlatformRoles() {

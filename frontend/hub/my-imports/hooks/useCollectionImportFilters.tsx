@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../framework';
+import { useTranslation } from 'react-i18next';
 
 export function useCollectionImportFilters() {
   const { t } = useTranslation();

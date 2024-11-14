@@ -1,6 +1,6 @@
-import { UserTokenDetails } from './UserTokenDetails';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { UserTokenDetails } from './UserTokenDetails';
 
 describe('UserTokenDetails', () => {
   beforeEach(() => {

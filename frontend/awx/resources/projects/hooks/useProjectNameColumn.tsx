@@ -1,10 +1,10 @@
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { IconWrapper } from '@ansible/ansible-ui-framework/components/IconWrapper';
 import { Split, SplitItem, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ITableColumn, useGetPageUrl } from '../../../../../framework';
-import { IconWrapper } from '../../../../../framework/components/IconWrapper';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

@@ -1,8 +1,8 @@
+import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { ClipboardCopy, ClipboardCopyVariant, Modal } from '@patternfly/react-core';
 import { t } from 'i18next';
 import { SetStateAction } from 'react';
-import { Modal, ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
-import { PageDetails, PageDetail } from '../../../../../framework';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 import { Token } from '../../../interfaces/Token';
 
 export function UserTokenSecretsModal(props: {

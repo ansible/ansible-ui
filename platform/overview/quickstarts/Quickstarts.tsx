@@ -1,7 +1,7 @@
+import { PageHeader, PageLayout, Scrollable } from '@ansible/ansible-ui-framework';
 import { QuickStartCatalogPage } from '@patternfly/quickstarts';
 import { PageSection } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, Scrollable } from '../../../framework';
 
 export function QuickStartsPage() {
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
+import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { StatusCell } from '../../../common/Status';
 import { EdaActivationInstance } from '../../interfaces/EdaActivationInstance';
 import { EdaRoute } from '../../main/EdaRoutes';
 

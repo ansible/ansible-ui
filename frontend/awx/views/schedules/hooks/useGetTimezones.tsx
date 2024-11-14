@@ -1,6 +1,6 @@
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useGet } from '../../../../common/crud/useGet';
 export function useGetTimezones() {
   const { data } = useGet<{ zones: string[]; links: Record<string, string> }>(
     awxAPI`/schedules/zoneinfo/`

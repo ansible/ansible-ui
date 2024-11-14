@@ -1,4 +1,4 @@
-import { Authenticator } from '../../../../../platform/interfaces/Authenticator';
+import { Authenticator } from '@ansible/platform-ui/interfaces/Authenticator';
 import { randomE2Ename } from '../../../../support/utils';
 
 describe('Authenticators - Local CRUD UI', () => {

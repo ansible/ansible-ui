@@ -1,11 +1,11 @@
+import { ITableColumn, MultiSelectDialog } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, MultiSelectDialog } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
-import { useGroupsFilters } from '../../groups/hooks/useGroupsFilters';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
-import { useMemo } from 'react';
 import { AwxHost } from '../../../interfaces/AwxHost';
+import { useGroupsFilters } from '../../groups/hooks/useGroupsFilters';
 
 export interface HostSelectModalProps {
   groupId: string;

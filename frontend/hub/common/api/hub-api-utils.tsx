@@ -1,11 +1,12 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { TFunction } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { requestGet } from '../../../common/crud/Data';
-import { RequestError } from '../../../common/crud/RequestError';
 import { Task, TaskResponse } from '../../administration/tasks/Task';
 import { AnsibleAnsibleDistributionResponse as Distribution } from '../../interfaces/generated/AnsibleAnsibleDistributionResponse';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
+import { HubRoute } from '../../main/HubRoutes';
 import { pulpAPI } from './formatPath';
 import {
   deleteHubRequest,
@@ -14,7 +15,6 @@ import {
   postHubRequest,
   putHubRequest,
 } from './request';
-import { HubRoute } from '../../main/HubRoutes';
 
 // returns the preferred distribution base_path given a repo name
 // if there is a distribution with the same name as the repository, it will be used (as long as it's connected to the right repo too)

@@ -1,9 +1,14 @@
+import {
+  ColumnTableOption,
+  ITableColumn,
+  TextCell,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
 import { Label, Truncate } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnTableOption, ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { StatusCell } from '../../../common/Status';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';

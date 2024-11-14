@@ -1,7 +1,12 @@
+import {
+  PageDashboard,
+  PageDashboardCard,
+  PageHeader,
+  PageLayout,
+} from '@ansible/ansible-ui-framework';
 import { Button, CardBody, CardFooter, Text, TextContent } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageDashboard, PageDashboardCard, PageHeader, PageLayout } from '../../framework';
 
 export function Lightspeed() {
   const { t } = useTranslation();

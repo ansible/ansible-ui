@@ -1,6 +1,6 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { ContentTypeEnum } from '../../../../frontend/hub/interfaces/expanded/ContentType';
-import { HubRbacRole } from '../../../../frontend/hub/interfaces/expanded/HubRbacRole';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import { HubRbacRole } from '@ansible/hub-ui/interfaces/expanded/HubRbacRole';
 
 describe('Automation Content: Roles', () => {
   describe('Automation Content: : Create and Delete Roles from Details View', () => {

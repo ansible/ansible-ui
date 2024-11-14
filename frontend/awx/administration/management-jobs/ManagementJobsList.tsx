@@ -1,12 +1,12 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
-import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
-import { useManagementJobFilters } from './hooks/useManagementJobFilters';
-import { useManagementJobColumns } from './hooks/useManagementJobColumns';
-import { useAwxView } from '../../common/useAwxView';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useAwxView } from '../../common/useAwxView';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
+import { useManagementJobColumns } from './hooks/useManagementJobColumns';
+import { useManagementJobFilters } from './hooks/useManagementJobFilters';
 import { useManagementJobRowActions } from './hooks/useManagementJobRowActions';
 
 export function ManagementJobs() {

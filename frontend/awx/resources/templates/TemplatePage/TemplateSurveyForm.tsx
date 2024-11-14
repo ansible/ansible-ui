@@ -1,7 +1,3 @@
-import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -10,12 +6,16 @@ import {
   PageFormTextArea,
   PageFormTextInput,
   usePageNavigate,
-} from '../../../../../framework';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { useURLSearchParams } from '../../../../../framework/components/useURLSearchParams';
-import { useGet } from '../../../../common/crud/useGet';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import {

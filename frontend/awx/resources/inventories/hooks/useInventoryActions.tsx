@@ -1,23 +1,22 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CopyIcon, PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
+  usePageAlertToaster,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CopyIcon, PencilAltIcon, SyncIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Inventory } from '../../../interfaces/Inventory';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { InventoryWithSource } from '../InventoryPage/InventoryDetails';
 import { useCopyInventory } from './useCopyInventory';
 import { useDeleteInventories } from './useDeleteInventories';
-import { useParams } from 'react-router-dom';
-import { InventoryWithSource } from '../InventoryPage/InventoryDetails';
-import { usePageAlertToaster } from '../../../../../framework';
-import { useCallback } from 'react';
-import { postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
 
 type InventoryActionOptions = {
   onInventoriesDeleted: (inventories: Inventory[]) => void;

@@ -1,7 +1,3 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageFormCheckbox,
@@ -11,15 +7,19 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageFormFileUpload } from '../../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormSecret } from '../../../../framework/PageForm/Inputs/PageFormSecret';
-import { PageFormExpandableSection } from '../../../../framework/PageForm/PageFormExpandableSection';
-import { useGet } from '../../../common/crud/useGet';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
-import { useClearCache } from '../../../common/useInvalidateCache/useInvalidateCache';
-import { useIsValidUrl } from '../../../common/validation/useIsValidUrl';
+} from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
+import { PageFormExpandableSection } from '@ansible/ansible-ui-framework/PageForm/PageFormExpandableSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { hubAPI } from '../../common/api/formatPath';

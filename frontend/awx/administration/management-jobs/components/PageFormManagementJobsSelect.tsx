@@ -1,8 +1,8 @@
+import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback } from 'react';
 import { FieldPath, FieldPathValue, FieldValues, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormAsyncSelect } from '../../../../../framework/PageForm/Inputs/PageFormAsyncSelect';
-import { requestGet } from '../../../../common/crud/Data';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';

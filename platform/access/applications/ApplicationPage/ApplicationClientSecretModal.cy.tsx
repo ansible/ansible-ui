@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { Application } from '../../../../frontend/awx/interfaces/Application';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { ApplicationClientSecretModal } from './ApplicationClientSecretModal';
 
 describe('ApplicationClientSecretModal', () => {

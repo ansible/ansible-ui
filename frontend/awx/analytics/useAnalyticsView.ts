@@ -8,26 +8,26 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
+  IFilterState,
   ISelected,
   ITableColumn,
   IToolbarFilter,
   IView,
   useSelected,
   useView,
-  IFilterState,
-} from '../../../framework';
-import { postRequest, requestGet } from '../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 
-import { RequestError } from '../../common/crud/RequestError';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import {
   AnalyticsReportBuilderBodyProps,
+  AnyType,
   computeMainFilterKeys,
+  DefaultDataParams,
 } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
-import { DefaultDataParams } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
-import { AnyType } from './AnalyticsReportBuilder/AnalyticsReportBuilder';
 
 export interface AnalyticsItemsResponse<T extends object> {
   meta: { count: number; legend: T[] };

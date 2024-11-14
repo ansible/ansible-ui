@@ -1,10 +1,10 @@
+import { compareStrings, pfDanger, pfSuccess, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
+import { PageDashboardChart } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { CardBody } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, pfDanger, pfSuccess, useGetPageUrl } from '../../../../framework';
-import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashboardCard';
-import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
-import { useGet } from '../../../common/crud/useGet';
 import { EDA_MAX_PAGE_SIZE } from '../../common/eda-constants';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaResult } from '../../interfaces/EdaResult';

@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { postRequest } from '../../../../common/crud/Data';
-import { awxAPI } from '../../../common/api/awx-utils';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { LabelGroupWrapper } from '@ansible/common-ui/label-group-wrapper';
 import { Flex, FlexItem, Label } from '@patternfly/react-core';
 import { DateTime } from 'luxon';
-import { LabelGroupWrapper } from '../../../../common/label-group-wrapper';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { awxAPI } from '../../../common/api/awx-utils';
 
 /**
  *

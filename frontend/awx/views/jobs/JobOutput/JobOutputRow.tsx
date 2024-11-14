@@ -1,15 +1,15 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Ansi } from '@ansible/common-ui/Ansi';
 import { Label } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import styled from 'styled-components';
-import { Ansi } from '../../../../common/Ansi';
 import { JobEvent } from '../../../interfaces/JobEvent';
+import { JobEventEllipsis } from './JobEventEllipsis';
 import './JobOutput.css';
 import { ICollapsed } from './JobOutputEvents';
-import { JobEventEllipsis } from './JobEventEllipsis';
 
 const LineNumberGutter = styled.div`
   position: sticky;

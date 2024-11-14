@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageActions,
@@ -7,8 +5,10 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
+} from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

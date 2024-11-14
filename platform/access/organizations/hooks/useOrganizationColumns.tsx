@@ -1,7 +1,7 @@
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ITableColumn, useGetPageUrl } from '../../../../framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,

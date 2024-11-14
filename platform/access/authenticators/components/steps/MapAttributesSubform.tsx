@@ -1,11 +1,11 @@
-import { useEffect, useCallback } from 'react';
+import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Button } from '@patternfly/react-core';
-import { useFormContext, useFieldArray } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { PageFormSelect, PageFormTextInput } from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { MapFieldsGrid } from './MapFields';
 import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useEffect } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { MapFieldsGrid } from './MapFields';
 
 export function MapAttributesSubform(props: Readonly<{ mappingIndex: number }>) {
   const { mappingIndex } = props;

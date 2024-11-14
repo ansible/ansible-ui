@@ -1,7 +1,7 @@
-import { ToolbarFilterType } from '../../../../framework';
-import * as useOptions from '../../../common/crud/useOptions';
-import { Teams } from './Teams';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { Teams } from './Teams';
 
 beforeEach(() => {
   cy.intercept(

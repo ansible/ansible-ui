@@ -1,10 +1,10 @@
+import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { Button, ButtonVariant, Flex } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable, useGetPageUrl } from '../../../framework';
-import { PageTableEmptyState } from '../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../framework/components/ButtonLink';
-import { idKeyFn } from '../../common/utils/nameKeyFn';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubView } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';

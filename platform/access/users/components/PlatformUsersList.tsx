@@ -1,20 +1,18 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
   PageHeader,
   PageLayout,
   PageTable,
   useGetPageUrl,
-} from '../../../../framework';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
-import {
-  ActionsResponse,
-  OptionsResponse,
-} from '../../../../frontend/awx/interfaces/OptionsResponse';
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useGetDocsUrl } from '@ansible/awx-ui/common/util/useGetDocsUrl';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
 import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { usePlatformView } from '../../../hooks/usePlatformView';
@@ -24,7 +22,6 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserRowActions, useUserToolbarActions } from '../hooks/useUserActions';
 import { useUsersColumns } from '../hooks/useUserColumns';
 import { useUsersFilters } from '../hooks/useUsersFilters';
-import { useGetDocsUrl } from '../../../../frontend/awx/common/util/useGetDocsUrl';
 
 export function PlatformUsersList() {
   const { t } = useTranslation();

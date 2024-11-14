@@ -1,8 +1,8 @@
-import { JobTemplate } from '../../../../frontend/awx/interfaces/JobTemplate';
+import { Job } from '@ansible/awx-ui/interfaces/Job';
+import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Spec } from '@ansible/awx-ui/interfaces/Survey';
+import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { WorkflowJobTemplate } from '../../../../frontend/awx/interfaces/WorkflowJobTemplate';
-import { Spec } from '../../../../frontend/awx/interfaces/Survey';
-import { Job } from '../../../../frontend/awx/interfaces/Job';
 
 export class ReusableTemplateSurveyTestSuite {
   template: JobTemplate | WorkflowJobTemplate;

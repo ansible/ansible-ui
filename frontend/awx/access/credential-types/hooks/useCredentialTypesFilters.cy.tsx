@@ -1,6 +1,6 @@
-import { IToolbarFilter } from '../../../../../framework';
-import { useCredentialTypesFilters } from './useCredentialTypesFilters';
+import { IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { useCredentialTypesFilters } from './useCredentialTypesFilters';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TestInner(props: { filters: IToolbarFilter[] }) {

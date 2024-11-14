@@ -1,4 +1,16 @@
 import {
+  DateTimeCell,
+  PageDetail,
+  PageDetails,
+  TextCell,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import {
   Label,
   LabelGroup,
   TextList,
@@ -8,31 +20,19 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams, useOutletContext } from 'react-router-dom';
-import {
-  DateTimeCell,
-  PageDetail,
-  PageDetails,
-  TextCell,
-  useGetPageUrl,
-  usePageNavigate,
-} from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { LastModifiedPageDetail } from '../../../../common/LastModifiedPageDetail';
-import { useGet } from '../../../../common/crud/useGet';
+import { Link, useOutletContext, useParams } from 'react-router-dom';
+import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { ConstructedInventory, Inventory } from '../../../interfaces/Inventory';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { InventorySource } from '../../../interfaces/InventorySource';
-import { AwxError } from '../../../common/AwxError';
-import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
-import { StatusCell } from '../../../../common/Status';
+import { AwxRoute } from '../../../main/AwxRoutes';
 import { useInventoryFormDetailLabels } from '../InventoryForm';
 import { LabelHelp } from '../components/LabelHelp';
-import { useInventoryTypes } from '../hooks/useInventoryTypes';
 import { INVENTORYURLPATHS } from '../constants';
+import { useInventoryTypes } from '../hooks/useInventoryTypes';
+import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 
 function useInstanceGroups(inventoryId: string) {
   const { data } = useGet<{ results: InstanceGroup[] }>(

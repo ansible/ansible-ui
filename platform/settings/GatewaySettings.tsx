@@ -1,7 +1,7 @@
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Page } from '@patternfly/react-core';
 import { Outlet } from 'react-router-dom';
 import useSWR from 'swr';
-import { LoadingState } from '../../framework/components/LoadingState';
 import { requestGet } from '../../frontend/common/crud/Data';
 import { useOptions } from '../../frontend/common/crud/useOptions';
 import { gatewayAPI } from '../utils/gateway-api-utils';

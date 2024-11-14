@@ -1,7 +1,7 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageDashboardCountBar } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCountBar';
+import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
 import { useTranslation } from 'react-i18next';
-import { useGetPageUrl } from '../../../../framework';
-import { PageDashboardCountBar } from '../../../../framework/PageDashboard/PageDashboardCountBar';
-import { usePageChartColors } from '../../../../framework/PageDashboard/usePageChartColors';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { IAwxDashboardData } from '../AwxOverview';
 

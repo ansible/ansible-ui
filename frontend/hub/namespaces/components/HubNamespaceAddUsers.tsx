@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import {
   LoadingPage,
   PageHeader,
@@ -7,22 +6,23 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
-import { HubUser } from '../../interfaces/expanded/HubUser';
+} from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGet } from '../../../common/crud/useGet';
-import { HubNamespace } from '../HubNamespace';
-import { HubItemsResponse } from '../../common/useHubView';
+import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
+import { HubSelectUsersStep } from '../../access/common/HubRoleWizardSteps/HubSelectUsersStep';
+import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { useHubBulkActionDialog } from '../../common/useHubBulkActionDialog';
-import { HubSelectUsersStep } from '../../access/common/HubRoleWizardSteps/HubSelectUsersStep';
-import { HubSelectRolesStep } from '../../access/common/HubRoleWizardSteps/HubSelectRolesStep';
-import { RoleAssignmentsReviewStep } from '../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { postRequest } from '../../../common/crud/Data';
+import { HubItemsResponse } from '../../common/useHubView';
+import { HubRbacRole } from '../../interfaces/expanded/HubRbacRole';
+import { HubUser } from '../../interfaces/expanded/HubUser';
 import { HubRoute } from '../../main/HubRoutes';
-import { hubErrorAdapter } from '../../common/adapters/hubErrorAdapter';
+import { HubNamespace } from '../HubNamespace';
 
 interface WizardFormValues {
   users: HubUser[];

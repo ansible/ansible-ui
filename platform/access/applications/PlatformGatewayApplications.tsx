@@ -1,7 +1,7 @@
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { useGetDocsUrl } from '@ansible/awx-ui/common/util/useGetDocsUrl';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout } from '../../../framework';
 import { PlatformApplicationsTable } from './PlatformApplicationsTable';
-import { useGetDocsUrl } from '../../../frontend/awx/common/util/useGetDocsUrl';
 
 export function PlatformGatewayApplications() {
   const { t } = useTranslation();

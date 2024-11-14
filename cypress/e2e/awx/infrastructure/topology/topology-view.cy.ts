@@ -1,9 +1,9 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { InstanceGroup } from '../../../../../frontend/awx/interfaces/InstanceGroup';
-import { MeshVisualizer } from '../../../../../frontend/awx/interfaces/MeshVisualizer';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { MeshVisualizer } from '@ansible/awx-ui/interfaces/MeshVisualizer';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { cyLabel } from '../../../../support/cyLabel';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 

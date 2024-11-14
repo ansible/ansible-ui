@@ -1,8 +1,8 @@
-import * as useOptions from '../../../common/crud/useOptions';
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
+import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { ExecutionEnvironments } from './ExecutionEnvironments';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Execution Environments List', () => {
   //Missing component tests:

@@ -1,4 +1,4 @@
-import { randomString } from '../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { UpgradeUserType } from '../../support/constants';
 
 describe('Linking accounts - Controller', () => {

@@ -1,6 +1,3 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
   ColumnCardOption,
   ColumnDashboardOption,
@@ -12,13 +9,16 @@ import {
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../framework';
-import { StatusCell } from '../../common/Status';
-import { useOptions } from '../../common/crud/useOptions';
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { UnifiedJob } from '../interfaces/UnifiedJob';
 import { AwxRoute } from '../main/AwxRoutes';
-import { useGetLaunchedByDetails, useGetScheduleUrl, isJobRunning } from '../views/jobs/jobUtils';
+import { isJobRunning, useGetLaunchedByDetails, useGetScheduleUrl } from '../views/jobs/jobUtils';
 import { awxAPI } from './api/awx-utils';
 
 export function useJobIdColumn<T extends UnifiedJob>() {

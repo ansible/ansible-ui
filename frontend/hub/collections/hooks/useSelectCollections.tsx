@@ -1,13 +1,13 @@
-import { Label, Truncate } from '@patternfly/react-core';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnTableOption,
   ITableColumn,
   MultiSelectDialog,
   TextCell,
   usePageDialog,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { Label, Truncate } from '@patternfly/react-core';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';

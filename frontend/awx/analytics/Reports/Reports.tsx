@@ -1,10 +1,10 @@
+import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { Label, LabelGroup, Page, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useSWR from 'swr';
-import { PageHeader, PageLayout } from '../../../../framework';
-import { requestGet } from '../../../common/crud/Data';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { AutomationCalculator } from './AutomationCalculator';

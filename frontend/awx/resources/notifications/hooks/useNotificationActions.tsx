@@ -1,9 +1,9 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { postRequest } from '../../../../common/crud/Data';
 
 interface ToggleNotification {
   id: number;

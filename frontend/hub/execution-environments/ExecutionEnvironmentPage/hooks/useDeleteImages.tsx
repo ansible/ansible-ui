@@ -1,13 +1,13 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { ExecutionEnvironmentImage } from '../ExecutionEnvironmentImage';
-import { useImagesColumns } from './useImagesColumns';
 import { hubAPI } from '../../../common/api/formatPath';
 import { hubAPIDelete } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
-import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { useClearCache } from '../../../../common/useInvalidateCache/useInvalidateCache';
+import { ExecutionEnvironmentImage } from '../ExecutionEnvironmentImage';
+import { useImagesColumns } from './useImagesColumns';
 
 export function useDeleteImages({
   id,

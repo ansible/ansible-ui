@@ -1,11 +1,11 @@
 /// <reference types="cypress" />
 
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import '@cypress/code-coverage/support';
-import { Organization } from '../../frontend/awx/interfaces/Organization';
-import { Team } from '../../frontend/awx/interfaces/Team';
-import { AwxUser } from '../../frontend/awx/interfaces/User';
-import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
-import { PlatformTeam } from '../../platform/interfaces/PlatformTeam';
 import { awxAPI } from './formatApiPathForAwx';
 
 // Base create and delete commands for AWX organizations, teams, and users

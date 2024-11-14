@@ -1,4 +1,4 @@
-import { UIAuth } from '../../../../../platform/interfaces/UIAuth';
+import { UIAuth } from '@ansible/platform-ui/interfaces/UIAuth';
 import { gatewayAPI } from '../../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../../support/utils';
 

@@ -1,25 +1,22 @@
+import {
+  ITableColumn,
+  LoadingPage,
+  PageTable,
+  Scrollable,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { PageSection, SearchInput, ToolbarItem } from '@patternfly/react-core';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGet } from '../../../common/crud/useGet';
+import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { pulpAPI } from '../../common/api/formatPath';
-import { useOutletContext } from 'react-router-dom';
-import { CollectionVersionSearch } from '../Collection';
 import { HubError } from '../../common/HubError';
 import { PulpItemsResponse } from '../../common/useHubView';
-import { SearchInput } from '@patternfly/react-core';
-import { useSearchParams } from 'react-router-dom';
-import { ToolbarItem } from '@patternfly/react-core';
-import styled from 'styled-components';
-import { LoadingPage, PageTable } from '../../../../framework';
-import { PageSection } from '@patternfly/react-core';
-import { useEffect } from 'react';
-import { useRef } from 'react';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
-import { ITableColumn } from '../../../../framework';
-import { Scrollable } from '../../../../framework';
-import { useGetPageUrl } from '../../../../framework';
 import { HubRoute } from '../../main/HubRoutes';
+import { CollectionVersionSearch } from '../Collection';
 
 export function CollectionContents() {
   const { t } = useTranslation();

@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   DateTimeCell,
   LoadingPage,
@@ -8,13 +6,15 @@ import {
   PageLayout,
   Scrollable,
   useGetPageUrl,
-} from '../../../../../framework';
-import { useGet } from '../../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { hubAPI } from '../../../common/api/formatPath';
 import { HubError } from '../../../common/HubError';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubRoute } from '../../../main/HubRoutes';
 import { HubRolePermissions } from '../components/HubRolePermissions';
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { useManagedRolesWithDescription } from '../hooks/useManagedRolesWithDescription';
 
 export function HubRoleDetails() {

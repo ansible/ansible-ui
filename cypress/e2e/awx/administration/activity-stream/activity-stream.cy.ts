@@ -1,6 +1,6 @@
-import { Inventory } from '../../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../../../frontend/awx/interfaces/User';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 describe('activity-stream', () => {

@@ -1,4 +1,4 @@
-import { formatDateString } from '../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import mockEdaBuiltInRole from '../../../../cypress/fixtures/edaBuiltInRoleDefinition.json';
 import mockEdaCustomRole from '../../../../cypress/fixtures/edaCustomRoleDefinition.json';
 import { EdaRoleDetails } from './EdaRoleDetails';

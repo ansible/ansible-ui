@@ -1,19 +1,17 @@
+import { compareStrings, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, usePageNavigate } from '../../../../framework';
-import { postRequest } from '../../../common/crud/Data';
+import { Repository } from '../../administration/repositories/Repository';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { collectionKeyFn, parsePulpIDFromURL, waitForTask } from '../../common/api/hub-api-utils';
 import { getHubAllItems } from '../../common/api/request';
 import { useHubBulkConfirmation } from '../../common/useHubBulkConfirmation';
-import { HubItemsResponse } from '../../common/useHubView';
+import { HubItemsResponse, PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { Repository } from '../../administration/repositories/Repository';
-import { requestGet } from '../../../common/crud/Data';
-import { PulpItemsResponse } from '../../common/useHubView';
 
 export function useDeleteCollectionsFromRepository(
   // if repository is undefined, it will be taken from collection.repository

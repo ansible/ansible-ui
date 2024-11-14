@@ -1,9 +1,9 @@
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ExpandableRowContent } from '@patternfly/react-table';
-import { useGet } from '../../../../common/crud/useGet';
+import { t } from 'i18next';
 import { edaAPI } from '../../../common/eda-utils';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { EdaRolePermissions } from './EdaRolePermissions';
-import { t } from 'i18next';
 
 interface EdaRoleExpandedRowProps {
   role: EdaRbacRole;

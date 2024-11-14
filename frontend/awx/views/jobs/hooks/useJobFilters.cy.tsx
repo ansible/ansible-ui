@@ -1,5 +1,5 @@
+import { IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
-import { IToolbarFilter } from '../../../../../framework';
 import { useJobsFilters } from './useJobsFilters';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

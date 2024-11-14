@@ -1,16 +1,21 @@
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import {
+  ITableColumn,
+  IToolbarFilter,
+  QueryParams,
+  usePageDialog,
+} from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
+import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
+import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Spinner } from '@patternfly/react-core';
+import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter, QueryParams, usePageDialog } from '../../../framework';
-import { SingleSelectDialog } from '../../../framework/PageDialogs/SingleSelectDialog';
-import { PageFormAsyncSingleSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageAsyncSelectOptionsFn } from '../../../framework/PageInputs/PageAsyncSelectOptions';
-import { useID } from '../../../framework/hooks/useID';
-import { requestGet } from '../../common/crud/Data';
-import { useGetItem } from '../../common/crud/useGet';
-import { useEdaView } from './useEventDrivenView';
+import { useTranslation } from 'react-i18next';
 import { EdaItemsResponse } from './EdaItemsResponse';
+import { useEdaView } from './useEventDrivenView';
 
 export function PageFormSingleSelectEdaResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },

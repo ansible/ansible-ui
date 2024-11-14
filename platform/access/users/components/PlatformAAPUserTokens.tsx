@@ -1,9 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   LoadingPage,
@@ -13,9 +8,16 @@ import {
   PageTable,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { DetailInfo } from '../../../../framework/components/DetailInfo';
-import { Token } from '../../../../frontend/awx/interfaces/Token';
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { DetailInfo } from '@ansible/ansible-ui-framework/components/DetailInfo';
+import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
@@ -24,8 +26,6 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useUserTokensColumns } from '../hooks/useAAPUserTokensColumns';
 import { useUserTokensFilters } from '../hooks/useAAPUserTokensFilters';
 import { useDeleteUserTokens } from '../hooks/useDeleteAAPUserTokens';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
 
 export function AAPUserTokens(props: { infoMessage?: string }) {
   const params = useParams<{ id: string }>();

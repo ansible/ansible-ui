@@ -1,10 +1,10 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
+import { useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { useNameColumn } from '../../../../common/columns';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
-import { capitalizeFirstLetter } from '../../../../../framework/utils/strings';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useNotificationsColumns(options?: {
   disableSort?: boolean;

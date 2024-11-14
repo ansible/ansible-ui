@@ -1,11 +1,11 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { Chip, ChipGroup } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '../../../../common/columns';
-import { useTranslation } from 'react-i18next';
-import { Chip, ChipGroup } from '@patternfly/react-core';
-import { useParams } from 'react-router-dom';
 
 export function useInventoriesGroupsColumns(options?: {
   disableSort?: boolean;

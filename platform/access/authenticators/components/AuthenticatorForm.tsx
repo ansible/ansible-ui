@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
 import {
   PageHeader,
   PageLayout,
   PageWizard,
   PageWizardStep,
   useGetPageUrl,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { useTranslation } from 'react-i18next';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import {
-  AuthenticatorMap,
-  AuthenticatorMapType,
-  AuthenticatorMapTriggers,
-  AttributesTriggers,
   AttributeDefinition,
+  AttributesTriggers,
+  AuthenticatorMap,
+  AuthenticatorMapTriggers,
+  AuthenticatorMapType,
 } from '../../../interfaces/AuthenticatorMap';
 import type {
   AuthenticatorPlugin,

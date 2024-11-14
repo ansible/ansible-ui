@@ -1,6 +1,6 @@
+import { PageDetails, PageDetailsFromColumns } from '@ansible/ansible-ui-framework';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router-dom';
-import { PageDetails, PageDetailsFromColumns } from '../../../../../framework';
-import { useGetItem } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalsColumns } from '../hooks/useWorkflowApprovalsColumns';

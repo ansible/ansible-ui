@@ -1,6 +1,6 @@
-import { AwxRoute } from '../../frontend/awx/main/AwxRoutes';
-import { EdaRoute } from '../../frontend/eda/main/EdaRoutes';
-import { HubRoute } from '../../frontend/hub/main/HubRoutes';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
+import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { PlatformTeamList } from '../access/teams/components/PlatformTeamList';
 import { PlatformUsersList } from '../access/users/components/PlatformUsersList';
 import { PlatformRoute } from '../main/PlatformRoutes';

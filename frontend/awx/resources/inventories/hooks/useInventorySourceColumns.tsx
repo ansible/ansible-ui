@@ -1,9 +1,9 @@
+import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useDescriptionColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
-import { useDescriptionColumn, useNameColumn } from '../../../../common/columns';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';

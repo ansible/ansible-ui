@@ -1,17 +1,17 @@
+import { IToolbarFilter, PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, PageHeader, PageLayout } from '../../../../framework';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import {
   useAddressToolbarFilter,
   useHostnameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
 import { InstancesList } from './components/InstancesList';
-import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
-import { useAwxConfig } from '../../common/useAwxConfig';
+import { useInstanceToolbarActions } from './hooks/useInstanceToolbarActions';
 
 export function Instances() {
   const { t } = useTranslation();

@@ -1,33 +1,31 @@
-import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
-import { TagIcon } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
   PageLayout,
   useGetPageUrl,
-} from '../../../framework';
-import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { useGet } from '../../common/crud/useGet';
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
+import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
+import { TagIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';
+import { hubErrorAdapter } from '../common/adapters/hubErrorAdapter';
 import { hubAPI, pulpAPI } from '../common/api/formatPath';
 import { hubAPIPatch, hubAPIPost, hubAPIPut } from '../common/api/hub-api-utils';
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
-
-import { usePageNavigate } from '../../../framework';
-import { PageFormAsyncSelect } from '../../../framework/PageForm/Inputs/PageFormAsyncSelect';
 import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
-
-import { LoadingPage } from '../../../framework/components/LoadingPage';
-import { HubError } from '../common/HubError';
-import { hubErrorAdapter } from '../../../frontend/hub/common/adapters/hubErrorAdapter';
-import { useClearCache } from '../../common/useInvalidateCache/useInvalidateCache';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;

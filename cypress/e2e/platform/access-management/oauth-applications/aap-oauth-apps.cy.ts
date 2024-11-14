@@ -1,8 +1,8 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { Application } from '../../../../../frontend/awx/interfaces/Application';
-import { Token } from '../../../../../frontend/awx/interfaces/Token';
-import { PlatformOrganization } from '../../../../../platform/interfaces/PlatformOrganization';
-import { PlatformUser } from '../../../../../platform/interfaces/PlatformUser';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { gatewayAPI } from '../../../../support/formatApiPathForPlatform';
 
 describe('AAP OAuth Applications CRUD actions List page', () => {

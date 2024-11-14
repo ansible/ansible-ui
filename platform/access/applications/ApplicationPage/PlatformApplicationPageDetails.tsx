@@ -1,7 +1,7 @@
+import { CopyCell, DateTimeCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { CopyCell, DateTimeCell, PageDetail, PageDetails } from '../../../../framework';
-import { Application } from '../../../../frontend/awx/interfaces/Application';
 import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 

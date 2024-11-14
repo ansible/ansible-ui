@@ -1,6 +1,6 @@
+import { useManageItems } from '@ansible/ansible-ui-framework/components/useManagedItems';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useManageItems } from '../../../../framework/components/useManagedItems';
 
 type Resource = { id: string; name: string };
 

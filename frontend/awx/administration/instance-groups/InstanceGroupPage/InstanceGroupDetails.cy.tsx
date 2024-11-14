@@ -1,7 +1,7 @@
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { InstanceGroupDetails } from './InstanceGroupDetails';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Instance Group Details', () => {
   it('Render instance group details', () => {

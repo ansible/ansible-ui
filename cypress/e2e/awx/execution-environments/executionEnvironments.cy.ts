@@ -1,10 +1,10 @@
-import { randomString } from '../../../../framework/utils/random-string';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { ExecutionEnvironment } from '../../../../frontend/awx/interfaces/ExecutionEnvironment';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { Project } from '../../../../frontend/awx/interfaces/Project';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { Project } from '@ansible/awx-ui/interfaces/Project';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('Execution Environments', () => {

@@ -1,12 +1,12 @@
 //This spec file needs to have tests added for constructed and smart inventories. See below.
 
-import { randomString } from '../../../../framework/utils/random-string';
-import { AwxItemsResponse } from '../../../../frontend/awx/common/AwxItemsResponse';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
-import { Inventory } from '../../../../frontend/awx/interfaces/Inventory';
-import { Label } from '../../../../frontend/awx/interfaces/Label';
-import { Organization } from '../../../../frontend/awx/interfaces/Organization';
-import { AwxUser } from '../../../../frontend/awx/interfaces/User';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
+import { Label } from '@ansible/awx-ui/interfaces/Label';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
+import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 

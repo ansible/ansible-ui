@@ -1,7 +1,7 @@
+import { ITableColumn, TextCell, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { Label } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell, useGetPageUrl } from '../../../../framework';
-import { Label } from '@patternfly/react-core';
 import { HubRoute } from '../../main/HubRoutes';
 
 import { ExecutionEnvironment } from '../ExecutionEnvironment';

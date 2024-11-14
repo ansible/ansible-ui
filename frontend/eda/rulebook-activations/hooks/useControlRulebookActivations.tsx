@@ -1,13 +1,13 @@
+import { compareStrings, usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { AlertProps } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, usePageAlertToaster } from '../../../../framework';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
+import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { useRulebookActivationColumns } from './useRulebookActivationColumns';
-import { useEdaBulkConfirmation } from '../../common/useEdaBulkConfirmation';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function useEnableRulebookActivations(
   onComplete: (rulebookActivations: EdaRulebookActivation[]) => void

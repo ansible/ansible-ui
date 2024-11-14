@@ -1,12 +1,12 @@
-import { HistoryIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { HistoryIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AwxRoute } from '../../main/AwxRoutes';
 export function useViewActivityStream<T extends object>(queryType: string) {
   const { t } = useTranslation();

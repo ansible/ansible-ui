@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageForm,
@@ -10,8 +8,10 @@ import {
   PageNotFound,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxError } from '../../../../frontend/awx/common/AwxError';
+} from '@ansible/ansible-ui-framework';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
 import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';

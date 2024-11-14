@@ -1,13 +1,13 @@
-import { t } from 'i18next';
-import { PageFormSubmitHandler, PageFormTextInput } from '../../../../../framework';
+import { PageFormSubmitHandler, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Modal } from '@patternfly/react-core';
+import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
-import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
-import { useNavigate } from 'react-router-dom';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 
 export interface ManagementJobsRetainDataModalProps {
   id: number;

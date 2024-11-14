@@ -1,7 +1,7 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { Credential } from '../../../../../frontend/awx/interfaces/Credential';
-import { CredentialType } from '../../../../../frontend/awx/interfaces/CredentialType';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { CredentialType } from '@ansible/awx-ui/interfaces/CredentialType';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 describe('Credential Types', () => {

@@ -1,6 +1,6 @@
+import { PageFormSelect } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useTranslation } from 'react-i18next';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { PageFormSelect } from '../../../../../framework';
 
 export function HubSelectResourceTypeStep() {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
+import { Tacacs } from '@ansible/platform-ui/interfaces/Tacacs';
 import { randomE2Ename } from '../../../../support/utils';
-import { Tacacs } from '../../../../../platform/interfaces/Tacacs';
 
 describe('TACACS Authentication form - create, edit, update and delete', () => {
   it('creates a TACACS authenticator', () => {

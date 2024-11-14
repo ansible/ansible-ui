@@ -1,9 +1,5 @@
 import { AlertProps } from '@patternfly/react-core';
 
-import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   IPageAction,
   PageActionSelection,
@@ -14,11 +10,16 @@ import {
   useGetPageUrl,
   usePageAlertToaster,
   usePageNavigate,
-} from '../../../../framework';
-import { PageRoutedTabs } from '../../../common/PageRoutedTabs';
-import { postRequest } from '../../../common/crud/Data';
-import { useGet } from '../../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
+import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
@@ -27,7 +28,6 @@ import {
   useRestartRulebookActivations,
 } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
-import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();

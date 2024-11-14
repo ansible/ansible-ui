@@ -1,4 +1,4 @@
-import { useGet } from '../../../../common/crud/useGet';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Job } from '../../../interfaces/Job';
 

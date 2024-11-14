@@ -1,4 +1,4 @@
-import { randomString } from '../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { UpgradeUserType, usersForMigration } from '../../support/constants';
 
 describe('Authenticate and migrate a Hub LDAP account', () => {

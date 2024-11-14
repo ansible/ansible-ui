@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnTableOption,
   CopyCell,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
+} from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { HubRoute } from '../../../main/HubRoutes';
 import { RemoteRegistry } from '../RemoteRegistry';
 

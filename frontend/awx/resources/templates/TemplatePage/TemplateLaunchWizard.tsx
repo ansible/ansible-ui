@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -8,10 +6,13 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageAlertToaster,
-} from '../../../../../framework';
-import { yamlToJson } from '../../../../../framework/utils/codeEditorUtils';
-import { useGet } from '../../../../common/crud/useGet';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useCredentialsValidate } from '../../../access/credentials/hooks/useCredentialsValidate';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
@@ -25,11 +26,10 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
 import { PromptFormValues } from '../WorkflowVisualizer/types';
+import { NodePromptsStep as PromptStep } from '../WorkflowVisualizer/wizard/NodePromptsStep';
 import { shouldHideOtherStep } from '../WorkflowVisualizer/wizard/helpers';
 import { useLabelPayload } from '../hooks/useLabelPayload';
 import { CredentialPasswordsStep, TemplateLaunchReviewStep } from './steps';
-import { NodePromptsStep as PromptStep } from '../WorkflowVisualizer/wizard/NodePromptsStep';
-import { useCredentialsValidate } from '../../../access/credentials/hooks/useCredentialsValidate';
 
 export const formFieldToLaunchConfig = {
   job_type: 'ask_job_type_on_launch',

@@ -1,7 +1,7 @@
+import { PageFormAsyncMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncMultiSelect';
+import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
 import { FieldPathByValue, FieldValues, PathValue } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormAsyncMultiSelect } from '../../../../framework/PageForm/Inputs/PageFormAsyncMultiSelect';
-import { PageAsyncSelectOptionsFn } from '../../../../framework/PageInputs/PageAsyncSelectOptions';
 import { AsyncQueryLabel } from '../../../../frontend/common/AsyncQueryLabel';
 import { useQueryPlatformOptions } from '../../../common/useQueryPlatformOptions';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

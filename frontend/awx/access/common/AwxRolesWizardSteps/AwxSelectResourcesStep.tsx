@@ -1,9 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { ITableColumn, IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useMemo } from 'react';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
+import { ITableColumn, IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { Title } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxMultiSelectListView } from '../../../common/useAwxMultiSelectListView';

@@ -1,8 +1,7 @@
-import { useCollectionColumns } from '../hooks/useCollectionColumns';
-import { PageDetails, PageDetailsFromColumns } from '../../../../framework';
-import React from 'react';
+import { PageDetails, PageDetailsFromColumns } from '@ansible/ansible-ui-framework';
 import { useOutletContext } from 'react-router-dom';
 import { CollectionVersionSearch } from '../Collection';
+import { useCollectionColumns } from '../hooks/useCollectionColumns';
 
 export function CollectionDetails() {
   const { collection } = useOutletContext<{ collection: CollectionVersionSearch }>();

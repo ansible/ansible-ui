@@ -1,7 +1,7 @@
-import { randomString } from '../../../../../framework/utils/random-string';
-import { Instance } from '../../../../../frontend/awx/interfaces/Instance';
-import { InstanceGroup } from '../../../../../frontend/awx/interfaces/InstanceGroup';
-import { Settings } from '../../../../../frontend/awx/interfaces/Settings';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { Instance } from '@ansible/awx-ui/interfaces/Instance';
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 
 // An instance can only be created in an Openshift or Kubernetes build

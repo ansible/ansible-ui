@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { TeamAccess } from '../../../../common/access/components/TeamAccess';
-import { useTranslation } from 'react-i18next';
 
 export function OrganizationTeamsAccess() {
   const params = useParams<{ id: string }>();

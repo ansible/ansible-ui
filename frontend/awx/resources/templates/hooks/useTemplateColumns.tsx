@@ -1,13 +1,10 @@
-import { Split } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useCredentialsColumn,
@@ -20,7 +17,10 @@ import {
   useOrganizationNameColumn,
   useProjectNameColumn,
   useTypeColumn,
-} from '../../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { Split } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { SummaryFieldRecentJob } from '../../../interfaces/summary-fields/summary-fields';

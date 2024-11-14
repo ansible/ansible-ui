@@ -1,11 +1,11 @@
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   useInitiatedByToolbarFilter,
   useKeywordToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
-import { IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
-import { useTranslation } from 'react-i18next';
 
 export function useActivityStreamFilter() {
   const keywordToolbarFilter = useKeywordToolbarFilter();

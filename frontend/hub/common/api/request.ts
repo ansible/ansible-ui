@@ -1,6 +1,6 @@
-import { requestGet } from '../../../common/crud/Data';
-import { createRequestError } from '../../../common/crud/RequestError';
-import { getCookie } from '../../../common/crud/cookie';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { createRequestError } from '@ansible/common-ui/crud/RequestError';
+import { getCookie } from '@ansible/common-ui/crud/cookie';
 import { TaskResponse } from '../../administration/tasks/Task';
 import { parseTaskResponse } from './hub-api-utils';
 

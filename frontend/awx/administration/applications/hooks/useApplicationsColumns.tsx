@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
-import { ITableColumn } from '../../../../../framework';
+import { ITableColumn } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { useMemo } from 'react';
 import { Application } from '../../../interfaces/Application';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

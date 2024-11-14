@@ -1,13 +1,13 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageNavigationItem } from '../../../../framework';
-import { AddInstance, EditInstance } from '../../administration/instances/InstanceForm';
 import { InstanceDetails } from '../../administration/instances/InstanceDetails';
-import { Instances } from '../../administration/instances/Instances';
-import { AwxRoute } from '../AwxRoutes';
-import { InstancePage } from '../../administration/instances/InstancesPage';
-import { InstancePeers } from '../../administration/instances/InstancePeers';
+import { AddInstance, EditInstance } from '../../administration/instances/InstanceForm';
 import { InstanceListenerAddresses } from '../../administration/instances/InstanceListenerAddresses';
+import { InstancePeers } from '../../administration/instances/InstancePeers';
+import { Instances } from '../../administration/instances/Instances';
+import { InstancePage } from '../../administration/instances/InstancesPage';
+import { AwxRoute } from '../AwxRoutes';
 
 export function useAwxInstancesRoutes() {
   const { t } = useTranslation();

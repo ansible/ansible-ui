@@ -1,13 +1,13 @@
+import { useAbortController } from '@ansible/ansible-ui-framework/hooks/useAbortController';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
-import { useAbortController } from '../../../../../framework/hooks/useAbortController';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { getAddedAndRemoved } from '../../../common/util/getAddedAndRemoved';
 import { Credential } from '../../../interfaces/Credential';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
-import { requestGet } from '../../../../common/crud/Data';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 export const useProcessCredentials = () => {
   const abortController = useAbortController();

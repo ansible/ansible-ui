@@ -1,8 +1,8 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
+import { useMemo } from 'react';
 import { awxAPI } from '../../common/api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';
-import { useGetPageUrl } from '../../../../framework/PageNavigation/useGetPageUrl';
-import { useMemo } from 'react';
 
 /** Returns the jobs API endpoint based on the job type */
 export function getJobsAPIUrl(type: string) {

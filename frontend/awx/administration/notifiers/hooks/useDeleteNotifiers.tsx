@@ -1,12 +1,12 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { useNameColumn } from '@ansible/common-ui/columns';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { useNameColumn } from '../../../../common/columns';
-import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
-import { useNotifiersColumns } from './useNotifiersColumns';
 import { NotificationTemplate } from '../../../interfaces/NotificationTemplate';
+import { useNotifiersColumns } from './useNotifiersColumns';
 
 export function useDeleteNotifiers(onComplete: (notification: NotificationTemplate[]) => void) {
   const { t } = useTranslation();

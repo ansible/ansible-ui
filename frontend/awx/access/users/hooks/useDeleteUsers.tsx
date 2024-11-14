@@ -1,7 +1,7 @@
+import { compareStrings, TextCell } from '@ansible/ansible-ui-framework';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { compareStrings, TextCell } from '../../../../../framework';
-import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { AwxUser } from '../../../interfaces/User';

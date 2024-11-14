@@ -1,4 +1,4 @@
-import { PageForm, PageFormProps } from '../../../framework';
+import { PageForm, PageFormProps } from '@ansible/ansible-ui-framework';
 import { hubErrorAdapter } from './adapters/hubErrorAdapter';
 
 export function HubPageForm<T extends object>(props: PageFormProps<T>) {

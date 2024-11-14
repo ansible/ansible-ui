@@ -1,8 +1,8 @@
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
+import { HubRbacRole } from '@ansible/hub-ui/interfaces/expanded/HubRbacRole';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
-import { randomString } from '../../../framework/utils/random-string';
-import { ContentTypeEnum } from '../../../frontend/hub/interfaces/expanded/ContentType';
-import { HubRbacRole } from '../../../frontend/hub/interfaces/expanded/HubRbacRole';
 
 describe('Namespace - team and user access', () => {
   let namespace: HubNamespace;

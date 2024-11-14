@@ -1,12 +1,12 @@
+import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
-import { useActivityStreamColumns } from './hooks/useActivityStreamColumns';
 import { ActivityStream } from '../../interfaces/ActivityStream';
 import { useActivityStreamActions } from './hooks/useActivityStreamActions';
+import { useActivityStreamColumns } from './hooks/useActivityStreamColumns';
 import { useActivityStreamFilter } from './hooks/useActivityStreamFilters';
 
 export function ActivityStreams() {

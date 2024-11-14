@@ -1,5 +1,5 @@
-import { SystemJobTemplate } from '../../../../../frontend/awx/interfaces/generated-from-swagger/api';
-import { Organization } from '../../../../../frontend/awx/interfaces/Organization';
+import { SystemJobTemplate } from '@ansible/awx-ui/interfaces/generated-from-swagger/api';
+import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../../support/utils';
 

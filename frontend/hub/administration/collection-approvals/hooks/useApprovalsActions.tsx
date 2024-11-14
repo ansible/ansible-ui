@@ -1,13 +1,13 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
 import { ThumbsDownIcon, ThumbsUpIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
+import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
 import { useHubContext } from '../../../common/useHubContext';
 import { CollectionVersionSearch } from '../Approval';
-import { useRejectCollections } from './useRejectCollections';
 import { approveCollection } from './useApprovalActions';
-import { useCopyToRepository } from '../../../collections/hooks/useCopyToRepository';
 import { useApproveCollectionsFrameworkModal } from './useApproveCollections';
+import { useRejectCollections } from './useRejectCollections';
 
 export function useApprovalsActions(callback: (collections: CollectionVersionSearch[]) => void) {
   const { t } = useTranslation();

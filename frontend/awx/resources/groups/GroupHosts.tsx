@@ -1,18 +1,18 @@
+import { PageTable } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageTable } from '../../../../framework';
-import { useOptions } from '../../../common/crud/useOptions';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
-import { AwxHost } from '../../interfaces/AwxHost';
-import { OptionsResponse, ActionsResponse } from '../../interfaces/OptionsResponse';
 import { useAwxView } from '../../common/useAwxView';
-import { useHostsFilters } from '../hosts/hooks/useHostsFilters';
-import { useInventoriesGroupHostsColumns } from '../inventories/hooks/useInventoriesHostsColumns';
+import { AwxHost } from '../../interfaces/AwxHost';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useHostsEmptyStateActions } from '../hosts/hooks/useHostsEmptyStateActions';
-import { useInventoriesGroupsHostsToolbarActions } from '../inventories/hooks/useInventoriesGroupsHostsToolbarActions';
+import { useHostsFilters } from '../hosts/hooks/useHostsFilters';
 import { useInventoriesGroupsHostsActions } from '../inventories/hooks/useInventoriesGroupsHostsActions';
+import { useInventoriesGroupsHostsToolbarActions } from '../inventories/hooks/useInventoriesGroupsHostsToolbarActions';
+import { useInventoriesGroupHostsColumns } from '../inventories/hooks/useInventoriesHostsColumns';
 
 export function GroupHosts() {
   const { t } = useTranslation();

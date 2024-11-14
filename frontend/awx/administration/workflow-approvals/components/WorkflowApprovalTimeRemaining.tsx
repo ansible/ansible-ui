@@ -1,9 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
+import { TextCell, getPatternflyColor } from '@ansible/ansible-ui-framework';
+import { IconWrapper } from '@ansible/ansible-ui-framework/components/IconWrapper';
 import { Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
-import { useEffect, useMemo, useState } from 'react';
-import { IconWrapper } from '../../../../../framework/components/IconWrapper';
 import { ClockIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-import { TextCell, getPatternflyColor } from '../../../../../framework';
+import { useEffect, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export function WorkflowApprovalTimeRemaining(props: { approval_expiration: string }) {

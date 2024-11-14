@@ -1,8 +1,8 @@
+import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPageAction, PageActionSelection, PageActionType } from '../../../../../framework';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { isJobRunning } from '../jobUtils';
 import { useCancelJobs } from './useCancelJobs';

@@ -1,5 +1,5 @@
+import { CopyCell } from '@ansible/ansible-ui-framework';
 import { Trans } from 'react-i18next';
-import { CopyCell } from '../../../../framework';
 import { ExternalLink } from '../../common/ExternalLink';
 import { getRepoURL } from '../../common/api/hub-api-utils';
 

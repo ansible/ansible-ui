@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
 import {
   ICatalogBreadcrumb,
   PageFormCheckbox,
@@ -12,11 +9,14 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { requestPatch } from '../../../../common/crud/Data';
-import { useGetRequest } from '../../../../common/crud/useGet';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
+} from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGetRequest } from '@ansible/common-ui/crud/useGet';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxHost } from '../../../interfaces/AwxHost';

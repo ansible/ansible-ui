@@ -1,14 +1,14 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { EmptyStateCustom } from '@ansible/ansible-ui-framework/components/EmptyStateCustom';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
+import { HubUser } from '@ansible/hub-ui/interfaces/expanded/HubUser';
 import { Page } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useGetPageUrl } from '../../framework';
-import { EmptyStateCustom } from '../../framework/components/EmptyStateCustom';
-import { LoadingState } from '../../framework/components/LoadingState';
 import { useGetItem } from '../../frontend/common/crud/useGet';
-import { PlatformRoute } from '../main/PlatformRoutes';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
-import { hubAPI } from '../../frontend/hub/common/api/formatPath';
-import { HubUser } from '../../frontend/hub/interfaces/expanded/HubUser';
+import { PlatformRoute } from '../main/PlatformRoutes';
 
 export function PlatformHubUser(props: { route?: string }) {
   const { t } = useTranslation();

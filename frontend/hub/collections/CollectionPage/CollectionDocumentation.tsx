@@ -1,23 +1,22 @@
+import { LoadingPage, useBreakpoint } from '@ansible/ansible-ui-framework';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import {
-  ToggleGroup,
-  ToggleGroupItem,
   Drawer,
   DrawerContent,
   DrawerContentBody,
+  PageSection,
+  Title,
+  ToggleGroup,
+  ToggleGroupItem,
 } from '@patternfly/react-core';
 import { useMemo, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { LoadingPage, useBreakpoint } from '../../../../framework';
-import { useGet } from '../../../common/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { pulpAPI } from '../../common/api/formatPath';
+import { HubError } from '../../common/HubError';
 import { CollectionVersionSearch, IContents } from '../Collection';
 import { CollectionDocumentationTabContent } from './documentationComponents/CollectionDocumentationTabContent';
 import { CollectionDocumentationTabPanel } from './documentationComponents/CollectionDocumentationTabPanel';
-import { HubError } from '../../common/HubError';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import { Title } from '@patternfly/react-core';
-import { PageSection } from '@patternfly/react-core';
 
 /*
 Documentation content is divided into list of contents. The list include content_name and content_type.

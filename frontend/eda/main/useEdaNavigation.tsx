@@ -1,8 +1,8 @@
+import { PageNavigationItem } from '@ansible/ansible-ui-framework/PageNavigation/PageNavigationItem';
+import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
+import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
-import { PageNavigationItem } from '../../../framework/PageNavigation/PageNavigationItem';
-import { PageSettingsDetails } from '../../../framework/PageSettings/PageSettingsDetails';
-import { PageSettingsForm } from '../../../framework/PageSettings/PageSettingsForm';
 import {
   CreateCredentialType,
   EditCredentialType,
@@ -48,6 +48,15 @@ import { DecisionEnvironmentPage } from '../decision-environments/DecisionEnviro
 import { DecisionEnvironmentTeamAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentTeamAccess';
 import { DecisionEnvironmentUserAccess } from '../decision-environments/DecisionEnvironmentPage/DecisionEnvironmentUserAccess';
 import { DecisionEnvironments } from '../decision-environments/DecisionEnvironments';
+import { EdaEventStreamAddTeams } from '../event-streams/components/EdaEventStreamAddTeams';
+import { EdaEventStreamAddUsers } from '../event-streams/components/EdaEventStreamAddUsers';
+import { CreateEventStream, EditEventStream } from '../event-streams/EventStreamForm';
+import { EventStreamActivations } from '../event-streams/EventStreamPage/EventStreamActivations';
+import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
+import { EventStreamPage } from '../event-streams/EventStreamPage/EventStreamPage';
+import { EventStreamTeamAccess } from '../event-streams/EventStreamPage/EventStreamTeamAccess';
+import { EventStreamUserAccess } from '../event-streams/EventStreamPage/EventStreamUserAccess';
+import { EventStreams } from '../event-streams/EventStreams';
 import { EdaOverview } from '../overview/EdaOverview';
 import { EdaProjectAddTeams } from '../projects/components/EdaProjectAddTeams';
 import { EdaProjectAddUsers } from '../projects/components/EdaProjectAddUsers';
@@ -73,17 +82,8 @@ import { RulebookActivationPage } from '../rulebook-activations/RulebookActivati
 import { RulebookActivationTeamAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationTeamAccess';
 import { RulebookActivationUserAccess } from '../rulebook-activations/RulebookActivationPage/RuleBookActivationUserAccess';
 import { RulebookActivations } from '../rulebook-activations/RulebookActivations';
-import { CreateEventStream, EditEventStream } from '../event-streams/EventStreamForm';
-import { EventStreamDetails } from '../event-streams/EventStreamPage/EventStreamDetails';
-import { EventStreamPage } from '../event-streams/EventStreamPage/EventStreamPage';
-import { EventStreams } from '../event-streams/EventStreams';
 import { EdaRoute } from './EdaRoutes';
 import { useEdaOrganizationRoutes } from './routes/useEdaOrganizationsRoutes';
-import { EventStreamActivations } from '../event-streams/EventStreamPage/EventStreamActivations';
-import { EdaEventStreamAddTeams } from '../event-streams/components/EdaEventStreamAddTeams';
-import { EdaEventStreamAddUsers } from '../event-streams/components/EdaEventStreamAddUsers';
-import { EventStreamUserAccess } from '../event-streams/EventStreamPage/EventStreamUserAccess';
-import { EventStreamTeamAccess } from '../event-streams/EventStreamPage/EventStreamTeamAccess';
 
 export function useEdaNavigation() {
   const { t } = useTranslation();

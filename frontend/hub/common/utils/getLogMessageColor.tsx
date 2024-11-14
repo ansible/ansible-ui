@@ -1,4 +1,4 @@
-import { getPatternflyColor, PFColorE } from '../../../../framework';
+import { getPatternflyColor, PFColorE } from '@ansible/ansible-ui-framework';
 
 export function getLogMessageColor(messageLevel: string) {
   const res = getPatternflyColor(

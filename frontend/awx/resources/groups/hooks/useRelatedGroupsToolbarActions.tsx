@@ -1,7 +1,3 @@
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { IAwxView } from '../../../common/useAwxView';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   IPageAction,
   PageActionSelection,
@@ -9,18 +5,22 @@ import {
   usePageAlertToaster,
   usePageDialog,
   usePageNavigate,
-} from '../../../../../framework';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useParams } from 'react-router-dom';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { IAwxView } from '../../../common/useAwxView';
+import { InventoryGroup } from '../../../interfaces/InventoryGroup';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useRunCommandAction } from '../../inventories/hooks/useInventoriesGroupsToolbarActions';
 import { useDisassociateGroups } from './useDisassociateGroups';
 import { GroupSelectDialog } from './useGroupSelectDialog';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { useRunCommandAction } from '../../inventories/hooks/useInventoriesGroupsToolbarActions';
 
 export function useRelatedGroupsToolbarActions(view: IAwxView<InventoryGroup>) {
   const [_, setDialog] = usePageDialog();

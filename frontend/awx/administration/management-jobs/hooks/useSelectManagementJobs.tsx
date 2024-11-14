@@ -1,12 +1,12 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SingleSelectDialog } from '../../../../../framework/PageDialogs/SingleSelectDialog';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
+import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { useManagementJobColumns } from './useManagementJobColumns';
 import { useManagementJobFilters } from './useManagementJobFilters';
-import { useCallback } from 'react';
-import { usePageDialog } from '../../../../../framework';
-import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 
 function SelectManagementJob(props: {
   title: string;

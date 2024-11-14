@@ -1,11 +1,11 @@
+import { DateTimeCell, LoadingPage, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Button } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { DateTimeCell, LoadingPage, PageDetail, PageDetails } from '../../../../framework';
-import { EmptyStateNoData } from '../../../../framework/components/EmptyStateNoData';
-import { useGet } from '../../../common/crud/useGet';
 import { HubError } from '../../common/HubError';
 import { hubAPI } from '../../common/api/formatPath';
 import { HubItemsResponse } from '../../common/useHubView';

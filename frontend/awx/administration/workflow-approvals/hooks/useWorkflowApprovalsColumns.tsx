@@ -1,12 +1,12 @@
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   DateTimeCell,
   ITableColumn,
   usePageNavigate,
-} from '../../../../../framework';
-import { useIdColumn, useNameColumn } from '../../../../common/columns';
+} from '@ansible/ansible-ui-framework';
+import { useIdColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { WorkflowApprovalStatusCell } from '../components/WorkflowApprovalStatusCell';

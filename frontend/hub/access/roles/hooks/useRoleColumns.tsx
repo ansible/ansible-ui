@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnModalOption,
   DateTimeCell,
   ITableColumn,
   TextCell,
   useGetPageUrl,
-} from '../../../../../framework';
-import { HubRoute } from '../../../main/HubRoutes';
+} from '@ansible/ansible-ui-framework';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { HubRoute } from '../../../main/HubRoutes';
 import { useManagedRolesWithDescription } from './useManagedRolesWithDescription';
 
 export function useRoleColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {

@@ -1,15 +1,15 @@
-import { Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import {
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSelect,
   PageFormTextArea,
   PageFormTextInput,
-} from '../../../../../framework';
-import { PageFormGroup } from '../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
+} from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
 import { Authenticator } from '../../../../interfaces/Authenticator';
 import {

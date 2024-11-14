@@ -1,6 +1,6 @@
+import { compareStrings } from '@ansible/ansible-ui-framework';
+import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
-import { compareStrings } from '../../../../../framework';
-import { getItemKey, requestDelete } from '../../../../common/crud/Data';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { Token } from '../../../interfaces/Token';

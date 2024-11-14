@@ -1,20 +1,20 @@
+import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import {
+  Grid,
+  GridItem,
   InputGroup,
   InputGroupItem,
   InputGroupText,
   TextInput,
-  Grid,
-  GridItem,
 } from '@patternfly/react-core';
 import { useEffect } from 'react';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { PageFormSelect, PageFormTextInput } from '../../../../../../framework';
-import { PageFormGroup } from '../../../../../../framework/PageForm/Inputs/PageFormGroup';
-import { PageFormWatch } from '../../../../../../framework/PageForm/Utils/PageFormWatch';
-import { usePageWizard } from '../../../../../../framework/PageWizard/PageWizardProvider';
-import { requestGet } from '../../../../../common/crud/Data';
-import { useGet } from '../../../../../common/crud/useGet';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';

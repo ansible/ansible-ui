@@ -1,9 +1,9 @@
-import { useFormContext } from 'react-hook-form';
-import { ITableColumn, IToolbarFilter } from '../../../framework';
-import { QueryParams } from './api/hub-api-utils';
-import { usePageWizard } from '../../../framework/PageWizard/PageWizardProvider';
-import { useHubView } from './useHubView';
+import { ITableColumn, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { QueryParams } from './api/hub-api-utils';
+import { useHubView } from './useHubView';
 
 /**
  * Hook for defining the view for a multi-select list in the context of a wizard. The selections made in the list

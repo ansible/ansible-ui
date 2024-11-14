@@ -1,6 +1,6 @@
-import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
-import { Repository } from '../../../frontend/hub/administration/repositories/Repository';
-import { HubNamespace } from '../../../frontend/hub/namespaces/HubNamespace';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
+import { Repository } from '@ansible/hub-ui/administration/repositories/Repository';
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { randomE2Ename } from '../../support/utils';
 import { Repositories } from './constants';
 

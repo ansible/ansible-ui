@@ -1,13 +1,18 @@
+import {
+  PageHeader,
+  PageLayout,
+  useGetPageUrl,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { PageFormTextArea } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextArea';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageHeader, PageLayout, useGetPageUrl, usePageNavigate } from '../../../../framework';
-import { PageFormTextArea } from '../../../../framework/PageForm/Inputs/PageFormTextArea';
-import { PageFormTextInput } from '../../../../framework/PageForm/Inputs/PageFormTextInput';
-import { PageFormSubmitHandler } from '../../../../framework/PageForm/PageForm';
-import { PageFormSection } from '../../../../framework/PageForm/Utils/PageFormSection';
-import { useGet } from '../../../common/crud/useGet';
-import { usePatchRequest } from '../../../common/crud/usePatchRequest';
-import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Team } from '../../interfaces/Team';

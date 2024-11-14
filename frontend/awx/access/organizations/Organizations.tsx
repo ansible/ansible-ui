@@ -1,7 +1,3 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   ITableColumn,
@@ -12,17 +8,21 @@ import {
   PageTable,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../framework/components/ButtonLink';
-import { usePersistentFilters } from '../../../common/PersistentFilters';
+} from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useIdColumn,
   useModifiedColumn,
   useNameColumn,
-} from '../../../common/columns';
+} from '@ansible/common-ui/columns';
+import { ButtonVariant } from '@patternfly/react-core';
+import { MinusCircleIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import {

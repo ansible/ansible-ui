@@ -1,6 +1,6 @@
+import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { Token } from '../../../interfaces/Token';
 import { UserTokenSecretsModal } from './UserTokenSecretsModal';
-import { formatDateString } from '../../../../../framework/utils/formatDateString';
 
 describe('UserTokenSecretsModal', () => {
   const appTokenToken = '1234-abcdef-6789';

@@ -6,19 +6,19 @@ import '@patternfly/quickstarts/dist/quickstarts.min.css';
 // patternfly-charts-theme-dark.css must come after patternfly-charts.css
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
+import { PageFramework } from '@ansible/ansible-ui-framework';
+import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
+import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
+import { WebSocketProvider } from '@ansible/awx-ui/common/useAwxWebSocket';
+import { DocsVersionProvider } from '@ansible/awx-ui/common/useDocsVersion';
+import { EdaActiveUserProvider } from '@ansible/eda-ui/common/useEdaActiveUser';
+import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
+import { HubContextProvider } from '@ansible/hub-ui/common/useHubContext';
 import { Bullseye, Page, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { PageFramework } from '../../framework';
-import { AwxActiveUserProvider } from '../../frontend/awx/common/useAwxActiveUser';
-import { AwxConfigProvider } from '../../frontend/awx/common/useAwxConfig';
-import { WebSocketProvider } from '../../frontend/awx/common/useAwxWebSocket';
-import { DocsVersionProvider } from '../../frontend/awx/common/useDocsVersion';
 import { useGet } from '../../frontend/common/crud/useGet';
 import '../../frontend/common/i18n';
-import { EdaActiveUserProvider } from '../../frontend/eda/common/useEdaActiveUser';
-import { HubActiveUserProvider } from '../../frontend/hub/common/useHubActiveUser';
-import { HubContextProvider } from '../../frontend/hub/common/useHubContext';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import {

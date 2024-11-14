@@ -1,22 +1,22 @@
-import { Label, LabelGroup } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageDetail,
   PageDetails,
   PageDetailsFromColumns,
   useGetPageUrl,
-} from '../../../../framework';
-import { CredentialLabel } from '../../../../frontend/awx/common/CredentialLabel';
-import { ExecutionEnvironmentDetail } from '../../../../frontend/awx/common/ExecutionEnvironmentDetail';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { useAwxConfig } from '../../../../frontend/awx/common/useAwxConfig';
-import { Credential } from '../../../../frontend/awx/interfaces/Credential';
-import { InstanceGroup } from '../../../../frontend/awx/interfaces/InstanceGroup';
-import { Organization as AwxOrganization } from '../../../../frontend/awx/interfaces/Organization';
-import { AwxRoute } from '../../../../frontend/awx/main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { CredentialLabel } from '@ansible/awx-ui/common/CredentialLabel';
+import { ExecutionEnvironmentDetail } from '@ansible/awx-ui/common/ExecutionEnvironmentDetail';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
+import { Credential } from '@ansible/awx-ui/interfaces/Credential';
+import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
+import { Organization as AwxOrganization } from '@ansible/awx-ui/interfaces/Organization';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { Label, LabelGroup } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useParams } from 'react-router-dom';
 import { useGet } from '../../../../frontend/common/crud/useGet';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

@@ -1,5 +1,5 @@
-import { randomString } from '../../../framework/utils/random-string';
-import { HubRemote } from '../../../frontend/hub/administration/remotes/Remotes';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { Remotes } from './constants';
 

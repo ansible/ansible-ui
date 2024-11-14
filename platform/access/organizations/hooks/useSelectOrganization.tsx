@@ -1,7 +1,7 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
+import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../../../framework';
-import { SingleSelectDialog } from '../../../../framework/PageDialogs/SingleSelectDialog';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

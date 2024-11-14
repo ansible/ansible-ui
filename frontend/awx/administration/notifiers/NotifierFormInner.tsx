@@ -6,12 +6,12 @@ import {
   PageFormDataEditor,
   PageFormTextArea,
   PageFormTextInput,
-} from '../../../../framework';
+} from '@ansible/ansible-ui-framework';
 
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 
-import { PageFormSingleSelect } from '../../../../framework/PageForm/Inputs/PageFormSingleSelect';
-import { PageFormGroup } from '../../../../framework/PageForm/Inputs/PageFormGroup';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { TFunction } from 'i18next';
 import { FieldPathByValue } from 'react-hook-form';
 import { ExternalLink } from '../../../hub/common/ExternalLink';

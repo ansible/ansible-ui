@@ -1,17 +1,17 @@
-import { StopCircleIcon } from '@patternfly/react-icons';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   compareStrings,
-} from '../../../../../framework';
-import { requestPatch } from '../../../../common/crud/Data';
+} from '@ansible/ansible-ui-framework';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { StopCircleIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { pulpAPI } from '../../../common/api/formatPath';
+import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { Task } from '../Task';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
 import { useTasksColumns } from './useTasksColumns';
 
 export function useTasksToolbarActions(onComplete?: (tasks: Task[]) => void) {

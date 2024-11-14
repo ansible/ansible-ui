@@ -1,21 +1,23 @@
-import { useMemo } from 'react';
+import {
+  IPageAction,
+  ITableColumn,
+  PageActionSelection,
+  PageActionType,
+  PageTable,
+  TextCell,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { PlusCircleIcon, RedoIcon } from '@patternfly/react-icons';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useParams } from 'react-router-dom';
-import { ITableColumn, PageTable, TextCell, useGetPageUrl } from '../../../../../framework';
 import { pulpAPI } from '../../../common/api/formatPath';
+import { parsePulpIDFromURL, waitForTask } from '../../../common/api/hub-api-utils';
+import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
 import { useHubView } from '../../../common/useHubView';
 import { HubRoute } from '../../../main/HubRoutes';
-import { RepositoryVersion } from '../Repository';
-import { useHubBulkConfirmation } from '../../../common/useHubBulkConfirmation';
-import { useCallback } from 'react';
-import { parsePulpIDFromURL } from '../../../common/api/hub-api-utils';
-import { PageActionSelection } from '../../../../../framework';
-import { PageActionType } from '../../../../../framework';
-import { IPageAction } from '../../../../../framework';
-import { waitForTask } from '../../../common/api/hub-api-utils';
-import { postRequest } from '../../../../common/crud/Data';
-import { Repository } from '../Repository';
-import { PlusCircleIcon, RedoIcon } from '@patternfly/react-icons';
+import { Repository, RepositoryVersion } from '../Repository';
 
 export function RepositoryVersions() {
   const { t } = useTranslation();

@@ -1,12 +1,12 @@
+import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageDetail, PageDetails } from '../../../../../framework';
-import { PageDetailCodeEditor } from '../../../../../framework/PageDetails/PageDetailCodeEditor';
-import { jsonToYaml } from '../../../../../framework/utils/codeEditorUtils';
-import { useGetItem } from '../../../../common/crud/useGet';
-import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 import { edaAPI } from '../../../common/eda-utils';
+import { EdaCredentialType } from '../../../interfaces/EdaCredentialType';
 
 export function CredentialTypeDetails() {
   const params = useParams<{ id: string }>();

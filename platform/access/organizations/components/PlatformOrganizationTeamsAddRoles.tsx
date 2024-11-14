@@ -1,6 +1,3 @@
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -9,17 +6,20 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../framework';
-import { AwxSelectRolesStep } from '../../../../frontend/awx/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
-import { awxAPI } from '../../../../frontend/awx/common/api/awx-utils';
-import { useAwxBulkActionDialog } from '../../../../frontend/awx/common/useAwxBulkActionDialog';
-import { AwxRbacRole } from '../../../../frontend/awx/interfaces/AwxRbacRole';
+} from '@ansible/ansible-ui-framework';
+import { AwxSelectRolesStep } from '@ansible/awx-ui/access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { useAwxBulkActionDialog } from '@ansible/awx-ui/common/useAwxBulkActionDialog';
+import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
+import { EdaSelectRolesStep } from '@ansible/eda-ui/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
+import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
+import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { RoleAssignmentsReviewStep } from '../../../../frontend/common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
 import { postRequest } from '../../../../frontend/common/crud/Data';
 import { useGet } from '../../../../frontend/common/crud/useGet';
-import { EdaSelectRolesStep } from '../../../../frontend/eda/access/common/EdaRolesWizardSteps/EdaSelectRolesStep';
-import { edaAPI } from '../../../../frontend/eda/common/eda-utils';
-import { EdaRbacRole } from '../../../../frontend/eda/interfaces/EdaRbacRole';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { useGatewayService } from '../../../main/GatewayServices';

@@ -1,13 +1,13 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   useGetPageUrl,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
+import { ButtonVariant } from '@patternfly/react-core';
+import { PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHubActiveUser } from '../../../common/useHubActiveUser';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubRoute } from '../../../main/HubRoutes';

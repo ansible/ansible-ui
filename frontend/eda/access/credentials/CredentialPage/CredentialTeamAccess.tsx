@@ -1,6 +1,6 @@
+import { TeamAccess } from '@ansible/common-ui/access/components/TeamAccess';
 import { useParams } from 'react-router-dom';
 import { EdaRoute } from '../../../main/EdaRoutes';
-import { TeamAccess } from '../../../../common/access/components/TeamAccess';
 
 export function CredentialTeamAccess() {
   const params = useParams<{ id: string }>();

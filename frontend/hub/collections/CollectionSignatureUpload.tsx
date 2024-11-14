@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../framework';
-import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
-import { useGet, useGetRequest } from '../../common/crud/useGet';
+} from '@ansible/ansible-ui-framework';
+import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
+import { useGet, useGetRequest } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Repository } from '../administration/repositories/Repository';
 import { HubError } from '../common/HubError';
 import { HubPageForm } from '../common/HubPageForm';

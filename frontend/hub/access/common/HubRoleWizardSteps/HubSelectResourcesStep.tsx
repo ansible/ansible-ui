@@ -1,16 +1,16 @@
+import { ITableColumn, IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
+import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { Title } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { HubRemote } from '../../../administration/remotes/Remotes';
 import { Repository } from '../../../administration/repositories/Repository';
 import { hubAPI, pulpAPI } from '../../../common/api/formatPath';
-import { ExecutionEnvironment } from '../../../execution-environments/ExecutionEnvironment';
-import { usePageWizard } from '../../../../../framework/PageWizard/PageWizardProvider';
-import { useTranslation } from 'react-i18next';
-import { Title } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { ITableColumn, IToolbarFilter, ToolbarFilterType } from '../../../../../framework';
 import { useHubMultiSelectListView } from '../../../common/useHubMultiSelectListView';
+import { ExecutionEnvironment } from '../../../execution-environments/ExecutionEnvironment';
 import { HubNamespace } from '../../../namespaces/HubNamespace';
-import { PageMultiSelectList } from '../../../../../framework/PageTable/PageMultiSelectList';
 
 export type HubResourceType = HubNamespace | ExecutionEnvironment | HubRemote | Repository;
 

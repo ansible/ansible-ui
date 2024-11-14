@@ -1,4 +1,4 @@
-import { AzureAD } from '../../../../../platform/interfaces/AzureAD';
+import { AzureAD } from '@ansible/platform-ui/interfaces/AzureAD';
 import { gatewayAPI } from '../../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../../support/utils';
 

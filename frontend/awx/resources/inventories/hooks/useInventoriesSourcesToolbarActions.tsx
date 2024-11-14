@@ -1,25 +1,25 @@
+import {
+  IPageAction,
+  PageActionSelection,
+  PageActionType,
+  usePageAlertToaster,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { cannotDeleteResources } from '@ansible/common-ui/utils/RBAChelpers';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PlusCircleIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import {
-  IPageAction,
-  PageActionType,
-  PageActionSelection,
-  usePageNavigate,
-} from '../../../../../framework';
-import { useOptions } from '../../../../common/crud/useOptions';
-import { cannotDeleteResources } from '../../../../common/utils/RBAChelpers';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { OptionsResponse, ActionsResponse } from '../../../interfaces/OptionsResponse';
-import { IAwxView } from '../../../common/useAwxView';
-import { useDeleteSources } from '../../sources/hooks/useDeleteSources';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import { usePostRequest } from '../../../../common/crud/usePostRequest';
-import { usePageAlertToaster } from '../../../../../framework';
+import { IAwxView } from '../../../common/useAwxView';
+import { InventorySource } from '../../../interfaces/InventorySource';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { AwxRoute } from '../../../main/AwxRoutes';
+import { useDeleteSources } from '../../sources/hooks/useDeleteSources';
 
 export function useInventoriesSourcesToolbarActions(
   view: IAwxView<InventorySource>,

@@ -1,14 +1,14 @@
 /// <reference types="cypress" />
 
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaResult } from '@ansible/eda-ui/interfaces/EdaResult';
+import { EdaTeam } from '@ansible/eda-ui/interfaces/EdaTeam';
+import { EdaUser, EdaUserCreateUpdate } from '@ansible/eda-ui/interfaces/EdaUser';
+import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import '@cypress/code-coverage/support';
-import { randomString } from '../../framework/utils/random-string';
-import { EdaUser, EdaUserCreateUpdate } from '../../frontend/eda/interfaces/EdaUser';
-import { EdaTeam } from '../../frontend/eda/interfaces/EdaTeam';
-import { EdaResult } from '../../frontend/eda/interfaces/EdaResult';
-import { EdaOrganization } from '../../frontend/eda/interfaces/EdaOrganization';
-import { edaAPI } from './formatApiPathForEDA';
 import { SetOptional } from 'type-fest';
-import { PlatformOrganization } from '../../platform/interfaces/PlatformOrganization';
+import { edaAPI } from './formatApiPathForEDA';
 
 // Base create and delete commands for EDA organizations, teams, and users
 Cypress.Commands.add('createEdaOrganization', () => {

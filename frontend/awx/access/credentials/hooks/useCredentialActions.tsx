@@ -1,22 +1,22 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   usePageNavigate,
-} from '../../../../../framework';
+} from '@ansible/ansible-ui-framework';
 import {
+  cannotCopyResource,
   cannotDeleteResource,
   cannotEditResource,
-  cannotCopyResource,
-} from '../../../../common/utils/RBAChelpers';
+} from '@ansible/common-ui/utils/RBAChelpers';
+import { ButtonVariant } from '@patternfly/react-core';
+import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Credential } from '../../../interfaces/Credential';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useDeleteCredentials } from './useDeleteCredentials';
 import { useCopyCredential } from './useCopyCredential';
+import { useDeleteCredentials } from './useDeleteCredentials';
 
 export function useCredentialActions(options?: {
   onDeleted: (credentials: Credential[]) => void;

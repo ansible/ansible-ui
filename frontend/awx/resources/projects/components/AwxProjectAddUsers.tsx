@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import {
   LoadingPage,
   PageHeader,
@@ -8,17 +6,19 @@ import {
   PageWizardStep,
   useGetPageUrl,
   usePageNavigate,
-} from '../../../../../framework';
-import { AwxRoute } from '../../../main/AwxRoutes';
-import { Project } from '../../../interfaces/Project';
-import { useGet } from '../../../../common/crud/useGet';
-import { postRequest } from '../../../../common/crud/Data';
-import { AwxUser } from '../../../interfaces/User';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { RoleAssignmentsReviewStep } from '../../../../common/access/RolesWizard/steps/RoleAssignmentsReviewStep';
-import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
-import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+} from '@ansible/ansible-ui-framework';
+import { RoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/RoleAssignmentsReviewStep';
+import { postRequest } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AwxSelectRolesStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectRolesStep';
+import { AwxSelectUsersStep } from '../../../access/common/AwxRolesWizardSteps/AwxSelectUsersStep';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { useAwxBulkActionDialog } from '../../../common/useAwxBulkActionDialog';
+import { Project } from '../../../interfaces/Project';
+import { AwxUser } from '../../../interfaces/User';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 interface AwxRole {
   id: string;

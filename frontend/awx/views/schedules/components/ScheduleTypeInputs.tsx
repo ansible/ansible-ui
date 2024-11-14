@@ -1,17 +1,17 @@
+import { PageFormSelect } from '@ansible/ansible-ui-framework';
+import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { Divider } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
 import { RegularInventory } from '../../../interfaces/Inventory';
-import { PageFormSection } from '../../../../../framework/PageForm/Utils/PageFormSection';
-import { PageFormSelect } from '../../../../../framework';
-import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
-import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
 import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
-import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
+import { PageFormJobTemplateSelect } from '../../../resources/templates/components/PageFormJobTemplateSelect';
+import { PageFormWorkflowJobTemplateSelect } from '../../../resources/templates/components/PageFormWorkflowJobTemplateSelect';
 import { ScheduleFormWizard } from '../types';
-import { Divider } from '@patternfly/react-core';
 
 export function ScheduleTypeInputs() {
   const { t } = useTranslation();

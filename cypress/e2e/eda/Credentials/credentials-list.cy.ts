@@ -1,9 +1,9 @@
 //Tests a user's ability to perform certain actions on the Credentials list in the EDA UI.
-import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
-import { Settings } from '../../../../frontend/awx/interfaces/Settings';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { SAAS_URL } from '../../../support/constants';
+import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('If SaaS Build', () => {
   before(function () {
