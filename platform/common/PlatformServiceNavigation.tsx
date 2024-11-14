@@ -1,6 +1,6 @@
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageRoutedTabs } from '../../frontend/common/PageRoutedTabs';
 import { useGatewayService } from '../main/GatewayServices';
 
 export function PlatformServiceNavigation(props: { awx?: string; eda?: string; hub?: string }) {

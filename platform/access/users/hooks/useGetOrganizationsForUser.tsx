@@ -1,5 +1,5 @@
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useCallback, useMemo } from 'react';
-import { useGet } from '../../../../frontend/common/crud/useGet';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

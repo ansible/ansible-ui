@@ -1,4 +1,4 @@
-import { Project } from '../../../frontend/awx/interfaces/Project';
+import { Project } from '@ansible/awx-ui//interfaces/Project';
 
 export function processProject(project: Project) {
   switch (project.description) {

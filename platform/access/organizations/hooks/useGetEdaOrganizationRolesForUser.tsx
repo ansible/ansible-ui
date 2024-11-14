@@ -1,10 +1,10 @@
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
 import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { useMemo } from 'react';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { useGet } from '../../../../frontend/common/crud/useGet';
 import { useEdaResource } from '../../../hooks/useEdaResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';

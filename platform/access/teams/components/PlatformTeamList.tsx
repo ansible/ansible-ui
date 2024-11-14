@@ -10,11 +10,11 @@ import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink'
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { useGetDocsUrl } from '@ansible/awx-ui/common/util/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { usePersistentFilters } from '../../../../frontend/common/PersistentFilters';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

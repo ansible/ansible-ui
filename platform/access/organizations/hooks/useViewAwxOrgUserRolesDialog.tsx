@@ -1,9 +1,9 @@
 import { ITableColumn, PageTable, TextCell, usePageDialog } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
 import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
 export function ViewAwxOrgUserRoles(props: { item: UserAssignment }) {

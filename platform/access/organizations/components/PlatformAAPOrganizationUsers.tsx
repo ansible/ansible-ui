@@ -4,12 +4,12 @@ import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink'
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
-import { useOptions } from '../../../../frontend/common/crud/useOptions';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformUser } from '../../../interfaces/PlatformUser';

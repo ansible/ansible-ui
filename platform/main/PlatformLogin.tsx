@@ -1,12 +1,12 @@
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxLogin } from '@ansible/awx-ui/main/AwxLogin';
+import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { HubLogin } from '@ansible/hub-ui/main/HubLogin';
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
-import { AnsibleLogin } from '../../frontend/common/AnsibleLogin/AnsibleLogin';
-import { useGet } from '../../frontend/common/crud/useGet';
 import AAPLogo from '../assets/aap-logo.svg';
 import { UIAuth } from '../interfaces/UIAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';

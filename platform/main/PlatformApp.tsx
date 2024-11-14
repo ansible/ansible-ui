@@ -1,12 +1,12 @@
 import { PageApp } from '@ansible/ansible-ui-framework';
 import { useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
+import { postRequest, requestGet } from '@ansible/common-ui/crud/Data';
 import { Banner, Button, Flex, FlexItem } from '@patternfly/react-core';
 import debounce from 'debounce';
 import { t } from 'i18next';
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
-import { postRequest, requestGet } from '../../frontend/common/crud/Data';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';

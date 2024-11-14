@@ -1,6 +1,6 @@
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
 import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
-import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformAAPOrganizationUsers } from './PlatformAAPOrganizationUsers';
 
 const mockPlatformOrganization = mockPlatformOrganizations.results[1];

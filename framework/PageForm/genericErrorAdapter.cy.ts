@@ -1,4 +1,4 @@
-import { RequestError } from '../../frontend/common/crud/RequestError';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { genericErrorAdapter } from './genericErrorAdapter';
 
 describe('genericErrorAdapter', () => {

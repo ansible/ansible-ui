@@ -11,14 +11,14 @@ import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
 import { WebSocketProvider } from '@ansible/awx-ui/common/useAwxWebSocket';
 import { DocsVersionProvider } from '@ansible/awx-ui/common/useDocsVersion';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import '@ansible/common-ui/i18n';
 import { EdaActiveUserProvider } from '@ansible/eda-ui/common/useEdaActiveUser';
 import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
 import { HubContextProvider } from '@ansible/hub-ui/common/useHubContext';
 import { Bullseye, Page, Spinner } from '@patternfly/react-core';
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useGet } from '../../frontend/common/crud/useGet';
-import '../../frontend/common/i18n';
 import { QuickStartProvider } from '../overview/quickstarts/QuickStartProvider';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import {

@@ -12,6 +12,8 @@ import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { ILicenseInfo } from '@ansible/awx-ui/interfaces/Config';
+import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {
   Divider,
   ProgressStep,
@@ -24,8 +26,6 @@ import {
 import { t } from 'i18next';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { postRequest, requestPatch } from '../../frontend/common/crud/Data';
-import { ExternalLink } from '../../frontend/hub/common/ExternalLink';
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'username';

@@ -5,8 +5,8 @@ import {
   PageNotFound,
 } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useParams } from 'react-router-dom';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTeamColumns } from '../hooks/useTeamColumns';

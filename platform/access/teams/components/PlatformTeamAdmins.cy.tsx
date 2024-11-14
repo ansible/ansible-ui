@@ -1,6 +1,6 @@
+import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
 import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
-import * as useOptions from '../../../../frontend/common/crud/useOptions';
 import { PlatformTeamAdmins } from './PlatformTeamAdmins';
 
 describe('Team admins list', () => {

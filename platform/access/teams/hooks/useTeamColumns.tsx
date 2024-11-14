@@ -1,14 +1,14 @@
 import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
-} from '../../../../frontend/common/columns';
+} from '@ansible/common-ui/columns';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 

@@ -9,6 +9,8 @@ import { PageMastheadDropdown } from '@ansible/ansible-ui-framework/PageMasthead
 import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/PageThemeSwitcher';
 import { useAwxActiveUser } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { useAwxNotifications } from '@ansible/awx-ui/main/AwxMasthead';
+import { PageRefreshIcon } from '@ansible/common-ui/PageRefreshIcon';
+import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useEdaActiveUser } from '@ansible/eda-ui/common/useEdaActiveUser';
 import { useHubActiveUser } from '@ansible/hub-ui/common/useHubActiveUser';
 import { useHubNotifications } from '@ansible/hub-ui/main/HubMasthead';
@@ -16,8 +18,6 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageRefreshIcon } from '../../frontend/common/PageRefreshIcon';
-import { postRequest } from '../../frontend/common/crud/Data';
 import AAPLogo from '../assets/aap-logo.svg';
 import RedHatIcon from '../assets/redhat-icon.svg';
 import { useQuickStarts } from '../overview/quickstarts/useQuickStarts';

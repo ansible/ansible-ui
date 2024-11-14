@@ -11,12 +11,12 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
+import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { PageRoutedTabs } from '../../../../frontend/common/PageRoutedTabs';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteUserTokens } from '../hooks/useDeleteAAPUserTokens';

@@ -1,10 +1,10 @@
 import { usePageDialog } from '@ansible/ansible-ui-framework';
 import { ReorderItems } from '@ansible/ansible-ui-framework/components/ReorderItems';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Button, Divider, Modal, ModalBoxBody, ModalVariant } from '@patternfly/react-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { requestPatch } from '../../../../frontend/common/crud/Data';
-import { useGet } from '../../../../frontend/common/crud/useGet';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';

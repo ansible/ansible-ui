@@ -15,12 +15,12 @@ import {
 } from '@ansible/awx-ui/common/awx-toolbar-filters';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOptions } from '../../../frontend/common/crud/useOptions';
-import { usePersistentFilters } from '../../../frontend/common/PersistentFilters';
 import { usePlatformView } from '../../hooks/usePlatformView';
 import { usePlatformActiveUser } from '../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../main/PlatformRoutes';

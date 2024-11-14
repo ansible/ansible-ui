@@ -1,7 +1,7 @@
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
-import { requestGet } from '../../frontend/common/crud/Data';
-import { useGet } from '../../frontend/common/crud/useGet';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { PlatformResource } from '../interfaces/PlatformResource';
 
 export function useAwxResource<T extends object>(url: string, platformResource?: PlatformResource) {

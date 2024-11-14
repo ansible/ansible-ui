@@ -7,6 +7,8 @@ import {
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { Team } from '@ansible/awx-ui/interfaces/Team';
+import { useManageOrgRoles } from '@ansible/common-ui/access/hooks/useManageOrgRolesDialog';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaTeam } from '@ansible/eda-ui/interfaces/EdaTeam';
@@ -15,8 +17,6 @@ import { CogIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useManageOrgRoles } from '../../../../frontend/common/access/hooks/useManageOrgRolesDialog';
-import { useGetItem } from '../../../../frontend/common/crud/useGet';
 import { getAwxResource, useAwxResource } from '../../../hooks/useAwxResource';
 import { getEdaResource, useEdaResource } from '../../../hooks/useEdaResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';

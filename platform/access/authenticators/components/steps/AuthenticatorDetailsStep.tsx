@@ -8,9 +8,9 @@ import {
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { postRequest, requestPatch } from '../../../../../frontend/common/crud/Data';
 import { Authenticator } from '../../../../interfaces/Authenticator';
 import {
   AuthenticatorPlugin,

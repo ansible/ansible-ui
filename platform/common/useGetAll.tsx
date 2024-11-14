@@ -1,6 +1,6 @@
+import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
-import { useGetRequest } from '../../frontend/common/crud/useGet';
 
 export interface IGetItemResponse<T> {
   count: number;

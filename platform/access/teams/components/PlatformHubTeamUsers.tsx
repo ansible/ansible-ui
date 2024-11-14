@@ -7,15 +7,15 @@ import {
   PageTable,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
+import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
+import { requestDelete } from '@ansible/common-ui/crud/Data';
+import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { useHubBulkConfirmation } from '@ansible/hub-ui/common/useHubBulkConfirmation';
 import { CubesIcon, MinusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { UserAssignment } from '../../../../frontend/common/access/interfaces/UserAssignment';
-import { requestDelete } from '../../../../frontend/common/crud/Data';
-import { idKeyFn } from '../../../../frontend/common/utils/nameKeyFn';
 import { usePlatformView } from '../../../hooks/usePlatformView';
 
 export function PlatformHubTeamUsers(props: { id?: string }) {

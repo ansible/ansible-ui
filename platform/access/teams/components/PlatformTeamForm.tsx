@@ -10,11 +10,11 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGet } from '../../../../frontend/common/crud/useGet';
-import { usePatchRequest } from '../../../../frontend/common/crud/usePatchRequest';
-import { usePostRequest } from '../../../../frontend/common/crud/usePostRequest';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { usePlatformActiveUser } from '../../../main/PlatformActiveUserProvider';
 import { PlatformRoute } from '../../../main/PlatformRoutes';

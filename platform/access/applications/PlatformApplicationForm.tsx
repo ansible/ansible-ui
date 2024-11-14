@@ -12,13 +12,13 @@ import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert, TextContent } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
-import { requestGet, requestPatch, swrOptions } from '../../../frontend/common/crud/Data';
-import { usePostRequest } from '../../../frontend/common/crud/usePostRequest';
 import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PageFormPlatformOrganizationSelect } from '../organizations/components/PageFormPlatformOrganizationSelect';
