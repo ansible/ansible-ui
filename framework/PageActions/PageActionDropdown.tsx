@@ -58,6 +58,7 @@ interface PageActionDropdownProps<T extends object> {
   selectedItems?: T[];
   tooltip?: string;
   variant?: ButtonVariant;
+  ariaLabel?: string;
 }
 
 export function PageActionDropdown<T extends object>(props: PageActionDropdownProps<T>) {
@@ -186,7 +187,13 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
               id={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               className={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               isDisabled={!!isDisabled}
-              aria-label={isKebab ? 'kebab dropdown toggle' : 'dropdown toggle'}
+              aria-label={
+                props.ariaLabel
+                  ? props.ariaLabel
+                  : isKebab
+                    ? 'kebab dropdown toggle'
+                    : 'dropdown toggle'
+              }
               variant={isSecondary ? 'secondary' : isPrimary ? 'primary' : 'plain'}
               onClick={() => setDropdownOpen(!dropdownOpen)}
               isExpanded={dropdownOpen}

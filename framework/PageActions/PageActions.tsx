@@ -14,6 +14,8 @@ import { isPageActionHidden } from './PageActionUtils';
 import { PageActionsPinned } from './PageActionsPinned';
 
 interface PageActionProps<T extends object> {
+  dropDownAriaLabel?: string;
+
   /** The array of PageActions */
   actions: IPageAction<T>[];
 
@@ -104,7 +106,12 @@ export function PageActions<T extends object>(props: PageActionProps<T>) {
       )}
       {dropdownActions.length > 0 && (
         <FlexItem>
-          <PageActionDropdown {...props} actions={dropdownActions} onOpen={handleOnOpen} />
+          <PageActionDropdown
+            {...props}
+            ariaLabel={props.dropDownAriaLabel}
+            actions={dropdownActions}
+            onOpen={handleOnOpen}
+          />
         </FlexItem>
       )}
     </Flex>
