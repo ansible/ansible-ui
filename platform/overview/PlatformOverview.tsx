@@ -69,7 +69,7 @@ export function PlatformOverview() {
               case 'recent-decision-environments':
                 return <EdaDecisionEnvironmentsCard key={resource.id} />;
               default:
-                return <></>;
+                return null;
             }
           })}
       </PageDashboard>
