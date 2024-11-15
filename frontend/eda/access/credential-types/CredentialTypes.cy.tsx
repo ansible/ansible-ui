@@ -142,7 +142,7 @@ describe('CredentialTypes.cy.ts', () => {
                   type: 'string',
                   label: 'Username',
                   help_text:
-                    'Red Hat Ansible Automation Platform username id to authenticate as.This should not be set if an OAuth token is being used.',
+                    'Red Hat Ansible Automation Platform username id to authenticate as. This should not be set if an OAuth token is being used.',
                 },
                 {
                   id: 'password',
@@ -156,7 +156,7 @@ describe('CredentialTypes.cy.ts', () => {
                   label: 'OAuth Token',
                   secret: true,
                   help_text:
-                    'An OAuth token to use to authenticate with.This should not be set if username/password are being used.',
+                    'An OAuth token to use to authenticate with. This should not be set if username/password are being used.',
                 },
                 {
                   id: 'verify_ssl',
