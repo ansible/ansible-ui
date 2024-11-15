@@ -1,5 +1,5 @@
-import { ActivityStreams } from './ActivityStream';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { ActivityStreams } from './ActivityStream';
 
 beforeEach(() => {
   cy.intercept(
@@ -345,11 +345,11 @@ describe('Activity Stream Tests', () => {
       cy.get('thead').find('th').contains('Event').should('exist');
     });
 
-    it('Clicking time table header sorts activity stream by timestamp', () => {
-      cy.intercept('api/v2/activity_stream/?order_by=-timestamp*').as('timeDescSortRequest');
+    it('Clicking time table header sorts activity stream by id', () => {
+      cy.intercept('api/v2/activity_stream/?order_by=-id*').as('timeDescSortRequest');
       cy.mount(<ActivityStreams />);
       cy.wait('@timeDescSortRequest');
-      cy.intercept('api/v2/activity_stream/?order_by=timestamp*').as('timeAscSortRequest');
+      cy.intercept('api/v2/activity_stream/?order_by=id*').as('timeAscSortRequest');
       cy.clickTableHeader(/^Time$/);
       cy.wait('@timeAscSortRequest');
       cy.clearAllFilters();
