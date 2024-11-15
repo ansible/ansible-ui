@@ -41,7 +41,7 @@ describe('TeamAccess.cy.ts', () => {
 
   it('Renders the correct teamAccess columns', () => {
     cy.mount(<TeamAccess service="eda" id={'1'} type={'activation'} addRolesRoute="xyz" />);
-    cy.get('.pf-v5-c-table__th').should('have.length', 4);
+    cy.get('.pf-v5-c-table__th').should('have.length', 3);
     cy.contains('Team');
     cy.contains('Role');
   });

@@ -202,7 +202,9 @@ test(
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByLabel('Username').click();
     await page.getByRole('button', { name: 'Submit' }).click();
-    await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
+    await expect(page.locator('h1').first()).toContainText(
+      'Welcome to the Ansible Automation Platform'
+    );
 
     await page.getByRole('button', { name: controllerKeyCloakUser?.username || 'mock' }).click();
     await page.getByRole('menuitem', { name: 'User details' }).click();

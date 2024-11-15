@@ -695,9 +695,10 @@ function TableHead<T extends object>(props: {
   return (
     <Thead>
       <Tr className="bg-lighten">
-        {expandedRow && <Th style={{ padding: 0 }} className="bg-lighten" />}
+        {expandedRow && <Th style={{ padding: 0 }} aria-label="Expand" className="bg-lighten" />}
         {(showSelect || onSelect) && (
           <Th
+            aria-label="Select"
             isStickyColumn
             stickyMinWidth="0px"
             hasRightBorder={props.scrollLeft}
@@ -710,6 +711,7 @@ function TableHead<T extends object>(props: {
         {columns.map((column, index) => {
           return (
             <Th
+              aria-label={column.header}
               key={column.header}
               sort={getColumnSort(index, column)}
               modifier="nowrap"
@@ -732,6 +734,7 @@ function TableHead<T extends object>(props: {
         })}
         {itemActions !== undefined && (
           <Td
+            aria-label="Actions"
             isActionCell
             isStickyColumn
             stickyMinWidth="0px"
@@ -847,10 +850,11 @@ function TableRow<T extends object>(props: {
           />
         )}
         {showSelect && (
-          <Th
+          <Td
             select={
               isItemSelected !== undefined
                 ? {
+                    rowIndex,
                     onSelect: (_event, isSelecting) => {
                       if (isSelecting) {
                         selectItem?.(item);
@@ -877,6 +881,7 @@ function TableRow<T extends object>(props: {
               isSelected: isItemSelected ?? false,
               variant: isSelectMultiple ? 'checkbox' : 'radio',
               isDisabled: maxSelections && selectedItems ? disableRow(item) : false,
+              props: { 'aria-label': 'Select row' },
             }}
             isStickyColumn={props.scrollLeft}
             stickyMinWidth="0px"
@@ -902,6 +907,7 @@ function TableRow<T extends object>(props: {
           <Td />
           {showSelect && (
             <Th
+              aria-label="Select"
               isStickyColumn={props.scrollLeft}
               stickyMinWidth="0px"
               hasRightBorder={props.scrollLeft}

@@ -223,6 +223,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
           {/* Actions */}
           <ToolbarGroup variant="button-group">
             <PageActions
+              dropDownAriaLabel="toolbar actions"
               actions={toolbarActions}
               selectedItems={selectedItems}
               wrapper={ToolbarItem}

@@ -24,10 +24,8 @@ export async function deleteExecutionEnvironment(executionEnvName: string, page:
   await page.getByLabel('Search input').fill(executionEnvName);
   await page.getByLabel('Search input').press('Enter');
   await page.locator('#filter-input-select').getByText(executionEnvName).click();
-  await page
-    .getByRole('row', { name: `Select all rows ${executionEnvName}` })
-    .getByLabel('kebab dropdown toggle')
-    .click();
+  await page.getByRole('row', { name: executionEnvName }).getByLabel('Select row').click();
+  await page.getByLabel('toolbar actions').click();
   await page.getByRole('menuitem', { name: 'Delete execution environment' }).click();
   await page.getByText('Yes, I confirm that I want to').click();
   await page.getByRole('button', { name: 'Delete execution environments' }).click();
