@@ -91,6 +91,7 @@ export default defineConfig({
     {
       name: 'mock webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: '**/upgrades-tests/**', // Webkit does not support the needed 301 redirects
       metadata: { mock: true },
     },
     {
