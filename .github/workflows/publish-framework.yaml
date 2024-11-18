@@ -31,7 +31,6 @@ jobs:
         working-directory: ./framework
         run: |
           npm run build
-          sed -i -e 's/"\/assets\//".\/assets\//g' ./publish/index.js
           cp -f ../LICENSE.md ./publish/LICENSE.md
           cp -f ./README.md ./publish/README.md
           cd publish          
