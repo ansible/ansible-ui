@@ -34,11 +34,11 @@ export async function createJobTemplate(
 }
 
 export async function runJobTemplate(jobTemplateName: string, page: Page) {
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
+  await navigateTo(page, 'Automation Execution', 'Templates');
   await page.getByRole('button', { name: 'Select name' }).click();
   await page.getByLabel('Search input').fill(jobTemplateName);
   await page.getByLabel(jobTemplateName).check();
-  await page.getByLabel('Launch template').click();
+  await page.getByRole('row', { name: jobTemplateName }).getByLabel('Launch template').click();
   await expect(page.getByRole('main')).toContainText(jobTemplateName);
   await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 60000 });
   await page.getByRole('tab', { name: 'Details' }).click();

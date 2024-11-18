@@ -3,6 +3,12 @@ import { Page, test } from '@playwright/test';
 import { klona } from 'klona/json';
 import { platformUI } from '../commands/login';
 import { controllerDashboardJobs } from './controller/controllerDashboardJobs';
+import { getJobEvents, getJobEventsChildrenSummary } from './controller/controllerJobs';
+import {
+  getJobTemplateLaunch,
+  postJobTemplateLaunch,
+  processJobTemplate,
+} from './controller/controllerJobTemplates';
 import { processProject } from './controller/controllerProcessProject';
 import { getProjectPlaybooks } from './controller/controllerProjectPlaybooks';
 import { controllerRelations } from './controller/controllerRelations';
@@ -71,8 +77,17 @@ export async function mock(page: Page) {
       '/api/controller/v2/projects',
       postItem({ relations: controllerRelations, process: processProject })
     )
-    .GET('/api/controller/v2/projects/:id/playbooks/', getProjectPlaybooks)
+    .GET('/api/controller/v2/projects/:id/playbooks', getProjectPlaybooks)
     .GET('/api/controller/v2/unified_job_templates', getUnifiedTemplates)
+    .POST(
+      '/api/controller/v2/job_templates',
+      postItem({ relations: controllerRelations, process: processJobTemplate })
+    )
+    .GET('/api/controller/v2/job_templates/:id/launch', getJobTemplateLaunch)
+    .POST('/api/controller/v2/job_templates/:id/launch', postJobTemplateLaunch)
+    .GET('/api/controller/v2/jobs/:id/job_events/children_summary', getJobEventsChildrenSummary)
+    .GET('/api/controller/v2/jobs/:id/job_events', getJobEvents)
+    // .GET('/api/controller/v2/workflow_jobs/:id/workflow_nodes', TODO)
 
     // Controller Resource API
     .OPTIONS('/api/controller/v2/:resource', getOptions())

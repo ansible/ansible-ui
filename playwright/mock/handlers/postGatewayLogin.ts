@@ -1,7 +1,7 @@
 import { MockResponse } from '../router/MockResponse';
 import { RouteOptions } from '../router/Router';
 
-export function postGatewayLogin({ data }: RouteOptions): MockResponse {
+export function postGatewayLogin({ mockData: data }: RouteOptions): MockResponse {
   const user = {
     id: 1,
     username: 'mock',

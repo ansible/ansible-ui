@@ -11,7 +11,7 @@ export function handleRoute(
 ) {
   const response = router.handle(route, data, options);
   return route.fulfill({
-    status: response.status || 501,
+    status: response.status ? response.status : response.body ? 200 : 501,
     headers: response.headers,
     json: response.body,
   });

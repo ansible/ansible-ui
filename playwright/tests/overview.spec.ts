@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '../commands/setup';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
-test('overview shows the right dashboard cards', async ({ page }) => {
+test('overview - dashboard cards', async ({ page }) => {
   await expect(page.locator('h1').first()).toContainText(
     'Welcome to the Ansible Automation Platform'
   );

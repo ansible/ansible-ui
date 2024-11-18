@@ -84,5 +84,19 @@ export function controllerRelations(item: Record<string, any>, data: IApiData) {
     };
   }
 
+  if (typeof item.job_template === 'number') {
+    const job_template = data.api.controller.v2.job_templates.find(
+      (job_template) => job_template.id === item.job_template
+    );
+    if (job_template) {
+      item.summary_fields.job_template = job_template;
+    }
+  }
+
+  if (!item.related) {
+    item.related = {};
+    // item.relations.stdout = item.summary_fields.labels.results.map((label: any) => {
+  }
+
   return item;
 }

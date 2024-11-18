@@ -3,7 +3,7 @@ import getValue from 'get-value';
 import { RouteHandler, RouteOptions } from '../router/Router';
 
 export function getOptions(): RouteHandler {
-  return ({ dotPath, options }: RouteOptions) => {
+  return ({ dotPath, mockOptions: options }: RouteOptions) => {
     const result = getValue(options, dotPath) as unknown;
     switch (typeof result) {
       case 'object':

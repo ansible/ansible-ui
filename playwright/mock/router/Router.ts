@@ -1,6 +1,6 @@
 import { Route } from '@playwright/test';
 import { match, MatchFunction, Path } from 'path-to-regexp';
-import { mockData } from '../mockData';
+import { IApiData, mockData } from '../mockData';
 import { mockOptions } from '../mockOptions';
 import { MockResponse } from './MockResponse';
 
@@ -9,8 +9,9 @@ export type RouteOptions = {
   url: URL;
   dotPath: string;
   params: Record<string, string | string[]>;
-  data: typeof mockData;
-  options: typeof mockOptions;
+  mockData: IApiData;
+  mockOptions: typeof mockOptions;
+  requestData: Record<string, unknown> | undefined;
 };
 
 export type RouteHandler = (options: RouteOptions) => MockResponse | undefined;
@@ -71,6 +72,17 @@ export class Router {
     let dotPath = url.pathname.split('/').join('.');
     if (dotPath.startsWith('.')) dotPath = dotPath.slice(1);
     if (dotPath.endsWith('.')) dotPath = dotPath.slice(0, -1);
+    let requestData: Record<string, unknown> | undefined;
+    if ((method === 'POST' || method === 'PUT' || method === 'PATCH') && request.postData) {
+      try {
+        const data = request.postData();
+        if (data) {
+          requestData = JSON.parse(data) as Record<string, unknown>;
+        }
+      } catch (e) {
+        // console.log(e);
+      }
+    }
     if (routes) {
       for (const { matchFn, handler } of routes) {
         const matched = matchFn(url.pathname);
@@ -79,9 +91,10 @@ export class Router {
             route,
             url,
             params: matched.params as Record<string, string | string[]>,
-            data,
-            options,
+            mockData: data,
+            mockOptions: options,
             dotPath,
+            requestData,
           });
           if (response) {
             return response;

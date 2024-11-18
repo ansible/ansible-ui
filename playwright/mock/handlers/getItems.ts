@@ -7,7 +7,7 @@ import { RouteHandler, RouteOptions } from '../router/Router';
 export function getItems(
   relations?: (item: Record<string, unknown>, data: IApiData) => void
 ): RouteHandler {
-  return ({ dotPath, data }: RouteOptions) => {
+  return ({ dotPath, mockData: data }: RouteOptions) => {
     const result = getValue(data, dotPath) as unknown;
     switch (typeof result) {
       case 'object': {

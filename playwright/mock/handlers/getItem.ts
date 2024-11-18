@@ -7,7 +7,7 @@ import { RouteHandler, RouteOptions } from '../router/Router';
 export function getItem(
   relations?: (item: Record<string, unknown>, data: IApiData) => void
 ): RouteHandler {
-  return ({ dotPath, data }: RouteOptions) => {
+  return ({ dotPath, mockData: data }: RouteOptions) => {
     const arrayPath = dotPath.split('.').slice(0, -1).join('.');
     const array = getValue(data, arrayPath) as { id: number }[];
     if (!Array.isArray(array)) return { status: 404 };
