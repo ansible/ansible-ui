@@ -2,10 +2,10 @@ import { expect, test } from '@playwright/test';
 import { createE2EUsername } from '../commands/createE2EName';
 import { setupAfter, setupBefore } from '../commands/setup';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
 
-test('create and delete a user', async ({ page }) => {
+test('user - create and delete', async ({ page }) => {
   const username = createE2EUsername();
   await page.getByRole('button', { name: 'Access Management' }).click();
   await page.getByRole('link', { name: 'Users' }).click();

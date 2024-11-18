@@ -9,10 +9,10 @@ import { navigateTo } from '../commands/navigateTo';
 import { setupAfter, setupBefore } from '../commands/setup';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);
 
-test('create, sync, and delete a project', async ({ page }) => {
+test('project - create, sync, and delete', async ({ page }) => {
   test.setTimeout(5 * 60 * 1000);
   const projectName = await createAwxProject({}, page);
   await syncAwxProject(projectName, page);

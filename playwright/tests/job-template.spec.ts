@@ -5,8 +5,8 @@ import { createJobTemplate, deleteJobTemplate, runJobTemplate } from './job-temp
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
 
-test('create, run, and delete a job template', { tag: ['@not-mock'] }, async ({ page }) => {
-  if (page.mock.enabled) return; // Does not yet work in mock
+test('job template - create, run, and delete', { tag: ['@not-mock'] }, async ({ page }) => {
+  // if (page.mock.enabled) return; // Does not yet work in mock
   const jobTemplateName = await createJobTemplate({}, page);
   await runJobTemplate(jobTemplateName, page);
   await deleteJobTemplate(jobTemplateName, page);

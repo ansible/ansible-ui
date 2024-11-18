@@ -5,10 +5,10 @@ import {
   deleteExecutionEnvironment,
 } from './execution-environment-utils';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/execution/infrastructure/execution-environments' }));
 test.afterEach(setupAfter);
 
-test('create and delete an execution environment', async ({ page }) => {
+test('execution environment - create and delete', async ({ page }) => {
   const executionEnvName = await createExecutionEnvironment(page);
   await deleteExecutionEnvironment(executionEnvName, page);
 });

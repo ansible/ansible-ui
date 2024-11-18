@@ -9,7 +9,7 @@ export function postItem(options?: {
   relations?: (item: Record<string, unknown>, data: IApiData) => void;
   process?: (item: any) => void;
 }): RouteHandler {
-  return ({ dotPath, data, route }: RouteOptions) => {
+  return ({ dotPath, mockData: data, route }: RouteOptions) => {
     const array = getValue(data, dotPath) as { id: number }[];
     if (!Array.isArray(array)) return { status: 404 };
     let item = route.request().postDataJSON() as { id: number };

@@ -2,10 +2,10 @@ import { expect, test } from '@playwright/test';
 import { createE2EName } from '../commands/createE2EName';
 import { setupAfter, setupBefore } from '../commands/setup';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/access/applications' }));
 test.afterEach(setupAfter);
 
-test('create and delete an oauth application', async ({ page }) => {
+test('application - create and delete', async ({ page }) => {
   const applicationName = createE2EName('my-app');
 
   // Create OAuth application

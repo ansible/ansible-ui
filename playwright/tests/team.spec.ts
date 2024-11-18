@@ -8,10 +8,10 @@ import { navigateTo } from '../commands/navigateTo';
 import { setupAfter, setupBefore } from '../commands/setup';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 
-test.beforeEach(setupBefore());
+test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);
 
-test('create and delete a team', { tag: ['@team'] }, async ({ page }) => {
+test('team - create and delete', { tag: ['@team'] }, async ({ page }) => {
   const teamName = await createTeam({}, page);
   await deleteTeam(teamName, page);
 });

@@ -139,7 +139,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(setupAfter);
 
 test(
-  'Log in using Hub OIDC Keycloak account, link accounts and be directed to the Platform UI dashboard',
+  'hub keycloak - Log in using Hub OIDC Keycloak account, link accounts and be directed to the Platform UI dashboard',
   { tag: ['@upgrade', '@not_e2e'] },
   async ({ page }) => {
     await page.goto(platformUI);
@@ -172,7 +172,7 @@ test(
 );
 
 test(
-  'Link additional accounts from User Details page',
+  'hub keycloak - Link additional accounts from User Details page',
   { tag: ['@upgrade', '@not_e2e'] },
   async ({ page }) => {
     await page.goto(platformUI);
@@ -210,7 +210,7 @@ test(
 // Since the assertions in the following tests occur within the Keycloak UI, they are not applicable for testing against the mock API
 test.describe('Negative paths for hub Keycloak authentication', () => {
   test(
-    'fails to authenticate with incorrect password',
+    'hub keycloak -  fails to authenticate with incorrect password',
     { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
     async ({ page }) => {
       const erroneousPassword = 'E2Epass ' + randomString(4);
@@ -229,7 +229,7 @@ test.describe('Negative paths for hub Keycloak authentication', () => {
     }
   );
   test(
-    'fails to authenticate with a user that does not exist',
+    'hub keycloak - fails to authenticate with a user that does not exist',
     { tag: ['@upgrade', '@not_e2e'] },
     async ({ page }) => {
       const nonExistentUsername = 'E2Euser ' + randomString(4);
