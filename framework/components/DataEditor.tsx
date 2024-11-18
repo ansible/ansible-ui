@@ -1,5 +1,5 @@
 import useResizeObserver from '@react-hook/resize-observer';
-import monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import { configureMonacoYaml } from 'monaco-yaml';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -184,20 +184,6 @@ const EditorLineHeight = 21;
 const EditorPaddingTop = 6;
 const EditorPaddingBottom = 6;
 const EditorPadding = EditorPaddingTop + EditorPaddingBottom;
-
-function getWorkerUrl(moduleId: string, label: string): string {
-  switch (label) {
-    case 'editorWorkerService':
-      return '/editor.worker.js';
-    case 'json':
-      return '/json.worker.js';
-    case 'yaml':
-      return '/yaml.worker.js';
-    default:
-      throw new Error(`Unknown label ${label}`);
-  }
-}
-window.MonacoEnvironment = { getWorkerUrl };
 
 // Set up Monaco editor json language support
 monaco.languages.json.jsonDefaults.setDiagnosticsOptions({ validate: true });
