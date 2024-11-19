@@ -9,10 +9,10 @@ import {
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
 import pLimit from 'p-limit';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
-import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
+import { ErrorAdapter, GenericErrorDetail } from '../PageForm/typesErrorAdapter';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
@@ -144,7 +144,69 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     );
   }, [error, isCanceled, items, keyFn, onClose, setDialog, statuses]);
 
+  const progressTitle = useMemo(() => {
+    if (abortController.signal.aborted) return translations.canceledText;
+    if (error) return translations.errorText;
+    if (!isProcessing) return translations.successText;
+    return processingText ?? translations.processingText;
+  }, [
+    abortController.signal.aborted,
+    error,
+    isProcessing,
+    processingText,
+    translations.canceledText,
+    translations.errorText,
+    translations.processingText,
+    translations.successText,
+  ]);
+
+  const progressVariant = useMemo(() => {
+    if (error || isCanceled) return ProgressVariant.danger;
+    if (progress === items.length) return ProgressVariant.success;
+    return undefined;
+  }, [error, isCanceled, items.length, progress]);
+
   useEffect(() => {
+    function updateSuccessState(key: string | number, response: unknown) {
+      if (abortController.signal.aborted) {
+        return;
+      }
+      let successState = undefined;
+      if (statusParser) {
+        successState = statusParser(response);
+      }
+      setStatuses((statuses) => ({
+        ...(statuses ?? {}),
+        [key]: successState !== undefined ? successState : null,
+      }));
+    }
+
+    function updateErrorState(
+      key: string | number,
+      parsedErrors: GenericErrorDetail[],
+      err: unknown
+    ) {
+      if (abortController.signal.aborted) {
+        return;
+      }
+      if (err instanceof Error) {
+        const message =
+          typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
+            ? parsedErrors[0].message
+            : t(`Unknown error`);
+        setStatuses((statuses) => ({
+          ...(statuses ?? {}),
+          [key]: message,
+        }));
+      } else {
+        setStatuses((statuses) => ({
+          ...(statuses ?? {}),
+          [key]: t(`Unknown error`),
+        }));
+      }
+      setError(translations.errorText);
+    }
+
     async function process() {
       const limit = pLimit(5);
       let progress = 0;
@@ -156,38 +218,12 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             const key = keyFn(item);
             try {
               const response = await actionFn(item, abortController.signal);
-              if (!abortController.signal.aborted) {
-                let successState = undefined;
-                if (statusParser) {
-                  successState = statusParser(response);
-                }
-                setStatuses((statuses) => ({
-                  ...(statuses ?? {}),
-                  [key]: successState !== undefined ? successState : null,
-                }));
-              }
+              updateSuccessState(key, response);
               successfulItems.push(item);
             } catch (err) {
               const { genericErrors, fieldErrors } = errorAdapter(err);
               const parsedErrors = [...genericErrors, ...fieldErrors.filter((e) => e.message)];
-              if (!abortController.signal.aborted) {
-                if (err instanceof Error) {
-                  const message =
-                    typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
-                      ? parsedErrors[0].message
-                      : t(`Unknown error`);
-                  setStatuses((statuses) => ({
-                    ...(statuses ?? {}),
-                    [key]: message,
-                  }));
-                } else {
-                  setStatuses((statuses) => ({
-                    ...(statuses ?? {}),
-                    [key]: t(`Unknown error`),
-                  }));
-                }
-                setError(translations.errorText);
-              }
+              updateErrorState(key, parsedErrors, err);
             } finally {
               if (!abortController.signal.aborted) {
                 setProgress(++progress);
@@ -201,6 +237,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       }
       onComplete?.(successfulItems);
     }
+
     void process();
   }, [
     abortController,
@@ -314,23 +351,9 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
         <Progress
           data-cy="progress"
           value={(progress / items.length) * 100}
-          title={
-            abortController.signal.aborted
-              ? translations.canceledText
-              : error
-                ? translations.errorText
-                : !isProcessing
-                  ? translations.successText
-                  : (processingText ?? translations.processingText)
-          }
+          title={progressTitle}
           size={ProgressSize.lg}
-          variant={
-            error || isCanceled
-              ? ProgressVariant.danger
-              : progress === items.length
-                ? ProgressVariant.success
-                : undefined
-          }
+          variant={progressVariant}
         />
       </ModalBoxBody>
     </Modal>
