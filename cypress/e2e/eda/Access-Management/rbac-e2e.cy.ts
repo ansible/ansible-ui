@@ -1,5 +1,4 @@
 import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
@@ -9,17 +8,13 @@ import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 
-describe('If SaaS Build', () => {
+describe('Check if the build includes EDA', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.getPlatformApis().then((data) => {
+      if (data?.apis && !data?.apis?.eda) {
         this.skip();
       } else {
         cy.log('Run these tests');

@@ -1,17 +1,12 @@
 //Tests a user's ability to log into and out of the EDA UI.
 //Note that EDA Actions do not have any CRUD functionality.
-import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomString } from '../../../../framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('If SaaS Build', () => {
+describe('Check if the build includes EDA', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.getPlatformApis().then((data) => {
+      if (data?.apis && !data?.apis?.eda) {
         this.skip();
       } else {
         cy.log('Run these tests');
