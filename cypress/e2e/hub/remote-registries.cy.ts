@@ -40,7 +40,7 @@ describe('Remote Registry', () => {
       cy.contains(remoteRegistry.name).should('be.visible');
       cy.get('[data-cy="table-view"]').click();
       cy.contains(remoteRegistry.name).should('be.visible');
-      cy.get('#select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-remote-registries');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remote registries$/);

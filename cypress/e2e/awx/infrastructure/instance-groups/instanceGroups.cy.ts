@@ -150,7 +150,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 5);
-      cy.getByDataCy('select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -184,7 +184,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 2);
-      cy.get('#select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -323,7 +323,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 5);
-      cy.getByDataCy('select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -359,7 +359,7 @@ describe(`Instance Groups`, () => {
       cy.verifyPageTitle('Instance Groups');
       cy.filterTableByMultiSelect('name', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 2);
-      cy.get('#select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {

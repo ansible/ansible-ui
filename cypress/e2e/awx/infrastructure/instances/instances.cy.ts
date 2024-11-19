@@ -226,7 +226,7 @@ describe('Instances K8S', () => {
       cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
       cy.filterTableByMultiSelect('hostname', arrayOfElementText);
       cy.get('tbody tr').should('have.length', 6);
-      cy.getByDataCy('select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="remove-instance"] button').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {

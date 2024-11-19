@@ -41,7 +41,7 @@ describe('Remotes', () => {
       cy.contains(remote.name).should('be.visible');
       cy.getBy('[data-cy="table-view"]').click();
       cy.contains(remote.name).should('be.visible');
-      cy.getBy('#select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-remotes');
       cy.getBy('#confirm').click();
       cy.clickButton(/^Delete remotes$/);
