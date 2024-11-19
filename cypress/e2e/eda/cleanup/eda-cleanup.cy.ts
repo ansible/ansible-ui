@@ -1,16 +1,11 @@
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
-import { EdaControllerToken } from '@ansible/eda-ui/interfaces/EdaControllerToken';
-import { EdaResult } from '@ansible/eda-ui/interfaces/EdaResult';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
+import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('If SaaS Build', () => {
+describe('Check if the build includes EDA', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.getPlatformApis().then((data) => {
+      if (data?.apis && !data?.apis?.eda) {
         this.skip();
       } else {
         cy.log('Run these tests');

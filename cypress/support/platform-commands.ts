@@ -600,3 +600,14 @@ Cypress.Commands.add('clickOnLinkAccount', (text) => {
       .click();
   });
 });
+
+Cypress.Commands.add('getPlatformApis', () => {
+  cy.requestGet<{
+    apis: {
+      gateway?: string;
+      controller?: string;
+      eda?: string;
+      galaxy?: string;
+    };
+  }>('/api/');
+});

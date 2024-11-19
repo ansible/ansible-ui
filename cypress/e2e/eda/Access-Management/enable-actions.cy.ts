@@ -1,23 +1,19 @@
-import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
-import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
-import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
-import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
-import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
-import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
-import { LogLevelEnum, RoleDefinition } from '@ansible/eda-ui/interfaces/generated/eda-api';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { randomString } from '../../../../framework/utils/random-string';
+import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
+import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { RoleDefinition } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
+import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('If SaaS Build', () => {
+describe('Check if the build includes EDA', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.getPlatformApis().then((data) => {
+      if (data?.apis && !data?.apis?.eda) {
         this.skip();
       } else {
         cy.log('Run these tests');

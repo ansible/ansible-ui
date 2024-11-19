@@ -1872,6 +1872,14 @@ declare global {
       getUserForMigration(
         userType: UpgradeUserType
       ): Chainable<{ username: string; password: string }>;
+      getPlatformApis(): Chainable<{
+        apis: {
+          gateway?: string;
+          controller?: string;
+          eda?: string;
+          galaxy?: string;
+        };
+      }>;
       deletePlatformUser(
         user: PlatformUser,
         options?: {

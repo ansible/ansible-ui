@@ -1,16 +1,11 @@
 //Tests a user's ability to perform certain actions on the Decision Environment list in the EDA UI.
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
-import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
-describe('If SaaS Build', () => {
+describe('Check if the build includes EDA', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.getPlatformApis().then((data) => {
+      if (data?.apis && !data?.apis?.eda) {
         this.skip();
       } else {
         cy.log('Run these tests');

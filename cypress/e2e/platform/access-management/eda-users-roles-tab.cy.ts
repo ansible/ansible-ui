@@ -1,5 +1,4 @@
 //Tests a user's ability to give permissions to a user from the roles tab.
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import { EdaEventStream } from '@ansible/eda-ui/interfaces/EdaEventStream';
@@ -9,16 +8,13 @@ import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
 import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
 import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
-import { SAAS_URL, user_team_access_tab_resources } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { user_team_access_tab_resources } from '../../../support/constants';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
-describe('If SaaS Build', () => {
+describe('Check if the build includes EDA', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.getPlatformApis().then((data) => {
+      if (data?.apis && !data?.apis?.eda) {
         this.skip();
       } else {
         cy.log('Run these tests');
