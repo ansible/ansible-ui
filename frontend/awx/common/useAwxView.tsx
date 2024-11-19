@@ -119,9 +119,16 @@ export function useAwxView<T extends { id: number }>(options: {
               if (toolbarFilter.type === ToolbarFilterType.DateRange) {
                 queryString += `${toolbarFilter.query}__gte=${values[0]}&${toolbarFilter.query}__lte=${values[1]}`;
               } else {
-                queryString += values
-                  .map((value) => `or__${toolbarFilter.query}=${value}`)
-                  .join('&');
+                if ('useAndOperator' in toolbarFilter && toolbarFilter.useAndOperator) {
+                  // In a few cases such as the labels filter, we want to use an AND operator which needs a chain__ prefix
+                  queryString += values
+                    .map((value) => `chain__${toolbarFilter.query}=${value}`)
+                    .join('&');
+                } else {
+                  queryString += values
+                    .map((value) => `or__${toolbarFilter.query}=${value}`)
+                    .join('&');
+                }
               }
             } else {
               if (toolbarFilter.type === ToolbarFilterType.DateRange) {

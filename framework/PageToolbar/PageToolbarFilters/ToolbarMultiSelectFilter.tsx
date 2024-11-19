@@ -7,4 +7,5 @@ export interface IToolbarMultiSelectFilter extends ToolbarFilterCommon {
   options: PageSelectOption<string>[];
   placeholder: string;
   disableSortOptions?: boolean;
+  useAndOperator?: boolean; // default is OR
 }

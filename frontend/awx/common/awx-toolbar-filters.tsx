@@ -272,6 +272,7 @@ export function useLabelsToolbarFilter() {
       placeholder: t('Select labels'),
       queryOptions,
       queryLabel,
+      useAndOperator: true,
     }),
     [queryLabel, queryOptions, t]
   );
