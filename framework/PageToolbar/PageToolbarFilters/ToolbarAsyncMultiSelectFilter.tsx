@@ -39,6 +39,8 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
   isRequired?: boolean;
 
   disableSortOptions?: boolean;
+
+  useAndOperator?: boolean; // default is OR
 }
 
 /**
