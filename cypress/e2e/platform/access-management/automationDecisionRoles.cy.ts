@@ -341,7 +341,7 @@ describe('Check if the build includes EDA', () => {
         });
         cy.get('tbody tr').should('have.length', 3);
         cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-          cy.getBy('[data-cy="select-all"]').click();
+          cy.getByDataCy('select-all').check();
         });
         cy.clickToolbarKebabAction('delete-roles');
         cy.getModal().within(() => {

@@ -140,7 +140,7 @@ describe(`Assign Role to a Team `, () => {
     cy.filterTableBySingleText(hubRemote.name);
     cy.get('[data-cy="card-view"]').click();
     cy.contains(hubRemote.name).should('be.visible');
-    cy.get('#select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickToolbarKebabAction('delete-remotes');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remotes$/);

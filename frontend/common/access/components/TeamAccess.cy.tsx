@@ -54,7 +54,7 @@ describe('TeamAccess.cy.ts', () => {
         statusCode: 204,
       }
     );
-    cy.get('input[id="select-all"]').first().click();
+    cy.getByDataCy('select-all').check();
     cy.get('[data-cy="actions-dropdown"]').first().click();
     cy.get('[data-cy="remove-roles"]').click();
     cy.get('div[role="dialog"]').within(() => {

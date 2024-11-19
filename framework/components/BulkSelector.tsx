@@ -1,10 +1,13 @@
 import {
   Dropdown,
   DropdownItem,
-  DropdownToggle,
-  DropdownToggleCheckbox,
-} from '@patternfly/react-core/deprecated';
+  DropdownList,
+  MenuToggle,
+  MenuToggleCheckbox,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { useBreakpoint } from './useBreakPoint';
 
@@ -22,6 +25,7 @@ export interface BulkSelectorProps<T> {
 }
 
 export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const isSmallOrLarger = useBreakpoint('sm');
   const [translations] = useFrameworkTranslations();
@@ -46,7 +50,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
   const toggleText = useMemo(() => {
     if (isSmallOrLarger) {
       if (selectedItems && selectedItems.length > 0) {
-        return `${selectedItems.length} selected`;
+        return t('{{count}} selected', { count: selectedItems.length });
       }
       return '';
     } else {
@@ -55,7 +59,7 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
       }
       return '';
     }
-  }, [isSmallOrLarger, selectedItems]);
+  }, [isSmallOrLarger, selectedItems, t]);
 
   const unselectedPageItems = useMemo(
     () => pageItems?.filter((item) => !selectedItems?.includes(item)),
@@ -78,28 +82,42 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     [allPageItemsSelected, maxSelections, selectedItems, unselectedPageItems]
   );
 
-  const toggle = useMemo(() => {
-    const selectedCount = selectedItems ? selectedItems.length : 0;
-    return (
-      <DropdownToggle
-        splitButtonItems={[
-          <DropdownToggleCheckbox
-            id="select-all"
-            ouiaId={'select-all'}
-            key="select-all"
-            data-cy="select-all"
-            aria-label="Select all"
-            isChecked={allPageItemsSelected ? true : selectedCount > 0 ? null : false}
-            onChange={onToggleCheckbox}
-          >
-            {toggleText}
-          </DropdownToggleCheckbox>,
-        ]}
-        onToggle={(_event, isOpen) => setIsOpen(isOpen)}
-        isDisabled={disableBulkSelector}
-      />
-    );
-  }, [selectedItems, allPageItemsSelected, onToggleCheckbox, toggleText, disableBulkSelector]);
+  const toggle = useCallback(
+    (toggleRef: React.Ref<MenuToggleElement>) => {
+      const selectedCount = selectedItems ? selectedItems.length : 0;
+      return (
+        <MenuToggle
+          splitButtonOptions={{
+            items: [
+              <MenuToggleCheckbox
+                id="select-all"
+                data-cy="select-all"
+                ouiaId={'select-all'}
+                key="select-all"
+                aria-label={t('Select all')}
+                isChecked={allPageItemsSelected ? true : selectedCount > 0 ? null : false}
+                onChange={onToggleCheckbox}
+              >
+                {toggleText}
+              </MenuToggleCheckbox>,
+            ],
+          }}
+          onClick={() => setIsOpen(!isOpen)}
+          isDisabled={disableBulkSelector}
+          ref={toggleRef}
+        />
+      );
+    },
+    [
+      selectedItems,
+      allPageItemsSelected,
+      onToggleCheckbox,
+      toggleText,
+      disableBulkSelector,
+      isOpen,
+      t,
+    ]
+  );
 
   const selectNoneDropdownItem = useMemo(() => {
     return (
@@ -128,10 +146,10 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
           setIsOpen(false);
         }}
       >
-        {`Select ${pageItems?.length ?? 0} page items`}
+        {t('Select {{count}} page items', { count: pageItems?.length ?? 0 })}
       </DropdownItem>
     );
-  }, [selectItems, pageItems]);
+  }, [selectItems, pageItems, t]);
 
   const dropdownItems = useMemo(() => {
     const hasSelectedItems = selectedItems && selectedItems.length > 0;
@@ -147,12 +165,13 @@ export function BulkSelector<T extends object>(props: BulkSelectorProps<T>) {
     // Negative margin is needed to align the bulk select with table checkboxes
     <div style={{ marginLeft: -8 }}>
       <Dropdown
-        isOpen={isOpen}
-        toggle={toggle}
-        dropdownItems={dropdownItems}
-        // ZIndex 400 is needed for PF table stick headers
         style={{ zIndex: 400 }}
-      />
+        toggle={toggle}
+        isOpen={isOpen}
+        onOpenChange={(open) => setIsOpen(open)}
+      >
+        <DropdownList>{dropdownItems}</DropdownList>
+      </Dropdown>
     </div>
   );
 }

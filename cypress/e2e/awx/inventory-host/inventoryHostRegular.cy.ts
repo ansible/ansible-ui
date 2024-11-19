@@ -177,7 +177,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     cy.contains(`a[role="tab"]`, 'Hosts').click();
     // add existing host
     cy.getByDataCy('add-existing-host').click();
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickModalButton('Add hosts');
     cy.getByDataCy('run-command').click();
     runCommand({

@@ -39,7 +39,7 @@ hub_resources_roles_tab.forEach((resource) => {
         cy.filterTableBySingleText(resource_object.name);
         cy.get('[data-cy="card-view"]').click();
         cy.contains(resource_object.name).should('be.visible');
-        cy.get('#select-all').click();
+        cy.getByDataCy('select-all').check();
         cy.clickToolbarKebabAction('delete-remotes');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete remotes$/);

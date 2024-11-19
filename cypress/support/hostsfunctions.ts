@@ -100,7 +100,7 @@ function deleteHostDetailsView(invenotryName: string, host_type: string, hostNam
 
 function deleteAllInventoryHosts(inventory: Inventory) {
   navigateToBaseView('inventory_host', inventory.name);
-  cy.getByDataCy('select-all').click();
+  cy.getByDataCy('select-all').check();
   cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
@@ -168,12 +168,12 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       navigateToHost(host_type, host.name, '[data-cy="name-column-cell"] a', inventory.name);
       cy.clickLink(/^Groups$/);
       cy.contains(group2.name);
-      cy.getByDataCy('select-all').click();
+      cy.getByDataCy('select-all').check();
       disassociate();
       cy.contains('There are currently no groups associated with this host').should('be.visible');
       // Add - multi groups
       cy.clickButton(/^Associate groups$/);
-      cy.getByDataCy('select-all').click();
+      cy.getByDataCy('select-all').check();
       cy.clickModalButton('Confirm');
       cy.contains('button', 'Close').click();
       cy.contains(group.name);
@@ -224,12 +224,10 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   //create 2 hosts
   createHost(host_type, inventory.id);
   createHost(host_type, inventory.id);
-
   navigateToBaseView(host_type, inventory.name);
   // wait for 3 rows in the table - header and 2 hosts
   cy.get(`[aria-label="Simple table"] tr`).should('have.length', 3);
-
-  cy.getByDataCy('select-all').click();
+  cy.getByDataCy('select-all').check();
   cy.contains('2 selected');
   cy.clickToolbarKebabAction('delete-hosts');
   cy.contains('Permanently delete hosts');

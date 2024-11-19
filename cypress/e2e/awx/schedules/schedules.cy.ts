@@ -612,7 +612,7 @@ describe('Schedules - Bulk deletion', () => {
     cy.verifyPageTitle('Schedules');
     cy.filterTableByMultiSelect('name', arrayOfElementText);
     cy.get('tbody tr').should('have.length', 5);
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickToolbarKebabAction('delete-schedules');
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently delete schedule');

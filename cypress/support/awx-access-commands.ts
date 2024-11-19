@@ -110,7 +110,7 @@ Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: strin
       disableFilter: true,
     });
     cy.clickButton(/^Next/);
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickButton(/^Next/);
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
@@ -136,7 +136,7 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
       disableFilter: true,
     });
     cy.clickButton(/^Next/);
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickButton(/^Next/);
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);

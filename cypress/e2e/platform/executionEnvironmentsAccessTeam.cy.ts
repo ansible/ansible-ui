@@ -90,7 +90,7 @@ describe('Execution Environments: Team access', () => {
     cy.clickTab(/^Details$/, true);
     cy.clickTab(/^Team Access$/, true);
 
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickToolbarKebabAction('remove-roles');
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();

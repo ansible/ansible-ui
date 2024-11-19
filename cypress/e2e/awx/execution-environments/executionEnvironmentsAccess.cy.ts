@@ -85,7 +85,7 @@ describe('Execution Environments: User/Team access', () => {
     cy.getModal().should('not.exist');
     cy.verifyPageTitle(execEnvName);
 
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickToolbarKebabAction('remove-roles');
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();
@@ -146,7 +146,7 @@ describe('Execution Environments: User/Team access', () => {
     cy.clickTab(/^Details$/, true);
     cy.clickTab(/^Team Access$/, true);
 
-    cy.getByDataCy('select-all').click();
+    cy.getByDataCy('select-all').check();
     cy.clickToolbarKebabAction('remove-roles');
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();

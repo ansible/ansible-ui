@@ -157,7 +157,7 @@ describe('Inventories Tests', () => {
                   cy.contains(inv1.name);
                   cy.contains(inv2.name);
                   cy.contains(inv3.name);
-                  cy.getByDataCy('select-all').click();
+                  cy.getByDataCy('select-all').check();
 
                   cy.clickToolbarKebabAction('delete-inventories');
 

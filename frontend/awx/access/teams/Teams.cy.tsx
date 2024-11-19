@@ -58,7 +58,7 @@ describe('Teams.cy.ts', () => {
       // The team with id: 29 in the teams.json fixture has user_capabilities.delete set to false
       cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
       cy.mount(<Teams />);
-      cy.get('[type="checkbox"][id="select-all"]').check();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-teams');
       cy.contains(
         '1 of the selected teams cannot be deleted due to insufficient permissions.'

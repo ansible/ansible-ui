@@ -77,7 +77,7 @@ describe('Notifiers.cy.tsx', () => {
         { fixture: 'notification_templates.json' }
       );
       cy.mount(<Notifiers />);
-      cy.get('[type="checkbox"][id="select-all"]').check();
+      cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-notifiers');
       cy.contains('Delete notifiers').should('be.visible');
     });
