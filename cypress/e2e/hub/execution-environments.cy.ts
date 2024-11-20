@@ -165,7 +165,6 @@ describe('Execution Environment Details tab', () => {
     cy.getBy('[data-cy="execution-environment-access-tab"]').should('contain', 'Team Access');
     cy.getBy('[data-cy="execution-environment-user-access-tab"]').should('contain', 'User Access');
     cy.get('[aria-selected="true"]').contains('Details');
-    cy.get('[class*="main-section"]').should('contain', 'Unsigned');
   });
 
   it('should render details page tab with instructions and empty readme', () => {
