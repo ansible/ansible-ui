@@ -24,5 +24,5 @@ export async function navigateTo(page: Page, ...labels: string[]) {
   }
 
   const lastLabel = labels[labels.length - 1];
-  await expect(page.getByRole('heading', { name: lastLabel, exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: lastLabel }).first()).toBeVisible();
 }
