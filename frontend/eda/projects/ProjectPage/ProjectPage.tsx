@@ -118,7 +118,7 @@ export function ProjectPage() {
       <PageHeader
         title={project?.name}
         breadcrumbs={[
-          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
+          { label: t('Automation Decisions Projects'), to: getPageUrl(EdaRoute.Projects) },
           { label: project?.name },
         ]}
         headerActions={
@@ -131,7 +131,7 @@ export function ProjectPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Projects'),
+          label: t('Back to Automation Decisions Projects'),
           page: EdaRoute.Projects,
           persistentFilterKey: 'projects',
         }}
