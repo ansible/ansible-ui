@@ -144,7 +144,9 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     createHost('inventory_host', inventory.id);
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
+    cy.intercept('get', awxAPI`/inventories/?name=${encodeURIComponent(inventory.name)}*`).as(
+      'getInventories'
+    );
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
@@ -167,7 +169,9 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     cy.createInventoryGroup(inventory, groupName);
     cy.log(`inv: ${inventory.name}, group: ${groupName}`);
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
+    cy.intercept('get', awxAPI`/inventories/?name=${encodeURIComponent(inventory.name)}*`).as(
+      'getInventories'
+    );
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
