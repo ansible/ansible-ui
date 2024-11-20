@@ -49,6 +49,7 @@ export function TemplatePage() {
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({
     onTemplatesDeleted: () => pageNavigate(AwxRoute.Templates),
+    isJobTemplate: template?.type === 'job_template' ? true : false,
   });
 
   const error = isNotifAdminError || templateError;

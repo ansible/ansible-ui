@@ -25,11 +25,13 @@ type Template = JobTemplate | WorkflowJobTemplate;
 type TemplateActionOptions = {
   onTemplatesDeleted: (templates: Template[]) => void;
   onTemplateCopied?: () => unknown;
+  isJobTemplate?: boolean;
 };
 
 export function useTemplateActions({
   onTemplatesDeleted,
   onTemplateCopied = () => null,
+  isJobTemplate,
 }: TemplateActionOptions) {
   const { t } = useTranslation();
   const deleteTemplates = useDeleteTemplates(onTemplatesDeleted);
@@ -61,6 +63,7 @@ export function useTemplateActions({
           !template?.summary_fields.user_capabilities.start
             ? t('You do not have permission to launch this template')
             : undefined,
+        variant: isJobTemplate ? ButtonVariant.primary : ButtonVariant.secondary,
         ouiaId: 'job-template-detail-launch-button',
         isDanger: false,
         isPinned: true,
@@ -113,5 +116,5 @@ export function useTemplateActions({
       },
     ];
     return itemActions;
-  }, [copyTemplate, deleteTemplates, getPageUrl, launchTemplate, t]);
+  }, [isJobTemplate, copyTemplate, deleteTemplates, getPageUrl, launchTemplate, t]);
 }
