@@ -41,6 +41,7 @@ export function Lightspeed() {
               component="a"
               target="_blank"
               iconPosition="end"
+              href="https://developers.redhat.com/products/ansible/lightspeed"
             >
               {t('Get started')}
             </Button>
