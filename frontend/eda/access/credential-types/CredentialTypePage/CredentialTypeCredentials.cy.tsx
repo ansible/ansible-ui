@@ -81,6 +81,15 @@ describe('Empty list', () => {
   beforeEach(() => {
     cy.intercept(
       {
+        method: 'OPTIONS',
+        url: edaAPI`/eda-credentials/`,
+      },
+      {
+        fixture: 'edaCredentialsOptions.json',
+      }
+    ).as('getOptions');
+    cy.intercept(
+      {
         method: 'GET',
         url: edaAPI`/eda-credentials/?credential_type_id=1*`,
       },
@@ -91,6 +100,6 @@ describe('Empty list', () => {
   });
   it('Empty state is displayed correctly', () => {
     cy.mount(<CredentialTypeCredentials />);
-    cy.contains(/^No credentials for this type$/);
+    cy.contains(/^There are currently no credentials of this type created for your organization.$/);
   });
 });
