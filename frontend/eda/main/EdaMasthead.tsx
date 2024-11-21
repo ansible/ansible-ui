@@ -21,7 +21,8 @@ export function EdaMasthead() {
   const logout = useCallback(async () => {
     await postRequest(edaAPI`/auth/session/logout/`, {});
     refreshActiveEdaUser?.();
-  }, [refreshActiveEdaUser]);
+    pageNavigate(EdaRoute.Overview);
+  }, [pageNavigate, refreshActiveEdaUser]);
   return (
     <PageMasthead brand={<EdaBrand style={{ height: 48 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>

@@ -52,7 +52,10 @@ export function PlatformMasthead() {
     void refreshActiveHubUser?.();
     void refreshActivePlatformUser?.();
     void refreshLegacyAuth?.();
+
+    pageNavigate(PlatformRoute.Overview);
   }, [
+    pageNavigate,
     refreshActiveEdaUser,
     refreshActiveAwxUser,
     refreshActiveHubUser,

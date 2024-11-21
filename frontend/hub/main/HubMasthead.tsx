@@ -1,4 +1,4 @@
-import { PageMasthead, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageMasthead, useGetPageUrl, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { PageMastheadDropdown } from '@ansible/ansible-ui-framework/PageMasthead/PageMastheadDropdown';
 import { PageNotificationsIcon } from '@ansible/ansible-ui-framework/PageMasthead/PageNotificationsIcon';
 import { PageThemeSwitcher } from '@ansible/ansible-ui-framework/PageMasthead/PageThemeSwitcher';
@@ -24,11 +24,13 @@ export function HubMasthead() {
   const { t } = useTranslation();
   const openAnsibleAboutModal = useAnsibleAboutModal();
   useHubNotifications();
+  const pageNavigate = usePageNavigate();
   const { activeHubUser, refreshActiveHubUser } = useHubActiveUser();
   const logout = useCallback(async () => {
     await postRequest(hubAPI`/_ui/v1/auth/logout/`, {});
     refreshActiveHubUser?.();
-  }, [refreshActiveHubUser]);
+    pageNavigate(HubRoute.Overview);
+  }, [pageNavigate, refreshActiveHubUser]);
   return (
     <PageMasthead brand={<GalaxyBrand style={{ height: 48, marginTop: -8 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
