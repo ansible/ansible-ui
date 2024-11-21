@@ -30,7 +30,8 @@ export function AwxMasthead() {
   const logout = useCallback(async () => {
     await fetch('/api/logout/');
     refreshActiveAwxUser?.();
-  }, [refreshActiveAwxUser]);
+    pageNavigate(AwxRoute.Login);
+  }, [pageNavigate, refreshActiveAwxUser]);
   return (
     <PageMasthead brand={<AwxBrand style={{ height: 60 }} />}>
       <ToolbarGroup variant="icon-button-group" style={{ flexGrow: 1 }}>
