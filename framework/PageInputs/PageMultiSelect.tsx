@@ -222,24 +222,22 @@ export function PageMultiSelect<
                   {selectedOptions.length}
                 </Chip>
               ) : (
-                <>
-                  <ChipGroup numChips={99}>
-                    {selectedOptions.map((option) => (
-                      <Chip
-                        key={option.label}
-                        isReadOnly={props.disableClearChips}
-                        textMaxWidth={maxChipSize}
-                        style={{ marginTop: -2, marginBottom: -2 }}
-                        onClick={() =>
-                          onSelect((previousValues) =>
-                            previousValues?.filter((v) => v !== option.value)
-                          )
-                        }
-                      >
-                        {option.label}
-                      </Chip>
-                    ))}
-                  </ChipGroup>
+                <ChipGroup numChips={99}>
+                  {selectedOptions.map((option) => (
+                    <Chip
+                      key={option.label}
+                      isReadOnly={props.disableClearChips}
+                      textMaxWidth={maxChipSize}
+                      style={{ marginTop: -2, marginBottom: -2 }}
+                      onClick={() =>
+                        onSelect((previousValues) =>
+                          previousValues?.filter((v) => v !== option.value)
+                        )
+                      }
+                    >
+                      {option.label}
+                    </Chip>
+                  ))}
                   {!disableClearSelection && (
                     <TimesIcon
                       role="button"
@@ -248,7 +246,7 @@ export function PageMultiSelect<
                       style={{ verticalAlign: 'middle', marginLeft: 8 }}
                     />
                   )}
-                </>
+                </ChipGroup>
               )}
             </>
           ) : (
