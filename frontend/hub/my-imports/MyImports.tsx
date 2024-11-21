@@ -173,10 +173,27 @@ export function MyImports() {
       </DrawerPanelBody>
     </DrawerPanelContent>
   );
-
+  const breadcrumbs = [{ label: t('Collection Approvals'), to: getPageUrl(HubRoute.Approvals) }];
+  if (!!namespaceQP && collectionImportsCount > 0) {
+    breadcrumbs.push({
+      label: collection.collection_version.namespace + '.' + collection.collection_version.name,
+      to: getPageUrl(HubRoute.CollectionPage, {
+        params: {
+          repository: collection.repository.name,
+          namespace: collection.collection_version.namespace,
+          name: collection.collection_version.name,
+        },
+      }),
+    });
+  }
+  breadcrumbs.push({ label: t('My Imports') });
   return (
     <PageLayout>
-      <PageHeader title={t('My imports')} description={t('Imported collections')} />
+      <PageHeader
+        breadcrumbs={breadcrumbs}
+        title={t('My imports')}
+        description={t('Imported collections')}
+      />
       <PageSection variant="light" hasOverflowScroll hasShadowTop={false} hasShadowBottom={false}>
         <Drawer isExpanded={isDrawerExpanded} isInline>
           <DrawerContent panelContent={panelContent}>
