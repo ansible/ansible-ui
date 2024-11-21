@@ -46,9 +46,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
-    cy.wait('@getInventories');
 
     cy.contains('a', inventory.name).click();
     cy.contains(`a[role="tab"]`, 'Hosts').click();
@@ -68,9 +66,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
 
   it('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
     cy.filterTableByMultiSelect('name', [inventory.name]);
-    cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
     cy.getByDataCy('sync-inventory').click();
     cy.contains(`[data-cy="last-job-status"]`, 'Success');
