@@ -1,0 +1,224 @@
+{
+  "actions": {
+    "PUT": {
+      "ALLOW_OAUTH2_FOR_EXTERNAL_USERS": {
+        "type": "boolean",
+        "required": false,
+        "read_only": false,
+        "default": false,
+        "help_text": "For security reasons, users from external auth providers (LDAP, SAML, SSO, Radius, and others) are not allowed to create OAuth2 tokens. To change this behavior, enable this setting. Existing tokens will not be deleted when this setting is toggled off.",
+        "label": "Allow external users to create OAuth2 tokens"
+      },
+      "gateway_access_token_expiration": {
+        "default": 600,
+        "help_text": "How long the access tokens are valid for",
+        "label": "Gateway access token expiration",
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "gateway_token_name": {
+        "default": "X-DAB-JW-TOKEN",
+        "help_text": "The header name to push from the proxy to the backend service. WARNING: if this is changed, backends must be updated to compensate!",
+        "label": "Gateway token name",
+        "read_only": false,
+        "required": false,
+        "type": "string"
+      },
+      "jwt_expiration_buffer_in_seconds": {
+        "default": 2,
+        "help_text": "The number of seconds before a JWT token's expiration to revoke it from the cache",
+        "label": "Jwt expiration buffer in seconds",
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "gateway_basic_auth_enabled": {
+        "default": true,
+        "help_text": "Enable basic auth to the gateway API",
+        "label": "Gateway basic auth enabled",
+        "read_only": false,
+        "required": false,
+        "type": "boolean"
+      },
+      "gateway_proxy_url": {
+        "default": "https://localhost:9080",
+        "help_text": "URL to the gateway proxy layer",
+        "label": "Gateway proxy url",
+        "read_only": false,
+        "required": false,
+        "type": "url"
+      },
+      "gateway_proxy_url_ignore_cert": {
+        "default": false,
+        "help_text": "Ignore certificate to the gateway proxy layer",
+        "label": "Gateway proxy url ignore cert",
+        "read_only": false,
+        "required": false,
+        "type": "boolean"
+      },
+      "jwt_private_key": {
+        "help_text": "JWT private key",
+        "label": "Jwt private key",
+        "read_only": false,
+        "required": false,
+        "type": "string"
+      },
+      "status_endpoint_backend_timeout_seconds": {
+        "default": 5,
+        "help_text": "Timeout (in seconds) for the status endpoint to wait when trying to connect to a backend.",
+        "label": "Status endpoint backend timeout seconds",
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "status_endpoint_backend_verify": {
+        "default": true,
+        "help_text": "Should SSL certificates of the services be verified when calling individual nodes for statuses.",
+        "label": "Status endpoint backend verify",
+        "read_only": false,
+        "required": false,
+        "type": "boolean"
+      },
+      "resource_client_request_timeout": {
+        "default": 2,
+        "help_text": "Timeout (in seconds) before the resource client will drop requests after forming connections.",
+        "label": "Resource client request timeout",
+        "min_value": 0,
+        "read_only": false,
+        "required": false,
+        "type": "float"
+      },
+      "request_timeout": {
+        "default": 30,
+        "help_text": "Timeout (in seconds) before the proxy will report a timeout and generate a 504.",
+        "label": "Request timeout",
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "password_min_length": {
+        "default": 0,
+        "help_text": "How many numerical characters need to be in a local password",
+        "label": "Password minimum numerical digits",
+        "max_value": 100,
+        "min_value": 0,
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "password_min_digits": {
+        "default": 0,
+        "help_text": "How many numerical characters need to be in a local password",
+        "label": "Password minimum numerical digits",
+        "max_value": 100,
+        "min_value": 0,
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "password_min_upper": {
+        "default": 0,
+        "help_text": "How many numerical characters need to be in a local password",
+        "label": "Password minimum numerical digits",
+        "max_value": 100,
+        "min_value": 0,
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "password_min_special": {
+        "default": 0,
+        "help_text": "How many numerical characters need to be in a local password",
+        "label": "Password minimum numerical digits",
+        "max_value": 100,
+        "min_value": 0,
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "allow_admins_to_set_insecure": {
+        "default": false,
+        "help_text": "Can a superuser account save an insecure password",
+        "label": "Allow system administrators to set insecure user passwords",
+        "read_only": false,
+        "required": false,
+        "type": "boolean"
+      },
+      "LOGIN_REDIRECT_OVERRIDE": {
+        "default": "",
+        "help_text": "URL to which unauthorized users will be redirected to log in. If blank, users will be sent to the login page.",
+        "label": "Login redirect override",
+        "read_only": false,
+        "required": false,
+        "type": "url"
+      },
+      "custom_login_info": {
+        "default": "",
+        "help_text": "Provide a specific information (such as a legal notice or a disclaimer) to a text box in the login modal",
+        "label": "Custom login info",
+        "read_only": false,
+        "required": false,
+        "type": "string"
+      },
+      "custom_logo": {
+        "default": "",
+        "help_text": "Provide an image file for setting up a custom logo (must be a data URL with a base64-encoded GIF, PNG or JPEG image)",
+        "label": "Custom logo",
+        "read_only": false,
+        "required": false,
+        "type": "field"
+      },
+      "SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL": {
+        "default": false,
+        "help_text": "Enabling this setting will tell social auth to use the full email as username instead of the full name",
+        "label": "Social auth username is full email",
+        "read_only": false,
+        "required": false,
+        "type": "boolean"
+      },
+      "SESSION_COOKIE_AGE": {
+        "default": 900,
+        "help_text": "Time in seconds before a session expires",
+        "label": "Session cookie age",
+        "max_value": 30000000000,
+        "min_value": 60,
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "DEFAULT_PAGE_SIZE": {
+        "default": 50,
+        "help_text": "The default number of items to show on a list page",
+        "label": "Default page size",
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "MAX_PAGE_SIZE": {
+        "default": 200,
+        "help_text": "The maximum number of items allowed on a list page",
+        "label": "Max page size",
+        "read_only": false,
+        "required": false,
+        "type": "integer"
+      },
+      "CONTROLLER_SSO_URL": {
+        "default": "",
+        "help_text": "The URL that is used to kick off authentication for Controller SSO that was configured prior to AAP 2.5.",
+        "label": "Controller sso url",
+        "read_only": false,
+        "required": false,
+        "type": "string"
+      },
+      "AUTOMATION_HUB_SSO_URL": {
+        "default": "",
+        "help_text": "The URL that is used to kick off authentication for Automation Hub SSO that was configured prior to AAP 2.5.",
+        "label": "Automation hub sso url",
+        "read_only": false,
+        "required": false,
+        "type": "string"
+      }
+    }
+  }
+}
