@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CSSProperties } from 'styled-components';
-import { AnsibleTowerIcon } from '@patternfly/react-icons';
+import AAPIcon from '../../assets/aap.svg';
 
 interface LogoProps {
   // size and width should be css length measurment: eg. '48px'
@@ -12,6 +13,29 @@ interface LogoProps {
   unlockWidth?: boolean;
   fallbackToDefault?: boolean;
   flexGrow?: boolean;
+}
+
+export function CollectionLogo({
+  collection,
+}: {
+  collection: {
+    namespace_metadata?: { company: string; avatar_url: string };
+    collection_version?: { namespace: string };
+  };
+}) {
+  const { t } = useTranslation();
+  return (
+    <Logo
+      alt={t(
+        `${collection.namespace_metadata?.company || collection.collection_version?.namespace} logo`
+      )}
+      fallbackToDefault
+      image={collection.namespace_metadata?.avatar_url ?? null}
+      logoSize="48px"
+      width="48px"
+      flexGrow
+    />
+  );
 }
 
 export function Logo(props: LogoProps) {
@@ -43,7 +67,7 @@ export function Logo(props: LogoProps) {
   return (
     <div className={className} style={style}>
       {failed || image === null ? (
-        <AnsibleTowerIcon style={{ height: '100%', width: '100%' }} />
+        <AAPIcon style={{ height: '100%', width: '100%' }} />
       ) : (
         <img
           style={{ objectFit: 'contain', height: logoSize }}

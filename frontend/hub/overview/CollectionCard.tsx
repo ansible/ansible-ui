@@ -11,7 +11,7 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { CSSProperties } from 'styled-components';
 import { CollectionVersionSearch } from '../collections/Collection';
-import { Logo } from '../common/Logo';
+import { CollectionLogo } from '../common/Logo';
 import { HubRoute } from '../main/HubRoutes';
 
 export const ColumnsDiv = styled.div`
@@ -91,18 +91,7 @@ export function CollectionCard(props: { collection: CollectionVersionSearch }) {
         item={collection}
         itemToCardFn={(item: CollectionVersionSearch) => ({
           id: item.collection_version?.name || '',
-          icon: (
-            <Logo
-              alt={t(
-                `${item.namespace_metadata?.company || item.collection_version?.namespace} logo`
-              )}
-              fallbackToDefault
-              image={item.namespace_metadata?.avatar_url ?? null}
-              logoSize="48px"
-              width="48px"
-              flexGrow
-            />
-          ),
+          icon: <CollectionLogo collection={item} />,
           title: (
             <TextCell
               text={item.collection_version?.name}

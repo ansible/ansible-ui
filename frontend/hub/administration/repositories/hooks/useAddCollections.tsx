@@ -18,9 +18,8 @@ import { ReactNode } from 'react';
 import { collectionId } from '../RepositoryPage/RepositoryCollectionVersion';
 import { useRepoQueryOptions } from './useRepoQueryOptions';
 
-import { AnsibleTowerIcon } from '@patternfly/react-icons';
-
 import { TextCell } from '@ansible/ansible-ui-framework';
+import { CollectionLogo } from '../../../common/Logo';
 
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
 import { Button } from '@patternfly/react-core';
@@ -277,8 +276,8 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         ),
         card: 'name',
         list: 'name',
-        icon: () => <AnsibleTowerIcon />,
         sort: 'name',
+        icon: (collection) => <CollectionLogo collection={collection} />,
       },
       {
         header: t('Provided by'),
