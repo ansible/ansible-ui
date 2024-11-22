@@ -6,16 +6,12 @@ import {
   TextCell,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import {
-  AnsibleTowerIcon,
-  BanIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-} from '@patternfly/react-icons';
+import { BanIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useHubContext } from '../../common/useHubContext';
+import { CollectionLogo } from '../../common/Logo';
 import { HubRoute } from '../../main/HubRoutes';
 import { CollectionVersionSearch } from '../Collection';
 
@@ -60,8 +56,8 @@ export function useCollectionColumns(_options?: { disableSort?: boolean; disable
         },
         card: 'name',
         list: 'name',
-        icon: () => <AnsibleTowerIcon />,
         sort: 'name',
+        icon: (collection) => <CollectionLogo collection={collection} />,
       },
       {
         header: t('Provided by'),
