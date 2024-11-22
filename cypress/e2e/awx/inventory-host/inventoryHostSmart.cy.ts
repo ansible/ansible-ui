@@ -39,7 +39,9 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
     //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${inventory.name}*`).as('getInventories');
+    cy.intercept('get', awxAPI`/inventories/?name=${encodeURIComponent(inventory.name)}*`).as(
+      'getInventories'
+    );
     cy.filterTableByMultiSelect('name', [inventory.name]);
     cy.wait('@getInventories');
 
