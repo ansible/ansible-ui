@@ -1,0 +1,31 @@
+{
+  "data": {
+    "ALLOW_OAUTH2_FOR_EXTERNAL_USERS": false,
+    "AUTOMATION_HUB_SSO_URL": "",
+    "CONTROLLER_SSO_URL": "",
+    "DEFAULT_PAGE_SIZE": 50,
+    "LOGIN_REDIRECT_OVERRIDE": "https://www.google.com",
+    "MAX_PAGE_SIZE": 200,
+    "SESSION_COOKIE_AGE": 900,
+    "SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL": false,
+    "allow_admins_to_set_insecure": false,
+    "custom_login_info": "",
+    "custom_logo": "",
+    "gateway_access_token_expiration": 600,
+    "gateway_basic_auth_enabled": true,
+    "gateway_proxy_url": "https://34.227.159.24",
+    "gateway_proxy_url_ignore_cert": false,
+    "gateway_token_name": "X-DAB-JW-TOKEN",
+    "jwt_expiration_buffer_in_seconds": 2,
+    "jwt_private_key": "$encrypted$",
+    "jwt_public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7FA78LKKOf95ruOiR8tG\nuufhw+NA4+0GG77IOGKRrjO85UMJq44tZ++hgsH6sgCsSQBrZOV967d1tq0iKspS\nnoS9SnY4WX7/4vI/6NLOEJYc3RmByuIriPQZC7BXoOMYIDKcnlmiuUVx+j0U6wOo\nKTYrWn199YIRDG4Z2jUjNO/y8yU9Rt3GJbZd3wSt6/t5+kNk9izpAEhyo+TGmpZ8\nZnlH1MbZo9bwq/Rn4QkNP+MdpmS8i06lVbZE/VLaV9bcxrA7f/qALFVjjf1nrn6x\n9Lw45lFkxT+6jTjDKoaz+ihsgTuNhUcE/Bxabwt9laYW9aWOT/1obEFFxTrn4VYN\nTQIDAQAB\n-----END PUBLIC KEY-----\n",
+    "password_min_digits": 0,
+    "password_min_length": 0,
+    "password_min_special": 0,
+    "password_min_upper": 0,
+    "request_timeout": 30,
+    "resource_client_request_timeout": 2,
+    "status_endpoint_backend_timeout_seconds": 5,
+    "status_endpoint_backend_verify": true
+  }
+}

@@ -67,7 +67,6 @@ export function useGatewaySettingsCategories(options: Record<string, GatewaySett
     categories[0].sections.push({
       title: t('Other settings'),
       exclude: [
-        'LOGIN_REDIRECT_OVERRIDE',
         'DEFAULT_PAGE_SIZE',
         'MAX_PAGE_SIZE',
         ...categories.reduce<string[]>(
