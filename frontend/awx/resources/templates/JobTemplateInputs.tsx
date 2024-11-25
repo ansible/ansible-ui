@@ -1,5 +1,4 @@
 import { FormSection } from '@patternfly/react-core';
-
 import {
   PageFormDataEditor,
   PageFormSelect,
@@ -23,6 +22,7 @@ import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 
 // This list below comes from the previous AWX code
 //https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
@@ -36,7 +36,7 @@ const acceptableCredentialKinds = [
   'cryptography',
 ];
 
-export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
+export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateForm }>) {
   const { jobtemplate } = props;
   const { t } = useTranslation();
   const { setValue, getValues, reset } = useFormContext<JobTemplateForm>();
@@ -287,6 +287,9 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
           label={t('Extra variables')}
           name="extra_vars"
         />
+      </PageFormSection>
+      <PageFormSection isHorizontal>
+        <PageFormGroup label={t('Options')}></PageFormGroup>
       </PageFormSection>
       <PageFormCheckbox<JobTemplateForm> label={t('Privilege escalation')} name="become_enabled" />
       <PageFormCheckbox<JobTemplateForm>
