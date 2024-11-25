@@ -14,10 +14,13 @@ import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 
-export function WorkflowJobTemplateInputs(props: {
-  workflowJobTemplate?: WorkflowJobTemplateForm;
-}) {
+export function WorkflowJobTemplateInputs(
+  props: Readonly<{
+    workflowJobTemplate?: WorkflowJobTemplateForm;
+  }>
+) {
   const { workflowJobTemplate } = props;
   const { setValue } = useFormContext<WorkflowJobTemplateForm>();
   const isWebhookEnabled = useWatch<WorkflowJobTemplateForm>({ name: 'isWebhookEnabled' });
@@ -121,16 +124,17 @@ export function WorkflowJobTemplateInputs(props: {
           name="extra_vars"
         />
       </PageFormSection>
-      <PageFormSection title={t('Options')}>
-        <PageFormCheckbox<WorkflowJobTemplateForm>
-          label={t('Enable webhook')}
-          name="isWebhookEnabled"
-        />
-        <PageFormCheckbox<WorkflowJobTemplateForm>
-          label={t('Enable concurrent jobs')}
-          name="allow_simultaneous"
-        />
+      <PageFormSection isHorizontal>
+        <PageFormGroup label={t('Options')}></PageFormGroup>
       </PageFormSection>
+      <PageFormCheckbox<WorkflowJobTemplateForm>
+        label={t('Enable webhook')}
+        name="isWebhookEnabled"
+      />
+      <PageFormCheckbox<WorkflowJobTemplateForm>
+        label={t('Enable concurrent jobs')}
+        name="allow_simultaneous"
+      />
 
       {isWebhookEnabled ? <WebhookSubForm templateType="workflow_job_templates" /> : null}
     </>
