@@ -3,6 +3,7 @@ import { StatusCell } from '@ansible/common-ui/Status';
 import {
   useCreatedColumn,
   useDescriptionColumn,
+  useLabelsColumn,
   useModifiedColumn,
   useNameColumn,
   useOrganizationNameColumn,
@@ -56,6 +57,7 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
     }),
     [t]
   );
+  const labelsColumn = useLabelsColumn();
   const statusColumn = useMemo<ITableColumn<Inventory>>(
     () => ({
       header: t('Status'),
@@ -102,6 +104,58 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
       statusColumn,
       typeColumn,
       organizationColumn,
+      labelsColumn,
+      {
+        header: t('Hosts'),
+        type: 'count',
+        value: (inventory: Inventory) => {
+          return inventory.total_hosts;
+        },
+        modal: 'hidden',
+        dashboard: 'hidden',
+      },
+      {
+        header: t('Host failures'),
+        type: 'count',
+        value: (inventory: Inventory) => {
+          return inventory.hosts_with_active_failures === 0
+            ? undefined
+            : inventory.hosts_with_active_failures;
+        },
+        modal: 'hidden',
+        dashboard: 'hidden',
+      },
+      {
+        header: t('Groups'),
+        type: 'count',
+        value: (inventory: Inventory) => {
+          return inventory.total_groups === 0 ? undefined : inventory.total_groups;
+        },
+        modal: 'hidden',
+        dashboard: 'hidden',
+      },
+      {
+        header: t('Sources'),
+        type: 'count',
+        value: (inventory: Inventory) => {
+          return inventory.total_inventory_sources === 0
+            ? undefined
+            : inventory.total_inventory_sources;
+        },
+        modal: 'hidden',
+        dashboard: 'hidden',
+      },
+      {
+        header: t('Source Failures'),
+        type: 'count',
+        value: (inventory: Inventory) => {
+          return inventory.inventory_sources_with_failures === 0
+            ? undefined
+            : inventory.inventory_sources_with_failures;
+        },
+        modal: 'hidden',
+        dashboard: 'hidden',
+      },
       createdColumn,
       modifiedColumn,
     ],
@@ -111,6 +165,8 @@ export function useInventoriesColumns(options?: { disableSort?: boolean; disable
       statusColumn,
       typeColumn,
       organizationColumn,
+      labelsColumn,
+      t,
       createdColumn,
       modifiedColumn,
     ]
