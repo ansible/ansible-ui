@@ -12,7 +12,7 @@ export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
-      cell: (user: PlatformUser) => <TextCell text={user.username} />,
+      cell: (user: PlatformUser) => <TextCell text={user?.username} />,
       sort: 'username',
       maxWidth: 200,
     }),
@@ -55,7 +55,7 @@ export function useDeleteUsers(onComplete: (users: PlatformUser[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (user: PlatformUser, signal) =>
-        requestDelete(gatewayAPI`/users/${user.id.toString()}/`, signal),
+        requestDelete(gatewayAPI`/users/${user?.id.toString()}/`, signal),
     });
   };
   return deleteUsers;

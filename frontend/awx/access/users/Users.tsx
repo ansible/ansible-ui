@@ -150,7 +150,7 @@ export function Users() {
         icon: PencilAltIcon,
         label: t('Edit user'),
         isDisabled: (user: AwxUser) => cannotEditUser(user),
-        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),
+        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user?.id } }),
       },
       { type: PageActionType.Seperator },
       {

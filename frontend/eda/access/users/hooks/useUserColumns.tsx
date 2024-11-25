@@ -13,8 +13,8 @@ export function useUserColumns() {
         header: t('Username'),
         cell: (user) => (
           <TextCell
-            text={user.username}
-            to={getPageUrl(EdaRoute.UserPage, { params: { id: user.id } })}
+            text={user?.username}
+            to={getPageUrl(EdaRoute.UserPage, { params: { id: user?.id } })}
           />
         ),
         sort: 'username',
@@ -33,11 +33,11 @@ export function useUserColumns() {
       },
       {
         header: t('First name'),
-        cell: (user) => user.first_name && <TextCell text={user.first_name} />,
+        cell: (user) => user?.first_name && <TextCell text={user.first_name} />,
       },
       {
         header: t('Last name'),
-        cell: (user) => user.last_name && <TextCell text={user.last_name} />,
+        cell: (user) => user?.last_name && <TextCell text={user?.last_name} />,
       },
     ],
     [getPageUrl, t]

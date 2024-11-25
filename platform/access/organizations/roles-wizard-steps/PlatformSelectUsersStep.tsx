@@ -23,7 +23,7 @@ export function PlatformSelectUsersStep() {
     return [
       {
         header: t('Username'),
-        cell: (user: PlatformUser) => <TextCell text={user.username} />,
+        cell: (user: PlatformUser) => <TextCell text={user?.username} />,
         card: 'name',
         list: 'name',
         sort: 'username',
@@ -32,13 +32,13 @@ export function PlatformSelectUsersStep() {
       {
         header: t('First name'),
         type: 'text',
-        value: (user: PlatformUser) => user.first_name,
+        value: (user: PlatformUser) => user?.first_name,
         sort: 'first_name',
       },
       {
         header: t('Last name'),
         type: 'text',
-        value: (user: PlatformUser) => user.last_name,
+        value: (user: PlatformUser) => user?.last_name,
         sort: 'last_name',
       },
     ];

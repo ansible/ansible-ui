@@ -53,7 +53,7 @@ function CreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: To
   const onSubmit: PageFormSubmitHandler<Token> = async (tokenInput) => {
     const newToken = await postRequest(awxAPI`/tokens/`, tokenInput);
     props.onCreate(newToken);
-    pageNavigate(AwxRoute.UserTokenDetails, { params: { id: user.id, tokenid: newToken.id } });
+    pageNavigate(AwxRoute.UserTokenDetails, { params: { id: user?.id, tokenid: newToken.id } });
   };
 
   return (
@@ -63,12 +63,12 @@ function CreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken: To
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
           {
-            label: user.username,
-            to: getPageUrl(AwxRoute.UserDetails, { params: { id: user.id } }),
+            label: user?.username,
+            to: getPageUrl(AwxRoute.UserDetails, { params: { id: user?.id } }),
           },
           {
             label: t('Tokens'),
-            to: getPageUrl(AwxRoute.UserTokens, { params: { id: user.id } }),
+            to: getPageUrl(AwxRoute.UserTokens, { params: { id: user?.id } }),
           },
         ]}
       />

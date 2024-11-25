@@ -88,7 +88,7 @@ export function useUserRowActions(onUsersDeleted: (users: PlatformUser[]) => voi
         variant: ButtonVariant.primary,
         label: t('Edit user'),
         isDisabled: cannotEditUser,
-        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
+        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user?.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -140,7 +140,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
         variant: ButtonVariant.primary,
         label: t('Edit user'),
         isDisabled: cannotEditUser,
-        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user.id } }),
+        onClick: (user) => pageNavigate(PlatformRoute.EditUser, { params: { id: user?.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -150,7 +150,7 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
         label: t('Link user accounts'),
         isHidden: () => !isLoggedInUser || !canLinkAdditionalAccounts,
         onClick: (user) =>
-          pageNavigate(PlatformRoute.LinkUserAccounts, { params: { id: user.id } }),
+          pageNavigate(PlatformRoute.LinkUserAccounts, { params: { id: user?.id } }),
       },
       {
         type: PageActionType.Button,

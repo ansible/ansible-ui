@@ -56,7 +56,7 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
   const tableColumns = useUserTokensColumns();
   const toolbarFilters = useUserTokensFilters();
   const view = usePlatformView<Token>({
-    url: gatewayAPI`/users/${user.id.toString()}/tokens/`,
+    url: gatewayAPI`/users/${user?.id.toString()}/tokens/`,
     toolbarFilters,
     tableColumns,
   });
@@ -71,7 +71,7 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create token'),
-        href: getPageUrl(PlatformRoute.CreateAapUserToken, { params: { id: user.id } }),
+        href: getPageUrl(PlatformRoute.CreateAapUserToken, { params: { id: user?.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -83,7 +83,7 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
         onClick: deleteTokens,
       },
     ],
-    [deleteTokens, getPageUrl, t, user.id]
+    [deleteTokens, getPageUrl, t, user?.id]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(
@@ -117,7 +117,7 @@ function AAPUserTokensInternal(props: { infoMessage?: string; user: PlatformUser
             <ButtonLink
               icon={<PlusCircleIcon />}
               variant={ButtonVariant.primary}
-              href={getPageUrl(PlatformRoute.CreateAapUserToken, { params: { id: user.id } })}
+              href={getPageUrl(PlatformRoute.CreateAapUserToken, { params: { id: user?.id } })}
             >
               {t('Create token')}
             </ButtonLink>

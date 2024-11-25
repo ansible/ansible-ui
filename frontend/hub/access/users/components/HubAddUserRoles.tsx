@@ -123,7 +123,7 @@ export function HubAddUserRoles(props: { id?: string; userRolesRoute?: string })
         actionColumns,
         actionFn: ({ resource, role }) =>
           postRequest(hubAPI`/_ui/v2/role_user_assignments/`, {
-            user: user.id,
+            user: user?.id,
             role_definition: role.id,
             content_type: resourceType === 'system' ? null : resourceType,
             object_id:

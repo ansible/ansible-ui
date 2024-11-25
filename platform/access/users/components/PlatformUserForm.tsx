@@ -198,7 +198,7 @@ export function EditPlatformUser() {
 
       if (platformAuditor && !user.is_platform_auditor) {
         await postRequest(gatewayAPI`/role_user_assignments/`, {
-          user: user.id,
+          user: user?.id,
           role_definition: platformAuditorRoleData?.results?.[0]?.id,
           object_id: null,
         });
@@ -207,7 +207,7 @@ export function EditPlatformUser() {
         const platformAuditorRoleAssignment = await getRequest(
           gatewayAPI`/role_user_assignments/`,
           {
-            user: user.id,
+            user: user?.id,
             role_definition: platformAuditorRoleData?.results?.[0]?.id || '',
           }
         );
@@ -231,7 +231,7 @@ export function EditPlatformUser() {
             await postRequest(
               gatewayAPI`/organizations/${addedOrganizationId.toString() ?? ''}/users/associate/`,
               {
-                instances: [user.id],
+                instances: [user?.id],
               }
             );
           } catch (error) {
@@ -256,7 +256,7 @@ export function EditPlatformUser() {
             await postRequest(
               gatewayAPI`/organizations/${removedOrganizationId.toString() ?? ''}/users/disassociate/`,
               {
-                instances: [user.id],
+                instances: [user?.id],
               }
             );
           } catch (error) {
@@ -282,7 +282,7 @@ export function EditPlatformUser() {
             await postRequest(
               gatewayAPI`/organizations/${organizationId.toString() ?? ''}/users/disassociate/`,
               {
-                instances: [user.id],
+                instances: [user?.id],
               }
             );
           } catch (error) {
@@ -306,7 +306,7 @@ export function EditPlatformUser() {
 
       user.is_platform_auditor = platformAuditor;
       await patchUser(gatewayAPI`/users/${userId.toString()}/`, user);
-      pageNavigate(PlatformRoute.UserDetails, { params: { id: user.id } });
+      pageNavigate(PlatformRoute.UserDetails, { params: { id: user?.id } });
     },
     [
       alertToaster,

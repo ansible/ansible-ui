@@ -82,7 +82,7 @@ export function AddRolesForm(props: { users?: AwxUser[]; teams?: Team[]; onClose
           actionColumns: [
             {
               header: props.users ? (props.teams ? t('User/Team') : t('User')) : t('Team'),
-              cell: (addRole) => ('user' in addRole ? addRole.user.username : addRole.team.name),
+              cell: (addRole) => ('user' in addRole ? addRole.user?.username : addRole.team.name),
             },
             { header: t('Resource'), cell: (addRole) => addRole.resource.name },
             { header: t('Role'), cell: (addRole) => addRole.roleName },
@@ -90,7 +90,7 @@ export function AddRolesForm(props: { users?: AwxUser[]; teams?: Team[]; onClose
           actionFn: async (addRole, signal: AbortSignal) => {
             return 'user' in addRole
               ? await postRequest(
-                  awxAPI`/users/${addRole.user.id.toString()}/roles/`,
+                  awxAPI`/users/${addRole.user?.id.toString()}/roles/`,
                   { id: addRole.roleId },
                   signal
                 )

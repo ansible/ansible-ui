@@ -21,7 +21,7 @@ export function useDeleteUserTokens(onComplete: (items: Token[]) => void) {
             }),
       actionButtonText: t('Delete token', { count: tokens.length }),
       items: tokens.sort((l, r) =>
-        compareStrings(l.summary_fields.user.username, r.summary_fields.user.username)
+        compareStrings(l.summary_fields.user?.username, r.summary_fields.user?.username)
       ),
       keyFn: getItemKey,
       isDanger: true,

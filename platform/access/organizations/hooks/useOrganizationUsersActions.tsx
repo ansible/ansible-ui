@@ -151,9 +151,9 @@ export function useOrganizationUsersRowActions(view: IPlatformView<PlatformUser>
         orgListsOptions: orgListOptions,
         onManageRolesClick: () =>
           pageNavigate(PlatformRoute.OrganizationManageUserRoles, {
-            params: { id: params.id, userId: user.id },
+            params: { id: params.id, userId: user?.id },
           }),
-        userOrTeamName: user.username,
+        userOrTeamName: user?.username,
       });
     },
     [

@@ -83,7 +83,7 @@ export function DeleteRoleConfirmation(props: DeleteRoleConfirmationProps) {
         <>
           {t(
             `Are you sure you want to remove ${role.name.toLowerCase()} access from ${
-              user.username
+              user?.username
             }?`
           )}
         </>

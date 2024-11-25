@@ -47,7 +47,7 @@ export function useRemoveUsersFromResource() {
         }),
         actionButtonText: t('Remove user', { count: users.length }),
         items: users.sort((l, r) => compareStrings(l.username, r.username)),
-        keyFn: (user: AwxUser) => user.id,
+        keyFn: (user: AwxUser) => user?.id,
         alertPrompts:
           undeletableUsers.length > 0
             ? [
@@ -62,13 +62,13 @@ export function useRemoveUsersFromResource() {
         isItemNonActionable: cannotRemoveUser,
         isDanger: true,
         confirmationColumns,
-        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user.username }],
+        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user?.username }],
         onComplete,
         actionFn: async (user: AwxUser, signal: AbortSignal) => {
           if (user.user_roles) {
             for (const role of user.user_roles) {
               await postRequest(
-                awxAPI`/users/${user.id.toString()}/roles/`,
+                awxAPI`/users/${user?.id.toString()}/roles/`,
                 {
                   id: role.id,
                   disassociate: true,

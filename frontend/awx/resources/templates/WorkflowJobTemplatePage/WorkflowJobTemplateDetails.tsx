@@ -98,7 +98,7 @@ export function WorkflowJobTemplateDetails(props: {
       <UserDateDetail
         label={t('Created')}
         date={template.created}
-        user={template.summary_fields.created_by}
+        user={template.summary_fields?.created_by}
       />
       <LastModifiedPageDetail
         value={template.modified}

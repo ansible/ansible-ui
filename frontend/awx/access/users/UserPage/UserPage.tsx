@@ -47,7 +47,7 @@ export function UserPage() {
         isPinned: true,
         icon: PencilAltIcon,
         label: t('Edit user'),
-        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user.id } }),
+        onClick: (user) => pageNavigate(AwxRoute.EditUser, { params: { id: user?.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -82,10 +82,10 @@ export function UserPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={user.username}
+        title={user?.username}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(AwxRoute.Users) },
-          { label: user.username },
+          { label: user?.username },
         ]}
         headerActions={
           <PageActions<AwxUser> actions={itemActions} position={'right'} selectedItem={user} />
@@ -98,7 +98,7 @@ export function UserPage() {
           persistentFilterKey: 'users',
         }}
         tabs={pageTabs}
-        params={{ id: user.id }}
+        params={{ id: user?.id }}
       />
     </PageLayout>
   );

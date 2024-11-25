@@ -13,7 +13,7 @@ export function useDeleteUsers(onComplete: (users: AwxUser[]) => void) {
   const deleteActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
-      cell: (user: AwxUser) => <TextCell text={user.username} />,
+      cell: (user: AwxUser) => <TextCell text={user?.username} />,
       sort: 'username',
       maxWidth: 200,
     }),
@@ -54,7 +54,7 @@ export function useDeleteUsers(onComplete: (users: AwxUser[]) => void) {
       actionColumns,
       onComplete,
       actionFn: (user: AwxUser, signal) =>
-        requestDelete(awxAPI`/users/${user.id.toString()}/`, signal),
+        requestDelete(awxAPI`/users/${user?.id.toString()}/`, signal),
     });
   };
   return deleteUsers;

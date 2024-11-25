@@ -185,7 +185,7 @@ function ReviewExpandableList<
         return [
           {
             header: t('Username'),
-            cell: (user: K) => <TextCell text={user.username} />,
+            cell: (user: K) => <TextCell text={user?.username} />,
             card: 'name',
             list: 'name',
             sort: 'username',

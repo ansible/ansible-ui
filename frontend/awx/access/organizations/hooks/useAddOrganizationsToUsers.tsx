@@ -29,7 +29,7 @@ export function useAddOrganizationsToUsers() {
         actionFn: async (organization: Organization, signal: AbortSignal) => {
           for (const user of users) {
             await postRequest(
-              awxAPI`/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user?.id.toString()}/roles/`,
               { id: organization.summary_fields.object_roles.member_role.id },
               signal
             );

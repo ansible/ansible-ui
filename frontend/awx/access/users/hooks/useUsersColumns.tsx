@@ -18,11 +18,11 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
         header: t('Username'),
         cell: (user) => (
           <TextCell
-            text={user.username}
+            text={user?.username}
             to={
               disableLinks
                 ? undefined
-                : getPageUrl(AwxRoute.UserDetails, { params: { id: user.id.toString() } })
+                : getPageUrl(AwxRoute.UserDetails, { params: { id: user?.id.toString() } })
             }
           />
         ),
@@ -40,19 +40,19 @@ export function useUsersColumns(options?: { disableLinks?: boolean; disableSort?
       {
         header: t('First name'),
         type: 'text',
-        value: (user) => user.first_name,
+        value: (user) => user?.first_name,
         sort: 'first_name',
       },
       {
         header: t('Last name'),
         type: 'text',
-        value: (user) => user.last_name,
+        value: (user) => user?.last_name,
         sort: 'last_name',
       },
       {
         header: t('Email'),
         type: 'text',
-        value: (user) => user.email,
+        value: (user) => user?.email,
         sort: 'email',
       },
       {

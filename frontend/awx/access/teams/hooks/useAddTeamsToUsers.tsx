@@ -20,7 +20,7 @@ export function useAddTeamsToUsers() {
         actionFn: async (team: Team, signal: AbortSignal) => {
           for (const user of users) {
             await postRequest(
-              awxAPI`/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user?.id.toString()}/roles/`,
               { id: team.summary_fields.object_roles.member_role.id },
               signal
             );

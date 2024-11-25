@@ -20,7 +20,7 @@ export function useRemoveOrganizationAdmins(onComplete: (users: PlatformUser[]) 
   const removeActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
-      cell: (user: PlatformUser) => <TextCell text={user.username} />,
+      cell: (user: PlatformUser) => <TextCell text={user?.username} />,
       sort: 'username',
       maxWidth: 200,
     }),
@@ -48,7 +48,7 @@ export function useRemoveOrganizationAdmins(onComplete: (users: PlatformUser[]) 
       actionFn: (user: PlatformUser, signal) =>
         postRequest(
           gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/admins/disassociate/`,
-          { instances: [user.id.toString()] },
+          { instances: [user?.id.toString()] },
           signal
         ),
     });

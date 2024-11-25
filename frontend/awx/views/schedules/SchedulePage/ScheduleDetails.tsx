@@ -96,7 +96,7 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
             <UserDateDetail
               label={t('Created')}
               date={schedule.created}
-              user={schedule.summary_fields.created_by}
+              user={schedule.summary_fields?.created_by}
             />
             <LastModifiedPageDetail
               value={schedule.modified}
