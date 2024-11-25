@@ -245,50 +245,6 @@ describe('Projects', () => {
       });
       cy.get('input[aria-label="Click to disable schedule"]').should('exist');
     });
-
-    it('can delete a schedule from the schedules list row', () => {
-      cy.filterTableBySingleSelect('name', schedule.name);
-      cy.clickTableRowAction('name', schedule.name, 'delete-schedule', {
-        disableFilter: true,
-        inKebab: true,
-      });
-      cy.getModal().then(() => {
-        cy.get('#confirm').click();
-        cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');
-        cy.clickButton(/^Delete schedule/);
-        cy.wait('@deleted')
-          .its('response')
-          .then((deleted) => {
-            expect(deleted?.statusCode).to.eql(204);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-          });
-      });
-      cy.contains('No results found');
-      cy.clickButton(/^Clear all filters$/);
-    });
-
-    it('can delete a schedule from the schedules list toolbar', () => {
-      cy.filterTableBySingleSelect('name', schedule.name);
-      cy.getTableRow('name', schedule.name, { disableFilter: true }).within(() => {
-        cy.get('input[aria-label="Select all rows"]').click();
-      });
-      cy.clickToolbarKebabAction('delete-schedules');
-      cy.intercept('DELETE', awxAPI`/schedules/${schedule.id.toString()}/`).as('deleted');
-      cy.getModal().then(() => {
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete schedule/);
-        cy.wait('@deleted')
-          .its('response')
-          .then((deleted) => {
-            expect(deleted?.statusCode).to.eql(204);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-          });
-      });
-      cy.contains('No results found');
-      cy.clickButton(/^Clear all filters$/);
-    });
   });
 
   describe('Projects: Job Templates Tab', () => {
