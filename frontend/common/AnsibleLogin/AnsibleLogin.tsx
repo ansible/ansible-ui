@@ -1,3 +1,4 @@
+import { useFrameworkTranslations } from '@ansible/ansible-ui-framework';
 import { ErrorBoundary } from '@ansible/ansible-ui-framework/components/ErrorBoundary';
 import {
   BackgroundImage,
@@ -16,7 +17,6 @@ import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { useFrameworkTranslations } from '../../../framework';
 import { getCookie } from '../crud/cookie';
 import { createRequestError, RequestError } from '../crud/RequestError';
 import { AuthOption, SocialAuthLogin } from '../SocialAuthLogin';

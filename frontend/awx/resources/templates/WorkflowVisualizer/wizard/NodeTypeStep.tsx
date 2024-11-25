@@ -4,6 +4,7 @@ import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/Page
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   Grid,
   GridItem,
@@ -29,7 +30,6 @@ import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateS
 import { RESOURCE_TYPE } from '../constants';
 import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
 import { getResourceURL, shouldHideOtherStep } from './helpers';
-import { ExternalLink } from '../../../../../hub/common/ExternalLink';
 
 export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =

@@ -19,6 +19,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -30,7 +31,6 @@ import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { InnerForm } from './NotifierFormInner';
 import { NotifierFormMessages, areMessagesEmpty } from './NotifierFormMessages';
-import { ExternalLink } from '../../../hub/common/ExternalLink';
 
 export function EditNotifier() {
   return <NotifierForm mode={'edit'} />;

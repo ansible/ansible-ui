@@ -1,18 +1,18 @@
-import { SetStateAction, useEffect, useMemo, useState } from 'react';
 import {
   ITableColumn,
   LoadingPage,
   PageTable,
   TextCell,
   useInMemoryView,
-} from '../../../../framework';
-import { useTranslation } from 'react-i18next';
-import { UserAssignment } from '../interfaces/UserAssignment';
-import { TeamAssignment } from '../interfaces/TeamAssignment';
-import { useGet } from '../../crud/useGet';
-import { getItemKey } from '../../crud/Data';
+} from '@ansible/ansible-ui-framework';
 import { Badge, Divider, ExpandableSection } from '@patternfly/react-core';
+import { SetStateAction, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { getItemKey } from '../../crud/Data';
+import { useGet } from '../../crud/useGet';
+import { TeamAssignment } from '../interfaces/TeamAssignment';
+import { UserAssignment } from '../interfaces/UserAssignment';
 
 type OrgRolesListBaseProps = {
   isExpandable?: boolean;

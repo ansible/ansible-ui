@@ -4,10 +4,10 @@ import {
   PageDashboardGettingStartedStep,
 } from '@ansible/ansible-ui-framework';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { Text } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink } from '../../../hub/common/ExternalLink';
 import { AwxRoute } from '../../main/AwxRoutes';
 
 export function AwxGettingStartedCard(props: {

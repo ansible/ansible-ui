@@ -1,10 +1,10 @@
+import { ColumnPriority, LoadingPage, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ColumnPriority, LoadingPage, ToolbarFilterType } from '../../../../framework';
 import { useOptions } from '../../crud/useOptions';
 import { useGetLinkToResourcePage } from '../hooks/useGetLinkToResourcePage';
 import { useMapContentTypeToDisplayName } from '../hooks/useMapContentTypeToDisplayName';

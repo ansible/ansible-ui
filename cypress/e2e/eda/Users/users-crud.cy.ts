@@ -1,5 +1,5 @@
 //Tests a user's ability to create, edit, and delete Users in the EDA UI.
-import { randomString } from '../../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 

@@ -14,6 +14,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { ScmType } from '@ansible/common-ui/scm';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   LabelGroup,
   TextList,
@@ -33,7 +34,6 @@ import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function ProjectDetails(props: { projectId?: string; disableScroll?: boolean }) {
   const { t } = useTranslation();

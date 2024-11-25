@@ -1,9 +1,9 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
 import { Button, ButtonVariant, Modal, ModalVariant } from '@patternfly/react-core';
-import { OrgRolesList, OrgRolesListProps } from '../components/OrgRolesList';
-import { Trans, useTranslation } from 'react-i18next';
-import { useCallback, useState } from 'react';
-import { usePageDialog } from '../../../../framework';
 import { CogIcon } from '@patternfly/react-icons';
+import { useCallback, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { OrgRolesList, OrgRolesListProps } from '../components/OrgRolesList';
 
 type ViewOrgRolesProps = {
   orgListsOptions: OrgRolesListProps[];

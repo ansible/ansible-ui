@@ -1,4 +1,5 @@
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   Button,
   Checkbox,
@@ -20,7 +21,6 @@ import { useEffect } from 'react';
 import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ExternalLink } from '../../hub/common/ExternalLink';
 import { useAwxConfig } from './useAwxConfig';
 import { useGetDocsUrl } from './util/useGetDocsUrl';
 

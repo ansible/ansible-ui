@@ -1,7 +1,9 @@
 import { PageHeader, PageLayout, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { PageDashboard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardCard';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { CardBody, ProgressStep, ProgressStepper, Stack, Text } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { edaAPI } from '../common/eda-utils';
@@ -15,8 +17,6 @@ import { EdaRecentProjectsCard } from './cards/EdaProjectsCard';
 import { EdaRuleAuditCard } from './cards/EdaRuleAuditCard';
 import { RuleAuditChart } from './cards/EdaRuleAuditChartCard';
 import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { ExternalLink } from '../../hub/common/ExternalLink';
 
 export function EdaOverview() {
   const { t } = useTranslation();

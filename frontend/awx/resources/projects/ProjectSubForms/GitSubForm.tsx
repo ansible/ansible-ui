@@ -1,13 +1,13 @@
 import { PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { Trans, useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { ScmTypeOptions } from './ScmTypeOptions';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function GitSubForm() {
   const { t } = useTranslation();

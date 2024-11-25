@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { IFilterState } from './PageToolbar/PageToolbarFilter';
 import { useIsMountedRef } from './components/useIsMounted';
 import { useURLSearchParams } from './components/useURLSearchParams';
 import { useWindowLocation } from './components/useWindowLocation';
-
-import { ITableColumn, IToolbarFilter } from '../framework';
+import { ITableColumn } from './PageTable/PageTableColumn';
+import { IFilterState, IToolbarFilter } from './PageToolbar/PageToolbarFilter';
 
 /**
  * The IView interface defines the state for a table.

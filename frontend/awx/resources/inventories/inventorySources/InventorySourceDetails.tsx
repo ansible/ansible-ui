@@ -14,6 +14,7 @@ import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetai
 import { StatusCell } from '@ansible/common-ui/Status';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   TextList,
   TextListItem,
@@ -34,7 +35,6 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { ansibleDocUrls } from '../../../main/ansibleDocsUrls';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export type WebsocketInventorySource = {
   status: string;

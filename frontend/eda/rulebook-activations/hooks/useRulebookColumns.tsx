@@ -1,6 +1,6 @@
+import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, TextCell } from '../../../../framework';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
 
 export function useRulebookColumns() {

@@ -1,6 +1,6 @@
 //Tests a user's ability to create, edit, and delete a EVent Stream in the EDA UI.
 
-import { randomString } from '../../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 

@@ -3,19 +3,19 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { PageLayout, PageTable, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ButtonVariant } from '@patternfly/react-core';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaView } from '../../../common/useEventDrivenView';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { EdaRoute } from '../../../main/EdaRoutes';
 import { useCredentialActions } from '../../credentials/hooks/useCredentialActions';
 import { useCredentialsActions } from '../../credentials/hooks/useCredentialsActions';
 import { useCredentialTypeCredentialsColumns } from '../hooks/useCredentialTypeCredentialsColumns';
 import { useCredentialTypeCredentialsFilters } from '../hooks/useCredentialTypeCredentialsFilters';
-import { PageTableEmptyState } from '../../../../../framework/PageTable/PageTableEmptyState';
-import { ButtonLink } from '../../../../../framework/components/ButtonLink';
-import { ButtonVariant } from '@patternfly/react-core';
-import { EdaRoute } from '../../../main/EdaRoutes';
-import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 
 export function CredentialTypeCredentials() {
   const params = useParams<{ id: string }>();

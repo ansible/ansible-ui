@@ -1,6 +1,6 @@
 //Tests a user's ability to log into and out of the EDA UI.
 //Note that EDA Actions do not have any CRUD functionality.
-import { randomString } from '../../../../framework/utils/random-string';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Check if the build includes EDA', () => {

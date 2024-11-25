@@ -1,25 +1,25 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   Alert,
   AlertActionLink,
+  CardBody,
+  ClipboardCopy,
   ClipboardCopyButton,
   CodeBlock,
   CodeBlockAction,
   CodeBlockCode,
-  ClipboardCopy,
   Form,
   FormFieldGroupExpandable,
   FormFieldGroupHeader,
   FormGroup,
   Panel,
-  CardBody,
 } from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function ConstructedInventoryHint() {
   const config = useAwxConfig();

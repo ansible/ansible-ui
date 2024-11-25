@@ -1,5 +1,5 @@
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { expect, test } from '@playwright/test';
-import { randomString } from '../../framework/utils/random-string';
 import { login, platformUI } from '../commands/login';
 import { logout } from '../commands/logout';
 import { setupAfter } from '../commands/setup';

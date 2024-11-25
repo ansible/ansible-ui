@@ -1,8 +1,8 @@
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { useCallback } from 'react';
-import { useGetPageUrl } from '../../../../framework';
 
 export function useGetLinkToResourcePage() {
   const getPageUrl = useGetPageUrl();
