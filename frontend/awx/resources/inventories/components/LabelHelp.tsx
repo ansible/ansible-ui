@@ -1,6 +1,6 @@
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { Trans, useTranslation } from 'react-i18next';
 import { ansibleDocUrls } from '../../../main/ansibleDocsUrls';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function LabelHelp(props: { inventoryKind: string }) {
   const { t } = useTranslation();

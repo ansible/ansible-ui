@@ -1,16 +1,18 @@
 //Tests a user's ability to map event streams to sources       .
 
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
+import {
+  EdaCredential,
+  EdaCredentialCreate,
+} from '../../../../frontend/eda/interfaces/EdaCredential';
 import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
+import { EdaEventStream } from '../../../../frontend/eda/interfaces/EdaEventStream';
+import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
 import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 import { ActivationRead } from '../../../../frontend/eda/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { randomString } from '../../../../framework/utils/random-string';
-import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaCredentialCreate } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaEventStream } from '../../../../frontend/eda/interfaces/EdaEventStream';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
 
 describe('Check if the build includes EDA', () => {
   before(function () {

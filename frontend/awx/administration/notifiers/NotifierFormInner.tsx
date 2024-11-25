@@ -12,9 +12,9 @@ import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { TFunction } from 'i18next';
 import { FieldPathByValue } from 'react-hook-form';
-import { ExternalLink } from '../../../hub/common/ExternalLink';
 
 export function InnerForm(props: { notification_type: string }) {
   const notification_type = props.notification_type;

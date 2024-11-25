@@ -1,7 +1,7 @@
 //Tests a user's ability to create, edit, and delete an decision environment in the EDA UI.
-import { randomString } from '../../../../framework/utils/random-string';
-import { edaAPI } from '../../../support/formatApiPathForEDA';
+import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Check if the build includes EDA', () => {
   before(function () {

@@ -6,6 +6,7 @@ import {
   PageTable,
 } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
+import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo, useState } from 'react';
@@ -16,7 +17,6 @@ import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
 import { RuleListItemType } from '../types';
 import { ScheduleSummary } from './ScheduleSummary';
-import { ExternalLink } from '../../../../hub/common/ExternalLink';
 
 export function RulesList(props: {
   setIsOpen?: (isOpen: boolean | number) => void;

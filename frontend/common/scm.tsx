@@ -1,5 +1,5 @@
+import { TextCell } from '@ansible/ansible-ui-framework';
 import { ReactNode } from 'react';
-import { TextCell } from '../../framework';
 
 export function getScmType(scm_type: string | null | undefined): {
   text: string;

@@ -1,3 +1,4 @@
+import { RunningIcon, TextCell } from '@ansible/ansible-ui-framework';
 import { Label } from '@patternfly/react-core';
 import {
   BanIcon,
@@ -11,7 +12,6 @@ import {
   StopCircleIcon,
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { RunningIcon, TextCell } from '../../framework';
 
 export function StatusCell(props: {
   status?: string;

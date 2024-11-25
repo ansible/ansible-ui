@@ -1,4 +1,4 @@
-import { AwxError } from '../../awx/common/AwxError';
+import { AwxError } from '@ansible/awx-ui/common/AwxError';
 
 import { useTranslation } from 'react-i18next';
 

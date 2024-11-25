@@ -1,5 +1,5 @@
+import { DateTimeCell, PageDetail } from '@ansible/ansible-ui-framework';
 import { t } from 'i18next';
-import { DateTimeCell, PageDetail } from '../../framework';
 
 export function LastModifiedPageDetail(props: {
   value: string | number | undefined | null;

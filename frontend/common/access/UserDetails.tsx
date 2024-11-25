@@ -1,7 +1,7 @@
+import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { AuthenticationType } from '@ansible/awx-ui/access/users/components/AuthenticationType';
+import { UserType } from '@ansible/awx-ui/access/users/components/UserType';
 import { useTranslation } from 'react-i18next';
-import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
-import { AuthenticationType } from '../../awx/access/users/components/AuthenticationType';
-import { UserType } from '../../awx/access/users/components/UserType';
 import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type UserDetailsType = {

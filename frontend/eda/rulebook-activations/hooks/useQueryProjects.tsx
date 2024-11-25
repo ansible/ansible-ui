@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
-import { EdaItemsResponse } from '../../common/EdaItemsResponse';
 import {
   PageAsyncSelectOptionsFn,
   PageAsyncSelectQueryOptions,
   PageAsyncSelectQueryResult,
-} from '../../../../framework/PageInputs/PageAsyncSelectOptions';
+} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { useCallback } from 'react';
 import { requestGet } from '../../../common/crud/Data';
+import { EdaItemsResponse } from '../../common/EdaItemsResponse';
 
 export function useQueryProjectOptions<
   ItemT extends object,

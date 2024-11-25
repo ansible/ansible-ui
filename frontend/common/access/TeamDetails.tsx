@@ -1,6 +1,6 @@
+import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { DateTimeCell, LabelsCell, PageDetail, PageDetails } from '../../../framework';
 import { LastModifiedPageDetail } from '../LastModifiedPageDetail';
 
 export type TeamDetailsType = {

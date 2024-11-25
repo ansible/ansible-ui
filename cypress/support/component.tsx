@@ -20,6 +20,7 @@ import '@patternfly/patternfly/patternfly-charts.css';
 import '@patternfly/patternfly/patternfly-charts-theme-dark.css';
 
 import '@4tw/cypress-drag-drop';
+import { PageFramework } from '@ansible/ansible-ui-framework';
 import { AwxActiveUserContext } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import '@ansible/common-ui/i18n';
@@ -33,7 +34,6 @@ import 'cypress-react-selector';
 import type { MountReturn } from 'cypress/react';
 import { mount } from 'cypress/react18';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { PageFramework } from '../../framework';
 import './auth';
 import './awx-access-commands';
 import './awx-commands';

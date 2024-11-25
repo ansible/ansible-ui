@@ -1,6 +1,3 @@
-import { LabelGroup } from '@patternfly/react-core';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   ColumnDashboardOption,
   ColumnModalOption,
@@ -11,10 +8,13 @@ import {
   TextCell,
   useGetPageUrl,
   usePageNavigate,
-} from '../../framework';
-import { CredentialLabel } from '../awx/common/CredentialLabel';
-import { SummaryFieldCredential } from '../awx/interfaces/summary-fields/summary-fields';
-import { AwxRoute } from '../awx/main/AwxRoutes';
+} from '@ansible/ansible-ui-framework';
+import { CredentialLabel } from '@ansible/awx-ui/common/CredentialLabel';
+import { SummaryFieldCredential } from '@ansible/awx-ui/interfaces/summary-fields/summary-fields';
+import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
+import { LabelGroup } from '@patternfly/react-core';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) {
   const { t } = useTranslation();

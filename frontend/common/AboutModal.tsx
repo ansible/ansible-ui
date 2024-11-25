@@ -1,7 +1,7 @@
+import { usePageDialog } from '@ansible/ansible-ui-framework';
 import { AboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePageDialog } from '../../framework';
 
 export interface AnsibleAboutModalProps {
   brandImageSrc: string;
