@@ -56,7 +56,7 @@ export function UserPage() {
             label: t('Edit user'),
             // isHidden: (_user: EdaUser) => !canViewOrEditUsers,
             onClick: (user: EdaUser) =>
-              pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
+              pageNavigate(EdaRoute.EditUser, { params: { id: user?.id } }),
           },
           {
             type: PageActionType.Button,

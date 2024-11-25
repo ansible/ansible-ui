@@ -17,7 +17,7 @@ export function useRemoveTeamUsers(onComplete: (users: PlatformUser[]) => void) 
   const removeActionNameColumn = useMemo(
     () => ({
       header: t('Username'),
-      cell: (user: PlatformUser) => <TextCell text={user.username} />,
+      cell: (user: PlatformUser) => <TextCell text={user?.username} />,
       sort: 'username',
       maxWidth: 200,
     }),
@@ -42,7 +42,7 @@ export function useRemoveTeamUsers(onComplete: (users: PlatformUser[]) => void) 
       actionFn: (user: PlatformUser, signal) =>
         postRequest(
           gatewayAPI`/teams/${team?.id?.toString() ?? ''}/users/disassociate/`,
-          { instances: [user.id.toString()] },
+          { instances: [user?.id.toString()] },
           signal
         ),
     });

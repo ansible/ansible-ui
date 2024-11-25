@@ -101,8 +101,8 @@ test.beforeEach(async ({ page }) => {
       };
       mockData.api.gateway.v1.me = [user];
       mockData.api.gateway.v1.legacy_auth = {
-        id: user.id,
-        username: user.username,
+        id: user?.id,
+        username: user?.username,
         is_authenticated: true,
         needs_rename: false,
         is_migrated: true,

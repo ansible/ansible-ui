@@ -24,8 +24,8 @@ export function useAccessColumns(
         header: t('Username'),
         cell: (user) => (
           <TextCell
-            text={user.username}
-            to={getPageUrl(AwxRoute.UserDetails, { params: { id: user.id } })}
+            text={user?.username}
+            to={getPageUrl(AwxRoute.UserDetails, { params: { id: user?.id } })}
           />
         ),
         card: 'name',
@@ -36,19 +36,19 @@ export function useAccessColumns(
       {
         header: t('First name'),
         type: 'text',
-        value: (user) => user.first_name,
+        value: (user) => user?.first_name,
         sort: 'first_name',
       },
       {
         header: t('Last name'),
         type: 'text',
-        value: (user) => user.last_name,
+        value: (user) => user?.last_name,
         sort: 'last_name',
       },
       {
         header: t('Email'),
         type: 'text',
-        value: (user) => user.email,
+        value: (user) => user?.email,
         sort: 'email',
       },
       {

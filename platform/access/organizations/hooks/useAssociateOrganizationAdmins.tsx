@@ -28,7 +28,7 @@ export function useAssociateOrganizationAdmins(onComplete: () => Promise<void>) 
         await postRequest(
           gatewayAPI`/organizations/${organization?.id?.toString() ?? ''}/admins/associate/`,
           {
-            instances: users.map((user) => user.id.toString()),
+            instances: users.map((user) => user?.id.toString()),
           }
         );
         await onComplete();

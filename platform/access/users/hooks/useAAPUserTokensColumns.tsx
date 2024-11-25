@@ -32,7 +32,7 @@ export function useUserTokensColumns(options?: { disableLinks?: boolean; disable
               options?.disableLinks
                 ? undefined
                 : getPageUrl(PlatformRoute.AAPUserTokenDetails, {
-                    params: { id: token.summary_fields.user.id, tokenid: token.id.toString() },
+                    params: { id: token.summary_fields.user?.id, tokenid: token.id.toString() },
                   })
             }
           />

@@ -40,7 +40,7 @@ function UserTeamsInternal(props: { user: AwxUser }) {
   const toolbarFilters = useTeamsFilters();
   const tableColumns = useTeamsColumns();
   const view = useAwxView<Team>({
-    url: awxAPI`/users/${user.id.toString()}/teams/`,
+    url: awxAPI`/users/${user?.id.toString()}/teams/`,
     toolbarFilters,
     disableQueryString: true,
   });

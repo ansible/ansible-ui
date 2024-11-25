@@ -18,7 +18,7 @@ export function useDeleteAccessRole(onComplete?: () => void) {
             disassociate: true,
           });
         }
-        await postRequest(awxAPI`/users/${user.id.toString()}/roles/`, {
+        await postRequest(awxAPI`/users/${user?.id.toString()}/roles/`, {
           id: role.id,
           disassociate: true,
         });

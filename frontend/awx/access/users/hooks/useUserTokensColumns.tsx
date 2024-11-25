@@ -26,7 +26,7 @@ export function useUserTokensColumns(options?: { disableLinks?: boolean; disable
               options?.disableLinks
                 ? undefined
                 : getPageUrl(AwxRoute.UserTokenDetails, {
-                    params: { id: token.summary_fields.user.id, tokenid: token.id.toString() },
+                    params: { id: token.summary_fields.user?.id, tokenid: token.id.toString() },
                   })
             }
           />

@@ -14,13 +14,13 @@ export function useAddUsersToResources() {
     (users: AwxUser[], resources: ResourceType[], onComplete?: (users: AwxUser[]) => void) => {
       userProgressDialog({
         title: t('Adding users', { count: resources.length }),
-        keyFn: (user: AwxUser) => user.id,
+        keyFn: (user: AwxUser) => user?.id,
         items: users,
-        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user.username }],
+        actionColumns: [{ header: t('User'), cell: (user: AwxUser) => user?.username }],
         actionFn: async (user: AwxUser, signal: AbortSignal) => {
           for (const resource of resources) {
             await postRequest(
-              awxAPI`/users/${user.id.toString()}/roles/`,
+              awxAPI`/users/${user?.id.toString()}/roles/`,
               { id: resource.summary_fields.object_roles.member_role.id },
               signal
             );

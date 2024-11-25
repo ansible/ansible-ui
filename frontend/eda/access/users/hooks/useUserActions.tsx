@@ -29,7 +29,7 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         icon: PencilAltIcon,
         label: t('Edit user'),
         isPinned: true,
-        onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user.id } }),
+        onClick: (user: EdaUser) => pageNavigate(EdaRoute.EditUser, { params: { id: user?.id } }),
       },
       {
         type: PageActionType.Seperator,
@@ -41,7 +41,7 @@ export function useUserActions(view: IEdaView<EdaUser>) {
         label: t('Delete user'),
         onClick: (user: EdaUser) => deleteUsers([user]),
         isDisabled: (user) =>
-          !activeEdaUser || Number(user.id) === Number(activeEdaUser.id)
+          !activeEdaUser || Number(user?.id) === Number(activeEdaUser.id)
             ? t('Current user cannot be deleted')
             : undefined,
         isDanger: true,

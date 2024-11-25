@@ -23,7 +23,7 @@ export function useAssociateTeamUsers(onComplete: () => Promise<void>) {
       async (users: PlatformUser[]) => {
         if (!team) return;
         await postRequest(gatewayAPI`/teams/${team?.id?.toString() ?? ''}/users/associate/`, {
-          instances: users.map((user) => user.id.toString()),
+          instances: users.map((user) => user?.id.toString()),
         });
         await onComplete();
       }

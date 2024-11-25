@@ -96,7 +96,7 @@ export function AddRolesToUser(props: { id?: string; userRolesRoute?: string }) 
         ],
         actionFn: ({ resource, role }) =>
           postRequest(awxAPI`/role_user_assignments/`, {
-            user: user.id,
+            user: user?.id,
             role_definition: role.id,
             content_type: resourceType,
             object_id: resource.id,

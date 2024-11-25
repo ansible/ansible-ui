@@ -15,8 +15,8 @@ export function UserDateDetail(props: { label: string; date: string; user: User 
     <PageDetail label={props.label}>
       <DateTimeCell
         value={props.date}
-        author={props?.user.username}
-        onClick={() => pageNavigate(AwxRoute.UserDetails, { params: { id: props.user.id } })}
+        author={props?.user?.username}
+        onClick={() => pageNavigate(AwxRoute.UserDetails, { params: { id: props.user?.id } })}
       />
     </PageDetail>
   );

@@ -286,13 +286,13 @@ export function PlatformOrganizationManageUserRoles() {
         title: t('Manage roles'),
         description: (
           <Trans>
-            The organization roles listed below for <b>{user.username}</b> have been changed.
+            The organization roles listed below for <b>{user?.username}</b> have been changed.
           </Trans>
         ),
         keyFn: (item) =>
           (item as UserAndAwxRole).awxRole
-            ? `${item.user.id}_${(item as UserAndAwxRole).awxRole.id}`
-            : `${item.user.id}_${(item as UserAndEdaRole).edaRole.id}`,
+            ? `${item.user?.id}_${(item as UserAndAwxRole).awxRole.id}`
+            : `${item.user?.id}_${(item as UserAndEdaRole).edaRole.id}`,
         items,
         actionColumns: [
           {

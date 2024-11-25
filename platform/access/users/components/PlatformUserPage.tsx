@@ -43,10 +43,10 @@ export function PlatformUserPage() {
   return (
     <PageLayout>
       <PageHeader
-        title={user.username}
+        title={user?.username}
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
-          { label: user.username },
+          { label: user?.username },
         ]}
         headerActions={
           <PageActions<PlatformUser> actions={actions} position={'right'} selectedItem={user} />
@@ -59,7 +59,7 @@ export function PlatformUserPage() {
           persistentFilterKey: 'users',
         }}
         tabs={pageTabs}
-        params={{ id: user.id }}
+        params={{ id: user?.id }}
       />
     </PageLayout>
   );

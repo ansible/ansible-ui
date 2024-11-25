@@ -37,7 +37,7 @@ export function ViewAwxOrgUserRoles(props: { item: UserAssignment }) {
   const view = usePlatformView<UserAssignment>({
     url: awxAPI`/role_user_assignments/`,
     queryParams: {
-      user_id: user.id.toString(),
+      user_id: user?.id.toString(),
       object_id,
       content_type__model: 'organization',
     },
@@ -46,7 +46,7 @@ export function ViewAwxOrgUserRoles(props: { item: UserAssignment }) {
 
   return (
     <Modal
-      title={t(`Automation Execution roles for ${user.username}`)}
+      title={t(`Automation Execution roles for ${user?.username}`)}
       variant={ModalVariant.medium}
       isOpen
       onClose={onClose}

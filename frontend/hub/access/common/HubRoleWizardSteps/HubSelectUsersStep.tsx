@@ -22,20 +22,20 @@ export function HubSelectUsersStep(props: { descriptionForUsersSelection?: strin
     return [
       {
         header: t('Username'),
-        cell: (user: HubUser) => <TextCell text={user.username} />,
+        cell: (user: HubUser) => <TextCell text={user?.username} />,
         sort: 'username',
         maxWidth: 200,
       },
       {
         header: t('First name'),
         type: 'text',
-        value: (user: HubUser) => user.first_name,
+        value: (user: HubUser) => user?.first_name,
         sort: 'first_name',
       },
       {
         header: t('Last name'),
         type: 'text',
-        value: (user: HubUser) => user.last_name,
+        value: (user: HubUser) => user?.last_name,
         sort: 'last_name',
       },
     ];

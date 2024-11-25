@@ -41,7 +41,7 @@ function UserOrganizationsInternal(props: { user: AwxUser }) {
   const tableColumns = useOrganizationsColumns();
 
   const view = useAwxView<Organization>({
-    url: awxAPI`/users/${user.id.toString()}/organizations/`,
+    url: awxAPI`/users/${user?.id.toString()}/organizations/`,
     toolbarFilters,
     disableQueryString: true,
   });

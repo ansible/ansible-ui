@@ -103,15 +103,15 @@ export function EdaRulebookActivationAddUsers() {
     return new Promise<void>((resolve) => {
       userProgressDialog({
         title: t('Add roles'),
-        keyFn: ({ user, role }) => `${user.id}_${role.id}`,
+        keyFn: ({ user, role }) => `${user?.id}_${role.id}`,
         items,
         actionColumns: [
-          { header: t('User'), cell: ({ user }) => user.username },
+          { header: t('User'), cell: ({ user }) => user?.username },
           { header: t('Role'), cell: ({ role }) => role.name },
         ],
         actionFn: ({ user, role }) =>
           postRequest(edaAPI`/role_user_assignments/`, {
-            user: user.id,
+            user: user?.id,
             role_definition: role.id,
             content_type: 'eda.activation',
             object_id: activation.id,

@@ -22,7 +22,7 @@ export function AwxSelectUsersStep(props: { descriptionForUsersSelection?: strin
     return [
       {
         header: t('Username'),
-        cell: (user: AwxUser) => <TextCell text={user.username} />,
+        cell: (user: AwxUser) => <TextCell text={user?.username} />,
         card: 'name',
         list: 'name',
         sort: 'username',
@@ -31,13 +31,13 @@ export function AwxSelectUsersStep(props: { descriptionForUsersSelection?: strin
       {
         header: t('First name'),
         type: 'text',
-        value: (user: AwxUser) => user.first_name,
+        value: (user: AwxUser) => user?.first_name,
         sort: 'first_name',
       },
       {
         header: t('Last name'),
         type: 'text',
-        value: (user: AwxUser) => user.last_name,
+        value: (user: AwxUser) => user?.last_name,
         sort: 'last_name',
       },
     ];

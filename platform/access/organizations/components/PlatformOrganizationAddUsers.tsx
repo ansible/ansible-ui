@@ -207,13 +207,13 @@ export function PlatformOrganizationAddUsers() {
         title: t('Add roles'),
         keyFn: (item) =>
           (item as UserAndPlatformRole).platformOrgMemberRole
-            ? `${item.user.id}_${(item as UserAndPlatformRole).platformOrgMemberRole.id}`
+            ? `${item.user?.id}_${(item as UserAndPlatformRole).platformOrgMemberRole.id}`
             : (item as UserAndAwxRole).awxRole
-              ? `${item.user.id}_${(item as UserAndAwxRole).awxRole.id}`
-              : `${item.user.id}_${(item as UserAndEdaRole).edaRole.id}`,
+              ? `${item.user?.id}_${(item as UserAndAwxRole).awxRole.id}`
+              : `${item.user?.id}_${(item as UserAndEdaRole).edaRole.id}`,
         items,
         actionColumns: [
-          { header: t('User'), cell: ({ user }) => user.username },
+          { header: t('User'), cell: ({ user }) => user?.username },
           {
             header: t('Role'),
             cell: (item) =>

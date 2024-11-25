@@ -63,7 +63,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; create
   const tableColumns = useUserTokensColumns();
   const toolbarFilters = useUserTokensFilters();
   const view = useAwxView<Token>({
-    url: awxAPI`/users/${user.id.toString()}/tokens/`,
+    url: awxAPI`/users/${user?.id.toString()}/tokens/`,
     toolbarFilters,
     tableColumns,
   });
@@ -78,7 +78,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; create
         isPinned: true,
         icon: PlusCircleIcon,
         label: t('Create token'),
-        href: getPageUrl(props.createRoute, { params: { id: user.id } }),
+        href: getPageUrl(props.createRoute, { params: { id: user?.id } }),
       },
       { type: PageActionType.Seperator },
       {
@@ -90,7 +90,7 @@ function UserTokensInternal(props: { infoMessage?: string; user: AwxUser; create
         onClick: deleteTokens,
       },
     ],
-    [deleteTokens, getPageUrl, t, user.id, props.createRoute]
+    [deleteTokens, getPageUrl, t, user?.id, props.createRoute]
   );
 
   const rowActions = useMemo<IPageAction<Token>[]>(

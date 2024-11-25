@@ -57,7 +57,7 @@ function CreateAAPUserTokenInternal(props: {
     const newToken = await postRequest(gatewayAPI`/tokens/`, tokenInput);
     props.onCreate(newToken);
     pageNavigate(PlatformRoute.AAPUserTokenDetails, {
-      params: { id: user.id, tokenid: newToken.id },
+      params: { id: user?.id, tokenid: newToken.id },
     });
   };
 
@@ -68,12 +68,12 @@ function CreateAAPUserTokenInternal(props: {
         breadcrumbs={[
           { label: t('Users'), to: getPageUrl(PlatformRoute.Users) },
           {
-            label: user.username,
-            to: getPageUrl(PlatformRoute.UserDetails, { params: { id: user.id } }),
+            label: user?.username,
+            to: getPageUrl(PlatformRoute.UserDetails, { params: { id: user?.id } }),
           },
           {
             label: t('Tokens'),
-            to: getPageUrl(PlatformRoute.AAPUserTokens, { params: { id: user.id } }),
+            to: getPageUrl(PlatformRoute.AAPUserTokens, { params: { id: user?.id } }),
           },
           { label: t('Create token') },
         ]}

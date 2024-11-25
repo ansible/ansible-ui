@@ -45,9 +45,9 @@ export function UserDetails<T extends UserDetailsType>(props: {
   return (
     <PageDetails>
       <PageDetail label={t('First name')}>{user.first_name}</PageDetail>
-      <PageDetail label={t('Last name')}>{user.last_name}</PageDetail>
-      <PageDetail label={t('Email')}>{user.email}</PageDetail>
-      <PageDetail label={t('Username')}>{user.username}</PageDetail>
+      <PageDetail label={t('Last name')}>{user?.last_name}</PageDetail>
+      <PageDetail label={t('Email')}>{user?.email}</PageDetail>
+      <PageDetail label={t('Username')}>{user?.username}</PageDetail>
       {organizations && organizations.length > 0 && (
         <PageDetail label={t('Organization', { count: organizations.length })}>
           <LabelsCell labelsWithLinks={organizations} />
