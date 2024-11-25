@@ -2,6 +2,7 @@ import {
   LoadingPage,
   PageFormCheckbox,
   PageFormSelect,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -229,7 +230,7 @@ export function RepositoryForm() {
           isDisabled={isEdit}
           isRequired
         />
-        <PageFormTextInput<RepositoryFormProps>
+        <PageFormTextArea<RepositoryFormProps>
           name="description"
           label={t('Description')}
           placeholder={t('Enter description')}

@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -59,7 +60,7 @@ function DecisionEnvironmentInputs() {
         isRequired
         maxLength={150}
       />
-      <PageFormTextInput<EdaDecisionEnvironment>
+      <PageFormTextArea<EdaDecisionEnvironment>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

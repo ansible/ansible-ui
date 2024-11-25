@@ -2,7 +2,7 @@ import {
   LoadingPage,
   PageFormSelect,
   PageFormSubmitHandler,
-  PageFormTextInput,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -89,7 +89,7 @@ function UserTokenFormInputs() {
   return (
     <>
       <PageFormApplicationSelect name="application" isRequired={false} />
-      <PageFormTextInput<Token>
+      <PageFormTextArea<Token>
         name="description"
         label={t('Description')}
         placeholder={t('Enter token description')}

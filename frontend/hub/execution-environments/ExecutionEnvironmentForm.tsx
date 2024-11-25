@@ -1,5 +1,6 @@
 import {
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -218,7 +219,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
           )}
 
           {!isNew && (
-            <PageFormTextInput<ExecutionEnvironmentFormProps>
+            <PageFormTextArea<ExecutionEnvironmentFormProps>
               name="description"
               label={t('Description')}
               placeholder={t('Enter description')}

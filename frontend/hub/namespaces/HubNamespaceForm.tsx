@@ -1,6 +1,7 @@
 import {
   LoadingPage,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -160,7 +161,7 @@ function HubNamespaceInputs(props: { isDisabled?: boolean; isRequired?: boolean 
         isRequired={props.isRequired}
         helperText={props.isDisabled ? t('Name is not editable.') : undefined}
       />
-      <PageFormTextInput<HubNamespace>
+      <PageFormTextArea<HubNamespace>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

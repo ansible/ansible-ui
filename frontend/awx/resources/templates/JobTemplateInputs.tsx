@@ -80,13 +80,11 @@ export function JobTemplateInputs(props: { jobtemplate?: JobTemplateForm }) {
         isRequired
         placeholder={t('Enter job template name')}
       />
-      <PageFormSection singleColumn>
-        <PageFormTextArea<JobTemplateForm>
-          name="description"
-          label={t('Description')}
-          placeholder={t('Enter description')}
-        />
-      </PageFormSection>
+      <PageFormTextArea<JobTemplateForm>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
       <PageFormSelect<JobTemplateForm>
         isRequired={!askJobTypeOnLaunch}
         additionalControls={

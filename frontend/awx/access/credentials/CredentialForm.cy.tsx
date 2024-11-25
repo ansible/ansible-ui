@@ -1,6 +1,6 @@
-import { CreateCredential } from './CredentialForm';
 import credentialTypes from '../../../../cypress/fixtures/credentialTypes.json';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { CreateCredential } from './CredentialForm';
 
 function assertOnSubFormFields(credentialType: string | RegExp) {
   const selectedType = credentialTypes.results.find((CT) => CT.name === credentialType);
@@ -77,7 +77,7 @@ describe('Credential form', () => {
 
   it('Should render and update the static fields', () => {
     cy.get('input[placeholder="Enter credential name"]').type('Test credential name');
-    cy.get('input[placeholder="Enter description"]').type('Test credential description');
+    cy.get('textarea[placeholder="Enter description"]').type('Test credential description');
     cy.selectSingleSelectOption('[data-cy="organization"]', 'Default');
     cy.selectSingleSelectOption('[data-cy="credential_type"]', 'Amazon Web Services');
   });

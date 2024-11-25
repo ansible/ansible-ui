@@ -2,6 +2,7 @@ import {
   LoadingPage,
   PageForm,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -104,7 +105,7 @@ function PlatformTeamInputs(props: { isEditMode?: boolean }) {
         placeholder={t('Enter team name')}
         isRequired
       />
-      <PageFormTextInput
+      <PageFormTextArea
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}

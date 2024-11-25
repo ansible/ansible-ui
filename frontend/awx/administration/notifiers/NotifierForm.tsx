@@ -4,6 +4,7 @@ import {
   LoadingPage,
   PageFormSubmitHandler,
   PageFormSwitch,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -23,6 +24,7 @@ import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ExternalLink } from '../../../hub/common/ExternalLink';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxError } from '../../common/AwxError';
@@ -223,7 +225,7 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
             isRequired
             maxLength={150}
           />
-          <PageFormTextInput<NotificationTemplate>
+          <PageFormTextArea<NotificationTemplate>
             name="description"
             label={t('Description')}
             placeholder={t('Enter description')}

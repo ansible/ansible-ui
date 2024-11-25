@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -200,7 +201,7 @@ function ProjectInputs(props: { project?: Project }) {
         placeholder={t('Enter project name')}
         isRequired
       />
-      <PageFormTextInput<Project>
+      <PageFormTextArea<Project>
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}

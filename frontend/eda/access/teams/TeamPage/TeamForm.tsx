@@ -1,5 +1,6 @@
 import {
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -118,7 +119,7 @@ function TeamInputs() {
   return (
     <>
       <PageFormTextInput label={t('Name')} name="name" placeholder={t('Enter name')} isRequired />
-      <PageFormTextInput
+      <PageFormTextArea
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}
