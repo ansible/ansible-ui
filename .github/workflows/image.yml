@@ -10,10 +10,6 @@ on:
       build-script:
         description: 'Build Script'
         type: string
-      docker-directory:
-        description: 'Docker Directory'
-        type: string
-        default: '.'
       docker-image:
         description: 'Docker Image'
         type: string
@@ -116,7 +112,7 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         uses: docker/build-push-action@v6
         with:
-          context: ${{ inputs.docker-directory }}
+          context: .
           file: ${{ inputs.docker-file }}
           target: ${{ inputs.docker-target }}
           platforms: linux/amd64

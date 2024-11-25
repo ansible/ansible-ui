@@ -77,8 +77,7 @@ jobs:
     with:
       build-directory: platform
       build-script: build
-      docker-directory: platform
-      docker-file: Dockerfile
+      docker-file: platform/Dockerfile
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
