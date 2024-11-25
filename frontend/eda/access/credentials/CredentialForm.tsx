@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -82,7 +83,7 @@ function CredentialInputs(props: { editMode: boolean }) {
         isRequired
         maxLength={150}
       />
-      <PageFormTextInput<EdaCredentialCreate>
+      <PageFormTextArea<EdaCredentialCreate>
         name="description"
         data-cy="description-form-field"
         label={t('Description')}

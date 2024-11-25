@@ -4,6 +4,7 @@ import {
   PageFormSelect,
   PageFormSubmitHandler,
   PageFormSwitch,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -194,7 +195,7 @@ export function RulebookActivationInputs() {
         isRequired={true}
         placeholder={t('Enter rulebook activation name')}
       />
-      <PageFormTextInput<IEdaRulebookActivationInputs>
+      <PageFormTextArea<IEdaRulebookActivationInputs>
         name="description"
         label={t('Description')}
         id={'description'}

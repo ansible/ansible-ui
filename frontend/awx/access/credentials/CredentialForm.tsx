@@ -2,6 +2,7 @@ import {
   LoadingPage,
   PageFormCheckbox,
   PageFormSelect,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -563,7 +564,7 @@ function CredentialInputs({
         placeholder={t('Enter credential name')}
         isRequired
       />
-      <PageFormTextInput<Credential>
+      <PageFormTextArea<Credential>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -134,7 +135,7 @@ function AwxRoleInputs(props: { disableContentType?: boolean }) {
         placeholder={t('Enter role name')}
         isRequired
       />
-      <PageFormTextInput<AwxRbacRole>
+      <PageFormTextArea<AwxRbacRole>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

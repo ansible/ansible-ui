@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -140,7 +141,7 @@ function EdaRoleInputs(props: { disableContentType?: boolean }) {
         placeholder={t('Enter role name')}
         isRequired
       />
-      <PageFormTextInput<EdaRbacRole>
+      <PageFormTextArea<EdaRbacRole>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

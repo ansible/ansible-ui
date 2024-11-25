@@ -1,6 +1,7 @@
 import {
   PageFormDataEditor,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
@@ -72,7 +73,7 @@ export function GroupCreate() {
       }}
     >
       <PageFormTextInput name="name" label={t('Name')} placeholder={t('Enter name')} isRequired />
-      <PageFormTextInput
+      <PageFormTextArea
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

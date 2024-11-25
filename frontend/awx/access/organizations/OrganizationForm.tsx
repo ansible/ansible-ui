@@ -1,5 +1,6 @@
 import {
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -166,7 +167,7 @@ function OrganizationInputs(props: { orgId?: number }) {
         placeholder={t('Enter name')}
         isRequired
       />
-      <PageFormTextInput<IOrganizationData>
+      <PageFormTextArea<IOrganizationData>
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}

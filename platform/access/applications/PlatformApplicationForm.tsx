@@ -3,6 +3,7 @@ import {
   CopyCell,
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -231,13 +232,11 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         maxLength={150}
       />
       <PageFormPlatformOrganizationSelect<Application> name="organization" isRequired />
-      <PageFormSection singleColumn>
-        <PageFormTextInput<Application>
-          name="description"
-          label={t('Description')}
-          placeholder={t('Enter description')}
-        />
-      </PageFormSection>
+      <PageFormTextArea<Application>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
       <PageFormSelect<Application>
         isReadOnly={mode === 'edit'}
         name="authorization_grant_type"

@@ -2,6 +2,7 @@ import {
   PageFormCheckbox,
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -49,7 +50,7 @@ function ProjectCreateInputs() {
           isRequired
           maxLength={150}
         />
-        <PageFormTextInput<EdaProjectCreate>
+        <PageFormTextArea<EdaProjectCreate>
           name="description"
           label={t('Description')}
           placeholder={t('Enter description')}
@@ -166,7 +167,7 @@ function ProjectEditInputs() {
           isRequired
           maxLength={150}
         />
-        <PageFormTextInput<EdaProjectCreate>
+        <PageFormTextArea<EdaProjectCreate>
           name="description"
           label={t('Description')}
           placeholder={t('Enter description')}

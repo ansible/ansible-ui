@@ -1,6 +1,7 @@
 import {
   PageFormDataEditor,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
@@ -63,7 +64,7 @@ export function GroupEdit() {
       defaultValue={defaultValue}
     >
       <PageFormTextInput name="name" label={t('Name')} isRequired />
-      <PageFormTextInput name="description" label={t('Description')} />
+      <PageFormTextArea name="description" label={t('Description')} />
       <PageFormSection singleColumn>
         <PageFormDataEditor name="variables" label={t('Variables')} format="yaml" />
       </PageFormSection>

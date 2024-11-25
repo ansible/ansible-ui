@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -198,7 +199,7 @@ function ExecutionEnvironmentInputs(props: {
           },
         ]}
       />
-      <PageFormTextInput<ExecutionEnvironment>
+      <PageFormTextArea<ExecutionEnvironment>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

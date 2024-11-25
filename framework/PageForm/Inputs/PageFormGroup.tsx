@@ -17,12 +17,22 @@ export interface PageFormGroupProps {
 
   helperText?: string;
   helperTextInvalid?: string | string[] | false;
+
+  fullWidth?: boolean;
 }
 
 /** Wrapper over the PatternFly FormGroup making it optional based on if label is given. */
 export function PageFormGroup(props: PageFormGroupProps) {
-  const { children, helperText, helperTextInvalid, isRequired, labelHelp, labelHelpTitle, label } =
-    props;
+  const {
+    children,
+    helperText,
+    helperTextInvalid,
+    isRequired,
+    labelHelp,
+    labelHelpTitle,
+    label,
+    fullWidth,
+  } = props;
 
   return (
     <FormGroup
@@ -38,6 +48,7 @@ export function PageFormGroup(props: PageFormGroupProps) {
       labelInfo={props.additionalControls}
       isRequired={isRequired}
       data-cy={`${props.fieldId}-form-group`}
+      style={{ gridColumn: fullWidth ? 'span 12' : undefined }}
     >
       {children}
       {(helperText || helperTextInvalid) && (

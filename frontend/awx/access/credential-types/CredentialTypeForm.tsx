@@ -1,5 +1,6 @@
 import {
   PageFormDataEditor,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -117,7 +118,7 @@ function CredentialTypeInputs() {
         placeholder={t('Enter credential type name')}
         isRequired
       />
-      <PageFormTextInput<CredentialType>
+      <PageFormTextArea<CredentialType>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

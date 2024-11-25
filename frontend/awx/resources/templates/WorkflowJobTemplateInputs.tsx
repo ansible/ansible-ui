@@ -1,6 +1,7 @@
 import {
   PageFormCheckbox,
   PageFormDataEditor,
+  PageFormTextArea,
   PageFormTextInput,
 } from '@ansible/ansible-ui-framework';
 import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
@@ -35,7 +36,7 @@ export function WorkflowJobTemplateInputs(props: {
         isRequired
         placeholder={t('Enter workflow job template name')}
       />
-      <PageFormTextInput<WorkflowJobTemplateForm>
+      <PageFormTextArea<WorkflowJobTemplateForm>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

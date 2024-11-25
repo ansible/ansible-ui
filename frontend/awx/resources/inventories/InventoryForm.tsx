@@ -2,6 +2,7 @@ import {
   LoadingPage,
   PageFormCheckbox,
   PageFormDataEditor,
+  PageFormTextArea,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -342,7 +343,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
         placeholder={t('Enter inventory name')}
         isRequired
       />
-      <PageFormTextInput<InventoryCreate>
+      <PageFormTextArea<InventoryCreate>
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}

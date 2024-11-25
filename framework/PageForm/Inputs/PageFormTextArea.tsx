@@ -83,6 +83,7 @@ export function PageFormTextArea<
             helperText={helperText}
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
+            fullWidth
           >
             <InputGroup>
               <InputGroupItem isFill>

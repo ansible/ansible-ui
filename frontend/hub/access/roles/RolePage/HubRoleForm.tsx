@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -153,7 +154,7 @@ function HubRoleInputs(props: { disableContentType?: boolean }) {
         validate={isValidRoleName}
         isRequired
       />
-      <PageFormTextInput<HubRbacRole>
+      <PageFormTextArea<HubRbacRole>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

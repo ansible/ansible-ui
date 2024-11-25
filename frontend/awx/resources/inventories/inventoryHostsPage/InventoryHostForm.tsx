@@ -4,6 +4,7 @@ import {
   PageFormCheckbox,
   PageFormDataEditor,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -303,7 +304,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
         isRequired
         maxLength={150}
       />
-      <PageFormTextInput<IHostInput>
+      <PageFormTextArea<IHostInput>
         name="description"
         label={t('Description')}
         placeholder={t('Enter description')}

@@ -7,7 +7,6 @@ import {
 import { PageFormTextArea } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextArea';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
-import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
@@ -101,13 +100,11 @@ function TeamInputs() {
         isRequired
       />
       <PageFormSelectOrganization<Team> name="organization" isRequired />
-      <PageFormSection singleColumn>
-        <PageFormTextArea<Team>
-          name="description"
-          label={t('Description')}
-          placeholder={t('Enter description')}
-        />
-      </PageFormSection>
+      <PageFormTextArea<Team>
+        name="description"
+        label={t('Description')}
+        placeholder={t('Enter description')}
+      />
     </>
   );
 }

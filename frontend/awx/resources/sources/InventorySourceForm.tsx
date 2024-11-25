@@ -1,6 +1,7 @@
 import {
   PageFormSelect,
   PageFormSubmitHandler,
+  PageFormTextArea,
   PageFormTextInput,
   PageHeader,
   PageLayout,
@@ -263,7 +264,7 @@ function InventorySourceInputs() {
         placeholder={t('Enter source name')}
         isRequired
       />
-      <PageFormTextInput
+      <PageFormTextArea
         label={t('Description')}
         name="description"
         placeholder={t('Enter description')}
