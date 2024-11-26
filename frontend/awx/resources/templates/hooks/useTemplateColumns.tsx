@@ -2,7 +2,6 @@ import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
-  TextCell,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import {
@@ -18,7 +17,6 @@ import {
   useProjectNameColumn,
   useTypeColumn,
 } from '@ansible/common-ui/columns';
-import { Split } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -90,19 +88,17 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
     () => [
       {
         header: t('Name'),
-        cell: (template: JobTemplate | WorkflowJobTemplate) => (
-          <Split hasGutter>
-            <TextCell
-              text={template.name}
-              to={getPageUrl(
-                template.type === 'job_template'
-                  ? AwxRoute.JobTemplateDetails
-                  : AwxRoute.WorkflowJobTemplateDetails,
-                { params: { id: template.id } }
-              )}
-            />
-          </Split>
-        ),
+        type: 'text',
+        value: (template) => template.name,
+        to: (template: JobTemplate | WorkflowJobTemplate) => {
+          if (options?.disableLinks) return undefined;
+          return getPageUrl(
+            template.type === 'job_template'
+              ? AwxRoute.JobTemplateDetails
+              : AwxRoute.WorkflowJobTemplateDetails,
+            { params: { id: template.id } }
+          );
+        },
         card: 'name',
         list: 'name',
         sort: 'name',
@@ -121,20 +117,21 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
       modifiedColumn,
     ],
     [
-      getPageUrl,
       t,
       activityColumn,
       descriptionColumn,
       typeOfTemplate,
-      createdColumn,
-      modifiedColumn,
+      labelsColumn,
       organizationColumn,
       inventoryColumn,
       executionEnvColumn,
       projectColumn,
       credentialsColumn,
-      labelsColumn,
       lastRanColumn,
+      createdColumn,
+      modifiedColumn,
+      options?.disableLinks,
+      getPageUrl,
     ]
   );
   return tableColumns;
