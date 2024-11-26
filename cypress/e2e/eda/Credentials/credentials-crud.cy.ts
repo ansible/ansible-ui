@@ -185,9 +185,10 @@ describe('Check if the build includes EDA', () => {
             cy.navigateTo('eda', 'credentials');
             cy.verifyPageTitle('Credentials');
             cy.clickTableRow(credential.name);
-            cy.intercept('DELETE', edaAPI`/eda-credentials/${credential.id.toString()}`).as(
-              'deleted'
-            );
+            cy.intercept(
+              'DELETE',
+              edaAPI`/eda-credentials/${credential.id.toString()}/?force=true`
+            ).as('deleted');
             cy.verifyPageTitle(credential.name);
             cy.clickPageAction('delete-credential');
             cy.clickModalConfirmCheckbox();

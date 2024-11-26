@@ -566,27 +566,23 @@ Cypress.Commands.add('deleteAllEdaCurrentUserTokens', () => {
 Cypress.Commands.add(
   'createEdaDecisionEnvironment',
   (organizationId: number, edaCredential?: EdaCredential, imageUrl?: string) => {
-    cy.requestPost<EdaDecisionEnvironment>(
-      edaAPI`/decision-environments/`,
-      edaCredential
-        ? {
-            name: 'E2E Decision Environment ' + randomString(4),
-            eda_credential_id: edaCredential?.id ? edaCredential?.id : 1,
-            organization_id: organizationId,
-            image_url: imageUrl ? imageUrl : 'brew.registry.redhat.io',
-          }
-        : {
-            name: 'E2E Decision Environment ' + randomString(4),
-            organization_id: organizationId,
-            image_url: imageUrl ? imageUrl : 'brew.registry.redhat.io',
-          }
-    ).then((edaDE) => {
-      Cypress.log({
-        displayName: 'EDA DECISION CREATION :',
-        message: [`Created 👉  ${edaDE.name}`],
-      });
-      return edaDE;
-    });
+    const requestPayload: Partial<EdaDecisionEnvironment> = {
+      name: 'E2E Decision Environment ' + randomString(4),
+      organization_id: organizationId,
+      image_url: imageUrl ? imageUrl : 'brew.registry.redhat.io',
+    };
+    if (edaCredential) {
+      requestPayload.eda_credential_id = edaCredential?.id ? edaCredential?.id : 1;
+    }
+    cy.requestPost<EdaDecisionEnvironment>(edaAPI`/decision-environments/`, requestPayload).then(
+      (edaDE) => {
+        Cypress.log({
+          displayName: 'EDA DECISION CREATION :',
+          message: [`Created 👉  ${edaDE.name}`],
+        });
+        return edaDE;
+      }
+    );
   }
 );
 

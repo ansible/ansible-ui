@@ -42,28 +42,24 @@ describe('Check if the build includes EDA', () => {
     });
 
     it('can verify edit functionality of a decision environment', () => {
-      cy.getEdaCredentials(1, 1).then((response) => {
-        const edaCredential = response?.results?.[0];
-        const edaCredentialHost =
-          typeof edaCredential?.inputs?.host === 'string' ? edaCredential.inputs.host : '';
-
-        cy.createEdaDecisionEnvironment(edaOrg?.id, edaCredential, edaCredentialHost).then(
-          (edaDE) => {
-            cy.navigateTo('eda', 'decision-environments');
-            cy.verifyPageTitle('Decision Environments');
-            cy.get('button[aria-label="table view"]').click();
-            cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
-            cy.contains('td', edaDE.name).within(() => {
-              cy.get('a').click();
-            });
-            cy.clickButton(/^Edit decision environment$/);
-            cy.verifyPageTitle(`Edit ${edaDE.name}`);
-            cy.get('[data-cy="name"]').type(edaDE.name + 'edited');
-            cy.clickButton(/^Save decision environment$/);
-            cy.verifyPageTitle(`${edaDE.name}edited`);
-            cy.deleteEdaDecisionEnvironment(edaDE);
-          }
-        );
+      cy.createEdaDecisionEnvironment(
+        edaOrg?.id,
+        undefined,
+        'quay.io/ansible/ansible-rulebook:main'
+      ).then((edaDE) => {
+        cy.navigateTo('eda', 'decision-environments');
+        cy.verifyPageTitle('Decision Environments');
+        cy.get('button[aria-label="table view"]').click();
+        cy.filterTableByTextFilter('name', edaDE.name, { disableFilterSelection: true });
+        cy.contains('td', edaDE.name).within(() => {
+          cy.get('a').click();
+        });
+        cy.clickButton(/^Edit decision environment$/);
+        cy.verifyPageTitle(`Edit ${edaDE.name}`);
+        cy.get('[data-cy="name"]').type(edaDE.name + 'edited');
+        cy.clickButton(/^Save decision environment$/);
+        cy.verifyPageTitle(`${edaDE.name}edited`);
+        cy.deleteEdaDecisionEnvironment(edaDE);
       });
     });
 
