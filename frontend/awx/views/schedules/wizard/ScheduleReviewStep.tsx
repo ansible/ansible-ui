@@ -48,7 +48,7 @@ export function ScheduleReviewStep() {
     data: resource,
     isLoading,
     error,
-  } = useGetItem<ScheduleResources>(url, resourceId ?? nodeResource.id);
+  } = useGetItem<ScheduleResources>(url, resourceId ?? nodeResource?.id);
   useEffect(() => {
     if (!resource) return;
     setWizardData((prev) => ({ ...prev, resource, resourceId: resource.id }));
@@ -60,7 +60,7 @@ export function ScheduleReviewStep() {
     return <AwxError error={error} />;
   }
   const hasPromptDetails = Boolean(
-    visibleSteps.find((step) => step.id === 'promptStep' || step.id === 'survey')
+    visibleSteps.find((step) => step?.id === 'promptStep' || step?.id === 'survey')
   );
 
   let resourceDetailsLink = getPageUrl(ResourceLink[schedule_type], {

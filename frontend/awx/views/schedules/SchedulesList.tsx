@@ -4,13 +4,15 @@ import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink'
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
-import { CubesIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { CubesIcon, ExclamationTriangleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { JobTemplate } from '../../interfaces/JobTemplate';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Schedule } from '../../interfaces/Schedule';
+import { missingResources } from '../../resources/templates/hooks/useTemplateColumns';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
@@ -45,6 +47,11 @@ export function SchedulesList(props: {
   const params = useParams<{ inventory_type?: string; id?: string; source_id?: string }>();
   const resourceId = params.source_id ?? params.id;
 
+  const compParams = useOutletContext<{ template: JobTemplate }>();
+  const isMissingResource: boolean = compParams?.template
+    ? missingResources(compParams?.template)
+    : false;
+
   const apiEndPoint: string | undefined = props.sublistEndpoint
     ? `${props.sublistEndpoint}/${resourceId}/schedules/`
     : undefined;
@@ -65,7 +72,8 @@ export function SchedulesList(props: {
 
   const toolbarActions = useScheduleToolbarActions(
     view.unselectItemsAndRefresh,
-    pageUrl(props.createSchedulePageId, { params })
+    pageUrl(props.createSchedulePageId, { params }),
+    isMissingResource
   );
   const rowActions = useSchedulesActions({
     onScheduleDeleteCompleted: view.unselectItemsAndRefresh,
@@ -77,8 +85,12 @@ export function SchedulesList(props: {
   let emptyStateDescription = '';
 
   if (canCreateSchedule) {
-    emptyStateTitle = t('No schedules yet');
-    emptyStateDescription = t('Please create a schedule by using the button below.');
+    emptyStateTitle = isMissingResource
+      ? t('Resources are missing from this template.')
+      : t('No schedules yet');
+    emptyStateDescription = isMissingResource
+      ? ''
+      : t('Please create a schedule by using the button below.');
   } else {
     emptyStateTitle = t('You do not have permission to create a schedule');
     emptyStateDescription = t(
@@ -94,7 +106,7 @@ export function SchedulesList(props: {
       rowActions={rowActions}
       errorStateTitle={t('Error loading schedules')}
       emptyState={
-        canCreateSchedule ? (
+        canCreateSchedule && !isMissingResource ? (
           <PageTableEmptyState title={emptyStateTitle} description={emptyStateDescription}>
             {
               <ButtonLink
@@ -108,7 +120,7 @@ export function SchedulesList(props: {
           </PageTableEmptyState>
         ) : (
           <PageTableEmptyState
-            icon={CubesIcon}
+            icon={isMissingResource ? ExclamationTriangleIcon : CubesIcon}
             title={emptyStateTitle}
             description={emptyStateDescription}
           />
