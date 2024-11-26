@@ -20,7 +20,7 @@ export function ManualSubForm(props: { localPath?: string }) {
   const brand: string = process.env.BRAND ?? 'AWX';
   const product: string = process.env.PRODUCT ?? t('Ansible');
   const basePathHelpBlock = (
-    <Trans i18nKey="basePathHelpBlock">
+    <Trans i18nKey="basePathHelpBlockKey">
       <p>
         Base path used for locating playbooks. Directories found inside this path will be listed in
         the playbook directory drop-down. Together the base path and selected playbook directory

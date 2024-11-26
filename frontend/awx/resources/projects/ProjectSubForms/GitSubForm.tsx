@@ -14,7 +14,7 @@ export function GitSubForm() {
   const config = useAwxConfig();
 
   const gitSourceControlUrlHelp = (
-    <Trans i18nKey="gitSourceControlUrlHelp">
+    <Trans i18nKey="gitSourceControlUrlHelpKey">
       <span>
         Example URLs for GIT Source Control include:
         <ul>
