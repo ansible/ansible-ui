@@ -47,6 +47,11 @@ function useActivityColumn() {
   return column;
 }
 
+export const missingResources = (template: JobTemplate | WorkflowJobTemplate) =>
+  template.type === 'job_template' &&
+  (!template?.summary_fields.project ||
+    (!template?.summary_fields.inventory && !template?.ask_inventory_on_launch));
+
 export function useTemplateColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();

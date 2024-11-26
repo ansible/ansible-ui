@@ -425,7 +425,6 @@ describe('Schedules - Create and Delete', () => {
       cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
     });
 
-    //https://issues.redhat.com/browse/AAP-28740
     it('can create a complex schedule and navigate to details page', () => {
       cy.navigateTo('awx', 'schedules');
       cy.verifyPageTitle('Schedules');
@@ -433,6 +432,7 @@ describe('Schedules - Create and Delete', () => {
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
       cy.getBy('button[id="job-template-select"]').click();
       const templateID = getId(jobTemplate.name);
+      cy.intercept(awxAPI`/job_templates/*/launch`).as('launchConfiguration');
       cy.get('div#job-template-select-select').within(() => {
         cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
         cy.get(`button#${templateID}`).click();
@@ -440,7 +440,7 @@ describe('Schedules - Create and Delete', () => {
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
       cy.clickButton(/^Next$/);
-
+      cy.wait('@launchConfiguration');
       cy.getByDataCy('wizard-nav').within(() => {
         ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -793,9 +793,7 @@ describe('Schedules - Edit', () => {
     });
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Add rule$/);
-    cy.getBy('[data-cy="row-id-1"]').within(() => {
-      cy.getBy('[data-cy="delete-rule"]').click();
-    });
+    cy.getBy('[data-cy="delete-rule"]').click();
     cy.clickButton(/^Save rule$/);
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
@@ -952,7 +950,12 @@ describe('Schedules - Edit', () => {
           rrule: 'DTSTART:20240415T124133Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SU',
         }).then((sched: Schedule) => {
           schedule = sched;
+
           cy.deleteAwxInventory(inv).then(() => {
+            cy.navigateTo('awx', 'inventories');
+            cy.verifyPageTitle('Inventories');
+            cy.contains('Select name').click().type(inv.name);
+            cy.contains(inv.name).should('not.exist');
             cy.navigateTo('awx', 'templates');
             cy.verifyPageTitle('Templates');
             cy.filterTableByMultiSelect('name', [jt.name]);
@@ -970,9 +973,11 @@ describe('Schedules - Edit', () => {
             cy.clickButton('Next');
             cy.clickButton('Next');
             cy.clickButton('Next');
-            cy.intercept(awxAPI`/schedules/preview/`).as('preview');
-            cy.clickButton('Finish');
-            cy.wait('@preview');
+            cy.contains('Review');
+            cy.intercept(awxAPI`/schedules/*`).as('editedSchedule');
+            cy.contains('Finish').click();
+            cy.contains('Finish').click();
+            cy.wait('@editedSchedule');
             cy.get('div.pf-v5-c-alert__description').should(
               'have.text',
               'Job Template inventory is missing or undefined.'
