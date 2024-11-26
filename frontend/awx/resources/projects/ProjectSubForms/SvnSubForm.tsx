@@ -9,7 +9,7 @@ import { ScmTypeOptions } from './ScmTypeOptions';
 export function SvnSubForm() {
   const { t } = useTranslation();
   const svnSourceControlUrlHelp = (
-    <Trans i18nKey="svnSourceControlUrlHelp">
+    <Trans i18nKey="svnSourceControlUrlHelpKey">
       <span>
         Example URLs for Subversion Source Control include:
         <ul>

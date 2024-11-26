@@ -9,7 +9,7 @@ import { ScmTypeOptions } from './ScmTypeOptions';
 export function ArchiveSubForm() {
   const { t } = useTranslation();
   const archiveSourceControlUrlHelp = (
-    <Trans i18nKey="archiveSourceControlUrlHelp">
+    <Trans i18nKey="archiveSourceControlUrlHelpKey">
       <span>
         Example URLs for Remote Archive Source Control include:
         <ul>
