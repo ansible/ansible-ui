@@ -1,11 +1,11 @@
-import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
-import { requestGet } from '@ansible/common-ui/crud/Data';
-import { ReactElement, ReactNode, useCallback } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { FieldPath, FieldValues, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { Inventory } from '../../../interfaces/Inventory';
 import { Project } from '../../../interfaces/Project';
+import { InventorySourceForm } from '../../../interfaces/InventorySource';
+import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
+import { useGet } from '../../../../common/crud/useGet';
 
 export function PageFormInventoryFileSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -20,38 +20,34 @@ export function PageFormInventoryFileSelect<
   const { t } = useTranslation();
   const value = useWatch({ name: props.watch }) as Project;
   const projectId = value?.id?.toString() ?? '';
-  const query = useCallback(async () => {
-    const response = projectId
-      ? await requestGet<Array<string>>(awxAPI`/projects/${projectId}/inventories/`)
+
+  const { data: inventories, error } = useGet<Array<string>>(
+    awxAPI`/projects/${projectId}/inventories/`
+  );
+  const inventoryOptions =
+    inventories && !error
+      ? inventories
+          .map((inventoryFile) => ({
+            value: inventoryFile,
+            label: inventoryFile,
+          }))
+          .concat([{ value: '/ (project root)', label: t('/ (project root)') }])
       : [];
-    const newResponse = response.map((str) => ({
-      name: str,
-    }));
-    return Promise.resolve({
-      total: newResponse.length,
-      values: [{ name: '/ (project root)' }, ...newResponse],
-    });
-  }, [projectId]);
 
   return (
-    <PageFormAsyncSelect<TFieldValues>
-      name={props.name}
+    <PageFormCreatableSelect<InventorySourceForm>
+      placeholderText={t('Select inventory file')}
+      name="source_path"
       id="inventory"
-      variant="typeahead"
       additionalControls={props.additionalControls}
       label={t('Inventory file')}
-      query={query}
-      valueToString={(value) => (value as Inventory)?.name ?? ''}
-      placeholder={t('Select inventory file')}
+      options={inventoryOptions}
       labelHelpTitle={t('Inventory')}
       labelHelp={
         props.labelHelp ??
         t('Select the inventory containing the playbook you want this job to execute.')
       }
-      loadingPlaceholder={t('Loading inventories...')}
-      loadingErrorText={t('Error loading inventories')}
       isRequired={props.isRequired}
-      limit={200}
     />
   );
 }

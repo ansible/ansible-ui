@@ -35,6 +35,7 @@ export function PageFormLabelSelect<
       options={
         options?.map((label) => ({ value: label, label: label.name })) ?? [{ label: '', value: '' }]
       }
+      isMulti={true}
     />
   );
 }

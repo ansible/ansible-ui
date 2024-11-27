@@ -170,6 +170,7 @@ export function MapFields(props: {
                 options={groupOptions}
                 isRequired
                 placeholderText={t('Select groups')}
+                isMulti={true}
               />
             </MapFieldsGrid>
           </PageFormHidden>

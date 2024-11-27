@@ -63,7 +63,7 @@ export function CreateInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      source_path: values?.source_path?.name,
+      source_path: values?.source_path?.[0] === '/ (project root)' ? '' : values?.source_path?.[0],
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };
@@ -134,17 +134,17 @@ export function EditInventorySource() {
     awxAPI`/inventory_sources/${params.source_id?.toString() ?? ''}/`
   );
 
-  const defaultValue: InventorySourceForm = useMemo(
-    () => ({
+  const defaultValue: InventorySourceForm = useMemo(() => {
+    return {
       name: inventorySource?.name,
       description: inventorySource?.description ?? '',
       execution_environment: inventorySource?.summary_fields?.execution_environment?.id,
       source: inventorySource?.source,
       credential: inventorySource?.credential ?? null,
       source_project: inventorySource?.summary_fields?.source_project,
-      source_path: {
-        name: inventorySource?.source_path,
-      },
+      source_path: inventorySource?.source_path
+        ? [inventorySource?.source_path]
+        : ['/ (project root)'],
       verbosity: inventorySource?.verbosity,
       host_filter: inventorySource?.host_filter,
       enabled_var: inventorySource?.enabled_var,
@@ -154,15 +154,14 @@ export function EditInventorySource() {
       update_on_launch: inventorySource?.update_on_launch,
       update_cache_timeout: inventorySource?.update_cache_timeout,
       source_vars: inventorySource?.source_vars,
-    }),
-    [inventorySource]
-  );
+    };
+  }, [inventorySource]);
 
   const onSubmit: PageFormSubmitHandler<InventorySourceForm> = async (values) => {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      source_path: values?.source_path?.name ?? '',
+      source_path: values?.source_path?.[0] === '/ (project root)' ? '' : values?.source_path?.[0],
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };
