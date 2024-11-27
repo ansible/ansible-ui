@@ -9,7 +9,7 @@ import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react';
 import { getID, useID } from '../../hooks/useID';
 import { PageFormGroup } from './PageFormGroup';
 
-export type FormGroupTypeAheadMultiSelectProps = {
+export type FormGroupTypeAheadSelectProps = {
   id?: string;
 
   label: string;
@@ -33,10 +33,11 @@ export type FormGroupTypeAheadMultiSelectProps = {
   value: Partial<{ name: string }>[];
   onHandleClear: (chip?: string) => void;
   isRequired?: boolean;
+  isMulti?: boolean;
 };
 
 /** A PatternFly FormGroup with a PatternFly Select */
-export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSelectProps) {
+export function FormGroupTypeAheadSelect(props: FormGroupTypeAheadSelectProps) {
   const {
     additionalControls,
     helperText,
@@ -52,6 +53,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
     options,
     placeholderText,
     value,
+    isMulti = false,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -91,8 +93,8 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
       helperText={helperText}
     >
       <Select
-        chipGroupComponent={chipGroupComponent()}
-        variant={SelectVariant.typeaheadMulti}
+        chipGroupComponent={isMulti ? chipGroupComponent() : undefined}
+        variant={isMulti ? SelectVariant.typeaheadMulti : SelectVariant.typeahead}
         isCreatable
         placeholderText={!value?.length && placeholderText ? placeholderText : undefined}
         isOpen={isOpen}

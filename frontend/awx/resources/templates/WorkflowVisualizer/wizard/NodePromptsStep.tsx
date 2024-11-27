@@ -200,6 +200,7 @@ export function NodePromptsStep({
           placeholderText={t('Select or create job tags')}
           label={t('Job tags')}
           options={parseStringToTagArray(template?.job_tags) || []}
+          isMulti={true}
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_skip_tags_on_launch}>
@@ -212,6 +213,7 @@ export function NodePromptsStep({
           placeholderText={t('Select or create skip tags')}
           label={t('Skip tags')}
           options={parseStringToTagArray(template?.skip_tags) || []}
+          isMulti={true}
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_variables_on_launch}>

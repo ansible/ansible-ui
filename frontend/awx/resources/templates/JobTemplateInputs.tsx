@@ -262,6 +262,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         placeholderText={t('Select or create job tags')}
         label={t('Job tags')}
         options={jobtemplate?.job_tags ?? [{ value: '', label: '', name: '' }]}
+        isMulti={true}
       />
       <PageFormCreatableSelect<JobTemplateForm>
         labelHelpTitle={t('Skip tags')}
@@ -275,6 +276,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         placeholderText={t('Select or create skip tags')}
         label={t('Skip tags')}
         options={jobtemplate?.skip_tags ?? [{ value: '', label: '', name: '' }]}
+        isMulti={true}
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<JobTemplateForm>

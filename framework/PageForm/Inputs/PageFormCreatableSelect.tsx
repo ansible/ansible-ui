@@ -7,8 +7,9 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
-import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
+import { FormGroupTypeAheadSelect } from './FormGroupTypeAheadSelect';
 import { useRequiredValidationRule } from './validation-hooks';
+import { SelectOptionObject } from '@patternfly/react-core/deprecated';
 
 export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -27,6 +28,7 @@ export type PageFormCreatableSelectProps<
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+  isMulti?: boolean;
 };
 
 export function PageFormCreatableSelect<
@@ -45,6 +47,7 @@ export function PageFormCreatableSelect<
     options,
     placeholderText,
     validate,
+    isMulti = false,
   } = props;
   const {
     control,
@@ -52,13 +55,45 @@ export function PageFormCreatableSelect<
     getValues,
   } = useFormContext<TFieldValues>();
   const required = useRequiredValidationRule(props.label, props.isRequired);
+
+  const getSelectedValues = (
+    item:
+      | string
+      | SelectOptionObject
+      | {
+          name: string;
+        }
+  ) => {
+    let newValue;
+    const selectedItem = item as { name: string };
+
+    if (isMulti) {
+      const values: { name: string }[] = getValues(props.name);
+
+      if (values?.find((value) => value.name === selectedItem.name)) {
+        newValue = values.filter((i) => i !== selectedItem);
+      } else {
+        newValue = values?.length ? [...values, selectedItem] : [selectedItem];
+      }
+    } else {
+      const value: { name: string } = getValues(props.name);
+
+      if (value?.name === selectedItem.name) {
+        newValue = [value.name];
+      } else {
+        newValue = [selectedItem.name];
+      }
+    }
+
+    return newValue;
+  };
   return (
     <Controller<TFieldValues, TFieldName>
       name={props.name}
       control={control}
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormGroupTypeAheadMultiSelect
+        <FormGroupTypeAheadSelect
           additionalControls={additionalControls}
           helperTextInvalid={error?.message}
           id={id ?? name}
@@ -71,22 +106,21 @@ export function PageFormCreatableSelect<
           options={options}
           placeholderText={placeholderText}
           value={value}
-          onHandleClear={(chip?: string) => {
-            const values: { name: string }[] = getValues(props.name);
-            onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
-          }}
+          onHandleClear={
+            isMulti
+              ? (chip?: string) => {
+                  const values: { name: string }[] = getValues(props.name);
+                  onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
+                }
+              : (_currVal?: string) => {
+                  onChange([]);
+                }
+          }
           onHandleSelection={(item) => {
-            let newValue;
-            const selectedItem = item as { name: string };
-            const values: { name: string }[] = getValues(props.name);
-
-            if (values?.find((value) => value.name === selectedItem.name)) {
-              newValue = values.filter((i) => i !== selectedItem);
-            } else {
-              newValue = values?.length ? [...values, selectedItem] : [selectedItem];
-            }
+            const newValue = getSelectedValues(item);
             return onChange(newValue);
           }}
+          isMulti={isMulti}
         />
       )}
       rules={{ required, validate: validate }}
