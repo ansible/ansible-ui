@@ -77,12 +77,12 @@ export function useJobOutput(
 
   const queryJobOutputEvent = useCallback(
     (counter: number) => {
-      const jobEvent = jobEvents[counter + 1];
+      const jobEvent = jobEvents[counter];
       if (jobEvent || isQuerying.current.querying) {
         return jobEvent;
       }
       if (isJobRunning) {
-        missingEvents.current[counter + 1] = true;
+        missingEvents.current[counter] = true;
         if (!queryTimeout.current) {
           queryTimeout.current = setTimeout(() => {
             const eventCounters = Object.keys(missingEvents.current).filter((counter) => {
