@@ -31,11 +31,12 @@ export function useGatewaySettingsCategories(options: Record<string, GatewaySett
             include: [
               'allow_admins_to_set_insecure',
               'gateway_basic_auth_enabled',
-              'SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL',
               'gateway_token_name',
               'gateway_access_token_expiration',
               'jwt_private_key',
               'jwt_public_key',
+              'LOGIN_REDIRECT_OVERRIDE',
+              'SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL',
             ],
             options: {},
           },
