@@ -170,13 +170,13 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
             style={{ '--output-line-chars': outputLineChars } as { [key: string]: string | number }}
           >
             <div style={{ height: beforeRowsHeight }} />
-            {visibleItems.map((row) => {
+            {visibleItems.map((row, index) => {
               if (typeof row === 'number') {
                 const counter = row as unknown as number;
 
                 return (
                   <JobOutputLoadingRow
-                    key={counter - 1}
+                    key={counter}
                     counter={counter}
                     queryJobOutputEvent={queryJobOutputEvent}
                   />
@@ -185,8 +185,8 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
 
               return (
                 <JobOutputRow
-                  key={row.index}
-                  index={row.index !== undefined ? row.index : row.counter}
+                  key={`${row.counter}-${row.eventLine}-${index}`}
+                  index={index}
                   row={row}
                   collapsed={collapsed}
                   setCollapsed={setCollapsed}
@@ -211,10 +211,6 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   );
 }
 
-interface IndexedRow extends IJobOutputRow {
-  index?: number;
-}
-
 function useNonCollapsedRows(
   isFlatMode: boolean,
   childrenSummary: IJobOutputChildrenSummary | undefined,
@@ -222,7 +218,7 @@ function useNonCollapsedRows(
   jobOutputRows: (IJobOutputRow | number)[]
 ) {
   return useMemo(() => {
-    const rows: (IndexedRow | number)[] = jobOutputRows.filter((row) => {
+    return jobOutputRows.filter((row) => {
       if (isFlatMode) {
         return true;
       }
@@ -257,11 +253,5 @@ function useNonCollapsedRows(
       }
       return true;
     });
-    rows.forEach((row, i) => {
-      if (typeof row !== 'number') {
-        row.index = i;
-      }
-    });
-    return rows;
   }, [isFlatMode, childrenSummary, collapsed, jobOutputRows]);
 }

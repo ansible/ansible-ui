@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useState } from 'react';
 
 function isAtBottom(el: HTMLElement) {
   const { clientHeight, scrollHeight, scrollTop } = el;
@@ -14,6 +14,37 @@ export function useScrollControls(
   isJobRunning: boolean
 ) {
   const [numTicksAtBottom, setNumTicksAtBottom] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [scrollHeight, setScrollHeight] = useState(0);
+
+  const onScroll = useCallback(() => {
+    if (!containerRef.current) return;
+    if (
+      isFollowModeEnabled &&
+      scrollTop > containerRef.current.scrollTop &&
+      scrollHeight === containerRef.current.scrollHeight
+    ) {
+      setIsFollowModeEnabled(false);
+    }
+    setScrollTop(containerRef.current.scrollTop);
+    setScrollHeight(containerRef.current.scrollHeight);
+    if (
+      containerRef.current.scrollTop + containerRef.current.clientHeight >=
+      containerRef.current.scrollHeight
+    ) {
+      setIsFollowModeEnabled(true);
+    }
+  }, [containerRef, isFollowModeEnabled, scrollHeight, scrollTop, setIsFollowModeEnabled]);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const el = containerRef.current;
+    el.addEventListener('scroll', onScroll);
+
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+    };
+  }, [containerRef, onScroll]);
 
   /* Keep scrolled to bottom if follow mode is enabled */
   useEffect(() => {
