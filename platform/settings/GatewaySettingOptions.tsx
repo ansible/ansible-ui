@@ -32,7 +32,7 @@ interface BooleanOption {
   default: boolean;
 }
 
-interface UrlOption {
+export interface UrlOption {
   type: 'url';
   required: false;
   read_only: false;

@@ -14,9 +14,10 @@ import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';
-import { GatewaySettingsOption } from './GatewaySettingOptions';
+import { GatewaySettingsOption, UrlOption } from './GatewaySettingOptions';
 import { useGatewaySettingsCategories } from './GatewaySettingsCategories';
 import { useRevertAllGatewaySettingsModal } from './useRevertAllGatewaySettingsModal';
+import { useWatch } from 'react-hook-form';
 
 export function GatewaySettingsEdit(props: { categoryId?: string }) {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
       <PageForm
         submitText={t('Save platform gateway settings')}
         onSubmit={async (values) => {
+          const { CONFIRM_LOGIN_REDIRECT_OVERRIDE, ...submitValues } = values;
           if ('custom_logo' in values && values.custom_logo instanceof File) {
             // get the extension of the file
             const ext = values.custom_logo.name.split('.').pop()?.toLowerCase();
@@ -58,7 +60,7 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                 break;
             }
           }
-          await requestPut(gatewayAPI`/settings/all/`, values);
+          await requestPut(gatewayAPI`/settings/all/`, submitValues);
           await refresh();
           pageNavigate(PlatformRoute.GatewaySettings);
         }}
@@ -92,6 +94,9 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
               if (key === 'gateway_token_name') {
                 option.read_only = true;
               }
+              if (key === 'LOGIN_REDIRECT_OVERRIDE' && option.type === 'url') {
+                return <LoginRedirectOverrideInputs key={key} name={key} option={option} />;
+              }
               switch (option.type) {
                 case 'string':
                   return (
@@ -102,7 +107,6 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       labelHelp={option.help_text}
                       isRequired={option.required}
                       isReadOnly={option.read_only}
-                      // helperText={key}
                       defaultValue={option.default}
                       enableUndo
                       enableReset
@@ -118,7 +122,6 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       labelHelp={option.help_text}
                       isRequired={option.required}
                       isReadOnly={option.read_only}
-                      // helperText={key}
                       defaultValue={option.default}
                       enableUndo
                       enableReset
@@ -138,7 +141,6 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                         { label: t('Enabled'), value: true },
                         { label: t('Disabled'), value: false },
                       ]}
-                      // helperText={key}
                       defaultValue={option.default}
                       enableReset
                       enableUndo
@@ -154,7 +156,6 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       labelHelp={option.help_text}
                       isRequired={option.required}
                       isReadOnly={option.read_only}
-                      // helperText={key}
                       defaultValue={option.default}
                       enableUndo
                       enableReset
@@ -169,7 +170,6 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
                       labelHelp={option.help_text}
                       isRequired={option.required}
                       isReadOnly={option.read_only}
-                      // helperText={key}
                     />
                   );
                 default:
@@ -180,5 +180,51 @@ export function GatewaySettingsEdit(props: { categoryId?: string }) {
         ))}
       </PageForm>
     </PageLayout>
+  );
+}
+
+export function LoginRedirectOverrideInputs(props: {
+  readonly option: UrlOption;
+  readonly name: string;
+}) {
+  const { name, option } = props;
+  const { t } = useTranslation();
+  const LOGINREDIRECT = useWatch<Record<string, string>, 'LOGIN_REDIRECT_OVERRIDE'>({
+    name: 'LOGIN_REDIRECT_OVERRIDE',
+  });
+  const CONFIRMLOGINREDIRECT = useWatch<Record<string, string>, 'CONFIRM_LOGIN_REDIRECT_OVERRIDE'>({
+    name: 'CONFIRM_LOGIN_REDIRECT_OVERRIDE',
+    defaultValue: option.default,
+  });
+
+  return (
+    <>
+      <PageFormTextInput
+        type="url"
+        key={name}
+        name={name}
+        label={option.label}
+        labelHelp={option.help_text}
+        isRequired={option.required}
+        isReadOnly={option.read_only}
+        defaultValue={option.default}
+        enableUndo
+        enableReset
+      />
+      <PageFormTextInput
+        validate={() =>
+          LOGINREDIRECT === CONFIRMLOGINREDIRECT
+            ? undefined
+            : t('This field must match login redirect override.')
+        }
+        type="url"
+        key={'CONFIRM_LOGIN_REDIRECT_OVERRIDE'}
+        name={'CONFIRM_LOGIN_REDIRECT_OVERRIDE'}
+        label={t('Confirm login redirect override')}
+        labelHelp={t('This value must match the value in login redirect override.')}
+        isRequired={LOGINREDIRECT.length > 0}
+        defaultValue={LOGINREDIRECT}
+      />
+    </>
   );
 }
