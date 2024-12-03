@@ -30,7 +30,7 @@ export function useNotifiersRowActions(params: {
   type?: 'detail' | 'list';
   runningNotifications?: RunningNotificationsType;
 }) {
-  const { onComplete, onNotifierCopied, onNotifierStartTest, type, runningNotifications } = params;
+  const { onComplete, onNotifierCopied, onNotifierStartTest, runningNotifications } = params;
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const deleteNotifiers = useDeleteNotifiers(onComplete || (() => {}));
@@ -92,7 +92,6 @@ export function useNotifiersRowActions(params: {
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,
         isPinned: false,
-        isHidden: () => type === 'detail',
       },
       { type: PageActionType.Seperator },
       {
@@ -109,7 +108,6 @@ export function useNotifiersRowActions(params: {
     pageNavigate,
     copyNotifier,
     deleteNotifiers,
-    type,
     t,
     onNotifierStartTest,
     alertToaster,
