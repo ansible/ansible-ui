@@ -25,15 +25,15 @@ export function useRuleAuditColumns() {
       {
         header: t('Status'),
         cell: (ruleAudit) => <StatusCell status={ruleAudit?.status} />,
-        card: 'name',
-        list: 'name',
+        card: undefined,
+        list: 'primary',
       },
       {
         header: t('Rulebook activation'),
         cell: (ruleAudit) =>
           ruleAudit?.activation_instance?.id ? (
             <TextCell
-              text={ruleAudit?.activation_instance?.name || ''}
+              text={ruleAudit?.activation_instance?.name ?? ''}
               to={getPageUrl(EdaRoute.RulebookActivationInstancePage, {
                 params: { id: ruleAudit?.id, instanceId: ruleAudit?.activation_instance?.id },
               })}
