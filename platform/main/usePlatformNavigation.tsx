@@ -40,311 +40,381 @@ import { Redirect } from './Redirect';
 export function usePlatformNavigation() {
   const { t } = useTranslation();
 
-  const awxService = useHasAwxService();
-  const edaService = useHasEdaService();
-  const hubService = useHasHubService();
+  const automationExecutionNavigation = useAutomationExecutionNavigation();
+  const automationDecisionsNavigation = useAutomationDecisionsNavigation();
+  const automationAnalytics = useAutomationAnalytics();
+  const automationContentNavigation = useAutomationContentNavigation();
+  const platformAccessNavigation = usePlatformAccessNavigation();
+  const platformSettingsNavigation = usePlatformSettingsNavigation();
+  const platformResourcesNavigation = useGetPlatformResourceRoutes();
 
-  const awxNav = useAwxNavigation();
-  const edaNav = useEdaNavigation();
-  const hubNav = useHubNavigation();
-
-  const organizations = useGetPlatformOrganizationsRoutes();
-  const teams = useGetPlatformTeamsRoutes();
-  const users = useGetPlatformUsersRoutes();
-  const roles = useGetPlatformRolesRoutes();
-  const applications = useGetPlatformApplicationsRoutes();
-  const authenticators = useGetPlatformAuthenticatorsRoutes();
-  const resources = useGetPlatformResourceRoutes();
-
-  const navigate = useNavigate();
-  const { activePlatformUser } = usePlatformActiveUser();
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
 
   const pageNavigationItems = useMemo<PageNavigationItem[]>(() => {
-    removeNavigationItemById(awxNav, AwxRoute.Overview);
-    removeNavigationItemById(awxNav, AwxRoute.Settings);
-    const awxInfrastructure = findNavigationItemById(awxNav, AwxRoute.Infrastructure);
-    const awxCredentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
-    const awxCredentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
-    if (awxInfrastructure && 'children' in awxInfrastructure) {
-      awxInfrastructure.children.push(awxCredentials);
-      awxInfrastructure.children.push(awxCredentialTypes);
-    }
-
-    // HERE
-    removeNavigationItemById(awxNav, AwxRoute.Access);
-
-    removeNavigationItemById(edaNav, EdaRoute.Overview);
-    removeNavigationItemById(edaNav, EdaRoute.Users);
-
-    const edaCredentials = removeNavigationItemById(edaNav, EdaRoute.Credentials)!;
-    const edaCredentialTypes = removeNavigationItemById(edaNav, EdaRoute.CredentialTypes)!;
-    removeNavigationItemById(edaNav, EdaRoute.Access);
-    edaNav.push({
-      id: 'eda-infrastructure',
-      label: t('Infrastructure'),
-      path: 'infrastructure',
-      children: [edaCredentials, edaCredentialTypes],
-    });
-    removeNavigationItemById(edaNav, EdaRoute.Settings);
-
-    removeNavigationItemById(hubNav, HubRoute.Overview);
-    removeNavigationItemById(hubNav, HubRoute.Organizations);
-    removeNavigationItemById(hubNav, HubRoute.Teams);
-    removeNavigationItemById(hubNav, HubRoute.Users);
-    removeNavigationItemById(hubNav, HubRoute.Settings);
-
-    // TODO - create token page for all 3 and put in access
-    // hubAdministration!.childrenhubNav.push(removeNavigationItemById(hubNav, HubRoute.APIToken)!);
-    // const hubApiTokenRoute = removeNavigationItemById(hubNav, HubRoute.APIToken)!;
-    // hubApiTokenRoute.label = t('Content API Token');
-    removeNavigationItemById(hubNav, HubRoute.Access);
-
-    // inline hub admin menu, preserving paths
-    const hubAdminIndex = hubNav.findIndex(({ path }) => path === 'administration');
-    if (hubAdminIndex !== -1) {
-      // as PageNavigationGroup really, but not exported
-      const admin = hubNav[hubAdminIndex] as { children: PageNavigationItem[] };
-      const children = admin.children.map((o) => ({
-        ...o,
-        path: `administration/${o.path}`,
-      }));
-      hubNav.splice(hubAdminIndex, 1, ...children);
-    }
-
     const navigationItems: PageNavigationItem[] = [];
-    navigationItems.push({
+
+    // Overview
+    const overviewNavigation: PageNavigationItem = {
       id: PlatformRoute.Overview,
       label: t('Overview'),
       path: 'overview',
       element: <PlatformOverview />,
-    });
-    navigationItems.push({
-      id: PlatformRoute.AWX,
-      label: t('Automation Execution'),
-      subtitle: t('Automation Controller'),
-      path: 'execution',
-      children: awxNav,
-      hidden: !awxService,
-    });
-    navigationItems.push({
-      id: PlatformRoute.EDA,
-      label: t('Automation Decisions'),
-      subtitle: t('Event-Driven Ansible'),
-      path: 'decisions',
-      children: edaNav,
-      hidden: !edaService,
-    });
-    navigationItems.push({
-      id: PlatformRoute.HUB,
-      label: t('Automation Content'),
-      subtitle: t('Automation Hub'),
-      hidden: !hubService,
-      path: 'content',
-      children: hubNav,
-    });
+    };
+    navigationItems.push(overviewNavigation);
 
-    const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
-    if (analytics && 'children' in analytics) {
-      analytics.label = t('Automation Analytics');
-      analytics.hidden = !awxService;
-      managedCloudInstall
-        ? removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage)
-        : null;
-      navigationItems.push(analytics);
-    }
+    // Automation Execution
+    navigationItems.push(automationExecutionNavigation);
 
-    const platformAccessRouteChildren = [organizations, teams, users];
+    // Automation Decisions
+    navigationItems.push(automationDecisionsNavigation);
 
-    if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
-      platformAccessRouteChildren.unshift(authenticators);
-    }
+    // Automation Analytics
+    if (automationAnalytics) navigationItems.push(automationAnalytics);
 
-    if (awxService || edaService || hubService) {
-      platformAccessRouteChildren.push(...roles);
-    }
+    // Automation Content
+    navigationItems.push(automationContentNavigation);
 
-    if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
-      platformAccessRouteChildren.push(...applications);
-    }
-
-    navigationItems.push({
-      id: PlatformRoute.Access,
-      label: t('Access Management'),
-      path: 'access',
-      children: platformAccessRouteChildren,
-    });
+    // Lightspeed
     navigationItems.push({
       id: PlatformRoute.Lightspeed,
       label: t('Ansible Lightspeed'),
       path: 'lightspeed',
       element: <Lightspeed />,
     });
-    if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
-      const settingsNav: PageNavigationItem[] = [];
 
-      if (awxService) {
-        settingsNav.push({
-          label: t('Subscription'),
-          path: 'subscription',
-          children: [
-            {
-              id: PlatformRoute.SubscriptionWizard,
-              path: 'wizard',
-              element: <SubscriptionWizard onSuccess={() => navigate('/settings/subscription')} />,
-            },
-            {
-              id: PlatformRoute.SubscriptionDetails,
-              path: '',
-              element: <SubscriptionDetails />,
-            },
-          ],
-        });
-      }
-      settingsNav.push({
-        id: PlatformRoute.GatewaySettings,
-        label: t('Platform gateway'),
-        path: 'platform-gateway',
-        element: <GatewaySettings />,
-        children: [
-          {
-            path: 'edit',
-            element: <GatewaySettingsEdit categoryId="platform" />,
-          },
-          {
-            path: '',
-            element: <GatewaySettingsDetails categoryId="platform" />,
-          },
-        ],
-      });
-      settingsNav.push({
-        id: AwxRoute.SettingsPreferences,
-        label: t('User Preferences'),
-        path: 'preferences',
-        children: [
-          {
-            path: 'edit',
-            element: <PageSettingsForm />,
-          },
-          {
-            path: '',
-            element: <PageSettingsDetails />,
-          },
-        ],
-      });
-      if (awxService) {
-        settingsNav.push({
-          id: AwxRoute.SettingsSystem,
-          label: t('System'),
-          path: 'system',
-          children: [
-            {
-              path: 'edit',
-              element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
-            },
-            {
-              path: '',
-              element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
-            },
-          ],
-        });
-        settingsNav.push({
-          id: AwxRoute.SettingsJobs,
-          label: t('Job'),
-          path: 'job-settings',
-          children: [
-            {
-              path: 'edit',
-              element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
-            },
-            {
-              path: '',
-              element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
-            },
-          ],
-        });
-        settingsNav.push({
-          id: AwxRoute.SettingsLogging,
-          label: t('Logging'),
-          path: 'logging',
-          children: [
-            {
-              path: 'edit',
-              element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
-            },
-            {
-              path: '',
-              element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
-            },
-          ],
-        });
-        settingsNav.push({
-          id: AwxRoute.SettingsTroubleshooting,
-          label: t('Troubleshooting'),
-          path: 'troubleshooting',
-          children: [
-            {
-              path: 'edit',
-              element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
-            },
-            {
-              path: '',
-              element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
-            },
-          ],
-        });
-      }
-      settingsNav.push({
-        path: '',
-        element: <Navigate to=".." />,
-      });
+    // Access
+    navigationItems.push(platformAccessNavigation);
 
+    // Settings
+    navigationItems.push(platformSettingsNavigation);
+
+    // QuickStarts
+    if (!managedCloudInstall) {
       navigationItems.push({
-        id: AwxRoute.Settings,
-        label: t('Settings'),
-        path: 'settings',
-        children: settingsNav,
+        id: PlatformRoute.QuickStarts,
+        label: t('QuickStarts'),
+        path: 'quickstarts',
+        element: <QuickStartsPage />,
       });
-
-      if (!managedCloudInstall) {
-        navigationItems.push({
-          id: PlatformRoute.QuickStarts,
-          label: t('QuickStarts'),
-          path: 'quickstarts',
-          element: <QuickStartsPage />,
-        });
-      }
     }
-    navigationItems.push(resources);
+
+    // Platform Resources - Handles redirects from links to platform resources
+    navigationItems.push(platformResourcesNavigation);
+
+    // OAuth Redirect
     navigationItems.push({
       path: 'redirect',
       element: <Redirect />,
     });
+
+    // Root - Redirect to Overview
     navigationItems.push({
       id: PlatformRoute.Root,
       path: '',
       element: <Navigate to="overview" />,
     });
+
     return navigationItems;
   }, [
-    awxNav,
-    edaNav,
     t,
-    hubNav,
-    awxService,
-    edaService,
-    hubService,
-    organizations,
-    teams,
-    users,
-    activePlatformUser?.is_superuser,
-    activePlatformUser?.is_platform_auditor,
-    resources,
+    automationExecutionNavigation,
+    automationDecisionsNavigation,
+    automationAnalytics,
+    automationContentNavigation,
+    platformAccessNavigation,
+    platformSettingsNavigation,
+    platformResourcesNavigation,
     managedCloudInstall,
-    authenticators,
-    roles,
-    applications,
-    navigate,
   ]);
   return pageNavigationItems;
+}
+
+function useAutomationExecutionNavigation(): PageNavigationItem {
+  const { t } = useTranslation();
+  const awxNav = useAwxNavigation();
+  const awxService = useHasAwxService();
+
+  // Move credentials and credential types under infrastructure
+  const awxInfrastructure = findNavigationItemById(awxNav, AwxRoute.Infrastructure);
+  const awxCredentials = removeNavigationItemById(awxNav, AwxRoute.Credentials)!;
+  const awxCredentialTypes = removeNavigationItemById(awxNav, AwxRoute.CredentialTypes)!;
+  if (awxInfrastructure && 'children' in awxInfrastructure) {
+    awxInfrastructure.children.push(awxCredentials);
+    awxInfrastructure.children.push(awxCredentialTypes);
+  }
+
+  // Remove AWX items that are handled by the platform
+  removeNavigationItemById(awxNav, AwxRoute.Overview);
+  removeNavigationItemById(awxNav, AwxRoute.Settings);
+  removeNavigationItemById(awxNav, AwxRoute.Access);
+  removeNavigationItemById(awxNav, AwxRoute.Analytics);
+
+  return {
+    id: PlatformRoute.AWX,
+    label: t('Automation Execution'),
+    subtitle: t('Automation Controller'),
+    path: 'execution',
+    children: awxNav,
+    hidden: !awxService,
+  };
+}
+
+function useAutomationDecisionsNavigation(): PageNavigationItem {
+  const { t } = useTranslation();
+  const edaNav = useEdaNavigation();
+  const edaService = useHasEdaService();
+
+  // Move credentials and credential types under infrastructure
+  const edaCredentials = removeNavigationItemById(edaNav, EdaRoute.Credentials)!;
+  const edaCredentialTypes = removeNavigationItemById(edaNav, EdaRoute.CredentialTypes)!;
+  edaNav.push({
+    id: 'eda-infrastructure',
+    label: t('Infrastructure'),
+    path: 'infrastructure',
+    children: [edaCredentials, edaCredentialTypes],
+  });
+
+  // Remove EDA items that are handled by the platform
+  removeNavigationItemById(edaNav, EdaRoute.Overview);
+  removeNavigationItemById(edaNav, EdaRoute.Users);
+  removeNavigationItemById(edaNav, EdaRoute.Access);
+  removeNavigationItemById(edaNav, EdaRoute.Settings);
+
+  return {
+    id: PlatformRoute.EDA,
+    label: t('Automation Decisions'),
+    subtitle: t('Event-Driven Ansible'),
+    path: 'decisions',
+    children: edaNav,
+    hidden: !edaService,
+  };
+}
+
+function useAutomationAnalytics(): PageNavigationItem {
+  const awxNav = useAwxNavigation();
+  const { t } = useTranslation();
+  const awxService = useHasAwxService();
+  const managedCloudInstall = useIsManagedCloudInstall() ?? false;
+  const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
+  const { activePlatformUser } = usePlatformActiveUser();
+  if (analytics && 'children' in analytics) {
+    analytics.label = t('Automation Analytics');
+    if (managedCloudInstall) {
+      removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
+    }
+    analytics.hidden = !awxService || !activePlatformUser?.is_superuser;
+  }
+  return analytics;
+}
+
+function useAutomationContentNavigation(): PageNavigationItem {
+  const { t } = useTranslation();
+  const hubNav = useHubNavigation();
+  const hubService = useHasHubService();
+
+  const hubAdminIndex = hubNav.findIndex(({ path }) => path === 'administration');
+  if (hubAdminIndex !== -1) {
+    // as PageNavigationGroup really, but not exported
+    const admin = hubNav[hubAdminIndex] as { children: PageNavigationItem[] };
+    const children = admin.children.map((o) => ({
+      ...o,
+      path: `administration/${o.path}`,
+    }));
+    hubNav.splice(hubAdminIndex, 1, ...children);
+  }
+
+  // Remove Hub items that are handled by the platform
+  removeNavigationItemById(hubNav, HubRoute.Overview);
+  removeNavigationItemById(hubNav, HubRoute.Organizations);
+  removeNavigationItemById(hubNav, HubRoute.Teams);
+  removeNavigationItemById(hubNav, HubRoute.Users);
+  removeNavigationItemById(hubNav, HubRoute.Settings);
+  removeNavigationItemById(hubNav, HubRoute.Access);
+
+  return {
+    id: PlatformRoute.HUB,
+    label: t('Automation Content'),
+    subtitle: t('Automation Hub'),
+    path: 'content',
+    children: hubNav,
+    hidden: !hubService,
+  };
+}
+
+function usePlatformAccessNavigation(): PageNavigationItem {
+  const { t } = useTranslation();
+  const { activePlatformUser } = usePlatformActiveUser();
+  const authenticators = useGetPlatformAuthenticatorsRoutes();
+  const organizations = useGetPlatformOrganizationsRoutes();
+  const teams = useGetPlatformTeamsRoutes();
+  const users = useGetPlatformUsersRoutes();
+  const roles = useGetPlatformRolesRoutes();
+  const applications = useGetPlatformApplicationsRoutes();
+  const awxService = useHasAwxService();
+  const edaService = useHasEdaService();
+  const hubService = useHasHubService();
+  const platformAccessRouteChildren = [organizations, teams, users];
+
+  if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
+    platformAccessRouteChildren.unshift(authenticators);
+  }
+
+  if (awxService || edaService || hubService) {
+    platformAccessRouteChildren.push(...roles);
+  }
+
+  if (activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) {
+    platformAccessRouteChildren.push(...applications);
+  }
+  return {
+    id: PlatformRoute.Access,
+    label: t('Access Management'),
+    path: 'access',
+    children: platformAccessRouteChildren,
+  };
+}
+
+function usePlatformSettingsNavigation(): PageNavigationItem {
+  const { t } = useTranslation();
+  const settingsNav: PageNavigationItem[] = [];
+  const { activePlatformUser } = usePlatformActiveUser();
+  const awxService = useHasAwxService();
+  const navigate = useNavigate();
+
+  settingsNav.push({
+    label: t('Subscription'),
+    path: 'subscription',
+    children: [
+      {
+        id: PlatformRoute.SubscriptionWizard,
+        path: 'wizard',
+        element: <SubscriptionWizard onSuccess={() => navigate('/settings/subscription')} />,
+      },
+      {
+        id: PlatformRoute.SubscriptionDetails,
+        path: '',
+        element: <SubscriptionDetails />,
+      },
+    ],
+    hidden:
+      !awxService ||
+      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+  });
+
+  settingsNav.push({
+    id: PlatformRoute.GatewaySettings,
+    label: t('Platform gateway'),
+    path: 'platform-gateway',
+    element: <GatewaySettings />,
+    children: [
+      {
+        path: 'edit',
+        element: <GatewaySettingsEdit categoryId="platform" />,
+      },
+      {
+        path: '',
+        element: <GatewaySettingsDetails categoryId="platform" />,
+      },
+    ],
+    hidden: !activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor,
+  });
+
+  const userPreferences = {
+    id: AwxRoute.SettingsPreferences,
+    label: t('User Preferences'),
+    path: 'preferences',
+    children: [
+      { path: 'edit', element: <PageSettingsForm /> },
+      { path: '', element: <PageSettingsDetails /> },
+    ],
+  };
+  settingsNav.push(userPreferences);
+
+  settingsNav.push({
+    id: AwxRoute.SettingsSystem,
+    label: t('System'),
+    path: 'system',
+    children: [
+      {
+        path: 'edit',
+        element: <AwxSettingsCategoryForm categoryId="system" key="system" />,
+      },
+      {
+        path: '',
+        element: <AwxSettingsCategoryDetailsPage categoryId="system" key="system" />,
+      },
+    ],
+    hidden:
+      !awxService ||
+      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+  });
+
+  settingsNav.push({
+    id: AwxRoute.SettingsJobs,
+    label: t('Job'),
+    path: 'job-settings',
+    children: [
+      {
+        path: 'edit',
+        element: <AwxSettingsCategoryForm categoryId="jobs" key="jobs" />,
+      },
+      {
+        path: '',
+        element: <AwxSettingsCategoryDetailsPage categoryId="jobs" key="jobs" />,
+      },
+    ],
+    hidden:
+      !awxService ||
+      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+  });
+
+  settingsNav.push({
+    id: AwxRoute.SettingsLogging,
+    label: t('Logging'),
+    path: 'logging',
+    children: [
+      {
+        path: 'edit',
+        element: <AwxSettingsCategoryForm categoryId="logging" key="logging" />,
+      },
+      {
+        path: '',
+        element: <AwxSettingsCategoryDetailsPage categoryId="logging" key="logging" />,
+      },
+    ],
+    hidden:
+      !awxService ||
+      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+  });
+
+  settingsNav.push({
+    id: AwxRoute.SettingsTroubleshooting,
+    label: t('Troubleshooting'),
+    path: 'troubleshooting',
+    children: [
+      {
+        path: 'edit',
+        element: <AwxSettingsCategoryForm categoryId="debug" key="debug" />,
+      },
+      {
+        path: '',
+        element: <AwxSettingsCategoryDetailsPage categoryId="debug" key="debug" />,
+      },
+    ],
+    hidden:
+      !awxService ||
+      (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+  });
+
+  settingsNav.push({
+    path: '',
+    element: <Navigate to=".." />,
+  });
+
+  return {
+    id: AwxRoute.Settings,
+    label: t('Settings'),
+    path: 'settings',
+    children: settingsNav,
+  };
 }
