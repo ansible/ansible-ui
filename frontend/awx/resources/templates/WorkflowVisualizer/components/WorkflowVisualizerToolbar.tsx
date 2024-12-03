@@ -29,7 +29,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { useLaunchTemplate } from '../../hooks/useLaunchTemplate';
 import { START_NODE_ID } from '../constants';

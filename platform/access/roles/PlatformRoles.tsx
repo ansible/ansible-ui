@@ -5,6 +5,7 @@ import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { useTranslation } from 'react-i18next';
 import { PlatformServiceNavigation } from '../../common/PlatformServiceNavigation';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function PlatformRoles() {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ export function PlatformRoles() {
         titleHelp={t(
           'A role represents set of actions that a team or user may perform on a resource or set of resources.'
         )}
+        titleDocLink={useGetDocsUrl(undefined, 'roles')}
       />
       <PlatformServiceNavigation awx={AwxRoute.Roles} eda={EdaRoute.Roles} hub={HubRoute.Roles} />
     </PageLayout>

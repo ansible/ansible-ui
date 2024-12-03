@@ -6,6 +6,8 @@ import { useEdaView } from '../common/useEventDrivenView';
 import { EdaRuleAuditItem } from '../interfaces/EdaRuleAudit';
 import { useRuleAuditColumns } from './hooks/useRuleAuditColumns';
 import { useRuleAuditFilters } from './hooks/useRuleAuditFilters';
+import { useEdaConfig } from '../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 const ruleAuditEndpoint = edaAPI`/audit-rules/`;
 
@@ -18,6 +20,7 @@ export function RuleAudit() {
     tableColumns,
     toolbarFilters,
   });
+  const config = useEdaConfig();
 
   return (
     <PageLayout>
@@ -30,6 +33,7 @@ export function RuleAudit() {
         description={t(
           'Rule audit allows for monitoring and reviewing the execution of defined rules which have been triggered by incoming events.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'ruleAudit')}
       />
       <PageTable
         id="eda-rule-audit-table"

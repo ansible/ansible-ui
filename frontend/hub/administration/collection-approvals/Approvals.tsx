@@ -8,11 +8,14 @@ import { useApprovalActions } from './hooks/useApprovalActions';
 import { useApprovalFilters } from './hooks/useApprovalFilters';
 import { useApprovalsActions } from './hooks/useApprovalsActions';
 import { useApprovalsColumns } from './hooks/useApprovalsColumns';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Approvals() {
   const { t } = useTranslation();
   const toolbarFilters = useApprovalFilters();
   const tableColumns = useApprovalsColumns();
+  const config = useHubConfig();
 
   const view = useHubView<CollectionVersionSearch>({
     url: hubAPI`/v3/plugin/ansible/search/collection-versions/`,
@@ -36,6 +39,7 @@ export function Approvals() {
         titleHelp={t(
           'Collection approvals enables administrators to manage and authorize Ansible content collections for organizational use.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'collectionApprovals')}
       />
       <PageTable<CollectionVersionSearch>
         id="hub-collection-version-search-table"

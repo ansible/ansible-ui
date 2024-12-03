@@ -14,6 +14,8 @@ import { useRulebookActivationActions } from './hooks/useRulebookActivationActio
 import { useRulebookActivationColumns } from './hooks/useRulebookActivationColumns';
 import { useRulebookActivationFilters } from './hooks/useRulebookActivationFilters';
 import { useRulebookActivationsActions } from './hooks/useRulebookActivationsActions';
+import { useEdaConfig } from '../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function RulebookActivations() {
   const { t } = useTranslation();
@@ -29,6 +31,7 @@ export function RulebookActivations() {
   });
   const toolbarActions = useRulebookActivationsActions(view);
   const rowActions = useRulebookActivationActions(view);
+  const config = useEdaConfig();
   return (
     <PageLayout>
       <PageHeader
@@ -40,6 +43,7 @@ export function RulebookActivations() {
         titleHelp={t(
           'Rulebook activations manage the configuration and enabling of rulebooks that govern automation logic triggered by events.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'rulebookActivations')}
       />
       <PageTable
         id="eda-rulebook-activations-table"

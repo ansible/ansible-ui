@@ -15,6 +15,8 @@ import {
 } from './hooks/useCredentialTypeActions';
 import { useCredentialTypeCredentialsFilters } from './hooks/useCredentialTypeCredentialsFilters';
 import { useCredentialTypesColumns } from './hooks/useCredentialTypesColumns';
+import { useEdaConfig } from '../../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function CredentialTypes() {
   const { t } = useTranslation();
@@ -23,6 +25,7 @@ export function CredentialTypes() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/credential-types/`);
   const canCreateCredentialTypes = Boolean(data && data.actions && data.actions['POST']);
   const toolbarFilters = useCredentialTypeCredentialsFilters();
+  const config = useEdaConfig();
 
   const view = useEdaView<EdaCredentialType>({
     url: edaAPI`/credential-types/`,
@@ -43,6 +46,7 @@ export function CredentialTypes() {
         titleHelp={t(
           'Define custom credential types to support authentication with other systems during automation.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'edaCredentialTypes')}
       />
       <PageTable<EdaCredentialType>
         id="Eda-credential-types"

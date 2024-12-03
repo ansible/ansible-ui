@@ -20,7 +20,7 @@ import { PageFormManagementJobsSelect } from '../../../../administration/managem
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';

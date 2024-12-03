@@ -16,6 +16,7 @@ import {
 } from '../hooks/useAuthenticatorActions';
 import { useAuthenticatorsColumns } from '../hooks/useAuthenticatorColumns';
 import { useAuthenticatorsFilters } from '../hooks/useAuthenticatorsFilters';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function AuthenticatorsList() {
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ export function AuthenticatorsList() {
         description={t(
           "Set up and manage your organization's authentication methods, which are used to simplify the login experience."
         )}
+        titleDocLink={useGetDocsUrl(undefined, 'authenticationMethods')}
       />
       <PageTable<Authenticator>
         id="platform-authenticators-table"

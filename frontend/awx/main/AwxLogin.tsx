@@ -9,7 +9,7 @@ import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';
 import { WebSocketProvider } from '../common/useAwxWebSocket';
-import { DocsVersionProvider } from '../common/useDocsVersion';
+import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 
 type AwxAuthOptions = {
   [key: string]: {

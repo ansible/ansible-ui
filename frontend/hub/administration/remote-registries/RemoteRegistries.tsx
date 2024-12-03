@@ -13,11 +13,14 @@ import { useRemoteRegistriesColumns } from './hooks/useRemoteRegistriesColumns';
 import { useRemoteRegistriesToolbarActions } from './hooks/useRemoteRegistriesToolbarActions';
 import { useRemoteRegistryActions } from './hooks/useRemoteRegistryActions';
 import { useRemoteRegistryFilters } from './hooks/useRemoteRegistryFilters';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function RemoteRegistries() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteRegistryFilters();
   const tableColumns = useRemoteRegistriesColumns();
+  const config = useHubConfig();
   const view = useHubView<RemoteRegistry>({
     url: hubAPI`/_ui/v1/execution-environments/registries/`,
     keyFn: pulpHrefKeyFn,
@@ -41,6 +44,7 @@ export function RemoteRegistries() {
         description={t(
           'Remote registries are external sources that provide a central location for users to search, retrieve, and install Ansible roles and collections.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'remoteRegistries')}
       />
       <PageTable<RemoteRegistry>
         id="hub-remote-registries-table"

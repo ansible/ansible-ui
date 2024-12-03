@@ -4,12 +4,15 @@ import { ActionGroup, Alert, Button, PageSection, Stack } from '@patternfly/reac
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Token() {
   const { t } = useTranslation();
   const [working, setWorking] = useState(false);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
+  const config = useHubConfig();
 
   const postRequest = usePostRequest<object, { token: string }>();
 
@@ -36,6 +39,7 @@ export function Token() {
         titleHelpTitle={t('API Token')}
         titleHelp={t('An API token can be used to authenticate the ansible-galaxy client.')}
         description={t('An API token can be used to authenticate the ansible-galaxy client.')}
+        titleDocLink={useGetDocsUrl(config, 'apiToken')}
       />
       {token ? (
         <Stack>

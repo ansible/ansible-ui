@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { SchedulesList } from './SchedulesList';
 

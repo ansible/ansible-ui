@@ -2,7 +2,7 @@ import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ExecutionEnvironmentsList } from './ExecutionEnvironmentsList';
 
 export function ExecutionEnvironments() {

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { useManagementJobColumns } from './hooks/useManagementJobColumns';
 import { useManagementJobFilters } from './hooks/useManagementJobFilters';

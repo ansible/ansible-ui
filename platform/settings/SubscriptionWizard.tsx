@@ -11,7 +11,7 @@ import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/Pag
 import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter';
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
-import { ILicenseInfo } from '@ansible/awx-ui/interfaces/Config';
+import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
 import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
 import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {

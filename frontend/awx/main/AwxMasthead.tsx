@@ -16,7 +16,7 @@ import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { useAwxConfig } from '../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../common/useAwxWebSocket';
-import { useGetDocsUrl } from '../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { WorkflowApproval } from '../interfaces/WorkflowApproval';
 import { AwxRoute } from './AwxRoutes';
 

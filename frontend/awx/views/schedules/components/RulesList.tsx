@@ -12,7 +12,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { useRuleRowActions } from '../hooks/useRuleRowActions';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
 import { RuleListItemType } from '../types';

@@ -12,6 +12,8 @@ import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
 import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export interface HubRemote {
   auth_url?: string | null;
@@ -40,6 +42,7 @@ export function Remotes() {
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
   const getPageUrl = useGetPageUrl();
+  const config = useHubConfig();
   const view = useHubView<HubRemote>({
     url: pulpAPI`/remotes/ansible/collection/`,
     keyFn: pulpHrefKeyFn,
@@ -60,6 +63,7 @@ export function Remotes() {
         titleHelp={t(
           'Remotes manage configurations for remote execution environments utilized in Ansible automation tasks.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'remotes')}
       />
       <PageTable<HubRemote>
         id="hub-remotes-table"

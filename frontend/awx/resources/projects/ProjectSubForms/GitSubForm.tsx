@@ -5,7 +5,7 @@ import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { Trans, useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../../access/credentials/components/PageFormCredentialSelect';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { ScmTypeOptions } from './ScmTypeOptions';
 

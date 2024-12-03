@@ -1,5 +1,5 @@
-import { Config } from '../../interfaces/Config';
-import { useDocsVersion } from '../useDocsVersion';
+import { Config } from '../interfaces/Config';
+import { useDocsVersion } from './useDocsVersion';
 
 export interface DocPathDictionary {
   credentialTypes: string;
@@ -9,6 +9,9 @@ export interface DocPathDictionary {
   users: string;
   activityStream: string;
   applications: string;
+  authenticationMethods?: string;
+  roles?: string;
+  oAuthApplications?: string;
   executionEnvironments: string;
   managementJobs: string;
   notifiers: string;
@@ -29,6 +32,24 @@ export interface DocPathDictionary {
   schedules: string;
   instanceGroups: string;
   instances: string;
+  automationContentExecutionEnvironments?: string;
+  ruleAudit?: string;
+  rulebookActivations?: string;
+  edaProjects?: string;
+  decisionEnvironments?: string;
+  eventStreams?: string;
+  edaCredentials?: string;
+  edaCredentialTypes?: string;
+  hubExecutionEnvironments?: string;
+  signatureKeys?: string;
+  repositories?: string;
+  remoteRegistries?: string;
+  taskManagement?: string;
+  collectionApprovals?: string;
+  remotes?: string;
+  apiToken?: string;
+  automationCalculator?: string;
+  hostMetrics?: string;
 }
 
 export function useGetDocsUrl(
@@ -79,8 +100,7 @@ const upstreamPaths: DocPathDictionary = {
 };
 
 export const downstreamPaths: DocPathDictionary = {
-  credentialTypes: 'html/using_automation_execution/assembly-controller-custom-credentials',
-  credentials: 'html/using_automation_execution/controller-credentials',
+  // Platform documentation routes
   organizations:
     'html/access_management_and_authentication/gw-managing-access#assembly-my-user-story_gw-manage-rbac',
   teams:
@@ -88,8 +108,15 @@ export const downstreamPaths: DocPathDictionary = {
   users:
     'html/access_management_and_authentication/gw-managing-access#assembly-controller-users_gw-manage-rbac',
   activityStream: 'html/using_automation_execution/assembly-controller-activity-stream',
-  applications:
-    'html/access_management_and_authentication/gw-token-based-authentication#assembly-controller-applications',
+  applications: 'html/access_management_and_authentication/gw-token-based-authentication',
+  roles: 'html/access_management_and_authentication/assembly-gw-roles',
+  authenticationMethods:
+    'html/access_management_and_authentication/gw-configure-authentication#gw-config-authentication-type',
+  oAuthApplications: 'html/access_management_and_authentication/gw-token-based-authentication',
+
+  // Controller documentation routes
+  credentialTypes: 'html/using_automation_execution/assembly-controller-custom-credentials',
+  credentials: 'html/using_automation_execution/controller-credentials',
   executionEnvironments:
     'html/using_automation_execution/assembly-controller-execution-environments',
   managementJobs: 'html/configuring_automation_execution/assembly-controller-management-jobs',
@@ -115,7 +142,34 @@ export const downstreamPaths: DocPathDictionary = {
     'html/using_automation_execution/controller-workflow-job-templates#controller-build-workflow',
   jobs: 'html/using_automation_execution/controller-jobs',
   schedules: 'html/using_automation_execution/controller-schedules',
-  instanceGroups:
-    'html/using_automation_execution/controller-instance-and-container-groups#con-controller-instance-groups',
+  instanceGroups: 'html/using_automation_execution/controller-instance-groups',
   instances: 'html/using_automation_execution/assembly-controller-instances',
+
+  // EDA documentation routes
+  ruleAudit: 'html/using_automation_decisions/eda-rule-audit',
+  rulebookActivations: 'html/using_automation_decisions/eda-rulebook-activations',
+  edaProjects: 'html/using_automation_decisions/eda-projects',
+  decisionEnvironments: 'html/using_automation_decisions/eda-decision-environments',
+  eventStreams: 'html-single/using_automation_decisions/index#event-streams',
+  edaCredentials: 'html/using_automation_decisions/eda-credentials',
+  edaCredentialTypes: 'html/using_automation_decisions/eda-credential-types',
+
+  // Hub documentation routes
+  hubExecutionEnvironments: 'html-single/managing_automation_content/index#container-registries',
+  signatureKeys:
+    'html-single/managing_automation_content/index#proc-downloading-signature-public-keys',
+  repositories: 'html-single/managing_automation_content/index#repo-management',
+  remoteRegistries:
+    'html-single/managing_automation_content/index#adding-containers-remotely-to-the-automation-hub',
+  taskManagement: 'html-single/managing_automation_content/index#repository-sync',
+  collectionApprovals:
+    'html-single/managing_automation_content/index#assembly-managing-private-collections',
+  remotes: 'html-single/managing_automation_content/index#proc-create-remote_remote-management',
+  apiToken: 'html-single/managing_automation_content/index#proc-create-remote_remote-management',
+
+  // Automation analytics documentation routes
+  automationCalculator:
+    'html-single/using_automation_analytics/index#assembly-evaluating-automation-return',
+  hostMetrics:
+    'html-single/configuring_automation_execution/index#ref-controller-analytics-reports',
 };

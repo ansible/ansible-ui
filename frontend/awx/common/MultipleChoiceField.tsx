@@ -22,7 +22,7 @@ import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useAwxConfig } from './useAwxConfig';
-import { useGetDocsUrl } from './util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 const DividerWithSpace = styled(Divider)`
   padding-top: var(--pf-v5-global--spacer--md);

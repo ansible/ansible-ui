@@ -31,7 +31,7 @@ import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironment
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
-import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
 

@@ -19,7 +19,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAwxConfig } from '../../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function ConstructedInventoryHint() {
   const config = useAwxConfig();

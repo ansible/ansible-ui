@@ -7,7 +7,7 @@ import {
   useHostnameToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { InstancesList } from './components/InstancesList';
 import { useInstanceRowActions } from './hooks/useInstanceRowActions';
 import { useInstancesColumns } from './hooks/useInstancesColumns';
