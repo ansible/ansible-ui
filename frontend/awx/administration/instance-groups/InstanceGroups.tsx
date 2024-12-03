@@ -6,7 +6,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import {
   useDisableCreateInstanceGroup,

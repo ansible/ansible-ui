@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { TemplatesList } from './TemplatesList';
 
 export function Templates() {

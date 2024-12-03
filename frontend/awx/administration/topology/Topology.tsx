@@ -5,7 +5,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { TopologyViewLayer } from './Visualizer';
 

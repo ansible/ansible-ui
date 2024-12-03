@@ -1,5 +1,5 @@
 import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
-import { useGetDocsUrl } from '@ansible/awx-ui/common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { useTranslation } from 'react-i18next';
 import { PlatformApplicationsTable } from './PlatformApplicationsTable';
 

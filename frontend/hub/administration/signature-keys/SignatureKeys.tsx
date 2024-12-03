@@ -21,6 +21,8 @@ import { pulpAPI } from '../../common/api/formatPath';
 import { pulpHrefKeyFn } from '../../common/api/hub-api-utils';
 import { useHubView } from '../../common/useHubView';
 import { SignatureKey } from './SignatureKey';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function SignatureKeys() {
   const { t } = useTranslation();
@@ -32,6 +34,8 @@ export function SignatureKeys() {
     toolbarFilters,
     tableColumns,
   });
+  const config = useHubConfig();
+
   const rowActions = useMemo<IPageAction<SignatureKey>[]>(
     () => [
       {
@@ -57,6 +61,7 @@ export function SignatureKeys() {
         description={t(
           'Signature keys are cryptographic keys used to verify the authenticity and integrity of content published on Ansible Galaxy.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'signatureKeys')}
       />
       <PageTable<SignatureKey>
         id="hub-signature-keys-table"

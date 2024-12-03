@@ -8,7 +8,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobsColumns } from './hooks/useJobsColumns';
 import { useJobsFilters } from './hooks/useJobsFilters';

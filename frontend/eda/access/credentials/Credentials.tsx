@@ -14,6 +14,8 @@ import { useCredentialActions } from './hooks/useCredentialActions';
 import { useCredentialColumns } from './hooks/useCredentialColumns';
 import { useCredentialFilters } from './hooks/useCredentialFilters';
 import { useCredentialsActions } from './hooks/useCredentialsActions';
+import { useEdaConfig } from '../../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Credentials() {
   const { t } = useTranslation();
@@ -30,6 +32,8 @@ export function Credentials() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/eda-credentials/`);
   const canCreateCredential = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useCredentialActions(view);
+  const config = useEdaConfig();
+
   return (
     <PageLayout>
       <PageHeader
@@ -43,6 +47,7 @@ export function Credentials() {
           'Credentials are utilized by {{product}} for authentication when launching rulebooks.',
           { product }
         )}
+        titleDocLink={useGetDocsUrl(config, 'edaCredentials')}
       />
       <PageTable
         id="eda-credentials-table"

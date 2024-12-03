@@ -14,6 +14,8 @@ import { useProjectActions } from './hooks/useProjectActions';
 import { useProjectColumns } from './hooks/useProjectColumns';
 import { useProjectFilters } from './hooks/useProjectFilters';
 import { useProjectsActions } from './hooks/useProjectsActions';
+import { useEdaConfig } from '../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Projects() {
   const { t } = useTranslation();
@@ -29,6 +31,7 @@ export function Projects() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/projects/`);
   const canCreateProject = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useProjectActions(view);
+  const config = useEdaConfig();
   return (
     <PageLayout>
       <PageHeader
@@ -36,6 +39,7 @@ export function Projects() {
         description={t('A project is a logical collection of rulebooks.')}
         titleHelpTitle={t('Automation Decisions Projects')}
         titleHelp={t('A project is a logical collection of rulebooks.')}
+        titleDocLink={useGetDocsUrl(config, 'edaProjects')}
       />
       <PageTable
         id="eda-projects-table"

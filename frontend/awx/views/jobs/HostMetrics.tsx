@@ -8,11 +8,14 @@ import { useHostMetricsColumns } from './hooks/useHostMetricsColumns';
 import { useHostMetricsFilters } from './hooks/useHostMetricsFilters';
 import { useHostMetricsRowActions } from './hooks/useHostMetricsRowActions';
 import { useHostMetricsToolbarActions } from './hooks/useHostMetricsToolbarActions';
+import { useAwxConfig } from '../../common/useAwxConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function HostMetrics() {
   const { t } = useTranslation();
   const toolbarFilters = useHostMetricsFilters();
   const tableColumns = useHostMetricsColumns();
+  const config = useAwxConfig();
   const view = useAwxView<HostMetric>({
     url: awxAPI`/host_metrics/`,
     queryParams: {
@@ -35,6 +38,7 @@ export function HostMetrics() {
         description={t(
           `All currently managed hosts, with information about when they were first automated, when they were most recently automated, how many times they were automated, and how many times each host has been deleted.`
         )}
+        titleDocLink={useGetDocsUrl(config, 'hostMetrics')}
       />
       <PageTable
         id="awx-host-metrics-table"

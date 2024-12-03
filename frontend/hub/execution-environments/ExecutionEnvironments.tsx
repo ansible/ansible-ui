@@ -16,6 +16,8 @@ import {
   useExecutionEnvironmentsActions,
 } from './hooks/useExecutionEnvironmentsActions';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { useHubConfig } from '../common/useHubConfig';
 
 export function ExecutionEnvironments() {
   const { t } = useTranslation();
@@ -23,6 +25,7 @@ export function ExecutionEnvironments() {
   const tableColumns = useExecutionEnvironmentsColumns();
   const getPageUrl = useGetPageUrl();
   const eePush = useEEPush();
+  const config = useHubConfig();
 
   const view = useHubView<ExecutionEnvironment>({
     url: hubAPI`/v3/plugin/execution-environments/repositories/`,
@@ -45,6 +48,7 @@ export function ExecutionEnvironments() {
         description={t(
           'Execution environments are isolated and reproducible environments that provide consistent runtime environments for running Ansible playbooks and roles.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'hubExecutionEnvironments')}
       />
 
       <PageTable<ExecutionEnvironment>

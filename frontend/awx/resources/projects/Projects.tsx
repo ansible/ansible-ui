@@ -12,7 +12,7 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { useGetDocsUrl } from '../../common/util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Project } from '../../interfaces/Project';
 import { AwxRoute } from '../../main/AwxRoutes';

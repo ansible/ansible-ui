@@ -1,4 +1,4 @@
-import { ILicenseInfo } from '@ansible/awx-ui/interfaces/Config';
+import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
 import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { SAAS_URL } from '../../../support/constants';
 import { awxAPI } from '../../../support/formatApiPathForAwx';

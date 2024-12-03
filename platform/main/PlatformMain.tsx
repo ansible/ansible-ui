@@ -10,7 +10,7 @@ import { PageFramework } from '@ansible/ansible-ui-framework';
 import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
 import { WebSocketProvider } from '@ansible/awx-ui/common/useAwxWebSocket';
-import { DocsVersionProvider } from '@ansible/awx-ui/common/useDocsVersion';
+import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import '@ansible/common-ui/i18n';
 import { EdaActiveUserProvider } from '@ansible/eda-ui/common/useEdaActiveUser';

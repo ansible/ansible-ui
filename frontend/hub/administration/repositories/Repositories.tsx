@@ -13,12 +13,15 @@ import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryActions } from './hooks/useRepositoryActions';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
 import { useRepositoryToolbarActions } from './hooks/useRepositoryToolbarActions';
+import { useHubConfig } from '../../common/useHubConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function Repositories() {
   const { t } = useTranslation();
   const toolbarFilters = useRepositoryFilters();
   const tableColumns = useRepositoriesColumns();
   const getPageUrl = useGetPageUrl();
+  const config = useHubConfig();
 
   const view = useHubView<Repository>({
     url: pulpAPI`/repositories/ansible/ansible/`,
@@ -41,6 +44,7 @@ export function Repositories() {
         description={t(
           'Repositories are online storage locations where Ansible content, such as roles and collections, can be published, shared, and accessed by the community.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'repositories')}
       />
       <PageTable<Repository>
         id="hub-repositories-table"

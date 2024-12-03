@@ -9,7 +9,7 @@ import { ExecutionEnvironment } from '../interfaces/ExecutionEnvironment';
 import { SummaryFieldsExecutionEnvironment } from '../interfaces/summary-fields/summary-fields';
 import { AwxRoute } from '../main/AwxRoutes';
 import { useAwxConfig } from './useAwxConfig';
-import { useGetDocsUrl } from './util/useGetDocsUrl';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-v5-global--warning-color--100);

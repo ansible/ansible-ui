@@ -3,12 +3,12 @@ import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfl
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { PageDetail } from '@ansible/ansible-ui-framework';
 import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
-import { useGetDocsUrl } from '@ansible/awx-ui/common/util/useGetDocsUrl';
+import { useGetDocsUrl } from './utils/useGetDocsUrl';
 import { SummaryFieldsExecutionEnvironment } from '@ansible/awx-ui/interfaces/summary-fields/summary-fields';
-import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import { useTranslation } from 'react-i18next';
+import { PageDetail } from '../../framework';
+import { ExternalLink } from '../hub/common/ExternalLink';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-global--warning-color--100);

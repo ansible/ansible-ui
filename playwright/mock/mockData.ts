@@ -1,4 +1,4 @@
-import { Config as AwxConfig } from '@ansible/awx-ui/interfaces/Config';
+import { Config as AwxConfig } from '@ansible/common-ui/interfaces/Config';
 import { Credential } from '@ansible/awx-ui/interfaces/Credential';
 import { CredentialType } from '@ansible/awx-ui/interfaces/CredentialType';
 import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';

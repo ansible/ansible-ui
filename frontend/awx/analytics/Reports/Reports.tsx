@@ -10,6 +10,8 @@ import { useAwxActiveUser } from '../../common/useAwxActiveUser';
 import { AutomationCalculator } from './AutomationCalculator';
 import { AnalyticsErrorState } from './ErrorStates';
 import { TAGS } from './constants';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
+import { useAwxConfig } from '../../common/useAwxConfig';
 
 export interface ReportItemsResponse {
   report: {
@@ -29,6 +31,7 @@ export function Reports() {
     requestGet
   );
   const [specificError, setSpecificError] = useState<string>('');
+  const config = useAwxConfig();
 
   useEffect(() => {
     if (!error) {
@@ -76,6 +79,9 @@ export function Reports() {
           title={data?.report?.name || ''}
           description={data?.report?.description || ''}
           controls={data ? reportTags : undefined}
+          titleHelp={data?.report?.description || ''}
+          titleHelpTitle={data?.report?.name || ''}
+          titleDocLink={useGetDocsUrl(config, 'automationCalculator')}
         />
         {activeAwxUser && !activeAwxUser?.is_superuser ? (
           <AnalyticsErrorState />

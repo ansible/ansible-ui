@@ -15,6 +15,8 @@ import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentAct
 import { useDecisionEnvironmentsColumns } from './hooks/useDecisionEnvironmentColumns';
 import { useDecisionEnvironmentFilters } from './hooks/useDecisionEnvironmentFilters';
 import { useDecisionEnvironmentsActions } from './hooks/useDecisionEnvironmentsActions';
+import { useEdaConfig } from '../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function DecisionEnvironments() {
   const { t } = useTranslation();
@@ -30,6 +32,7 @@ export function DecisionEnvironments() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/decision-environments/`);
   const canCreateDE = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useDecisionEnvironmentActions(view);
+  const config = useEdaConfig();
   return (
     <PageLayout>
       <PageHeader
@@ -37,6 +40,7 @@ export function DecisionEnvironments() {
         titleHelpTitle={t('Decision Environments')}
         titleHelp={t('Decision environments are a container image to run Ansible rulebooks.')}
         description={t('Decision environments are a container image to run Ansible rulebooks.')}
+        titleDocLink={useGetDocsUrl(config, 'decisionEnvironments')}
       />
       <PageTable
         id="eda-decision-environments-table"

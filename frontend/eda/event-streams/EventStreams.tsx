@@ -13,6 +13,8 @@ import { useEventStreamActions } from './hooks/useEventStreamActions';
 import { useEventStreamColumns } from './hooks/useEventStreamColumns';
 import { useEventStreamFilters } from './hooks/useEventStreamFilters';
 import { useEventStreamsActions } from './hooks/useEventStreamsActions';
+import { useEdaConfig } from '../common/useEdaConfig';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 
 export function EventStreams() {
   const { t } = useTranslation();
@@ -28,14 +30,22 @@ export function EventStreams() {
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/event-streams/`);
   const canCreateEventStream = Boolean(data && data.actions && data.actions['POST']);
   const rowActions = useEventStreamActions(view);
+  const config = useEdaConfig();
+
   return (
     <PageLayout>
       <PageHeader
         title={t('Event Streams')}
+        titleHelpTitle={t('Event Streams')}
+        titleHelp={t(
+          'Event streams represent server side webhooks which ease the routing issues related to running webhooks ' +
+            'individually in a container or a pod. Sources can be swapped in a rulebook with a matching event stream.'
+        )}
         description={t(
           'Event streams represent server side webhooks which ease the routing issues related to running webhooks ' +
             'individually in a container or a pod. Sources can be swapped in a rulebook with a matching event stream.'
         )}
+        titleDocLink={useGetDocsUrl(config, 'eventStreams')}
       />
       <PageTable
         id="eda-event-streams-table"
