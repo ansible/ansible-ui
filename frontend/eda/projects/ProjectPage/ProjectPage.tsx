@@ -131,7 +131,7 @@ export function ProjectPage() {
       />
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Automation Decisions Projects'),
+          label: t('Back to Projects'),
           page: EdaRoute.Projects,
           persistentFilterKey: 'projects',
         }}

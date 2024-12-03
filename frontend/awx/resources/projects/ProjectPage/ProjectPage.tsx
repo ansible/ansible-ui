@@ -81,7 +81,7 @@ export function ProjectPage() {
 
       <PageRoutedTabs
         backTab={{
-          label: t('Back to Automation Execution Projects'),
+          label: t('Back to Projects'),
           page: AwxRoute.Projects,
           persistentFilterKey: 'projects',
         }}
