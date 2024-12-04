@@ -1,4 +1,10 @@
-import { CopyCell, PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  CopyCell,
+  PageDetail,
+  PageDetails,
+  Scrollable,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { useGet } from '@ansible/common-ui/crud/useGet';
@@ -52,14 +58,15 @@ export function RemoteDetails() {
     refreshRepositories
   );
 
-  if (loadingOrErrorRepositories) return loadingOrErrorRepositories;
+  if (loadingOrErrorRepositories) {
+    return loadingOrErrorRepositories;
+  }
 
-  const emptyRequirementFieldValue = '---';
-  const requirementsFileValue = remote?.requirements_file ?? emptyRequirementFieldValue;
+  const requirementsFileValue = remote?.requirements_file;
 
   return (
-    <>
-      <PageDetails>
+    <Scrollable>
+      <PageDetails disableScroll>
         <PageDetail label={t('Name')}>{remote?.name}</PageDetail>
         <PageDetail label={t('Server URL')}>
           <CopyCell text={remote?.url} />
@@ -108,13 +115,17 @@ export function RemoteDetails() {
           )}
         </PageDetail>
       </PageDetails>
-      <PageDetails numberOfColumns="single">
-        <PageDetailCodeEditor
-          label={t('YAML requirements')}
-          value={requirementsFileValue}
-          showCopyToClipboard={requirementsFileValue !== emptyRequirementFieldValue}
-        />
+      <PageDetails numberOfColumns="single" disableScroll>
+        {requirementsFileValue ? (
+          <PageDetailCodeEditor
+            label={t('YAML requirements')}
+            value={requirementsFileValue}
+            showCopyToClipboard
+          />
+        ) : (
+          <PageDetail label={t('YAML requirements')}>{t('Sync everything')}</PageDetail>
+        )}
       </PageDetails>
-    </>
+    </Scrollable>
   );
 }

@@ -1,37 +1,18 @@
 import { PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
 import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
-import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
+import { RemoteFormProps } from '../RemoteForm';
 
-export function ProxyAdvancedRemoteInputs() {
+interface Props {
+  handleOnClear: (name: string) => void;
+  shouldHideField: (name: string) => boolean;
+}
+
+export function ProxyAdvancedRemoteInputs({ shouldHideField, handleOnClear }: Readonly<Props>) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
-  const [clear, setClear] = useState(false);
-  const { resetField, getValues, setValue } = useFormContext();
 
-  const handleOnClear = (name: string) => {
-    resetField(name);
-    setClear(!clear);
-    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
-
-    if (!hiddenFields) return;
-    const index = hiddenFields.findIndex((field) => field.name === name);
-    if (index !== undefined && index > -1) {
-      hiddenFields[index].is_set = false;
-      setValue('hidden_fields', hiddenFields);
-    }
-  };
-
-  const shouldHideField = (name: string) => {
-    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
-    if (!hiddenFields) {
-      return false;
-    }
-    return !!hiddenFields.find((field) => field.name === name)?.is_set;
-  };
   return (
     <>
       <PageFormTextInput<RemoteFormProps>

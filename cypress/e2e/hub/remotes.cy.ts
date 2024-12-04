@@ -191,7 +191,7 @@ collections:
     // Verify URL and requirements file
     cy.url().should('include', `remotes/${remoteName}/details`);
     cy.get('[data-cy="label-yaml-requirements"]').should('contain', 'YAML requirements');
-    cy.get('.pf-v5-c-code-block__content').should('contain', '');
+    cy.get('.pf-v5-c-code-block__content').should('not.exist');
 
     // Delete the remote
     cy.get('[data-cy="actions-dropdown"]').click();

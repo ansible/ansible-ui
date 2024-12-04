@@ -34,7 +34,6 @@ export interface HubRemote {
     is_set: boolean;
     name: 'client_key' | 'password' | 'proxy_username' | 'proxy_password' | 'token' | 'username';
   }[];
-  my_permissions?: string[];
 }
 
 export function Remotes() {
