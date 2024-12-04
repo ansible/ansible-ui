@@ -2,36 +2,20 @@ import { PageFormCheckbox } from '@ansible/ansible-ui-framework';
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
-import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { HiddenFieldsType, RemoteFormProps } from '../RemoteForm';
+import { RemoteFormProps } from '../RemoteForm';
 
-export function CertificatesAdvancedRemoteInputs() {
+interface Props {
+  handleOnClear: (name: string) => void;
+  shouldHideField: (name: string) => boolean;
+}
+
+export function CertificatesAdvancedRemoteInputs({
+  shouldHideField,
+  handleOnClear,
+}: Readonly<Props>) {
   const { t } = useTranslation();
-  const { resetField, getValues, setValue } = useFormContext();
-  const [clear, setClear] = useState(false);
 
-  const handleOnClear = (name: string) => {
-    resetField(name);
-    setClear(!clear);
-    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
-
-    if (!hiddenFields) return;
-    const index = hiddenFields.findIndex((field) => field.name === name);
-    if (index !== undefined && index > -1) {
-      hiddenFields[index].is_set = false;
-      setValue('hidden_fields', hiddenFields);
-    }
-  };
-
-  const shouldHideField = (name: string) => {
-    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
-    if (!hiddenFields) {
-      return false;
-    }
-    return !!hiddenFields.find((field) => field.name === name)?.is_set;
-  };
   return (
     <>
       <PageFormGroup

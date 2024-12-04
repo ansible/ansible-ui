@@ -4,6 +4,7 @@ import { RemoteFormProps } from '../RemoteForm';
 
 export function MiscAdvancedRemoteInputs() {
   const { t } = useTranslation();
+
   return (
     <>
       <PageFormTextInput<RemoteFormProps>

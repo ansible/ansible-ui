@@ -14,6 +14,7 @@ import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalida
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useFormContext } from 'react-hook-form';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { pulpAPI } from '../../common/api/formatPath';
@@ -27,9 +28,11 @@ import { MiscAdvancedRemoteInputs } from './components/MiscAdvancedRemoteInputs'
 import { ProxyAdvancedRemoteInputs } from './components/ProxyAdvancedRemoteInputs';
 import { RemoteInputs } from './components/RemoteInputs';
 import { RequirementsFile } from './components/RequirementsFile';
-import { yamlRequirementsTemplate } from './constants';
 
-export type HiddenFieldsType = { name: AllowedHiddenFields; is_set: boolean }[];
+export type HiddenFieldsType = {
+  name: 'client_key' | 'password' | 'proxy_password' | 'proxy_username' | 'token' | 'username';
+  is_set: boolean;
+}[];
 
 export interface RemoteFormProps extends HubRemote {
   client_key?: string | null;
@@ -39,82 +42,37 @@ export interface RemoteFormProps extends HubRemote {
   token?: string | null;
   username?: string | null;
 }
-export type AllowedHiddenFields =
-  | 'password'
-  | 'token'
-  | 'username'
-  | 'client_key'
-  | 'proxy_username'
-  | 'proxy_password';
-
-export const HiddenFields: AllowedHiddenFields[] = [
-  'client_key',
-  'password',
-  'proxy_password',
-  'proxy_username',
-  'token',
-  'username',
-];
-
-const compareYaml = (firstYaml: string, secondYaml: string) => {
-  const processYaml = (content: string): string[] => {
-    return (
-      content
-        .split('\n')
-        .map((line) => line.trim())
-        // Remove empty lines and comments
-        .filter((line) => !line.startsWith('#') && line !== '' && line !== '---')
-    );
-  };
-
-  const firstProcessedYaml = processYaml(firstYaml);
-  const secondProcessedYaml = processYaml(secondYaml);
-
-  if (firstProcessedYaml.length !== firstProcessedYaml.length) {
-    return false;
-  }
-
-  for (let i = 0; i < firstProcessedYaml.length; i++) {
-    if (firstProcessedYaml[i] !== secondProcessedYaml[i]) {
-      return false;
-    }
-  }
-
-  return true;
-};
 
 export function CreateRemote() {
-  const {
-    featureFlags: { collection_signing },
-  } = useHubContext();
   const { t } = useTranslation();
   const { clearCacheByKey } = useClearCache();
-  clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
+  const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubRemote>();
-  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
 
   const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (remote) => {
-    const url: string = appendTrailingSlash(remote.url);
-    if (compareYaml(remote?.requirements_file ?? '', yamlRequirementsTemplate)) {
-      delete remote.requirements_file;
-    }
-    if (remote?.proxy_username === '') {
-      delete remote.proxy_username;
-    }
+    const url: string = remote.url && appendTrailingSlash(remote.url);
 
-    if (remote?.proxy_url === '') {
-      delete remote.proxy_url;
-    }
+    // fixes fields that are only required when present
+    ['username', 'password', 'proxy_username', 'proxy_password', 'proxy_url', 'token'].forEach(
+      (field) => {
+        // @ts-expect-error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'RemoteFormProps'.
+        if (remote[field] === '') {
+          // @ts-expect-error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'RemoteFormProps'.
+          delete remote[field];
+        }
+      }
+    );
 
     const createdRemote = await postRequest(pulpAPI`/remotes/ansible/collection/`, {
       ...remote,
       url,
     });
+
+    clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
     pageNavigate(HubRoute.RemotePage, { params: { id: createdRemote?.name } });
   };
-  const getPageUrl = useGetPageUrl();
 
   return (
     <PageLayout>
@@ -134,90 +92,56 @@ export function CreateRemote() {
           url: '',
           signed_only: false,
           sync_dependencies: false,
-          requirements_file: yamlRequirementsTemplate,
         }}
       >
-        <>
-          <RemoteInputs
-            isCommunityRemote={isCommunityRemote}
-            collection_signing={collection_signing}
-            setIsCommunityRemote={setIsCommunityRemote}
-          />
-          <PageFormSection singleColumn>
-            <RequirementsFile isCommunityRemote={isCommunityRemote} />
-          </PageFormSection>
-          <PageFormExpandableSection singleColumn>
-            <ProxyAdvancedRemoteInputs />
-            <CertificatesAdvancedRemoteInputs />
-            <MiscAdvancedRemoteInputs />
-          </PageFormExpandableSection>
-        </>
+        <HelperWrapper isNew />
       </HubPageForm>
     </PageLayout>
   );
 }
 
+// defaults for hidden fields
 const initialRemote: Partial<RemoteFormProps> = {
-  name: '',
-  url: '',
-  ca_cert: null,
-  client_cert: null,
-  tls_validation: true,
-  proxy_url: null,
-  download_concurrency: null,
-  rate_limit: null,
-  requirements_file: '---',
-  auth_url: null,
-  signed_only: false,
-  sync_dependencies: false,
   client_key: null,
   password: null,
   proxy_password: null,
   proxy_username: null,
   token: null,
   username: null,
-  hidden_fields: HiddenFields.map((name) => ({ name, is_set: false })),
 };
 
-function isHiddenField(key: keyof RemoteFormProps): key is AllowedHiddenFields {
-  return HiddenFields.includes(key as AllowedHiddenFields);
-}
+type RemoteKey = keyof RemoteFormProps;
 
-type RemoteFormPropsKey = keyof RemoteFormProps;
 function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFormProps) {
-  // Adapted from https://github.com/ansible/ansible-hub-ui/blob/625157662113cd68c3b121508fa8f64613339a71/src/api/ansible-remote.ts#L5
-  if (modifiedRemote.my_permissions) {
-    delete modifiedRemote.my_permissions;
-  }
+  const getHiddenField = (key: RemoteKey, from: RemoteFormProps) =>
+    from?.hidden_fields?.find((field) => field.name === key);
+  const isHiddenField = (key: RemoteKey) => !!getHiddenField(key, unmodifiedRemote);
 
   /**
    * When a field is clear ('' or null):
    * - If it has been explicitly cleared in the edit, record the null or '' value in the response
    * - If it was unchanged, delete it from the response
    */
-  Object.keys(modifiedRemote).forEach((key) => {
-    const propKey = key as RemoteFormPropsKey;
+  (Object.keys(modifiedRemote) as RemoteKey[]).forEach((propKey) => {
+    const isEmpty = modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null;
+    const wasEmpty = unmodifiedRemote[propKey] === '' || unmodifiedRemote[propKey] === null;
+    const unchanged = isHiddenField(propKey)
+      ? getHiddenField(propKey, unmodifiedRemote)?.is_set ===
+        getHiddenField(propKey, modifiedRemote)?.is_set
+      : wasEmpty;
 
-    if (modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null) {
-      if (isHiddenField(propKey)) {
-        if (
-          unmodifiedRemote?.hidden_fields?.find((field) => field.name === propKey)?.is_set ===
-          modifiedRemote?.hidden_fields?.find((field) => field.name === propKey)?.is_set
-        ) {
-          delete modifiedRemote[propKey];
-        } else {
-          modifiedRemote[propKey] = null;
-        }
-      } else {
-        if (unmodifiedRemote[propKey] === '' || unmodifiedRemote[propKey] === null) {
-          delete modifiedRemote[propKey];
-        } else if (modifiedRemote[propKey] === '') {
-          // @ts-expect-error Unable to override error Type 'null' is not assignable to type 'never'.
-          modifiedRemote[propKey] = null;
-        }
-      }
+    if (!isEmpty) {
+      return;
+    }
+
+    if (unchanged) {
+      delete modifiedRemote[propKey];
+    } else {
+      // @ts-expect-error TS2322: Type 'null' is not assignable to type 'never'.
+      modifiedRemote[propKey] = null;
     }
   });
+
   // Pulp complains if auth_url gets sent with a request that doesn't include a
   // valid token, even if the token exists in the database and isn't being changed.
   // To solve this issue, simply delete auth_url from the request if it hasn't
@@ -225,68 +149,50 @@ function smartUpdate(modifiedRemote: RemoteFormProps, unmodifiedRemote: RemoteFo
   if (modifiedRemote.auth_url === unmodifiedRemote.auth_url) {
     delete modifiedRemote.auth_url;
   }
-  const keys = Object.keys(modifiedRemote) as RemoteFormPropsKey[];
+
+  const keys = Object.keys(modifiedRemote) as RemoteKey[];
   for (const field of keys) {
-    if (!isHiddenField(field)) {
-      if (modifiedRemote[field] === null && unmodifiedRemote[field] === null) {
-        // API returns headers:null but doesn't accept it .. and we don't edit headers
-        delete modifiedRemote[field];
-      }
+    if (
+      !isHiddenField(field) &&
+      modifiedRemote[field] === null &&
+      unmodifiedRemote[field] === null
+    ) {
+      // API returns headers: null but doesn't accept it .. and we don't edit headers
+      delete modifiedRemote[field];
     }
   }
 
   return modifiedRemote;
 }
+
 export function EditRemote() {
-  const {
-    featureFlags: { collection_signing },
-  } = useHubContext();
-  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
-  const name = params.id;
   const { clearCacheByKey } = useClearCache();
 
+  const name = params.id;
   const { data, error, refresh, isLoading } = useGet<PulpItemsResponse<HubRemote>>(
-    pulpAPI`/remotes/ansible/collection/?name=${name}`
+    name ? pulpAPI`/remotes/ansible/collection/?name=${name}` : undefined
   );
-  const remote = data?.results[0];
 
-  const getPageUrl = useGetPageUrl();
+  if (error) {
+    return <HubError error={error} handleRefresh={refresh} />;
+  }
 
-  if (error) return <HubError error={error} handleRefresh={refresh} />;
-  if (!data || isLoading || isCommunityRemote === undefined)
+  if (!data || isLoading) {
     return <LoadingPage breadcrumbs tabs />;
+  }
+
+  const remote = data?.results[0];
 
   const handleRefresh = () => {
     // Navigate back when remote is not found
     if (!error && !remote) {
       navigate(-1);
     }
-  };
-
-  const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (modifiedRemote) => {
-    const updatedRemote = smartUpdate(modifiedRemote, remote!);
-
-    // If requirements_file is an empty string, set it to null
-    if (updatedRemote.requirements_file === '') {
-      updatedRemote.requirements_file = null;
-    } else if (compareYaml(updatedRemote.requirements_file ?? '', yamlRequirementsTemplate)) {
-      // If it matches the default template, delete the field
-      delete updatedRemote.requirements_file;
-    }
-
-    await hubAPIPut<RemoteFormProps>(
-      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(modifiedRemote.pulp_href)}/`,
-      updatedRemote
-    );
-
-    clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
-    pageNavigate(HubRoute.RemoteDetails, {
-      params: { id: name },
-    });
   };
 
   if (data && data.count === 0 && !error && !remote) {
@@ -303,18 +209,28 @@ export function EditRemote() {
     );
   }
 
-  function updateRemoteRequirements(remoteValues: RemoteFormProps) {
-    if (remote?.requirements_file === '' || remote?.requirements_file === null) {
-      return {
-        ...remoteValues,
-        requirements_file: yamlRequirementsTemplate,
-      };
+  const onSubmit: PageFormSubmitHandler<RemoteFormProps> = async (modifiedRemote) => {
+    const updatedRemote = smartUpdate(modifiedRemote, remote);
+
+    // If requirements_file is empty, set to null
+    if (!updatedRemote.requirements_file || updatedRemote.requirements_file.trim() === '') {
+      updatedRemote.requirements_file = null;
     }
-    return remoteValues;
-  }
+
+    await hubAPIPut<RemoteFormProps>(
+      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href)}/`,
+      updatedRemote
+    );
+
+    clearCacheByKey(pulpAPI`/remotes/ansible/collection/`);
+    pageNavigate(HubRoute.RemoteDetails, {
+      params: { id: name },
+    });
+  };
+
   const remoteDefaultValues = {
     ...initialRemote,
-    ...updateRemoteRequirements(remote!),
+    ...remote,
   };
 
   return (
@@ -336,21 +252,71 @@ export function EditRemote() {
         onCancel={() => navigate(-1)}
         defaultValue={remoteDefaultValues}
       >
-        <RemoteInputs
-          disableEditName
-          collection_signing={collection_signing}
-          isCommunityRemote={isCommunityRemote}
-          setIsCommunityRemote={setIsCommunityRemote}
-        />{' '}
-        <PageFormSection singleColumn>
-          <RequirementsFile isCommunityRemote={isCommunityRemote} />
-        </PageFormSection>
-        <PageFormExpandableSection singleColumn>
-          <ProxyAdvancedRemoteInputs />
-          <CertificatesAdvancedRemoteInputs />
-          <MiscAdvancedRemoteInputs />
-        </PageFormExpandableSection>
+        <HelperWrapper />
       </HubPageForm>
     </PageLayout>
+  );
+}
+
+function HelperWrapper({ isNew }: Readonly<{ isNew?: boolean }>) {
+  const { getValues, resetField, setValue } = useFormContext();
+  const {
+    featureFlags: { collection_signing },
+  } = useHubContext();
+  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
+  const [reload, setReload] = useState(0);
+
+  const handleOnClear = (name: string) => {
+    resetField(name, { defaultValue: null });
+
+    // resetField nor setValue cause a re-render, force it
+    setReload(reload + 1);
+
+    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
+    if (!hiddenFields) {
+      return;
+    }
+
+    const field = hiddenFields.find((field) => field.name === name);
+    if (field) {
+      field.is_set = false;
+      setValue('hidden_fields', hiddenFields);
+    }
+  };
+
+  const shouldHideField = (name: string) => {
+    const hiddenFields = getValues('hidden_fields') as HiddenFieldsType;
+    if (!hiddenFields) {
+      return false;
+    }
+
+    return !!hiddenFields.find((field) => field.name === name)?.is_set;
+  };
+
+  return (
+    <>
+      <RemoteInputs
+        collection_signing={collection_signing}
+        disableEditName={!isNew}
+        handleOnClear={handleOnClear}
+        isCommunityRemote={isCommunityRemote}
+        setIsCommunityRemote={setIsCommunityRemote}
+        shouldHideField={shouldHideField}
+      />
+      <PageFormSection singleColumn>
+        <RequirementsFile isRequired={isCommunityRemote} />
+      </PageFormSection>
+      <PageFormExpandableSection singleColumn>
+        <ProxyAdvancedRemoteInputs
+          handleOnClear={handleOnClear}
+          shouldHideField={shouldHideField}
+        />
+        <CertificatesAdvancedRemoteInputs
+          handleOnClear={handleOnClear}
+          shouldHideField={shouldHideField}
+        />
+        <MiscAdvancedRemoteInputs />
+      </PageFormExpandableSection>
+    </>
   );
 }
