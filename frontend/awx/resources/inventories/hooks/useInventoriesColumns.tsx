@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { StatusCell } from '@ansible/common-ui/Status';
 import {
   useCreatedColumn,
@@ -16,23 +16,25 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import { type WebSocketInventory } from '../Inventories';
 
 export function useInventoriesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const { t } = useTranslation();
-
-  const nameClick = useCallback(
+  const nameTo = useCallback(
     (inventory: Inventory) => {
       const kinds: { [key: string]: string } = {
         '': 'inventory',
         smart: 'smart_inventory',
         constructed: 'constructed_inventory',
       };
-      return pageNavigate(AwxRoute.InventoryDetails, {
+      return getPageUrl(AwxRoute.InventoryDetails, {
         params: { inventory_type: kinds[inventory.kind], id: inventory.id },
       });
     },
-    [pageNavigate]
+    [getPageUrl]
   );
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const nameColumn = useNameColumn({
+    ...options,
+    to: nameTo,
+  });
   const createdColumn = useCreatedColumn(options);
   const descriptionColumn = useDescriptionColumn();
   const modifiedColumn = useModifiedColumn(options);

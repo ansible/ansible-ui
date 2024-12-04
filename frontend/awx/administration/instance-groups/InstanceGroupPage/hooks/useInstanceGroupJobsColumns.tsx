@@ -1,4 +1,4 @@
-import { DateTimeCell, ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { DateTimeCell, ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { StatusCell } from '@ansible/common-ui/Status';
 import {
   useInventoryNameColumn,
@@ -23,7 +23,7 @@ export function useInstanceGroupJobsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const { t } = useTranslation();
 
   const IDColumns = useMemo<ITableColumn<UnifiedJob>>(
@@ -51,21 +51,21 @@ export function useInstanceGroupJobsColumns(options?: {
     []
   );
 
-  const nameClick = useCallback(
+  const nameTo = useCallback(
     (job: UnifiedJob) =>
-      pageNavigate(AwxRoute.JobDetails, {
+      getPageUrl(AwxRoute.JobDetails, {
         params: {
           id: job.id,
           job_type: jobPaths[job.type],
         },
       }),
-    [jobPaths, pageNavigate]
+    [getPageUrl, jobPaths]
   );
 
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
     defaultSort: false,
+    to: nameTo,
   });
 
   const statusColumn = useMemo<ITableColumn<UnifiedJob>>(

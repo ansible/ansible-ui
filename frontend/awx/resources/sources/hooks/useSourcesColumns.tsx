@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -10,15 +10,15 @@ import { InventorySource } from '../../../interfaces/InventorySource';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useSourcesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
-    (source: InventorySource) =>
-      pageNavigate(AwxRoute.InventorySourceDetail, { params: { id: source.id } }),
-    [pageNavigate]
+  const getPageUrl = useGetPageUrl();
+  const nameTo = useCallback(
+    (item: InventorySource) =>
+      getPageUrl(AwxRoute.InventorySourceDetail, { params: { id: item.id } }),
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
+    to: nameTo,
     ...options,
-    onClick: nameClick,
   });
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);

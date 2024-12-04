@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,12 +10,11 @@ export function useHostsGroupsColumns(options?: {
   disableLinks?: boolean;
   useGroupInventory?: boolean;
 }) {
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const params = useParams<{ id: string; inventory_type: string }>();
-
-  const nameClick = useCallback(
-    (group: InventoryGroup) => {
-      pageNavigate(AwxRoute.InventoryGroupDetails, {
+  const nameTo = useCallback(
+    (group: InventoryGroup) =>
+      getPageUrl(AwxRoute.InventoryGroupDetails, {
         params: {
           id: options?.useGroupInventory === true ? group.summary_fields.inventory.id : params.id,
           group_id: group.id,
@@ -24,18 +23,14 @@ export function useHostsGroupsColumns(options?: {
               ? kindToInventoryType(group.summary_fields.inventory.kind)
               : params.inventory_type,
         },
-      });
-    },
-    [pageNavigate, params.id, params.inventory_type, options?.useGroupInventory]
+      }),
+    [getPageUrl, options?.useGroupInventory, params.id, params.inventory_type]
   );
   const nameColumn = useNameColumn({
+    to: nameTo,
     ...options,
-    onClick: nameClick,
   });
-
-  const tableColumns = useMemo<ITableColumn<InventoryGroup>[]>(() => [nameColumn], [nameColumn]);
-
-  return tableColumns;
+  return useMemo<ITableColumn<InventoryGroup>[]>(() => [nameColumn], [nameColumn]);
 }
 
 function kindToInventoryType(kind: string) {

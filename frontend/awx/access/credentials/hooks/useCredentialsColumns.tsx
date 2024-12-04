@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -16,14 +16,17 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useCredentialsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
-    (credential: Credential) =>
-      pageNavigate(AwxRoute.CredentialDetails, { params: { id: credential.id } }),
-    [pageNavigate]
-  );
+  const getPageUrl = useGetPageUrl();
   const idColumn = useIdColumn();
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const nameTo = useCallback(
+    (credential: Credential) =>
+      getPageUrl(AwxRoute.CredentialDetails, { params: { id: credential.id } }),
+    [getPageUrl]
+  );
+  const nameColumn = useNameColumn({
+    ...options,
+    to: nameTo,
+  });
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);

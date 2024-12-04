@@ -1,19 +1,21 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useDescriptionColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useGroupsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
+  const getPageUrl = useGetPageUrl();
+  const nameTo = useCallback(
     (group: InventoryGroup) =>
-      pageNavigate(AwxRoute.InventoryGroupDetails, { params: { id: group.id } }),
-    [pageNavigate]
+      getPageUrl(AwxRoute.InventoryGroupDetails, {
+        params: { id: group.id },
+      }),
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const createdColumn = useDescriptionColumn();
   const modifiedColumn = useModifiedColumn(options);

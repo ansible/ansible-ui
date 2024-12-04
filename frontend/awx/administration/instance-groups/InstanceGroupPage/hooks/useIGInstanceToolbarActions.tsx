@@ -90,7 +90,7 @@ function isDisassociateBtnDisabled(
           ? item.node_type === 'control' || item.node_type === 'hybrid'
           : !item.summary_fields?.user_capabilities?.delete
       )
-      .map((item) => item.name ?? item.hostname)
+      .map((item) => item.hostname)
       .join(', ');
 
     if (itemsUnableToDisassociate) {

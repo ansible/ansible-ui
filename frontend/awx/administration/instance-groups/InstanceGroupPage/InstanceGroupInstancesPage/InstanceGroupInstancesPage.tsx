@@ -42,7 +42,7 @@ export function InstanceGroupInstancesPage() {
             to: getPageUrl(AwxRoute.InstanceGroups),
           },
           {
-            label: instanceGroup?.name,
+            label: instanceGroup?.hostname,
           },
           {
             label: t('Instances'),

@@ -1,4 +1,4 @@
-import { ColumnTableOption, ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ColumnTableOption, ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   useDescriptionColumn,
   useInventoryNameColumn,
@@ -37,14 +37,17 @@ function useActivityColumn() {
 }
 
 export function useHostsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
-    (host: AwxHost) => pageNavigate(AwxRoute.HostDetails, { params: { id: host.id } }),
-    [pageNavigate]
+  const getPageUrl = useGetPageUrl();
+  const nameTo = useCallback(
+    (host: AwxHost) =>
+      getPageUrl(AwxRoute.HostDetails, {
+        params: { id: host.id },
+      }),
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const descriptionColumn = useDescriptionColumn({
     tableViewOption: undefined,

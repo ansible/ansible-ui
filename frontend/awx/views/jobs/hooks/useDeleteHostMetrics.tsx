@@ -1,17 +1,17 @@
 import { compareStrings } from '@ansible/ansible-ui-framework';
-import { useNameColumn } from '@ansible/common-ui/columns';
 import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { HostMetric } from '../../../interfaces/HostMetric';
+import { useHostMetricNameColumn } from './useHostMetricNameColumn';
 import { useHostMetricsColumns } from './useHostMetricsColumns';
 
 export function useDeleteHostMetrics(onComplete: (host: HostMetric[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useHostMetricsColumns();
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useHostMetricNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<HostMetric>();
   const deleteHostMetrics = (host: HostMetric[]) => {

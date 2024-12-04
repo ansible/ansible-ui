@@ -7,7 +7,6 @@ import {
   PageLayout,
   PageTable,
   useGetPageUrl,
-  usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
@@ -221,18 +220,17 @@ export function useOrganizationsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const idColumn = useIdColumn();
-  const nameClick = useCallback(
-    (organization: Organization) =>
-      pageNavigate(AwxRoute.OrganizationDetails, { params: { id: organization.id } }),
-    [pageNavigate]
-  );
   const descriptionColumn = useDescriptionColumn();
+  const nameTo = useCallback(
+    (organization: Organization) =>
+      getPageUrl(AwxRoute.OrganizationDetails, { params: { id: organization.id } }),
+    [getPageUrl]
+  );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);

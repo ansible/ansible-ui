@@ -8,20 +8,21 @@ import {
 } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 export function useTeamColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const navigate = useNavigate();
-  const nameColumnClick = useCallback(
-    (team: PlatformTeam) =>
-      navigate(getPageUrl(PlatformRoute.TeamDetails, { params: { id: team.id } })),
-    [getPageUrl, navigate]
+  const nameTo = useCallback(
+    (item: PlatformTeam) => getPageUrl(PlatformRoute.TeamDetails, { params: { id: item.id } }),
+    [getPageUrl]
   );
-  const nameColumn = useNameColumn({ header: t('Name'), ...options, onClick: nameColumnClick });
+  const nameColumn = useNameColumn({
+    header: t('Name'),
+    to: nameTo,
+    ...options,
+  });
   const organizationNameColumn = useOrganizationNameColumn(
     PlatformRoute.OrganizationDetails,
     options

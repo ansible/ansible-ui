@@ -7,7 +7,6 @@ import {
 } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 
@@ -17,16 +16,15 @@ export function useOrganizationColumns(options?: {
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const navigate = useNavigate();
-  const nameColumnClick = useCallback(
-    (organization: PlatformOrganization) =>
-      navigate(getPageUrl(PlatformRoute.OrganizationDetails, { params: { id: organization.id } })),
-    [getPageUrl, navigate]
+  const nameTo = useCallback(
+    (item: PlatformOrganization) =>
+      getPageUrl(PlatformRoute.OrganizationDetails, { params: { id: item.id } }),
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
     header: t('Name'),
+    to: nameTo,
     ...options,
-    onClick: nameColumnClick,
   });
   const createdColumn = useCreatedColumn({
     sort: 'created',

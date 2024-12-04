@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useInventoryNameColumn,
@@ -48,22 +48,22 @@ export function useInventoriesHostsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const params = useParams<{ inventory_type: string; id: string }>();
-  const nameClick = useCallback(
+  const nameTo = useCallback(
     (host: AwxHost) =>
-      pageNavigate(AwxRoute.InventoryHostDetails, {
+      getPageUrl(AwxRoute.InventoryHostDetails, {
         params: {
           inventory_type: params.inventory_type,
           id: params.id,
           host_id: host.id,
         },
       }),
-    [pageNavigate, params.id, params.inventory_type]
+    [getPageUrl, params.id, params.inventory_type]
   );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
@@ -107,22 +107,22 @@ export function useInventoriesGroupHostsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const params = useParams<{ inventory_type: string; id: string }>();
-  const nameClick = useCallback(
+  const nameTo = useCallback(
     (host: AwxHost) =>
-      pageNavigate(AwxRoute.InventoryHostDetails, {
+      getPageUrl(AwxRoute.InventoryHostDetails, {
         params: {
           inventory_type: params.inventory_type,
           id: params.id,
           host_id: host.id,
         },
       }),
-    [pageNavigate, params.id, params.inventory_type]
+    [getPageUrl, params.id, params.inventory_type]
   );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const activityColumn = useActivityColumn('Activity');
   const descriptionColumn = useDescriptionColumn();

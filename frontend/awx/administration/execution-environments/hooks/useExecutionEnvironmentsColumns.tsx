@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -17,17 +17,17 @@ export function useExecutionEnvironmentsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
+  const getPageUrl = useGetPageUrl();
+  const nameTo = useCallback(
     (executionEnvironment: ExecutionEnvironment) =>
-      pageNavigate(AwxRoute.ExecutionEnvironmentDetails, {
+      getPageUrl(AwxRoute.ExecutionEnvironmentDetails, {
         params: { id: executionEnvironment.id },
       }),
-    [pageNavigate]
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const idColumn = useIdColumn<ExecutionEnvironment>();
   const descriptionColumn = useDescriptionColumn();
