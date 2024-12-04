@@ -6,7 +6,6 @@ export interface Instance {
   description: string;
   id: number;
   hostname: string;
-  name: string;
   type: string;
   url: string;
   related: {

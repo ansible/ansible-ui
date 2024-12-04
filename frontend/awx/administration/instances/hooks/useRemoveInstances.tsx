@@ -1,11 +1,11 @@
 import { compareStrings } from '@ansible/ansible-ui-framework';
-import { useNameColumn } from '@ansible/common-ui/columns';
 import { getItemKey, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { Instance } from '../../../interfaces/Instance';
+import { useInstanceNameColumn } from './useInstanceNameColumn';
 import { useInstancesColumns } from './useInstancesColumns';
 
 export function useRemoveInstances(onComplete: (instances: Instance[]) => void) {
@@ -16,7 +16,7 @@ export function useRemoveInstances(onComplete: (instances: Instance[]) => void) 
   );
 
   const { t } = useTranslation();
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useInstanceNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<Instance>();
   const removeInstances = (instances: Instance[]) => {
@@ -29,7 +29,7 @@ export function useRemoveInstances(onComplete: (instances: Instance[]) => void) 
               count: instances.length,
             }),
       actionButtonText: t('Remove instance', { count: instances.length }),
-      items: instances.sort((l, r) => compareStrings(l.name, r.name)),
+      items: instances.sort((l, r) => compareStrings(l.hostname, r.hostname)),
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,

@@ -47,15 +47,12 @@ export type PageFormMultiInputProps<
   selectTitle?: string;
   isDisabled?: boolean;
   selectOpen?: (callback: (selection: T[]) => void, title: string) => void;
+  getChipLabel: (item: T) => string;
 } & Omit<PageFormGroupProps, 'onChange' | 'value'> &
   ChipGroupProps;
 
 export function PageFormMultiInput<
-  T extends {
-    hostname?: string;
-    id: number | string;
-    name: string;
-  },
+  T extends { id: number | string },
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPathByValue<TFieldValues, T[]> = FieldPathByValue<TFieldValues, T[]>,
 >(props: PageFormMultiInputProps<T, TFieldValues, TFieldName>) {
@@ -113,7 +110,7 @@ export function PageFormMultiInput<
                   >
                     {(value as T[])?.map((item: T) => (
                       <Chip key={item.id} onClick={() => removeItem(item)}>
-                        {item.hostname ?? item.name}
+                        {props.getChipLabel(item)}
                       </Chip>
                     ))}
                   </ChipGroup>

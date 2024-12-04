@@ -28,6 +28,7 @@ export function PageFormPeersSelect<
       selectOpen={multiSelectelectPeer}
       validate={(value: Instance[]) => validatePeer(value, t)}
       isRequired={props.isRequired}
+      getChipLabel={(item: Instance) => item.hostname}
     />
   );
 }

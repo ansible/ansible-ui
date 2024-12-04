@@ -1,5 +1,4 @@
 import { compareStrings } from '@ansible/ansible-ui-framework';
-import { useNameColumn } from '@ansible/common-ui/columns';
 import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,12 +7,16 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../../common/useAwxBulkConfirmation';
 import { Instance } from '../../../../interfaces/Instance';
 import { useInstancesColumns } from '../../../instances/hooks/useInstancesColumns';
+import { useInstanceGroupInstanceNameColumn } from './useInstanceGroupInstanceNameColumn';
 
 export function useDisassociateInstanceFromIG(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
   const bulkConfirmation = useAwxBulkConfirmation<Instance>();
   const confirmationColumns = useInstancesColumns({ disableLinks: true, disableSort: true });
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useInstanceGroupInstanceNameColumn({
+    disableLinks: true,
+    disableSort: true,
+  });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const params = useParams<{ id: string }>();
 
@@ -24,7 +27,7 @@ export function useDisassociateInstanceFromIG(onComplete: (instances: Instance[]
         count: instances.length,
       }),
       actionButtonText: t('Disassociate instances', { count: instances.length }),
-      items: instances.sort((l, r) => compareStrings(l.name, r.name)),
+      items: instances.sort((l, r) => compareStrings(l.hostname, r.hostname)),
       keyFn: getItemKey,
       isDanger: true,
       confirmationColumns,

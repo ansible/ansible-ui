@@ -1,24 +1,13 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
-import { useExpiresColumn, useNameColumn, useScopeColumn } from '@ansible/common-ui/columns';
-import { useCallback, useMemo } from 'react';
+import { ITableColumn } from '@ansible/ansible-ui-framework';
+import { useExpiresColumn, useScopeColumn } from '@ansible/common-ui/columns';
+import { useMemo } from 'react';
 import { Token } from '../../../interfaces/Token';
-import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { useTokenNameColumn } from './useTokenUserColumn';
 
 export function useTokensColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
-  const pageNavigate = usePageNavigate();
-
-  const nameClick = useCallback(
-    (token: Token) => pageNavigate(PlatformRoute.UserDetails, { params: { id: token.user } }),
-    [pageNavigate]
-  );
-  const nameColumn = useNameColumn({
-    onClick: nameClick,
-    sort: 'user__username',
-    ...options,
-  });
+  const nameColumn = useTokenNameColumn(options);
   const scopeColumn = useScopeColumn(options);
   const expiresColumn = useExpiresColumn(options);
-
   const tableColumns = useMemo<ITableColumn<Token>[]>(
     () => [nameColumn, scopeColumn, expiresColumn],
     [nameColumn, scopeColumn, expiresColumn]

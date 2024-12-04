@@ -35,6 +35,7 @@ export function PageFormCredentialSelect<
         return undefined;
       }}
       isRequired={props.isRequired}
+      getChipLabel={(item: EdaCredential) => item.name}
     />
   );
 }

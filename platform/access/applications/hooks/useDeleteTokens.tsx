@@ -1,11 +1,11 @@
 import { compareStrings, useBulkConfirmation } from '@ansible/ansible-ui-framework';
 import { Token } from '@ansible/awx-ui/interfaces/Token';
-import { useNameColumn } from '@ansible/common-ui/columns';
 import { getItemKey, requestDelete } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useTokensColumns } from './useTokensColumns';
+import { useTokenNameColumn } from './useTokenUserColumn';
 
 export function useDeleteTokens(onComplete: (applications: Token[]) => void) {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ export function useDeleteTokens(onComplete: (applications: Token[]) => void) {
     disableLinks: true,
     disableSort: true,
   });
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useTokenNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useBulkConfirmation<Token>();
   const deleteTokens = (tokens: Token[]) => {

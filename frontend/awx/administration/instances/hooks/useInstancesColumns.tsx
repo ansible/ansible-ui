@@ -3,40 +3,26 @@ import {
   ColumnModalOption,
   ColumnTableOption,
   ITableColumn,
-  usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { Dotted } from '@ansible/ansible-ui-framework/components/Dotted';
 import { Unavailable } from '@ansible/ansible-ui-framework/components/Unavailable';
 import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
-import { useCreatedColumn, useModifiedColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { useCreatedColumn, useModifiedColumn } from '@ansible/common-ui/columns';
 import { StatusCell } from '@ansible/common-ui/Status';
 import { Progress, Tooltip } from '@patternfly/react-core';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Instance } from '../../../interfaces/Instance';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import { InstanceForksSlider } from '../components/InstanceForksSlider';
 import { computeForks } from './useInstanceActions';
+import { useInstanceNameColumn } from './useInstanceNameColumn';
 import { useNodeTypeTooltip } from './useNodeTypeTooltip';
 
-export function useInstancesColumns(
-  options?: { disableSort?: boolean; disableLinks?: boolean },
-  onNameClick?: (instance: Instance) => void
-) {
+export function useInstancesColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-
   const toolTipMap: {
     [item: string]: string;
   } = useNodeTypeTooltip();
-
-  const nameClick = useCallback(
-    (instance: Instance) =>
-      pageNavigate(AwxRoute.InstanceDetails, {
-        params: { id: instance.id },
-      }),
-    [pageNavigate]
-  );
 
   const makeReadable = useCallback(
     (instance: Instance) => {
@@ -49,13 +35,7 @@ export function useInstancesColumns(
     [toolTipMap]
   );
 
-  const nameColumn = useNameColumn<Instance>({
-    ...options,
-    onClick: onNameClick ?? nameClick,
-    header: t('Name'),
-    sort: 'hostname',
-  });
-
+  const nameColumn = useInstanceNameColumn(options);
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
 

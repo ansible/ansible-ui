@@ -2,7 +2,7 @@ import {
   ColumnModalOption,
   DateTimeCell,
   ITableColumn,
-  usePageNavigate,
+  useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { useIdColumn, useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
@@ -16,16 +16,16 @@ export function useWorkflowApprovalsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
+  const getPageUrl = useGetPageUrl();
   const idColumn = useIdColumn(false);
-  const nameClick = useCallback(
+  const nameTo = useCallback(
     (workflow_approval: WorkflowApproval) =>
-      pageNavigate(AwxRoute.WorkflowApprovalDetails, { params: { id: workflow_approval.id } }),
-    [pageNavigate]
+      getPageUrl(AwxRoute.WorkflowApprovalDetails, { params: { id: workflow_approval.id } }),
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
     ...options,
-    onClick: nameClick,
+    to: nameTo,
   });
   const tableColumns = useMemo<ITableColumn<WorkflowApproval>[]>(
     () => [

@@ -34,60 +34,32 @@ export function useIdColumn<T extends { id: number }>(isHidden: boolean = true) 
 }
 
 export function useNameColumn<
-  T extends
-    | {
-        name?: string;
-        hostname?: string;
-        id: number;
-        summary_fields?: { user?: { username?: string } };
-      }
-    | {
-        name?: string;
-        hostname?: string;
-        id: number;
-      },
+  T extends {
+    name?: string;
+  },
 >(options?: {
   header?: string;
-  url?: string;
-  onClick?: (item: T) => void;
+  to?: (item: T) => string;
   sort?: string;
   disableSort?: boolean;
   disableLinks?: boolean;
   defaultSort?: boolean;
 }) {
-  const { url, onClick, disableSort, disableLinks } = options ?? {};
+  const { sort, to, disableSort, disableLinks } = options ?? {};
   const { t } = useTranslation();
   const column = useMemo<ITableColumn<T>>(
     () => ({
       id: 'name',
       header: options?.header ?? t('Name'),
-      cell: (item: T) => (
-        <TextCell
-          text={
-            item.name ||
-            item.hostname ||
-            ('summary_fields' in item ? item.summary_fields?.user?.username : undefined)
-          }
-          iconSize="sm"
-          to={disableLinks ? undefined : url?.replace(':id', item.id.toString())}
-          onClick={!disableLinks && onClick ? () => onClick?.(item) : undefined}
-        />
-      ),
-      sort: disableSort ? undefined : (options?.sort ?? 'name'),
+      type: 'text',
+      value: (item) => item.name,
+      to: (item) => (disableLinks ? undefined : to?.(item)),
+      sort: disableSort ? undefined : (sort ?? 'name'),
       card: 'name',
       list: 'name',
       defaultSort: options?.defaultSort !== undefined ? options?.defaultSort : true,
     }),
-    [
-      options?.header,
-      options?.sort,
-      options?.defaultSort,
-      t,
-      disableSort,
-      disableLinks,
-      url,
-      onClick,
-    ]
+    [options?.header, options?.defaultSort, t, disableSort, sort, disableLinks, to]
   );
   return column;
 }

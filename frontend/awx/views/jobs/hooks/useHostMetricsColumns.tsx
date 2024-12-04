@@ -1,21 +1,15 @@
-import { DateCell, ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { DateCell, ITableColumn } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HostMetric } from '../../../interfaces/HostMetric';
+import { useHostMetricNameColumn } from './useHostMetricNameColumn';
 
 export function useHostMetricsColumns() {
   const { t } = useTranslation();
+  const nameColumn = useHostMetricNameColumn();
   const tableColumns = useMemo<ITableColumn<HostMetric>[]>(
     () => [
-      {
-        header: t('Hostname'),
-        cell: (host: HostMetric) => <TextCell text={host.hostname} />,
-        sort: 'hostname',
-        card: 'name',
-        list: 'name',
-        defaultSortDirection: 'asc',
-        defaultSort: true,
-      },
+      nameColumn,
       {
         header: t('First automated'),
         cell: (host: HostMetric) => <DateCell value={host.first_automation} />,
@@ -39,7 +33,7 @@ export function useHostMetricsColumns() {
         sort: 'deleted_counter',
       },
     ],
-    [t]
+    [nameColumn, t]
   );
   return tableColumns;
 }

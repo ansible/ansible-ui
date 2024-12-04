@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
@@ -12,13 +12,16 @@ import { Team } from '../../../interfaces/Team';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
 export function useTeamsColumns(options?: { disableLinks?: boolean; disableSort?: boolean }) {
-  const pageNavigate = usePageNavigate();
-  const nameColumnClick = useCallback(
-    (team: Team) => pageNavigate(AwxRoute.TeamDetails, { params: { id: team.id } }),
-    [pageNavigate]
-  );
+  const getPageUrl = useGetPageUrl();
   const idColumn = useIdColumn();
-  const nameColumn = useNameColumn({ ...options, onClick: nameColumnClick });
+  const nameTo = useCallback(
+    (team: Team) => getPageUrl(AwxRoute.TeamDetails, { params: { id: team.id } }),
+    [getPageUrl]
+  );
+  const nameColumn = useNameColumn({
+    ...options,
+    to: nameTo,
+  });
   const descriptionColumn = useDescriptionColumn();
 
   const organizationColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);

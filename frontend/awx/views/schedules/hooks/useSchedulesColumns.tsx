@@ -2,6 +2,7 @@ import {
   DateTimeCell,
   ITableColumn,
   TextCell,
+  useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { useDescriptionColumn, useNameColumn, useTypeColumn } from '@ansible/common-ui/columns';
@@ -15,6 +16,7 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
   const { t } = useTranslation();
 
   const getScheduleUrl = useGetScheduleUrl();
+  const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
 
   const typeColumn = useTypeColumn<Schedule>({
@@ -22,16 +24,17 @@ export function useSchedulesColumns(options?: { disableSort?: boolean; disableLi
     makeReadable: (schedule: Schedule) => getScheduleUrl('name', schedule) as string,
     sort: 'unified_job_template__polymorphic_ctype__model',
   });
-  const nameClick = useCallback(
+
+  const nameTo = useCallback(
     (schedule: Schedule) => {
       const pageUrl = getScheduleUrl('details', schedule) as schedulePageUrl;
-      return pageNavigate(pageUrl.pageId, { params: pageUrl.params });
+      return getPageUrl(pageUrl.pageId, { params: pageUrl.params });
     },
-    [getScheduleUrl, pageNavigate]
+    [getPageUrl, getScheduleUrl]
   );
   const nameColumn = useNameColumn({
+    to: nameTo,
     ...options,
-    onClick: nameClick,
   });
   const relatedNameClick = useCallback(
     (schedule: Schedule) => {

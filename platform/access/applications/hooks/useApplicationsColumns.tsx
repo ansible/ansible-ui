@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import {
   useCreatedColumn,
@@ -14,16 +14,15 @@ export function useApplicationsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
-  const pageNavigate = usePageNavigate();
-
-  const nameClick = useCallback(
-    (application: Application) =>
-      pageNavigate(PlatformRoute.ApplicationDetails, { params: { id: application.id } }),
-    [pageNavigate]
+  const getPageUrl = useGetPageUrl();
+  const nameTo = useCallback(
+    (item: Application) =>
+      getPageUrl(PlatformRoute.ApplicationDetails, { params: { id: item.id } }),
+    [getPageUrl]
   );
   const nameColumn = useNameColumn({
+    to: nameTo,
     ...options,
-    onClick: nameClick,
   });
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(PlatformRoute.OrganizationDetails, options);

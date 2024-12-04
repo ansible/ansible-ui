@@ -1,17 +1,17 @@
 import { compareStrings } from '@ansible/ansible-ui-framework';
-import { useNameColumn } from '@ansible/common-ui/columns';
 import { getItemKey, postRequest } from '@ansible/common-ui/crud/Data';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxBulkConfirmation } from '../../../common/useAwxBulkConfirmation';
 import { Instance } from '../../../interfaces/Instance';
+import { useInstanceNameColumn } from './useInstanceNameColumn';
 import { useInstancesColumns } from './useInstancesColumns';
 
 export function useRunHealthCheck(onComplete: (instances: Instance[]) => void) {
   const { t } = useTranslation();
   const confirmationColumns = useInstancesColumns({ disableLinks: true, disableSort: true });
-  const deleteActionNameColumn = useNameColumn({ disableLinks: true, disableSort: true });
+  const deleteActionNameColumn = useInstanceNameColumn({ disableLinks: true, disableSort: true });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const bulkAction = useAwxBulkConfirmation<Instance>();
   const cannotRunHealthCheckDueToNodeType = (instance: Instance) => {

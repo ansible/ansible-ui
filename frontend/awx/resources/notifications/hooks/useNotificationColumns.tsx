@@ -1,4 +1,4 @@
-import { ITableColumn, usePageNavigate } from '@ansible/ansible-ui-framework';
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
 import { useNameColumn } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
@@ -11,18 +11,16 @@ export function useNotificationsColumns(options?: {
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
-    (notificationTemplate: NotificationTemplate) => {
-      return pageNavigate(AwxRoute.NotificationTemplateDetails, {
-        params: {
-          id: notificationTemplate.id,
-        },
-      });
-    },
-    [pageNavigate]
+  const getPageUrl = useGetPageUrl();
+  const nameTo = useCallback(
+    (item: NotificationTemplate) =>
+      getPageUrl(AwxRoute.NotificationTemplateDetails, { params: { id: item.id } }),
+    [getPageUrl]
   );
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const nameColumn = useNameColumn({
+    ...options,
+    to: nameTo,
+  });
   const typeColumn = useMemo<ITableColumn<NotificationTemplate>>(
     () => ({
       header: t('Type'),
