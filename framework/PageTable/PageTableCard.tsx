@@ -15,6 +15,7 @@ import {
   Truncate,
 } from '@patternfly/react-core';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { IPageAction } from '../PageActions/PageAction';
 import { PageActions } from '../PageActions/PageActions';
@@ -23,6 +24,7 @@ import { IconWrapper } from '../components/IconWrapper';
 import { Scrollable } from '../components/Scrollable';
 import { LabelColor } from '../components/pfcolors';
 import {
+  CellFn,
   ITableColumn,
   ITableColumnTypeCount,
   ITableColumnTypeLabels,
@@ -74,6 +76,9 @@ const CardTopDiv = styled.div`
 
 const CardDiv = styled.div`
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 `;
 
 const CardFooterDiv = styled.div`
@@ -173,9 +178,7 @@ export function PageTableCard<T extends object>(props: {
                   {card.icon && <IconWrapper size="xl">{card.icon}</IconWrapper>}
                 </CardIconDiv>
               ) : null}
-              <CardTitle>
-                <Truncate content={card.title as string} />
-              </CardTitle>
+              <CardTitle>{card.title}</CardTitle>
               {card.subtitle ? (
                 <Text component="small" style={{ opacity: 0.7 }}>
                   {card.subtitle}
@@ -208,7 +211,6 @@ export function PageTableCard<T extends object>(props: {
       </CardHeader>
       <div
         style={{
-          maxHeight: 250,
           overflow: 'hidden',
           display: 'flex',
           paddingBottom: 16,
@@ -326,10 +328,24 @@ export function useColumnsToTableCardFn<T extends object>(
         (column) => !column.value || column.value(item)
       );
 
+      const to = nameColumn && 'to' in nameColumn ? nameColumn.to : undefined;
+      let value: CellFn<T, ReactNode> | undefined =
+        nameColumn && 'value' in nameColumn ? nameColumn.value : undefined;
+      if (!value) {
+        value = nameColumn && 'cell' in nameColumn ? nameColumn.cell : undefined;
+      }
+      const cardTitle = value?.(item) ?? '';
+
       const pageTableCard: IPageTableCard = {
         id: keyFn(item),
         icon: nameColumn?.icon?.(item),
-        title: <TableColumnCell column={nameColumn} item={item} />,
+        title: (
+          <Link to={to?.(item) ?? ''} style={{ whiteSpace: 'normal', textWrap: 'balance' }}>
+            {typeof cardTitle === 'string'
+              ? cardTitle.split('/').map((part, i) => <div key={i}>{part}</div>)
+              : (value?.(item) ?? '')}
+          </Link>
+        ),
         subtitle: subtitleColumn && (!subtitleColumn.value || subtitleColumn.value(item)) && (
           <TableColumnCell column={subtitleColumn} item={item} />
         ),

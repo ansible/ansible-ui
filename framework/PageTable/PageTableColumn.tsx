@@ -300,7 +300,7 @@ export function useExpandedColumns<T extends object>(columns: ITableColumn<T>[])
   );
 }
 
-type CellFn<T extends object, R> = (item: T) => R;
+export type CellFn<T extends object, R> = (item: T) => R;
 
 /** Hook to disable sorting on all columns. */
 export function useColumnsWithoutSort<T extends object>(columns: ITableColumn<T>[]) {
