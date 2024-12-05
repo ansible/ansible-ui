@@ -5,6 +5,7 @@ import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ButtonVariant } from '@patternfly/react-core';
 import { CubesIcon, ExclamationTriangleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -12,7 +13,6 @@ import { useAwxView } from '../../common/useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { Schedule } from '../../interfaces/Schedule';
-import { missingResources } from '../../resources/templates/hooks/useTemplateColumns';
 import { useSchedulesActions } from './hooks/useSchedulesActions';
 import { useSchedulesColumns } from './hooks/useSchedulesColumns';
 import { useSchedulesFilter } from './hooks/useSchedulesFilter';
@@ -48,9 +48,19 @@ export function SchedulesList(props: {
   const resourceId = params.source_id ?? params.id;
 
   const compParams = useOutletContext<{ template: JobTemplate }>();
-  const isMissingResource: boolean = compParams?.template
-    ? missingResources(compParams?.template)
-    : false;
+  const isMissingResource = useMemo(
+    () =>
+      compParams?.template?.type === 'job_template' &&
+      (!compParams?.template?.summary_fields.project ||
+        (!compParams?.template?.summary_fields.inventory &&
+          !compParams?.template?.ask_inventory_on_launch)),
+    [
+      compParams?.template?.ask_inventory_on_launch,
+      compParams?.template?.summary_fields.inventory,
+      compParams?.template?.summary_fields.project,
+      compParams?.template?.type,
+    ]
+  );
 
   const apiEndPoint: string | undefined = props.sublistEndpoint
     ? `${props.sublistEndpoint}/${resourceId}/schedules/`
