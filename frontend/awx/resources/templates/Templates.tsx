@@ -16,14 +16,28 @@ export function Templates() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Templates')}
-        titleHelpTitle={t('Templates')}
-        titleHelp={t(
-          'A job template is a definition and set of parameters for running an Ansible job. Job templates are useful to execute the same job many times. Job templates also encourage the reuse of Ansible playbook content and collaboration between teams.'
-        )}
+        title={t('Automation Templates')}
+        titleHelpTitle={t('Automation Templates')}
+        titleHelp={[
+          t(
+            'Automation Templates serve as a powerful blueprint for automating and orchestrating complex IT tasks.'
+          ),
+          t(
+            'Whether defined as a Job Template or Workflow Template, it standardizes and streamlines routine operations, enabling consistent execution across various environments.'
+          ),
+          t(
+            'By specifying playbooks, inventory, credentials, and other configuration details, an Automation Template eliminates manual intervention, reduces errors, and accelerates task completion.'
+          ),
+          t(
+            'It also provides flexibility by allowing the chaining of multiple tasks in a Workflow Template, supporting sophisticated automation use cases that can span across multiple systems and processes.'
+          ),
+          t(
+            'This ensures IT teams can reliably scale automation while maintaining high efficiency and control.'
+          ),
+        ]}
         titleDocLink={useGetDocsUrl(config, 'templates')}
         description={t(
-          'A job template is a definition and set of parameters for running an Ansible job.'
+          'Job Templates and Workflow Templates for automating and orchestrating IT tasks efficiently.'
         )}
         headerActions={
           <ActivityStreamIcon
