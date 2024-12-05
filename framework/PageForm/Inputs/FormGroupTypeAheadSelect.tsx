@@ -100,7 +100,7 @@ export function FormGroupTypeAheadSelect(props: FormGroupTypeAheadSelectProps) {
         isOpen={isOpen}
         isCreateOptionOnTop
         onClear={() => onHandleClear()}
-        id={id}
+        toggleId={id}
         ouiaId="menu-select"
         selections={value?.length ? value : undefined}
         onToggle={() => {

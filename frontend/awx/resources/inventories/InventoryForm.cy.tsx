@@ -1,12 +1,12 @@
 import { CyHttpMessages } from 'cypress/types/net-stubbing';
-import { AwxItemsResponse } from '../../common/AwxItemsResponse';
+import instanceGroupsResponse from '../../../../cypress/fixtures/instance_groups.json';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
 import { Label } from '../../interfaces/Label';
 import { Organization } from '../../interfaces/Organization';
 import { CreateInventory, EditInventory, InventoryCreate } from './InventoryForm';
-import instanceGroupsResponse from '../../../../cypress/fixtures/instance_groups.json';
 
 export type RegularPayload = {
   kind: string;
@@ -118,9 +118,10 @@ describe('Create Edit Inventory Form', () => {
           ])
         );
         if (kind === '') {
-          cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
-            (payload as RegularPayload).labels[0].name
-          );
+          cy.get('#labels')
+            .click()
+            .parent()
+            .type((payload as RegularPayload).labels[0].name);
           cy.get('.pf-v5-c-select__menu-item').click();
         }
         if (kind === 'smart') {
@@ -294,9 +295,7 @@ describe('Create Edit Inventory Form', () => {
         }
         if (kind === '') {
           cy.get('.pf-v5-c-select__toggle-clear').click();
-          cy.get('[id^=pf-select-toggle-id-][id$=-select-multi-typeahead-typeahead]').type(
-            'edited test'
-          );
+          cy.get('#labels').click().parent().type('edited test');
           cy.get('.pf-v5-c-select__menu-item').click();
         }
         cy.clickButton(/^Save inventory$/);
