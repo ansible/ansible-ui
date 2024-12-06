@@ -1,9 +1,11 @@
 import { ITableColumn, PageTable } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon } from '@patternfly/react-icons';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxView } from '../../common/useAwxView';
+import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobRowActions } from '../../views/jobs/hooks/useJobRowActions';
 import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarActions';
@@ -28,6 +30,32 @@ export function JobsList(props: {
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);
 
   usePersistentFilters('jobs');
+
+  const { refresh } = view;
+  const handleWebSocketMessage = useCallback(
+    (message?: { group_name?: string; type?: string }) => {
+      switch (message?.group_name) {
+        case 'jobs':
+          switch (message?.type) {
+            case 'job':
+              void refresh();
+              break;
+            case 'workflow_job':
+              void refresh();
+              break;
+            case 'project_update':
+              void refresh();
+              break;
+          }
+          break;
+      }
+    },
+    [refresh]
+  );
+  useAwxWebSocketSubscription(
+    { control: ['limit_reached_1'], jobs: ['status_changed'], schedules: ['changed'] },
+    handleWebSocketMessage as (data: unknown) => void
+  );
 
   return (
     <PageTable<UnifiedJob>
