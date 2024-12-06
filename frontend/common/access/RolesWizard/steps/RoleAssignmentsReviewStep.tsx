@@ -241,6 +241,7 @@ function ReviewExpandableList<
     },
     items: selectedItems,
     tableColumns,
+    disableQueryString: true,
   });
 
   if (view?.itemCount === 0) {
