@@ -126,6 +126,7 @@ export function useLabelsColumn() {
           ? item.summary_fields?.labels?.results.map((label) => label.name)
           : undefined,
       modal: ColumnModalOption.hidden,
+      dashboard: ColumnDashboardOption.hidden,
     }),
     [t]
   );
