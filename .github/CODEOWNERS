@@ -4,11 +4,8 @@
 @keithjgrant
 @AlexSCorey
 @lgalis
-@ZitaNemeckova
 @marshmalien
 @kialam
-@MilanPospisil
-@himdel
 
 # Code owners for the cypress/support directory
-cypress/support/ @nixocio @akus062381 @vishsanghishetty @AlexSCorey @vidyanambiar @keithjgrant @lgalis @ZitaNemeckova @marshmalien @kialam @MilanPospisil @himdel
+cypress/support/ @nixocio @akus062381 @AlexSCorey @vidyanambiar @keithjgrant @lgalis @marshmalien @kialam
