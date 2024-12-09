@@ -17,7 +17,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
@@ -26,7 +26,8 @@ import { hubAPI } from '../../common/api/formatPath';
 import { appendTrailingSlash, hubAPIPut, parsePulpIDFromURL } from '../../common/api/hub-api-utils';
 import { HubItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
-import { RemoteRegistry } from './RemoteRegistry';
+import { type HiddenFieldsType } from '../remotes/RemoteForm';
+import { type RemoteRegistry } from './RemoteRegistry';
 
 interface SecretInput {
   onClear?: (name: string) => void;
@@ -44,34 +45,26 @@ interface RemoteRegistryProps extends RemoteRegistry {
   proxy_username?: string | null;
   username?: string | null;
 }
-type AllowedWriteOnlyFields =
-  | 'client_key'
-  | 'password'
-  | 'proxy_password'
-  | 'proxy_username'
-  | 'username';
-const WriteOnlyFields: AllowedWriteOnlyFields[] = [
-  'client_key',
-  'password',
-  'proxy_password',
-  'proxy_username',
-  'username',
-];
-type RemoteRegistryPropsKey = keyof RemoteRegistryProps;
-
-function isWriteOnlyField(key: keyof RemoteRegistryProps): key is AllowedWriteOnlyFields {
-  return WriteOnlyFields.includes(key as AllowedWriteOnlyFields);
-}
 
 export function CreateRemoteRegistry() {
   const { t } = useTranslation();
   const { clearCacheByKey } = useClearCache();
-  clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
+  const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<RemoteRegistryProps>();
+
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (remote) => {
     const url: string = appendTrailingSlash(remote.url);
+
+    // fixes fields that are only required when present
+    ['username', 'password', 'proxy_username', 'proxy_password', 'proxy_url'].forEach((field) => {
+      // @ts-expect-error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'RemoteRegistryProps'.
+      if (remote[field] === '') {
+        // @ts-expect-error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'RemoteRegistryProps'.
+        delete remote[field];
+      }
+    });
 
     const createdRemoteRegistry = await postRequest(
       hubAPI`/_ui/v1/execution-environments/registries/`,
@@ -80,12 +73,13 @@ export function CreateRemoteRegistry() {
         url,
       }
     );
+
+    clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
     pageNavigate(HubRoute.RemoteRegistryDetails, {
       params: { id: createdRemoteRegistry?.name },
     });
   };
 
-  const getPageUrl = useGetPageUrl();
   return (
     <PageLayout>
       <PageHeader
@@ -101,88 +95,72 @@ export function CreateRemoteRegistry() {
         onCancel={() => navigate(-1)}
         defaultValue={{ name: '', url: '' }}
       >
-        <>
-          <RemoteInputs />
-          <PageFormExpandableSection singleColumn>
-            <ProxyAdvancedRemoteInputs />
-            <CertificatesAdvancedRemoteInputs />
-            <MiscAdvancedRemoteInputs />
-          </PageFormExpandableSection>
-        </>
+        <FormWrapper isNew />
       </HubPageForm>
     </PageLayout>
   );
 }
 
+// defaults for hidden fields
 const initialRemoteRegistry: Partial<RemoteRegistryProps> = {
   client_key: null,
   password: null,
   proxy_password: null,
   proxy_username: null,
   username: null,
-
-  write_only_fields: WriteOnlyFields.map((key) => ({
-    name: key,
-    is_set: false,
-  })),
 };
 
-function smartUpdate(
-  modifiedRemoteRegistry: RemoteRegistryProps,
-  unmodifiedRemoteRegistry: RemoteRegistryProps
-) {
+type RemoteKey = keyof RemoteRegistryProps;
+
+function smartUpdate(modifiedRemote: RemoteRegistryProps, unmodifiedRemote: RemoteRegistryProps) {
+  const getWriteOnlyField = (key: RemoteKey, from: RemoteRegistryProps) =>
+    from?.write_only_fields?.find((field) => field.name === key);
+  const isWriteOnlyField = (key: RemoteKey) => !!getWriteOnlyField(key, unmodifiedRemote);
+
   /**
    * When a field is clear ('' or null):
    * - If it has been explicitly cleared in the edit, record the null or '' value in the response
    * - If it was unchanged, delete it from the response
    */
-  Object.keys(modifiedRemoteRegistry).forEach((key) => {
-    const propKey = key as RemoteRegistryPropsKey;
+  (Object.keys(modifiedRemote) as RemoteKey[]).forEach((propKey) => {
+    const isEmpty = modifiedRemote[propKey] === '' || modifiedRemote[propKey] === null;
+    const wasEmpty = unmodifiedRemote[propKey] === '' || unmodifiedRemote[propKey] === null;
+    const unchanged = isWriteOnlyField(propKey)
+      ? getWriteOnlyField(propKey, unmodifiedRemote)?.is_set ===
+        getWriteOnlyField(propKey, modifiedRemote)?.is_set
+      : wasEmpty;
 
-    if (modifiedRemoteRegistry[propKey] === '' || modifiedRemoteRegistry[propKey] === null) {
-      if (isWriteOnlyField(propKey)) {
-        if (
-          unmodifiedRemoteRegistry?.write_only_fields?.find((field) => field.name === propKey)
-            ?.is_set ===
-          modifiedRemoteRegistry?.write_only_fields?.find((field) => field.name === propKey)?.is_set
-        ) {
-          delete modifiedRemoteRegistry[propKey];
-        } else {
-          modifiedRemoteRegistry[propKey] = null;
-        }
-      } else {
-        if (
-          unmodifiedRemoteRegistry[propKey] === '' ||
-          unmodifiedRemoteRegistry[propKey] === null
-        ) {
-          delete modifiedRemoteRegistry[propKey];
-        } else if (modifiedRemoteRegistry[propKey] === '') {
-          // @ts-expect-error Unable to override error Type 'null' is not assignable to type 'never'.
-          modifiedRemoteRegistry[propKey] = null;
-        }
-      }
-    }
+    if (!isEmpty) return;
+
+    // @ts-expect-error TS2322: Type 'null' is not assignable to type 'never'.
+    modifiedRemote[propKey] = null;
+
+    if (unchanged) delete modifiedRemote[propKey];
   });
 
-  return modifiedRemoteRegistry;
+  return modifiedRemote;
 }
 
 export function EditRemoteRegistry() {
-  const [clear, setClear] = useState(false);
-  const { resetField } = useForm();
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
-  const name = params.id;
-  const { data, error, refresh } = useGet<HubItemsResponse<RemoteRegistryProps>>(
-    hubAPI`/_ui/v1/execution-environments/registries/?name=${name}`
-  );
-  const getPageUrl = useGetPageUrl();
   const { clearCacheByKey } = useClearCache();
 
-  if (error) return <HubError error={error} handleRefresh={refresh} />;
-  if (!data) return <LoadingPage breadcrumbs tabs />;
+  const name = params.id;
+  const { data, error, refresh } = useGet<HubItemsResponse<RemoteRegistryProps>>(
+    name ? hubAPI`/_ui/v1/execution-environments/registries/?name=${name}` : undefined
+  );
+
+  if (error) {
+    return <HubError error={error} handleRefresh={refresh} />;
+  }
+
+  if (!data) {
+    return <LoadingPage breadcrumbs tabs />;
+  }
 
   const remoteRegistry = data?.data[0];
 
@@ -207,32 +185,17 @@ export function EditRemoteRegistry() {
   }
 
   const onSubmit: PageFormSubmitHandler<RemoteRegistryProps> = async (modifiedRemoteRegistry) => {
-    smartUpdate(modifiedRemoteRegistry, remoteRegistry);
-    const remoteRegistryId = parsePulpIDFromURL(modifiedRemoteRegistry.pulp_href) as string;
+    const updatedRemote = smartUpdate(modifiedRemoteRegistry, remoteRegistry);
+
     await hubAPIPut<RemoteRegistryProps>(
-      hubAPI`/_ui/v1/execution-environments/registries/${remoteRegistryId}/`,
-      modifiedRemoteRegistry
+      hubAPI`/_ui/v1/execution-environments/registries/${parsePulpIDFromURL(remoteRegistry.pulp_href)}/`,
+      updatedRemote
     );
 
     clearCacheByKey(hubAPI`/_ui/v1/execution-environments/registries/`);
     pageNavigate(HubRoute.RemoteRegistryDetails, {
       params: { id: name },
     });
-  };
-
-  const handleOnClear = (name: string) => {
-    resetField(name);
-    setClear(!clear);
-    if (!remoteRegistry.write_only_fields) return;
-    const index = remoteRegistry.write_only_fields.findIndex((field) => field.name === name);
-    if (index !== undefined && index > -1) {
-      remoteRegistry.write_only_fields[index].is_set = false;
-    }
-  };
-
-  const shouldHideField = (name: string) => {
-    if (!remoteRegistry.write_only_fields) return false;
-    return !!remoteRegistry.write_only_fields.find((field) => field.name === name)?.is_set;
   };
 
   const remoteRegistryDefaultValues = {
@@ -263,23 +226,16 @@ export function EditRemoteRegistry() {
         onCancel={() => navigate(-1)}
         defaultValue={remoteRegistryDefaultValues}
       >
-        <RemoteInputs disableEditName onClear={handleOnClear} shouldHideField={shouldHideField} />
-        <PageFormExpandableSection singleColumn>
-          <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
-          <CertificatesAdvancedRemoteInputs
-            onClear={handleOnClear}
-            shouldHideField={shouldHideField}
-          />
-          <MiscAdvancedRemoteInputs />
-        </PageFormExpandableSection>
+        <FormWrapper />
       </HubPageForm>
     </PageLayout>
   );
 }
 
-function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
+function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: Readonly<SecretInput>) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
+
   return (
     <>
       <PageFormTextInput<RemoteRegistryProps>
@@ -317,8 +273,9 @@ function ProxyAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
   );
 }
 
-function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretInput) {
+function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: Readonly<SecretInput>) {
   const { t } = useTranslation();
+
   return (
     <>
       <PageFormGroup
@@ -359,8 +316,10 @@ function CertificatesAdvancedRemoteInputs({ onClear, shouldHideField }: SecretIn
     </>
   );
 }
+
 function MiscAdvancedRemoteInputs() {
   const { t } = useTranslation();
+
   return (
     <>
       <PageFormTextInput<RemoteRegistryProps>
@@ -382,9 +341,10 @@ function MiscAdvancedRemoteInputs() {
   );
 }
 
-function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInputs) {
+function RemoteInputs({ onClear, shouldHideField, disableEditName }: Readonly<IRemoteInputs>) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
+
   return (
     <>
       <PageFormTextInput<RemoteRegistryProps>
@@ -429,6 +389,52 @@ function RemoteInputs({ onClear, shouldHideField, disableEditName }: IRemoteInpu
           labelHelp={t('The password to be used for authentication when syncing.')}
         />
       </PageFormSecret>
+    </>
+  );
+}
+
+function FormWrapper({ isNew }: Readonly<{ isNew?: boolean }>) {
+  const { getValues, resetField, setValue } = useFormContext();
+  const [reload, setReload] = useState(0);
+
+  const shouldHideField = (name: string) => {
+    const hiddenFields = getValues('write_only_fields') as HiddenFieldsType;
+    if (!hiddenFields) return false;
+
+    return !!hiddenFields.find((field) => field.name === name)?.is_set;
+  };
+
+  const handleOnClear = (name: string) => {
+    resetField(name, { defaultValue: null });
+
+    // resetField nor setValue cause a re-render, force it
+    setReload(reload + 1);
+
+    const hiddenFields = getValues('write_only_fields') as HiddenFieldsType;
+    if (!hiddenFields) return;
+
+    const field = hiddenFields.find((field) => field.name === name);
+    if (field) {
+      field.is_set = false;
+      setValue('write_only_fields', hiddenFields);
+    }
+  };
+
+  return (
+    <>
+      <RemoteInputs
+        disableEditName={!isNew}
+        onClear={handleOnClear}
+        shouldHideField={shouldHideField}
+      />
+      <PageFormExpandableSection singleColumn>
+        <ProxyAdvancedRemoteInputs onClear={handleOnClear} shouldHideField={shouldHideField} />
+        <CertificatesAdvancedRemoteInputs
+          onClear={handleOnClear}
+          shouldHideField={shouldHideField}
+        />
+        <MiscAdvancedRemoteInputs />
+      </PageFormExpandableSection>
     </>
   );
 }

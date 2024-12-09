@@ -98,10 +98,10 @@ describe('GalaxyKit Installation Check for Collections Dependencies', () => {
       cy.contains('Loading').should('not.exist');
       cy.get('[data-cy="collection-dependencies-tab"]').click();
       cy.contains('This collection is being used by').should('be.visible');
-      cy.reload();
       cy.intercept('GET', hubAPI`/v3/plugin/ansible/search/collection-versions/?name=*`, {
         fixture: 'collection_with_one_dependency.json',
       }).as('getDependenciesMockData');
+      cy.reload();
       cy.wait('@getDependenciesMockData');
       // non-empty state
       cy.get('button[data="collection-dependency"]').should('have.length', 1);
