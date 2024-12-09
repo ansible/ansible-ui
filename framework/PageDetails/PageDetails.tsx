@@ -1,5 +1,6 @@
 import { Alert, DescriptionList, PageSection } from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import ResizeObserver from 'rc-resize-observer';
+import { ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { usePageSettings } from '../PageSettings/PageSettingsProvider';
 import { Scrollable } from '../components/Scrollable';
@@ -19,6 +20,30 @@ export function PageDetails(props: {
   const numberOfColumns = props.numberOfColumns ? props.numberOfColumns : settings.formColumns;
   const isCompact = props.isCompact;
 
+  const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
+  const onResize = useCallback(
+    ({ width }: { width: number }) => {
+      let columns = Math.max(1 + Math.floor((width - 350) / (350 + 24)), 1);
+      if (columns < 1) columns = 1;
+      switch (numberOfColumns) {
+        case 'multiple':
+          break;
+        case 'two':
+          columns = Math.min(columns, 2);
+          break;
+        default:
+          columns = 1;
+      }
+      switch (orientation) {
+        case 'horizontal':
+          columns = 1;
+          break;
+      }
+      setGridTemplateColumns(() => new Array(columns).fill('1fr').join(' '));
+    },
+    [numberOfColumns, orientation]
+  );
+
   let component = (
     <PageSectionStyled variant="light" padding={{ default: 'noPadding' }}>
       {alertPrompts &&
@@ -31,42 +56,19 @@ export function PageDetails(props: {
             variant="warning"
             key={i}
             data-cy={alertPrompt}
-          ></Alert>
+          />
         ))}
-      <DescriptionList
-        orientation={{
-          sm: orientation,
-          md: orientation,
-          lg: orientation,
-          xl: orientation,
-          '2xl': orientation,
-        }}
-        columnModifier={
-          numberOfColumns === 'multiple'
-            ? {
-                default: '1Col',
-                sm: '1Col',
-                md: '2Col',
-                lg: '2Col',
-                xl: '3Col',
-                '2xl': '3Col',
-              }
-            : numberOfColumns === 'two'
-              ? {
-                  default: '1Col',
-                  sm: '1Col',
-                  md: '2Col',
-                  lg: '2Col',
-                  xl: '3Col',
-                  '2xl': '2Col',
-                }
-              : undefined
-        }
-        style={{ maxWidth: 1200, padding: disablePadding ? undefined : 24 }}
-        isCompact={isCompact}
-      >
-        {props.children}
-      </DescriptionList>
+      <ResizeObserver onResize={onResize}>
+        <DescriptionList
+          style={{
+            padding: disablePadding ? undefined : 24,
+            gridTemplateColumns,
+          }}
+          isCompact={isCompact}
+        >
+          {props.children}
+        </DescriptionList>
+      </ResizeObserver>
     </PageSectionStyled>
   );
   if (!props.disableScroll) {
