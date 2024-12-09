@@ -25,7 +25,7 @@ export function PageDetail(props: {
     return <></>;
   }
   return (
-    <DescriptionListGroup style={{ gridColumn: props.fullWidth ? 'span 3' : undefined }}>
+    <DescriptionListGroupStyled fullWidth={props.fullWidth}>
       {label && (
         <DescriptionListTerm data-cy={`label-${id}`}>
           {label}
@@ -35,9 +35,13 @@ export function PageDetail(props: {
       <DescriptionListDescriptionStyled id={id} data-cy={id}>
         {children}
       </DescriptionListDescriptionStyled>
-    </DescriptionListGroup>
+    </DescriptionListGroupStyled>
   );
 }
+
+const DescriptionListGroupStyled = styled(DescriptionListGroup)<{ fullWidth?: boolean }>`
+  grid-column: ${(props: { fullWidth?: boolean }) => (props.fullWidth ? '1 / -1' : 'span 1')};
+`;
 
 const DescriptionListDescriptionStyled = styled(DescriptionListDescription)`
   opacity: 0.8;
