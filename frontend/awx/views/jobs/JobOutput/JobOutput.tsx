@@ -126,7 +126,7 @@ function useOutputFilters() {
           { value: 'runner_item_on_skipped', label: t('Item Skipped') },
           { value: 'playbook_on_no_hosts_matched', label: t('No Hosts Matched') },
           { value: 'playbook_on_no_hosts_remaining', label: t('No Hosts Remaining') },
-          { value: 'runner_on_no_hosts', label: t('No Hosts Remaining') },
+          { value: 'runner_on_no_hosts', label: t('No Hosts Provided') },
           { value: 'playbook_on_play_start', label: t('Play Started') },
           { value: 'playbook_on_stats', label: t('Playbook Complete') },
           { value: 'playbook_on_start', label: t('Playbook Started') },
