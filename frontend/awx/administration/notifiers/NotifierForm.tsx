@@ -12,7 +12,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
@@ -251,13 +250,13 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         </PageFormSection>
         <PageFormSection>
           <PageFormWatch watch="notification_type">
-            {(notification_type: string) => (
-              <>
-                <PageFormGroup label={t('Type Details')}>
+            {(notification_type: string) =>
+              notification_type ? (
+                <PageFormSection title={t('Type Details')}>
                   <InnerForm notification_type={notification_type} />
-                </PageFormGroup>
-              </>
-            )}
+                </PageFormSection>
+              ) : null
+            }
           </PageFormWatch>
         </PageFormSection>
         <PageFormSection>
