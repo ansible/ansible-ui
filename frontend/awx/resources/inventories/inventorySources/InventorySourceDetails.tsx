@@ -20,7 +20,6 @@ import {
   TextListItem,
   TextListItemVariants,
   TextListVariants,
-  Tooltip,
 } from '@patternfly/react-core';
 import { useCallback } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -186,19 +185,17 @@ export function InventorySourceDetails(
       </PageDetail>
       {lastJob ? (
         <PageDetail label={t`Last job status`}>
-          <Tooltip
-            position="top"
-            content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
-            key={lastJob.id}
+          <Link
+            to={getPageUrl(AwxRoute.JobOutput, {
+              params: { id: lastJob.id, job_type: 'inventory' },
+            })}
           >
-            <Link
-              to={getPageUrl(AwxRoute.JobOutput, {
-                params: { id: lastJob.id, job_type: 'inventory' },
-              })}
-            >
-              <StatusCell status={lastJob.status} />
-            </Link>
-          </Tooltip>
+            <StatusCell
+              tooltip={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
+              status={lastJob.status}
+              tooltipId={lastJob.id}
+            />
+          </Link>
         </PageDetail>
       ) : null}
       <PageDetail label={t`Description`}>{inventorySource.description}</PageDetail>

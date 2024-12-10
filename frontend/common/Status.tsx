@@ -11,6 +11,7 @@ import {
   MinusCircleIcon,
   StopCircleIcon,
 } from '@patternfly/react-icons';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function StatusCell(props: {
@@ -18,10 +19,11 @@ export function StatusCell(props: {
   disableLinks?: boolean;
   to?: string;
   hideLabel?: boolean;
+  tooltip?: ReactElement;
+  tooltipId?: number;
 }) {
   const { t } = useTranslation();
   const status = props.status;
-
   const label = useLabel(status, t);
   const color = getColor(status);
   const Icon = getIcon(status);
@@ -33,6 +35,8 @@ export function StatusCell(props: {
       icon={Icon ? <Icon /> : null}
       to={props.to}
       disableLinks={props.disableLinks}
+      tooltip={props.tooltip}
+      tooltipId={props.tooltipId}
     />
   );
 }

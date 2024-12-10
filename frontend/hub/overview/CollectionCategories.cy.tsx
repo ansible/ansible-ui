@@ -46,10 +46,13 @@ describe('CollectionCategories.cy.tsx', () => {
         ).should('not.be.visible');
         // Navigate to next page in the carousel to view the 4th card
         cy.get('button[aria-label="Navigate to the next page"]').click();
+
         cy.contains(
           'div[id="slide-container-application-collections"] div.pf-v5-c-card__title',
           collections[3].collection_version?.name || ''
-        ).should('be.visible');
+        )
+          .scrollIntoView()
+          .should('be.visible');
       }
     );
   });
