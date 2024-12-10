@@ -170,9 +170,28 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
             style={{ '--output-line-chars': outputLineChars } as { [key: string]: string | number }}
           >
             <div style={{ height: beforeRowsHeight }} />
-            {visibleItems.map((row) => {
+            {visibleItems.map((row, index) => {
               if (typeof row === 'number') {
                 const counter = row as unknown as number;
+
+                // check if row is between two adjacent output lines
+                // if so, it indicates a gap in the event counters. do not display
+                // a loading row for this
+                const prev =
+                  typeof visibleItems[index - 1] === 'object'
+                    ? visibleItems[index - 1]
+                    : visibleItems[index - 2];
+                const next =
+                  typeof visibleItems[index + 1] === 'object'
+                    ? visibleItems[index + 1]
+                    : visibleItems[index + 2];
+                if (
+                  typeof prev === 'object' &&
+                  typeof next === 'object' &&
+                  (prev.line || 0) + 1 === next.line
+                ) {
+                  return null;
+                }
 
                 return (
                   <JobOutputLoadingRow
