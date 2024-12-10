@@ -1,5 +1,5 @@
-import { Flex, FlexItem } from '@patternfly/react-core';
-import { ReactNode } from 'react';
+import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
+import { ReactElement, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconWrapper } from '../components/IconWrapper';
 import { PFColor, getPatternflyColor } from '../components/pfcolors';
@@ -15,6 +15,8 @@ export interface TextCellProps {
   iconColor?: PFColor;
   maxWidth?: number;
   disableLinks?: boolean;
+  tooltip?: ReactElement;
+  tooltipId?: number;
 }
 export function TextCell(props: Readonly<TextCellProps>) {
   const navigate = useNavigate();
@@ -37,39 +39,48 @@ export function TextCell(props: Readonly<TextCellProps>) {
           </FlexItem>
         )}
       {props.text && (
-        <FlexItem style={{ maxWidth: '100%' }} data-cy={props.text.toLocaleLowerCase() + '-status'}>
-          <div
-            style={{
-              maxWidth: props.maxWidth ?? '100%',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              color: props.color ? getPatternflyColor(props.color) : undefined,
-            }}
+        <Tooltip
+          trigger={props.tooltip ? undefined : 'manual'}
+          content={props.tooltip}
+          key={props.tooltipId}
+        >
+          <FlexItem
+            style={{ maxWidth: '100%' }}
+            data-cy={props.text.toLocaleLowerCase() + '-status'}
           >
-            {!props.disableLinks && (props.to || props.onClick) ? (
-              <a
-                style={{
-                  color: props.color ? getPatternflyColor(props.color) : undefined,
-                }}
-                href={props.to}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (props.onClick) {
-                    props.onClick();
-                  } else {
-                    if (!props.to) return;
-                    navigate(props.to);
-                  }
-                }}
-              >
-                {props.text}
-              </a>
-            ) : (
-              <>{props.text}</>
-            )}
-          </div>
-        </FlexItem>
+            <div
+              style={{
+                maxWidth: props.maxWidth ?? '100%',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                color: props.color ? getPatternflyColor(props.color) : undefined,
+              }}
+            >
+              {!props.disableLinks && (props.to || props.onClick) ? (
+                <a
+                  style={{
+                    color: props.color ? getPatternflyColor(props.color) : undefined,
+                  }}
+                  href={props.to}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (props.onClick) {
+                      props.onClick();
+                    } else {
+                      if (!props.to) return;
+                      navigate(props.to);
+                    }
+                  }}
+                >
+                  {props.text}
+                </a>
+              ) : (
+                <>{props.text}</>
+              )}
+            </div>
+          </FlexItem>
+        </Tooltip>
       )}
       {props.icon && props.iconAlign === 'right' && (
         <FlexItem alignSelf={{ default: 'alignSelfCenter' }}>

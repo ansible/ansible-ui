@@ -4,10 +4,12 @@ import { useDescriptionColumn, useNameColumn } from '@ansible/common-ui/columns'
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 
 export function useInventorySourceColumns(options?: {
   disableSort?: boolean;
@@ -15,6 +17,7 @@ export function useInventorySourceColumns(options?: {
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+
   const { data, error, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventory_sources/`
   );
@@ -54,12 +57,31 @@ export function useInventorySourceColumns(options?: {
   );
   const statusColumn = useMemo<ITableColumn<InventorySource>>(
     () => ({
-      header: t('Status'),
+      header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
-        return <StatusCell status={inventorySource.status} />;
+        return (
+          <Link
+            to={getPageUrl(AwxRoute.JobOutput, {
+              params: {
+                id: inventorySource?.summary_fields?.last_job?.id,
+                job_type: 'inventory',
+              },
+            })}
+          >
+            <StatusCell
+              tooltip={
+                inventorySource.summary_fields.last_job ? (
+                  <LastJobTooltip job={inventorySource?.summary_fields?.last_job} />
+                ) : undefined
+              }
+              tooltipId={inventorySource.summary_fields.last_job?.id}
+              status={inventorySource.status}
+            />
+          </Link>
+        );
       },
     }),
-    [t]
+    [t, getPageUrl]
   );
   const tableColumns = useMemo<ITableColumn<InventorySource>[]>(
     () => [nameColumn, descriptionColumn, statusColumn, typeColumn],
