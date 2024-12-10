@@ -25,6 +25,8 @@ export function MyImports() {
   const getPageUrl = useGetPageUrl();
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const from = searchParams.get('from') ?? '';
+
   const namespaceQP = searchParams.get('namespace') ?? '';
   const nameQP = searchParams.get('name') ?? undefined;
   const statusQP = searchParams.get('status') ?? undefined;
@@ -43,22 +45,31 @@ export function MyImports() {
   const [perPage, setPerPage] = useState(perPageQP);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      collectionFilter.name !== nameQP &&
-        params.set('name', collectionFilter.name?.join(',') ?? '');
+    // Only call setSearchParams if there's a change. It fixes back button.
+    if (
+      collectionFilter.name?.[0] !== nameQP ||
+      collectionFilter.status?.[0] !== statusQP ||
+      collectionFilter.version?.[0] !== versionQP ||
+      page !== pageQP ||
+      perPage !== perPageQP
+    ) {
+      setSearchParams((params) => {
+        collectionFilter.name?.[0] !== nameQP &&
+          params.set('name', collectionFilter.name?.[0] ?? '');
 
-      collectionFilter.status !== statusQP &&
-        params.set('status', collectionFilter.status?.[0] ?? '');
+        collectionFilter.status?.[0] !== statusQP &&
+          params.set('status', collectionFilter.status?.[0] ?? '');
 
-      collectionFilter.version !== versionQP &&
-        params.set('version', collectionFilter.version?.join(',') ?? '');
+        collectionFilter.version?.[0] !== versionQP &&
+          params.set('version', collectionFilter.version?.[0] ?? '');
 
-      page !== pageQP && params.set('page', page.toString());
+        page !== pageQP && params.set('page', page.toString());
 
-      perPage !== perPageQP && params.set('perPage', perPage.toString());
+        perPage !== perPageQP && params.set('perPage', perPage.toString());
 
-      return params;
-    });
+        return params;
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionFilter, page, perPage]);
 
@@ -173,10 +184,42 @@ export function MyImports() {
       </DrawerPanelBody>
     </DrawerPanelContent>
   );
-
+  const breadcrumbs: { label: string; to?: string }[] = [];
+  if (from === 'approvals') {
+    breadcrumbs.push({ label: t('Collection Approvals'), to: getPageUrl(HubRoute.Approvals) });
+  } else {
+    breadcrumbs.push({ label: t('Namespaces'), to: getPageUrl(HubRoute.Namespaces) });
+  }
+  if (namespaceQP) {
+    breadcrumbs.push({
+      label: namespaceQP,
+      to: getPageUrl(HubRoute.NamespaceDetails, {
+        params: {
+          id: namespaceQP,
+        },
+      }),
+    });
+  }
+  if (!!namespaceQP && !!collectionImportsCount && collectionImportsCount > 0 && !!collection) {
+    breadcrumbs.push({
+      label: collection?.collection_version?.name || '',
+      to: getPageUrl(HubRoute.CollectionPage, {
+        params: {
+          repository: collection?.repository?.name || '',
+          namespace: collection?.collection_version?.namespace || '',
+          name: collection?.collection_version?.name || '',
+        },
+      }),
+    });
+  }
+  breadcrumbs.push({ label: t('My imports') });
   return (
     <PageLayout>
-      <PageHeader title={t('My imports')} description={t('Imported collections')} />
+      <PageHeader
+        breadcrumbs={breadcrumbs}
+        title={t('My imports')}
+        description={t('Imported collections')}
+      />
       <PageSection variant="light" hasOverflowScroll hasShadowTop={false} hasShadowBottom={false}>
         <Drawer isExpanded={isDrawerExpanded} isInline>
           <DrawerContent panelContent={panelContent}>

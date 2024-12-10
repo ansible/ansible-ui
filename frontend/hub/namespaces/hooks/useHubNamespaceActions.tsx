@@ -58,7 +58,12 @@ export function useHubNamespaceActions(options?: {
         icon: ImportIcon,
         label: t('Imports'),
         onClick: (namespace) =>
-          pageNavigate(HubRoute.MyImports, { query: { namespace: namespace.name } }),
+          pageNavigate(HubRoute.MyImports, {
+            query: {
+              namespace: namespace.name,
+              from: options.isDetailsPageAction ? 'namespace' : 'namespaces',
+            },
+          }),
       },
       {
         type: PageActionType.Button,
