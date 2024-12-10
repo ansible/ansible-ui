@@ -95,6 +95,7 @@ export function useApprovalActions(callback: (collections: CollectionVersionSear
               namespace: collection?.collection_version?.namespace,
               name: collection?.collection_version?.name,
               version: collection?.collection_version?.version,
+              from: 'approvals',
             },
           }),
       },
