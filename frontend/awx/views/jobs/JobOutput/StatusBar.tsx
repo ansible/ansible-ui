@@ -102,7 +102,7 @@ export function WorkflowNodesStatusBar(props: { nodes: WorkflowNode[] }) {
 
   const segments: WFNodesStatusProps = {};
 
-  props.nodes.map((node) => {
+  props.nodes.forEach((node) => {
     if (!node?.summary_fields?.job?.status) {
       return;
     }

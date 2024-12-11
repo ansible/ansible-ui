@@ -7,7 +7,7 @@ export function CredentialDetailFields(props: { credential: EdaCredential }) {
   const { t } = useTranslation();
   if (!props?.credential?.inputs) return <></>;
   const enabledOptions: string[] = [];
-  Object.keys(props?.credential?.inputs).map((label, idx) => {
+  Object.keys(props?.credential?.inputs).forEach((label, idx) => {
     if (
       typeof Object.values(props?.credential?.inputs || {}).at(idx) === 'boolean' &&
       Object.values(props?.credential?.inputs || {}).at(idx) === true

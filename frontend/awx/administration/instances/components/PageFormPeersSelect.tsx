@@ -37,7 +37,7 @@ function validatePeer(peer: Instance[], t: TFunction<'translation', undefined>) 
   const arrAux: string[] = [];
 
   if (peer?.length > 1) {
-    peer.map((element) => {
+    peer.forEach((element) => {
       if (element.listener_port) {
         return undefined;
       } else {

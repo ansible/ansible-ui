@@ -191,11 +191,11 @@ export function PageFormGrid(props: {
   const isHorizontal = props.isVertical ? false : settings.formLayout === 'horizontal';
   const multipleColumns = props.singleColumn ? false : settings.formColumns === 'multiple';
 
-  const sm: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 12) : 12;
+  const sm: gridItemSpanValueShape | undefined = 12;
   const md: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 12 : 6) : 12;
-  const lg: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
-  const xl: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 6 : 6) : 12;
-  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? (isHorizontal ? 4 : 4) : 12;
+  const lg: gridItemSpanValueShape | undefined = multipleColumns ? 6 : 12;
+  const xl: gridItemSpanValueShape | undefined = multipleColumns ? 6 : 12;
+  const xl2: gridItemSpanValueShape | undefined = multipleColumns ? 4 : 12;
 
   const Component = (
     <Grid hasGutter span={12} sm={sm} md={md} lg={lg} xl={xl} xl2={xl2} className={props.className}>

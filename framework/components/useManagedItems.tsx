@@ -131,7 +131,9 @@ export function useManageItems<ItemT extends object>(options: ManageItemsProps<I
       }));
       setItemsState(managedItemsState);
       localStorage.setItem(options.id, JSON.stringify(managedItemsState));
-      options.onSubmit ? options.onSubmit(orderedItems) : undefined;
+      if (options.onSubmit) {
+        options.onSubmit(orderedItems);
+      }
     },
     [keyFn, options, saveFn]
   );

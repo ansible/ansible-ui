@@ -173,7 +173,9 @@ export function PageFormSelect<
         ) => {
           const option = options.find((option) => option.label === label.toString())?.value;
           onChange(option);
-          fieldNameToResetOnFieldChange ? resetField(fieldNameToResetOnFieldChange) : undefined;
+          if (fieldNameToResetOnFieldChange) {
+            resetField(fieldNameToResetOnFieldChange);
+          }
           if (props.onChange) {
             props.onChange(option);
           }

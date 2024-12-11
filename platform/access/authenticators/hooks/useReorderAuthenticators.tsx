@@ -34,7 +34,9 @@ export function ReorderAuthenticatorsModal(options: ReorderItemsProps) {
         })
       )
         .then(() => {
-          options?.onComplete ? options.onComplete(orderedItems) : '';
+          if (options?.onComplete) {
+            options.onComplete(orderedItems);
+          }
         })
         .catch();
     },

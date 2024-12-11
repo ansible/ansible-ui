@@ -87,15 +87,10 @@ export function UserPage() {
   }, [canViewOrEditUsers, deleteUsers, isViewingSelf, pageNavigate, isActionTab, t]);
 
   if (!activeEdaUser) return <LoadingPage breadcrumbs tabs />;
-  const tabs = isViewingSelf
-    ? [
-        { label: t('Details'), page: EdaRoute.UserDetails },
-        { label: t('Roles'), page: EdaRoute.UserRoles },
-      ]
-    : [
-        { label: t('Details'), page: EdaRoute.UserDetails },
-        { label: t('Roles'), page: EdaRoute.UserRoles },
-      ];
+  const tabs = [
+    { label: t('Details'), page: EdaRoute.UserDetails },
+    { label: t('Roles'), page: EdaRoute.UserRoles },
+  ];
   return (
     <PageLayout>
       <PageHeader
