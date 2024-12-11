@@ -219,7 +219,7 @@ export function PageTableCard<T extends object>(props: {
       >
         <Scrollable>{card.cardBody}</Scrollable>
       </div>
-      {(card.labels || (itemActions && itemActions.length)) && (
+      {card.labels || (itemActions && itemActions.length) ? (
         <CardFooter>
           <CardFooterDiv>
             <CardFooterLabelsDiv>
@@ -238,7 +238,7 @@ export function PageTableCard<T extends object>(props: {
                 </LabelGroup>
               )}
             </CardFooterLabelsDiv>
-            {itemActions && itemActions.length && (
+            {itemActions && itemActions.length ? (
               <div
                 style={{ marginRight: -16, alignSelf: 'end', justifySelf: 'flex-end', flexGrow: 1 }}
               >
@@ -249,10 +249,10 @@ export function PageTableCard<T extends object>(props: {
                   iconOnly
                 />
               </div>
-            )}
+            ) : null}
           </CardFooterDiv>
         </CardFooter>
-      )}
+      ) : null}
       {card.alertTitle && (
         <Alert title={card.alertTitle} isInline variant={card.alertVariant}>
           {card.alertContent}

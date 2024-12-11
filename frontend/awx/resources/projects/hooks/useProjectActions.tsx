@@ -99,7 +99,9 @@ export function useProjectActions(
             id: project.id,
           })
             .then(() => {
-              showToastMessage ? alertToaster.addAlert(alert) : null;
+              if (showToastMessage) {
+                alertToaster.addAlert(alert);
+              }
             })
             .catch((error) => {
               alertToaster.addAlert({

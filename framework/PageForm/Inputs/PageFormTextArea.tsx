@@ -134,7 +134,7 @@ export function PageFormTextArea<
                   <SearchIcon />
                 </Button>
               )}
-              {button && button}
+              {button}
             </InputGroup>
           </PageFormGroup>
         );

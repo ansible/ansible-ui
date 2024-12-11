@@ -59,13 +59,13 @@ export function ScheduleTypeInputs() {
                   )}
                   name="resourceInventory"
                 />
-                {resourceInventory && resourceInventory?.id && (
+                {resourceInventory && resourceInventory?.id ? (
                   <PageFormInventorySourceSelect<ScheduleFormWizard>
                     isRequired
                     inventoryId={resourceInventory?.id}
                     name="resource"
                   />
-                )}
+                ) : null}
               </>
             ),
             project: <PageFormProjectSelect<ScheduleFormWizard> isRequired name="resource" />,

@@ -124,11 +124,11 @@ export function InstanceDetailsTab(props: {
           </Button>
         </PageDetail>
       )}
-      {instance.listener_port && (
+      {instance.listener_port ? (
         <PageDetail label={t`Listener port`} data-cy="listener-port">
           {instance.listener_port}
         </PageDetail>
-      )}
+      ) : null}
       <PageDetail label={t('Used capacity')} data-cy="used-capacity">
         {instance.enabled ? (
           <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
