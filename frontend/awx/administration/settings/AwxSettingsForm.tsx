@@ -196,18 +196,14 @@ export function AwxSettingsForm(props: {
         </Button>
       }
     >
-      {Object.entries(otherOptions).map(([key, option]) => {
-        return option.hidden ? null : (
-          <OptionActionsFormInput key={key} name={key} option={option} />
-        );
-      })}
+      {Object.entries(otherOptions).map(([key, option]) => (
+        <OptionActionsFormInput key={key} name={key} option={option} />
+      ))}
       {Object.keys(booleanOptions).length > 0 && (
         <FormGroup label={t('Options')} isStack role="group">
-          {Object.entries(booleanOptions).map(([key, option]) => {
-            return option.hidden ? null : (
-              <OptionActionsFormInput key={key} name={key} option={option} />
-            );
-          })}
+          {Object.entries(booleanOptions).map(([key, option]) => (
+            <OptionActionsFormInput key={key} name={key} option={option} />
+          ))}
         </FormGroup>
       )}
 
@@ -219,11 +215,9 @@ export function AwxSettingsForm(props: {
             canCollapse
             defaultCollapsed={group.groupName !== 'LDAP'}
           >
-            {Object.entries(group.options).map(([key, option]) => {
-              return option.hidden ? null : (
-                <OptionActionsFormInput key={key} name={key} option={option} />
-              );
-            })}
+            {Object.entries(group.options).map(([key, option]) => (
+              <OptionActionsFormInput key={key} name={key} option={option} />
+            ))}
           </PageFormSection>
         );
       })}

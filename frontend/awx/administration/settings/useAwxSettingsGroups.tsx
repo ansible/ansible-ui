@@ -117,6 +117,7 @@ export function useAwxSettingsGroups() {
     >((acc, key) => {
       if (awxSettingsExcludeKeys.includes(key)) return acc;
       const value = awxSettingsDefinedInFile.includes(key) ? actions.GET[key] : actions.PUT[key];
+      if (value.hidden) return acc;
       acc[key] = value;
       return acc;
     }, {});
