@@ -52,6 +52,22 @@ describe('Create credential ', () => {
       });
     });
   });
+  it('Should create the binary file field', () => {
+    cy.mount(<CreateCredential />);
+    cy.get('[data-cy="name"]').type('Test');
+    cy.selectDropdownOptionByResourceName('credential-type-id', 'Sample Base 64 Binary');
+    cy.get('[data-cy="organization_id"]').click();
+    cy.get('#organization-2 > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click();
+    cy.get('#inputs-binary-file-filename').should('be.visible');
+    cy.clickButton('Create credential');
+    cy.intercept('POST', edaAPI`/eda-credentials/`, (req) => {
+      expect(req.body).to.contain({
+        name: 'Test',
+        credential_type_id: 6,
+        inputs: { username: '', binary_file: '' },
+      });
+    });
+  });
 });
 
 describe('Edit Credential', () => {

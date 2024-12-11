@@ -21,4 +21,6 @@ export interface EdaCredentialTypeField {
   ask_at_runtime?: boolean;
   hidden?: boolean;
   default?: number | string | boolean;
+  multiline?: boolean;
+  format?: string;
 }
