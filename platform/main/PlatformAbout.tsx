@@ -38,7 +38,7 @@ export const PlatformAbout: React.FunctionComponent = () => {
           )}
           {edaVersion && (
             <>
-              <TextListItem component="dt">{t('Event Driven Automation Version')}</TextListItem>
+              <TextListItem component="dt">{t('Event-Driven Ansible Version')}</TextListItem>
               <TextListItem component="dd">{edaVersion}</TextListItem>
             </>
           )}
