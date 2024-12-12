@@ -218,7 +218,6 @@ describe('GalaxykKit Installation for Collections Details', () => {
         // Sign collection
         visitCollection(collectionName, namespace.name);
         cy.selectDetailsPageKebabAction('sign-collection');
-        cy.clickButton(/^Close$/);
         cy.getModal().should('not.exist');
         // Verify collection has been signed
         cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
@@ -271,9 +270,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
             // FIXME: here, the version changes from 1.0.0 to 1.2.3
             // could be autoreload when no version is explicitly selected, or sign-version forgetting state?
             cy.selectDetailsPageKebabAction('sign-version');
-            cy.getModal().then(() => {
-              cy.clickButton(/^Close$/);
-            });
+
             // Reload the page to reflect and assert the newly signed version
             cy.reload();
             cy.getByDataCy('version').should('contain', firstVersion);
@@ -295,19 +292,16 @@ describe('GalaxykKit Installation for Collections Details', () => {
         // Deprecate collection
         visitCollection(collectionName, namespace.name);
         cy.selectDetailsPageKebabAction('deprecate-collection');
-        cy.clickButton(/^Close$/);
         cy.getModal().should('not.exist');
         // Verify collection has been deprecated
         cy.getByDataCy('deprecated-status').should('exist');
         // Undeprecate collection
         cy.selectDetailsPageKebabAction('undeprecate-collection');
-        cy.clickButton(/^Close$/);
         // Verify collection has been undeprecated
         cy.get('[data-cy="deprecated-status"]').should('not.exist');
 
         // deprecate collection again
         cy.selectDetailsPageKebabAction('deprecate-collection');
-        cy.clickButton(/^Close$/);
         // Verify collection has been deprecated
         cy.getByDataCy('deprecated-status').should('exist');
 
@@ -325,7 +319,6 @@ describe('GalaxykKit Installation for Collections Details', () => {
           cy.get(`input[type="checkbox"]`).click();
         });
         cy.contains('button', 'Undeprecate collections').click();
-        cy.clickButton(/^Close$/);
         cy.getModal().should('not.exist');
 
         cy.get(`[aria-label="Simple table"]`).within(() => {

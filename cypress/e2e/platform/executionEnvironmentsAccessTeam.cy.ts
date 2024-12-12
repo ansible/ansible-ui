@@ -79,9 +79,6 @@ describe('Execution Environments: Team access', () => {
           expect(response?.statusCode).to.eql(201);
         });
     });
-    cy.getModal().within(() => {
-      cy.clickButton(/^Close$/);
-    });
     cy.getModal().should('not.exist');
     cy.verifyPageTitle(execEnvName);
 
@@ -95,6 +92,5 @@ describe('Execution Environments: Team access', () => {
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();
     cy.clickButton(/^Remove role$/);
-    cy.clickButton(/^Close$/);
   });
 });

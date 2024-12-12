@@ -324,6 +324,7 @@ describe('Job Templates Tests', function () {
             );
             cy.clickModalButton('Delete inventory');
             cy.wait('@deleteInventory');
+            cy.verifyPageTitle('Inventories');
             cy.navigateTo('awx', 'templates');
             cy.filterTableByMultiSelect('name', [jobTemplateToEdit.name]);
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
@@ -578,7 +579,6 @@ describe('Job Templates Tests', function () {
       cy.getModal().within(() => {
         cy.contains(jobTemplate.name);
         cy.contains('Success');
-        cy.clickButton('Close');
       });
     });
 
@@ -624,7 +624,6 @@ describe('Job Templates Tests', function () {
           expect(jtArray[1]?.response?.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.clearAllFilters();
       });
     });

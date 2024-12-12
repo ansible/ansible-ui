@@ -91,7 +91,6 @@ describe('Teams.cy.ts', () => {
       cy.get('button').contains('Delete teams').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 });
 

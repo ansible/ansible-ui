@@ -29,6 +29,7 @@ export async function deleteExecutionEnvironment(executionEnvName: string, page:
   await page.getByRole('menuitem', { name: 'Delete execution environment' }).click();
   await page.getByText('Yes, I confirm that I want to').click();
   await page.getByRole('button', { name: 'Delete execution environments' }).click();
-  await page.getByText('Close').click();
-  await expect(page.locator('h1')).toContainText('Execution Environments');
+  await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
+    'Success'
+  );
 }

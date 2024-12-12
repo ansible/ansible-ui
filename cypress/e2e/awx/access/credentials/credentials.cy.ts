@@ -79,7 +79,6 @@ describe('Credentials', () => {
         .then((deleted) => {
           expect(deleted?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
           cy.verifyPageTitle('Credentials');
         });
@@ -98,7 +97,6 @@ describe('Credentials', () => {
         .then((deleted) => {
           expect(deleted?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
           cy.verifyPageTitle('Credentials');
         });
@@ -122,7 +120,6 @@ describe('Credentials', () => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete credential/);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
       });
     });
   });
@@ -614,7 +611,6 @@ cyLabel(['upstream'], () => {
           .then((deleted) => {
             expect(deleted?.statusCode).to.eql(204);
             cy.contains(/^Success$/).should('be.visible');
-            cy.containsBy('button', /^Close$/).click();
           });
       });
     }
@@ -664,9 +660,6 @@ cyLabel(['upstream'], () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(201);
           });
-      });
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(machineCredential.name);
@@ -726,9 +719,6 @@ cyLabel(['upstream'], () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(201);
           });
-      });
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(machineCredential.name);

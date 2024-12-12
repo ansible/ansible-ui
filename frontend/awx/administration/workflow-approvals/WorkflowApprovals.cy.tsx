@@ -190,7 +190,6 @@ describe('Workflow Approvals List', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Approve workflow approvals/);
       cy.wait('@approveRequest');
-      cy.clickButton(/^Close/);
     });
 
     it('Deny row action calls correct API endpoint', () => {
@@ -210,7 +209,6 @@ describe('Workflow Approvals List', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Deny workflow approvals/);
       cy.wait('@denyRequest');
-      cy.clickButton(/^Close/);
     });
 
     it('Delete row action calls correct API endpoint', () => {
@@ -230,7 +228,6 @@ describe('Workflow Approvals List', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete workflow approvals/);
       cy.wait('@deleteRequest');
-      cy.clickButton(/^Close/);
       cy.clickButton(/^Clear all filters$/);
     });
 

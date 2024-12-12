@@ -71,7 +71,6 @@ describe('Check if the build includes EDA', () => {
       cy.clickToolbarKebabAction('delete-credentials');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credentials');
-      cy.clickButton(/^Close$/);
       cy.get(`${cred.name}`).should('not.exist');
     });
   });

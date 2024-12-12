@@ -269,7 +269,6 @@ describe('Inventory Groups', () => {
             expect(statusCode).to.eql(204);
           });
         cy.assertModalSuccess();
-        cy.clickModalButton(/^Close/);
         cy.clickButton(/^Clear all filters$/);
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
@@ -329,7 +328,6 @@ describe('Inventory Groups', () => {
             expect(statusCode).to.eql(204);
           });
         cy.assertModalSuccess();
-        cy.clickModalButton(/^Close/);
         cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
       });
     });
@@ -431,7 +429,6 @@ describe('Inventory Groups', () => {
           expect(response?.statusCode).to.eql(204);
         });
       cy.assertModalSuccess();
-      cy.clickModalButton(/^Close/);
       cy.intercept('POST', awxAPI`/hosts/`).as('createHost');
       cy.clickButton(/^Create host$/);
       cy.verifyPageTitle('Create host');

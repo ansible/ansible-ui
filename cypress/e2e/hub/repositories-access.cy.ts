@@ -27,7 +27,6 @@ describe('Repositories user and team access tests', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
       cy.contains(/^Success$/).should('be.visible');
-      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -65,9 +64,6 @@ describe('Repositories user and team access tests', () => {
           });
       });
       cy.intercept('GET', hubAPI`/_ui/v2/role_user_assignments/*`).as('roleAssignments');
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
-      });
       cy.wait('@roleAssignments');
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(repository.name);
@@ -113,9 +109,6 @@ describe('Repositories user and team access tests', () => {
           });
       });
       cy.intercept('GET', hubAPI`/_ui/v2/role_team_assignments/*`).as('teams');
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
-      });
       cy.wait('@teams');
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(repository.name);

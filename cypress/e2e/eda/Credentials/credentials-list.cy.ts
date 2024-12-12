@@ -71,7 +71,6 @@ describe('Check if the build includes EDA', () => {
               expect(testCredential?.response?.statusCode).to.eql(204);
             });
             cy.assertModalSuccess();
-            cy.clickButton(/^Close$/);
             cy.clickButton(/^Clear all filters$/);
           });
         });

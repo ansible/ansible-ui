@@ -213,7 +213,6 @@ describe('Inventory Sources', () => {
         cy.wait('@deleteSchedule').then((response) => {
           expect(response?.response?.statusCode).to.eql(204);
         });
-        cy.clickButton('Close');
         cy.contains('name-column-cell', scheduleName).should('not.exist');
       });
     });

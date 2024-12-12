@@ -44,7 +44,6 @@ hub_resources_roles_tab.forEach((resource) => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete remotes$/);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
       } else {
         if (resource.deletion !== null && resource_object !== undefined) {
@@ -84,7 +83,6 @@ hub_resources_roles_tab.forEach((resource) => {
         cy.clickButton(/^Finish$/);
       });
       cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
       cy.verifyPageTitle(user.username);
       cy.contains(resource_object.name);
       cy.contains(role.name);
@@ -154,7 +152,6 @@ describe(`Roles Tab for Users - actions`, () => {
           cy.clickButton(/^Finish$/);
         });
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.verifyPageTitle(user.username);
       });
     });
@@ -179,7 +176,6 @@ describe(`Roles Tab for Users - actions`, () => {
     });
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove role');
-    cy.clickButton(/^Close$/);
     cy.contains(role1.name).should('not.exist');
   });
 
@@ -194,7 +190,6 @@ describe(`Roles Tab for Users - actions`, () => {
     cy.clickToolbarKebabAction('remove-roles');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove role');
-    cy.clickButton(/^Close$/);
     cy.contains(role2.name).should('not.exist');
     cy.contains(role3.name).should('not.exist');
   });

@@ -370,14 +370,12 @@ describe('Workflow Visualizer', () => {
             cy.getByDataCy('remove-node').click();
             cy.clickModalConfirmCheckbox();
             cy.clickModalButton('Remove');
-            cy.clickModalButton('Close');
             cy.get(`g[data-id=${approvalNode.id}] .pf-topology__node__action-icon`).click({
               force: true,
             });
             cy.getByDataCy('remove-node').click();
             cy.clickModalConfirmCheckbox();
             cy.clickModalButton('Remove');
-            cy.clickModalButton('Close');
             cy.clickButton('Save');
             cy.getByDataCy('alert-toaster').should('be.visible');
             cy.clickButton('Add step');
@@ -556,7 +554,6 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('remove-node').click();
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove');
-          cy.clickModalButton('Close');
           cy.clickButton('Save');
           cy.getByDataCy('alert-toaster').should(
             'have.text',
@@ -591,7 +588,6 @@ describe('Workflow Visualizer', () => {
           cy.getModal().within(() => {
             cy.get('[data-ouia-component-id="confirm"]').click();
             cy.get('[data-ouia-component-id="submit"]').click();
-            cy.clickButton('Close');
           });
           cy.getByDataCy('workflow-visualizer-toolbar-save').click();
           cy.getByDataCy('alert-toaster').should(

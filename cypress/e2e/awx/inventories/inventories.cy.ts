@@ -124,7 +124,6 @@ describe('Inventories Tests', () => {
           cy.get('#confirm').click();
           cy.clickButton(/^Delete inventory/);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
         });
 
@@ -137,7 +136,6 @@ describe('Inventories Tests', () => {
           cy.get('#confirm').click();
           cy.clickButton(/^Delete inventory/);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
         });
 
@@ -164,7 +162,6 @@ describe('Inventories Tests', () => {
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete inventories/);
                   cy.contains(/^Success$/);
-                  cy.clickButton(/^Close$/);
                   cy.contains('No results found');
                 });
               });

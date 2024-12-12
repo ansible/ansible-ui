@@ -67,7 +67,6 @@ describe('Check if the build includes EDA', () => {
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Disable forwarding of events');
       cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
       cy.wait('@event-stream1').then((event_stream) => {
         expect(event_stream?.response?.statusCode).to.eql(200);
@@ -102,7 +101,6 @@ describe('Check if the build includes EDA', () => {
         expect(eventstream?.response?.statusCode).to.eql(204);
       });
       cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
   });

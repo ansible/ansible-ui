@@ -169,7 +169,6 @@ describe('Check if the build includes EDA', () => {
           cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
           cy.clickButton(/^Finish$/);
           cy.assertModalSuccess();
-          cy.clickButton(/^Close$/);
           cy.wait('@assignment').then((assignment) => {
             expect(assignment?.response?.statusCode).to.eql(201);
             cy.contains('div', edaUser1.username);
@@ -196,7 +195,6 @@ describe('Check if the build includes EDA', () => {
           });
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove role');
-          cy.clickButton(/^Close$/);
           cy.contains(edaUser1.username).should('not.exist');
         });
 
@@ -220,7 +218,6 @@ describe('Check if the build includes EDA', () => {
           cy.clickToolbarKebabAction('remove-roles');
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove role');
-          cy.clickButton(/^Close$/);
           cy.contains(edaUser2.username).should('not.exist');
           cy.contains(edaUser3.username).should('not.exist');
         });

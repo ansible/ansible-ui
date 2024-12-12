@@ -93,7 +93,6 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete organization/);
     cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
 
@@ -123,7 +122,6 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
           expect(edaPlatformOrg2?.response?.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
       });
     });
@@ -213,9 +211,6 @@ describe('If SaaS Build', () => {
             );
             cy.clickButton(/^Finish/);
           });
-          cy.getModal().within(() => {
-            cy.clickButton(/^Close$/);
-          });
           cy.getModal().should('not.exist');
           cy.verifyPageTitle(organization.name);
           cy.selectTableRowByCheckbox('username', createdUser1.username);
@@ -225,7 +220,6 @@ describe('If SaaS Build', () => {
             cy.get('#confirm').click();
             cy.get('#submit').click();
             cy.contains(/^Success$/).should('be.visible');
-            cy.containsBy('button', /^Close$/).click();
           });
           cy.clickButton(/^Clear all filters$/);
           cy.deletePlatformUser(createdUser1, { failOnStatusCode: false });
@@ -248,9 +242,6 @@ describe('If SaaS Build', () => {
           cy.clickButton(/^Next/);
           cy.clickButton(/^Next/);
           cy.clickButton(/^Finish/);
-        });
-        cy.getModal().within(() => {
-          cy.clickButton(/^Close$/);
         });
         cy.getModal().should('not.exist');
         cy.verifyPageTitle(organization.name);
@@ -293,7 +284,6 @@ describe('If SaaS Build', () => {
         cy.getModal().within(() => {
           cy.getBy('#confirm').click();
           cy.getBy('#submit').click();
-          cy.clickButton(/^Close$/);
         });
         cy.clickButton(/^Clear all filters$/);
         cy.getModal().should('not.exist');
@@ -357,9 +347,6 @@ describe('If SaaS Build', () => {
           cy.verifyReviewStepWizardDetails('teams', [createdPlatformTeam], '1');
           cy.clickButton(/^Finish/);
         });
-        cy.getModal().within(() => {
-          cy.clickButton(/^Close$/);
-        });
         cy.getModal().should('not.exist');
         cy.verifyPageTitle(organization.name);
         cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
@@ -393,7 +380,6 @@ describe('If SaaS Build', () => {
           cy.contains('.pf-v5-c-description-list__text', createdPlatformTeam).should('be.visible');
           cy.clickButton(/^Finish/);
         });
-        cy.clickButton(/^Close/);
         cy.verifyPageTitle(organization.name);
         cy.contains('a', `${createdPlatformTeam}`).click();
         cy.verifyPageTitle(createdPlatformTeam);

@@ -153,7 +153,6 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
               .then((response) => {
                 expect(response?.statusCode).to.eql(204);
               });
-            cy.clickButton(/^Close/);
           });
           cy.clickButton(/^Clear all filters$/);
         });
@@ -191,7 +190,6 @@ describe('AAP OAuth Applications CRUD actions and Bulk Deletion', () => {
         expect(deleteTeamArr[0]?.response?.statusCode).to.eql(204);
         expect(deleteTeamArr[1]?.response?.statusCode).to.eql(204);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
       });
     });
     cy.clickButton(/^Clear all filters$/);
@@ -252,7 +250,6 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
         cy.wait('@deleteAAPToken').then((deleteAAPToken) => {
           expect(deleteAAPToken?.response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
         });
       });
       cy.clickButton(/^Clear all filters$/);
@@ -267,7 +264,6 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
         cy.wait('@deleteOAuthApp').then((deleteOAuthApp) => {
           expect(deleteOAuthApp?.response?.statusCode).to.eql(204);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
         });
       });
       cy.clickButton(/^Clear all filters$/);

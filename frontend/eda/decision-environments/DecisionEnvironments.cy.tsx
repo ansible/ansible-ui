@@ -100,7 +100,6 @@ describe('DecisionEnvironments.cy.ts', () => {
       cy.get('button').contains('Delete decision environments').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 
   it('can delete a Decision Environment in use', () => {
@@ -159,7 +158,6 @@ describe('DecisionEnvironments.cy.ts', () => {
       cy.get('button').contains('Delete decision environments').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 });
 

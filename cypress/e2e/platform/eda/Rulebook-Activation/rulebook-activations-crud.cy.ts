@@ -113,7 +113,6 @@ describe('Check if the build includes EDA', () => {
                 ).as('restart');
                 cy.edaRuleBookActivationActionsModal('restart', rbaToBeDeleted.name);
                 cy.get('button').contains('rulebook activations').click();
-                cy.get('button').contains('Close').click();
                 cy.wait('@restart').then((restart) => {
                   expect(restart?.response?.statusCode).to.eq(204);
                 });
@@ -180,7 +179,6 @@ describe('Check if the build includes EDA', () => {
         });
         cy.edaRuleBookActivationActionsModal('disable', edaRBA.name);
         cy.get('button').contains('rulebook activations').click();
-        cy.get('button').contains('Close').click();
         cy.wait('@disable').then((disable) => {
           expect(disable?.response?.statusCode).to.eq(204);
         });

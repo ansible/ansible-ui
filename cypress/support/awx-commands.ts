@@ -46,7 +46,6 @@ Cypress.Commands.add('removeAllNodesFromVisualizerToolbar', () => {
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Remove all steps');
   cy.assertModalSuccess();
-  cy.clickModalButton('Close');
 });
 
 /* Custom Cypress command called `actionsWFApprovalConfirmModal`.
@@ -67,7 +66,6 @@ Cypress.Commands.add(
     cy.clickModalConfirmCheckbox();
     cy.get('#submit').click(); // FIXME: contains doesn't work for buttons inside the modal
     cy.assertModalSuccess();
-    cy.clickModalButton('Close');
   }
 );
 

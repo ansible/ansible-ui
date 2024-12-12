@@ -57,7 +57,6 @@ describe('Check if the build includes EDA', () => {
             expect(edaArr[1]?.response?.statusCode).to.eql(204);
           });
           cy.assertModalSuccess();
-          cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
         });
       });
@@ -74,7 +73,6 @@ describe('Check if the build includes EDA', () => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete decision environment/);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
         cy.verifyPageTitle('Decision Environments');
       });

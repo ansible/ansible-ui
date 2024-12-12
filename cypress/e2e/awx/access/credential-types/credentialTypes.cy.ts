@@ -230,7 +230,6 @@ describe('Credential Types', () => {
       );
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
       cy.wait('@deleteCredType').then((deleteCredType) => {
         expect(deleteCredType?.response?.statusCode).to.eql(204);
       });
@@ -295,7 +294,6 @@ describe('Credential Types', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential type/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
 
@@ -318,7 +316,6 @@ describe('Credential Types', () => {
         expect(credTypeArray[1]?.response?.statusCode).to.eql(204);
       });
       cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
   });

@@ -170,7 +170,6 @@ describe.skip('Namespaces - sign collections', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Sign collections$/);
     cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
     cy.getModal().should('not.exist');
     cy.get('div[data-cy="manage-view"]').within(() => {
       cy.clickKebabAction('actions-dropdown', 'imports');
@@ -218,7 +217,6 @@ describe('Namespaces - delete', () => {
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete namespaces');
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
       });
     });
   });

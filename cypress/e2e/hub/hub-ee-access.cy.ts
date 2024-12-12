@@ -55,7 +55,6 @@ describe('Execution Environment User Access tab', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
     });
   }
 
@@ -87,9 +86,6 @@ describe('Execution Environment User Access tab', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(201);
           });
-      });
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(executionEnvironment.name);
@@ -132,9 +128,6 @@ describe('Execution Environment User Access tab', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(201);
           });
-      });
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(executionEnvironment.name);

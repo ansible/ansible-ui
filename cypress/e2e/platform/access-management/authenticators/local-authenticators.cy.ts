@@ -30,7 +30,6 @@ describe('Authenticators - Local CRUD UI', () => {
           cy.get('#confirm').click();
           cy.get('#submit').click();
           cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
         });
       }
     );
@@ -56,7 +55,6 @@ describe('Authenticators - Local CRUD UI', () => {
       cy.get('#confirm').click();
       cy.get('#submit').click();
       cy.contains(/^Success$/).should('be.visible');
-      cy.containsBy('button', /^Close$/).click();
     });
     cy.clickButton(/^Clear all filters$/);
   });
@@ -148,7 +146,6 @@ describe('Authenticators - Local CRUD UI', () => {
               cy.get('#confirm').click();
               cy.get('#submit').click();
               cy.contains(/^Success$/).should('be.visible');
-              cy.containsBy('button', /^Close$/).click();
             });
             cy.clickButton(/^Clear all filters$/);
           }

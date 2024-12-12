@@ -311,7 +311,6 @@ describe('Automation Execution: Roles', () => {
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.get('[data-ouia-component-id="submit"]').click();
-        cy.clickButton('Close');
       });
       cy.wait('@deletedRole').then((deleted) => {
         expect(deleted?.response?.statusCode).to.eql(204);
@@ -345,7 +344,6 @@ describe('Automation Execution: Roles', () => {
         cy.getModal().within(() => {
           cy.get('#confirm').click();
           cy.get('[data-ouia-component-id="submit"]').click();
-          cy.clickButton('Close');
         });
       });
     });

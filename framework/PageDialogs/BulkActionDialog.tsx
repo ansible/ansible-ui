@@ -89,7 +89,6 @@ export interface BulkActionDialogProps<T extends object> {
 export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
   const {
     title,
-    items,
     keyFn,
     actionColumns,
     actionFn,
@@ -102,8 +101,10 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     statusParser,
   } = props;
   const { t } = useTranslation();
+  const [items, setItems] = useState<T[]>(props.items);
   const [translations] = useFrameworkTranslations();
   const [isProcessing, setProcessing] = useState(true);
+  const [retry, setRetry] = useState(0);
   const [isCanceled, setCanceled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
@@ -111,6 +112,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     useState<Record<string | number, string | null | undefined | StatusWithMessageAndUrl>>();
   const abortController = useAbortController();
   const [_, setDialog] = usePageDialog();
+  const [successfulItems, setSuccessfulItems] = useState<T[]>([]);
 
   const onCancelClicked = useCallback(() => {
     setCanceled(true);
@@ -142,7 +144,21 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       ),
       items.filter((item) => statuses?.[keyFn(item)] === undefined)
     );
-  }, [error, isCanceled, items, keyFn, onClose, setDialog, statuses]);
+    onComplete?.(successfulItems);
+  }, [error, isCanceled, items, keyFn, onClose, onComplete, setDialog, statuses, successfulItems]);
+
+  const onRetryClicked = useCallback(() => {
+    setError('');
+    setProcessing(true);
+    setStatuses(undefined);
+    // Set items for bulk action to include only failed items
+    setItems(
+      items.filter(
+        (item) => statuses?.[keyFn(item)] !== null && typeof statuses?.[keyFn(item)] === 'string'
+      )
+    );
+    setRetry(retry + 1);
+  }, [items, keyFn, retry, statuses]);
 
   const progressTitle = useMemo(() => {
     if (abortController.signal.aborted) return translations.canceledText;
@@ -210,7 +226,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     async function process() {
       const limit = pLimit(5);
       let progress = 0;
-      const successfulItems: T[] = [];
+      const successfulItemsArray: T[] = [];
       await Promise.all(
         items.map((item: T) =>
           limit(async () => {
@@ -219,7 +235,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
             try {
               const response = await actionFn(item, abortController.signal);
               updateSuccessState(key, response);
-              successfulItems.push(item);
+              successfulItemsArray.push(item);
             } catch (err) {
               const { genericErrors, fieldErrors } = errorAdapter(err);
               const parsedErrors = [...genericErrors, ...fieldErrors.filter((e) => e.message)];
@@ -232,13 +248,14 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
           })
         )
       );
+      setSuccessfulItems([...successfulItems, ...successfulItemsArray]);
       if (!abortController.signal.aborted) {
         setProcessing(false);
       }
-      onComplete?.(successfulItems);
     }
 
     void process();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     abortController,
     actionFn,
@@ -249,11 +266,43 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     t,
     errorAdapter,
     statusParser,
+    retry,
   ]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (!isProcessing && !error) {
+      timer = setTimeout(() => {
+        onCloseClicked();
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [isProcessing, error, onCloseClicked]);
 
   const pagination = usePaged(items);
 
   const modalColumns = useVisibleModalColumns(actionColumns);
+
+  const modalActions = useMemo(() => {
+    if (isProcessing) {
+      return [
+        <Button key="cancel" variant="link" onClick={onCancelClicked}>
+          {t('Cancel')}
+        </Button>,
+      ];
+    }
+    if (error) {
+      return [
+        <Button key="retry" variant="primary" onClick={onRetryClicked}>
+          {t('Retry')}
+        </Button>,
+        <Button key="close" variant="secondary" onClick={onCloseClicked}>
+          {t('Close')}
+        </Button>,
+      ];
+    }
+    return [];
+  }, [error, isProcessing, onCancelClicked, onCloseClicked, onRetryClicked, t]);
 
   return (
     <Modal
@@ -268,19 +317,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
         onCancelClicked();
         onCloseClicked();
       }}
-      actions={
-        isProcessing
-          ? [
-              <Button key="cancel" variant="link" onClick={onCancelClicked}>
-                {translations.cancelText}
-              </Button>,
-            ]
-          : [
-              <Button key="close" variant="secondary" onClick={onCloseClicked}>
-                {translations.closeText}
-              </Button>,
-            ]
-      }
+      actions={modalActions}
       hasNoBodyWrapper
     >
       <ModalBoxBody style={{ paddingBottom: 0, paddingLeft: 0, paddingRight: 0 }}>

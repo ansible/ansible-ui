@@ -58,7 +58,6 @@ describe('Host Tests', () => {
     cy.getByDataCy('delete-host').click();
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Delete hosts');
-    cy.contains('button', 'Close').click();
     cy.contains(/^No results found./);
   });
 
