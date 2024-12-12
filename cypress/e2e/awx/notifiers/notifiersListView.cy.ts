@@ -104,7 +104,6 @@ describe('Notifications: List View', () => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete notifiers/);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
       });
     });
   });
@@ -132,7 +131,6 @@ describe('Notifications: List View', () => {
           cy.get('#confirm').click();
           cy.clickButton(/^Delete notifiers/);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
         });
         cy.contains('No results found');
         cy.contains(name1).should('not.exist');

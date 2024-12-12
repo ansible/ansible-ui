@@ -169,7 +169,6 @@ describe('Automation Content: Roles', () => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete role/);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
       });
       cy.clickButton(/^Clear all filters$/);
     });
@@ -230,7 +229,6 @@ describe('Automation Content: Roles', () => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete roles/);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
       });
       cy.clickButton(/^Clear all filters$/);
     });

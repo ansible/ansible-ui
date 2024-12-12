@@ -106,7 +106,6 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
         cy.contains(/^Success$/).should('be.visible');
-        cy.containsBy('button', /^Close$/).click();
       });
       cy.getModal().should('not.exist');
       cy.clickButton(/^Clear all filters$/);

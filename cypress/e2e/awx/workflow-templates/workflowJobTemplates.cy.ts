@@ -340,7 +340,6 @@ describe('Workflow Job Templates Tests', () => {
             cy.getModal().within(() => {
               cy.get('#confirm').click();
               cy.get('[data-ouia-component-id="submit"]').click();
-              cy.clickButton('Close');
             });
           });
         });
@@ -376,7 +375,6 @@ describe('Workflow Job Templates Tests', () => {
             cy.getModal().within(() => {
               cy.get('#confirm').click();
               cy.get('[data-ouia-component-id="submit"]').click();
-              cy.clickButton('Close');
             });
           });
         });
@@ -439,7 +437,6 @@ describe('Workflow Job Templates Tests', () => {
           expect(deletedWFJT2?.response?.statusCode).to.eql(204);
         });
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.clearAllFilters();
       });
     });
@@ -502,7 +499,6 @@ describe('Workflow Job Templates Tests', () => {
         .then((statusCode) => {
           expect(statusCode).to.eql(204);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
           cy.clickButton(/^Clear all filters$/);
         });
     });
@@ -778,7 +774,6 @@ describe('Workflow Job Templates Tests', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(204);
           });
-        cy.clickButton('Close');
       });
       cy.clickButton('Clear all filters');
       const dataCy = 'name';

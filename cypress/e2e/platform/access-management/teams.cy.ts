@@ -88,7 +88,6 @@ describe('Platform Teams - Create, Edit and Delete', function () {
             .then((response) => {
               expect(response?.statusCode).to.eql(204);
               cy.contains(/^Success$/);
-              cy.clickButton(/^Close$/);
             });
         });
         cy.getModal().should('not.exist');
@@ -143,7 +142,6 @@ describe('Platform Teams - Create, Edit and Delete', function () {
         expect(deleteTeamArr[0]?.response?.statusCode).to.eql(204);
         expect(deleteTeamArr[1]?.response?.statusCode).to.eql(204);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
       });
     });
@@ -198,7 +196,6 @@ describe('Platform Teams - Tabs Tests', function () {
             cy.getModal().within(() => {
               cy.getBy('#confirm').click();
               cy.getBy('#submit').click();
-              cy.clickButton(/^Close$/);
             });
             cy.getModal().should('not.exist');
           });
@@ -231,7 +228,6 @@ describe('Platform Teams - Tabs Tests', function () {
             cy.getModal().within(() => {
               cy.getBy('#confirm').click();
               cy.getBy('#submit').click();
-              cy.clickButton(/^Close$/);
             });
             cy.getModal().should('not.exist');
           });

@@ -81,7 +81,6 @@ function deleteHostListView(invenotryName: string, host_type: string, hostName: 
   cy.getByDataCy('delete-host').click();
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Delete hosts');
-  cy.contains('button', 'Close').click();
   cy.contains(/^No results found./);
 }
 
@@ -105,7 +104,6 @@ function deleteAllInventoryHosts(inventory: Inventory) {
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
   cy.clickButton(/^Delete hosts$/);
-  cy.clickButton(/^Close$/);
   cy.contains('There are currently no hosts added to this inventory.').should('be.visible');
 }
 
@@ -136,7 +134,6 @@ function disassociate() {
   cy.clickModalConfirmCheckbox();
   cy.clickModalButton('Disassociate groups');
   cy.assertModalSuccess();
-  cy.clickModalButton('Close');
 }
 
 export function checkHostGroup(host_type: string, organization: Organization) {
@@ -175,7 +172,6 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.clickButton(/^Associate groups$/);
       cy.getByDataCy('select-all').check();
       cy.clickModalButton('Confirm');
-      cy.contains('button', 'Close').click();
       cy.contains(group.name);
       cy.contains(group2.name);
       /// single disassociate
@@ -192,7 +188,6 @@ export function checkHostGroup(host_type: string, organization: Organization) {
       cy.getByDataCy('associate-group').click();
       cy.get(`[data-cy="row-id-${group.id}"] [data-cy="checkbox-column-cell"]`).click();
       cy.clickModalButton('Confirm');
-      cy.clickButton(/^Close$/);
       cy.contains(group.name);
       deleteAllInventoryHosts(inventory);
     });
@@ -233,7 +228,6 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   cy.contains('Permanently delete hosts');
   cy.clickModalConfirmCheckbox();
   cy.contains('button', 'Delete hosts').click();
-  cy.contains('button', 'Close').click();
   if (host_type === 'inventory_host') {
     cy.contains('There are currently no hosts added to this inventory.').should('be.visible');
   }

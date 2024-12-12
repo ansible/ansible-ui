@@ -119,7 +119,7 @@ describe('Workflow Visualizer', () => {
       cy.verifyPageTitle('Templates');
       cy.get('[data-cy="app-description"]').should(
         'contain',
-        'A job template is a definition and set of parameters for running an Ansible job.'
+        'Job Templates and Workflow Templates for automating and orchestrating IT tasks efficiently.'
       );
       cy.url().should('contain', '/templates');
       cy.singleSelectByDataCy('filter-input', `${workflowJobTemplate?.name}`, false);

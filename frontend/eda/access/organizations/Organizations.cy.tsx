@@ -91,7 +91,6 @@ describe('Organizations.cy.ts', () => {
       cy.get('button').contains('Delete organizations').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 });
 

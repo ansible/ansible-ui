@@ -128,7 +128,6 @@ describe('Credentials.cy.ts', () => {
       cy.get('button').contains('Delete credentials').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 
   it('can delete a Credential in use', () => {
@@ -189,7 +188,6 @@ describe('Credentials.cy.ts', () => {
       cy.get('button').contains('Delete credentials').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 });
 

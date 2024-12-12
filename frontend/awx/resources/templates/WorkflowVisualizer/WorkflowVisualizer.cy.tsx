@@ -186,7 +186,6 @@ describe('WorkflowVisualizer', () => {
     cy.get('li[data-cy="remove-link"]').click();
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove link');
-    cy.clickModalButton('Close');
     cy.get('[data-id="1356-1511"]').should('not.exist');
   });
 
@@ -204,7 +203,6 @@ describe('WorkflowVisualizer', () => {
     });
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove step');
-    cy.clickModalButton('Close');
     cy.get('[data-id="1510"] .pf-topology__node__action-icon').should('not.exist');
   });
 

@@ -101,7 +101,6 @@ describe(`Assign Role to a Team `, () => {
       cy.clickButton(/^Finish$/);
     });
     cy.assertModalSuccess();
-    cy.clickButton(/^Close$/);
     cy.verifyPageTitle(PlatformTeam.name);
     cy.clickTab(/^Automation Content$/, true);
     cy.contains(hubRepository.name);
@@ -129,7 +128,6 @@ describe(`Assign Role to a Team `, () => {
       cy.clickButton(/^Finish$/);
     });
     cy.assertModalSuccess();
-    cy.clickButton(/^Close$/);
     cy.verifyPageTitle(PlatformTeam.name);
     cy.clickTab(/^Automation Content$/, true);
     cy.contains(hubRemote.name);
@@ -145,7 +143,6 @@ describe(`Assign Role to a Team `, () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remotes$/);
     cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
 
@@ -175,7 +172,6 @@ describe(`Assign Role to a Team `, () => {
       cy.clickButton(/^Finish$/);
     });
     cy.assertModalSuccess();
-    cy.clickButton(/^Close$/);
     cy.verifyPageTitle(PlatformTeam.name);
     cy.contains(hubNamespace.name);
     cy.contains(namespaceRole.name);
@@ -250,7 +246,6 @@ describe(`Roles Tab for Teams - actions`, () => {
           cy.clickButton(/^Finish$/);
         });
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.verifyPageTitle(PlatformTeam.name);
       });
     });
@@ -276,7 +271,6 @@ describe(`Roles Tab for Teams - actions`, () => {
     });
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove role');
-    cy.clickButton(/^Close$/);
     cy.contains(role1.name).should('not.exist');
   });
 
@@ -291,7 +285,6 @@ describe(`Roles Tab for Teams - actions`, () => {
     cy.clickToolbarKebabAction('remove-roles');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove role');
-    cy.clickButton(/^Close$/);
     cy.contains(role2.name).should('not.exist');
     cy.contains(role3.name).should('not.exist');
   });

@@ -46,7 +46,6 @@ describe('Namespace - team and user access', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Remove role/);
       cy.contains(/^Success$/).should('be.visible');
-      cy.containsBy('button', /^Close$/).click();
     });
   }
 
@@ -80,9 +79,6 @@ describe('Namespace - team and user access', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(201);
           });
-      });
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(namespace.name);
@@ -124,9 +120,6 @@ describe('Namespace - team and user access', () => {
           .then((response) => {
             expect(response?.statusCode).to.eql(201);
           });
-      });
-      cy.getModal().within(() => {
-        cy.clickButton(/^Close$/);
       });
       cy.getModal().should('not.exist');
       cy.verifyPageTitle(namespace.name);

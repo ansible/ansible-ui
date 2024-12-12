@@ -24,7 +24,6 @@ describe('Users - Create, Edit and Delete', () => {
       cy.clickToolbarKebabAction('delete-users');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete user/);
-      cy.clickButton('Close');
       cy.clickButton(/^Clear all filters$/);
     });
   });
@@ -61,7 +60,6 @@ describe('Users - Create, Edit and Delete', () => {
           cy.get('#confirm').click();
           cy.get('#submit').click();
           cy.contains(/^Success$/).should('be.visible');
-          cy.containsBy('button', /^Close$/).click();
         });
         cy.clickButton(/^Clear all filters$/);
       });
@@ -104,7 +102,6 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         cy.clickToolbarKebabAction('delete-users');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete user/);
-        cy.clickButton('Close');
       });
     cy.clickButton(/^Clear all filters$/);
   });
@@ -137,7 +134,6 @@ describe('User Types - Creates Users of Type Normal, Platform Auditor and System
         cy.clickToolbarKebabAction('delete-users');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete user/);
-        cy.clickButton('Close');
       });
     cy.clickButton(/^Clear all filters$/);
   });
@@ -229,7 +225,6 @@ describe('Users - Teams and Roles Tab Tests', () => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
         cy.contains(/^Success$/).should('be.visible');
-        cy.containsBy('button', /^Close$/).click();
       });
       cy.clickButton(/^Clear all filters$/);
     });

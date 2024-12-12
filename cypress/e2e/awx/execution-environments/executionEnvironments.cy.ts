@@ -100,7 +100,6 @@ describe('Execution Environments', () => {
         cy.contains(execEnvName);
       });
       cy.assertModalSuccess();
-      cy.clickModalButton('Close');
     });
 
     it('can create a new EE associated to a particular org, then visit the EE tab inside the org to view the EE and assert info', () => {
@@ -150,7 +149,6 @@ describe('Execution Environments', () => {
         cy.contains(execEnvName);
       });
       cy.assertModalSuccess();
-      cy.clickModalButton('Close');
     });
 
     // Skipping this test that includes a logout: since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
@@ -291,7 +289,6 @@ describe('Execution Environments', () => {
         cy.contains(arrayOfElementText[1]);
       });
       cy.assertModalSuccess();
-      cy.clickModalButton('Close');
     });
   });
 
@@ -396,7 +393,6 @@ describe('Execution Environments', () => {
         cy.contains(jtName);
       });
       cy.assertModalSuccess();
-      cy.clickModalButton('Close');
       cy.clickTab(/^Details$/, true);
       cy.getByDataCy('actions-dropdown')
         .click()

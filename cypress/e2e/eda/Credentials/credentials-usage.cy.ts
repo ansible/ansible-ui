@@ -99,7 +99,6 @@ describe('Check if the build includes EDA', () => {
               ).as('restart');
               cy.edaRuleBookActivationActionsModal('restart', rbaToBeDeleted.name);
               cy.get('button').contains('rulebook activations').click();
-              cy.get('button').contains('Close').click();
               cy.wait('@restart').then((restart) => {
                 expect(restart?.response?.statusCode).to.eq(204);
               });

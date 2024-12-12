@@ -64,7 +64,6 @@ describe('Project Delete', () => {
       .then((deleted) => {
         expect(deleted?.statusCode).to.eql(204);
         cy.contains(/^Success$/);
-        cy.clickButton(/^Close$/);
         cy.clearAllFilters();
       });
   });

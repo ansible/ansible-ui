@@ -408,7 +408,6 @@ describe('Workflow Approvals Tests', () => {
                           cy.getModal().within(() => {
                             cy.get('[data-ouia-component-id="confirm"]').click();
                             cy.get('[data-ouia-component-id="submit"]').click();
-                            cy.clickButton('Close');
                           });
                           cy.waitForWorkflowJobStatus(launched.id.toString());
                           cy.waitForWorkflowJobStatus(relaunched.id.toString());
@@ -435,7 +434,6 @@ describe('Workflow Approvals Tests', () => {
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
-      cy.clickButton('Close');
     });
     cy.get('h2').should('contain', 'No results found');
   }
@@ -501,9 +499,6 @@ describe('Workflow Approvals Tests', () => {
                         cy.get('tbody tr').should('have.length', 1);
                       });
                       cy.getByDataCy('Submit').click();
-                      cy.getModal().within(() => {
-                        cy.clickButton('Close');
-                      });
                       cy.get('tbody tr').should('have.length', 1);
                       cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
                       cy.navigateTo('awx', 'workflow-approvals');
@@ -519,7 +514,6 @@ describe('Workflow Approvals Tests', () => {
                       cy.getModal().within(() => {
                         cy.get('#confirm').click();
                         cy.get('[data-ouia-component-id="submit"]').click();
-                        cy.clickButton('Close');
                       });
                       cy.waitForWorkflowJobStatus(launched.id.toString());
                       cy.get('[data-ouia-component-id="simple-table"]').within(() => {

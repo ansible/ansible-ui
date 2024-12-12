@@ -88,7 +88,6 @@ describe('Approvals', () => {
     cy.getModal().within(() => {
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Reject collections').click();
-      cy.containsBy('button', 'Close').click();
     });
     cy.getModal().should('not.exist');
     cy.get('#refresh').click();

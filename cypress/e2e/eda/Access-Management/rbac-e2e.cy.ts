@@ -103,7 +103,6 @@ describe('Check if the build includes EDA', () => {
         cy.clickButton(/^Next$/);
         cy.clickButton(/^Finish$/);
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.contains('div', edaUser1.username);
         cy.intercept('GET', gatewayAPI`/users/*`).as('user1');
         cy.visit(`/access/users/${edaUser1.id.toString()}/details`);
@@ -133,7 +132,6 @@ describe('Check if the build includes EDA', () => {
         });
         cy.edaRuleBookActivationActionsModal('disable', RBA.name);
         cy.get('button').contains('rulebook activations').click();
-        cy.get('button').contains('Close').click();
         // cy.contains('[data-label="Status"]', 'Stopped', { timeout: 120000 });
         //Reenable to following lines of code with this issue is fixed: https://issues.redhat.com/browse/AAP-29872
         // Also refer to https://issues.redhat.com/browse/AAP-29873
@@ -210,7 +208,6 @@ describe('Check if the build includes EDA', () => {
         cy.clickButton(/^Next$/);
         cy.clickButton(/^Finish$/);
         cy.assertModalSuccess();
-        cy.clickButton(/^Close$/);
         cy.platformLogout();
         cy.get('input[id*="login-username-id"]').type(edaUser1.username);
         cy.get('input[id*="login-password-id"]').type('pass');

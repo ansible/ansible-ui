@@ -160,7 +160,6 @@ describe(`Instance Groups`, () => {
           .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains(`Delete instance group`).click();
-        cy.clickButton('Close');
       });
       cy.wait('@deleteInstanceGroup')
         .its('response')
@@ -205,7 +204,6 @@ describe(`Instance Groups`, () => {
         cy.get('header').contains(`Permanently delete instance groups`);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[0]);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[1]);
-        cy.clickButton('Close');
       });
       cy.wait('@deleteInstanceGroup')
         .its('response')
@@ -333,7 +331,6 @@ describe(`Instance Groups`, () => {
           .should('have.attr', 'aria-disabled', 'true');
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains(`Delete container group`).click();
-        cy.clickButton('Close');
       });
       cy.wait('@deleteInstanceGroup')
         .its('response')
@@ -380,7 +377,6 @@ describe(`Instance Groups`, () => {
         cy.get('header').contains(`Permanently delete container groups`);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[0]);
         cy.get('[data-cy="name-column-cell"]').should('contain', arrayOfElementText[1]);
-        cy.clickButton('Close');
       });
       cy.wait('@deleteInstanceGroup')
         .its('response')
@@ -633,7 +629,6 @@ describe(`Instance Groups`, () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
         });
-      cy.clickModalButton('Close');
       cy.verifyPageTitle(instanceGroup.name);
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
@@ -661,7 +656,6 @@ describe(`Instance Groups`, () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(204);
         });
-      cy.clickModalButton('Close');
     });
 
     it(`can visit the container group -> team access tab, add a team, view the team on the teams list and then delete team`, () => {
@@ -720,7 +714,6 @@ describe(`Instance Groups`, () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
         });
-      cy.clickModalButton('Close');
       cy.verifyPageTitle(containerGroup.name);
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
@@ -747,7 +740,6 @@ describe(`Instance Groups`, () => {
         .its('response')
         .then((response) => {
           expect(response?.statusCode).to.eql(204);
-          cy.clickModalButton('Close');
         });
     });
   });
@@ -840,10 +832,11 @@ describe(`Instance Groups`, () => {
         .its('response')
         .then((response) => {
           expect(response?.statusCode).to.eql(201);
+          cy.verifyPageTitle(instanceGroup.name);
         });
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableByMultiSelect('name', [instanceGroup.name]);
+      cy.filterTableBySingleSelect('name', instanceGroup.name);
       cy.clickTableRowLink('name', instanceGroup.name, { disableFilter: true });
       cy.verifyPageTitle(instanceGroup.name);
       cy.get('a[href*="user-access"]').click();
@@ -1021,7 +1014,6 @@ describe(`Instance Groups`, () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(204);
         });
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
   });

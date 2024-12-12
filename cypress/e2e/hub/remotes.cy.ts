@@ -25,7 +25,6 @@ describe('Remotes', () => {
     cy.getBy('#confirm').click();
     cy.clickButton(/^Delete remotes$/);
     cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
 
@@ -46,7 +45,6 @@ describe('Remotes', () => {
       cy.getBy('#confirm').click();
       cy.clickButton(/^Delete remotes$/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
   });
@@ -71,7 +69,6 @@ describe('Remotes', () => {
     cy.getBy('#confirm').click();
     cy.clickButton(/^Delete remote/);
     cy.contains(/^Success$/);
-    cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
 
@@ -105,7 +102,6 @@ describe('Remotes', () => {
       cy.getBy('#confirm').click();
       cy.clickButton(/^Delete remote/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
   });

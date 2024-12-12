@@ -45,7 +45,6 @@ describe('Remote Registry', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete remote registries$/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
       cy.clickButton(/^Clear all filters$/);
     });
   });
@@ -90,7 +89,6 @@ describe('Remote Registry', () => {
         });
         cy.get('#confirm').click();
         cy.clickButton(/^Delete remote registries/);
-        cy.clickButton(/^Close$/);
         cy.clickButton(/^Clear all filters$/);
       }
     );
@@ -124,7 +122,6 @@ describe('Remote Registry', () => {
     });
     cy.get('#confirm').click();
     cy.clickButton(/^Delete remote registries/);
-    cy.clickButton(/^Close$/);
     cy.clickButton(/^Clear all filters$/);
   });
 

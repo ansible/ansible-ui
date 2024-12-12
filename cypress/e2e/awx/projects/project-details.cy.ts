@@ -327,7 +327,6 @@ describe('Projects', () => {
           cy.get('h1').should('contain', 'Permanently delete job template');
           cy.get('#confirm').click();
           cy.get('[data-ouia-component-id="submit"]').click();
-          cy.clickButton('Close');
         });
         cy.get('h2').should('contain', 'No results found');
       });

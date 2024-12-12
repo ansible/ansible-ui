@@ -132,9 +132,6 @@ describe('Check if the build includes EDA', () => {
             cy.intercept('POST', edaAPI`/role_team_assignments/`).as('assignment');
             cy.clickButton(/^Finish$/);
           });
-          cy.getModal().within(() => {
-            cy.clickButton('Close');
-          });
           cy.wait('@assignment').then((assignment) => {
             expect(assignment?.response?.statusCode).to.eql(201);
           });
@@ -214,7 +211,6 @@ describe('Check if the build includes EDA', () => {
       });
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Remove role');
-      cy.clickButton(/^Close$/);
       cy.contains(cred1.name).should('not.exist');
     });
 
@@ -229,7 +225,6 @@ describe('Check if the build includes EDA', () => {
       cy.clickToolbarKebabAction('remove-roles');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Remove role');
-      cy.clickButton(/^Close$/);
       cy.contains(cred2.name).should('not.exist');
       cy.contains(cred3.name).should('not.exist');
     });

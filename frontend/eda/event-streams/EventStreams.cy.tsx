@@ -239,7 +239,6 @@ describe('EventStreams.cy.ts', () => {
       cy.get('button').contains('Delete event streams').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 });
 

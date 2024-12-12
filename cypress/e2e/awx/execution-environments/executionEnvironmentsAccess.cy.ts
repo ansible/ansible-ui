@@ -79,9 +79,6 @@ describe('Execution Environments: User/Team access', () => {
           expect(response?.statusCode).to.eql(201);
         });
     });
-    cy.getModal().within(() => {
-      cy.clickButton(/^Close$/);
-    });
     cy.getModal().should('not.exist');
     cy.verifyPageTitle(execEnvName);
 
@@ -90,7 +87,6 @@ describe('Execution Environments: User/Team access', () => {
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();
     cy.clickButton(/^Remove role$/);
-    cy.clickButton(/^Close$/);
   });
 
   // There's inconsistency with Users -> creating a team with an org doesn't show it under the org so skipping for time being
@@ -135,9 +131,6 @@ describe('Execution Environments: User/Team access', () => {
           expect(response?.statusCode).to.eql(201);
         });
     });
-    cy.getModal().within(() => {
-      cy.clickButton(/^Close$/);
-    });
     cy.getModal().should('not.exist');
     cy.verifyPageTitle(execEnvName);
 
@@ -151,7 +144,6 @@ describe('Execution Environments: User/Team access', () => {
     cy.contains('Remove role');
     cy.clickModalConfirmCheckbox();
     cy.clickButton(/^Remove role$/);
-    cy.clickButton(/^Close$/);
   });
 
   it('User and Team Access tabs are not present for managed EEs', () => {

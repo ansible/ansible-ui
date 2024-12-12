@@ -175,7 +175,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
-        cy.contains('button', 'Close').click();
       });
       // Verify collections are removed
       cy.contains('tr', collectionName).should('not.exist');
@@ -213,7 +212,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
-        cy.contains('button', 'Close').click();
       });
       // Collection versions tab
       cy.clickTab('Collection Versions', true);

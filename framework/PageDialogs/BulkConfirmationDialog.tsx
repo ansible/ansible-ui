@@ -266,7 +266,11 @@ export function useBulkConfirmation<T extends object>(
       options: Omit<BulkConfirmationDialog<T>, 'onConfirm' | 'onClose'> &
         Omit<BulkActionDialogProps<T>, 'onClose'>
     ) => {
-      const bulkActionOptions = { ...options, errorAdapter, statusParser };
+      const bulkActionOptions = {
+        ...options,
+        errorAdapter,
+        statusParser,
+      };
       if (options.isItemNonActionable && options.isItemNonActionable !== undefined) {
         bulkActionOptions.items = options.items.filter(
           (item) => options.isItemNonActionable !== undefined && !options.isItemNonActionable(item)

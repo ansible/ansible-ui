@@ -50,7 +50,6 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.wait('@signed'); // The response is a 202 that kicks off a task for signing the collection
         cy.waitForAllTasks();
         cy.get('[data-label="Status"]').should('contain', 'Success');
-        cy.clickButton(/^Close$/);
         cy.getModal().should('not.exist');
         cy.reload();
         // Verify collection has been signed
@@ -73,7 +72,6 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.wait('@signed'); // The response is a 202 that kicks off a task for signing the collection
         cy.waitForAllTasks();
         cy.get('[data-label="Status"]').should('contain', 'Success');
-        cy.clickButton(/^Close$/);
         cy.contains('Signed state').should('be.visible');
         cy.contains('a collection with some deps on other collections').should('be.visible');
         cy.contains('3.0.0').should('be.visible');
@@ -105,7 +103,6 @@ describe('GalaxyKit Installation Check for Collections List', () => {
           cy.get('#confirm').click();
           cy.clickButton(/^Delete collections/);
           cy.contains(/^Success$/);
-          cy.clickButton(/^Close$/);
           cy.getModal().should('not.exist');
           // Verify collection has been deleted from system
           cy.getByDataCy('table-view').click();
@@ -184,7 +181,6 @@ describe('GalaxyKit Installation Check for Collections List', () => {
       cy.get('#confirm').click();
       cy.clickButton(/^Delete collections/);
       cy.contains(/^Success$/);
-      cy.clickButton(/^Close$/);
       cy.contains('tr', 'community').should('not.exist');
     });
   });

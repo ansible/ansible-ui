@@ -75,9 +75,6 @@ export function testDelete(name: string, options?: { details?: boolean }) {
 
   cy.get(`[role="dialog"] input`).click();
   cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
-  if (options?.details !== true) {
-    cy.contains(`[role="dialog"] button`, `Close`).click();
-  }
 
   cy.verifyPageTitle('Notifiers');
   cy.contains('Configure custom notifications to be sent based on predefined events.');

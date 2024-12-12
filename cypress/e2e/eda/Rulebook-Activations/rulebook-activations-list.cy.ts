@@ -118,7 +118,6 @@ describe('Check if the build includes EDA', () => {
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Disable rulebook activations').click();
       });
-      cy.clickButton(/^Close$/);
     });
 
     it('can delete a single Rulebook Activation from the line item on the list view', () => {
@@ -136,7 +135,6 @@ describe('Check if the build includes EDA', () => {
         cy.get('input[id="confirm"]').click();
         cy.get('button').contains('Delete rulebook activations').click();
       });
-      cy.clickButton(/^Close$/);
     });
 
     it('can bulk delete rulebook activations from the toolbar', () => {
@@ -160,7 +158,6 @@ describe('Check if the build includes EDA', () => {
         expect(activationArr[1]?.response?.statusCode).to.eql(204);
       });
       cy.assertModalSuccess();
-      cy.clickButton(/^Close$/);
     });
   });
 });

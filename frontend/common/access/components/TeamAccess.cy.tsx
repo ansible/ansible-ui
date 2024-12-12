@@ -63,7 +63,6 @@ describe('TeamAccess.cy.ts', () => {
       cy.get('button').contains('Remove role').click();
     });
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
-    cy.clickButton(/^Close$/);
   });
 });
 
