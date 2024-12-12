@@ -29,8 +29,8 @@ describe('Platform Header Toolbar - Help Menu', () => {
       // Check the Automation Hub Version is not empty
       cy.get('dt').contains('Automation Hub Version').next().should('not.be.empty');
 
-      // Check the Event Driven Automation Version is not empty
-      cy.get('dt').contains('Event Driven Automation Version').next().should('not.be.empty');
+      // Check the Event-Driven Ansible Version is not empty
+      cy.get('dt').contains('Event-Driven Ansible Version').next().should('not.be.empty');
 
       cy.get('.pf-v5-c-button').click();
     });
