@@ -1,4 +1,3 @@
-import { FormSection } from '@patternfly/react-core';
 import {
   PageFormDataEditor,
   PageFormSelect,
@@ -6,10 +5,12 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormCheckbox } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
+import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSwitch } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSwitch';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { FormSection } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,6 @@ import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
-import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 
 // This list below comes from the previous AWX code
 //https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
@@ -194,16 +194,23 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         )}
         label={t('Limit')}
       />
-      <PageFormTextInput<JobTemplateForm>
-        placeholder={t('Enter verbosity value')}
+      <PageFormSelect<JobTemplateForm>
+        placeholderText={t('Enter verbosity value')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_verbosity_on_launch" />
         }
         name="verbosity"
-        type="number"
+        label={t('Verbosity')}
         labelHelpTitle={t('Verbosity')}
         labelHelp={t('Control the level of output Ansible will produce as the playbook executes.')}
-        label={t('Verbosity')}
+        options={[
+          { label: t('0 (Normal)'), value: 0 },
+          { label: t('1 (Verbose)'), value: 1 },
+          { label: t('2 (More Verbose)'), value: 2 },
+          { label: t('3 (Debug)'), value: 3 },
+          { label: t('4 (Connection Debug)'), value: 4 },
+          { label: t('5 (WinRM Debug)'), value: 5 },
+        ]}
       />
       <PageFormTextInput<JobTemplateForm>
         placeholder={t('Enter job slicing value')}
