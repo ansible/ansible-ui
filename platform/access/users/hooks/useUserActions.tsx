@@ -122,10 +122,18 @@ export function useUserPageActions(onUsersDeleted: (users: PlatformUser[]) => vo
   );
 
   const pageActions = useMemo<IPageAction<PlatformUser>[]>(() => {
-    const cannotDeleteUser = () =>
-      canEditUser ? '' : t(`The user cannot be deleted due to insufficient permissions.`);
-    const cannotEditUser = () =>
-      canEditUser ? '' : t(`The user cannot be edited due to insufficient permissions.`);
+    const cannotDeleteUser = (user: PlatformUser) => {
+      if (canEditUser) return '';
+      return user.managed
+        ? t(`System managed users cannot be deleted`)
+        : t(`The user cannot be deleted due to insufficient permissions.`);
+    };
+    const cannotEditUser = (user: PlatformUser) => {
+      if (canEditUser) return '';
+      return user.managed
+        ? t(`System managed users cannot be edited`)
+        : t(`The user cannot be edited due to insufficient permissions.`);
+    };
 
     const isLoggedInUser = activePlatformUser?.id.toString() === params.id;
     const canLinkAdditionalAccounts =
