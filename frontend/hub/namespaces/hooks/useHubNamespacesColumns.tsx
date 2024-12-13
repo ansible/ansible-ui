@@ -1,9 +1,4 @@
-import {
-  ColumnModalOption,
-  ITableColumn,
-  TextCell,
-  useGetPageUrl,
-} from '@ansible/ansible-ui-framework';
+import { ColumnModalOption, ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { RedhatIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,16 +15,15 @@ export function useHubNamespacesColumns(_options?: {
     () => [
       {
         header: t('Name'),
-        cell: (namespace) => (
-          <TextCell
-            text={namespace.name}
-            to={getPageUrl(HubRoute.NamespacePage, { params: { id: namespace.name } })}
-          />
-        ),
+        type: 'text',
         value: (namespace) => namespace.name,
-        sort: 'name',
+        to: (namespace: HubNamespace) => {
+          if (_options?.disableLinks) return undefined;
+          return getPageUrl(HubRoute.NamespacePage, { params: { id: namespace.name } });
+        },
         card: 'name',
         list: 'name',
+        sort: _options?.disableSort ? undefined : 'name',
         icon: () => <RedhatIcon />,
       },
       {
@@ -47,7 +41,7 @@ export function useHubNamespacesColumns(_options?: {
         list: 'secondary',
       },
     ],
-    [getPageUrl, t]
+    [_options?.disableLinks, _options?.disableSort, getPageUrl, t]
   );
   return tableColumns;
 }
