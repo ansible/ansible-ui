@@ -19,7 +19,7 @@ describe('Namespaces', () => {
     cy.navigateTo('hub', Namespaces.url);
     cy.verifyPageTitle('Namespaces');
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.getByDataCy('create-namespace').click();
+    cy.contains('a', 'Create namespace').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.getByDataCy('name').type(namespaceName);
     cy.getByDataCy('company').type('test company');
@@ -42,7 +42,7 @@ describe('Namespaces', () => {
     cy.navigateTo('hub', Namespaces.url);
     cy.verifyPageTitle('Namespaces');
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.getByDataCy('create-namespace').click();
+    cy.contains('a', 'Create namespace').click();
     cy.url().should('include', Namespaces.urlCreate);
     cy.getByDataCy('name').type(namespaceName);
     cy.getByDataCy('company').type('test company');
