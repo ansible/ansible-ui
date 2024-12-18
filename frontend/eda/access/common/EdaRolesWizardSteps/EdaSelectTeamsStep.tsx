@@ -36,6 +36,7 @@ export function EdaSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
       url: edaAPI`/teams/`,
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'teams'
   );

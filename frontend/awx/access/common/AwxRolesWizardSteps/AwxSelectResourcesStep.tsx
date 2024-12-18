@@ -96,6 +96,7 @@ export function AwxSelectResourcesStep() {
           : undefined,
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'resources'
   );
