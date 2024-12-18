@@ -13,6 +13,7 @@ import {
   Modal,
   Title,
   ToolbarItem,
+  Tooltip,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -230,6 +231,31 @@ export const WorkflowVisualizerToolbar = observer(() => {
           </ToolbarItem>
         </>
       )}
+      <ToolbarItem>
+        {RBAC?.start && (
+          <Tooltip
+            zIndex={modified || nodes.length === 0 ? 9999 : -9999}
+            content={
+              modified || nodes.length === 0
+                ? modified
+                  ? t('Save the workflow before launching')
+                  : t('Add a step to the workflow before launching')
+                : undefined
+            }
+          >
+            <Button
+              data-cy="launch-workflow-button"
+              icon={<RocketIcon />}
+              variant={'secondary'}
+              label={t('Launch workflow')}
+              onClick={() => void handleLaunchWorkflow()}
+              isAriaDisabled={modified || nodes.length === 0}
+            >
+              {t('Launch workflow')}
+            </Button>
+          </Tooltip>
+        )}
+      </ToolbarItem>
       <ToolbarItem data-cy="workflow-visualizer-toolbar-kebab">
         <Dropdown
           onOpenChange={(isOpen: boolean) => setIsKebabOpen(isOpen)}
@@ -254,25 +280,6 @@ export const WorkflowVisualizerToolbar = observer(() => {
             >
               {t('Documentation')}
             </DropdownItem>
-            {RBAC?.start && (
-              <DropdownItem
-                tooltipProps={
-                  modified || nodes.length === 0
-                    ? {
-                        content: modified
-                          ? t('Save the workflow before launching')
-                          : t('Add a step to the workflow before launching'),
-                      }
-                    : undefined
-                }
-                isAriaDisabled={nodes.length === 0 || modified}
-                data-cy="workflow-visualizer-toolbar-launch"
-                onClick={() => void handleLaunchWorkflow()}
-                icon={<RocketIcon />}
-              >
-                {t('Launch workflow')}
-              </DropdownItem>
-            )}
             {RBAC?.edit && (
               <>
                 <Divider />
