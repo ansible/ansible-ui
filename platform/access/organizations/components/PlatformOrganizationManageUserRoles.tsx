@@ -238,7 +238,7 @@ export function PlatformOrganizationManageUserRoles() {
   }
 
   const onSubmit = (data: WizardFormValues) => {
-    const { awxRoles: updatedAwxRoles, edaRoles: updatedEdaRoles } = data;
+    const { awxRoles: updatedAwxRoles = [], edaRoles: updatedEdaRoles = [] } = data;
     const awxRolesData: (AwxRbacRole & { remove?: boolean })[] = [];
     const edaRolesData: (EdaRbacRole & { remove?: boolean })[] = [];
 
