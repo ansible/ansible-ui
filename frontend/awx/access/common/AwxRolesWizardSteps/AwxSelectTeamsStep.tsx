@@ -36,6 +36,7 @@ export function AwxSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
       url: awxAPI`/teams/`,
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'teams'
   );

@@ -36,6 +36,7 @@ export function HubSelectTeamsStep(props: { descriptionForTeamsSelection?: strin
       url: hubAPI`/_ui/v2/teams/`,
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'teams'
   );

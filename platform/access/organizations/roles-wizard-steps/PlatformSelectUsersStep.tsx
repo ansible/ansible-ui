@@ -52,6 +52,7 @@ export function PlatformSelectUsersStep() {
       },
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'users'
   );

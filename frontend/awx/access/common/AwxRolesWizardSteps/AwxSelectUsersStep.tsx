@@ -51,6 +51,7 @@ export function AwxSelectUsersStep(props: { descriptionForUsersSelection?: strin
       },
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'users'
   );

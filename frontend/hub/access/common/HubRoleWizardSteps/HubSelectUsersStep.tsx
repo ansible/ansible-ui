@@ -49,6 +49,7 @@ export function HubSelectUsersStep(props: { descriptionForUsersSelection?: strin
       },
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'users'
   );

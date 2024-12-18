@@ -38,6 +38,7 @@ export function PlatformSelectOrganizationTeamsStep() {
       url: gatewayAPI`/organizations/${params.id || ''}/teams/`,
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'teams'
   );

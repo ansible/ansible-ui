@@ -92,6 +92,7 @@ export function EdaSelectResourcesStep() {
       url: resourceToEndpointMapping[resourceType as string],
       toolbarFilters,
       tableColumns,
+      disableQueryString: true,
     },
     'resources'
   );

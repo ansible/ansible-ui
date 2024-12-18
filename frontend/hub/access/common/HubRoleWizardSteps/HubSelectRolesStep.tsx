@@ -76,6 +76,7 @@ export function HubSelectRolesStep(props: {
         ...(contentType === 'system' && { content_type__isnull: 'true' }),
         name__startswith: 'galaxy.',
       },
+      disableQueryString: true,
     },
     'hubRoles'
   );

@@ -85,6 +85,7 @@ export function EdaSelectRolesStep(props: {
       toolbarFilters,
       tableColumns,
       queryParams,
+      disableQueryString: true,
     },
     'edaRoles'
   );
