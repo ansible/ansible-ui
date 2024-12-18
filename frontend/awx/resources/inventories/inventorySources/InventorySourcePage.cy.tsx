@@ -31,7 +31,7 @@ describe('InventorySourcePage', () => {
       path: '/inventories/:id/sources/:source_id',
       initialEntries: ['/inventories/1/sources/1'],
     });
-    cy.clickButton(/^Launch inventory update$/);
+    cy.clickButton(/^Sync inventory source$/);
     cy.wait('@inventorySourceUpdate');
   });
 
@@ -43,7 +43,7 @@ describe('InventorySourcePage', () => {
       path: '/inventories/:id/sources/:source_id',
       initialEntries: ['/inventories/1/sources/1'],
     });
-    cy.clickButton(/^Launch inventory update$/);
+    cy.clickButton(/^Sync inventory source$/);
     cy.get('.pf-v5-c-alert__title').contains('Failed to update inventory source');
   });
 });
@@ -69,7 +69,7 @@ describe('InventorySourcePage RBAC', () => {
       },
       'activeUserSysAuditor.json'
     );
-    cy.get('button#launch-inventory-update').should('have.attr', 'aria-disabled', 'true');
+    cy.get('button#sync-inventory-source').should('have.attr', 'aria-disabled', 'true');
     cy.get('button#edit-inventory-source').should('have.attr', 'aria-disabled', 'true');
   });
 });
