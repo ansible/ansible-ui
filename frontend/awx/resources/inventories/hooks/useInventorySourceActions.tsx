@@ -7,7 +7,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ButtonVariant } from '@patternfly/react-core';
-import { MinusCircleIcon, PencilAltIcon, RocketIcon, TrashIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PencilAltIcon, SyncAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -102,8 +102,8 @@ export function useInventorySourceActions({
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
-        icon: RocketIcon,
-        label: t('Launch inventory update'),
+        icon: SyncAltIcon,
+        label: t('Sync inventory source'),
         isPinned: true,
         isHidden: (inventorySource: InventorySource) => {
           const startPerms = inventorySource?.summary_fields.user_capabilities.start;
