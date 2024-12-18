@@ -164,11 +164,6 @@ describe('WorkflowVisualizer', () => {
       .should('have.attr', 'href')
       .should('include', 'controller-workflow-job-templates#controller-workflow-visualizer');
     cy.get('.toggle-kebab').click();
-    cy.get('.toggle-kebab')
-      .click()
-      .get('.pf-v5-c-menu__item-text')
-      .contains('Launch workflow')
-      .should('be.visible');
   });
 
   it('Show confirmation modal when removing a link, then cancel removal, then actually remove ', () => {

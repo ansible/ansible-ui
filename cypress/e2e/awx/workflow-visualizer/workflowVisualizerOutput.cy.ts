@@ -162,7 +162,7 @@ describe('Workflow Visualizer', () => {
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
       ).as('launch');
-      cy.getByDataCy('workflow-visualizer-toolbar-launch').click();
+      cy.getByDataCy('launch-workflow-button').click();
       cy.wait('@launch')
         .its('response.body')
         .then((job: Job) => {
