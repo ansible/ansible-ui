@@ -145,7 +145,7 @@ function CredentialTypeInputs() {
   const credentialInjectors = useWatch<EdaCredentialTypeCreate>({
     name: 'injectors',
     defaultValue: undefined,
-  }) as EdaCredentialTypeCreate;
+  }) as Record<string, unknown>;
 
   const setInjectorsExtraVars = useCallback(() => {
     const fields = credentialInputs?.fields;
@@ -156,13 +156,23 @@ function CredentialTypeInputs() {
       }
       extraVarFields += `"${field.id}" : "{{${field.id}}}"`;
     });
-    const extraVars = `{"extra_vars": { ${extraVarFields}}}`;
-    setValue('injectors', JSON.parse(extraVars), { shouldValidate: true });
-  }, [credentialInputs, setValue]);
+    const extraVars = `{ ${extraVarFields}}`;
+    setValue(
+      'injectors',
+      JSON.parse(
+        JSON.stringify({ ...credentialInjectors, extra_vars: JSON.parse(extraVars) as unknown })
+      ),
+      { shouldValidate: true }
+    );
+  }, [credentialInjectors, credentialInputs?.fields, setValue]);
 
   const clearInjectorsExtraVars = useCallback(() => {
-    setValue('injectors', undefined);
-  }, [setValue]);
+    const injectorsWithoutExtraVars = credentialInjectors;
+    if (injectorsWithoutExtraVars?.extra_vars) {
+      delete injectorsWithoutExtraVars.extra_vars;
+    }
+    setValue('injectors', injectorsWithoutExtraVars);
+  }, [credentialInjectors, setValue]);
 
   return (
     <>
@@ -185,7 +195,6 @@ function CredentialTypeInputs() {
           labelHelp={t(
             `Input schema which defines a set of ordered fields for that type, either in JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
           )}
-          isRequired
           format="object"
         />
       </PageFormSection>
@@ -213,7 +222,6 @@ function CredentialTypeInputs() {
           labelHelp={t(
             `Enter injectors using either JSON or YAML syntax. Refer to the Ansible Controller documentation for example syntax.`
           )}
-          isRequired
           format="object"
         />
         {credentialInjectors && Object.keys(credentialInjectors).length !== 0 && (
