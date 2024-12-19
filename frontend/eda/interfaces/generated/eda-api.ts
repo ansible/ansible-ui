@@ -372,7 +372,7 @@ export interface CredentialType {
   kind?: string;
   description?: string;
   inputs?: Record<string, any>;
-  injectors?: Record<string, any>;
+  injectors?: Record<string, unknown>;
   id: number;
   /** @format date-time */
   created_at: string;
@@ -387,7 +387,7 @@ export interface CredentialTypeCreate {
   /** Inputs of the credential type */
   inputs: Record<string, any>;
   /** Injectors of the credential type */
-  injectors: Record<string, any>;
+  injectors: Record<string, unknown>;
 }
 
 export interface CredentialTypeRef {

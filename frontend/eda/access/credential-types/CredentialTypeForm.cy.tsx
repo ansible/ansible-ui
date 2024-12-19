@@ -101,4 +101,67 @@ describe('CredentialTypeForm.cy.ts', () => {
       cy.dataEditorShouldContain('[data-cy="injectors"]', { extra_vars: { name: '{{name}}' } });
     });
   });
+
+  describe('Generate and clear only the extra vars field in the Credential Type injector field', () => {
+    const injectorWithMultipleFields = {
+      name: 'Sample Credential Type',
+      description: 'This is a credential with multi field injector',
+      id: 1,
+      inputs: {
+        fields: [
+          {
+            id: 'name',
+            type: 'string',
+            label: 'Name',
+          },
+        ],
+        required: ['name'],
+      },
+      injectors: { extra_vars: { value: 'test' }, field1: { value1: 'one', value2: 'two' } },
+    };
+
+    beforeEach(() => {
+      cy.intercept(
+        { method: 'GET', url: edaAPI`/credential-types/1/` },
+        { statusCode: 200, body: injectorWithMultipleFields }
+      );
+    });
+
+    it('should preload the form with current values', () => {
+      cy.mount(<EditCredentialType />);
+      cy.verifyPageTitle('Edit Sample Credential Type');
+      cy.get('[data-cy="name"]').should('have.value', 'Sample Credential Type');
+      cy.get('[data-cy="description"]').should('have.value', 'This is a sample credential');
+      cy.dataEditorShouldContain('[data-cy="inputs"]', injectorWithMultipleFields.inputs);
+    });
+
+    it('should generate extra vars', () => {
+      cy.mount(<EditCredentialType />);
+      cy.dataEditorShouldContain('[data-cy="injectors"]', {
+        extra_vars: { value: 'test' },
+        field1: { value1: 'one', value2: 'two' },
+      });
+      cy.get('[data-cy="name"]').type('Sample Credential Type');
+      cy.get('[data-cy="description"]').type('This is a sample credential');
+      cy.clickButton(/^Generate extra vars$/);
+      cy.dataEditorShouldContain('[data-cy="injectors"]', {
+        field1: { value1: 'one', value2: 'two' },
+        extra_vars: { name: '{{name}}' },
+      });
+    });
+
+    it('should clear extra vars', () => {
+      cy.mount(<EditCredentialType />);
+      cy.dataEditorShouldContain('[data-cy="injectors"]', {
+        extra_vars: { value: 'test' },
+        field1: { value1: 'one', value2: 'two' },
+      });
+      cy.get('[data-cy="name"]').type('Sample Credential Type');
+      cy.get('[data-cy="description"]').type('This is a sample credential');
+      cy.clickButton(/^Clear extra vars$/);
+      cy.dataEditorShouldContain('[data-cy="injectors"]', {
+        field1: { value1: 'one', value2: 'two' },
+      });
+    });
+  });
 });
