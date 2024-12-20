@@ -78,7 +78,8 @@ describe('Inventory Sources', () => {
           cy.get(`[id="${projName}"]`).find('input').check();
           cy.getBy('[data-cy="checkbox-column-cell"]').click();
           cy.clickButton('Confirm');
-          cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+          cy.get('#inventory-typeahead-select-input').click();
+          cy.get('#select-create-typeahead-Dockerfile').click();
           cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
           cy.getByDataCy('host-filter').type('/^test$/');
@@ -384,7 +385,8 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.get(`[id="${projName}"]`).find('input').check();
     cy.getBy('[data-cy="checkbox-column-cell"]').click();
     cy.clickButton('Confirm');
-    cy.selectDropdownOptionByResourceName('inventory', 'Dockerfile');
+    cy.get('#inventory-typeahead-select-input').click();
+    cy.get('#select-create-typeahead-Dockerfile').click();
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
     cy.verifyPageTitle('new project');

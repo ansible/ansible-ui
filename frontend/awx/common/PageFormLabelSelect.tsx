@@ -23,7 +23,11 @@ export function PageFormLabelSelect<
   const { t } = useTranslation();
 
   const { results, isLoading } = useAwxGetAllPages<Label>(awxAPI`/labels/`, { order_by: 'name' });
-  const options = isLoading ? [{ name: '' }] : results;
+
+  const options = isLoading
+    ? [{ label: t('Loading...'), value: '' }]
+    : (results ?? []).map((label) => ({ value: label.name, label: label.name }));
+
   return (
     <PageFormCreatableSelect<TFieldValues, TFieldName>
       labelHelpTitle={labelHelpTitle}
@@ -32,10 +36,7 @@ export function PageFormLabelSelect<
       placeholderText={placeholderText ?? t('Select or create labels')}
       label={t('Labels')}
       additionalControls={additionalControls ?? undefined}
-      options={
-        options?.map((label) => ({ value: label, label: label.name })) ?? [{ label: '', value: '' }]
-      }
-      isMulti={true}
+      options={options}
     />
   );
 }

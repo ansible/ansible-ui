@@ -1,4 +1,9 @@
-import { SelectOptionObject } from '@patternfly/react-core/deprecated';
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
 
 export type AttributeType = string | string[] | SelectOptionObject | SelectOptionObject[] | boolean;
 

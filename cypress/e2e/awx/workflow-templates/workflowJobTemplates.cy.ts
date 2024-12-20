@@ -63,7 +63,7 @@ describe('Workflow Job Templates Tests', () => {
           cy.get('li').contains(`${inventory.name}`).click();
           cy.get('[data-cy="limit"]').type('mock-limit');
           cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
-          cy.selectDropdownOptionByResourceName('labels', label.name.toString());
+          cy.get('[data-cy="labels-typeahead-input"]').type(label.name.toString());
           cy.get('[data-cy="job_tags-form-group"]').within(() => {
             cy.get('input[type="text"]').type('test job tag');
             cy.contains('Create "test job tag"').click();
@@ -108,7 +108,7 @@ describe('Workflow Job Templates Tests', () => {
       });
       cy.get('[data-cy="limit"]').type('mock-limit');
       cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
-      cy.selectDropdownOptionByResourceName('labels', label.name.toString());
+      cy.get('[data-cy="labels-typeahead-input"]').type(label.name.toString());
       cy.get('[data-cy="job_tags-form-group"]').within(() => {
         cy.get('input[type="text"]').type('test job tag');
         cy.contains('Create "test job tag"').click();

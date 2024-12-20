@@ -87,7 +87,8 @@ describe('Inventories Tests', () => {
           cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
           cy.verifyPageTitle(inventory.name);
           cy.clickButton(/^Edit inventory/);
-          cy.selectDropdownOptionByResourceName('labels', label.name);
+          cy.get('[data-cy="labels-typeahead-input"]').click().type(label.name.toString());
+          cy.contains(label.name.toString()).click();
           cy.dataEditorTypeByDataCy('variables', 'remote_install_path: /opt/my_app_config');
           cy.contains('button', 'Save inventory').click();
           cy.verifyPageTitle(inventory.name);

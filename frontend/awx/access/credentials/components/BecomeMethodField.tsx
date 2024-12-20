@@ -1,5 +1,5 @@
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/deprecated';
+import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,7 @@ export function BecomeMethodField({ fieldOptions, isRequired }: BecomeMethodFiel
       <Select
         typeAheadAriaLabel={fieldOptions.label}
         maxHeight={200}
-        variant={SelectVariant.typeahead}
+        variant={'typeahead'}
         onToggle={(event, isExpanded) => setIsOpen(isExpanded)}
         onClear={() => onChange('')}
         onSelect={(event, option) => {
