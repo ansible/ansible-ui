@@ -1,6 +1,6 @@
-import { NodeAddWizard } from './NodeAddWizard';
-import { awxAPI } from '../../../../../../cypress/support/formatApiPathForAwx';
 import { VisualizationProvider } from '@patternfly/react-topology';
+import { awxAPI } from '../../../../../../cypress/support/formatApiPathForAwx';
+import { NodeAddWizard } from './NodeAddWizard';
 
 describe('NodeAddWizard', () => {
   const mockResults = {
@@ -123,7 +123,7 @@ describe('NodeAddWizard', () => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Inventory Source Sync');
     });
     cy.get('[data-cy="inventory-source-select-form-group"]').within(() => {
-      cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Select inventory source');
+      cy.get('span.pf-v5-c-menu-toggle__text').should('have.text', 'Select inventory source');
     });
   });
 
