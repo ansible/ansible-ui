@@ -340,7 +340,7 @@ describe('Jobs', () => {
       cy.intercept('POST', awxAPI`/inventory_sources/${inventorySource.id.toString()}/update/`).as(
         'postLaunch'
       );
-      cy.getByDataCy('launch-inventory-update').click();
+      cy.getByDataCy('sync-inventory-source').click();
       cy.wait('@postLaunch')
         .then((response) => {
           expect(response?.response?.statusCode).to.eql(202);
