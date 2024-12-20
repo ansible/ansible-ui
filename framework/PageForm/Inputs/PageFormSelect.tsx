@@ -1,5 +1,5 @@
 import { ButtonVariant } from '@patternfly/react-core';
-import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
+import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import getValue from 'get-value';
 import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
@@ -19,6 +19,13 @@ import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { PageFormGroup } from './PageFormGroup';
 import { useRequiredValidationRule } from './validation-hooks';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
 
 export type PageFormSelectProps<
   TFieldValues extends FieldValues = FieldValues,

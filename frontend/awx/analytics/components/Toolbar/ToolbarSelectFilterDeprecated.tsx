@@ -1,10 +1,19 @@
-import {
-  Select,
-  SelectOption,
-  SelectOptionObject,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import { useEffect, useState } from 'react';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
+
+export enum SelectVariant {
+  single = 'single',
+  checkbox = 'checkbox',
+  typeahead = 'typeahead',
+  typeaheadMulti = 'typeaheadmulti',
+}
 
 /**
  * @deprecated

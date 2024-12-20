@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, InputGroup, InputGroupItem, Spinner } from '@patternfly/react-core';
-import {
-  Select,
-  SelectOption,
-  SelectOptionObject,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import { SearchIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { ReactElement, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
@@ -14,6 +9,15 @@ import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { PageFormGroup } from './PageFormGroup';
 import { useRequiredValidationRule } from './validation-hooks';
 
+export type Variant = 'single' | 'typeahead' | 'typeaheadmulti';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
+
 export interface PageFormAsyncSelectProps<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -21,7 +25,7 @@ export interface PageFormAsyncSelectProps<
 > {
   id?: string;
   name: TFieldName;
-  variant?: 'single' | 'typeahead' | 'typeaheadMulti';
+  variant?: Variant;
   label: string;
   labelHelpTitle?: string;
   labelHelp?: string | string[] | ReactNode;
@@ -146,7 +150,7 @@ export interface AsyncSelectProps<SelectionType> {
   onSelect: (value: SelectionType | null) => void;
   query: (pageSize: number) => Promise<{ total: number; values: SelectionType[] }>;
   placeholder: string;
-  variant?: 'single' | 'typeahead' | 'typeaheadMulti';
+  variant?: Variant;
   loadingPlaceholder: string;
   labeledBy?: string;
   isReadOnly?: boolean;
@@ -255,7 +259,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           toggleId={id}
           ouiaId="menu-select"
           aria-labelledby={labeledBy}
-          variant={variant ? SelectVariant[`${variant}`] : SelectVariant.single}
+          variant={variant ?? 'single'}
           hasPlaceholderStyle
           placeholderText={
             loadingError

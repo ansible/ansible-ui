@@ -1,12 +1,7 @@
 // TODO: The component converts all types to string.
 // It should be able to use the correct type in the future for example number and number[].
 import { ToolbarChip, ToolbarFilter, Tooltip } from '@patternfly/react-core';
-import {
-  Select as PFSelect,
-  SelectOption,
-  SelectOptionObject,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+import { Select as PFSelect, SelectOption } from '@patternfly/react-core/deprecated';
 import { FunctionComponent, useState } from 'react';
 
 import styled from 'styled-components';
@@ -14,6 +9,20 @@ import { optionsForCategories } from '../../constants';
 import { handleCheckboxChips, handleSingleChips } from './helpers';
 
 import { AttributeType, SelectOptionProps, SetValue } from '../../types';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
+
+export enum SelectVariant {
+  single = 'single',
+  checkbox = 'checkbox',
+  typeahead = 'typeahead',
+  typeaheadMulti = 'typeaheadmulti',
+}
 
 const OptionSpan = styled('span')`
   display: block;

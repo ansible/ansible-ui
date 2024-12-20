@@ -14,9 +14,16 @@ import {
 
 import { useState } from 'react';
 
-import { Select, SelectOption, SelectOptionObject } from '@patternfly/react-core/deprecated';
+import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import { awxAPI } from '../../common/api/awx-utils';
 import { allDefaultParams } from './constants';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: any): boolean;
+}
 
 export function Test() {
   const location = useLocation();

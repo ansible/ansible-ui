@@ -24,15 +24,19 @@ export function PageFormInventoryFileSelect<
   const { data: inventories, error } = useGet<Array<string>>(
     awxAPI`/projects/${projectId}/inventories/`
   );
-  const inventoryOptions =
+
+  let inventoryOptions =
     inventories && !error
-      ? inventories
-          .map((inventoryFile) => ({
-            value: inventoryFile,
-            label: inventoryFile,
-          }))
-          .concat([{ value: '/ (project root)', label: t('/ (project root)') }])
+      ? inventories.map((inventoryFile) => ({
+          value: inventoryFile,
+          label: inventoryFile,
+        }))
       : [];
+
+  inventoryOptions = [
+    ...inventoryOptions,
+    { value: '/ (project root)', label: t('/ (project root)') },
+  ];
 
   return (
     <PageFormCreatableSelect<InventorySourceForm>
@@ -48,6 +52,7 @@ export function PageFormInventoryFileSelect<
         t('Select the inventory containing the playbook you want this job to execute.')
       }
       isRequired={props.isRequired}
+      isMulti={false}
     />
   );
 }

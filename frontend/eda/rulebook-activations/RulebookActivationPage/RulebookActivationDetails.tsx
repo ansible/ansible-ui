@@ -20,7 +20,6 @@ import {
   LabelGroup,
   Tooltip,
 } from '@patternfly/react-core';
-import { SelectVariant } from '@patternfly/react-core/deprecated';
 import jsyaml from 'js-yaml';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
@@ -30,6 +29,13 @@ import { EdaSourceEventMapping } from '../../interfaces/EdaSource';
 import { LogLevelEnum, RestartPolicyEnum, StatusEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
+
+export enum SelectVariant {
+  single = 'single',
+  checkbox = 'checkbox',
+  typeahead = 'typeahead',
+  typeaheadMulti = 'typeaheadmulti',
+}
 
 export function RulebookActivationDetails() {
   const { t } = useTranslation();

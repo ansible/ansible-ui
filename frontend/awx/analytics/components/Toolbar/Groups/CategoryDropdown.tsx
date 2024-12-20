@@ -1,5 +1,5 @@
 import { ToolbarItem } from '@patternfly/react-core';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/deprecated';
+import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import { FunctionComponent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +25,7 @@ export const CategoryDropdown: FunctionComponent<Props> = ({
     <ToolbarItem data-cy={categoryKey}>
       <Select
         isOpen={isExpanded}
-        variant={SelectVariant.single}
+        variant={'single'}
         aria-label={'Categories'}
         onToggle={() => setIsExpanded(!isExpanded)}
         onSelect={(_, selection) => {

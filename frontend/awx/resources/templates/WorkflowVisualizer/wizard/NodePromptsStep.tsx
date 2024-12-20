@@ -213,7 +213,6 @@ export function NodePromptsStep({
           placeholderText={t('Select or create skip tags')}
           label={t('Skip tags')}
           options={parseStringToTagArray(template?.skip_tags) || []}
-          isMulti={true}
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_variables_on_launch}>

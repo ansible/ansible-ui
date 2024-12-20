@@ -63,7 +63,8 @@ export function CreateInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      source_path: values?.source_path?.[0] === '/ (project root)' ? '' : values?.source_path?.[0],
+      source_path:
+        values?.source_path?.name === '/ (project root)' ? '' : values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };
@@ -142,9 +143,9 @@ export function EditInventorySource() {
       source: inventorySource?.source,
       credential: inventorySource?.credential ?? null,
       source_project: inventorySource?.summary_fields?.source_project,
-      source_path: inventorySource?.source_path
-        ? [inventorySource?.source_path]
-        : ['/ (project root)'],
+      source_path: {
+        name: inventorySource?.source_path ? inventorySource?.source_path : '/ (project root)',
+      },
       verbosity: inventorySource?.verbosity,
       host_filter: inventorySource?.host_filter,
       enabled_var: inventorySource?.enabled_var,
@@ -161,7 +162,8 @@ export function EditInventorySource() {
     const formValues: InventorySourceCreate = {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
-      source_path: values?.source_path?.[0] === '/ (project root)' ? '' : values?.source_path?.[0],
+      source_path:
+        values?.source_path?.name === '/ (project root)' ? '' : values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };

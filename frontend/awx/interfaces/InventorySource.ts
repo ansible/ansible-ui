@@ -99,7 +99,7 @@ export interface InventorySourceCreate {
 export interface InventorySourceForm {
   credential: number | null;
   inventory?: number;
-  source_path: string[];
+  source_path: { name: string | undefined | null };
   source_script?: string;
   execution_environment?: number;
   description: string;

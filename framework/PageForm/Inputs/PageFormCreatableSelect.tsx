@@ -7,9 +7,10 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
-import { FormGroupTypeAheadSelect } from './FormGroupTypeAheadSelect';
 import { useRequiredValidationRule } from './validation-hooks';
 import { SelectOptionObject } from '@patternfly/react-core/deprecated';
+import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
+import { FormGroupSingleSelectTypeAhead } from './FormGroupSingleSelectTypeAhead';
 
 export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -22,7 +23,7 @@ export type PageFormCreatableSelectProps<
   labelHelpTitle?: string;
   additionalControls?: ReactElement;
   placeholderText?: string;
-  options: { value: string | { name: string }; label: string }[];
+  options: { value: string; label: string }[];
   isReadOnly?: boolean;
   isRequired?: boolean;
   validate?:
@@ -47,82 +48,84 @@ export function PageFormCreatableSelect<
     options,
     placeholderText,
     validate,
-    isMulti = false,
+    isMulti = true,
   } = props;
   const {
     control,
     formState: { isSubmitting },
     getValues,
   } = useFormContext<TFieldValues>();
-  const required = useRequiredValidationRule(props.label, props.isRequired);
+  const required = useRequiredValidationRule(label, isRequired);
 
-  const getSelectedValues = (
-    item:
-      | string
-      | SelectOptionObject
-      | {
-          name: string;
-        }
-  ) => {
-    let newValue;
+  const getSelectedValues = (item: string | SelectOptionObject | { name: string }) => {
     const selectedItem = item as { name: string };
 
     if (isMulti) {
-      const values: { name: string }[] = getValues(props.name);
+      const values: { name: string }[] = getValues(name);
 
       if (values?.find((value) => value.name === selectedItem.name)) {
-        newValue = values.filter((i) => i !== selectedItem);
+        return values.filter((i) => i.name !== selectedItem.name);
       } else {
-        newValue = values?.length ? [...values, selectedItem] : [selectedItem];
+        return values?.length ? [...values, selectedItem] : [selectedItem];
       }
     } else {
-      const value: { name: string } = getValues(props.name);
-
-      if (value?.name === selectedItem.name) {
-        newValue = [value.name];
-      } else {
-        newValue = [selectedItem.name];
-      }
+      return selectedItem;
     }
-
-    return newValue;
   };
+
   return (
     <Controller<TFieldValues, TFieldName>
-      name={props.name}
+      name={name}
       control={control}
       shouldUnregister
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormGroupTypeAheadSelect
-          additionalControls={additionalControls}
-          helperTextInvalid={error?.message}
-          id={id ?? name}
-          isReadOnly={isReadOnly}
-          isSubmitting={isSubmitting}
-          isRequired={isRequired}
-          label={label}
-          labelHelp={labelHelp}
-          labelHelpTitle={labelHelpTitle ?? label}
-          options={options}
-          placeholderText={placeholderText}
-          value={value}
-          onHandleClear={
-            isMulti
-              ? (chip?: string) => {
-                  const values: { name: string }[] = getValues(props.name);
-                  onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
-                }
-              : (_currVal?: string) => {
-                  onChange([]);
-                }
-          }
-          onHandleSelection={(item) => {
-            const newValue = getSelectedValues(item);
-            return onChange(newValue);
-          }}
-          isMulti={isMulti}
-        />
-      )}
+      render={({ field: { onChange, value }, fieldState: { error } }) =>
+        isMulti ? (
+          <FormGroupTypeAheadMultiSelect
+            additionalControls={additionalControls}
+            helperTextInvalid={error?.message}
+            id={id ?? name}
+            isReadOnly={isReadOnly}
+            isSubmitting={isSubmitting}
+            isRequired={isRequired}
+            label={label}
+            labelHelp={labelHelp}
+            labelHelpTitle={labelHelpTitle ?? label}
+            options={options}
+            placeholderText={placeholderText}
+            value={value}
+            onHandleClear={(chip?: string) => {
+              const values: { name: string }[] = getValues(name);
+              onChange(!chip ? [] : values.filter((v: { name: string }) => v.name !== chip));
+            }}
+            onHandleSelection={(item) => {
+              const newValue = getSelectedValues(item);
+              return onChange(newValue);
+            }}
+          />
+        ) : (
+          <FormGroupSingleSelectTypeAhead
+            additionalControls={additionalControls}
+            helperTextInvalid={error?.message}
+            id={id ?? name}
+            isReadOnly={isReadOnly}
+            isSubmitting={isSubmitting}
+            isRequired={isRequired}
+            label={label}
+            labelHelp={labelHelp}
+            labelHelpTitle={labelHelpTitle ?? label}
+            options={options}
+            placeholderText={placeholderText}
+            value={value}
+            onHandleClear={() => {
+              onChange(null);
+            }}
+            onHandleSelection={(item) => {
+              const newValue = getSelectedValues(item);
+              return onChange(newValue);
+            }}
+          />
+        )
+      }
       rules={{ required, validate: validate }}
     />
   );

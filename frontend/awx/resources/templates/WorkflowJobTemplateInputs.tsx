@@ -112,7 +112,6 @@ export function WorkflowJobTemplateInputs(
         placeholderText={t('Select or create skip tags')}
         label={t('Skip tags')}
         options={workflowJobTemplate?.skip_tags ?? [{ value: '', label: '' }]}
-        isMulti={true}
       />
       <PageFormSection singleColumn>
         <PageFormDataEditor<WorkflowJobTemplateForm>
