@@ -26,11 +26,12 @@ describe('Check if the build includes EDA', () => {
     after(() => {
       cy.deleteEdaOrganization(edaOrg);
     });
+
     it('can create a Project, sync it, and assert the information showing on the details page', () => {
       const name = 'E2E Project ' + randomString(4);
       cy.navigateTo('eda', 'projects');
       cy.get('h1').should('contain', 'Projects');
-      cy.clickButton(/^Create project$/);
+      cy.contains(/^Create project$/).click();
       cy.getByDataCy('name').type(name);
       cy.getByDataCy('url').type('https://github.com/ansible/ansible-ui');
       cy.selectSingleSelectOption('[data-cy="organization_id"]', 'Default');
