@@ -63,7 +63,7 @@ export function ScheduleTypeInputs() {
                   <PageFormInventorySourceSelect<ScheduleFormWizard>
                     isRequired
                     inventoryId={resourceInventory?.id}
-                    name="resource"
+                    name="resourceId"
                   />
                 ) : null}
               </>

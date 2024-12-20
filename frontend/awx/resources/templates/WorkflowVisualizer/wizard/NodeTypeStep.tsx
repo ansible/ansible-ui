@@ -4,6 +4,7 @@ import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/Page
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
   Grid,
@@ -20,7 +21,6 @@ import { PageFormManagementJobsSelect } from '../../../../administration/managem
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
@@ -231,7 +231,7 @@ function NodeResourceInput() {
           case RESOURCE_TYPE.project_update:
             return <PageFormProjectSelect<WizardFormValues> name="resource" isRequired />;
           case RESOURCE_TYPE.inventory_update:
-            return <PageFormInventorySourceSelect<WizardFormValues> name="resource" isRequired />;
+            return <PageFormInventorySourceSelect<WizardFormValues> name="resourceId" isRequired />;
           case RESOURCE_TYPE.system_job:
             return (
               <>
