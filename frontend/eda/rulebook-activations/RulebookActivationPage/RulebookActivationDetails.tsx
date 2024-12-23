@@ -16,8 +16,11 @@ import {
   Alert,
   DescriptionListGroup,
   DescriptionListTerm,
+  Divider,
   Label,
   LabelGroup,
+  Split,
+  SplitItem,
   Tooltip,
 } from '@patternfly/react-core';
 import jsyaml from 'js-yaml';
@@ -26,7 +29,7 @@ import { Link, useParams } from 'react-router-dom';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { EdaSourceEventMapping } from '../../interfaces/EdaSource';
-import { LogLevelEnum, RestartPolicyEnum, StatusEnum } from '../../interfaces/generated/eda-api';
+import { LogLevelEnum, RestartPolicyEnum } from '../../interfaces/generated/eda-api';
 import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaExtraVarsCell } from '../components/EdaExtraVarCell';
 
@@ -98,15 +101,17 @@ export function RulebookActivationDetails() {
           </p>
         </Alert>
       )}
-      <PageDetails
-        disableScroll={true}
-        alertPrompts={
-          rulebookActivation.status === StatusEnum.Error ||
-          rulebookActivation.status === StatusEnum.Failed
-            ? [`${t('Rulebook Activation error: ')}${rulebookActivation?.status_message || ''}`]
-            : []
-        }
-      >
+      <PageDetails disableScroll={true} numberOfColumns={'single'}>
+        <Split hasGutter>
+          <SplitItem>
+            <StatusCell status={rulebookActivation?.status} />
+          </SplitItem>
+          <SplitItem>{' | '}</SplitItem>
+          <SplitItem>{rulebookActivation?.status_message}</SplitItem>
+        </Split>
+        <Divider />
+      </PageDetails>
+      <PageDetails disableScroll={true}>
         <PageDetail label={t('Activation ID')}>{rulebookActivation?.id || ''}</PageDetail>
         <PageDetail label={t('Name')}>{rulebookActivation?.name || ''}</PageDetail>
         <PageDetail label={t('Description')}>{rulebookActivation?.description || ''}</PageDetail>
@@ -208,16 +213,6 @@ export function RulebookActivationDetails() {
             ? restartPolicyName(rulebookActivation?.restart_policy, t)
             : ''}
         </PageDetail>
-        <PageDetail label={t('Activation status')}>
-          <StatusCell status={rulebookActivation?.status || ''} />
-        </PageDetail>
-        {rulebookActivation.status !== StatusEnum.Error &&
-          rulebookActivation.status !== StatusEnum.Failed &&
-          !!rulebookActivation?.status_message && (
-            <PageDetail label={t('Status message')}>
-              {rulebookActivation?.status_message}
-            </PageDetail>
-          )}
         <PageDetail label={t('Log level')} helpText={logLevelHelpBlock}>
           {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
