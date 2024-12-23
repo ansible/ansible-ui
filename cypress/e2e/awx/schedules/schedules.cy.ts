@@ -255,10 +255,7 @@ describe('Schedules - Create and Delete', () => {
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Management job template');
-      cy.selectDropdownOptionByResourceName(
-        'management-job-template-select',
-        'Cleanup Activity Stream'
-      );
+      cy.selectAsyncSingleSelectOption('management-job-template-select', 'Cleanup Activity Stream');
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.getByDataCy('description').type(`description ${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');

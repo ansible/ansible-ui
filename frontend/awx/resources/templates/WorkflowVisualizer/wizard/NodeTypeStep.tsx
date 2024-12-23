@@ -235,7 +235,7 @@ function NodeResourceInput() {
           case RESOURCE_TYPE.system_job:
             return (
               <>
-                <PageFormManagementJobsSelect<WizardFormValues> name="resource" isRequired />
+                <PageFormManagementJobsSelect<WizardFormValues> name="resourceId" isRequired />
                 <SystemJobInputs />
               </>
             );

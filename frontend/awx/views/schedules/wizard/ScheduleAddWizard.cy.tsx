@@ -1,5 +1,5 @@
+import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleAddWizard } from './ScheduleAddWizard';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('ScheduleAddWizard', () => {
   const zones = {
@@ -176,8 +176,9 @@ describe('ScheduleAddWizard', () => {
         { method: 'GET', url: awxAPI`/system_job_templates/*/` },
         {
           id: 1,
-          type: 'system_job_template',
+          type: 'management_job_template',
           name: 'Cleanup Job Details',
+          job_type: 'cleanup_jobs',
         }
       );
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
@@ -267,8 +268,9 @@ describe('ScheduleAddWizard', () => {
         { method: 'GET', url: awxAPI`/system_job_templates/*/` },
         {
           id: 1,
-          type: 'system_job_template',
+          type: 'management_job_template',
           name: 'Cleanup Job Details',
+          job_type: 'cleanup_jobs',
         }
       );
       cy.mount(<ScheduleAddWizard resourceEndPoint={awxAPI`/system_job_templates/`} />, {
