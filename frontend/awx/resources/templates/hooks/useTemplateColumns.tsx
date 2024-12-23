@@ -72,7 +72,10 @@ export function useTemplateColumns(options?: { disableSort?: boolean; disableLin
     }),
     [organizationColumnDefault]
   );
-  const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, options);
+  const inventoryColumn = useInventoryNameColumn(AwxRoute.InventoryDetails, {
+    ...options,
+    disableSort: true,
+  });
   const projectColumn = useProjectNameColumn(AwxRoute.ProjectDetails, options);
   const credentialsColumn = useCredentialsColumn();
   const labelsColumn = useLabelsColumn();
