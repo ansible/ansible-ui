@@ -139,7 +139,7 @@ describe('NodeAddWizard', () => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Management Job');
     });
     cy.get('[data-cy="management-job-template-select-form-group"]').within(() => {
-      cy.get('div.pf-v5-c-select__toggle-wrapper').should(
+      cy.get('span.pf-v5-c-menu-toggle__text').should(
         'have.text',
         'Select management job template'
       );

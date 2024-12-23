@@ -131,6 +131,18 @@ Cypress.Commands.add('selectSingleSelectOption', (selector: string, label: strin
     });
 });
 
+Cypress.Commands.add(
+  'selectAsyncSingleSelectOption',
+  (selector: string, label: string | RegExp) => {
+    cy.get(`button#${selector}`).click();
+    cy.get(`div#${selector}-select`);
+    cy.get("input[aria-label='Search input']").type(`${label}`);
+    cy.get('.pf-v5-c-menu__list').within(() => {
+      cy.get('.pf-v5-c-menu__item-text').contains(label).click();
+    });
+  }
+);
+
 Cypress.Commands.add('selectMultiSelectOption', (selector: string, label: string | RegExp) => {
   cy.get(selector)
     .parent()

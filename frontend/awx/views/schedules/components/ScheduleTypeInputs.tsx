@@ -70,7 +70,7 @@ export function ScheduleTypeInputs() {
             ),
             project: <PageFormProjectSelect<ScheduleFormWizard> isRequired name="resource" />,
             management_job_template: (
-              <PageFormManagementJobsSelect<ScheduleFormWizard> isRequired name="resource" />
+              <PageFormManagementJobsSelect<ScheduleFormWizard> isRequired name="resourceId" />
             ),
           }[scheduleType]}
       </PageFormSection>

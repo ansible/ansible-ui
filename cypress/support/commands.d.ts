@@ -302,6 +302,7 @@ declare global {
       ): Chainable<void>;
       singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
       selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
+      selectAsyncSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
       /** Checks the cell text value based on the column name. */
       checkValueByHeaderName(headerName: string, expectedValue: string): Chainable<void>;
