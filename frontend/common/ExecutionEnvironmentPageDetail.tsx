@@ -1,14 +1,13 @@
+import { PageDetail } from '@ansible/ansible-ui-framework';
+import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
+import { SummaryFieldsExecutionEnvironment } from '@ansible/awx-ui/interfaces/summary-fields/summary-fields';
 import { Popover, Tooltip } from '@patternfly/react-core';
 import { ExclamationTriangleIcon as PFExclamationTriangleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
-import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
-import { useGetDocsUrl } from './utils/useGetDocsUrl';
-import { SummaryFieldsExecutionEnvironment } from '@ansible/awx-ui/interfaces/summary-fields/summary-fields';
-import { useTranslation } from 'react-i18next';
-import { PageDetail } from '../../framework';
 import { ExternalLink } from '../hub/common/ExternalLink';
+import { useGetDocsUrl } from './utils/useGetDocsUrl';
 
 const ExclamationTriangleIcon = styled(PFExclamationTriangleIcon)`
   color: var(--pf-global--warning-color--100);

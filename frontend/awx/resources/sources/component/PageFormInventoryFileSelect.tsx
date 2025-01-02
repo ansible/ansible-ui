@@ -1,11 +1,11 @@
+import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
 import { ReactElement, ReactNode } from 'react';
 import { FieldPath, FieldValues, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { Project } from '../../../interfaces/Project';
-import { InventorySourceForm } from '../../../interfaces/InventorySource';
-import { PageFormCreatableSelect } from '../../../../../framework/PageForm/Inputs/PageFormCreatableSelect';
 import { useGet } from '../../../../common/crud/useGet';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { InventorySourceForm } from '../../../interfaces/InventorySource';
+import { Project } from '../../../interfaces/Project';
 
 export function PageFormInventoryFileSelect<
   TFieldValues extends FieldValues = FieldValues,
