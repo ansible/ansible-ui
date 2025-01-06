@@ -329,12 +329,7 @@ export function PageMultiSelect<
       isOpen={open}
       onOpenChange={setOpen}
       toggle={Toggle}
-      popperProps={{
-        appendTo: () => document.body,
-        preventOverflow: true,
-        enableFlip: true,
-        maxWidth: 'trigger',
-      }}
+      popperProps={{ appendTo: () => document.body, preventOverflow: true, enableFlip: true }}
       innerRef={selectListRef}
     >
       <MenuSearch>
