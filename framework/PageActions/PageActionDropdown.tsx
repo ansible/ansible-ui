@@ -179,6 +179,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
             preventOverflow: true,
             enableFlip: true,
             position: position,
+            maxWidth: '300px',
           }}
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle
