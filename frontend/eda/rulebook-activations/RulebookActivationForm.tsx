@@ -141,6 +141,8 @@ export function RulebookActivationInputs() {
     edaAPI`/event-streams/?test_mode=false`
   );
 
+  const { data: config } = useGet<{ deployment_type?: string }>(`/api/eda/v1/config/`);
+
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
     { label: t('Always'), value: 'always' },
@@ -261,14 +263,16 @@ export function RulebookActivationInputs() {
         labelHelp={logLevelHelpBlock}
         labelHelpTitle={t('Log level')}
       />
-      <PageFormTextInput<IEdaRulebookActivationInputs>
-        name="k8s_service_name"
-        label={t('Service name')}
-        id={'k8s_service_name'}
-        placeholder={t('Enter service name')}
-        labelHelp={t('Optional service name.')}
-        labelHelpTitle={t('Service name')}
-      />
+      {config?.deployment_type === 'k8s' && (
+        <PageFormTextInput<IEdaRulebookActivationInputs>
+          name="k8s_service_name"
+          label={t('Service name')}
+          id={'k8s_service_name'}
+          placeholder={t('Enter service name')}
+          labelHelp={t('Optional service name.')}
+          labelHelpTitle={t('Service name')}
+        />
+      )}
       <PageFormSwitch<IEdaRulebookActivationInputs>
         id="rulebook-activation"
         name="is_enabled"

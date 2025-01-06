@@ -45,6 +45,12 @@ describe('Create rulebook activation ', () => {
         fixture: 'edaEventStreams.json',
       }
     );
+    cy.intercept(
+      { method: 'GET', url: edaAPI`/config/` },
+      {
+        fixture: 'edaConfig.json',
+      }
+    );
   });
 
   it('Create Rulebook Activation - Displays error message on internal server error', () => {
