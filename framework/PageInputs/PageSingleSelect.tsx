@@ -311,12 +311,7 @@ export function PageSingleSelect<
         isOpen={open}
         onOpenChange={setOpen}
         toggle={props.toggle ?? Toggle}
-        popperProps={{
-          appendTo: () => document.body,
-          preventOverflow: true,
-          enableFlip: true,
-          maxWidth: 'trigger',
-        }}
+        popperProps={{ appendTo: () => document.body, preventOverflow: true, enableFlip: true }}
         shouldFocusToggleOnSelect
         innerRef={selectListRef}
       >
