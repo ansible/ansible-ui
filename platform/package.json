@@ -5,7 +5,8 @@
     "@ansible/ansible-ui-framework": "^0.0.0",
     "@ansible/awx-ui": "^0.0.0",
     "@ansible/eda-ui": "^0.0.0",
-    "@ansible/hub-ui": "^0.0.0"
+    "@ansible/hub-ui": "^0.0.0",
+    "path-to-regexp": "^8.2.0"
   },
   "scripts": {
     "start": "cd .. && UI_MODE=AWX BRAND='Red Hat' PRODUCT='Ansible Automation Platform' AWX_API_PREFIX='/api/controller/v2' AWX_WEBSOCKET_PREFIX='/api/controller/v2/websocket/' HUB_API_PREFIX='/api/galaxy' webpack serve --mode development --config ./platform/webpack.platform.cjs --port 4100 --open",
@@ -30,8 +31,5 @@
     "eslint:fix": "eslint --fix .",
     "prettier": "prettier --check !**/*.scss .",
     "prettier:fix": "prettier --write ."
-  },
-  "dependencies": {
-    "path-to-regexp": "^8.2.0"
   }
 }
