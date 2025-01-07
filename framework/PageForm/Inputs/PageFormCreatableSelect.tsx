@@ -30,6 +30,7 @@ export type PageFormCreatableSelectProps<
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
   isMulti?: boolean;
+  toggleButtonId?: string;
 };
 
 export function PageFormCreatableSelect<
@@ -49,6 +50,7 @@ export function PageFormCreatableSelect<
     placeholderText,
     validate,
     isMulti = true,
+    toggleButtonId,
   } = props;
   const {
     control,
@@ -111,6 +113,7 @@ export function PageFormCreatableSelect<
             isSubmitting={isSubmitting}
             isRequired={isRequired}
             label={label}
+            toggleButtonId={toggleButtonId}
             labelHelp={labelHelp}
             labelHelpTitle={labelHelpTitle ?? label}
             options={options}

@@ -229,7 +229,7 @@ function NodeResourceInput() {
               </>
             );
           case RESOURCE_TYPE.project_update:
-            return <PageFormProjectSelect<WizardFormValues> name="resource" isRequired />;
+            return <PageFormProjectSelect<WizardFormValues> name="resourceId" isRequired />;
           case RESOURCE_TYPE.inventory_update:
             return <PageFormInventorySourceSelect<WizardFormValues> name="resourceId" isRequired />;
           case RESOURCE_TYPE.system_job:

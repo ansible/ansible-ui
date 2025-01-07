@@ -23,6 +23,7 @@ import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
+import { Project } from '../../interfaces/Project';
 
 // This list below comes from the previous AWX code
 //https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
@@ -41,7 +42,9 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const { t } = useTranslation();
   const { setValue, getValues, reset } = useFormContext<JobTemplateForm>();
   const [playbookOptions, setPlaybookOptions] = useState<string[]>();
-  const projectPath = useWatch<JobTemplateForm, 'project'>({ name: 'project' });
+  const [allowOverride, setAllowOverride] = useState<boolean>();
+  const [organization, setOrganization] = useState<number | undefined>();
+  const projectId = useWatch<JobTemplateForm, 'project'>({ name: 'project' });
   const isProvisioningCallbackEnabled = useWatch<JobTemplateForm, 'isProvisioningCallbackEnabled'>({
     name: 'isProvisioningCallbackEnabled',
   });
@@ -54,23 +57,24 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const askJobTypeOnLaunch = useWatch<JobTemplateForm, 'ask_job_type_on_launch'>({
     name: 'ask_job_type_on_launch',
   });
-  const organization = useWatch<JobTemplateForm, 'organization'>({ name: 'organization' });
-  const organizationId = organization ?? projectPath?.organization;
   useEffect(() => {
     reset(getValues());
   }, [isProvisioningCallbackEnabled, reset, getValues]);
 
   useEffect(() => {
     async function handleFetchPlaybooks() {
-      if (projectPath) {
+      if (projectId) {
         const playbooks = await requestGet<string[]>(
-          awxAPI`/projects/${projectPath.id.toString()}/playbooks/`
+          awxAPI`/projects/${projectId.toString()}/playbooks/`
         );
+        const project = await requestGet<Project>(awxAPI`/projects/${projectId.toString()}`);
+        setOrganization(project.organization ?? undefined);
+        setAllowOverride(project.allow_override ?? false);
         return setPlaybookOptions(playbooks);
       }
     }
-    handleFetchPlaybooks().catch(() => 'there was an error');
-  }, [projectPath, setValue]);
+    void handleFetchPlaybooks();
+  }, [projectId, setValue]);
 
   return (
     <>
@@ -122,7 +126,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         options={playbookOptions?.map((playbook) => ({ label: playbook, value: playbook })) ?? []}
       />
 
-      {projectPath?.allow_override ? (
+      {allowOverride ? (
         <PageFormTextInput<JobTemplateForm>
           name="scm_branch"
           placeholder={t('Enter source control branch')}
@@ -138,7 +142,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       ) : null}
       <PageFormSelectExecutionEnvironment<JobTemplateForm>
         name="execution_environment.id"
-        organizationId={organizationId}
+        organizationId={organization}
         additionalControls={
           <PageFormCheckbox
             label={t('Prompt on launch')}

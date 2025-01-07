@@ -36,6 +36,7 @@ export type FormGroupSingleSelectTypeAheadProps = {
   value: string | string[] | Partial<{ name: string }> | null;
   onHandleClear: () => void;
   isRequired?: boolean;
+  toggleButtonId?: string;
 };
 
 export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeAheadProps) {
@@ -55,6 +56,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     value: propValue,
     onHandleClear,
     isRequired,
+    toggleButtonId = '',
   } = props;
 
   const { t } = useTranslation();
@@ -285,6 +287,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
       onClick={onToggleClick}
       innerRef={toggleRef}
       isExpanded={isOpen}
+      id={toggleButtonId}
       isFullWidth
       isDisabled={isReadOnly || isSubmitting}
     >

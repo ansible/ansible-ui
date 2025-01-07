@@ -1,6 +1,5 @@
 import { JobTemplate } from './JobTemplate';
 import { Label } from './Label';
-import { Project } from './Project';
 import { Credential } from './Credential';
 import { InstanceGroup } from './InstanceGroup';
 
@@ -19,7 +18,6 @@ export interface JobTemplateForm
     | 'job_tags'
     | 'last_job'
     | 'modified'
-    | 'organization'
     | 'related'
     | 'skip_tags'
     | 'status'
@@ -43,9 +41,8 @@ export interface JobTemplateForm
   isWebhookEnabled: boolean;
   job_tags: { name: string; value: string; label: string }[];
   labels: Label[];
-  organization?: number;
   playbook: string;
-  project: Pick<Project, 'id' | 'name' | 'organization' | 'allow_override'>;
+  project: number;
   related: JobTemplateRelatedFields;
   skip_tags: { name: string; value: string; label: string }[];
   webhook_credential: number;

@@ -17,7 +17,7 @@ export async function createJobTemplate(
   await page.getByRole('option', { name: inventoryName }).click();
 
   const projectName = options.projectName ?? 'Demo Project';
-  await page.locator('#project').click();
+  await page.locator('#project-select').click();
   await page.getByRole('option', { name: projectName }).click();
 
   await new Promise((r) => setTimeout(r, 1000)); // TODO need to figure this out...
