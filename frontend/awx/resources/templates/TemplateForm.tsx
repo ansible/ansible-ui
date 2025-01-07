@@ -67,7 +67,7 @@ export function EditJobTemplate() {
     } = values;
     const formValues = {
       ...rest,
-      project: values.project.id,
+      project: values.project,
       execution_environment: values.execution_environment?.id || null,
       inventory: values.inventory?.id || null,
       job_tags: stringifyTags(values.job_tags) ?? '',
@@ -138,7 +138,7 @@ export function CreateJobTemplate() {
     const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
     const formValues = {
       ...rest,
-      project: values.project.id,
+      project: values.project,
       execution_environment: values.execution_environment?.id
         ? values.execution_environment?.id
         : null,

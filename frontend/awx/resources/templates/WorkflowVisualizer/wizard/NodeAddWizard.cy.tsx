@@ -106,9 +106,7 @@ describe('NodeAddWizard', () => {
     cy.get('[data-cy="node-type-form-group"]').within(() => {
       cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Project Sync');
     });
-    cy.get('[data-cy="project-form-group"]').within(() => {
-      cy.get('div.pf-v5-c-select__toggle-wrapper').should('have.text', 'Select project');
-    });
+    cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
   });
 
   it('Should render the correct fields for an inventory source node', () => {

@@ -347,16 +347,7 @@ describe('Execution Environments', () => {
         });
       });
       cy.get('li').contains(`${inventory.name}`).click();
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.get('[data-cy="filter-input"]').click();
-      });
-      cy.get('[id="filter-input-search"]').type(project.name);
-      const projName = project.name.toLowerCase().split(' ').join('-').toString();
-      cy.get(`[id="${projName}"]`).find('input').check();
-      cy.getBy('[data-cy="checkbox-column-cell"]').click();
-      cy.clickButton('Confirm');
+      cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.singleSelectBy('[data-cy="executionEnvironment"]', execEnvName);
       cy.intercept('POST', awxAPI`/job_templates/`).as('createJT');

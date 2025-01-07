@@ -6,11 +6,7 @@ import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { Schedule } from '@ansible/awx-ui/interfaces/Schedule';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
-const getId = (name: string) =>
-  name
-    .split(' ')
-    .map((i) => i.toLowerCase())
-    .join('-');
+
 describe('Schedules - Create and Delete', () => {
   describe('Schedules - Create schedule of resource type Job template', () => {
     let organization: Organization;
@@ -51,12 +47,7 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.getBy('button[id="job-template-select"]').click();
-      const templateID = getId(jobTemplate.name);
-      cy.get('div#job-template-select-select').within(() => {
-        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
-        cy.get(`button#${templateID}`).click();
-      });
+      cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -83,12 +74,7 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Schedule COUNT ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.getBy('button[id="job-template-select"]').click();
-      const templateID = getId(jobTemplate.name);
-      cy.get('div#job-template-select-select').within(() => {
-        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
-        cy.get(`button#${templateID}`).click();
-      });
+      cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -120,12 +106,7 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Schedule UNTIL ' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.getBy('button[id="job-template-select"]').click();
-      const templateID = getId(jobTemplate.name);
-      cy.get('div#job-template-select-select').within(() => {
-        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
-        cy.get(`button#${templateID}`).click();
-      });
+      cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -160,12 +141,7 @@ describe('Schedules - Create and Delete', () => {
         cy.getByDataCy('create-schedule').click();
         cy.verifyPageTitle('Create schedule');
         cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-        cy.getBy('button[id="job-template-select"]').click();
-        const templateID = getId(jobTemplate.name);
-        cy.get('div#job-template-select-select').within(() => {
-          cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
-          cy.get(`button#${templateID}`).click();
-        });
+        cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
         cy.getByDataCy('name').type(`${scheduleName}`);
         cy.clickButton('Next');
         cy.selectDropdownOptionByResourceName('freq', 'Hourly');
@@ -173,13 +149,9 @@ describe('Schedules - Create and Delete', () => {
         cy.clickButton('Save rule');
         cy.clickButton('Next');
         cy.clickButton('Next');
-        // cy.intercept('GET', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as(
-        //   'fetchTemplate'
-        // );
         cy.intercept(awxAPI`/schedules/preview/`).as('preview');
         cy.wait('@preview');
         cy.clickButton('Finish');
-        // cy.wait('@fetchTemplate');
         cy.get('div.pf-v5-c-alert__description').should(
           'have.text',
           'Job Template inventory is missing or undefined.'
@@ -212,16 +184,7 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule Project' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Project sync');
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.get('[data-cy="filter-input"]').click();
-      });
-      cy.get('[id="filter-input-search"]').type(project.name);
-      const projName = project.name.toLowerCase().split(' ').join('-').toString();
-      cy.get(`[id="${projName}"]`).find('input').check();
-      cy.getBy('[data-cy="checkbox-column-cell"]').click();
-      cy.clickButton('Confirm');
+      cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -427,17 +390,10 @@ describe('Schedules - Create and Delete', () => {
       cy.verifyPageTitle('Schedules');
       cy.getByDataCy('create-schedule').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Job template');
-      cy.getBy('button[id="job-template-select"]').click();
-      const templateID = getId(jobTemplate.name);
-      cy.intercept(awxAPI`/job_templates/*/launch`).as('launchConfiguration');
-      cy.get('div#job-template-select-select').within(() => {
-        cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
-        cy.get(`button#${templateID}`).click();
-      });
+      cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'America/Mexico_City');
       cy.clickButton(/^Next$/);
-      cy.wait('@launchConfiguration');
       cy.getByDataCy('wizard-nav').within(() => {
         ['Details', 'Prompts', 'Survey', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
           cy.get('li')
@@ -449,9 +405,17 @@ describe('Schedules - Create and Delete', () => {
       //Prompts step
       cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Prompts');
       cy.get('input[placeholder="Select or create job tags"]').type('test_job_tag');
-      cy.get('[id="prompt.job_tags"]').find('button').click();
+      cy.get('div[id="prompt.job_tags-form-group"]').within(() => {
+        cy.get('ul').within(() => {
+          cy.get('button').click();
+        });
+      });
       cy.get('input[placeholder="Select or create skip tags"]').type('test_skip_tag');
-      cy.get('[id="prompt.skip_tags"]').find('button').click();
+      cy.get('div[id="prompt.skip_tags-form-group"]').within(() => {
+        cy.get('ul').within(() => {
+          cy.get('button').click();
+        });
+      });
       cy.clickButton(/^Next$/);
 
       //Survey step

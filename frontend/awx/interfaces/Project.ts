@@ -56,7 +56,7 @@ export interface Project
     access_list: string;
     object_roles: string;
     copy: string;
-    organization: string;
+    organization: number;
     last_job?: string;
     last_update?: string;
   };

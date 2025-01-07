@@ -61,16 +61,7 @@ describe('Job Templates Tests', function () {
         });
       });
       cy.get('li').contains(`${awxInventory.name}`).click();
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.get('[data-cy="filter-input"]').click();
-      });
-      cy.get('[id="filter-input-search"]').type(awxProject.name);
-      const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
-      cy.get(`[id="${projName}"]`).find('input').check();
-      cy.getBy('[data-cy="checkbox-column-cell"]').click();
-      cy.clickButton('Confirm');
+      cy.selectAsyncSingleSelectOption('project-select', `${awxProject.name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.getBy('[data-cy="Submit"]').click();
       cy.wait('@createJT')
@@ -105,16 +96,7 @@ describe('Job Templates Tests', function () {
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
         cy.getBy('[data-cy="extra-vars"]').type('foo: bar');
         cy.selectPromptOnLaunch('inventory');
-        cy.getBy('button[id="project"]').click();
-        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-        cy.getModal().within(() => {
-          cy.get('[data-cy="filter-input"]').click();
-        });
-        cy.get('[id="filter-input-search"]').type(awxProject.name);
-        const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
-        cy.get(`[id="${projName}"]`).find('input').check();
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+        cy.selectAsyncSingleSelectOption('project-select', `${awxProject.name}`);
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
         cy.selectPromptOnLaunch('variables');
@@ -174,16 +156,7 @@ describe('Job Templates Tests', function () {
         cy.getBy('[data-cy="name"]').type(jtName);
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
         cy.selectPromptOnLaunch('inventory');
-        cy.getBy('button[id="project"]').click();
-        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-        cy.getModal().within(() => {
-          cy.get('[data-cy="filter-input"]').click();
-        });
-        cy.get('[id="filter-input-search"]').type(awxProject.name);
-        const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
-        cy.get(`[id="${projName}"]`).find('input').check();
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
+        cy.selectAsyncSingleSelectOption('project-select', `${awxProject.name}`);
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
         cy.selectPromptOnLaunch('credential');
@@ -765,16 +738,7 @@ describe('Job Templates Tests', function () {
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);
           cy.selectPromptOnLaunch('inventory');
-          cy.getBy('button[id="project"]').click();
-          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-          cy.getModal().within(() => {
-            cy.get('[data-cy="filter-input"]').click();
-          });
-          cy.get('[id="filter-input-search"]').type(awxProject.name);
-          const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
-          cy.get(`[id="${projName}"]`).find('input').check();
-          cy.getBy('[data-cy="checkbox-column-cell"]').click();
-          cy.clickButton('Confirm');
+          cy.selectAsyncSingleSelectOption('project-select', `${awxProject.name}`);
           cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
           cy.multiSelectByDataCy('credential', [machineCredential1.name, machineCredential2.name]);
           cy.getBy('[data-cy="Submit"]').click();
@@ -829,16 +793,7 @@ describe('Job Templates Tests', function () {
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);
           cy.selectPromptOnLaunch('inventory');
-          cy.getBy('button[id="project"]').click();
-          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-          cy.getModal().within(() => {
-            cy.get('[data-cy="filter-input"]').click();
-          });
-          cy.get('[id="filter-input-search"]').type(awxProject.name);
-          const projName = awxProject.name.toLowerCase().split(' ').join('-').toString();
-          cy.get(`[id="${projName}"]`).find('input').check();
-          cy.getBy('[data-cy="checkbox-column-cell"]').click();
-          cy.clickButton('Confirm');
+          cy.selectAsyncSingleSelectOption('project-select', `${awxProject.name}`);
           cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
           cy.multiSelectByDataCy('credential', [vaultCredential1.name, vaultCredential2.name]);
           cy.getBy('[data-cy="Submit"]').click();

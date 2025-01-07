@@ -68,18 +68,16 @@ describe('Inventory Sources', () => {
           cy.verifyPageTitle('Create source');
           cy.getByDataCy('name').type('project source');
           cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
-          cy.getBy('button[id="project"]').click();
-          cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-          cy.getModal().within(() => {
-            cy.get('[data-cy="filter-input"]').click();
+          cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
+          cy.get('div#inventory-file-toggle').within(() => {
+            cy.get('button').click();
+            cy.get('input[aria-label="Type to filter"]').type('Dockerfile');
           });
-          cy.get('[id="filter-input-search"]').type(project.name);
-          const projName = project.name.toLowerCase().split(' ').join('-').toString();
-          cy.get(`[id="${projName}"]`).find('input').check();
-          cy.getBy('[data-cy="checkbox-column-cell"]').click();
-          cy.clickButton('Confirm');
-          cy.get('#inventory-typeahead-select-input').click();
-          cy.get('#select-create-typeahead-Dockerfile').click();
+          cy.get('div#inventory-typeahead-select').within(() => {
+            cy.get('li.pf-v5-c-menu__list-item').within(() => {
+              cy.get('button#select-create-typeahead-Dockerfile').click();
+            });
+          });
           cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
           cy.getByDataCy('host-filter').type('/^test$/');
@@ -131,36 +129,6 @@ describe('Inventory Sources', () => {
   });
 
   describe('Inventory Source Schedules List Page', () => {
-    // https://issues.redhat.com/browse/AAP-28875
-    it.skip('can navigate to the Create Schedules form, create a new Schedule, verify schedule is enabled, and verify all expected information is showing on the details page', () => {
-      goToSourceList(inventory.name);
-      cy.clickTableRowLink('name', inventorySource.name, { disableFilter: true });
-      cy.verifyPageTitle(inventorySource.name);
-      cy.clickTab('Schedules', true);
-      cy.clickButton('Create schedule');
-      cy.get('[data-cy="wizard-nav"]').within(() => {
-        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
-          cy.get('li')
-            .eq(index)
-            .should((el) => expect(el.text().trim()).to.equal(text));
-        });
-      });
-      cy.getByDataCy('name').clear().type('new schedule', { timeout: 300 });
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Save rule$/);
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Next$/);
-      cy.clickButton(/^Finish$/);
-      cy.verifyPageTitle('new schedule');
-      cy.get('.pf-v5-c-switch__label.pf-m-on')
-        .should('have.text', 'Schedule enabled')
-        .should('be.visible');
-      cy.getByDataCy('name').should('contain', 'new schedule');
-      cy.getByDataCy('next-run').should('exist');
-      cy.getByDataCy('first-run').should('exist');
-      cy.getByDataCy('time-zone').should('contain', 'America/New_York');
-    });
-
     it("can access the Edit form of an existing Schedule, update information, and verify the presence of the edited information on the schedule's details page", () => {
       cy.createAWXSchedule({
         name: scheduleName,
@@ -375,18 +343,16 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.selectDropdownOptionByResourceName('source_control_type', 'Sourced from a Project');
     cy.getByDataCy('overwrite_vars').check();
     cy.getByDataCy('update_on_launch').check();
-    cy.getBy('button[id="project"]').click();
-    cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-    cy.getModal().within(() => {
-      cy.get('[data-cy="filter-input"]').click();
+    cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
+    cy.get('div#inventory-file-toggle').within(() => {
+      cy.get('button').click();
+      cy.get('input[aria-label="Type to filter"]').type('Dockerfile');
     });
-    cy.get('[id="filter-input-search"]').type(project.name);
-    const projName = project.name.toLowerCase().split(' ').join('-').toString();
-    cy.get(`[id="${projName}"]`).find('input').check();
-    cy.getBy('[data-cy="checkbox-column-cell"]').click();
-    cy.clickButton('Confirm');
-    cy.get('#inventory-typeahead-select-input').click();
-    cy.get('#select-create-typeahead-Dockerfile').click();
+    cy.get('div#inventory-typeahead-select').within(() => {
+      cy.get('li.pf-v5-c-menu__list-item').within(() => {
+        cy.get('button#select-create-typeahead-Dockerfile').click();
+      });
+    });
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
     cy.verifyPageTitle('new project');

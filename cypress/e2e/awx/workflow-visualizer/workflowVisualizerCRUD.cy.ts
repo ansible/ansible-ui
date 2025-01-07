@@ -325,16 +325,7 @@ describe('Workflow Visualizer', () => {
       });
       cy.getByDataCy('edit-node').click();
       cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
-      cy.getModal().within(() => {
-        cy.get('[data-cy="filter-input"]').click();
-      });
-      cy.get('[id="filter-input-search"]').type(project.name);
-      const projName = project.name.toLowerCase().split(' ').join('-').toString();
-      cy.get(`[id="${projName}"]`).find('input').check();
-      cy.getBy('[data-cy="checkbox-column-cell"]').click();
-      cy.clickButton('Confirm');
+      cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
       cy.getByDataCy('node-alias').type(`Project Node`);
       cy.clickButton('Next');
@@ -398,16 +389,7 @@ describe('Workflow Visualizer', () => {
             });
             cy.getByDataCy('add-node-and-link').click();
             cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
-            cy.getBy('button[id="project"]').click();
-            cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
-            cy.getModal().within(() => {
-              cy.get('[data-cy="filter-input"]').click();
-            });
-            cy.get('[id="filter-input-search"]').type(project.name);
-            const projName = project.name.toLowerCase().split(' ').join('-').toString();
-            cy.get(`[id="${projName}"]`).find('input').check();
-            cy.getBy('[data-cy="checkbox-column-cell"]').click();
-            cy.clickButton('Confirm');
+            cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
             cy.selectDropdownOptionByResourceName('node-convergence', 'All');
             cy.getByDataCy('node-alias').type('Project Node');
             cy.clickButton('Next');
@@ -461,16 +443,7 @@ describe('Workflow Visualizer', () => {
                 cy.clickButton('Finish');
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Project Sync');
-                cy.getBy('button[id="project"]').click();
-                cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
-                cy.getModal().within(() => {
-                  cy.get('[data-cy="filter-input"]').click();
-                });
-                cy.get('[id="filter-input-search"]').type(project.name);
-                const projName = project.name.toLowerCase().split(' ').join('-').toString();
-                cy.get(`[id="${projName}"]`).find('input').check();
-                cy.getBy('[data-cy="checkbox-column-cell"]').click();
-                cy.clickButton('Confirm');
+                cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.clickButton('Next');
                 cy.clickButton('Finish');

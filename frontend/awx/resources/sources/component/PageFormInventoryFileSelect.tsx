@@ -2,10 +2,9 @@ import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/
 import { ReactElement, ReactNode } from 'react';
 import { FieldPath, FieldValues, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useGet } from '../../../../common/crud/useGet';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySourceForm } from '../../../interfaces/InventorySource';
-import { Project } from '../../../interfaces/Project';
+import { useGet } from '../../../../common/crud/useGet';
 
 export function PageFormInventoryFileSelect<
   TFieldValues extends FieldValues = FieldValues,
@@ -18,8 +17,8 @@ export function PageFormInventoryFileSelect<
   labelHelp?: string | string[] | ReactNode;
 }) {
   const { t } = useTranslation();
-  const value = useWatch({ name: props.watch }) as Project;
-  const projectId = value?.id?.toString() ?? '';
+  const value = useWatch<{ [key: string]: number }>({ name: props.watch });
+  const projectId = value?.toString() ?? '';
 
   const { data: inventories, error } = useGet<Array<string>>(
     awxAPI`/projects/${projectId}/inventories/`
@@ -42,6 +41,7 @@ export function PageFormInventoryFileSelect<
     <PageFormCreatableSelect<InventorySourceForm>
       placeholderText={t('Select inventory file')}
       name="source_path"
+      toggleButtonId="inventory-file-toggle"
       id="inventory"
       additionalControls={props.additionalControls}
       label={t('Inventory file')}

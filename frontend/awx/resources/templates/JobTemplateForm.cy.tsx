@@ -104,12 +104,12 @@ describe('Create job template ', () => {
     );
     cy.mount(<CreateJobTemplate />);
     cy.contains('Error loading inventories').should('be.visible');
-    cy.contains('Error loading projects').should('be.visible');
   });
 
   it('Should validate required form fields', () => {
     cy.mount(<CreateJobTemplate />);
     cy.clickButton(/^Create job template$/);
+
     ['Name', 'Inventory', 'Project', 'Playbook'].map((field) =>
       cy.contains(`${field} is required.`).should('be.visible')
     );
@@ -141,7 +141,7 @@ describe('Create job template ', () => {
     cy.get('button[aria-describedby="job_type-form-group"]').click();
     cy.clickButton(/^Check$/);
     cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
-    cy.selectDropdownOptionByResourceName('project', 'Demo Project').as('ProjectInput');
+    cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroups[0].name]);
     cy.clickButton('Create job template');

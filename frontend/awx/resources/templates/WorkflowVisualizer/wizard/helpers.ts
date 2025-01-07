@@ -29,7 +29,7 @@ export function getResourceURL(resourceType: string): string {
       return awxAPI`/inventory_sources`;
     case 'project':
     case 'project_update':
-      return awxAPI`/projects`;
+      return awxAPI`/projects/`;
     case 'system_job':
     case 'management_job_template':
       return awxAPI`/system_job_templates/`;

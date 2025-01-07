@@ -66,7 +66,7 @@ export function CreateInventorySource() {
       source_path:
         values?.source_path?.name === '/ (project root)' ? '' : values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
-      source_project: values?.source_project?.id,
+      source_project: values?.source_project,
     };
 
     const source = await postRequest(awxAPI`/inventory_sources/`, formValues);
@@ -142,7 +142,7 @@ export function EditInventorySource() {
       execution_environment: inventorySource?.summary_fields?.execution_environment?.id,
       source: inventorySource?.source,
       credential: inventorySource?.credential ?? null,
-      source_project: inventorySource?.summary_fields?.source_project,
+      source_project: inventorySource?.summary_fields?.source_project?.id,
       source_path: {
         name: inventorySource?.source_path ? inventorySource?.source_path : '/ (project root)',
       },
@@ -165,7 +165,7 @@ export function EditInventorySource() {
       source_path:
         values?.source_path?.name === '/ (project root)' ? '' : values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
-      source_project: values?.source_project?.id,
+      source_project: values?.source_project,
     };
 
     const source = await patchRequest(
