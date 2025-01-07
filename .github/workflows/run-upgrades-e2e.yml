@@ -7,6 +7,26 @@ on:
         type: string
         required: true
         description: 'Platform Server'
+      CTRL_LDAP:
+        type: boolean
+        required: false
+        default: false
+      HUB_LDAP:
+        type: boolean
+        required: false
+        default: false
+      HUB_KEYCLOAK:
+        type: boolean
+        required: false
+        default: false
+      CTRL_OIDC:
+        type: boolean
+        required: false
+        default: false
+      CTRL_SAML:
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   platform-ui-image:
@@ -27,6 +47,11 @@ jobs:
     uses: ./.github/workflows/upgrades-e2e.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+      CTRL_LDAP: ${{ inputs.CTRL_LDAP }}
+      HUB_LDAP: ${{ inputs.HUB_LDAP }}
+      HUB_KEYCLOAK: ${{ inputs.HUB_KEYCLOAK }}
+      CTRL_OIDC: ${{ inputs.CTRL_OIDC }}
+      CTRL_SAML: ${{ inputs.CTRL_SAML }}
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       UPGRADES_PROJECT_ID: ${{ secrets.UPGRADES_PROJECT_ID }}
