@@ -8,9 +8,15 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import { useRequiredValidationRule } from './validation-hooks';
-import { SelectOptionObject } from '@patternfly/react-core/deprecated';
 import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
 import { FormGroupSingleSelectTypeAhead } from './FormGroupSingleSelectTypeAhead';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
 
 export type PageFormCreatableSelectProps<
   TFieldValues extends FieldValues = FieldValues,

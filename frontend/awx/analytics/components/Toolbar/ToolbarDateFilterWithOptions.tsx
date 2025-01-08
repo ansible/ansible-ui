@@ -1,8 +1,14 @@
 import { ToolbarFilterCommon } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarFilterCommon';
 import { ToolbarGroup, ToolbarGroupVariant } from '@patternfly/react-core';
-import { SelectOptionObject } from '@patternfly/react-core/deprecated';
 import { ToolbarDateFilter } from './ToolbarDateFilter';
 import { SelectVariant, ToolbarSelectFilterDeprecated } from './ToolbarSelectFilterDeprecated';
+
+export interface SelectOptionObject {
+  /** Function returns a string to represent the select option object */
+  toString(): string;
+  /** Function returns a true if the passed in select option is equal to this select option object, false otherwise */
+  compareTo?(selectOption: unknown): boolean;
+}
 
 export interface IToolbarDateFilter extends ToolbarFilterCommon {
   /** Filter for filtering by user text input. */
