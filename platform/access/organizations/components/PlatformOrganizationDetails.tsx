@@ -28,7 +28,7 @@ export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const awxService = useHasAwxService();
-  const columns = useOrganizationColumns();
+  const columns = useOrganizationColumns({ disableLinks: true });
 
   const { data: platformOrganization, isLoading } = useGet<PlatformOrganization>(
     gatewayAPI`/organizations/${id.toString()}/`
