@@ -10,6 +10,9 @@ import type { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 import type { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import type { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 import { getAuthenticatorTypeLabel } from '../getAuthenticatorTypeLabel';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { MigrateUsersToDetail } from '../components/MigrateUsersDetail';
 
 type Field = {
   label: string;
@@ -32,13 +35,17 @@ const SubHeading = styled(Text)`
 export function PlatformAuthenticatorDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: authenticator } = useGetItem<Authenticator>(
-    `/api/gateway/v1/authenticators`,
-    params.id
+  const { data: authenticator } = useGetItem<Authenticator>(gatewayAPI`/authenticators`, params.id);
+  const { data: legacyAuthenticators } = useGet<AwxItemsResponse<Authenticator>>(
+    gatewayAPI`/authenticators/`,
+    {
+      auto_migrate_users_to: authenticator?.id.toString() ?? '',
+    }
   );
-  const { data: plugins } = useGet<AuthenticatorPlugins>(`/api/gateway/v1/authenticator_plugins/`);
+
+  const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
   const mapsResponse = useGet<PlatformItemsResponse<AuthenticatorMap>>(
-    `/api/gateway/v1/authenticator_maps/?authenticator=${params.id}`
+    gatewayAPI`/authenticator_maps/?authenticator=${params.id?.toString() ?? ''}`
   );
   const maps = mapsResponse?.data?.results || [];
 
@@ -71,14 +78,21 @@ export function PlatformAuthenticatorDetails() {
       });
     }
   });
-
+  const isLegacyAuthenticator = authenticator?.type.includes('legacy') ?? false;
   const type = getAuthenticatorTypeLabel(authenticator.type, t);
-
   return (
     <Scrollable>
       <PageDetails disableScroll>
         <PageDetail label={t('Name')}>{authenticator.name}</PageDetail>
         <PageDetail label={t('Type')}>{type}</PageDetail>
+        <MigrateUsersToDetail
+          autoMigrateUsersTo={
+            isLegacyAuthenticator
+              ? authenticator.auto_migrate_users_to
+              : legacyAuthenticators?.results
+          }
+          isLegacy={isLegacyAuthenticator}
+        />
         {fields.map((field) => (
           <PageDetail label={field.label} key={field.label}>
             {field.value}

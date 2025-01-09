@@ -129,6 +129,129 @@ describe('AuthenticatorForm', () => {
       });
     });
   });
+  it('Should assign auto migrate users to field for a legacy authenticator', () => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: gatewayAPI`/authenticators/?page_size=10&order_by=name&not__type__contains=legacy`,
+      },
+      {
+        body: {
+          count: 3,
+          next: null,
+          previous: null,
+          results: [
+            authenticators.results[0],
+            authenticators.results[1],
+            authenticators.results[2],
+          ],
+        },
+      }
+    );
+    cy.intercept(
+      {
+        method: 'GET',
+        url: gatewayAPI`/authenticators/1`,
+      },
+      {
+        body: authenticators.results[0],
+      }
+    );
+    cy.mount(
+      <AuthenticatorForm
+        plugins={plugins as AuthenticatorPlugins}
+        handleSubmit={voidFn}
+        authenticator={authenticators.results[3] as unknown as Authenticator}
+        mappings={[]}
+      />
+    );
+    cy.get('button[data-cy="auto_migrate_users_to"]').should(
+      'have.text',
+      'Local Database Authenticator'
+    );
+    cy.get('button[data-cy="auto_migrate_users_to"]').click();
+    cy.get('button#dev-keycloak-container').click();
+    cy.get('button[data-cy="auto_migrate_users_to"]').should('have.text', 'Dev Keycloak Container');
+  });
+
+  it('Should assign auto migrate users to field for a new authenticator', () => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: gatewayAPI`/authenticators/?page_size=10&order_by=name&type__contains=legacy`,
+      },
+      {
+        body: {
+          count: 3,
+          next: null,
+          previous: null,
+          results: [
+            {
+              ...authenticators.results[0],
+              type: 'ansible_base.authenticator_plugins.local.legacy',
+            },
+            {
+              ...authenticators.results[1],
+              type: 'ansible_base.authenticator_plugins.keycloak.legacy',
+            },
+            {
+              ...authenticators.results[2],
+              type: 'ansible_base.authenticator_plugins.ldap.legacy',
+            },
+          ],
+        },
+      }
+    );
+    cy.intercept(
+      {
+        method: 'GET',
+        url: gatewayAPI`/authenticators/?auto_migrate_users_to=${authenticators.results[3].id.toString()}`,
+      },
+      {
+        body: {
+          count: 3,
+          next: null,
+          previous: null,
+          results: [
+            authenticators.results[0],
+            {
+              ...authenticators.results[1],
+              type: 'ansible_base.authenticator_plugins.keycloak.legacy',
+            },
+            {
+              ...authenticators.results[2],
+              type: 'ansible_base.authenticator_plugins.ldap.legacy',
+            },
+          ],
+        },
+      }
+    );
+    cy.mount(
+      <AuthenticatorForm
+        plugins={plugins as AuthenticatorPlugins}
+        handleSubmit={voidFn}
+        authenticator={authenticators.results[0] as unknown as Authenticator}
+        mappings={[]}
+      />
+    );
+
+    const items = [
+      { dataCy: 'dev-ldap-container', label: 'Dev LDAP Container' },
+      { dataCy: 'dev-keycloak-container', label: 'Dev Keycloak Container' },
+    ];
+    cy.get('button[data-cy="auto_migrate_users_to"]').click();
+
+    items.forEach((item) => {
+      cy.get(`li[data-cy=${item.dataCy}]`).within(() => {
+        cy.get('input').click({ force: true });
+      });
+    });
+    cy.get('div.pf-v5-c-chip').each(($el, index) => {
+      cy.wrap($el).within(() => {
+        cy.get('span.pf-v5-c-chip__text').should('have.text', `${items[index].label}`);
+      });
+    });
+  });
 
   describe('buildTriggers', () => {
     it('should build always trigger', () => {

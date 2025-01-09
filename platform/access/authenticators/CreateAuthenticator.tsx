@@ -13,6 +13,7 @@ import {
   buildTriggers,
   formatConfiguration,
 } from './components/AuthenticatorForm';
+import { useProcessAutoMigrationUsersRequest } from './hooks/useProcessAutoMigrationUsersRequest';
 
 type Errors = { [key: string]: string } | undefined;
 
@@ -20,20 +21,29 @@ export function CreateAuthenticator() {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
-
+  const processAutoMigrationUsersRequest = useProcessAutoMigrationUsersRequest();
   const { data: plugins } = useGet<AuthenticatorPlugins>(gatewayAPI`/authenticator_plugins/`);
   if (!plugins) {
     return <LoadingPage />;
   }
 
   const handleSubmit = async (values: AuthenticatorFormValues) => {
-    const { name, enabled, create_objects, remove_users, type, configuration, mappings } = values;
+    const {
+      auto_migrate_users_to,
+      name,
+      enabled = false,
+      create_objects,
+      remove_users,
+      type,
+      configuration,
+      mappings,
+    } = values;
     const plugin = plugins?.authenticators.find((a) => a.type === type);
     if (!plugins || !plugin) {
       return;
     }
 
-    const request = postRequest(gatewayAPI`/authenticators/`, {
+    const request = postRequest<Authenticator>(gatewayAPI`/authenticators/`, {
       name,
       type,
       create_objects,
@@ -42,8 +52,8 @@ export function CreateAuthenticator() {
     });
 
     try {
-      const authenticator = await request;
-      const id = (authenticator as Authenticator).id;
+      const newAuthenticator = await request;
+      const newAuthenticatorId = newAuthenticator.id;
 
       const mapRequests = mappings.map((map, index) => {
         const data = {
@@ -51,7 +61,7 @@ export function CreateAuthenticator() {
           map_type: map.map_type,
           revoke: map.revoke,
           order: index + 1,
-          authenticator: id,
+          authenticator: newAuthenticatorId,
           triggers: buildTriggers(map),
           organization: ['organization', 'team', 'role'].includes(map.map_type)
             ? map.organization
@@ -62,13 +72,14 @@ export function CreateAuthenticator() {
         return postRequest(gatewayAPI`/authenticator_maps/`, data);
       });
       await Promise.all(mapRequests);
-      if (enabled) {
-        await requestPatch(gatewayAPI`/authenticators/${id.toString()}/`, {
-          enabled,
-        });
+      await requestPatch(gatewayAPI`/authenticators/${newAuthenticatorId.toString()}/`, {
+        enabled,
+      });
+      if (auto_migrate_users_to) {
+        await processAutoMigrationUsersRequest(newAuthenticator, auto_migrate_users_to);
       }
       pageNavigate(PlatformRoute.AuthenticatorDetails, {
-        params: { id },
+        params: { id: newAuthenticatorId },
       });
     } catch (err) {
       let children: ReactNode | string | string[];

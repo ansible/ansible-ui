@@ -160,7 +160,6 @@ export function PageMultiSelect<
     props.searchValue ?? '',
     props.setSearchValue
   );
-
   const selectListRef = useRef<HTMLDivElement>(null);
 
   const selectedOptions = useMemo(() => {

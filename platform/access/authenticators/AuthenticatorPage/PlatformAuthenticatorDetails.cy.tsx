@@ -5,6 +5,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 
 const mockAuthenticator = mockPlatformAuthenticators.results[2];
+const legacyAuthenticator = mockPlatformAuthenticators.results[3];
 const mockPlugins = mockPlatformAuthenticatorPlugins;
 const mockMaps = mockPlatformAuthenticatorMaps;
 
@@ -14,6 +15,22 @@ describe('PlatformAuthenticatorDetails', () => {
       { method: 'GET', path: gatewayAPI`/authenticators/*` },
       { body: mockAuthenticator }
     );
+
+    cy.intercept(
+      {
+        method: 'GET',
+        path: gatewayAPI`/authenticators/?auto_migrate_users_to=${legacyAuthenticator.id.toString()}`,
+      },
+      {
+        body: {
+          count: 1,
+          next: null,
+          previous: null,
+          results: [mockPlatformAuthenticators.results[0]],
+        },
+      }
+    );
+
     cy.intercept(
       { method: 'GET', path: gatewayAPI`/authenticator_plugins/` },
       { body: mockPlugins }

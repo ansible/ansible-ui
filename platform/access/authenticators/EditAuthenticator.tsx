@@ -17,6 +17,7 @@ import {
   buildTriggers,
   formatConfiguration,
 } from './components/AuthenticatorForm';
+import { useProcessAutoMigrationUsersRequest } from './hooks/useProcessAutoMigrationUsersRequest';
 
 type Errors = { [key: string]: string } | undefined;
 
@@ -25,6 +26,7 @@ export function EditAuthenticator() {
   const alertToaster = usePageAlertToaster();
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
+  const processAutoMigrationUsersRequest = useProcessAutoMigrationUsersRequest();
 
   const id = Number(params.id);
   const [mappings, setMappings] = useState<AuthenticatorMap[]>();
@@ -64,6 +66,7 @@ export function EditAuthenticator() {
 
   const handleSubmit = async (values: AuthenticatorFormValues) => {
     const {
+      auto_migrate_users_to,
       name,
       enabled,
       create_objects,
@@ -75,16 +78,19 @@ export function EditAuthenticator() {
     if (!plugins || !plugin) {
       return;
     }
-    const request = requestPatch(gatewayAPI`/authenticators/${id.toString()}/`, {
-      name,
-      create_objects,
-      remove_users,
-      enabled: false,
-      configuration: formatConfiguration(configuration, plugin),
-    });
 
     try {
-      const authenticator = await request;
+      const request = requestPatch<
+        Authenticator,
+        Omit<AuthenticatorFormValues, 'type' | 'mappings' | 'auto_migrate_users_to' | 'order'>
+      >(gatewayAPI`/authenticators/${id.toString()}/`, {
+        name,
+        create_objects,
+        remove_users,
+        enabled: false,
+        configuration: formatConfiguration(configuration, plugin),
+      });
+      const updatedAuthenticator = await request;
 
       const controller = new AbortController();
       const deleteRequests = mappings.map((map) => {
@@ -100,7 +106,7 @@ export function EditAuthenticator() {
           map_type: map.map_type,
           revoke: map.revoke,
           order: index + 1,
-          authenticator: (authenticator as Authenticator).id,
+          authenticator: updatedAuthenticator.id,
           triggers: buildTriggers(map),
           organization: ['organization', 'team', 'role'].includes(map.map_type)
             ? map.organization
@@ -116,8 +122,11 @@ export function EditAuthenticator() {
           enabled,
         });
       }
+
+      await processAutoMigrationUsersRequest(updatedAuthenticator, auto_migrate_users_to);
+
       pageNavigate(PlatformRoute.AuthenticatorDetails, {
-        params: { id: (authenticator as Authenticator).id },
+        params: { id: updatedAuthenticator.id },
       });
     } catch (err) {
       let children: ReactNode | string | string[];

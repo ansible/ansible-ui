@@ -25,6 +25,7 @@
     },
     {
       "name": "Dev Keycloak Container",
+      "auto_migrate_users_to": 1,
       "id": 2,
       "url": "/api/gateway/v1/authenticators/2/",
       "created_on": "2023-11-01T21:03:55.143569Z",
@@ -70,6 +71,7 @@
     },
     {
       "name": "Dev LDAP Container",
+      "auto_migrate_users_to": null,
       "id": 3,
       "url": "/api/gateway/v1/authenticators/3/",
       "created_on": "2023-11-01T21:03:56.170000Z",
@@ -126,6 +128,72 @@
         "USER_SEARCH": ["ou=users,dc=example,dc=org", "SCOPE_SUBTREE", "(cn=%(user)s)"]
       },
       "type": "ansible_base.authenticator_plugins.ldap",
+      "order": 1,
+      "slug": "ansible_baseauthenticator_pluginsldap-dev-ldap-container"
+    },
+    {
+      "name": "legacy",
+      "auto_migrate_users_to": 1,
+      "id": 4,
+      "url": "/api/gateway/v1/authenticators/3/",
+      "created_on": "2023-11-01T21:03:56.170000Z",
+      "created_by": 1,
+      "modified_on": "2023-11-01T21:03:56.170016Z",
+      "modified_by": 1,
+      "related": {
+        "created_by": "/api/gateway/v1/users/1/",
+        "modified_by": "/api/gateway/v1/users/1/",
+        "authenticator-map": "/api/gateway/v1/authenticators/3/authenticator_maps/"
+      },
+      "summary_fields": {
+        "created_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "Local",
+          "last_name": "Admin"
+        },
+        "modified_by": {
+          "id": 1,
+          "username": "admin",
+          "first_name": "Local",
+          "last_name": "Admin"
+        },
+        "auto_migrate_users_to": {
+          "name": "Local Database Authenticator",
+          "id": 1
+        }
+      },
+      "enabled": true,
+      "create_objects": true,
+      "remove_users": true,
+      "configuration": {
+        "BIND_DN": "cn=admin,dc=example,dc=org",
+        "BIND_PASSWORD": "$encrypted$",
+        "CONNECTION_OPTIONS": {
+          "OPT_REFERRALS": 0,
+          "OPT_NETWORK_TIMEOUT": 30
+        },
+        "GROUP_SEARCH": [
+          "ou=groups,dc=example,dc=org",
+          "SCOPE_SUBTREE",
+          "(objectClass=groupOfNames)"
+        ],
+        "GROUP_TYPE": "MemberDNGroupType",
+        "GROUP_TYPE_PARAMS": {
+          "name_attr": "cn",
+          "member_attr": "member"
+        },
+        "SERVER_URI": ["ldap://host.docker.internal:389"],
+        "START_TLS": false,
+        "USER_ATTR_MAP": {
+          "email": "mail",
+          "last_name": "sn",
+          "first_name": "givenName"
+        },
+        "USER_DN_TEMPLATE": "cn=%(user)s,ou=users,dc=example,dc=org",
+        "USER_SEARCH": ["ou=users,dc=example,dc=org", "SCOPE_SUBTREE", "(cn=%(user)s)"]
+      },
+      "type": "ansible_base.legacy.ldap",
       "order": 1,
       "slug": "ansible_baseauthenticator_pluginsldap-dev-ldap-container"
     }

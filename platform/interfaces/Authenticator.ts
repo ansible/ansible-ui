@@ -10,6 +10,7 @@ export enum AuthenticatorTypeEnum {
 export interface Authenticator {
   name: string;
   id: number;
+  auto_migrate_users_to: number | null;
   url: string;
   created: string;
   created_by?: string;
@@ -28,6 +29,7 @@ export interface Authenticator {
   order: number;
   slug: string;
   summary_fields: {
+    auto_migrate_users_to: { name: string; id: number };
     created_by: PlatformUser;
     modified_by: PlatformUser;
   };
