@@ -231,7 +231,7 @@ export function useSaveVisualizer(templateId: string) {
         setValue('job_type', launch_data?.job_type, true);
         setValue('limit', launch_data?.limit, true);
         setValue('scm_branch', launch_data?.scm_branch, true);
-        setValue('skip_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','), true);
+        setValue('skip_tags', launch_data?.skip_tags?.map((tag) => tag.name).join(','), true);
         setValue('timeout', launch_data?.timeout, true);
         setValue('verbosity', launch_data?.verbosity, true);
 
@@ -321,11 +321,11 @@ export function useSaveVisualizer(templateId: string) {
           setValue('forks', launch_data?.forks, true);
           setValue('inventory', launch_data?.inventory?.id, true);
           setValue('job_slice_count', launch_data?.job_slice_count, true);
-          setValue('job_tags', launch_data?.job_tags?.map((tag) => tag).join(','), true);
+          setValue('job_tags', launch_data?.job_tags?.map((tag) => tag.name).join(','), true);
           setValue('job_type', launch_data?.job_type, true);
           setValue('limit', launch_data?.limit, true);
           setValue('scm_branch', launch_data?.scm_branch, true);
-          setValue('skip_tags', launch_data?.job_tags?.map((tag) => tag).join(','), true);
+          setValue('skip_tags', launch_data?.skip_tags?.map((tag) => tag.name).join(','), true);
           setValue('timeout', launch_data?.timeout, true);
           setValue('verbosity', launch_data?.verbosity, true);
 

@@ -113,15 +113,27 @@ export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
           resourceId,
           resource: nodeResource,
         }));
-        setStepData((prev) => ({
-          ...prev,
-          nodePromptsStep: {
-            launch_config: launchConfigResults,
-            resourceId,
-            resource: nodeResource,
-            prompt: launchConfigValue,
-          },
-        }));
+        setStepData((prev) => {
+          const prompts = prev.nodePromptsStep?.prompt;
+          return {
+            ...prev,
+            nodePromptsStep: {
+              launch_config: launchConfigResults,
+              resourceId,
+              resource: nodeResource,
+              prompt: {
+                ...launchConfigValue,
+                inventory: prompts?.inventory ?? launchConfigValue.inventory,
+                credentials: [
+                  ...(launchConfigValue.credentials ?? []),
+                  ...(prompts?.credentials ?? []),
+                ],
+                skip_tags: [...launchConfigValue.skip_tags, ...(prompts?.skip_tags || [])],
+                job_tags: [...launchConfigValue.job_tags, ...(prompts?.job_tags ?? [])],
+              },
+            },
+          };
+        });
       }
     };
 

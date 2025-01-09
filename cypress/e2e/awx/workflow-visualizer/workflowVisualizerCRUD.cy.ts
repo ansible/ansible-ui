@@ -574,3 +574,98 @@ describe('Workflow Visualizer', () => {
     });
   });
 });
+
+describe('Workflow Visualizer Prompt Step', () => {
+  let organization: Organization;
+  let project: Project;
+  let inventory: Inventory;
+  let jobTemplate: JobTemplate;
+  let workflowJobTemplate: WorkflowJobTemplate;
+
+  before(function () {
+    cy.createAwxOrganization().then((thisAwxOrg) => {
+      organization = thisAwxOrg;
+
+      cy.createAwxProject(organization).then((proj) => {
+        project = proj;
+      });
+    });
+  });
+
+  beforeEach(function () {
+    cy.createAwxInventory(organization)
+      .then((i) => {
+        inventory = i;
+      })
+      .then(() => {
+        cy.createAwxJobTemplate({
+          organization: organization.id,
+          project: project.id,
+          inventory: inventory.id,
+          ask_skip_tags_on_launch: true,
+          skip_tags: 'aap-ui',
+        }).then((jt) => {
+          jobTemplate = jt;
+
+          cy.createAwxWorkflowJobTemplate({
+            organization: organization.id,
+            inventory: inventory.id,
+          }).then((wfjt) => {
+            workflowJobTemplate = wfjt;
+          });
+        });
+      });
+  });
+
+  afterEach(() => {
+    cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+    cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
+  });
+
+  after(() => {
+    cy.deleteAwxProject(project, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
+  });
+  it('Should update skip tags', () => {
+    cy.navigateTo('awx', 'templates');
+    cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+    cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
+    cy.get('a[href*="/visualizer"]').click();
+    cy.contains('Workflow Visualizer').should('be.visible');
+    cy.clickButton('Add step');
+    cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
+    cy.getBy('button[id="job-template-select"]').click();
+    cy.get('button#browse').scrollIntoView().click({
+      force: true,
+    });
+    cy.getModal().within(() => {
+      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+      cy.get('[data-cy="checkbox-column-cell"]').first().click();
+      cy.clickButton('Confirm');
+    });
+    cy.selectDropdownOptionByResourceName('node-convergence', 'All');
+    cy.getByDataCy('node-alias').type('Test Node');
+    cy.clickButton('Next');
+    cy.getByDataCy('prompt.skip_tags-form-group').should('exist');
+
+    cy.getByDataCy('prompt.skip_tags-typeahead-input').within(() => {
+      cy.get('span.pf-v5-c-chip__content').should('have.text', 'aap-ui');
+      cy.get('input').type('new skip tag');
+    });
+    cy.getByDataCy('prompt.skip_tags-typeahead-select').within(() => {
+      cy.get('button').should('have.text', 'Create "new skip tag"').click({ force: true });
+    });
+    cy.clickButton('Next');
+    cy.clickButton('Finish');
+    cy.clickButton('Save');
+    cy.get('g[data-type="node"]').within(() => {
+      cy.get('ellipse').click({ force: true });
+    });
+    const skipTagLabels = ['aap-ui', 'new skip tag'];
+    cy.get('span.pf-v5-c-label__text').each(($el, index) => {
+      cy.wrap($el).should('have.text', `${skipTagLabels[index]}`);
+    });
+    cy.pause();
+  });
+});
