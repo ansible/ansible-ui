@@ -9,6 +9,7 @@ import { AuthenticatorPlugins } from '../../../../interfaces/AuthenticatorPlugin
 import { getAuthenticatorTypeLabel } from '../../getAuthenticatorTypeLabel';
 import { AuthenticatorFormValues } from '../AuthenticatorForm';
 import { dataInputTypes, textInputTypes } from './AuthenticatorDetailsStep';
+import { MigrateUsersToDetail } from '../MigrateUsersDetail';
 
 type Field = {
   label: string;
@@ -29,10 +30,9 @@ export function AuthenticatorReviewStep(props: {
 }) {
   const { plugins, authenticator } = props;
   const { t } = useTranslation();
-  const { wizardData } = usePageWizard();
-
-  const { name, configuration, mappings } = wizardData as AuthenticatorFormValues;
-  const type = authenticator ? authenticator.type : (wizardData as AuthenticatorFormValues).type;
+  const { wizardData } = usePageWizard<AuthenticatorFormValues>();
+  const { name, configuration, mappings, auto_migrate_users_to } = wizardData;
+  const type = authenticator ? authenticator.type : wizardData.type;
 
   const schema =
     plugins.authenticators.find((plugin) => plugin.type === type)?.configuration_schema || [];
@@ -60,7 +60,6 @@ export function AuthenticatorReviewStep(props: {
   });
 
   const readableType = getAuthenticatorTypeLabel(type, t);
-
   return (
     <>
       <TextContent style={{ marginBottom: 25 }}>
@@ -69,6 +68,10 @@ export function AuthenticatorReviewStep(props: {
       <PageDetails numberOfColumns="multiple">
         <PageDetail label={t('Name')}>{name}</PageDetail>
         <PageDetail label={t('Type')}>{readableType}</PageDetail>
+        <MigrateUsersToDetail
+          autoMigrateUsersTo={auto_migrate_users_to}
+          isLegacy={authenticator?.type.includes('legacy') ?? false}
+        />
         {fields.map((field) => (
           <PageDetail label={field.label} key={field.label}>
             {field.value}

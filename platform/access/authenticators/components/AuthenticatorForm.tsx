@@ -26,9 +26,13 @@ import { AuthenticatorMappingOrderStep } from './steps/AuthenticatorMappingOrder
 import { AuthenticatorMappingStep, validateMappingStep } from './steps/AuthenticatorMappingStep';
 import { AuthenticatorReviewStep } from './steps/AuthenticatorReviewStep';
 import { AuthenticatorTypeStep } from './steps/AuthenticatorTypeStep';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { useCallback } from 'react';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 
 export interface Configuration {
-  [key: string]: boolean | string | string[] | { [k: string]: string };
+  [key: string]: boolean | string | string[] | { [k: string]: string | boolean | object };
 }
 
 interface MapBase {
@@ -73,6 +77,7 @@ export interface AuthenticatorFormValues {
   type: AuthenticatorTypeEnum;
   order: number;
   mappings: AuthenticatorMapValues[];
+  auto_migrate_users_to: number | Authenticator[] | null;
 }
 
 interface AuthenticatorFormProps {
@@ -139,6 +144,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
       enabled: false,
       create_objects: false,
       remove_users: false,
+      auto_migrate_users_to: null,
     },
     mapping: {},
     order: {},
@@ -152,11 +158,11 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
     initialValues.details = {
       name: authenticator.name,
       configuration: {},
+      auto_migrate_users_to: null,
       enabled: authenticator.enabled,
       create_objects: authenticator.create_objects,
       remove_users: authenticator.remove_users,
     };
-
     const configuration: Configuration = {};
 
     plugin?.configuration_schema.forEach((field) => {
@@ -190,7 +196,6 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
         }),
     };
   }
-
   return (
     <PageLayout>
       <PageHeader
@@ -219,7 +224,7 @@ export function AuthenticatorForm(props: AuthenticatorFormProps) {
 }
 
 export function formatConfiguration(values: Configuration, plugin: AuthenticatorPlugin) {
-  const formatted: { [k: string]: boolean | string | object | [] } = {};
+  const formatted: Configuration = {};
   plugin.configuration_schema.forEach((definition) => {
     const key = definition.name;
     const value = values[key] as string;
@@ -236,7 +241,7 @@ export function formatConfiguration(values: Configuration, plugin: Authenticator
       case 'LDAPConnectionOptions':
       case 'LDAPSearchField':
       case 'UserAttrMap':
-        formatted[key] = JSON.parse(value) as object | [];
+        formatted[key] = JSON.parse(value) as Configuration;
         return;
       case 'BooleanField':
         formatted[key] = Boolean(value);
@@ -333,4 +338,17 @@ export function parseTrigger(mapping: AuthenticatorMap) {
     return { trigger: 'never' };
   }
   return { trigger: 'always' };
+}
+export function useSetAutoMigrateInitialValue() {
+  return useCallback(async (auth?: Authenticator) => {
+    return await requestGet<AwxItemsResponse<Authenticator>>(
+      gatewayAPI`/authenticators/?auto_migrate_users_to=${auth?.id.toString() ?? ''} `
+    ).then((res) => {
+      if (auth?.type.includes('legacy')) {
+        return auth?.summary_fields?.auto_migrate_users_to.id;
+      }
+
+      return res.results[0].id ?? null;
+    });
+  }, []);
 }

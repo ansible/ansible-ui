@@ -26,7 +26,7 @@ describe('Authenticators list', () => {
     it('Authenticators list renders', () => {
       cy.mount(<AuthenticatorsList />);
       cy.verifyPageTitle('Authentication Methods');
-      cy.get('tbody').find('tr').should('have.length', 3);
+      cy.get('tbody').find('tr').should('have.length', 4);
       // Toolbar actions are visible
       cy.get(`[data-cy="create-authentication"]`).should('be.visible');
       cy.get('.page-table-toolbar').within(() => {
@@ -42,7 +42,7 @@ describe('Authenticators list', () => {
     it('Renders the correct authenticators columns', () => {
       cy.mount(<AuthenticatorsList />);
       cy.get('h1').should('contain', 'Authentication');
-      cy.get('tbody').find('tr').should('have.length', 3);
+      cy.get('tbody').find('tr').should('have.length', 4);
       cy.get('[data-cy="order-column-header"]').should('be.visible');
       cy.get('[data-cy="name-column-header"]').should('be.visible');
       cy.get('[data-cy="authentication-type-column-header"]').should('be.visible');

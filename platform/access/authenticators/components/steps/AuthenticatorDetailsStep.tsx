@@ -8,7 +8,7 @@ import {
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
-import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Authenticator } from '../../../../interfaces/Authenticator';
@@ -19,6 +19,10 @@ import {
 } from '../../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../../utils/gateway-api-utils';
 import { AuthenticatorFormValues, Configuration, formatConfiguration } from '../AuthenticatorForm';
+import { PageFormAutoMigrateUsersSelect } from '../PageFormAutoMigrateUsersSelect';
+import { useEffect } from 'react';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { useFormContext } from 'react-hook-form';
 
 /* TODO: more intelligent categorization of field type to input type
     pending updates to the API */
@@ -45,13 +49,44 @@ export function AuthenticatorDetailsStep(props: {
   authenticator?: Authenticator;
 }) {
   const { t } = useTranslation();
-  const { wizardData } = usePageWizard();
+  const { setValue } = useFormContext();
+  const { wizardData, setWizardData, setStepData } = usePageWizard<AuthenticatorFormValues>();
+
+  useEffect(() => {
+    const setBothWizardAndStepData = (value: Authenticator[] | number | null) => {
+      setStepData((prev) => ({
+        ...prev,
+        details: { ...prev.details, auto_migrate_users_to: value },
+      }));
+      setWizardData((prev) => ({
+        ...prev,
+        auto_migrate_users_to: value,
+      }));
+      setValue('auto_migrate_users_to', value);
+    };
+    async function getDefaultAutoMigrateAuthenticator() {
+      await requestGet<AwxItemsResponse<Authenticator>>(
+        gatewayAPI`/authenticators/?auto_migrate_users_to=${props.authenticator?.id.toString() ?? ''}`
+      ).then((res) => {
+        setBothWizardAndStepData(res.results ?? null);
+      });
+    }
+    if (props.authenticator?.type.includes('legacy')) {
+      setBothWizardAndStepData(
+        props.authenticator?.summary_fields?.auto_migrate_users_to.id ?? null
+      );
+      return;
+    }
+    if (props.authenticator) {
+      void getDefaultAutoMigrateAuthenticator();
+    }
+  }, [props.authenticator, setValue, setStepData, setWizardData]);
 
   const authenticatorPlugin = props.plugins.authenticators.find((plugin) => {
     if (props.authenticator) {
       return plugin.type === props.authenticator.type;
     }
-    return plugin.type === (wizardData as AuthenticatorFormValues).type;
+    return plugin.type === wizardData.type;
   });
   let schema = authenticatorPlugin?.configuration_schema || [];
   const textFields: PluginConfiguration[] = [];
@@ -92,6 +127,9 @@ export function AuthenticatorDetailsStep(props: {
           label={t('Name')}
           isRequired
           placeholder={t('Enter authentication name')}
+        />
+        <PageFormAutoMigrateUsersSelect
+          isLegacy={Boolean(props.authenticator?.type.includes('legacy'))}
         />
         {textFields.map((field) =>
           field.type === 'ChoiceField' ? (
