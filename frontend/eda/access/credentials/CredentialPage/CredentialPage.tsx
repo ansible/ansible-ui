@@ -13,7 +13,7 @@ import {
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -22,6 +22,7 @@ import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { useDeleteCredentials } from '../hooks/useDeleteCredentials';
+import { useCopyCredential } from '../hooks/useCopyCredential';
 
 export function CredentialPage() {
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ export function CredentialPage() {
       pageNavigate(EdaRoute.Credentials);
     }
   });
-
+  const copyCredential = useCopyCredential();
   const itemActions = useMemo<IPageAction<EdaCredential>[]>(
     () => [
       {
@@ -57,6 +58,19 @@ export function CredentialPage() {
           pageNavigate(EdaRoute.EditCredential, { params: { id: credential.id } }),
       },
       {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: CopyIcon,
+        label: t(`Copy credential`),
+        onClick: (credential: EdaCredential) => copyCredential(credential),
+        isDisabled: () =>
+          canPatchCredential
+            ? ''
+            : t(`The credential cannot be copied due to insufficient permission.`),
+        isDanger: false,
+        isPinned: true,
+      },
+      {
         type: PageActionType.Seperator,
       },
       {
@@ -72,7 +86,7 @@ export function CredentialPage() {
         isDanger: true,
       },
     ],
-    [canPatchCredential, deleteCredentials, pageNavigate, t]
+    [canPatchCredential, copyCredential, deleteCredentials, pageNavigate, t]
   );
 
   const getPageUrl = useGetPageUrl();
