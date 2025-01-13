@@ -2,7 +2,9 @@ import {
   Chart,
   ChartArea,
   ChartAxis,
+  ChartBar,
   ChartCursorContainerProps,
+  ChartGroup,
   ChartLegendTooltip,
   ChartLine,
   ChartScatter,
@@ -18,6 +20,15 @@ import './PageDashboardChart.css';
 const CursorVoronoiContainer = createContainer('voronoi', 'cursor') as React.FunctionComponent<
   ChartVoronoiContainerProps & ChartCursorContainerProps
 >;
+
+export enum PageDashboardChartVariantE {
+  lineChart = 'lineChart',
+  stackedAreaChart = 'stackedAreaChart',
+  barChart = 'barChart',
+  stackedBarChart = 'stackedBarChart',
+}
+
+export type PageDashboardChartVariant = keyof typeof PageDashboardChartVariantE;
 
 export function PageDashboardChart(props: {
   id?: string;
@@ -41,7 +52,7 @@ export function PageDashboardChart(props: {
   // prevents filtering of zero values
   allowZero?: boolean;
   /** variant of the chart */
-  variant?: 'stackedAreaChart' | 'lineChart';
+  variant?: PageDashboardChartVariant;
   /** additional padding if needed for chart */
   padding?: {
     top?: number;
@@ -87,11 +98,19 @@ export function PageDashboardChart(props: {
     const maxValues: Record<string, number> = {};
     for (const group of groups) {
       for (const entry of group.values) {
-        maxValues[entry.label] = (maxValues[entry.label] ?? 0) + entry.value;
+        switch (props.variant) {
+          case PageDashboardChartVariantE.barChart:
+          case PageDashboardChartVariantE.lineChart:
+            maxValues[entry.label] = Math.max(maxValues[entry.label] ?? 0, entry.value);
+            break;
+          default:
+            maxValues[entry.label] = (maxValues[entry.label] ?? 0) + entry.value;
+            break;
+        }
       }
     }
     return Object.values(maxValues).reduce((max, value) => (value > max ? value : max), 0);
-  }, [groups]);
+  }, [groups, props.variant]);
 
   const padding = {
     top: (props.padding?.top ?? 4) + 16,
@@ -157,7 +176,7 @@ export function PageDashboardChart(props: {
                       : (t: number) => (Number.isInteger(t) ? t : '')
                   }
                 />
-                {props.variant === 'lineChart' &&
+                {props.variant === PageDashboardChartVariantE.lineChart &&
                   groups.map((group, index) => (
                     <ChartLine
                       key={index}
@@ -167,7 +186,7 @@ export function PageDashboardChart(props: {
                       interpolation="monotoneX"
                     />
                   ))}
-                {props.variant === 'lineChart' &&
+                {props.variant === PageDashboardChartVariantE.lineChart &&
                   groups.map((group, index) => (
                     <ChartScatter
                       key={'scatter-' + index}
@@ -177,7 +196,32 @@ export function PageDashboardChart(props: {
                       style={{ data: { fill: group.color } }}
                     />
                   ))}
-                {(!props.variant || props.variant === 'stackedAreaChart') && (
+                {props.variant === PageDashboardChartVariantE.stackedBarChart && (
+                  <ChartStack>
+                    {groups.map((group, index) => (
+                      <ChartBar
+                        key={index}
+                        name={index.toString()}
+                        style={{ data: { fill: group.color } }}
+                        data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                      />
+                    ))}
+                  </ChartStack>
+                )}
+                {props.variant === PageDashboardChartVariantE.barChart && (
+                  <ChartGroup offset={10}>
+                    {groups.map((group, index) => (
+                      <ChartBar
+                        key={index}
+                        name={index.toString()}
+                        style={{ data: { fill: group.color } }}
+                        data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+                      />
+                    ))}
+                  </ChartGroup>
+                )}
+                {(!props.variant ||
+                  props.variant === PageDashboardChartVariantE.stackedAreaChart) && (
                   <ChartStack>
                     {groups.map((group, index) => (
                       <ChartArea
@@ -190,7 +234,8 @@ export function PageDashboardChart(props: {
                     ))}
                   </ChartStack>
                 )}
-                {(!props.variant || props.variant === 'stackedAreaChart') && (
+                {(!props.variant ||
+                  props.variant === PageDashboardChartVariantE.stackedAreaChart) && (
                   <ChartStack>
                     {groups.map((group, index) => (
                       <ChartScatter

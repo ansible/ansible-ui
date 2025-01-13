@@ -1,4 +1,8 @@
-import { PageDashboardChart } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
+import {
+  PageDashboardChart,
+  PageDashboardChartVariant,
+  PageDashboardChartVariantE,
+} from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
 import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { Bullseye, Spinner } from '@patternfly/react-core';
@@ -26,6 +30,7 @@ export function JobsChart(props: {
   height?: number;
   period?: DashboardJobPeriod;
   jobType?: DashboardJobType;
+  variant?: PageDashboardChartVariant;
 }) {
   const getPageUrl = useGetPageUrl();
 
@@ -67,7 +72,7 @@ export function JobsChart(props: {
   return (
     <PageDashboardChart
       yLabel={t('Job count')}
-      variant="stackedAreaChart"
+      variant={props.variant ?? PageDashboardChartVariantE.stackedAreaChart}
       groups={[
         {
           label: t('Success'),
