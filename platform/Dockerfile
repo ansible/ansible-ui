@@ -1,4 +1,4 @@
-FROM nginx:alpine AS certificate
+FROM public.ecr.aws/nginx/nginx:alpine AS certificate
 RUN apk add --no-cache openssl
 RUN mkdir -p /certs
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/cert.key -out /certs/cert.pem -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
@@ -15,7 +15,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/cert.key 
 # directories and files that are written to by processes in the image must be owned by the root group
 # and be read/writable by that group. Files to be executed must also have group execute permissions.
 #
-FROM nginx:alpine AS base
+FROM public.ecr.aws/nginx/nginx:alpine AS base
 COPY --from=certificate /certs/cert.pem /certs/cert.pem
 COPY --from=certificate /certs/cert.key /certs/cert.key
 COPY --from=certificate /certs/cert.pem /certs/CA.pem
