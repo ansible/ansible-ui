@@ -1,10 +1,10 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../commands/clearTableFilters';
-import { clickPageAction } from '../commands/clickPageAction';
-import { clickTableRow } from '../commands/clickTableRow';
-import { createE2EName } from '../commands/createE2EName';
-import { filterTableBySelect } from '../commands/filterTableBySelect';
-import { navigateTo } from '../commands/navigateTo';
+import { clearTableFilters } from '../../../../commands/clearTableFilters';
+import { clickPageAction } from '../../../../commands/clickPageAction';
+import { clickTableRow } from '../../../../commands/clickTableRow';
+import { createE2EName } from '../../../../commands/createE2EName';
+import { filterTableBySelect } from '../../../../commands/filterTableBySelect';
+import { navigateTo } from '../../../../commands/navigateTo';
 
 export async function createInventory(options: { name?: string }, page: Page) {
   const inventoryName = options.name ?? createE2EName('inventory');
@@ -16,7 +16,7 @@ export async function createInventory(options: { name?: string }, page: Page) {
   await page.getByLabel('Search input').fill('Default');
   await page.getByRole('option', { name: 'Default' }).click();
   await page.getByRole('button', { name: 'Create inventory' }).click();
-  await expect(page.getByRole('heading').first()).toContainText(inventoryName);
+  await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(inventoryName);
   return inventoryName;
 }

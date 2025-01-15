@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../commands/setup';
+import { setupAfter, setupBefore } from '../../../../commands/setup';
 import { createInventory, deleteInventory } from './inventory-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));

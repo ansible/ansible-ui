@@ -1,10 +1,10 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../commands/clearTableFilters';
-import { clickPageAction } from '../commands/clickPageAction';
-import { clickTableRow } from '../commands/clickTableRow';
-import { createE2EName } from '../commands/createE2EName';
-import { filterTableByText } from '../commands/filterTableByText';
-import { navigateTo } from '../commands/navigateTo';
+import { clearTableFilters } from '../../../commands/clearTableFilters';
+import { clickPageAction } from '../../../commands/clickPageAction';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { createE2EName } from '../../../commands/createE2EName';
+import { filterTableByText } from '../../../commands/filterTableByText';
+import { navigateTo } from '../../../commands/navigateTo';
 
 export async function createOrganization(page: Page, options: { organizationName?: string } = {}) {
   await navigateTo(page, 'Access Management', 'Organizations');

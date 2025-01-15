@@ -1,13 +1,13 @@
 import { expect, Page, test } from '@playwright/test';
-import { clearTableFilters } from '../commands/clearTableFilters';
-import { clickPageAction } from '../commands/clickPageAction';
-import { clickTableRow } from '../commands/clickTableRow';
-import { createE2EName } from '../commands/createE2EName';
-import { expectRowToContain } from '../commands/expectRowToContain';
-import { filterTableBySelect } from '../commands/filterTableBySelect';
-import { navigateTo } from '../commands/navigateTo';
-import { setupAfter, setupBefore } from '../commands/setup';
-import { singleSelectByLabel } from '../commands/singleSelectByLabel';
+import { clearTableFilters } from '../../../commands/clearTableFilters';
+import { clickPageAction } from '../../../commands/clickPageAction';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { createE2EName } from '../../../commands/createE2EName';
+import { expectRowToContain } from '../../../commands/expectRowToContain';
+import { filterTableBySelect } from '../../../commands/filterTableBySelect';
+import { navigateTo } from '../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../commands/setup';
+import { singleSelectByLabel } from '../../../commands/singleSelectByLabel';
 
 test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);

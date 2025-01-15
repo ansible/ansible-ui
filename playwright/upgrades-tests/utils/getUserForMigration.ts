@@ -1,8 +1,8 @@
+import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { APIRequestContext } from '@playwright/test';
-import { PlatformItemsResponse } from '../../platform/interfaces/PlatformItemsResponse';
-import { PlatformUser } from '../../platform/interfaces/PlatformUser';
-import { gatewayAPI } from '../../platform/utils/gateway-api-utils';
-import { platformUI } from '../commands/login';
+import { platformUI } from '../../commands/login';
 import { UpgradeUserType, usersForMigration } from './constants';
 
 /**
