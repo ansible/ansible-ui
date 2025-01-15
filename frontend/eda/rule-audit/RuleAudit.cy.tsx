@@ -89,6 +89,96 @@ describe('RuleAudit.cy.ts', () => {
     );
     cy.get('[data-cy="last-fired-date-column-header"]').should('contain', 'Last fired date');
   });
+
+  it('Rule Audit filters for Name and Rulebook Activation Name', () => {
+    cy.mount(<RuleAudit />);
+    cy.verifyPageTitle('Rule Audit');
+    cy.openToolbarFilterTypeSelect().within(() => {
+      cy.contains(/^Name$/).should('be.visible');
+      cy.contains(/^Activation$/).should('be.visible');
+    });
+  });
+
+  it('Filter rule audit by name', () => {
+    cy.intercept(
+      { method: 'GET', url: '/api/eda/v1/audit-rules/?name__icontains=run&page=1&page_size=10' },
+      {
+        count: 2,
+        next: null,
+        previous: null,
+        page_size: 10,
+        page: 1,
+        results: [
+          {
+            id: 109,
+            name: 'Run JT at 8',
+            status: 'failed',
+            activation_instance: {
+              id: 66,
+              name: 'Activation 2',
+            },
+            fired_at: '2023-11-06T20:20:37.156383Z',
+          },
+          {
+            id: 108,
+            name: 'Run JT at 8',
+            status: 'failed',
+            activation_instance: {
+              id: 65,
+              name: 'Activation 7',
+            },
+            fired_at: '2023-11-02T21:58:02.373946Z',
+          },
+        ],
+      }
+    ).as('nameFilterRequest');
+    cy.mount(<RuleAudit />);
+    cy.filterTableByTextFilter('name', 'run');
+    cy.wait('@nameFilterRequest');
+    cy.clearAllFilters();
+  });
+
+  it('Filter rule audit by activation', () => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/api/eda/v1/audit-rules/?activation_instance__name__icontains=Activation%204&page=1&page_size=10',
+      },
+      {
+        count: 2,
+        next: null,
+        previous: null,
+        page_size: 10,
+        page: 1,
+        results: [
+          {
+            id: 98,
+            name: 'Say Hello from ruleset 2',
+            status: 'successful',
+            activation_instance: {
+              id: 59,
+              name: 'Activation 4',
+            },
+            fired_at: '2023-10-31T13:45:30.941856Z',
+          },
+          {
+            id: 97,
+            name: 'Say Hello from ruleset 1',
+            status: 'successful',
+            activation_instance: {
+              id: 59,
+              name: 'Activation 4',
+            },
+            fired_at: '2023-10-31T13:45:30.935965Z',
+          },
+        ],
+      }
+    ).as('activationFilterRequest');
+    cy.mount(<RuleAudit />);
+    cy.filterTableByTextFilter('activation', 'Activation 4');
+    cy.wait('@activationFilterRequest');
+    cy.clearAllFilters();
+  });
 });
 
 describe('Empty list', () => {
