@@ -381,7 +381,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           {props.scrollTopContent ? (
             <Scrollable>
               {topContent}
-              <PageSection padding={{ default: 'noPadding' }}>
+              <PageSection padding={{ default: 'noPadding' }} variant="light">
                 {!props.hideTable && (
                   <PageTableList {...props} showSelect={showSelect} tableColumns={managedColumns} />
                 )}
@@ -391,7 +391,7 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
             <>
               {topContent}
               <Scrollable>
-                <PageSection padding={{ default: 'noPadding' }}>
+                <PageSection padding={{ default: 'noPadding' }} variant="light">
                   {!props.hideTable && (
                     <PageTableList
                       {...props}
@@ -551,78 +551,76 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
   const settings = usePageSettings();
 
   let returnElement: JSX.Element;
-  if (props.itemCount === undefined || pageItems === undefined) {
+  if (itemCount === undefined || pageItems === undefined) {
     returnElement = <PageLoadingTable />;
+  } else if (itemCount === 0) {
+    returnElement = (
+      <EmptyState isFullHeight>
+        <EmptyStateHeader
+          titleText={<>{translations.noResultsFound}</>}
+          icon={<EmptyStateIcon icon={props.emptyStateIcon ?? SearchIcon} />}
+        />
+        <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
+        <EmptyStateFooter>
+          {clearAllFilters && (
+            <EmptyStateActions>
+              <Button variant="primary" onClick={clearAllFilters}>
+                {translations.clearAllFilters}
+              </Button>
+            </EmptyStateActions>
+          )}
+        </EmptyStateFooter>
+      </EmptyState>
+    );
   } else {
     returnElement = (
-      <>
-        <Table
-          aria-label="Simple table"
-          ouiaId="simple-table"
-          variant={
-            props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
-          }
-          borders={!props.borderless}
-          gridBreakPoint=""
-          isStickyHeader
-          className="page-table"
-        >
-          <TableHead
-            {...props}
-            showSelect={showSelect}
-            scrollLeft={scroll.left > 0}
-            scrollRight={scroll.right > 1}
-            tableColumns={tableColumns}
-            onSelect={onSelect}
-            expandedRow={expandedRow}
-          />
-          <Tbody>
-            {pageItems.map((item, rowIndex) => (
-              <TableRow<T>
-                key={keyFn ? keyFn(item) : rowIndex}
-                columns={tableColumns}
-                item={item}
-                isItemSelected={isSelected?.(item)}
-                isSelectMultiple={isSelectMultiple}
-                selectItem={selectItem}
-                unselectItem={unselectItem}
-                rowActions={rowActions}
-                rowIndex={rowIndex}
-                showSelect={showSelect}
-                scrollLeft={scroll.left > 0}
-                scrollRight={scroll.right > 1}
-                unselectAll={unselectAll}
-                onSelect={onSelect}
-                expandedRow={expandedRow}
-                isLastRow={rowIndex === pageItems.length - 1}
-                disableLastRowBorder={props.disableLastRowBorder}
-                maxSelections={maxSelections}
-                selectedItems={props.selectedItems}
-                defaultExpandedRows={props.defaultExpandedRows}
-              />
-            ))}
-          </Tbody>
-        </Table>
-        {itemCount === 0 && (
-          <EmptyState isFullHeight>
-            <EmptyStateHeader
-              titleText={<>{translations.noResultsFound}</>}
-              icon={<EmptyStateIcon icon={props.emptyStateIcon ?? SearchIcon} />}
-              headingLevel="h2"
+      <Table
+        aria-label="Simple table"
+        ouiaId="simple-table"
+        variant={
+          props.compact ? 'compact' : settings.tableLayout === 'compact' ? 'compact' : undefined
+        }
+        borders={!props.borderless}
+        gridBreakPoint=""
+        isStickyHeader
+        className="page-table"
+      >
+        <TableHead
+          {...props}
+          showSelect={showSelect}
+          scrollLeft={scroll.left > 0}
+          scrollRight={scroll.right > 1}
+          tableColumns={tableColumns}
+          onSelect={onSelect}
+          expandedRow={expandedRow}
+        />
+        <Tbody>
+          {pageItems.map((item, rowIndex) => (
+            <TableRow<T>
+              key={keyFn ? keyFn(item) : rowIndex}
+              columns={tableColumns}
+              item={item}
+              isItemSelected={isSelected?.(item)}
+              isSelectMultiple={isSelectMultiple}
+              selectItem={selectItem}
+              unselectItem={unselectItem}
+              rowActions={rowActions}
+              rowIndex={rowIndex}
+              showSelect={showSelect}
+              scrollLeft={scroll.left > 0}
+              scrollRight={scroll.right > 1}
+              unselectAll={unselectAll}
+              onSelect={onSelect}
+              expandedRow={expandedRow}
+              isLastRow={rowIndex === pageItems.length - 1}
+              disableLastRowBorder={props.disableLastRowBorder}
+              maxSelections={maxSelections}
+              selectedItems={props.selectedItems}
+              defaultExpandedRows={props.defaultExpandedRows}
             />
-            <EmptyStateBody>{translations.noResultsMatchCriteria}</EmptyStateBody>
-            <EmptyStateFooter>
-              {clearAllFilters && (
-                <EmptyStateActions>
-                  <Button variant="primary" onClick={clearAllFilters}>
-                    {translations.clearAllFilters}
-                  </Button>
-                </EmptyStateActions>
-              )}
-            </EmptyStateFooter>
-          </EmptyState>
-        )}
-      </>
+          ))}
+        </Tbody>
+      </Table>
     );
   }
 

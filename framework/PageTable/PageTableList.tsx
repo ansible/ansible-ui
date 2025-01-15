@@ -1,4 +1,5 @@
 import {
+  Button,
   DataList,
   DataListAction,
   DataListCell,
@@ -26,6 +27,9 @@ import {
   ITableColumnTypeLabels,
   TableColumnCell,
 } from './PageTableColumn';
+import { SearchIcon } from '@patternfly/react-icons';
+import { PageTableEmptyState } from './PageTableEmptyState';
+import { useFrameworkTranslations } from '../useFrameworkTranslations';
 
 export type PageTableListProps<T extends object> = PageTableProps<T>;
 
@@ -40,8 +44,11 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
     rowActions,
     defaultSubtitle: defaultCardSubtitle,
     showSelect,
+    itemCount,
+    clearAllFilters,
   } = props;
 
+  const [translations] = useFrameworkTranslations();
   const columnsToDataList = useColumnsToDataList(
     tableColumns,
     keyFn,
@@ -54,9 +61,23 @@ export function PageTableList<T extends object>(props: PageTableListProps<T>) {
   );
 
   return (
-    <DataList aria-label="TODO" style={{ marginTop: -1, maxWidth: '100%', overflow: 'hidden' }}>
-      {pageItems?.map(columnsToDataList)}
-    </DataList>
+    <>
+      {itemCount === 0 ? (
+        <PageTableEmptyState
+          icon={SearchIcon}
+          title={translations.noResultsFound}
+          description={translations.noResultsMatchCriteria}
+        >
+          <Button variant="primary" onClick={clearAllFilters}>
+            {translations.clearAllFilters}
+          </Button>
+        </PageTableEmptyState>
+      ) : (
+        <DataList aria-label="TODO" style={{ marginTop: -1, maxWidth: '100%', overflow: 'hidden' }}>
+          {pageItems?.map(columnsToDataList)}
+        </DataList>
+      )}
+    </>
   );
 }
 
