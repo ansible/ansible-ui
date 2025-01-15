@@ -410,22 +410,29 @@ export function valueToObject(
   value: string | object | undefined | null,
   isArray?: boolean
 ): object {
-  if (value === undefined || value === null) {
-    return isArray ? [] : {};
+  const emptyArrayOrObject = isArray ? [] : {};
+  const emptyValue = value === undefined || value === null;
+
+  if (emptyValue) {
+    return emptyArrayOrObject;
   }
+
+  const catchError = () => {
+    try {
+      value = jsyaml.load(value as string) as object;
+    } catch (err) {
+      if (err instanceof Error || err instanceof YAMLException) {
+        return new Error(err.message);
+      }
+      return {};
+    }
+  };
 
   if (typeof value === 'string') {
     try {
       value = JSON.parse(value) as object;
     } catch {
-      try {
-        value = jsyaml.load(value as string) as object;
-      } catch (err) {
-        if (err instanceof Error || err instanceof YAMLException) {
-          return new Error(err.message);
-        }
-        return {};
-      }
+      catchError();
     }
   }
 
@@ -439,7 +446,7 @@ export function valueToObject(
     if (Array.isArray(value)) {
       return {};
     } else {
-      return value;
+      return value as object;
     }
   }
 }
