@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { createE2EName } from '../commands/createE2EName';
-import { setupAfter, setupBefore } from '../commands/setup';
+import { createE2EName } from '../../../commands/createE2EName';
+import { setupAfter, setupBefore } from '../../../commands/setup';
 
 test.beforeEach(setupBefore({ path: '/access/applications' }));
 test.afterEach(setupAfter);
@@ -30,7 +30,7 @@ test('application - create and delete', async ({ page }) => {
   await page.getByLabel('Close').click();
 
   // Verify OAuth application in the details page
-  await expect(page.getByRole('heading')).toContainText(applicationName);
+  await expect(page.getByRole('heading', { name: applicationName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(applicationName);
 
   // Delete OAuth application

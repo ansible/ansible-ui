@@ -6,8 +6,8 @@ import { setupAfter } from '../commands/setup';
 import { handleRoute } from '../mock/handlers/handleRoute';
 import { mock } from '../mock/mock';
 import { Router } from '../mock/router/Router';
-import { UpgradeUserType } from '../utils/constants';
-import { getUserForMigration } from '../utils/getUserForMigration';
+import { UpgradeUserType } from './utils/constants';
+import { getUserForMigration } from './utils/getUserForMigration';
 
 let controllerKeyCloakUser: { username: string; password: string };
 

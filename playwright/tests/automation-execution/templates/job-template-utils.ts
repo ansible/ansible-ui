@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
-import { createE2EName } from '../commands/createE2EName';
-import { navigateTo } from '../commands/navigateTo';
+import { createE2EName } from '../../../commands/createE2EName';
+import { navigateTo } from '../../../commands/navigateTo';
 
 export async function createJobTemplate(
   options: { name?: string; inventoryName?: string; projectName?: string },
@@ -22,7 +22,7 @@ export async function createJobTemplate(
 
   await new Promise((r) => setTimeout(r, 1000)); // TODO need to figure this out...
   await page.getByRole('button', { name: 'Create job template' }).click();
-  await expect(page.getByRole('heading').first()).toContainText(jobTemplateName);
+  await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(jobTemplateName);
   await expect(page.locator('#inventory')).toContainText(inventoryName);
   await expect(page.locator('#project')).toContainText(projectName);
@@ -53,10 +53,12 @@ export async function deleteJobTemplate(jobTemplateName: string, page: Page) {
   await page.getByLabel('Search input').fill(jobTemplateName);
   await page.getByLabel(jobTemplateName).check();
   await page.getByRole('link', { name: jobTemplateName }).click();
-  await expect(page.getByRole('heading')).toContainText(jobTemplateName);
+  await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
   await page.getByLabel('kebab dropdown toggle').click();
   await page.getByRole('menuitem', { name: 'Delete template' }).click();
   await page.getByText('Yes, I confirm that I want to').click();
   await page.getByRole('button', { name: 'Delete template' }).click();
-  await expect(page.getByRole('heading')).toContainText('Templates');
+  await expect(
+    page.getByRole('heading', { name: 'Automation Templates', exact: true })
+  ).toBeVisible();
 }

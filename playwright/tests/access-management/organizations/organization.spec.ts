@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../commands/setup';
+import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createOrganization, deleteOrganization } from './organization-utils';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));

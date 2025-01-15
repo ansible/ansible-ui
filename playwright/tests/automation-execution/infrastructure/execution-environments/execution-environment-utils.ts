@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../commands/clearTableFilters';
-import { createE2EName } from '../commands/createE2EName';
-import { navigateTo } from '../commands/navigateTo';
+import { clearTableFilters } from '../../../../commands/clearTableFilters';
+import { createE2EName } from '../../../../commands/createE2EName';
+import { navigateTo } from '../../../../commands/navigateTo';
 
 export async function createExecutionEnvironment(
   page: Page,
@@ -13,7 +13,7 @@ export async function createExecutionEnvironment(
   await page.getByPlaceholder('Enter execution environment').fill(executionEnvName);
   await page.getByPlaceholder('Enter image').fill('myimage');
   await page.getByRole('button', { name: 'Create execution environment' }).click();
-  await expect(page.getByRole('heading')).toContainText(executionEnvName);
+  await expect(page.getByRole('heading', { name: executionEnvName, exact: true })).toBeVisible();
   return executionEnvName;
 }
 export async function deleteExecutionEnvironment(executionEnvName: string, page: Page) {

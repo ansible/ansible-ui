@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../commands/setup';
+import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createJobTemplate, deleteJobTemplate, runJobTemplate } from './job-template-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));

@@ -1,20 +1,12 @@
-import { expect, Page, test } from '@playwright/test';
-import { clearTableFilters } from '../commands/clearTableFilters';
-import { clickPageAction } from '../commands/clickPageAction';
-import { clickTableRow } from '../commands/clickTableRow';
-import { createE2EName } from '../commands/createE2EName';
-import { filterTableByText } from '../commands/filterTableByText';
-import { navigateTo } from '../commands/navigateTo';
-import { setupAfter, setupBefore } from '../commands/setup';
-import { singleSelectByLabel } from '../commands/singleSelectByLabel';
-
-test.beforeEach(setupBefore({ path: '/access/teams' }));
-test.afterEach(setupAfter);
-
-test('team - create and delete', { tag: ['@team'] }, async ({ page }) => {
-  const teamName = await createTeam({}, page);
-  await deleteTeam(teamName, page);
-});
+import { expect } from '@playwright/test';
+import { Page } from 'playwright-core';
+import { clearTableFilters } from '../../../commands/clearTableFilters';
+import { clickPageAction } from '../../../commands/clickPageAction';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { createE2EName } from '../../../commands/createE2EName';
+import { filterTableByText } from '../../../commands/filterTableByText';
+import { navigateTo } from '../../../commands/navigateTo';
+import { singleSelectByLabel } from '../../../commands/singleSelectByLabel';
 
 export async function createTeam(
   options: { teamName?: string; organizationName?: string },
