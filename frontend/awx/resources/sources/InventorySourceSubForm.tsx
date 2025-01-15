@@ -78,9 +78,9 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
               { value: '2', label: t('2 (Debug)') },
             ]}
             defaultValue={'1'}
-            labelHelpTitle={t('Limit')}
+            labelHelpTitle={t('Verbosity')}
             labelHelp={t(
-              'Control the level of output Ansible will produce as the playbook executes.'
+              'Control the level of output Ansible will produce for inventory source update jobs.'
             )}
             label={t('Verbosity')}
             isRequired
