@@ -24,7 +24,6 @@ COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 443
 CMD ["nginx", "-g", "daemon off;"]
 
-# platform-ui
 FROM base AS platform-ui
-COPY /platform/platform.conf /etc/nginx/templates/default.conf.template
-COPY /build/platform /usr/share/nginx/html
+COPY /nginx/templates/default.conf.template /etc/nginx/templates/default.conf.template
+COPY /dist /usr/share/nginx/html

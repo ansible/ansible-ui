@@ -10,6 +10,10 @@ on:
       build-script:
         description: 'Build Script'
         type: string
+      docker-context:
+        description: 'Docker Context'
+        type: string
+        default: '.'
       docker-image:
         description: 'Docker Image'
         type: string
@@ -65,10 +69,15 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Install build dependencies
+        run: npm i @rollup/rollup-linux-x64-gnu
+
       - name: NPM Build
         if: ${{ inputs.build-script }}
         working-directory: ${{ inputs.build-directory }}
         run: npm run ${{ inputs.build-script }}
+        env:
+          AWX_API_PREFIX: '/api/controller/v2'
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -100,7 +109,7 @@ jobs:
         if: ${{ inputs.docker-publish }}
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ inputs.docker-context }}
           file: ${{ inputs.docker-file }}
           target: ${{ inputs.docker-target }}
           platforms: linux/amd64,linux/arm64
@@ -112,13 +121,13 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ inputs.docker-context }}
           file: ${{ inputs.docker-file }}
           target: ${{ inputs.docker-target }}
           platforms: linux/amd64
           tags: ${{ inputs.docker-image }}:latest
           load: true
-
+  
       - name: Save Image
         if: ${{ inputs.upload-artifact }}
         run: docker save ${{ inputs.docker-image }} > ${{ inputs.docker-image }}.tar

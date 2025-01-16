@@ -8,7 +8,7 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import EdaBrand from '../../assets/eda-logo.svg';
+import EdaBrand from '../../assets/eda-logo.svg?react';
 import { edaAPI } from '../common/eda-utils';
 import { useEdaActiveUser } from '../common/useEdaActiveUser';
 import { EdaRoute } from './EdaRoutes';

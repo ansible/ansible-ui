@@ -1,6 +1,13 @@
 /* eslint-disable no-restricted-exports */
 type SvgrComponent = React.StatelessComponent<React.SVGAttributes<SVGElement>>;
 
+declare module '*.svg?react' {
+  const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
+  const content: React.FunctionComponent<React.SVGAttributes<SVGElement>>;
+  export { ReactComponent };
+  export default content;
+}
+
 declare module '*.svg' {
   const ReactComponent: React.FC<React.SVGProps<SVGSVGElement>>;
   const content: React.FunctionComponent<React.SVGAttributes<SVGElement>>;

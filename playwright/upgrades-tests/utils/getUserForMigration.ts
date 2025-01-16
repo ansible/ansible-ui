@@ -1,9 +1,9 @@
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { APIRequestContext } from '@playwright/test';
 import { platformUI } from '../../commands/login';
 import { UpgradeUserType, usersForMigration } from './constants';
+import { gatewayAPI } from './gateway-api';
 
 /**
  * Sets environment variables with the credentials username and password) of an unmigrated user for testing upgrades
@@ -30,7 +30,7 @@ export async function getUserForMigration(options: {
     if (index === users.length) {
       throw new Error('There are no unlinked users available for testing!');
     }
-    const url = platformUI + gatewayAPI`/users/?username=${users[index]?.username}`;
+    const url = platformUI + gatewayAPI(`/users/?username=${users[index]?.username}`);
     const response = await options.request.get(url);
     const result = (await response.json()) as PlatformItemsResponse<PlatformUser>;
     const platformUser = result?.results?.[0];
