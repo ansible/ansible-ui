@@ -127,7 +127,7 @@ describe('schedules .cy.ts', () => {
           },
         });
         cy.mount(<Schedules />);
-        cy.contains('td', 'Cleanup Expired OAuth 2 Tokens')
+        cy.contains('td', 'Cleanup Expired Sessions')
           .parent()
           .within(() => {
             cy.get('input.pf-v5-c-switch__input').should('have.attr', 'disabled');
