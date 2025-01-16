@@ -79,10 +79,10 @@
       },
       "summary_fields": {
         "unified_job_template": {
-          "description": "Cleanup expired OAuth 2 access and refresh tokens",
-          "id": 5,
-          "job_type": "cleanup_tokens",
-          "name": "Cleanup Expired OAuth 2 Tokens",
+          "description": "Cleans out expired browser sessions",
+          "id": 4,
+          "job_type": "cleanup_sessions",
+          "name": "Cleanup Expired Sessions",
           "unified_job_type": "system_job"
         },
         "user_capabilities": {

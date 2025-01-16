@@ -64,9 +64,5 @@ describe('Non-empty ManagementJobs list', () => {
       'have.text',
       'Cleanup Job Details'
     );
-    cy.get('[data-cy="row-id-5"] [data-cy="name-column-cell"]').should(
-      'have.text',
-      'Cleanup Expired OAuth 2 Tokens'
-    );
   });
 });

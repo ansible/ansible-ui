@@ -46,48 +46,6 @@
       "job_type": "cleanup_activitystream"
     },
     {
-      "id": 5,
-      "type": "system_job_template",
-      "url": "/api/v2/system_job_templates/5/",
-      "related": {
-        "last_job": "/api/v2/system_jobs/13112/",
-        "next_schedule": "/api/v2/schedules/5/",
-        "jobs": "/api/v2/system_job_templates/5/jobs/",
-        "schedules": "/api/v2/system_job_templates/5/schedules/",
-        "launch": "/api/v2/system_job_templates/5/launch/",
-        "notification_templates_started": "/api/v2/system_job_templates/5/notification_templates_started/",
-        "notification_templates_success": "/api/v2/system_job_templates/5/notification_templates_success/",
-        "notification_templates_error": "/api/v2/system_job_templates/5/notification_templates_error/"
-      },
-      "summary_fields": {
-        "last_job": {
-          "id": 13112,
-          "name": "Cleanup Expired OAuth 2 Tokens",
-          "description": "Cleanup expired OAuth 2 access and refresh tokens",
-          "finished": "2024-01-31T19:10:48.876908Z",
-          "status": "successful",
-          "failed": false
-        },
-        "last_update": {
-          "id": 13112,
-          "name": "Cleanup Expired OAuth 2 Tokens",
-          "description": "Cleanup expired OAuth 2 access and refresh tokens",
-          "status": "successful",
-          "failed": false
-        }
-      },
-      "created": "2023-10-25T19:10:18.747271Z",
-      "modified": "2023-10-25T19:10:18.747271Z",
-      "name": "Cleanup Expired OAuth 2 Tokens",
-      "description": "Cleanup expired OAuth 2 access and refresh tokens",
-      "last_job_run": "2024-01-31T19:10:48.876908Z",
-      "last_job_failed": false,
-      "next_job_run": "2024-02-07T19:10:18Z",
-      "status": "successful",
-      "execution_environment": null,
-      "job_type": "cleanup_tokens"
-    },
-    {
       "id": 4,
       "type": "system_job_template",
       "url": "/api/v2/system_job_templates/4/",
