@@ -8,6 +8,7 @@ import { getID, useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { PageFormGroup } from './PageFormGroup';
 import { useRequiredValidationRule } from './validation-hooks';
+import { useTranslation } from 'react-i18next';
 
 export type Variant = 'single' | 'typeahead' | 'typeaheadmulti';
 
@@ -184,6 +185,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
 
   const [valueToString] = useState(() => props.valueToString);
   const [valueToDescription] = useState(() => props.valueToDescription);
+  const { t } = useTranslation();
 
   const value = useMemo(() => {
     if (!props.value) return undefined;
@@ -252,6 +254,50 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
         }),
     [options, valueToDescription]
   );
+
+  const getPlaceholderText = () => {
+    if (loadingError) {
+      return frameworkTranslations.clickToRefresh;
+    } else if (loadingPlaceholder) {
+      if (loading) {
+        return loadingPlaceholder;
+      } else return placeholder;
+    } else {
+      return placeholder;
+    }
+  };
+
+  const getToggleIndicator = () => {
+    if (loading) {
+      return (
+        <Spinner size="md" style={{ margin: -1, marginBottom: -3 }} data-cy="loading-spinner" />
+      );
+    } else if (loadingError) {
+      return <SyncAltIcon />;
+    } else if (useSelectDialog) {
+      return <SearchIcon data-cy="lookup-button" />;
+    } else {
+      return undefined;
+    }
+  };
+
+  const getFooter = () => {
+    if (!props.openSelectDialog) {
+      return undefined;
+    }
+    return (
+      <Button
+        data-cy="browse-button"
+        variant="link"
+        onClick={() => {
+          setOpen(false);
+          props.openSelectDialog?.(onSelect, props.value);
+        }}
+      >
+        {t`Browse`}
+      </Button>
+    );
+  };
   return (
     <InputGroup>
       <InputGroupItem isFill>
@@ -261,15 +307,7 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
           aria-labelledby={labeledBy}
           variant={variant ?? 'single'}
           hasPlaceholderStyle
-          placeholderText={
-            loadingError
-              ? frameworkTranslations.clickToRefresh
-              : loadingPlaceholder
-                ? loading
-                  ? loadingPlaceholder
-                  : placeholder
-                : placeholder
-          }
+          placeholderText={getPlaceholderText()}
           typeAheadAriaLabel={placeholder}
           data-cy="dropdown-menu"
           selections={value}
@@ -296,39 +334,14 @@ export function AsyncSelect<SelectionType>(props: AsyncSelectProps<SelectionType
               setOpen(false);
             }
           }}
-          toggleIndicator={
-            loading ? (
-              <Spinner
-                size="md"
-                style={{ margin: -1, marginBottom: -3 }}
-                data-cy="loading-spinner"
-              />
-            ) : loadingError ? (
-              <SyncAltIcon />
-            ) : useSelectDialog ? (
-              <SearchIcon data-cy="lookup-button" />
-            ) : undefined
-          }
+          toggleIndicator={getToggleIndicator()}
           validated={validated}
           isDisabled={options === null || loading || isReadOnly}
           onFilter={onFilter}
           hasInlineFilter={options !== null && options.length > 10}
           menuAppendTo="parent"
           maxHeight={'45vh'}
-          footer={
-            props.openSelectDialog ? (
-              <Button
-                data-cy="browse-button"
-                variant="link"
-                onClick={() => {
-                  setOpen(false);
-                  props.openSelectDialog?.(onSelect, props.value);
-                }}
-              >
-                Browse
-              </Button>
-            ) : undefined
-          }
+          footer={getFooter()}
         >
           {(options ?? []).map((option) => (
             <SelectOption
