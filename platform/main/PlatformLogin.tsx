@@ -7,7 +7,7 @@ import { Page } from '@patternfly/react-core';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mutate } from 'swr';
-import AAPLogo from '../assets/aap-logo.svg';
+import AAPLogo from '../assets/aap-logo.svg?react';
 import { UIAuth } from '../interfaces/UIAuth';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';

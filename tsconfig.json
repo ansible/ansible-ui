@@ -27,9 +27,6 @@
     // "strictNullChecks": true
   },
   "include": [
-    "awx",
-    "eda",
-    "hub",
     "platform",
     "frontend",
     "framework",

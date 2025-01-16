@@ -11,7 +11,7 @@ import { DropdownItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core'
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import GalaxyBrand from '../../assets/galaxy-logo.svg';
+import GalaxyBrand from '../../assets/galaxy-logo.svg?react';
 import { CollectionVersionSearch } from '../collections/Collection';
 import { hubAPI } from '../common/api/formatPath';
 import { useHubActiveUser } from '../common/useHubActiveUser';

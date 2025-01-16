@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CSSProperties } from 'styled-components';
-import AAPIcon from '../../assets/aap.svg';
+import AAPIcon from '../../assets/aap.svg?react';
 
 interface LogoProps {
   // size and width should be css length measurment: eg. '48px'

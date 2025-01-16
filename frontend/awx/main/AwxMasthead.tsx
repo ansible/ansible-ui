@@ -10,7 +10,7 @@ import { DropdownItem, Icon, ToolbarGroup, ToolbarItem } from '@patternfly/react
 import { QuestionCircleIcon, UserCircleIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import AwxBrand from '../../assets/awx-logo.svg';
+import AwxBrand from '../../assets/awx-logo.svg?react';
 import { AwxItemsResponse } from '../common/AwxItemsResponse';
 import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';

@@ -104,20 +104,21 @@ jobs:
         PLATFORM_PASSWORD: mock
         TAGS: ${{ inputs.TAGS }}
         NOT_TAGS: ${{ inputs.NOT_TAGS }}
+        AWX_API_PREFIX: '/api/controller/v2'
 
     - name: Upload blob report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.BROWSER }}-blob-report-${{ matrix.shardIndex }}
-        path: blob-report
+        path: playwright/blob-report
         retention-days: 1
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-${{ inputs.BROWSER }}-${{ matrix.shardIndex }}
-        path: test-results
+        path: playwright/test-results
         retention-days: 1
         overwrite: true
         if-no-files-found: ignore

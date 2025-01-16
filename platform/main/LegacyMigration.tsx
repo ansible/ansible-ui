@@ -14,7 +14,7 @@ import {
 import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import AAPLogo from '../assets/aap-logo.svg';
+import AAPLogo from '../assets/aap-logo.svg?react';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { useLegacyAuth } from './LegacyAuthProvider';
 import { CreateAAPUserForm } from './LegacyMigrationCreateAAPUserForm';

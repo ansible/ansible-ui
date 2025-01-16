@@ -1,8 +1,11 @@
+**/.env
 **/blob-report/
+**/dist/
 **/node_modules/
 **/playwright-report/
 **/playwright/.cache/
 **/test-results/
+**/coverage/
 .DS_Store
 .eslintcache
 .vscode
@@ -11,10 +14,7 @@
 /certs
 /coverage
 /cypress/.nyc_output
-/cypress/coverage
 /cypress/downloads
 /dist
 /framework/publish
-/node_modules
 /storybook-static
-**/.env

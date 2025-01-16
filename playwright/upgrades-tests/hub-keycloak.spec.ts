@@ -1,4 +1,3 @@
-import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { expect, test } from '@playwright/test';
 import { login, platformUI } from '../commands/login';
 import { logout } from '../commands/logout';
@@ -8,6 +7,7 @@ import { mock } from '../mock/mock';
 import { Router } from '../mock/router/Router';
 import { UpgradeUserType } from './utils/constants';
 import { getUserForMigration } from './utils/getUserForMigration';
+import { randomString } from './utils/random-string';
 
 let hubKeyCloakUser: { username: string; password: string };
 
@@ -16,6 +16,8 @@ let controllerUser: { username: string; password: string };
 test.beforeEach(({ page }) => mock(page));
 
 test.beforeEach(async ({ page }) => {
+  test.setTimeout(60 * 1000);
+
   // Get a user to test with
   if (!page.mock.enabled) {
     // Login as administrator
@@ -167,7 +169,9 @@ test(
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByLabel('Username').click();
     await page.getByRole('button', { name: 'Submit' }).click();
-    await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
+    await expect(page.locator('h1').first()).toContainText(
+      'Welcome to the Ansible Automation Platform'
+    );
   }
 );
 
@@ -191,7 +195,9 @@ test(
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByLabel('Username').click();
     await page.getByRole('button', { name: 'Submit' }).click();
-    await expect(page.locator('h1')).toContainText('Welcome to the Ansible Automation Platform');
+    await expect(page.locator('h1').first()).toContainText(
+      'Welcome to the Ansible Automation Platform'
+    );
 
     await page.getByRole('button', { name: hubKeyCloakUser?.username || 'mock' }).click();
     await page.getByRole('menuitem', { name: 'User details' }).click();
