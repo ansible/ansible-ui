@@ -1,5 +1,10 @@
-import { LoadingPage, PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
-import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
+import {
+  DateTimeCell,
+  LoadingPage,
+  PageDetail,
+  PageDetails,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useTranslation } from 'react-i18next';
@@ -39,9 +44,12 @@ export function CredentialDetails() {
       </PageDetail>
       <CredentialDetailFields credential={credential} />
       <PageDetail label={t('Created')}>
-        {credential?.created_at ? formatDateString(credential.created_at) : ''}
+        <DateTimeCell value={credential?.created_at} author={credential?.created_by?.username} />
       </PageDetail>
-      <LastModifiedPageDetail value={credential?.modified_at ? credential.modified_at : ''} />
+      <LastModifiedPageDetail
+        value={credential?.modified_at ? credential.modified_at : ''}
+        author={credential?.modified_by?.username}
+      />
     </PageDetails>
   );
 }

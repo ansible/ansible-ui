@@ -1,5 +1,6 @@
 import {
   CopyCell,
+  DateTimeCell,
   LoadingPage,
   PageDetail,
   PageDetails,
@@ -233,10 +234,14 @@ export function RulebookActivationDetails() {
         </PageDetail>
         <PageDetail label={t('Restart count')}>{rulebookActivation?.restart_count || 0}</PageDetail>
         <PageDetail label={t('Created')}>
-          {rulebookActivation?.created_at ? formatDateString(rulebookActivation?.created_at) : ''}
+          <DateTimeCell
+            value={rulebookActivation.created_at}
+            author={rulebookActivation?.created_by?.username}
+          />
         </PageDetail>
         <LastModifiedPageDetail
           value={rulebookActivation?.modified_at ? rulebookActivation?.modified_at : ''}
+          author={rulebookActivation?.modified_by?.username}
         />
       </PageDetails>
       {rulebookActivation?.extra_var && (

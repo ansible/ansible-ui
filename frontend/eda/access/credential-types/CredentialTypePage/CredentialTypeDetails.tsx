@@ -1,5 +1,6 @@
-import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { DateTimeCell, PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
+import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { jsonToYaml } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label } from '@patternfly/react-core';
@@ -50,6 +51,16 @@ export function CredentialTypeDetailInner(props: { credentialType: EdaCredential
         )}
         label={t('Injector configuration')}
         value={jsonToYaml(JSON.stringify(props.credentialType.injectors))}
+      />
+      <PageDetail label={t('Created')}>
+        <DateTimeCell
+          value={props.credentialType?.created_at}
+          author={props.credentialType?.created_by?.username}
+        />
+      </PageDetail>
+      <LastModifiedPageDetail
+        value={props.credentialType?.modified_at ? props.credentialType.modified_at : ''}
+        author={props.credentialType?.modified_by?.username}
       />
     </PageDetails>
   );

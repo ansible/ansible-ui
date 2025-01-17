@@ -1,12 +1,12 @@
 import {
   CopyCell,
+  DateTimeCell,
   LoadingPage,
   PageDetail,
   PageDetails,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
 import { StandardPopover } from '@ansible/ansible-ui-framework/components/StandardPopover';
-import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
 import { capitalizeFirstLetter } from '@ansible/ansible-ui-framework/utils/strings';
 import { LastModifiedPageDetail } from '@ansible/common-ui/LastModifiedPageDetail';
 import { StatusCell } from '@ansible/common-ui/Status';
@@ -104,9 +104,12 @@ export function ProjectDetails() {
       <PageDetail label={t('Source control refspec')}>{project?.scm_refspec || ''}</PageDetail>
       <PageDetail label={t('Import error')}>{project?.import_error || ''}</PageDetail>
       <PageDetail label={t('Created')}>
-        {project?.created_at ? formatDateString(project.created_at) : ''}
+        <DateTimeCell value={project.created_at} author={project?.created_by?.username} />
       </PageDetail>
-      <LastModifiedPageDetail value={project?.modified_at ? project.modified_at : ''} />
+      <LastModifiedPageDetail
+        value={project?.modified_at ? project.modified_at : ''}
+        author={project?.modified_by?.username}
+      />
       {!!project?.verify_ssl && (
         <PageDetail label={t('Enabled option')}>
           <DescriptionListGroup>

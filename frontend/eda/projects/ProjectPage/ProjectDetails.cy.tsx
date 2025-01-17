@@ -7,7 +7,7 @@ describe('ProjectDetails', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: edaAPI`/projects/1/`,
+        url: edaAPI`/projects/*`,
       },
       {
         fixture: 'edaProject.json',
@@ -26,6 +26,8 @@ describe('ProjectDetails', () => {
       cy.get('#source-control-url').should('have.text', 'https://github.com/ansible/ansible-ui');
       cy.get('#proxy').should('have.text', 'proxy.example.com');
       cy.get('#import-state').should('have.text', 'completed');
+      cy.get('#created').should('contain', 'by DemoUser1');
+      cy.get('#last-modified').should('contain', 'by DemoUser2');
     });
   });
 });
