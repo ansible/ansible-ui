@@ -37,6 +37,7 @@ export function PageFormPlatformOrganizationNameSelect<
       id="organization"
       label={t('Organization')}
       placeholder={t('Select organization')}
+      labelHelp={t('Specify the organization that matching users are added to or barred from. ')}
       queryOptions={queryOptions as PageAsyncSelectOptionsFn<PathValue<TFieldValues, TFieldName>>}
       queryPlaceholder={t('Loading organizations...')}
       queryErrorText={t('Error loading organizations')}

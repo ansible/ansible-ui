@@ -28,6 +28,7 @@ export function PageFormPlatformRoleNameSelect<
       id="role"
       label={t('Role')}
       placeholder={t('Select role')}
+      labelHelp={t('Specify the role that matching users are added to or barred from. ')}
       queryOptions={queryOptions as PageAsyncSelectOptionsFn<PathValue<TFieldValues, TFieldName>>}
       queryPlaceholder={t('Loading role...')}
       queryErrorText={t('Error loading roles')}

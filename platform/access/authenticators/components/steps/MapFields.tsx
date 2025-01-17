@@ -119,11 +119,15 @@ export function MapFields(props: {
               label={t('Name')}
               isRequired
               placeholder={t('Enter name')}
+              labelHelp={t(
+                'The rule name is a unique string that identifies the rule, and will appear in the Mapping order step.'
+              )}
             />
             <PageFormSelect
               id={`mappings-${index}-trigger`}
               name={`mappings.${index}.trigger`}
               label={t('Trigger')}
+              labelHelp={t('The trigger defines how or when the rule is activated.')}
               options={[
                 {
                   value: 'always',
@@ -145,7 +149,13 @@ export function MapFields(props: {
               placeholderText={t('Select trigger')}
               isRequired
             />
-            <PageFormCheckbox name={`mappings.${index}.revoke`} label={t('Revoke')} />
+            <PageFormCheckbox
+              labelHelp={
+                'Selecting revoke bars matching user groups from being added to the team. Barred members will not be notified.'
+              }
+              name={`mappings.${index}.revoke`}
+              label={t('Revoke')}
+            />
           </MapFieldsGrid>
           <PageFormHidden
             watch={`mappings.${index}.trigger`}
