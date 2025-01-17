@@ -8,13 +8,13 @@ import { filterTableByText } from '../../../commands/filterTableByText';
 import { navigateTo } from '../../../commands/navigateTo';
 
 export async function createUser(
-  options: { teamName?: string; organizationName?: string },
+  options: { userName?: string; organizationName?: string },
   page: Page
 ) {
   await navigateTo(page, 'Access Management', 'Users');
   await page.getByRole('link', { name: 'Create user', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Create user', exact: true })).toBeVisible();
-  const userName = options.teamName ?? createE2EName();
+  const userName = options.userName ?? createE2EName('user', { noWhitespace: true });
   await page.getByLabel('Username').fill(userName);
   const password = 'password';
   await page.getByLabel('Password *', { exact: true }).fill(password);
