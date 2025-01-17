@@ -5,7 +5,6 @@ import { initReactI18next } from 'react-i18next';
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
-
 void i18n
   .use({
     type: 'postProcessor',
@@ -26,6 +25,22 @@ void i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     detection: {
+      order: [
+        'querystring',
+        'cookie',
+        'localStorage',
+        'sessionStorage',
+        'navigator',
+        'htmlTag',
+        'path',
+        'subdomain',
+      ],
+      convertDetectedLanguage: (lng) => {
+        if (lng.includes('en_')) {
+          return 'en';
+        }
+        return lng.replace('-', '_');
+      },
       lookupQuerystring: 'lang',
       lookupCookie: 'lang',
       lookupLocalStorage: 'lang',
