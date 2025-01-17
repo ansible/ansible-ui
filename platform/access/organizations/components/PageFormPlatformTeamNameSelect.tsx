@@ -36,6 +36,7 @@ export function PageFormPlatformTeamNameSelect<
       name={props.name}
       id="team"
       label={t('Team')}
+      labelHelp={t('Specify the team that matching users are added to or barred from.')}
       placeholder={t('Select team')}
       queryOptions={queryOptions as PageAsyncSelectOptionsFn<PathValue<TFieldValues, TFieldName>>}
       queryPlaceholder={t('Loading teams...')}
