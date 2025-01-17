@@ -74,9 +74,15 @@ export function DecisionEnvironmentDetails() {
         )}
       </PageDetail>
       <PageDetail label={t('Created')}>
-        <DateTimeCell value={decisionEnvironment?.created_at} />
+        <DateTimeCell
+          value={decisionEnvironment?.created_at}
+          author={decisionEnvironment?.created_by?.username}
+        />
       </PageDetail>
-      <LastModifiedPageDetail value={decisionEnvironment?.modified_at} />
+      <LastModifiedPageDetail
+        value={decisionEnvironment?.modified_at}
+        author={decisionEnvironment?.modified_by?.username}
+      />
     </PageDetails>
   );
 }

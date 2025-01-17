@@ -209,6 +209,8 @@ export interface ActivationRead {
   source_mappings?: string;
   /** Skip audit events for activation */
   skip_audit_events?: boolean;
+  created_by?: { username?: string };
+  modified_by?: { username?: string };
 }
 
 export interface AuditAction {
@@ -379,6 +381,8 @@ export interface CredentialType {
   /** @format date-time */
   modified_at: string;
   managed: boolean;
+  created_by?: { username?: string };
+  modified_by?: { username?: string };
 }
 
 export interface CredentialTypeCreate {
@@ -431,6 +435,8 @@ export interface DecisionEnvironmentRead {
   created_at: string;
   /** @format date-time */
   modified_at: string;
+  created_by?: { username?: string };
+  modified_by?: { username?: string };
 }
 
 /** Serializer for DecisionEnvironment reference. */
@@ -455,6 +461,8 @@ export interface EdaCredential {
   modified_at: string;
   managed: boolean;
   organization: OrganizationRef;
+  created_by?: { username?: string };
+  modified_by?: { username?: string };
 }
 
 export interface EdaCredentialCreate {
@@ -538,6 +546,8 @@ export interface EventStreamOut {
    * @format date-time
    */
   last_event_received_at: string | null;
+  created_by?: { username?: string };
+  modified_by?: { username?: string };
 }
 
 /**
@@ -1350,6 +1360,12 @@ export interface ProjectRead {
   created_at: string;
   /** @format date-time */
   modified_at: string;
+  created_by: {
+    username?: string;
+  };
+  modified_by: {
+    username?: string;
+  };
 }
 
 export interface ProjectRef {

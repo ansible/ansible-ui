@@ -1,5 +1,6 @@
 import {
   CopyCell,
+  DateTimeCell,
   LoadingPage,
   PageDetail,
   PageDetails,
@@ -89,9 +90,15 @@ export function EventStreamDetails() {
             : ''}
         </PageDetail>
         <PageDetail label={t('Created')}>
-          {eventStream?.created_at ? formatDateString(eventStream.created_at) : ''}
+          <DateTimeCell
+            value={eventStream?.created_at}
+            author={eventStream?.created_by?.username}
+          />
         </PageDetail>
-        <LastModifiedPageDetail value={eventStream?.modified_at ? eventStream.modified_at : ''} />
+        <LastModifiedPageDetail
+          value={eventStream?.modified_at ? eventStream.modified_at : ''}
+          author={eventStream?.modified_by?.username}
+        />
         <PageDetail
           label={t('Test content type')}
           helpText={t('The HTTP Body that was sent from the Sender.')}
