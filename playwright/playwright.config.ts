@@ -67,6 +67,8 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testIgnore: '**/upgrades-tests/**',
       dependencies: ['coverage setup'],
+      fullyParallel: false,
+      timeout: 5 * 60 * 1000,
     },
     {
       name: 'mock chromium',
@@ -78,6 +80,7 @@ export default defineConfig({
       name: 'live firefox',
       use: { ...devices['Desktop Firefox'] },
       testIgnore: '**/upgrades-tests/**',
+      fullyParallel: false,
     },
     {
       name: 'mock firefox',
@@ -88,6 +91,7 @@ export default defineConfig({
       name: 'live webkit',
       use: { ...devices['Desktop Safari'] },
       testIgnore: '**/upgrades-tests/**',
+      fullyParallel: false,
     },
     {
       name: 'mock webkit',

@@ -109,7 +109,7 @@ export function InstanceGroupDetailInner(props: { instanceGroup: InstanceGroup }
       </PageDetail>
       <PageDetailCodeEditor
         fullWidth
-        isEmpty={!instanceGroup.pod_spec_override.length}
+        isEmpty={!instanceGroup.pod_spec_override?.length}
         helpText={t('Custom Kubernetes or OpenShift Pod specification.')}
         label={t('Pod spec override')}
         showCopyToClipboard

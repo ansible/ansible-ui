@@ -1,6 +1,15 @@
-export function createE2EName(name?: string): string {
+export function createE2EName(
+  name?: string,
+  options?: {
+    noWhitespace?: boolean;
+  }
+): string {
   const id = crypto.randomUUID().split('-')[0];
-  return `E2E ${name ? name + ' ' : ''}` + id;
+  let randomName = `E2E ${name ? name + ' ' : ''}` + id;
+  if (options?.noWhitespace) {
+    randomName = randomName.replace(/\s/g, '_');
+  }
+  return randomName;
 }
 
 export function createE2EUsername(username?: string): string {
