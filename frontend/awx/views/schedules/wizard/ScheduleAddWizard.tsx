@@ -74,6 +74,7 @@ export function ScheduleAddWizard(props: {
       schedule_type: getScheduleType(props.resourceEndPoint),
       startDateTime: { date: currentDate, time: time },
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      resourceId: null,
     },
     promptStep: {
       // This needs to be set from the "details" step when the resource is selected
