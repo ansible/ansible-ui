@@ -1,7 +1,7 @@
 import { PageFormSelect } from '@ansible/ansible-ui-framework';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { Divider } from '@patternfly/react-core';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
@@ -16,11 +16,13 @@ import { ScheduleFormWizard } from '../types';
 export function ScheduleTypeInputs() {
   const { t } = useTranslation();
   const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
+  const { resetField } = useFormContext();
 
   const resourceInventory = useWatch({ name: 'resourceInventory' }) as RegularInventory;
   const scheduleType = useWatch({
     name: 'schedule_type',
   }) as string;
+
   return (
     <>
       <PageFormSection>
@@ -40,6 +42,9 @@ export function ScheduleTypeInputs() {
             { label: t('Management job template'), value: 'management_job_template' },
           ]}
           placeholderText={t('Select resource type')}
+          onChange={() => {
+            resetField('resourceId', { defaultValue: null });
+          }}
         />
 
         {scheduleType &&
