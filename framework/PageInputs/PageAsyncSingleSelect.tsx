@@ -258,6 +258,7 @@ export function PageAsyncSingleSelect<
             )
           : undefined
       }
+      disableMaxDropdownWidth={props.disableMaxDropdownWidth}
     />
   );
 }

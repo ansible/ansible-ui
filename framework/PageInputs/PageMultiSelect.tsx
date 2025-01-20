@@ -101,6 +101,8 @@ export interface PageMultiSelectProps<ValueT> {
   queryLabel?: (value: ValueT) => ReactNode;
 
   compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
+
+  disableMaxDropdownWidth?: boolean;
 }
 
 /**
@@ -328,7 +330,12 @@ export function PageMultiSelect<
       isOpen={open}
       onOpenChange={setOpen}
       toggle={Toggle}
-      popperProps={{ appendTo: () => document.body, preventOverflow: true, enableFlip: true }}
+      popperProps={{
+        appendTo: () => document.body,
+        preventOverflow: true,
+        enableFlip: true,
+        maxWidth: props.disableMaxDropdownWidth ? undefined : 'trigger',
+      }}
       innerRef={selectListRef}
     >
       <MenuSearch>

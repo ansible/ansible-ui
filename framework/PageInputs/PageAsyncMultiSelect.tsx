@@ -250,6 +250,7 @@ export function PageAsyncMultiSelect<
       disableClearChips={props.disableClearChips}
       queryLabel={props.queryLabel}
       compareOptionValues={props.compareOptionValues}
+      disableMaxDropdownWidth={props.disableMaxDropdownWidth}
     />
   );
 }
