@@ -122,6 +122,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             data-cy={selectedFilter}
             disableSortOptions
             isRequired
+            disableMaxDropdownWidth
           />
           <ToolbarFilterComponent
             id="filter-input"
@@ -351,6 +352,7 @@ function ToolbarFilterComponent(props: {
           options={filter.options}
           isRequired={filter.isRequired || !filter.isPinned}
           disableSortOptions={filter.disableSortOptions}
+          disableMaxDropdownWidth
         />
       );
 
@@ -389,6 +391,7 @@ function ToolbarFilterComponent(props: {
           }
           queryLabel={filter.queryLabel}
           disableSortOptions={filter.disableSortOptions}
+          disableMaxDropdownWidth
         />
       );
 
@@ -422,6 +425,7 @@ function ToolbarFilterComponent(props: {
             }
             queryLabel={filter.queryLabel}
             disableSortOptions={filter.disableSortOptions}
+            disableMaxDropdownWidth
           />
         );
       }
@@ -454,6 +458,7 @@ function ToolbarFilterComponent(props: {
           disableClearSelection
           queryLabel={filter.queryLabel}
           disableSortOptions={filter.disableSortOptions}
+          disableMaxDropdownWidth
         />
       );
 
@@ -468,6 +473,7 @@ function ToolbarFilterComponent(props: {
             onSelect={(item) => setFilterValues(() => [item!])}
             options={filter.options}
             disableSortOptions={filter.disableSortOptions}
+            disableMaxDropdownWidth
           />
         );
       }
@@ -482,6 +488,7 @@ function ToolbarFilterComponent(props: {
           variant="count"
           disableClearSelection
           disableSortOptions={filter.disableSortOptions}
+          disableMaxDropdownWidth
         />
       );
 

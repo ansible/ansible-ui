@@ -1,7 +1,6 @@
 import {
   Dropdown,
   DropdownList,
-  DropdownPopperProps,
   Flex,
   FlexItem,
   Icon,
@@ -41,14 +40,12 @@ export function PageMastheadDropdown(props: {
       )}
       isOpen={isOpen}
       isPlain
-      popperProps={
-        {
-          appendTo: () => document.body,
-          preventOverflow: true,
-          enableFlip: true,
-          position: 'right',
-        } as DropdownPopperProps
-      }
+      popperProps={{
+        appendTo: () => document.body,
+        preventOverflow: true,
+        enableFlip: true,
+        position: 'right',
+      }}
       data-cy={props.id}
     >
       <DropdownList>{children}</DropdownList>

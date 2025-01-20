@@ -110,6 +110,8 @@ export interface PageSingleSelectProps<ValueT> {
   disableAutoSelect?: boolean;
 
   disableSortOptions?: boolean;
+
+  disableMaxDropdownWidth?: boolean;
 }
 
 /**
@@ -311,7 +313,12 @@ export function PageSingleSelect<
         isOpen={open}
         onOpenChange={setOpen}
         toggle={props.toggle ?? Toggle}
-        popperProps={{ appendTo: () => document.body, preventOverflow: true, enableFlip: true }}
+        popperProps={{
+          appendTo: () => document.body,
+          preventOverflow: true,
+          enableFlip: true,
+          maxWidth: props.disableMaxDropdownWidth ? undefined : 'trigger',
+        }}
         shouldFocusToggleOnSelect
         innerRef={selectListRef}
       >
