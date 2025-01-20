@@ -61,7 +61,10 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
             queryParams={handleQueryParams(source)}
           />
           <PageFormHidden watch="source" hidden={(type: string) => type !== 'scm'}>
-            <PageFormProjectSelect<InventorySourceForm> name="source_project" isRequired />
+            <PageFormProjectSelect<InventorySourceForm>
+              name="source_project.id"
+              isRequired={true}
+            />
             <PageFormInventoryFileSelect<InventorySourceForm>
               watch="source_project"
               name="source_path"
