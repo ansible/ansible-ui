@@ -115,5 +115,5 @@ export interface InventorySourceForm {
   enabled_var: string | undefined | null;
   enabled_value: string | undefined | null;
   host_filter: string | undefined | null;
-  source_project?: number;
+  source_project?: { id: number };
 }
