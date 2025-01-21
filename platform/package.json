@@ -3,7 +3,10 @@
   "type": "module",
   "scripts": {
     "start": "vite --open --port 4100",
-    "build": "npm run clean && vite build",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "preview": "vite preview --port 4100",
+    "serve": "concurrently --kill-others-on-fail npm:preview npm:build:watch -c auto",
     "clean": "rm -rf node_modules dist coverage",
     "cypress": "cd .. && cypress open --config-file=cypress.platform.config.ts",
     "e2e": "cd .. && cypress open --browser chrome --e2e --config-file=cypress.platform.config.ts",
