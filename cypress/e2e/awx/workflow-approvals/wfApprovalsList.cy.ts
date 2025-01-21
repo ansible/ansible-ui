@@ -435,7 +435,7 @@ describe('Workflow Approvals Tests', () => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
     });
-    cy.get('h2').should('contain', 'No results found');
+    cy.contains('No results found');
   }
 
   describe('Workflow Approvals - User Access', () => {

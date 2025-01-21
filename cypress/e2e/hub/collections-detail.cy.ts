@@ -1,8 +1,8 @@
 import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
+import { QueryParamsType } from '../../../frontend/eda/interfaces/generated/eda-api';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
-import { QueryParamsType } from '../../../frontend/eda/interfaces/generated/eda-api';
 
 function visitCollection(collection: string, namespace: string) {
   cy.navigateTo('hub', Collections.url);
@@ -141,7 +141,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
               cy.contains(/^No collections yet/);
             } else {
               cy.filterTableByTextFilter('name', collectionName);
-              cy.contains('No results found').should('exist');
+              cy.contains('No results found');
             }
           });
       });

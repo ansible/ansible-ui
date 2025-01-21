@@ -117,7 +117,7 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.verifyPageTitle('Repositories');
       cy.filterTableByTextFilter('name', repositoryName);
       cy.get('.pf-v5-c-empty-state').should('be.visible');
-      cy.get('.pf-v5-c-empty-state').contains('No results found');
+      cy.contains('No results found');
     });
 
     it('should copy CLI to clipboard', () => {

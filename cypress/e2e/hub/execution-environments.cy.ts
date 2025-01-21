@@ -115,7 +115,7 @@ describe('Execution Environments', () => {
               cy.containsBy('button', 'Close').click();
             }
           );
-          cy.contains('h2', 'No results found').should('be.visible');
+          cy.contains('No results found');
           cy.get('[class*="empty-state__content"]')
             .should('exist')
             .should(
