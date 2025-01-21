@@ -46,14 +46,16 @@ describe('Host Tests', () => {
     cy.hasDetail(/^Description$/, 'This is the description');
     cy.get('[data-cy="code-block-value"]').should('contains.text', 'test: true');
     cy.navigateTo('awx', 'hosts');
-    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.filterTableBySearch(hostName);
+    cy.get('tbody').find('tr').should('have.length', 1);
     cy.getByDataCy('edit-host').click();
     cy.verifyPageTitle(`Edit ${hostName}`);
     cy.getByDataCy('description').clear().type('This is the description edited');
     cy.getByDataCy('Submit').click();
     cy.hasDetail(/^Description$/, 'This is the description edited');
     cy.navigateTo('awx', 'hosts');
-    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.filterTableBySearch(hostName);
+    cy.get('tbody').find('tr').should('have.length', 1);
     cy.get(`[data-cy="actions-column-cell"] [data-cy="actions-dropdown"]`).click();
     cy.getByDataCy('delete-host').click();
     cy.clickModalConfirmCheckbox();

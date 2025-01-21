@@ -52,9 +52,19 @@ describe('Check if the build includes EDA', () => {
         cy.createEdaCredential(edaOrg.id).then((edaCredential) => {
           cy.createEdaCredential(edaOrg.id).then((testCredential) => {
             cy.navigateTo('eda', 'credentials');
-            cy.selectTableRow(edaCredential.name);
+            cy.filterTableByTextFilter('name', edaCredential.name, {
+              disableFilterSelection: true,
+            });
+            cy.getTableRowByText(edaCredential.name, false).within(() => {
+              cy.get('input[type=checkbox]').click();
+            });
             cy.clearAllFilters();
-            cy.selectTableRow(testCredential.name);
+            cy.filterTableByTextFilter('name', testCredential.name, {
+              disableFilterSelection: true,
+            });
+            cy.getTableRowByText(testCredential.name, false).within(() => {
+              cy.get('input[type=checkbox]').click();
+            });
             cy.clickToolbarKebabAction('delete-credentials');
             cy.intercept('DELETE', edaAPI`/eda-credentials/${edaCredential.id.toString()}/`).as(
               'edaCredential'

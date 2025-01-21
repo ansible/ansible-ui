@@ -38,10 +38,11 @@ describe('AWX team roles', () => {
           statusCode: 204,
         }
       );
-      cy.clickTableRowAction('resource-name', 'Demo Inventory', 'remove-role', {
-        inKebab: false,
-        disableFilter: true,
-      });
+      cy.contains(`[data-cy="resource-name-column-cell"]`, 'Demo Inventory')
+        .parents('tr')
+        .within(() => {
+          cy.get(`button[data-cy="remove-role"]`).click();
+        });
       cy.get('div[role="dialog"]').within(() => {
         cy.contains('Demo Inventory');
         cy.get('input[id="confirm"]').click();

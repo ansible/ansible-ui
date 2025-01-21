@@ -502,10 +502,18 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('selectTableRow', (name: string | RegExp, filter?: boolean) => {
-  cy.getTableRowByText(name, filter).within(() => {
-    cy.get('input[type=checkbox]').click();
-  });
+/* Use a search string to narrow the table results to a single item
+   and then click the input box
+**/
+
+Cypress.Commands.add('selectTableRow', (name: string | RegExp) => {
+  cy.filterTableBySearch(`${name}`);
+  cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
+  cy.contains(`[data-cy="name-column-cell"]`, name)
+    .parents('tr')
+    .within(() => {
+      cy.get('input[type=checkbox]').eq(0).click();
+    });
 });
 
 Cypress.Commands.add('expandTableRow', (name: string | RegExp, filter?: boolean) => {
@@ -1038,7 +1046,7 @@ Cypress.Commands.add(
           .as('newVisualizerView')
           .then(() => {
             cy.navigateTo('awx', 'templates');
-            cy.filterTableByMultiSelect('name', [results.name]);
+            cy.filterTableBySearch(results.name);
             cy.clickTableRowLink('name', results.name, { disableFilter: true });
             cy.get('a[href*="/visualizer"]').click();
           });
@@ -1663,7 +1671,10 @@ Cypress.Commands.add(
   (template: JobTemplate | WorkflowJobTemplate, label: string, spec: Spec) => {
     cy.navigateTo('awx', 'templates');
     cy.verifyPageTitle('Templates');
-    cy.filterTableByMultiSelect('name', [template.name]);
+    cy.intercept('GET', awxAPI`/unified_job_templates/?*`).as('search');
+    cy.filterTableBySearch(template.name);
+    cy.wait('@search');
+    cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
     cy.get('[data-cy="name-column-cell"]').within(() => {
       cy.get('a').click();
     });

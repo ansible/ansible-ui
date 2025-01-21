@@ -19,20 +19,6 @@ export function useNameToolbarFilter() {
   );
 }
 
-export function useKeywordToolbarFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'keyword',
-      label: t('Keyword'),
-      type: ToolbarFilterType.SingleText,
-      query: 'search',
-      comparison: 'contains',
-    }),
-    [t]
-  );
-}
-
 export function useInitiatedByToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
@@ -276,4 +262,18 @@ export function useLabelsToolbarFilter() {
     }),
     [queryLabel, queryOptions, t]
   );
+}
+
+export function useSearchToolbarFilter() {
+  const { t } = useTranslation();
+  return useMemo(() => {
+    const filter: IToolbarFilter = {
+      type: ToolbarFilterType.Search,
+      key: 'search',
+      label: t('Search'),
+      query: 'search',
+      placeholder: t('Enter search'),
+    };
+    return filter;
+  }, [t]);
 }

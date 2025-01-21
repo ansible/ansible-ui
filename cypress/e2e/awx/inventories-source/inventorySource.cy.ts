@@ -78,6 +78,8 @@ describe('Inventory Sources', () => {
               cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
             });
           });
+          cy.get('#inventory-typeahead-select-input').click();
+          cy.get('#select-create-typeahead-Dockerfile').click();
           cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
           cy.getByDataCy('host-filter').type('/^test$/');
@@ -271,19 +273,14 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
   const executionEnvironmentName = 'E2E Execution Environment ' + randomString(5);
 
   before(() => {
-    // Create organization, project, inventory, execution environment, and EC2 credential
     cy.createAwxOrganization().then((org) => {
       organizationEC2 = org;
-
       cy.createAwxExecutionEnvironment({ name: executionEnvironmentName }).then((ee) => {
         executionEnvironment = ee;
-
         cy.createAwxInventory(organizationEC2).then((inv) => {
           inventory = inv;
-
           cy.createAwxProject(organizationEC2).then((proj) => {
             project = proj;
-
             cy.createAWXCredential({
               name: credentialName,
               inputs: { username: 'test', password: 'test' },
@@ -300,7 +297,6 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
   });
 
   after(() => {
-    // Clean up resources
     cy.deleteAwxCredential(ec2Credential, { failOnStatusCode: false });
     cy.deleteAwxOrganization(organizationEC2, { failOnStatusCode: false });
     cy.deleteAwxExecutionEnvironment(executionEnvironment, { failOnStatusCode: false });
@@ -327,7 +323,6 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.getByDataCy('overwrite').check();
     cy.getByDataCy('Submit').click();
     cy.verifyPageTitle('amazon ec2 source');
-
     cy.clickButton('Edit inventory source');
     cy.verifyPageTitle(`Edit amazon ec2 source`);
     cy.getByDataCy('name').clear().type('updated amazon ec2 source');
@@ -335,7 +330,6 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
     cy.verifyPageTitle('updated amazon ec2 source');
-
     cy.clickButton('Edit inventory source');
     cy.location('pathname').should('match', /\/edit$/);
     cy.verifyPageTitle(`Edit updated amazon ec2 source`);
@@ -353,6 +347,8 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
         cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
       });
     });
+    cy.get('#inventory-typeahead-select-input').click();
+    cy.get('#select-create-typeahead-Dockerfile').click();
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
     cy.verifyPageTitle('new project');

@@ -1,10 +1,12 @@
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useManagementJobFilters() {
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
@@ -13,8 +15,8 @@ export function useManagementJobFilters() {
       name: { apiPath: 'system_job_templates' },
       id: { apiPath: 'system_job_templates' },
     },
-    preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    preSortedKeys: ['search', 'name', 'id', 'created-by', 'modified-by'],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }

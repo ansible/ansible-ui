@@ -70,14 +70,20 @@ hub_resources_roles_tab.forEach((resource) => {
               cy.get('input').clear().type(resource_object.name);
             });
           cy.contains('.pf-v5-c-chip__text', resource_object.name);
-          cy.selectTableRow(resource_object.name, false);
+          cy.getTableRowByText(resource_object.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
         } else {
-          cy.selectTableRow(resource_object.name, true);
+          cy.getTableRowByText(resource_object.name, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
         }
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');
-        cy.selectTableRow(role.name, true);
+        cy.getTableRowByText(role.name, true).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clickButton(/^Next$/);
         cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
         cy.clickButton(/^Finish$/);
@@ -140,13 +146,21 @@ describe(`Roles Tab for Users - actions`, () => {
             .within(() => {
               cy.get('input').clear().type(namespace.name);
             });
-          cy.selectTableRow(namespace.name, false);
+          cy.getTableRowByText(namespace.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
           cy.clickButton(/^Next/);
           cy.wait('@roleDefinitions');
-          cy.selectTableRow(role1.name, true);
-          cy.selectTableRow(role2.name, true);
-          cy.selectTableRow(role3.name, true);
+          cy.getTableRowByText(role1.name, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
+          cy.getTableRowByText(role2.name, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
+          cy.getTableRowByText(role3.name, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickButton(/^Next$/);
           cy.verifyReviewStepWizardDetails('resources', [namespace.name], '1');
           cy.clickButton(/^Finish$/);
@@ -185,8 +199,12 @@ describe(`Roles Tab for Users - actions`, () => {
     cy.clickTableRow(user.username, true);
     cy.clickTab('Roles', true);
     cy.clickTab('Automation Content', true);
-    cy.selectTableRow(role2.name, false);
-    cy.selectTableRow(role3.name, false);
+    cy.getTableRowByText(role2.name, false).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.getTableRowByText(role3.name, false).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
     cy.clickToolbarKebabAction('remove-roles');
     cy.clickModalConfirmCheckbox();
     cy.clickModalButton('Remove role');

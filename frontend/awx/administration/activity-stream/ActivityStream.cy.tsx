@@ -418,7 +418,7 @@ describe('Activity Stream Tests', () => {
     it('See a list of events filtered by keyword', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept('api/v2/activity_stream/?search=associate*').as('keywordFilterRequest');
-      cy.filterTableByTypeAndSingleText(/^Keyword$/, 'associate');
+      cy.filterTableByTypeAndSingleText(/^Search$/, 'associate');
       cy.wait('@keywordFilterRequest');
       cy.clearAllFilters();
     });

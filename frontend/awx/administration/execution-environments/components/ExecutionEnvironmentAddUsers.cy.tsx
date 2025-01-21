@@ -1,5 +1,5 @@
-import { ExecutionEnvironmentAddUsers } from './ExecutionEnvironmentAddUsers';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { ExecutionEnvironmentAddUsers } from './ExecutionEnvironmentAddUsers';
 
 describe('ExecutionEnvironmentAddUsers', () => {
   const component = <ExecutionEnvironmentAddUsers />;
@@ -42,6 +42,7 @@ describe('ExecutionEnvironmentAddUsers', () => {
     cy.intercept(awxAPI`/users/?is_superuser=false&username__icontains=e2e-user-avAE*`, {
       fixture: 'users.json',
     }).as('nameFilterRequest');
+    cy.selectTableFilter('username');
     cy.filterTableByText('e2e-user-avAE');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();

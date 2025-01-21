@@ -146,20 +146,19 @@ describe('Inventories Tests', () => {
               cy.createAwxInventory(org).then((inv2) => {
                 cy.createAwxInventory(org).then((inv3) => {
                   cy.navigateTo('awx', 'inventories');
-                  cy.intercept(
-                    'GET',
-                    awxAPI`/inventories/?organization=${org?.id.toString()}&order_by=name&page=1&page_size=10`
-                  ).as('getInventories');
-                  cy.filterTableByMultiSelect('organization', [org?.name]);
+                  cy.intercept('GET', awxAPI`/inventories/?*`).as('getInventories');
+                  cy.selectTableFilter('organization');
+                  cy.get('[data-cy="filter-input"]').click();
+                  cy.get('[data-cy="search-input"]').type(org.name);
+                  const orgName = org.name.toLowerCase().split(' ').join('-');
+                  cy.get(`[data-cy="${orgName}"]`).click();
                   cy.wait('@getInventories');
                   cy.get('[aria-label="Simple table"] tr').should('have.length', 4);
                   cy.contains(inv1.name);
                   cy.contains(inv2.name);
                   cy.contains(inv3.name);
                   cy.getByDataCy('select-all').check();
-
                   cy.clickToolbarKebabAction('delete-inventories');
-
                   cy.get('#confirm').click();
                   cy.clickButton(/^Delete inventories/);
                   cy.contains(/^Success$/);
@@ -193,7 +192,8 @@ describe('Inventories Tests', () => {
             cy.getByDataCy('Submit').click();
             cy.getByDataCy('description').should('have.text', 'updated description');
             cy.contains(`[data-cy="smart-host-filter"]`, 'name=host2');
-            cy.clickKebabAction('actions-dropdown', 'delete-inventory');
+            cy.getBy(`[data-cy="actions-dropdown"]`).click();
+            cy.getBy('[data-cy="delete-inventory"]').click();
             cy.clickModalConfirmCheckbox();
             cy.clickModalButton('Delete inventory');
             cy.requestGet<AwxItemsResponse<Notification>>(awxAPI`/inventories/?name={name}`)

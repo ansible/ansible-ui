@@ -35,9 +35,13 @@ describe('Check if the build includes EDA', () => {
           is_superuser: true,
         }).then((userB) => {
           cy.navigateTo('eda', 'users');
-          cy.selectTableRow(userA.username, true);
+          cy.getTableRowByText(userA.username, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clearAllFilters();
-          cy.selectTableRow(userB.username, true);
+          cy.getTableRowByText(userB.username, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickToolbarKebabAction('delete-users');
           cy.intercept('DELETE', edaAPI`/users/${userA.id.toString()}/`).as('userA');
           cy.intercept('DELETE', edaAPI`/users/${userB.id.toString()}/`).as('userB');
@@ -56,7 +60,9 @@ describe('Check if the build includes EDA', () => {
     it('deletes a User from kebab menu from the project details page', () => {
       cy.createEdaUser().then((edaUser) => {
         cy.navigateTo('eda', 'users');
-        cy.selectTableRow(edaUser.username, true);
+        cy.getTableRowByText(edaUser.username, true).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clickToolbarKebabAction('delete-users');
         cy.get('#confirm').click();
         cy.clickButton(/^Delete user/);

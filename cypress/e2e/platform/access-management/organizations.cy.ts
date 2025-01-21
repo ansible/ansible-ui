@@ -93,7 +93,6 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
     cy.get('#confirm').click();
     cy.clickButton(/^Delete organization/);
     cy.contains(/^Success$/);
-    cy.clickButton(/^Clear all filters$/);
   });
 
   it('bulk creates and deletes an organization from the organizations list toolbar', () => {
@@ -103,9 +102,19 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
       testOrganization1 = organization;
       cy.createPlatformOrganization().then((organization: PlatformOrganization) => {
         testOrganization2 = organization;
-        cy.selectTableRow(testOrganization1.name);
+        cy.filterTableByTextFilter('name', testOrganization1.name, {
+          disableFilterSelection: true,
+        });
+        cy.getTableRowByText(testOrganization1.name, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clearAllFilters();
-        cy.selectTableRow(testOrganization2.name);
+        cy.filterTableByTextFilter('name', testOrganization2.name, {
+          disableFilterSelection: true,
+        });
+        cy.getTableRowByText(testOrganization2.name, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clickToolbarKebabAction('delete-organizations');
         cy.intercept('DELETE', gatewayAPI`/organizations/${testOrganization1.id.toString()}/`).as(
           'edaPlatformOrg1'
@@ -158,7 +167,6 @@ describe('If SaaS Build', () => {
       cy.deletePlatformOrganization(organization, { failOnStatusCode: false });
     });
 
-    // Organizations Users tab -  add roles to Users
     it('can add a user and apply the roles to the users of an organization via the users tab', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.createPlatformUser().then((createdUser2) => {
@@ -228,7 +236,6 @@ describe('If SaaS Build', () => {
       });
     });
 
-    //Organizations Users tab - users row item modal check
     it('verifies the modal displayed when no organization roles are added to a user', function () {
       cy.createPlatformUser().then((createdUser1) => {
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
@@ -258,17 +265,11 @@ describe('If SaaS Build', () => {
       });
     });
 
-    // Organizations Administrators tab
     it('can add and remove users from an org using the administrators tab', function () {
       cy.createPlatformUser().then((user) => {
-        // Organization Page
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
-
-        // Organization - Administrators Tab
         cy.clickTab('Administrators', true);
-
-        // Add Administrator
         cy.getByDataCy('add-administrators').click();
         cy.contains('h1', 'Add administrators');
         cy.getModal().within(() => {
@@ -276,31 +277,21 @@ describe('If SaaS Build', () => {
           cy.getBy('#submit').click();
         });
         cy.getModal().should('not.exist');
-
-        // Remove Administrator
-        cy.clickTableRowAction('username', user.username, 'remove-administrator', {
-          inKebab: false,
-        });
+        cy.getBy('[data-cy="remove-administrator"]').click();
         cy.getModal().within(() => {
           cy.getBy('#confirm').click();
           cy.getBy('#submit').click();
         });
-        cy.clickButton(/^Clear all filters$/);
-        cy.getModal().should('not.exist');
-
-        // Clean up
         cy.deletePlatformUser(user, { failOnStatusCode: false });
       });
     });
 
-    //Organizations teams tab - add roles to team
     it("can add a team and apply and remove the roles from an organization's team via the teams tab", function () {
       cy.createPlatformTeam({ organization: organization.id }).then((team) => {
         const createdPlatformTeam = team.name;
         cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
         cy.clickTableRowLink('name', organization.name, { disableFilter: true });
         cy.clickTab('Teams', true);
-        // Adds roles to the team
         cy.getByDataCy('add-roles').click();
         cy.verifyPageTitle('Add roles');
         cy.getWizard().within(() => {
@@ -352,7 +343,6 @@ describe('If SaaS Build', () => {
         cy.getTableRow('name', createdPlatformTeam, { disableFilter: true }).within(() => {
           cy.get('[data-cy="manage-roles"]').click();
         });
-        // Removes roles from the team
         cy.getModal().should('exist');
         cy.getModal().within(() => {
           cy.get('[data-ouia-component-id="manage-roles-modal-manage-roles-button"]').click();
@@ -362,11 +352,9 @@ describe('If SaaS Build', () => {
           cy.filterTableByTextFilter('name', 'Organization Audit', {
             disableFilterSelection: true,
           });
-
           cy.selectTableRowByCheckbox('name', 'Organization Audit', {
             disableFilter: true,
           });
-
           cy.clickButton(/^Next/);
           cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
           cy.filterTableByTextFilter('name', 'Operator', {
@@ -395,7 +383,6 @@ describe('If SaaS Build', () => {
       });
     });
 
-    //Organizations teams tab - teams row item modal check
     it('verifies the modal displayed when organization roles are not added to the team', function () {
       cy.createPlatformTeam({ organization: organization.id }).then((team) => {
         const createdPlatformTeam = team.name;
@@ -416,33 +403,21 @@ describe('If SaaS Build', () => {
       });
     });
 
-    // Create team from teams tab
     it('can create a team from the teams tab of an organization then delete team from details page', function () {
-      // Organization Page
       cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
       cy.clickTableRowLink('name', organization.name, { disableFilter: true });
-
-      // Organization - Teams Tab
       cy.clickTab('Teams', true);
-
-      // Create Team
       const teamName = `E2E PlatformTeam ${randomString(4)}`;
       cy.intercept('POST', gatewayAPI`/teams/`).as('createTeam');
       cy.clickLink(/^Create team$/);
       cy.get('[data-cy="name"]').type(teamName);
       cy.singleSelectByDataCy('organization', organization.name);
       cy.clickButton(/^Create team$/);
-
-      // Team Details
       cy.verifyPageTitle(teamName);
       cy.hasDetail('Organization', organization.name);
-
-      // Delete Team
       cy.clickPageAction('delete-team');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete team/);
-
-      // Clean up
       cy.wait('@createTeam')
         .its('response.body')
         .then((team: PlatformTeam) => {
@@ -475,13 +450,11 @@ describe('Notifications Tab for Organizations', function () {
   it('can navigate to the Organizations -> Notifications list and then to the details page of the Notification', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
-      cy.getBy('button[data-cy="apply-filter"]').click();
-      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', organization.name, { disableFilter: true });
       cy.contains(awxOrganization.name);
       cy.contains(`a[role="tab"]`, 'Notifications').click();
-      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-      cy.getByDataCy(`apply-filter`).click();
+      cy.filterTableBySearch(notificationName);
       cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
       cy.get('[data-cy="name-column-cell"] a').click();
       cy.contains(notificationName);
@@ -492,16 +465,12 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job approval', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
-      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
-      cy.getBy('button[data-cy="apply-filter"]').click();
-      cy.wait('@orgSearch');
-      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.filterTableByTextFilter('name', organization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', organization.name, { disableFilter: true });
       cy.contains(awxOrganization.name);
       cy.contains(`a[role="tab"]`, 'Notifications').click();
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
-      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-      cy.getByDataCy(`apply-filter`).click();
+      cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
       cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
       cy.get(`[aria-label="Click to enable approval"]`).click();
@@ -514,16 +483,12 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job start', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
-      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
-      cy.getBy('button[data-cy="apply-filter"]').click();
-      cy.wait('@orgSearch');
-      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.filterTableByTextFilter('name', awxOrganization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', awxOrganization.name, { disableFilter: true });
       cy.contains(awxOrganization.name);
       cy.contains(`a[role="tab"]`, 'Notifications').click();
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
-      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-      cy.getByDataCy(`apply-filter`).click();
+      cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
       cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
       cy.get(`[aria-label="Click to enable start"]`).eq(0).click();
@@ -536,16 +501,12 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job success', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
-      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
-      cy.getBy('button[data-cy="apply-filter"]').click();
-      cy.wait('@orgSearch');
-      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.filterTableByTextFilter('name', awxOrganization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', awxOrganization.name, { disableFilter: true });
       cy.contains(awxOrganization.name);
       cy.contains(`a[role="tab"]`, 'Notifications').click();
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
-      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-      cy.getByDataCy(`apply-filter`).click();
+      cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
       cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
       cy.get(`[aria-label="Click to enable success"]`).click();
@@ -558,16 +519,12 @@ describe('Notifications Tab for Organizations', function () {
   it('can toggle the Organizations -> Notification on and off for job failure', () => {
     cy.createNotificationTemplate(notificationName, awxOrganization).then((notifier) => {
       notification = notifier;
-      cy.intercept('GET', gatewayAPI`/organizations/?*`).as('orgSearch');
-      cy.getBy('[data-cy="text-input"]').type(awxOrganization.name);
-      cy.getBy('button[data-cy="apply-filter"]').click();
-      cy.wait('@orgSearch');
-      cy.get('[data-cy="name-column-cell"] a').click();
+      cy.filterTableByTextFilter('name', awxOrganization.name, { disableFilterSelection: true });
+      cy.clickTableRowLink('name', awxOrganization.name, { disableFilter: true });
       cy.contains(awxOrganization.name);
       cy.contains(`a[role="tab"]`, 'Notifications').click();
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
-      cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-      cy.getByDataCy(`apply-filter`).click();
+      cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
       cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
       cy.get(`[aria-label="Click to enable failure"]`).click();

@@ -188,7 +188,9 @@ describe('Check if the build includes EDA', () => {
           cy.navigateTo('eda', 'credential-types');
           cy.get('h1').should('contain', 'Credential Types');
           cy.filterTableByText(credtype.name, 'MultiText');
-          cy.selectTableRow(credtype.name, false);
+          cy.getTableRowByText(credtype.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickToolbarKebabAction('delete-credential-types');
           cy.intercept('DELETE', edaAPI`/credential-types/${credtype.id.toString()}/`).as(
             'credtype'

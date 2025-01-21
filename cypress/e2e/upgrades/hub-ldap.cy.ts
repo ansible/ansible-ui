@@ -33,11 +33,11 @@ describe('Authenticate and migrate a Hub LDAP account', () => {
     cy.contains('Complete your AAP migration').should('be.visible');
     cy.clickButton(/^Submit$/);
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
-    // Link a controller service account
     cy.navigateTo('platform', 'users');
     cy.clickTableRowLink('username', hubLdapUsername);
     cy.clickTab(/^Details$/, true);
-    cy.clickKebabAction('actions-dropdown', 'link-user-accounts');
+    cy.getBy(`[data-cy="actions-dropdown"]`).click();
+    cy.getBy('[data-cy="link-user-accounts"]').click();
     cy.verifyPageTitle('Link user accounts');
     cy.checkLinkedButton('Automation Hub');
     cy.getByDataCy('controller-username').type(controllerUsername);

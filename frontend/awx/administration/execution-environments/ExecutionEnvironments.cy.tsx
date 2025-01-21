@@ -38,8 +38,7 @@ describe('Execution Environments List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<ExecutionEnvironments />);
-      cy.filterTableByMultiSelect('name', ['Control Plane Execution Environment']);
-      cy.getByDataCy('filter-input').click();
+      cy.filterTableBySearch('Control Plane Execution Environment');
       cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
     });

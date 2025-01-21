@@ -66,7 +66,23 @@ describe('Users.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: AwxUser[]) => {
         const user = results[0];
-        cy.selectTableRow(user.username, false);
+        cy.intercept('GET', awxAPI`/users/?search=${user.username}*`, {
+          statusCode: 200,
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+              {
+                id: 1,
+                username: user.username,
+              },
+            ],
+          },
+        });
+        cy.selectTableRowByCheckbox('username', user.username, {
+          disableFilter: true,
+        });
         cy.clickToolbarKebabAction('delete-users');
         cy.contains('Permanently delete users').should('be.visible');
       });

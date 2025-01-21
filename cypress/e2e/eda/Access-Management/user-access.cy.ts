@@ -160,11 +160,15 @@ describe('Check if the build includes EDA', () => {
           cy.contains('h1', resource_object.name).should('be.visible');
           cy.clickTab('User Access', true);
           cy.get('a[data-cy="add-roles"]').click();
-          cy.selectTableRow(edaUser1.username, true);
+          cy.getTableRowByText(edaUser1.username, true).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.intercept('GET', edaAPI`/role_definitions/*`).as('edaRoles');
           cy.clickButton(/^Next$/);
           cy.wait('@edaRoles');
-          cy.selectTableRow(resource.role, false);
+          cy.getTableRowByText(resource.role, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickButton(/^Next$/);
           cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
           cy.clickButton(/^Finish$/);
@@ -213,8 +217,12 @@ describe('Check if the build includes EDA', () => {
           }
           cy.contains('h1', resource_object.name).should('be.visible');
           cy.clickTab('User Access', true);
-          cy.selectTableRow(`${edaUser2.username}`, false);
-          cy.selectTableRow(`${edaUser3.username}`, false);
+          cy.getTableRowByText(`${edaUser2.username}`, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
+          cy.getTableRowByText(`${edaUser3.username}`, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickToolbarKebabAction('remove-roles');
           cy.clickModalConfirmCheckbox();
           cy.clickModalButton('Remove role');

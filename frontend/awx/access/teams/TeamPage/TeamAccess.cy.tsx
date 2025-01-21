@@ -83,8 +83,8 @@ describe('TeamAccess', () => {
     cy.fixture('team').then(() => {
       cy.mount(<TeamAccess />);
       // Remove users
-      cy.selectTableRow('admin', false); //  User cannot be removed as they are a system administrator
-      cy.selectTableRow('user-2', false);
+      cy.selectTableRow('admin'); //  User cannot be removed as they are a system administrator
+      cy.selectTableRow('user-2');
       cy.clickToolbarKebabAction('remove-users-from-teams');
       // Confirmation modal is displayed with a warning
       cy.get('.pf-v5-c-modal-box').within(() => {

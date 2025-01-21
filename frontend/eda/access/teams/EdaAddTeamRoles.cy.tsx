@@ -55,7 +55,7 @@ describe('EDA team: Add roles', () => {
     );
     cy.clickButton(/^Next$/);
     cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one resource.');
-    cy.selectTableRow('Project 1', false);
+    cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
@@ -65,7 +65,7 @@ describe('EDA team: Add roles', () => {
     cy.get('button[data-cy="project"]').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
-    cy.selectTableRow('Project 1', false);
+    cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected projects.$/);
     cy.clickButton(/^Next$/);
@@ -82,7 +82,7 @@ describe('EDA team: Add roles', () => {
     cy.get('button[data-cy="project"]').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
-    cy.selectTableRow('Project 1', false);
+    cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected projects.$/);
     cy.selectTableRowByCheckbox('name', 'Project Admin', { disableFilter: true });

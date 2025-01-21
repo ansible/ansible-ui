@@ -95,11 +95,15 @@ describe('Check if the build includes EDA', () => {
         cy.verifyPageTitle(RBA.name);
         cy.clickTab('User Access', true);
         cy.getByDataCy('add-roles').click();
-        cy.selectTableRow(edaUser1.username, true);
+        cy.getTableRowByText(edaUser1.username, true).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', edaAPI`/role_definitions/?*`).as('edaRoles');
         cy.clickButton(/^Next$/);
         cy.wait('@edaRoles');
-        cy.selectTableRow('Activation Admin', false);
+        cy.getTableRowByText('Activation Admin', false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clickButton(/^Next$/);
         cy.clickButton(/^Finish$/);
         cy.assertModalSuccess();
@@ -199,12 +203,16 @@ describe('Check if the build includes EDA', () => {
         cy.verifyPageTitle(edaProject.name);
         cy.clickTab('Team Access', true);
         cy.get('a[data-cy="add-roles"]').click();
-        cy.selectTableRow(edaTeam.name, true);
+        cy.getTableRowByText(edaTeam.name, true).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', edaAPI`/role_definitions/?*`).as('edaRoles');
         cy.clickButton(/^Next$/);
         cy.wait('@edaRoles');
         cy.clickButton(/^Next$/);
-        cy.selectTableRow('Project Admin', false);
+        cy.getTableRowByText('Project Admin', false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clickButton(/^Next$/);
         cy.clickButton(/^Finish$/);
         cy.assertModalSuccess();

@@ -16,7 +16,10 @@ export class ReusableTemplateSurveyTestSuite {
   navigateToTemplateDetails() {
     cy.navigateTo('awx', 'templates');
     cy.verifyPageTitle('Templates');
-    cy.filterTableByMultiSelect('name', [this.template.name]);
+    cy.intercept('GET', awxAPI`/unified_job_templates/?*`).as('search');
+    cy.filterTableBySearch(this.template.name);
+    cy.wait('@search');
+    cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
     cy.get('[data-cy="name-column-cell"]').within(() => {
       cy.get('a').click();
     });
@@ -75,8 +78,9 @@ export class ReusableTemplateSurveyTestSuite {
       cy.contains(question.question_name);
       cy.contains(question.default);
       cy.contains('text');
-      cy.clickKebabAction('actions-dropdown', 'delete-survey-question');
+      cy.getBy(`[data-cy="actions-dropdown"]`).click();
     });
+    cy.getBy('[data-cy="delete-survey-question"]').click();
     cy.clickModalConfirmCheckbox();
     cy.intercept(
       'DELETE',
@@ -208,7 +212,7 @@ export class ReusableTemplateSurveyTestSuite {
 
         cy.navigateTo('awx', 'jobs');
         cy.verifyPageTitle('Jobs');
-        cy.filterTableByMultiSelect('id', [job.id.toString()]);
+        cy.filterTableById(job.id.toString());
         cy.clickTableRowLink('name', job.name, { disableFilter: true });
         cy.verifyPageTitle(job.name);
         cy.clickTab('Details', true);

@@ -1,88 +1,56 @@
-import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
-import * as useOptions from '@ansible/common-ui/crud/useOptions';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Notifiers } from './Notifiers';
-import { useNotifiersFilters } from './hooks/useNotifiersFilters';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function TestInner(props: { filters: IToolbarFilter[] }) {
-  return <div />;
-}
-
-function Test() {
-  const notifierFilters = useNotifiersFilters();
-  return (
-    notifierFilters &&
-    notifierFilters.length > 0 && (
-      <div id="root">
-        <TestInner filters={notifierFilters} />
-      </div>
-    )
-  );
-}
 
 describe('Notifiers.cy.tsx', () => {
   describe('Error list', () => {
     it('Displays error if notifiers are not successfully loaded', () => {
       cy.intercept({ method: 'GET', url: awxAPI`/notification_templates/*` }, { statusCode: 500 });
+      cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
+        { fixture: 'mock_options.json' }
+      );
       cy.mount(<Notifiers />);
       cy.contains('Error loading notifiers');
     });
   });
 
   describe('Non-empty list', () => {
-    it('Component renders', () => {
+    beforeEach(() => {
+      cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
+        { fixture: 'mock_options.json' }
+      );
       cy.intercept(
         { method: 'GET', url: awxAPI`/notification_templates/*` },
         { fixture: 'notification_templates.json' }
       );
+    });
+    it('Component renders', () => {
       cy.mount(<Notifiers />);
       cy.verifyPageTitle('Notifiers');
       cy.get('table').find('tr').should('have.length', 2);
     });
 
-    it('Returns number of expected filters', () => {
-      cy.intercept(
-        { method: 'GET', url: awxAPI`/notification_templates/*` },
-        { fixture: 'notification_templates.json' }
-      );
-      cy.intercept(
-        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
-        { fixture: 'mock_options.json' }
-      ).as('getOptions');
-      cy.mount(<Test />);
-      cy.wait('@getOptions');
-      cy.waitForReact(10000, '#root');
-      cy.getReact('TestInner').getProps('filters').should('have.length', 26);
-    });
-
-    it('List has filter for Name', () => {
-      cy.intercept(
-        { method: 'GET', url: awxAPI`/notification_templates/*` },
-        { fixture: 'notification_templates.json' }
-      );
-      cy.intercept(
-        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
-        { fixture: 'mock_options.json' }
-      );
-      cy.mount(<Notifiers />);
-      cy.intercept(awxAPI`/notification_templates/?name=notification*`).as('nameFilterRequest');
-      cy.filterTableByMultiSelect('name', ['csantiago_notification']);
-      cy.clearAllFilters();
-    });
-
     it('Bulk deletion confirmation', () => {
-      cy.intercept(
-        { method: 'GET', url: awxAPI`/notification_templates/*` },
-        { fixture: 'notification_templates.json' }
-      );
       cy.mount(<Notifiers />);
       cy.getByDataCy('select-all').check();
       cy.clickToolbarKebabAction('delete-notifiers');
       cy.contains('Delete notifiers').should('be.visible');
     });
-
+  });
+  describe('Notifiers RBAC', () => {
     it('Add notifier button is disabled if the user does not have the correct permissions', () => {
+      cy.fixture('awx_notifier_options.json').then((optionsResponse) => {
+        const { actions } = optionsResponse as {
+          actions: { GET?: Record<string, unknown>; POST?: Record<string, unknown> };
+        };
+        delete actions.POST;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        return cy.intercept('OPTIONS', awxAPI`/notification_templates`, {
+          ...optionsResponse,
+          actions,
+        });
+      });
       cy.intercept(
         { method: 'GET', url: awxAPI`/notification_templates/*` },
         { fixture: 'notification_templates.json' }
@@ -92,22 +60,10 @@ describe('Notifiers.cy.tsx', () => {
     });
 
     it('Add notifier button is enabled if the user has the correct permissions', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: ToolbarFilterType.MultiText,
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this notifier.',
-                filterable: true,
-              },
-            },
-          },
-        },
-      }));
+      cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
+        { fixture: 'awx_notifier_options.json' }
+      );
       cy.intercept(
         { method: 'GET', url: awxAPI`/notification_templates/*` },
         { fixture: 'notification_templates.json' }
@@ -117,6 +73,10 @@ describe('Notifiers.cy.tsx', () => {
     });
 
     it('Copy notifier button is enabled if the user has the correct permissions', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
+        { fixture: 'awx_notifier_options.json' }
+      );
       cy.intercept(
         { method: 'GET', url: awxAPI`/notification_templates/*` },
         { fixture: 'notification_templates.json' }
@@ -130,6 +90,10 @@ describe('Notifiers.cy.tsx', () => {
 
     it('Edit notifier button is enabled if the user has the correct permissions', () => {
       cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
+        { fixture: 'awx_notifier_options.json' }
+      );
+      cy.intercept(
         { method: 'GET', url: awxAPI`/notification_templates/*` },
         { fixture: 'notification_templates.json' }
       );
@@ -137,28 +101,17 @@ describe('Notifiers.cy.tsx', () => {
       cy.get('[data-cy="edit-notifier"]').should('have.attr', 'aria-disabled', 'false');
     });
   });
-
   describe('Empty list', () => {
-    it('Empty state is displayed correctly for user with permission to add notifier', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({
-        data: {
-          actions: {
-            POST: {
-              name: {
-                type: ToolbarFilterType.MultiText,
-                required: true,
-                label: 'Name',
-                max_length: 512,
-                help_text: 'Name of this notifier.',
-                filterable: true,
-              },
-            },
-          },
-        },
-      }));
+    beforeEach(() => {
       cy.intercept(
         { method: 'GET', url: awxAPI`/notification_templates/*` },
         { fixture: 'emptyList.json' }
+      );
+    });
+    it('Empty state is displayed correctly for user with permission to add notifier', () => {
+      cy.intercept(
+        { method: 'OPTIONS', url: awxAPI`/notification_templates` },
+        { fixture: 'awx_notifier_options.json' }
       );
       cy.mount(<Notifiers />);
       cy.contains(/^No notifiers found.$/);
@@ -167,11 +120,17 @@ describe('Notifiers.cy.tsx', () => {
     });
 
     it('Empty state is displayed correctly for user without permission to add notifier', () => {
-      cy.stub(useOptions, 'useOptions').callsFake(() => ({ data: { actions: {} } }));
-      cy.intercept(
-        { method: 'GET', url: awxAPI`/notification_templates/*` },
-        { fixture: 'emptyList.json' }
-      );
+      cy.fixture('awx_notifier_options.json').then((optionsResponse) => {
+        const { actions } = optionsResponse as {
+          actions: { GET?: Record<string, unknown>; POST?: Record<string, unknown> };
+        };
+        delete actions.POST;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        return cy.intercept('OPTIONS', awxAPI`/notification_templates`, {
+          ...optionsResponse,
+          actions,
+        });
+      });
       cy.mount(<Notifiers />);
       cy.contains(/^You do not have permission to create notifiers.$/);
       cy.contains(

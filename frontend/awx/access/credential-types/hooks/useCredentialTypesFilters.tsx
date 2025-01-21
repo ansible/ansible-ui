@@ -1,15 +1,17 @@
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useCredentialTypesFilters() {
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'credential_types',
-    preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
+    preSortedKeys: ['search', 'name', 'id', 'created-by', 'modified-by'],
     preFilledValueKeys: {
       name: {
         apiPath: 'credential_types',
@@ -18,7 +20,7 @@ export function useCredentialTypesFilters() {
         apiPath: 'credential_types',
       },
     },
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }

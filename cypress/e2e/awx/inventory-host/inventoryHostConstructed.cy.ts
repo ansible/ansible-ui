@@ -17,11 +17,9 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
       cy.createInventoryHost(organization, 'constructed').then((result) => {
         const { inventory: inv } = result;
         inventory = inv;
-
         cy.createInventoryHostGroup(organization).then((result2) => {
           const normalInventory = result2.inventory;
           group = result2.group;
-
           cy.requestPost<{ id: number }>(
             awxAPI`/inventories/${inventory.id.toString()}/input_inventories/`,
             {
@@ -38,19 +36,11 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
     cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
-  //tests
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
-    //1) Use the inventory created in before, access the host tab of that inventory
-    //2) Use a host, EE, and credential - these resources are needed to run a command against a host
-    //3) Assert redirect to the job output screen
-    //4) Navigate to the details page of the job and assert the values there match what was entered in the Run Command Wizard
-    //5) Navigate back to the Inventory -> Jobs Tab to assert that the Run Command job shows up there
     cy.navigateTo('awx', 'inventories');
-    cy.filterTableByMultiSelect('name', [inventory.name]);
-
+    cy.filterTableBySearch(inventory.name);
     cy.contains('a', inventory.name).click();
     cy.contains(`a[role="tab"]`, 'Hosts').click();
-
     cy.getByDataCy('run-command').click();
 
     runCommand({
@@ -66,7 +56,7 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
 
   it('can run an ad-hoc command against the host on the groups tab of a host-inventory from the host details page', () => {
     cy.navigateTo('awx', 'inventories');
-    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.filterTableBySearch(inventory.name);
     cy.contains('a', inventory.name).click();
     cy.getByDataCy('sync-inventory').click();
     cy.contains(`[data-cy="last-job-status"]`, 'Success');
@@ -94,14 +84,6 @@ describe('Inventory Host Tab Tests for contructed inventory', () => {
         cy.deleteAwxProject(project, { failOnStatusCode: false });
       });
     });
-  });
-
-  it.skip('can cancel a currently running job from the host jobs tab inside an inventory', () => {
-    //1) Use the inventory and host
-    //2) create a job template that uses that inventory, utilize a playbook that will cause the job to be long running
-    //3) Launch the job template
-    //4) Navigate back to inventory -> host tab -> jobs tab -> assert presence of job in that list
-    //5) Cancel the job and assert that it has been canceled
   });
 
   it('test edit, delete buttons and facts tab are not present for constructed inventory host options', () => {

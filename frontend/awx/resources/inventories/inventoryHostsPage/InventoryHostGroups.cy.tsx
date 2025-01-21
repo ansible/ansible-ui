@@ -63,12 +63,12 @@ describe('Inventory Host Groups List', () => {
             fixture: 'groups.json',
           }
         ).as('getGroups');
-        cy.intercept(awxAPI`/hosts/1/all_groups/?name=*`).as('nameFilterRequest');
+        cy.intercept(awxAPI`/hosts/1/all_groups/?search=*`).as('nameFilterRequest');
         cy.mount(<InventoryHostGroups page={type} />, {
           path: path,
           initialEntries: initialEntries,
         });
-        cy.filterTableByMultiSelect('name', ['Related to group 1']);
+        cy.filterTableBySearch('Related to group 1');
         cy.wait('@nameFilterRequest');
         cy.clearAllFilters();
       });

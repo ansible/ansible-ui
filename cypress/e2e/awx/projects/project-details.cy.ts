@@ -29,7 +29,7 @@ describe('Projects', () => {
   describe('Projects: User Access Tab', () => {
     it('can navigate to project access tab', () => {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.filterTableBySearch(project.name);
       cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
@@ -41,7 +41,7 @@ describe('Projects', () => {
   describe('Projects: Team Access Tab', () => {
     it('can navigate to team access tab', () => {
       cy.navigateTo('awx', 'projects');
-      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.filterTableBySearch(project.name);
       cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
       });
@@ -271,12 +271,20 @@ describe('Projects', () => {
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
       cy.createAwxProject(awxOrganization).then((thisProject) => {
         cy.navigateTo('awx', 'templates');
-        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.filterTableBySearch(jobTemplate.name);
         cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
-        cy.selectTableRow(jobTemplate.name, false);
+        cy.selectTableRow(jobTemplate.name);
         cy.getBy('[data-cy="edit-template"]').click();
         cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
-        cy.selectAsyncSingleSelectOption('project-select', `${thisProject.name}`);
+        cy.getBy('button[id="project"]').click();
+        cy.get('button[data-cy="browse-button"]').scrollIntoView().click({ force: true });
+        cy.getModal().within(() => {
+          cy.intercept('GET', awxAPI`/projects/?search**`).as('search');
+          cy.get('[data-cy="text-input"]').type(thisProject.name);
+          cy.wait('@search');
+          cy.getBy('[data-cy="checkbox-column-cell"]').click();
+          cy.clickButton('Confirm');
+        });
         cy.intercept('PATCH', awxAPI`/job_templates/${jobTemplate.id.toString()}/`).as('edited');
         cy.getByDataCy('Submit').click();
         cy.wait('@edited')
@@ -298,8 +306,8 @@ describe('Projects', () => {
           });
         cy.navigateTo('awx', 'projects');
         cy.verifyPageTitle('Projects');
-        cy.intercept('GET', awxAPI`/projects/?name*`).as('results');
-        cy.filterTableByMultiSelect('name', [thisProject.name]);
+        cy.intercept('GET', awxAPI`/projects/?search*`).as('results');
+        cy.filterTableBySearch(thisProject.name);
         cy.wait('@results');
         cy.get(`[data-cy="row-id-${thisProject.id}"]`).within(() => {
           cy.get('[data-cy="name-column-cell"]').click();
@@ -309,7 +317,8 @@ describe('Projects', () => {
           'contain',
           `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`
         );
-        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
+        cy.filterTableBySearch(jobTemplate.name);
+        cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
         cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
           inKebab: true,
           disableFilter: true,
@@ -340,8 +349,8 @@ describe('Projects', () => {
 
     it('can navigate to the Projects Notifications list, toggle a Notification on Start, and navigate to its details page', () => {
       cy.navigateTo('awx', 'projects');
-      cy.intercept('GET', awxAPI`/projects/?name*`).as('projectResults');
-      cy.filterTableByMultiSelect('name', [project.name]);
+      cy.intercept('GET', awxAPI`/projects/?search*`).as('projectResults');
+      cy.filterTableBySearch(project.name);
       cy.wait('@projectResults');
       cy.clickTableRowLink('name', `${project.name}`, {
         disableFilter: true,
@@ -349,7 +358,6 @@ describe('Projects', () => {
       cy.verifyPageTitle(`${project.name}`);
       cy.clickTab(/^Notifications$/, true);
       cy.getBy('#filter-input').type(`${notification.name}`);
-      cy.getByDataCy('apply-filter').click();
       cy.intercept(
         'POST',
         awxAPI`/projects/${project.id.toString()}/notification_templates_started/`

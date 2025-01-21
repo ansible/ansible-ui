@@ -38,21 +38,22 @@ describe('GalaxyKit Installation Check for Collections List', () => {
     it('can sign a collection', () => {
       cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
         cy.waitForAllTasks();
-        // Sign collection
         cy.getBy('[data-cy="list-view"]').click();
         cy.filterTableBySingleText(collectionName);
         cy.getBy('[data-cy="data-list-action"]').within(() => {
-          cy.clickKebabAction('actions-dropdown', 'sign-collection');
+          cy.getBy(`[data-cy="actions-dropdown"]`).click();
         });
+        cy.getBy('[data-cy="sign-collection"]').click();
         cy.get('#confirm').click();
         cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
         cy.clickButton(/^Sign collections$/);
-        cy.wait('@signed'); // The response is a 202 that kicks off a task for signing the collection
+        cy.wait('@signed');
         cy.waitForAllTasks();
-        cy.get('[data-label="Status"]').should('contain', 'Success');
+        cy.reload();
+        cy.getBy('[data-cy="list-view"]').click();
+        cy.get('[data-cy="signed-status"]').should('contain', 'Signed');
         cy.getModal().should('not.exist');
         cy.reload();
-        // Verify collection has been signed
         cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
         cy.deleteCollectionsInNamespace(namespace.name);
       });
@@ -64,21 +65,23 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.getBy('[data-cy="list-view"]').click();
         cy.filterTableBySingleText(collectionName);
         cy.getBy('[data-cy="data-list-action"]').within(() => {
-          cy.clickKebabAction('actions-dropdown', 'sign-collection');
+          cy.getBy(`[data-cy="actions-dropdown"]`).click();
         });
+        cy.getBy('[data-cy="sign-collection"]').click();
         cy.get('#confirm').click();
         cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
         cy.clickButton(/^Sign collections$/);
-        cy.wait('@signed'); // The response is a 202 that kicks off a task for signing the collection
+        cy.wait('@signed');
         cy.waitForAllTasks();
-        cy.get('[data-label="Status"]').should('contain', 'Success');
+        cy.get('[data-cy="signed-status"]').should('contain', 'Signed');
         cy.contains('Signed state').should('be.visible');
         cy.contains('a collection with some deps on other collections').should('be.visible');
         cy.contains('3.0.0').should('be.visible');
         cy.get('a[href*="/content/collections/validated/"]').click();
         cy.url().should('contain', '/details');
         cy.getBy('[data-cy="signed-status"]').contains(Collections.signedStatus);
-        cy.clickKebabAction('actions-dropdown', 'delete-entire-collection-from-system');
+        cy.getBy(`[data-cy="actions-dropdown"]`).click();
+        cy.getBy('[data-cy="delete-entire-collection-from-system"]').click();
         cy.get('#confirm').click();
         cy.clickButton(/^Delete collections/);
       });
@@ -87,7 +90,6 @@ describe('GalaxyKit Installation Check for Collections List', () => {
     it('can upload and delete collection from system', () => {
       cy.galaxykit('collection upload --skip-upload', namespace.name, collectionName).then(
         (result) => {
-          // Upload collection
           const filePath = result.filename as string;
           cy.uploadHubCollectionFile(filePath);
           cy.get('input[id="radio-non-pipeline"]').click();
@@ -95,16 +97,13 @@ describe('GalaxyKit Installation Check for Collections List', () => {
             cy.get('td[data-cy=checkbox-column-cell]').click();
           });
           cy.get('[data-cy="Submit"]').click();
-          // Verify collection has been uploaded
           cy.verifyPageTitle(Collections.title);
-          // Delete collection
           cy.getByDataCy('table-view').click();
           actionClick(collectionName, 'delete-entire-collection-from-system');
           cy.get('#confirm').click();
           cy.clickButton(/^Delete collections/);
           cy.contains(/^Success$/);
           cy.getModal().should('not.exist');
-          // Verify collection has been deleted from system
           cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.contains('No results found');
@@ -119,27 +118,22 @@ describe('GalaxyKit Installation Check for Collections List', () => {
           cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.clickTableRow(collectionName, false);
-          // Details Page
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
-          // Upload new version
           cy.getByDataCy('upload-new-version').click();
           cy.get('#file-browse-button').click();
           cy.get('input[id="file-filename"]').selectFile(result.filename, {
             action: 'drag-drop',
           });
-          // Upload page
           cy.get('#radio-non-pipeline').click();
           cy.filterTableBySingleText('validated', true);
           cy.getTableRowByText('validated', false).within(() => {
             cy.getByDataCy('checkbox-column-cell').click();
           });
           cy.get('[data-cy="Submit"]').click();
-          // Collections Page
           cy.verifyPageTitle(Collections.title);
           cy.getByDataCy('table-view').click();
           cy.filterTableBySingleText(collectionName, true);
           cy.clickTableRow(collectionName, false);
-          // Details Page
           cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`); //assert that we are looking at the collection we expect
           cy.get('[data-cy="version"]').should('contain', '1.2.3'); //assert that the version has changed
           cy.get('[data-cy="actions-dropdown"]')
@@ -166,11 +160,7 @@ describe('GalaxyKit Installation Check for Collections List', () => {
         cy.get('[data-cy="actions-dropdown"]').first().click();
       });
       cy.get('[data-cy="copy-version-to-repositories"] button').click();
-
       cy.collectionCopyVersionToRepositories(collectionName, 2);
-
-      // delete it from repository community
-
       cy.navigateTo('hub', Collections.url);
       cy.getByDataCy('table-view').click();
       cy.filterTableBySingleText(collectionName);

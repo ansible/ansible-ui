@@ -59,10 +59,12 @@ describe('Remotes User Access tab', () => {
       cy.wait('@userRoleAssignments');
       cy.getByDataCy('add-roles').click();
       cy.verifyPageTitle('Add roles');
-
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.selectTableRow(hubUser.username);
+        cy.filterTableByTextFilter('name', hubUser.username, { disableFilterSelection: true });
+        cy.getTableRowByText(hubUser.username, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');
@@ -106,7 +108,9 @@ describe('Remotes User Access tab', () => {
 
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.selectTableRow(hubTeam.name);
+        cy.getTableRowByText(hubTeam.name, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');

@@ -19,7 +19,7 @@ describe('Namespaces', () => {
     cy.navigateTo('hub', Namespaces.url);
     cy.verifyPageTitle('Namespaces');
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.contains('a', 'Create namespace').click();
+    cy.clickLink('Create namespace');
     cy.url().should('include', Namespaces.urlCreate);
     cy.getByDataCy('name').type(namespaceName);
     cy.getByDataCy('company').type('test company');
@@ -42,7 +42,7 @@ describe('Namespaces', () => {
     cy.navigateTo('hub', Namespaces.url);
     cy.verifyPageTitle('Namespaces');
     const namespaceName = `test_namespace_${randomString(5, undefined, { isLowercase: true })}`;
-    cy.contains('a', 'Create namespace').click();
+    cy.clickLink('Create namespace');
     cy.url().should('include', Namespaces.urlCreate);
     cy.getByDataCy('name').type(namespaceName);
     cy.getByDataCy('company').type('test company');
@@ -51,7 +51,6 @@ describe('Namespaces', () => {
     cy.getByDataCy('namespace-cli-tab').should('contain', 'CLI Configuration');
     cy.getByDataCy('namespace-cli-tab').click();
     cy.get('.pf-v5-c-truncate__start').should('contain', apiPrefix);
-    // Delete namespace
     cy.getByDataCy('actions-dropdown').click();
     cy.getByDataCy('delete-namespace').click();
     cy.get('#confirm').click();
@@ -94,7 +93,6 @@ describe('Namespaces - use existing namespaces', () => {
     cy.getByDataCy('collections-tab').click();
     cy.contains('No collections yet').should('be.visible');
     cy.contains('Upload collection').should('be.visible');
-
     cy.clickPageAction('imports');
     cy.url().should('include', MyImports.url);
     cy.url().should('include', namespace.name);
@@ -127,7 +125,7 @@ describe('Namespaces - use existing namespaces', () => {
   });
 });
 
-describe.skip('Namespaces - sign collections', () => {
+describe('Namespaces - sign collections', () => {
   let namespace: HubNamespace;
   const collectionName = randomE2Ename();
   const collectionName2 = randomE2Ename();
@@ -162,8 +160,6 @@ describe.skip('Namespaces - sign collections', () => {
     cy.clickTableRow(namespace.name, false);
     cy.getByDataCy('collections-tab').click();
     cy.setTableView('table');
-
-    // Sign collection
     cy.filterTableBySingleText(collectionName, true);
     cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
     cy.get(`[data-cy="sign-collection"] button`).click();
@@ -172,8 +168,9 @@ describe.skip('Namespaces - sign collections', () => {
     cy.contains(/^Success$/);
     cy.getModal().should('not.exist');
     cy.get('div[data-cy="manage-view"]').within(() => {
-      cy.clickKebabAction('actions-dropdown', 'imports');
+      cy.getBy(`[data-cy="actions-dropdown"]`).click();
     });
+    cy.getBy('[data-cy="imports"]').click();
     cy.getByDataCy('status').should('contain', 'Completed');
     cy.getByDataCy('approval-status').should('be.visible');
   });
@@ -186,12 +183,11 @@ describe.skip('Namespaces - sign collections', () => {
     cy.clickTableRow(namespace.name, false);
     cy.getByDataCy('collections-tab').click();
     cy.setTableView('table');
-
-    // Sign collection
     cy.filterTableBySingleSelect('repository', 'validated');
     cy.get('div[data-cy="manage-view"]').within(() => {
-      cy.clickKebabAction('actions-dropdown', 'sign-all-collections');
+      cy.getBy(`[data-cy="actions-dropdown"]`).click();
     });
+    cy.getBy('[data-cy="sign-all-collections"]').click();
     cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signAll');
     cy.getByDataCy('modal-sign-button').click();
     cy.wait('@signAll').then((response) => {
@@ -210,9 +206,13 @@ describe('Namespaces - delete', () => {
         cy.setTablePageSize('10');
         cy.setTableView('table');
         cy.filterTableBySingleText(namespace1.name, true);
-        cy.selectTableRow(namespace1.name, false);
+        cy.getTableRowByText(namespace1.name, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.filterTableBySingleText(namespace2.name, true);
-        cy.selectTableRow(namespace2.name, false);
+        cy.getTableRowByText(namespace2.name, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.clickToolbarKebabAction('delete-namespaces');
         cy.clickModalConfirmCheckbox();
         cy.clickModalButton('Delete namespaces');

@@ -396,10 +396,12 @@ declare global {
        * This is used when the filter is a multi select dropdown.
        * @example
        * ```
-       * cy.filterTableByMultiSelect('status', ["Success", "Pending"]);
+       * cy.filterTableBySearch("Success");
        * ```
        */
-      filterTableByMultiSelect(filterDataCy: string, optionLabels: string[]): Chainable<void>;
+      filterTableBySearch(searchString: string): Chainable<void>;
+
+      filterTableById(idString: string): Chainable<void>;
 
       /**
        * Gets a table row containing the specified text for the specified column.
@@ -466,13 +468,13 @@ declare global {
        *
        * @example
        * ```
-       * cy.clickKebabAction('kebab-dropdown', 'edit')
+       * cy.clickKebabAction('edit')
        * ```
        *
        * @param kebabDataCy - The data-cy attribute of the kebab dropdown.
        * @param actionDataCy - The data-cy attribute of the action to click.
        */
-      clickKebabAction(kebabDataCy: string, actionDataCy: string): Chainable<void>;
+      clickKebabAction(actionDataCy: string): Chainable<void>;
 
       /**
        * Click the action in the table row that contains the specified text for the specified column.
@@ -589,7 +591,7 @@ declare global {
       ): Chainable<void>;
 
       /** Selects a table row by clicking on the row checkbox. */
-      selectTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;
+      selectTableRow(name: string | RegExp): Chainable<void>;
 
       /**Expands a table row by locating the row using the provided name and thenclicking the "expand-toggle" button on that row.*/
       expandTableRow(name: string | RegExp, filter?: boolean): Chainable<void>;

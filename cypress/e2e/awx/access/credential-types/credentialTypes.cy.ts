@@ -51,7 +51,7 @@ describe('Credential Types', () => {
     it('can navigate to the details page, then to the credentials tab and view a related credential', function () {
       cy.navigateTo('awx', 'credential-types');
       cy.verifyPageTitle('Credential Types');
-      cy.filterTableByMultiSelect('name', [credType1.name]);
+      cy.filterTableBySearch(credType1.name);
       cy.clickTableRowLink('name', credType1.name, { disableFilter: true });
       cy.url().then((currentUrl) => {
         expect(currentUrl.includes('details')).to.be.true;
@@ -74,7 +74,7 @@ describe('Credential Types', () => {
 
     it('can filter credential types by name', () => {
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableByMultiSelect('name', [credType1.name]);
+      cy.filterTableBySearch(credType1.name);
       cy.get('tr').should('have.length', 2);
       cy.contains(credType1.name).should('be.visible');
       cy.clearAllFilters();
@@ -82,7 +82,7 @@ describe('Credential Types', () => {
 
     it('can filter credential types by description', () => {
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableByTextFilter('description', credType1.description);
+      cy.filterTableBySearch(credType1.description);
       cy.get('tr').should('have.length.greaterThan', 0);
       cy.contains(credType1.description).should('be.visible');
       cy.clearAllFilters();
@@ -104,7 +104,7 @@ describe('Credential Types', () => {
 
     it('checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed ', () => {
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableByMultiSelect('name', [credType1.name]);
+      cy.filterTableBySearch(credType1.name);
       cy.getByDataCy('edit-credential-type').click();
       cy.verifyPageTitle(`Edit ${credType1.name}`);
       cy.url().should('contain', `/credential-types/${credType1.id}/edit`);
@@ -177,7 +177,7 @@ describe('Credential Types', () => {
 
     it('checks that deleting a custom credential type which is being used by a credential is not allowed', () => {
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableBySingleSelect('name', 'Google Compute Engine');
+      cy.filterTableBySearch('Google Compute Engine');
       cy.selectTableRowByCheckbox('name', 'Google Compute Engine', { disableFilter: true });
       cy.clickToolbarKebabAction('delete-credential-types');
       cy.getModal().within(() => {
@@ -196,7 +196,7 @@ describe('Credential Types', () => {
     it('edit a credential type from the list row action and delete it using the list kebab menu', () => {
       cy.navigateTo('awx', 'credential-types');
       const editedCredentialTypeName = (credType1.name ?? '') + ' edited';
-      cy.filterTableByMultiSelect('name', [credType1.name]);
+      cy.filterTableBySearch(credType1.name);
       cy.clickTableRowPinnedAction(credType1.name, 'edit-credential-type', false);
       cy.verifyPageTitle(`Edit ${credType1.name}`);
       cy.url().then((currentUrl) => {
@@ -219,7 +219,7 @@ describe('Credential Types', () => {
           );
         });
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableByMultiSelect('name', [editedCredentialTypeName]);
+      cy.filterTableBySearch(editedCredentialTypeName);
       cy.clickTableRowAction('name', editedCredentialTypeName, 'delete-credential-type', {
         disableFilter: true,
         inKebab: true,
@@ -240,7 +240,7 @@ describe('Credential Types', () => {
     it('can edit and delete a credential type from the details page', () => {
       cy.navigateTo('awx', 'credential-types');
       const editedCredentialTypeName = (credType1.name ?? '') + ' edited';
-      cy.filterTableByMultiSelect('name', [credType1.name]);
+      cy.filterTableBySearch(credType1.name);
       cy.clickTableRowLink('name', credType1.name, { disableFilter: true });
       cy.clickButton('Edit credential type');
       cy.verifyPageTitle(`Edit ${credType1.name}`);
@@ -286,7 +286,7 @@ describe('Credential Types', () => {
 
     it('can delete a credential type from the list row action', () => {
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableByMultiSelect('name', [credType1.name]);
+      cy.filterTableBySearch(credType1.name);
       cy.clickTableRowAction('name', credType1.name, 'delete-credential-type', {
         disableFilter: true,
         inKebab: true,
@@ -299,9 +299,9 @@ describe('Credential Types', () => {
 
     it('can bulk delete custom credentials from the list page', function () {
       cy.navigateTo('awx', 'credential-types');
-      cy.filterTableByMultiSelect('name', [credType1.name, credType2.name]);
-      cy.selectTableRow(credType1.name, false);
-      cy.selectTableRow(credType2.name, false);
+      cy.selectTableRow(credType1.name);
+      cy.selectTableRow(credType2.name);
+      cy.clickButton('Clear all filters');
       cy.clickToolbarKebabAction('delete-credential-types');
       cy.intercept('DELETE', awxAPI`/credential_types/${credType1.id.toString()}/`).as(
         'deleteCredType1'
@@ -316,7 +316,6 @@ describe('Credential Types', () => {
         expect(credTypeArray[1]?.response?.statusCode).to.eql(204);
       });
       cy.assertModalSuccess();
-      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

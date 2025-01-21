@@ -21,7 +21,7 @@ describe('Notifications', () => {
 
   describe('Notifications: Details View', () => {
     beforeEach(() => {
-      // reloading page so the notifications dissapears
+      // reloading page so the notifications disappears
       cy.reload();
     });
 
@@ -29,7 +29,9 @@ describe('Notifications', () => {
       const notificationName = randomE2Ename();
       cy.createNotificationTemplate(notificationName, awxOrganization).then(() => {
         cy.navigateTo('awx', 'notification-templates');
-        cy.filterTableByMultiSelect('name', [notificationName]);
+        cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+        cy.filterTableBySearch(notificationName);
+        cy.wait('@search');
         cy.get('[data-cy="name-column-cell"] a').click();
         cy.getByDataCy('test-notifier').click();
         cy.contains(`[data-cy="status"]`, 'Failed', { timeout: 100000 });
@@ -54,7 +56,9 @@ describe('Notifications', () => {
       const notificationName = randomE2Ename();
       cy.createNotificationTemplate(notificationName, awxOrganization).then(() => {
         cy.navigateTo('awx', 'notification-templates');
-        cy.filterTableByMultiSelect('name', [notificationName]);
+        cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+        cy.filterTableBySearch(notificationName);
+        cy.wait('@search');
         cy.get('[data-cy="name-column-cell"] a').click();
         testDelete(notificationName, { details: true });
       });

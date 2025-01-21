@@ -28,14 +28,14 @@ describe('activity-stream', () => {
   });
 
   function openEventDetails(inventoryName: string) {
-    cy.filterTableByTextFilter('keyword', `inventory ${inventoryName}`);
+    cy.filterTableByTextFilter('search', `inventory ${inventoryName}`);
     cy.getByDataCy('view-event-details').click();
   }
 
   it('event column displays correct info', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
-    cy.filterTableByTextFilter('keyword', `inventory ${inventory.name}`);
+    cy.filterTableByTextFilter('search', `inventory ${inventory.name}`);
     cy.contains(`created inventory ${inventory.name}`);
   });
 
@@ -54,7 +54,7 @@ describe('activity-stream', () => {
   it('can navigate to event resource detail page from activity stream list page', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
-    cy.filterTableByTextFilter('keyword', inventory.name);
+    cy.filterTableByTextFilter('search', inventory.name);
     cy.getTableRow('event', ` created inventory ${inventory.name}`, { disableFilter: true }).within(
       () => {
         cy.getByDataCy('source-resource-detail').click();
@@ -67,7 +67,7 @@ describe('activity-stream', () => {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
     cy.intercept('GET', awxAPI`/activity_stream/?search*`).as('search');
-    cy.filterTableByTextFilter('keyword', inventory.name);
+    cy.filterTableByTextFilter('search', inventory.name);
     cy.wait('@search');
     openEventDetails(inventory.name);
     cy.getModal().within(() => {
@@ -76,11 +76,11 @@ describe('activity-stream', () => {
     cy.verifyPageTitle(inventory.name);
   });
 
-  it('can filter by keyword from activity stream list', function () {
+  it('can filter by Search from activity stream list', function () {
     cy.navigateTo('awx', 'activity-stream');
     cy.verifyPageTitle('Activity Stream');
     cy.intercept('GET', awxAPI`/activity_stream/?search*`).as('search');
-    cy.filterTableByTextFilter('keyword', inventory.name);
+    cy.filterTableByTextFilter('search', inventory.name);
     cy.wait('@search');
     cy.get('tbody').find('tr').should('have.length', 1);
     cy.get(`[data-cy='event-column-cell']`, { timeout: 30000 }).should(

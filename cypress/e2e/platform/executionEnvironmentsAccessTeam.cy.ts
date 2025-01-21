@@ -45,16 +45,15 @@ describe('Execution Environments: Team access', () => {
     cy.navigateTo('awx', 'execution-environments');
     cy.verifyPageTitle('Execution Environments');
     cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
-    cy.filterTableByMultiSelect('name', [execEnvName]);
+    cy.filterTableBySearch(execEnvName);
     cy.clickTableRowLink('name', execEnvName, { disableFilter: true });
     cy.hasDetail('Name', execEnvName);
     cy.clickTab(/^Team Access$/, true);
-
     cy.getByDataCy('add-roles').click();
     cy.verifyPageTitle('Add roles');
     cy.getWizard().within(() => {
       cy.contains('h1', 'Select team(s)').should('be.visible');
-      cy.filterTableByMultiSelect('name', [team.name]);
+      cy.filterTableBySearch(team.name);
       cy.selectTableRowByCheckbox('name', team.name, { disableFilter: true });
       cy.clickButton(/^Next/);
       cy.contains('h1', 'Select roles to apply').should('be.visible');
@@ -81,12 +80,10 @@ describe('Execution Environments: Team access', () => {
     });
     cy.getModal().should('not.exist');
     cy.verifyPageTitle(execEnvName);
-
     // This is a workaround for the issue:
     // https://issues.redhat.com/browse/AAP-31401
     cy.clickTab(/^Details$/, true);
     cy.clickTab(/^Team Access$/, true);
-
     cy.getByDataCy('select-all').check();
     cy.clickToolbarKebabAction('remove-roles');
     cy.contains('Remove role');

@@ -1,9 +1,10 @@
-import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
+import { awxApiPath } from '../../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
-import { awxApiPath } from '../../../common/api/awx-utils';
+import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useExecutionEnvironmentsFilters({
   url,
@@ -12,11 +13,12 @@ export function useExecutionEnvironmentsFilters({
 } = {}) {
   const urlPath = url ? url.replace(awxApiPath, '') : '';
   const optionsPath = urlPath || 'execution_environments';
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: optionsPath,
-    preSortedKeys: ['name', 'id', 'image', 'created-by', 'modified-by'],
+    preSortedKeys: ['search', 'name', 'id', 'image', 'created-by', 'modified-by'],
     preFilledValueKeys: {
       id: {
         apiPath: optionsPath,
@@ -25,7 +27,7 @@ export function useExecutionEnvironmentsFilters({
         apiPath: optionsPath,
       },
     },
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }

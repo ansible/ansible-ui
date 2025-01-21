@@ -32,28 +32,6 @@ describe('Teams.cy.ts', () => {
       cy.get('table').find('tr').should('have.length', 4);
     });
 
-    it('List has filters for Name, Organization, Created By and Modified By', () => {
-      cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });
-      cy.intercept(
-        { method: 'GET', url: awxAPI`/organizations/*` },
-        { fixture: 'organizations.json' }
-      );
-      cy.mount(<Teams />);
-      cy.intercept(awxAPI`/teams/?organization=*`).as('orgFilterRequest');
-      cy.openToolbarFilterTypeSelect().within(() => {
-        cy.contains(/^Name$/).should('be.visible');
-        cy.contains(/^Organization$/).should('be.visible');
-        cy.contains(/^Created by$/).should('be.visible');
-        cy.contains(/^Modified by$/).should('be.visible');
-        cy.contains('button', /^Organization$/).click();
-      });
-      cy.filterTableByMultiSelect('organization', ['Default']);
-      // A network request is made based on the filter selected on the UI
-      cy.wait('@orgFilterRequest');
-      // Clear filter
-      cy.clearAllFilters();
-    });
-
     it('Bulk deletion confirmation contains message about selected teams that cannot be deleted', () => {
       // The team with id: 29 in the teams.json fixture has user_capabilities.delete set to false
       cy.intercept({ method: 'GET', url: awxAPI`/teams/*` }, { fixture: 'teams.json' });

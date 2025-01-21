@@ -1,12 +1,13 @@
 import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useSearchToolbarFilter } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import {
   useDisableCreateInstanceGroup,
@@ -72,13 +73,15 @@ export function InstanceGroups() {
 }
 
 export function useInstanceGroupsFilters() {
+  const searchFilter = useSearchToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'instance_groups',
-    preSortedKeys: ['name', 'id'],
+    preSortedKeys: ['search', 'name', 'id'],
     preFilledValueKeys: {
       name: { apiPath: 'instance_groups' },
       id: { apiPath: 'instance_groups' },
     },
+    additionalFilters: [searchFilter],
   });
   return toolbarFilters;
 }

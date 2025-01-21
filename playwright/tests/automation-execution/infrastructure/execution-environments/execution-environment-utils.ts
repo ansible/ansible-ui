@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { clearTableFilters } from '../../../../commands/clearTableFilters';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { navigateTo } from '../../../../commands/navigateTo';
+import { selectTableFilter } from '../../../../commands/selectTableFilter';
 
 export async function createExecutionEnvironment(
   page: Page,
@@ -19,6 +20,7 @@ export async function createExecutionEnvironment(
 export async function deleteExecutionEnvironment(executionEnvName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
   await clearTableFilters(page);
+  await selectTableFilter('Name', page);
   await page.getByRole('button', { name: 'Select name' }).click();
   await page.getByLabel('Search input').click();
   await page.getByLabel('Search input').fill(executionEnvName);

@@ -6,6 +6,15 @@ describe('Credentials.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
+        method: 'OPTIONS',
+        url: awxAPI`/credentials/`,
+      },
+      {
+        fixture: 'mock_options.json',
+      }
+    ).as('getOptions');
+    cy.intercept(
+      {
         method: 'GET',
         url: awxAPI`/credentials/*`,
         hostname: 'localhost',
@@ -29,7 +38,21 @@ describe('Credentials.cy.ts', () => {
       .should('be.an', 'array')
       .then((results: Credential[]) => {
         const credential = results[0];
-        cy.selectTableRow(credential.name, false);
+        cy.intercept('GET', awxAPI`/credentials/?search=${credential.name}*`, {
+          statusCode: 200,
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+              {
+                id: 1,
+                name: credential.name,
+              },
+            ],
+          },
+        });
+        cy.selectTableRow(credential.name);
         cy.clickToolbarKebabAction('delete-credentials');
         cy.contains('Permanently delete credentials').should('be.visible');
       });

@@ -1,11 +1,12 @@
 import { expect, Page, test } from '@playwright/test';
 import { clearTableFilters } from '../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../commands/clickPageAction';
-import { clickTableRow } from '../../../commands/clickTableRow';
+import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
 import { expectRowToContain } from '../../../commands/expectRowToContain';
 import { filterTableBySelect } from '../../../commands/filterTableBySelect';
 import { navigateTo } from '../../../commands/navigateTo';
+import { selectTableFilter } from '../../../commands/selectTableFilter';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { singleSelectByLabel } from '../../../commands/singleSelectByLabel';
 
@@ -40,16 +41,14 @@ export async function createAwxProject(
 export async function syncAwxProject(projectName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Projects');
   await clearTableFilters(page);
+  await selectTableFilter('Name', page);
   await filterTableBySelect(projectName, page);
   await expectRowToContain(projectName, 'Success', page, 60 * 1000);
 }
 
 export async function deleteAwxProject(projectName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Projects');
-  await clearTableFilters(page);
-  await filterTableBySelect(projectName, page);
-  await clickTableRow(projectName, page);
-  await expect(page.getByRole('heading', { name: projectName, exact: true })).toBeVisible();
+  await clickTableRowWithFilter(projectName, page);
   await clickPageAction('Delete project', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();

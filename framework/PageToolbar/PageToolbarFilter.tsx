@@ -1,5 +1,5 @@
 import { Button, ToolbarFilter, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons';
+import { FilterIcon, SearchIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { PageAsyncMultiSelect } from '../PageInputs/PageAsyncMultiSelect';
 import { PageAsyncSingleSelect } from '../PageInputs/PageAsyncSingleSelect';
@@ -17,6 +17,7 @@ import { IToolbarMultiSelectFilter } from './PageToolbarFilters/ToolbarMultiSele
 import { IToolbarSingleSelectFilter } from './PageToolbarFilters/ToolbarSingleSelectFilter';
 import {
   IToolbarMultiTextFilter,
+  IToolbarSearchFilter,
   IToolbarSingleTextFilter,
   ToolbarSingleTextFilter,
   ToolbarTextMultiFilter,
@@ -25,6 +26,7 @@ import { PageToolbarToggleGroup } from './PageToolbarToggleGroup';
 
 /** Represents the types of filters that can be used in the toolbar */
 export enum ToolbarFilterType {
+  Search,
   SingleText,
   MultiText,
   SingleSelect,
@@ -36,6 +38,7 @@ export enum ToolbarFilterType {
 
 /** An IToolbarFilter represents a filter that can be used in the toolbar */
 export type IToolbarFilter =
+  | IToolbarSearchFilter
   | IToolbarSingleTextFilter
   | IToolbarMultiTextFilter
   | IToolbarDateRangeFilter
@@ -113,7 +116,9 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
             id="filter"
             value={selectedFilterKey}
             onSelect={setSeletedFilterKey}
-            icon={<FilterIcon />}
+            icon={
+              selectedFilter.type === ToolbarFilterType.Search ? <SearchIcon /> : <FilterIcon />
+            }
             options={toolbarFilters.map((filter) => ({
               label: filter.label,
               value: filter.key,
@@ -304,6 +309,18 @@ function ToolbarFilterComponent(props: {
   }
 
   switch (filter.type) {
+    case ToolbarFilterType.Search:
+      return (
+        <ToolbarSingleTextFilter
+          key={filter.key}
+          id={props.id ?? filter.key}
+          placeholder={filter.placeholder}
+          setValue={(value) => setFilterValues(() => (value ? [value] : []))}
+          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          hasKey={!!filterState?.[filter.key]}
+        />
+      );
+
     case ToolbarFilterType.SingleText:
       return (
         <ToolbarSingleTextFilter

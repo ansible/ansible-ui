@@ -19,6 +19,7 @@ import { useNotifiersColumns } from './hooks/useNotifiersColumns';
 import { useNotifiersFilters } from './hooks/useNotifiersFilters';
 import { useNotifiersRowActions } from './hooks/useNotifiersRowActions';
 import { useNotifiersToolbarActions } from './hooks/useNotifiersToolbarActions';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 
 export function Notifiers() {
   const { t } = useTranslation();
@@ -44,13 +45,11 @@ export function Notifiers() {
     type: 'list',
     runningNotifications,
   });
-
-  const notificationsOptions = useOptions<OptionsResponse<ActionsResponse>>(
+  const titleDocLink = useGetDocsUrl(config, 'notifiers');
+  const { data, isLoading = true } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/notification_templates/`
-  ).data;
-  const canAddNotificationTemplate = Boolean(
-    notificationsOptions && notificationsOptions.actions && notificationsOptions.actions['POST']
   );
+  const canAddNotificationTemplate = Boolean(data?.actions?.POST);
 
   useEffect(() => {
     if (view.pageItems) {
@@ -58,7 +57,9 @@ export function Notifiers() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view.pageItems]);
-
+  if (isLoading) {
+    return <PageLoadingTable />;
+  }
   return (
     <PageLayout>
       <PageHeader
@@ -66,7 +67,7 @@ export function Notifiers() {
         description={t('Configure custom notifications to be sent based on predefined events.')}
         titleHelpTitle={t('Notifiers')}
         titleHelp={t('Configure custom notifications to be sent based on predefined events.')}
-        titleDocLink={useGetDocsUrl(config, 'notifiers')}
+        titleDocLink={titleDocLink}
         headerActions={<ActivityStreamIcon type={'notification_template'} />}
       />
       <PageTable

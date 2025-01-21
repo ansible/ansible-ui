@@ -51,13 +51,43 @@ types.forEach((type) => {
 
     if (type === inventory) {
       it('deletes group from toolbar menu', () => {
+        cy.intercept(
+          {
+            method: 'OPTIONS',
+            url: awxAPI`/inventories/1/groups/`,
+            hostname: 'localhost',
+          },
+          {
+            fixture: 'mock_options.json',
+          }
+        ).as('getFilterOptions');
         cy.mount(<InventoryGroups />, params);
         cy.fixture('groups.json')
           .its('results')
           .should('be.an', 'array')
           .then((results: InventoryGroup[]) => {
             const group = results[0];
-            cy.selectTableRow(group.name, false);
+            cy.intercept('GET', awxAPI`/inventories/1/groups/?search=Related*`, {
+              statusCode: 200,
+              body: {
+                count: 1,
+                next: null,
+                previous: null,
+                results: [
+                  {
+                    id: 1,
+                    name: group.name,
+                    summary_fields: {
+                      user_capabilities: {
+                        delete: true,
+                        start: true,
+                      },
+                    },
+                  },
+                ],
+              },
+            });
+            cy.selectTableRow(group.name);
             cy.clickToolbarKebabAction('delete-groups');
             cy.get('[data-cy="delete-group-modal-delete-button"]').should('be.disabled');
             cy.get('[data-cy="delete-groups-dialog-radio-delete"]').click();
@@ -97,9 +127,9 @@ types.forEach((type) => {
           fixture: 'groups.json',
         }
       ).as('getGroups');
-      cy.intercept(awxAPI`/inventories/1/groups/?name=*`).as('nameFilterRequest');
+      cy.intercept(awxAPI`/inventories/1/groups/?search=Related*`).as('nameFilterRequest');
       cy.mount(<InventoryGroups />, params);
-      cy.filterTableByMultiSelect('name', ['Related to group 1']);
+      cy.filterTableBySearch('Related to group 1');
       cy.wait('@nameFilterRequest');
       cy.clearAllFilters();
     });

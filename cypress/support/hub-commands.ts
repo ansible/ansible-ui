@@ -675,7 +675,9 @@ Cypress.Commands.add('getHubCollection', (name: string) => {
     .requestGet<
       HubItemsResponse<CollectionVersionSearch>
     >(hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}`)
-    .then((itemsResponse) => itemsResponse.data[0]);
+    .then((itemsResponse) => {
+      return itemsResponse.data[0];
+    });
 });
 
 export type HubDeleteCollectionOptions = {

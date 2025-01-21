@@ -1,9 +1,7 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
+import { clickTableRowWithFilter } from '../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../commands/createE2EName';
-import { filterTableBySelect } from '../../../../commands/filterTableBySelect';
 import { navigateTo } from '../../../../commands/navigateTo';
 
 export async function createInventory(options: { name?: string }, page: Page) {
@@ -23,10 +21,7 @@ export async function createInventory(options: { name?: string }, page: Page) {
 
 export async function deleteInventory(inventoryName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-  await clearTableFilters(page);
-  await filterTableBySelect(inventoryName, page);
-  await clickTableRow(inventoryName, page);
-  await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
+  await clickTableRowWithFilter(inventoryName, page);
   await clickPageAction('Delete inventory', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();

@@ -1,9 +1,8 @@
 import { Page, expect } from '@playwright/test';
 import { clearTableFilters } from '../../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
+import { clickTableRowWithFilter } from '../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../commands/createE2EName';
-import { filterTableBySelect } from '../../../../commands/filterTableBySelect';
 import { navigateTo } from '../../../../commands/navigateTo';
 
 export async function createInstanceGroup(options: { name?: string }, page: Page) {
@@ -21,8 +20,7 @@ export async function createInstanceGroup(options: { name?: string }, page: Page
 export async function deleteInstanceGroup(instanceGroupName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Instance Groups');
   await clearTableFilters(page);
-  await filterTableBySelect(instanceGroupName, page);
-  await clickTableRow(instanceGroupName, page);
+  await clickTableRowWithFilter(instanceGroupName, page);
   await expect(page.getByRole('heading', { name: instanceGroupName, exact: true })).toBeVisible();
   await clickPageAction('Delete instance group', page);
   await page.locator('#confirm').click();

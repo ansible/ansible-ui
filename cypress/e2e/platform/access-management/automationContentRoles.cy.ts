@@ -115,7 +115,7 @@ describe('Automation Content: Roles', () => {
       cy.verifyPageTitle(editableRole.name);
       cy.clickButton('Edit role');
       cy.verifyPageTitle(`Edit ${editableRole.name}`);
-      cy.multiSelectByDataCy('permissions-form-group', ['Delete namespace']);
+      cy.multiSelectByDataCy('permissions-form-group', ['Delete namespace', 'Change namespace']);
       cy.getByDataCy('Submit').click();
       cy.getByDataCy('permissions').within(() => {
         cy.get('.pf-v5-c-description-list__description').within(() => {
@@ -163,8 +163,9 @@ describe('Automation Content: Roles', () => {
     it('can delete an editable role from the list view', () => {
       cy.filterTableByTextFilter('name', editableRole.name);
       cy.getByDataCy('actions-column-cell').within(() => {
-        cy.clickKebabAction('actions-dropdown', 'delete-role');
+        cy.getBy(`[data-cy="actions-dropdown"]`).click();
       });
+      cy.getBy('[data-cy="delete-role"]').click();
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.clickButton(/^Delete role/);
@@ -222,8 +223,14 @@ describe('Automation Content: Roles', () => {
     });
 
     it('can bulk delete editable roles from the toolbar view', () => {
-      cy.selectTableRow(editableRole1.name);
-      cy.selectTableRow(editableRole2.name);
+      cy.filterTableByTextFilter('name', editableRole1.name);
+      cy.contains('tr', editableRole1.name).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
+      cy.filterTableByTextFilter('name', editableRole2.name);
+      cy.contains('tr', editableRole2.name).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
       cy.clickToolbarKebabAction('delete-roles');
       cy.getModal().within(() => {
         cy.get('#confirm').click();

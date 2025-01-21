@@ -67,7 +67,9 @@ describe('Check if the build includes EDA', () => {
       cy.verifyPageTitle('Credential Types');
       cy.clickTableRow(credtype.name, true);
       cy.clickTab('Credentials', true);
-      cy.selectTableRow(cred.name);
+      cy.getTableRowByText(cred.name, false).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
       cy.clickToolbarKebabAction('delete-credentials');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Delete credentials');

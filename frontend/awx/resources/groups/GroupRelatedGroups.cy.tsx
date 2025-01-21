@@ -57,7 +57,7 @@ inventories.forEach((inventory) => {
           .should('be.an', 'array')
           .then((results: InventoryGroup[]) => {
             const group = results[0];
-            cy.selectTableRow(group.name, false);
+            cy.selectTableRowByCheckbox('name', group.name, { disableFilter: true });
             cy.clickToolbarKebabAction('disassociate-groups');
             cy.contains('Permanently disassociate groups');
           });
@@ -85,12 +85,12 @@ inventories.forEach((inventory) => {
           fixture: 'groups.json',
         }
       ).as('getGroups');
-      cy.intercept(awxAPI`/groups/176/children/?name=*`).as('nameFilterRequest');
+      cy.intercept(awxAPI`/groups/176/children/?search=*`).as('nameFilterRequest');
       cy.mount(<GroupRelatedGroups />, {
         path,
         initialEntries,
       });
-      cy.filterTableByMultiSelect('name', ['Related to group 1']);
+      cy.filterTableBySearch('Related to group 1');
       cy.wait('@nameFilterRequest');
       cy.clearAllFilters();
     });
