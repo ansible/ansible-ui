@@ -792,7 +792,7 @@ describe('Workflow Job Templates Tests', () => {
         .find('.pf-v5-c-menu__content')
         .within(() => {
           cy.getByDataCy('search-input').type(scheduleName);
-          cy.contains('.pf-v5-c-menu__item-text', 'No results found').should('be.visible');
+          cy.contains('No results found');
         });
       cy.deleteAwxWorkflowJobTemplate(workflowTemplate, { failOnStatusCode: false });
     });

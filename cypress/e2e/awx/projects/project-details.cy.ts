@@ -319,7 +319,7 @@ describe('Projects', () => {
           cy.get('#confirm').click();
           cy.get('[data-ouia-component-id="submit"]').click();
         });
-        cy.get('h2').should('contain', 'No results found');
+        cy.contains('No results found');
       });
     });
   });
