@@ -46,7 +46,7 @@ describe('Credentials', () => {
 
     it('can edit machine credential from the list row action', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.get(`[data-cy="row-id-${credential.id}"]`).within(() => {
         cy.getByDataCy('edit-credential').click();
       });
@@ -54,7 +54,7 @@ describe('Credentials', () => {
       cy.getByDataCy('name').clear().type(`${credential.name} - edited`);
       cy.clickButton(/^Save credential$/);
       cy.clearAllFilters();
-      cy.filterTableByMultiSelect('name', [`${credential.name} - edited`]);
+      cy.filterTableBySearch(`${credential.name} - edited`);
       cy.clickTableRowLink('name', `${credential.name} - edited`, { disableFilter: true });
       cy.verifyPageTitle(`${credential.name} - edited`);
       cy.clickButton(/^Edit credential$/);
@@ -66,7 +66,7 @@ describe('Credentials', () => {
 
     it('can delete machine credential from the list row action', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.clickTableRowAction('name', credential.name, 'delete-credential', {
         disableFilter: true,
         inKebab: true,
@@ -86,7 +86,7 @@ describe('Credentials', () => {
 
     it('can delete machine credential from the list toolbar', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.selectTableRowByCheckbox('name', credential.name, { disableFilter: true });
       cy.clickToolbarKebabAction('delete-credentials');
       cy.get('#confirm').click();
@@ -104,14 +104,14 @@ describe('Credentials', () => {
 
     it('copies a credential from the list row action', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('copy-credential').click();
       });
       cy.getByDataCy('alert-toaster').contains('copied').should('be.visible');
       cy.clickButton(/^Clear all filters/);
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
-      cy.filterTableByMultiSelect('name', [`${credential.name} @`]);
+      cy.filterTableBySearch(`${credential.name} @`);
       cy.getByDataCy('checkbox-column-cell').within(() => {
         cy.get('input').click();
       });
@@ -165,7 +165,7 @@ describe('Credentials', () => {
 
     it('can edit machine credential from the details page', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.clickTableRowLink('name', credential.name, {
         disableFilter: true,
       });
@@ -190,7 +190,7 @@ describe('Credentials', () => {
 
     it('can delete a machine credential from the details page', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.clickTableRowLink('name', credential.name, {
         disableFilter: true,
       });
@@ -280,7 +280,7 @@ describe('Credentials', () => {
 
     it('can display error toast message when running a test from the edit credential form', () => {
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
       cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
       cy.contains('Test external credential').should('be.visible');
@@ -300,7 +300,7 @@ describe('Credentials', () => {
     it('can display success toast message when running a test from the edit credential form', () => {
       cy.intercept('POST', awxAPI`/credentials/${credential.id.toString()}/test`, {}).as('runTest');
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [credential.name]);
+      cy.filterTableBySearch(credential.name);
       cy.clickTableRowAction('name', credential.name, 'edit-credential', { disableFilter: true });
       cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
       cy.contains('Test external credential').should('be.visible');
@@ -351,7 +351,7 @@ describe('Credentials', () => {
       const jobTemplateName = `E2E Job Template ${randomE2Ename()}`;
       cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.filterTableBySearch(machineCredential.name);
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('Job Templates', true);
       cy.clickLink(/^Create template$/);
@@ -386,7 +386,6 @@ describe('Credentials: Credential Types Tests', () => {
       cy.clickButton(/^Create credential$/);
       cy.verifyPageTitle(credentialName);
       cy.getByDataCy('name').contains(credentialName);
-      //delete created credential
       cy.clickPageAction('delete-credential');
       cy.get('#confirm').click();
       cy.clickButton(/^Delete credential/);
@@ -424,7 +423,6 @@ describe('Credentials: Credential Types Tests', () => {
     cy.getByDataCy('vault-identifier').contains('id');
     cy.contains('Vault Password').should('be.visible');
     cy.getByDataCy('vault-password').contains('Prompt on launch');
-    //delete created credential
     cy.clickPageAction('delete-credential');
     cy.get('#confirm').click();
     cy.clickButton(/^Delete credential/);
@@ -487,7 +485,6 @@ describe('Credentials: Credential Types Tests', () => {
         cy.getByDataCy('sts-token').contains('Encrypted');
         cy.getByDataCy('label-description').contains('Description');
         cy.getByDataCy('description').contains(newDescription);
-
         cy.clickPageAction('delete-credential');
         cy.get('#confirm').click();
         cy.intercept('DELETE', awxAPI`/credentials/${newCred.id.toString()}/`).as('deleted');
@@ -608,7 +605,7 @@ cyLabel(['upstream'], () => {
     it('create a new credential, assign a team and apply role(s)', () => {
       cy.intercept('POST', awxAPI`/role_team_assignments/`).as('teamRoleAssignment');
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.filterTableBySearch(machineCredential.name);
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('Team Access', true);
 
@@ -616,7 +613,7 @@ cyLabel(['upstream'], () => {
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.filterTableByMultiSelect('name', [awxTeam.name]);
+        cy.filterTableBySearch(awxTeam.name);
         cy.selectTableRowByCheckbox('name', awxTeam.name, { disableFilter: true });
         cy.clickButton(/^Next/);
         cy.contains('h1', 'Select roles to apply').should('be.visible');
@@ -667,7 +664,7 @@ cyLabel(['upstream'], () => {
     it('create a new credential, assign a user and apply role(s)', () => {
       cy.intercept('POST', awxAPI`/role_user_assignments/`).as('userRoleAssignment');
       cy.navigateTo('awx', 'credentials');
-      cy.filterTableByMultiSelect('name', [machineCredential.name]);
+      cy.filterTableBySearch(machineCredential.name);
       cy.clickTableRowLink('name', machineCredential.name, { disableFilter: true });
       cy.clickTab('User Access', true);
 

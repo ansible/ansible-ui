@@ -120,11 +120,15 @@ describe('Check if the build includes EDA', () => {
             cy.contains('Choose the resources that will be receiving new roles.');
             // due to filtering bug
             cy.setTablePageSize('100');
-            cy.selectTableRow(resource_object.name, false);
+            cy.getTableRowByText(resource_object.name, false).within(() => {
+              cy.get('input[type=checkbox]').click();
+            });
             cy.intercept('GET', edaAPI`/role_definitions/*`).as('roleDefinitions');
             cy.clickButton(/^Next$/);
             cy.wait('@roleDefinitions');
-            cy.selectTableRow(resource.role, true);
+            cy.getTableRowByText(resource.role, true).within(() => {
+              cy.get('input[type=checkbox]').click();
+            });
             cy.clickButton(/^Next$/);
             cy.verifyReviewStepWizardDetails('resources', [resource_object.name], '1');
             cy.intercept('POST', edaAPI`/role_user_assignments/`).as('assignment');
@@ -219,8 +223,12 @@ describe('Check if the build includes EDA', () => {
       cy.verifyPageTitle(user.username);
       cy.clickTab('Roles', true);
       cy.clickTab('Automation Decisions', true);
-      cy.selectTableRow(`${cred2.name}`, false);
-      cy.selectTableRow(`${cred3.name}`, false);
+      cy.getTableRowByText(cred2.name, false).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
+      cy.getTableRowByText(cred3.name, false).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
       cy.clickToolbarKebabAction('remove-roles');
       cy.clickModalConfirmCheckbox();
       cy.clickModalButton('Remove role');

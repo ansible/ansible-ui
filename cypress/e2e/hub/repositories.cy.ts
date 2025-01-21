@@ -21,8 +21,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
     let repository: Repository;
 
     before(() => {
-      // Create namespace and upload collection only once in the before hook
-      // as it is not necessary to create a new namespace and upload collection for each test
       cy.createHubNamespace().then((namespaceResult) => {
         namespace = namespaceResult;
         cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
@@ -39,10 +37,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
     beforeEach(() => {
       cy.navigateTo('hub', Repositories.url);
       cy.verifyPageTitle('Repositories');
-
-      // Create remote and repository before each test
-      // Note: Some tests like create and delete do not use this shared remote and repository
-      // otherwise it would cause issues in the after eachhook when deleting
       cy.createHubRemote().then((remoteResult) => {
         remote = remoteResult;
         cy.createHubRepository({
@@ -70,7 +64,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
     it('should be able to create edit and delete a repository', () => {
       const repositoryName = randomE2Ename();
       const repositoryDescription = 'Here goes description';
-      // Create repository
       cy.getByDataCy('create-repository').click();
       cy.verifyPageTitle('Create repository');
       cy.getByDataCy('name').type(repositoryName);
@@ -78,22 +71,17 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.getByDataCy('Submit').click();
       cy.verifyPageTitle(`${repositoryName}`);
       cy.hasDetail(/^Description$/, 'Here goes description');
-      cy.hasDetail(/^Labels$/, 'None'); //pipelines
+      cy.hasDetail(/^Labels$/, 'None');
       cy.hasDetail(/^Remote$/, 'None');
       cy.hasDetail(/^Retained version count$/, '1');
       navigateToRepositories();
-      //* Edit Repository *//
       const editDescription = 'repositoryDescription edited';
       const RetainedNumber = '10';
       cy.clickTableRowAction('name', repositoryName, 'edit-repository', { inKebab: false });
       cy.verifyPageTitle(`Edit ${repositoryName}`);
-      // Edit description
       cy.getByDataCy('description').clear().type(editDescription);
-      // Edit Retained version count
       cy.getByDataCy('retain-repo-versions-form-group').clear().type(RetainedNumber);
-      // Edit Pipeline\Labels
       cy.getByDataCy('pipeline-form-group').click().getByDataCy('approved').click();
-      // Edit Remote
       cy.get('[id="remote"]').click();
       cy.get('li').contains(`${remote.name}`).click();
       cy.getByDataCy('Submit').click();
@@ -105,15 +93,12 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.hasDetail('Labels', 'approved');
       cy.hasDetail('Remote', remote.name);
       navigateToRepositories();
-      // Delete Repository
       cy.clickTableRowLink('name', repositoryName);
-      // Repository Details
       cy.verifyPageTitle(repositoryName);
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="delete-repository"]').click();
       cy.get('#confirm').click();
       cy.get('button').contains('Delete repositories').click();
-      // Repositories Page
       cy.verifyPageTitle('Repositories');
       cy.filterTableByTextFilter('name', repositoryName);
       cy.get('.pf-v5-c-empty-state').should('be.visible');
@@ -122,7 +107,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
 
     it('should copy CLI to clipboard', () => {
       cy.clickTableRowLink('name', repository.name);
-      // Repository Details
       cy.verifyPageTitle(repository.name);
       cy.clickPageAction('copy-cli-configuration');
       cy.get('[data-cy="alert-toaster"]').should('be.visible');
@@ -134,7 +118,6 @@ describe('GalaxyKit Installation Check for Repositories', () => {
 
     it('should sync repository', () => {
       cy.clickTableRowAction('name', repository.name, 'sync-repository', { inKebab: true });
-      // Sync modal
       cy.getModal().within(() => {
         cy.get('button').contains('Sync').click();
       });
@@ -147,12 +130,9 @@ describe('GalaxyKit Installation Check for Repositories', () => {
     });
 
     it('should be able to add and remove collection versions', () => {
-      // Repository Details
       cy.clickTableRowLink('name', repository.name);
       cy.verifyPageTitle(repository.name);
-      // Collection versions tab
       cy.clickTab('Collection Versions', true);
-      // Add collections
       cy.getByDataCy('add-collections').click();
       cy.getModal().within(() => {
         cy.filterTableByTextFilter('namespace', namespace.name);
@@ -160,35 +140,32 @@ describe('GalaxyKit Installation Check for Repositories', () => {
         cy.contains('button', 'Select').click();
       });
       cy.getModal().should('not.exist');
-      // Verify collections are added and visible
       cy.setTableView('table');
       cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
-      // Should show the remove dialog from row action
-      cy.clickTableRowAction('name', collectionName, 'remove', { disableFilter: true });
+      cy.getTableRow('name', collectionName, { disableFilter: true }).within(() => {
+        cy.get(`[data-cy="actions-column-cell"]`).within(() => {
+          cy.getBy(`[data-cy="remove"]`).click();
+        });
+      });
       cy.getModal().within(() => {
         cy.contains('button', 'Delete collections versions').should('be.visible');
         cy.get('#cancel').click();
       });
-      // Remove collection using table bulk action
       cy.selectTableRowByCheckbox('name', collectionName, { disableFilter: true });
       cy.containsBy('button', 'Remove collections').click();
       cy.getModal().within(() => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
       });
-      // Verify collections are removed
       cy.contains('tr', collectionName).should('not.exist');
       navigateToRepositories();
     });
 
     it('should be able to revert repository version', () => {
-      // Repository Details
       cy.clickTableRowLink('name', repository.name);
       cy.verifyPageTitle(repository.name);
-      // Collection versions tab
       cy.clickTab('Collection Versions', true);
       cy.contains('No collection versions yet');
-      // Add collections
       cy.getByDataCy('add-collections').click();
       cy.getModal().within(() => {
         cy.filterTableByTextFilter('namespace', namespace.name);
@@ -196,14 +173,10 @@ describe('GalaxyKit Installation Check for Repositories', () => {
         cy.contains('button', 'Select').click();
       });
       cy.getModal().should('not.exist');
-      // Verify collections are added and visible
       cy.get(`[aria-label="table view"]`).click();
       cy.getTableRow('name', collectionName, { disableFilter: true }).should('be.visible');
-      // Versions tab
       cy.clickTab(/^Versions$/, true);
-      // Revert repository version
       cy.contains('Version number');
-      // Takes a while for the version to switch to 1 (latest)
       cy.contains('td', '1 (latest)', { timeout: 60 * 1000 }).should('be.visible');
       cy.clickTableRowAction('version-number', '0', 'revert-to-this-version', {
         inKebab: true,
@@ -213,9 +186,7 @@ describe('GalaxyKit Installation Check for Repositories', () => {
         cy.get('#confirm').click();
         cy.get('#submit').click();
       });
-      // Collection versions tab
       cy.clickTab('Collection Versions', true);
-      // Verify collections are removed since we are reverting to repository version 0
       cy.contains('No collection versions yet');
       navigateToRepositories();
     });

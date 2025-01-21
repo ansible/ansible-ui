@@ -37,7 +37,6 @@ describe('Controller LDAP user migration flow', () => {
     cy.contains('Complete your AAP migration').should('be.visible');
     cy.clickButton('Submit');
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
-    //Log in with newly migrated user
     cy.platformLogout();
     cy.get('input[id*="login-username-id"]').type(controllerLdapUsername);
     cy.get('input[id*="login-password-id"]').type(controllerLdapPassword);
@@ -57,10 +56,10 @@ describe('Controller LDAP user migration flow', () => {
     cy.contains('Complete your AAP migration').should('be.visible');
     cy.clickButton('Submit');
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
-
     cy.get('#account-menu-menu-toggle').click();
     cy.get('#user-details').click();
-    cy.clickKebabAction('actions-dropdown', 'link-user-accounts');
+    cy.getBy(`[data-cy="actions-dropdown"]`).click();
+    cy.getBy('[data-cy="link-user-accounts"]').click();
     cy.verifyPageTitle('Link user accounts');
     cy.getByDataCy('hub-username').type(hubUsername);
     cy.getByDataCy('hub-password').type(hubPassword);

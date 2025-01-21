@@ -224,9 +224,11 @@ describe('Instances K8S', () => {
       cy.intercept('PATCH', awxAPI`/instances/*`).as('removedInstance');
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="remove-instance"] button').should('have.attr', 'aria-disabled', 'true');
-      cy.filterTableByMultiSelect('hostname', arrayOfElementText);
-      cy.get('tbody tr').should('have.length', 6);
-      cy.getByDataCy('select-all').check();
+      cy.selectTableRow(arrayOfElementText[0]);
+      cy.selectTableRow(arrayOfElementText[1]);
+      cy.selectTableRow(arrayOfElementText[2]);
+      cy.selectTableRow(arrayOfElementText[3]);
+      cy.selectTableRow(arrayOfElementText[4]);
       cy.get('[data-cy="actions-dropdown"]').click();
       cy.get('[data-cy="remove-instance"] button').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {

@@ -8,11 +8,13 @@ import {
   useDescriptionToolbarFilter,
   useModifiedByToolbarFilter,
   useNameToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 
 export function useNotificationFilters() {
   const { t } = useTranslation();
+  const searchFilter = useSearchToolbarFilter();
   const nameToolbarFilter = useNameToolbarFilter();
   const descriptionToolbarFilter = useDescriptionToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
@@ -28,6 +30,7 @@ export function useNotificationFilters() {
   );
   const toolbarFilters = useMemo<IToolbarFilter[]>(
     () => [
+      searchFilter,
       nameToolbarFilter,
       descriptionToolbarFilter,
       {
@@ -35,7 +38,6 @@ export function useNotificationFilters() {
         label: t('Notification type'),
         type: ToolbarFilterType.MultiSelect,
         query: 'notification_type',
-
         options: notificationTypes ?? [],
         placeholder: t('Select types'),
       },
@@ -43,6 +45,7 @@ export function useNotificationFilters() {
       modifiedByToolbarFilter,
     ],
     [
+      searchFilter,
       nameToolbarFilter,
       descriptionToolbarFilter,
       t,

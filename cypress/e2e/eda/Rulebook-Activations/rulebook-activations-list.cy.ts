@@ -139,14 +139,20 @@ describe('Check if the build includes EDA', () => {
 
     it('can bulk delete rulebook activations from the toolbar', () => {
       cy.navigateTo('eda', 'rulebook-activations');
-      const rulebookActivations = [edaRBA2.name, edaRBA3.name];
-      rulebookActivations.forEach((rulebookActivation) => {
-        cy.contains('td[data-label="Name"]', rulebookActivation)
-          .prev()
-          .prev()
-          .within(() => {
-            cy.get('input[type=checkbox]').check();
-          });
+      cy.filterTableByTextFilter('name', edaRBA2.name, {
+        disableFilterSelection: true,
+      });
+      cy.get('tbody').find('tr').should('have.length', 1);
+      cy.getTableRowByText(edaRBA2.name, false).within(() => {
+        cy.get('input[type=checkbox]').eq(0).click();
+      });
+      cy.clickButton(/^Clear all filters$/);
+      cy.filterTableByTextFilter('name', edaRBA3.name, {
+        disableFilterSelection: true,
+      });
+      cy.get('tbody').find('tr').should('have.length', 1);
+      cy.getTableRowByText(edaRBA3.name, false).within(() => {
+        cy.get('input[type=checkbox]').eq(0).click();
       });
       cy.clickToolbarKebabAction('delete-rulebook-activations');
       cy.intercept('DELETE', edaAPI`/activations/${edaRBA2.id.toString()}/`).as('rba2');

@@ -1,7 +1,8 @@
 import {
   useCreatedByToolbarFilter,
-  useModifiedByToolbarFilter,
   useGroupTypeToolbarFilter,
+  useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
@@ -12,6 +13,7 @@ export function useGroupsFilters({
   url?: string;
   queryParams?: Record<string, string>;
 }) {
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const groupTypeToolbarFilter = useGroupTypeToolbarFilter();
@@ -27,8 +29,13 @@ export function useGroupsFilters({
         queryParams: queryParams ? queryParams : {},
       },
     },
-    preSortedKeys: ['name', 'id', 'description', 'created-by', 'modified-by', 'group'],
-    additionalFilters: [modifiedByToolbarFilter, createdByToolbarFilter, groupTypeToolbarFilter],
+    preSortedKeys: ['search', 'name', 'id', 'description', 'created-by', 'modified-by', 'group'],
+    additionalFilters: [
+      searchFilter,
+      modifiedByToolbarFilter,
+      createdByToolbarFilter,
+      groupTypeToolbarFilter,
+    ],
     removeFilters: ['inventory'],
   });
   return toolbarFilters;

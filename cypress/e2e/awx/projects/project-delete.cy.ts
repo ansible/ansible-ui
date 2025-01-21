@@ -21,10 +21,11 @@ describe('Project Delete', () => {
   beforeEach(() => {
     cy.navigateTo('awx', 'projects');
     cy.verifyPageTitle('Projects');
-    cy.filterTableByMultiSelect('name', [project.name]);
+    cy.filterTableBySearch(project.name);
   });
 
   it('can get to the project delete dialog from the list toolbar', () => {
+    cy.get('tbody').find('tr').should('have.length', 1);
     cy.selectTableRowByCheckbox('name', `${project.name}`, { disableFilter: true });
     cy.clickToolbarKebabAction('delete-projects');
     expect(cy.getModal().contains('Permanently delete projects'));
@@ -33,6 +34,7 @@ describe('Project Delete', () => {
   });
 
   it('can get to the project delete dialog from the project details page', () => {
+    cy.get('tbody').find('tr').should('have.length', 1);
     cy.clickTableRowLink('name', project.name, { disableFilter: true });
     cy.get('[data-cy="page-title"]').should('contain', `${project.name}`);
     cy.clickPageAction('delete-project');
@@ -42,6 +44,7 @@ describe('Project Delete', () => {
   });
 
   it('can get to the project delete dialog from the projects list row', () => {
+    cy.get('tbody').find('tr').should('have.length', 1);
     cy.clickTableRowAction('name', `${project.name}`, 'delete-project', {
       inKebab: true,
       disableFilter: true,
@@ -52,6 +55,7 @@ describe('Project Delete', () => {
   });
 
   it('can delete a project', () => {
+    cy.get('tbody').find('tr').should('have.length', 1);
     cy.clickTableRowAction('name', `${project.name}`, 'delete-project', {
       inKebab: true,
       disableFilter: true,

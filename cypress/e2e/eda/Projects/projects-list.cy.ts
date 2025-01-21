@@ -50,9 +50,19 @@ describe('Check if the build includes EDA', () => {
       cy.createEdaProject(edaOrg?.id).then((edaProject) => {
         cy.createEdaProject(edaOrg?.id).then((testProject) => {
           cy.navigateTo('eda', 'projects');
-          cy.selectTableRow(edaProject.name);
+          cy.filterTableByTextFilter('name', edaProject.name, {
+            disableFilterSelection: true,
+          });
+          cy.getTableRowByText(edaProject.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickButton(/^Clear all filters$/);
-          cy.selectTableRow(testProject.name);
+          cy.filterTableByTextFilter('name', testProject.name, {
+            disableFilterSelection: true,
+          });
+          cy.getTableRowByText(testProject.name, false).within(() => {
+            cy.get('input[type=checkbox]').click();
+          });
           cy.clickToolbarKebabAction('delete-projects');
           cy.intercept('DELETE', edaAPI`/projects/${edaProject.id.toString()}/`).as('edaProject');
           cy.intercept('DELETE', edaAPI`/projects/${testProject.id.toString()}/`).as('testProject');

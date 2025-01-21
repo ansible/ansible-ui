@@ -1,10 +1,12 @@
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../../common/useDynamicFilters';
 
 export function useHostsGroupsFilters(url?: string) {
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
@@ -17,8 +19,8 @@ export function useHostsGroupsFilters(url?: string) {
         apiPath: url ? url : 'groups',
       },
     },
-    preSortedKeys: ['name', 'id', 'description', 'created-by', 'modified-by'],
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    preSortedKeys: ['search', 'name', 'id', 'description', 'created-by', 'modified-by'],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }

@@ -18,6 +18,7 @@ import {
   useModifiedColumn,
   useNameColumn,
 } from '@ansible/common-ui/columns';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ButtonVariant } from '@patternfly/react-core';
 import { MinusCircleIcon, PencilAltIcon, PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -27,11 +28,11 @@ import { awxAPI } from '../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../common/awx-toolbar-filters';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useDynamicToolbarFilters } from '../../common/useDynamicFilters';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { Organization } from '../../interfaces/Organization';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { useSelectUsersAddOrganizations } from '../users/hooks/useSelectUsersAddOrganizations';
@@ -197,11 +198,12 @@ export function Organizations() {
 }
 
 export function useOrganizationsFilters() {
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: 'organizations',
-    preSortedKeys: ['name', 'description', 'created-by', 'modified-by'],
+    preSortedKeys: ['search', 'name', 'description', 'created-by', 'modified-by'],
     preFilledValueKeys: {
       name: {
         apiPath: 'organizations',
@@ -210,7 +212,7 @@ export function useOrganizationsFilters() {
         apiPath: 'organizations',
       },
     },
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }

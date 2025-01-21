@@ -13,6 +13,12 @@ import { useTranslation } from 'react-i18next';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
 
+/** Filter for filtering by search with single value. */
+export interface IToolbarSearchFilter
+  extends Omit<IToolbarSingleTextFilter, 'type' | 'comparison'> {
+  type: ToolbarFilterType.Search;
+}
+
 /** Filter for filtering by user text input with single value. */
 export interface IToolbarSingleTextFilter extends ToolbarFilterCommon {
   type: ToolbarFilterType.SingleText;
@@ -120,7 +126,7 @@ export function ToolbarSingleTextFilter(props: {
   placeholder?: string;
 
   /** The placeholder text for the filter, indicating what kind of filter caprison it uses. */
-  comparison: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'iregex';
+  comparison?: 'contains' | 'startsWith' | 'endsWith' | 'equals' | 'iregex';
   setValue: (value: string) => void;
   value: string;
   hasKey: boolean;

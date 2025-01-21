@@ -33,7 +33,6 @@ describe('Successfully authenticate hub legacy credentials', () => {
     cy.clickButton(/^Log in$/);
     cy.checkLinkedButton('Automation Hub');
     cy.getByDataCy('link-accounts').contains('Link your Ansible Automation Platform accounts');
-
     cy.clickButton(/^Next$/);
     cy.getByDataCy('aap-password').type(newHubPassword);
     cy.clickButton(/^Submit$/);
@@ -55,19 +54,17 @@ describe('Successfully authenticate hub legacy credentials', () => {
     cy.clickButton(/^Log in$/);
     cy.checkLinkedButton('Automation Hub');
     cy.getByDataCy('link-accounts').contains('Link your Ansible Automation Platform accounts');
-
     cy.clickButton(/^Next$/);
     cy.getByDataCy('new-username').should('have.value', hubUsername);
     cy.getByDataCy('new-username').clear().type(newHubUsername);
-
     cy.getByDataCy('aap-password').type(newHubPassword);
     cy.clickButton(/^Submit$/);
     cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
     cy.navigateTo('platform', 'users');
     cy.clickTableRowLink('username', newHubUsername);
     cy.clickTab(/^Details$/, true);
-
-    cy.clickKebabAction('actions-dropdown', 'link-user-accounts');
+    cy.getBy(`[data-cy="actions-dropdown"]`).click();
+    cy.getBy('[data-cy="link-user-accounts"]').click();
     cy.verifyPageTitle('Link user accounts');
     cy.getByDataCy('controller-username').type(controllerUsername);
     cy.getByDataCy('controller-password').type(controllerPassword);
@@ -131,8 +128,6 @@ describe('Negative paths for hub legacy authentication', () => {
     cy.get('input[id*="login-username-id"]').type(controllerUsername);
     cy.get('input[id*="login-password-id"]').type(controllerPassword);
     cy.clickButton(/^Log in$/);
-
-    // link Hub user
     cy.getByDataCy('link-accounts').contains('Link your Ansible Automation Platform accounts');
     cy.getByDataCy('hub-username').type(hubUsername);
     cy.getByDataCy('hub-password').type(hubPassword);
@@ -141,18 +136,13 @@ describe('Negative paths for hub legacy authentication', () => {
     cy.clickButton(/^Next$/);
     cy.getByDataCy('new-username').should('have.value', controllerUsername);
     cy.getByDataCy('new-username').clear().type(extraControllerUsername);
-
     cy.getByDataCy('aap-password').type(extraControllerPassword);
     cy.clickButton(/^Submit$/);
-
     cy.platformLogout();
-
-    //attempt to log in using previously linked Hub account
     cy.clickLink(/^I have an Automation Hub account$/);
     cy.get('input[id*="login-username-id"]').type(hubUsername);
     cy.get('input[id*="login-password-id"]').type(hubPassword);
     cy.clickButton(/^Log in$/);
-    //expect error message
     cy.get('.pf-v5-c-helper-text__item-text').contains(
       'Invalid username or password. Please try again.'
     );

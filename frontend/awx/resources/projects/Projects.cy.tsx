@@ -56,7 +56,7 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by name', () => {
       cy.mount(<Projects />);
-      cy.filterTableByMultiSelect('name', [' Project 2 Org 0']);
+      cy.filterTableBySearch(' Project 2 Org 0');
       cy.clearAllFilters();
     });
 
@@ -90,50 +90,40 @@ describe('projects.cy.ts', () => {
 
     it('Filter projects by Type = Git', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?scm_type=git&order_by=name&page=1&page_size=10').as(
-        'scmGitTypeFilterRequest'
-      );
-      cy.filterTableByMultiSelect('scm-type', ['Git']);
+      cy.intercept('api/v2/projects/?search=Git*').as('scmGitTypeFilterRequest');
+      cy.filterTableBySearch('Git');
       cy.wait('@scmGitTypeFilterRequest');
       cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Subversion', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?scm_type=svn&order_by=name&page=1&page_size=10').as(
-        'scmSvnTypeFilterRequest'
-      );
-      cy.filterTableByMultiSelect('scm-type', ['Subversion']);
+      cy.intercept('api/v2/projects/?search=Subversion*').as('scmSvnTypeFilterRequest');
+      cy.filterTableBySearch('Subversion');
       cy.wait('@scmSvnTypeFilterRequest');
       cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Insights', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?scm_type=insights&order_by=name&page=1&page_size=10').as(
-        'scmInsightsTypeFilterRequest'
-      );
-      cy.filterTableByMultiSelect('scm-type', ['Red Hat Insights']);
+      cy.intercept('api/v2/projects/?search=Red*').as('scmInsightsTypeFilterRequest');
+      cy.filterTableBySearch('Red Hat Insights');
       cy.wait('@scmInsightsTypeFilterRequest');
       cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Manual', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?scm_type=&order_by=name&page=1&page_size=10').as(
-        'scmManualTypeFilterRequest'
-      );
-      cy.filterTableByMultiSelect('scm-type', ['Manual']);
+      cy.intercept('api/v2/projects/?search=Manual*').as('scmManualTypeFilterRequest');
+      cy.filterTableBySearch('Manual');
       cy.wait('@scmManualTypeFilterRequest');
       cy.clearAllFilters();
     });
 
     it('Filter projects by Type = Remote Archive', () => {
       cy.mount(<Projects />);
-      cy.intercept('api/v2/projects/?scm_type=archive&order_by=name&page=1&page_size=10').as(
-        'scmArchiveTypeFilterRequest'
-      );
-      cy.filterTableByMultiSelect('scm-type', ['Remote Archive']);
+      cy.intercept('api/v2/projects/?search=Remote*').as('scmArchiveTypeFilterRequest');
+      cy.filterTableBySearch('Remote Archive');
       cy.wait('@scmArchiveTypeFilterRequest');
       cy.clearAllFilters();
     });
@@ -157,7 +147,7 @@ describe('projects.cy.ts', () => {
 
     it('Cancel project sync toolbar button shows error dialog if project sync is not running', () => {
       cy.mount(<Projects />);
-      cy.filterTableByMultiSelect('name', [' Project 1 Org 0']);
+      cy.filterTableBySearch(' Project 1 Org 0');
       cy.selectTableRowByCheckbox('name', ' Project 1 Org 0', { disableFilter: true });
       cy.clickToolbarKebabAction('cancel-projects');
       cy.get('.pf-v5-c-modal-box').within(() => {
@@ -176,7 +166,7 @@ describe('projects.cy.ts', () => {
 
     it('Cancel project sync toolbar button shows error dialog if user has insufficient permissions', () => {
       cy.mount(<Projects />);
-      cy.filterTableByMultiSelect('name', [' Project 2 Org 0']);
+      cy.filterTableBySearch(' Project 2 Org 0');
       cy.selectTableRowByCheckbox('name', ' Project 2 Org 0', {
         disableFilter: true,
       });

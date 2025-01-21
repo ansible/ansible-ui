@@ -1,9 +1,7 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRow } from '../../../../commands/clickTableRow';
+import { clickTableRowWithFilter } from '../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../commands/createE2EName';
-import { filterTableBySelect } from '../../../../commands/filterTableBySelect';
 import { navigateTo } from '../../../../commands/navigateTo';
 
 export async function createHost(options: { name?: string; inventoryName?: string }, page: Page) {
@@ -25,10 +23,7 @@ export async function createHost(options: { name?: string; inventoryName?: strin
 
 export async function deleteHost(hostName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
-  await clearTableFilters(page);
-  await filterTableBySelect(hostName, page);
-  await clickTableRow(hostName, page);
-  await expect(page.getByRole('heading', { name: hostName, exact: true })).toBeVisible();
+  await clickTableRowWithFilter(hostName, page);
   await clickPageAction('Delete host', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();

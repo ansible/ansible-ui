@@ -45,7 +45,6 @@ describe('Jobs', () => {
         }).then((jt) => {
           jobTemplate = jt;
 
-          // Launch job to populate jobs list
           cy.requestPost<Job, Partial<Omit<Job, 'id'>>>(
             awxAPI`/job_templates/${jobTemplate.id.toString()}/launch/`,
             {}
@@ -61,7 +60,7 @@ describe('Jobs', () => {
       cy.verifyPageTitle('Jobs');
       const jobId = job.id ? job.id.toString() : '';
       const jobName = job.name ? job.name : '';
-      cy.filterTableByMultiSelect('id', [jobId]);
+      cy.filterTableById(jobId);
       cy.contains(jobName);
       cy.clearAllFilters();
     });
@@ -70,7 +69,7 @@ describe('Jobs', () => {
       cy.navigateTo('awx', 'jobs');
       const jobId = job.id ? job.id.toString() : '';
       const jobName = job.name ? job.name : '';
-      cy.filterTableByMultiSelect('id', [jobId]);
+      cy.filterTableById(jobId);
       cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
       cy.verifyPageTitle(jobName);
       cy.contains('.pf-v5-c-tabs a', 'Output').should('have.attr', 'aria-selected', 'true');
@@ -81,12 +80,11 @@ describe('Jobs', () => {
       cy.get('.pf-v5-c-toolbar__group button.toggle-kebab').click();
       cy.contains(/^Delete jobs$/).should('exist');
       cy.contains(/^Cancel jobs$/).should('exist');
-      cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
+      cy.filterTableById(job.id ? job.id.toString() : '');
       const jobName = job.name ? job.name : '';
       cy.contains('td', jobName)
         .parent()
         .within(() => {
-          // Relaunch job
           cy.get('#relaunch-job').should('exist');
           cy.getByDataCy('actions-dropdown').click();
         });
@@ -96,7 +94,7 @@ describe('Jobs', () => {
 
     it('can render additional details on expanding job row', () => {
       cy.navigateTo('awx', 'jobs');
-      cy.filterTableByMultiSelect('id', [job.id ? job.id.toString() : '']);
+      cy.filterTableById(job.id ? job.id.toString() : '');
       const jobName = job.name ? job.name : '';
       cy.expandTableRow(jobName, false);
       cy.hasDetail('Inventory', 'E2E Inventory');
@@ -108,7 +106,7 @@ describe('Jobs', () => {
     it('can filter jobs by id', () => {
       cy.navigateTo('awx', 'jobs');
       const jobId = job.id ? job.id.toString() : '';
-      cy.filterTableByMultiSelect('id', [jobId]);
+      cy.filterTableById(jobId);
       cy.get('tr').should('have.length.greaterThan', 0);
       if (job.name) {
         cy.contains(job.name).should('be.visible');
@@ -129,70 +127,71 @@ describe('Jobs', () => {
           jobTemplate = jt;
         });
       });
+    });
 
-      afterEach(() => {
-        cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
-        cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
-      });
+    afterEach(() => {
+      cy.deleteAwxJobTemplate(jobTemplate, { failOnStatusCode: false });
+      cy.deleteAwxInventory(inventory, { failOnStatusCode: false });
+    });
 
-      it('can delete a job from the jobs list row', () => {
-        const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
-        cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
-          (testJob) => {
-            cy.navigateTo('awx', 'jobs');
-            const jobId = testJob.id ? testJob.id.toString() : '';
-            cy.filterTableByMultiSelect('id', [jobId]);
-            const jobName = testJob.name ? testJob.name : '';
-            cy.waitForJobToProcessEvents(jobId, 'jobs');
-            cy.get('[data-cy="refresh"]').click();
-            cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
-            cy.clickTableRowKebabAction(jobName, 'delete-job', false);
-            cy.get('.pf-v5-c-modal-box__footer')
-              .prev()
-              .find('td[data-cy="status-column-cell"]')
-              .within(() => {
-                cy.contains('Success').should('be.visible');
-              });
-            cy.get('input[id="confirm"]').should('be.visible');
-            cy.get('#confirm').click();
-            cy.clickButton(/^Delete job/);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-            cy.contains('tr', jobId).should('not.exist');
-            cy.clickButton(/^Clear all filters$/);
-          }
-        );
-      });
+    it('can delete a job from the jobs list row', () => {
+      const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
+      cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
+        (testJob) => {
+          cy.navigateTo('awx', 'jobs');
+          const jobId = testJob.id ? testJob.id.toString() : '';
+          cy.filterTableById(jobId);
+          const jobName = testJob.name ? testJob.name : '';
+          cy.waitForJobToProcessEvents(jobId, 'jobs');
+          cy.get('[data-cy="refresh"]').click();
+          cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
+          cy.getTableRowByText(jobName, false).within(() => {
+            cy.get('[data-cy*="actions-dropdown"]').click();
+          });
+          cy.clickButton('Delete job');
+          cy.get('.pf-v5-c-modal-box__footer')
+            .prev()
+            .find('td[data-cy="status-column-cell"]')
+            .within(() => {
+              cy.contains('Success').should('be.visible');
+            });
+          cy.get('input[id="confirm"]').should('be.visible');
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete job/);
+          cy.contains(/^Success$/);
+          cy.contains('tr', jobId).should('not.exist');
+          cy.clickButton(/^Clear all filters$/);
+        }
+      );
+    });
 
-      it('can delete a job from the jobs list toolbar', () => {
-        const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
-        cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
-          (testJob) => {
-            cy.navigateTo('awx', 'jobs');
-            const jobId = testJob.id ? testJob.id.toString() : '';
-            cy.filterTableByMultiSelect('id', [jobId]);
-            const jobName = testJob.name ? testJob.name : '';
-            cy.waitForJobToProcessEvents(jobId, 'jobs');
-            cy.get('[data-cy="refresh"]').click();
-            cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
-            cy.selectTableRow(jobName, false);
-            cy.clickToolbarKebabAction('delete-jobs');
-            cy.get('.pf-v5-c-modal-box__footer')
-              .prev()
-              .find('td[data-cy="status-column-cell"]')
-              .within(() => {
-                cy.contains('Success').should('be.visible');
-              });
-            cy.get('input[id="confirm"]').should('be.visible');
-            cy.get('#confirm').click();
-            cy.clickButton(/^Delete job/);
-            cy.contains(/^Success$/);
-            cy.clickButton(/^Close$/);
-            cy.contains('tr', jobId).should('not.exist');
-            cy.clickButton(/^Clear all filters$/);
-          }
-        );
-      });
+    it('can delete a job from the jobs list toolbar', () => {
+      const jobTemplateId = jobTemplate.id ? jobTemplate.id.toString() : '';
+      cy.requestPost<UnifiedJobList>(awxAPI`/job_templates/${jobTemplateId}/launch/`, {}).then(
+        (testJob) => {
+          cy.navigateTo('awx', 'jobs');
+          const jobId = testJob.id ? testJob.id.toString() : '';
+          cy.filterTableById(jobId);
+          const jobName = testJob.name ? testJob.name : '';
+          cy.waitForJobToProcessEvents(jobId, 'jobs');
+          cy.get('[data-cy="refresh"]').click();
+          cy.contains('tr', jobName, { timeout: 60 * 1000 }).should('contain', 'Success');
+          cy.selectTableRow(jobName);
+          cy.clickToolbarKebabAction('delete-jobs');
+          cy.get('.pf-v5-c-modal-box__footer')
+            .prev()
+            .find('td[data-cy="status-column-cell"]')
+            .within(() => {
+              cy.contains('Success').should('be.visible');
+            });
+          cy.get('input[id="confirm"]').should('be.visible');
+          cy.get('#confirm').click();
+          cy.clickButton(/^Delete job/);
+          cy.contains(/^Success$/);
+          cy.contains('tr', jobId).should('not.exist');
+          cy.clickButton(/^Clear all filters$/);
+        }
+      );
     });
   });
 

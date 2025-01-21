@@ -96,9 +96,7 @@ describe('TemplatesList', () => {
         { fixture: 'jobTemplateLaunch' }
       ).as('launchRequest');
       cy.mount(<TemplatesList />);
-      cy.clickTableRowAction('name', 'Demo Job Template', 'launch-template', {
-        disableFilter: true,
-      });
+      cy.get('[data-cy="launch-template"]').first().click();
       cy.wait('@launchRequest');
     });
 
@@ -115,7 +113,7 @@ describe('TemplatesList', () => {
     it('Filter templates by name', () => {
       cy.mount(<TemplatesList />);
       cy.intercept('api/v2/unified_job_templates/*&name=Test%20Job%20Template*');
-      cy.filterTableByMultiSelect('name', ['Test Job Template']);
+      cy.filterTableBySearch('Test Job Template');
       cy.clearAllFilters();
     });
 
@@ -178,11 +176,9 @@ describe('TemplatesList', () => {
     it('Clicking Sort button changes the order of listed templates', () => {
       cy.mount(<TemplatesList />);
       cy.intercept('api/v2/unified_job_templates/*order_by=-name*');
-      cy.clickTableHeader(/^Name$/);
-      // cy.wait('@nameDescSortRequest');
+      cy.contains('th', 'Name').click();
       cy.intercept('api/v2/unified_job_templates/*order_by=name*');
-      cy.clickTableHeader(/^Name$/);
-      // cy.wait('@nameAscSortRequest');
+      cy.contains('th', 'Name').click();
     });
   });
 });

@@ -58,7 +58,12 @@ describe('Namespace - team and user access', () => {
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select user(s)').should('be.visible');
-        cy.selectTableRow(hubUser.username);
+        cy.filterTableByTextFilter('name', hubUser.username, {
+          disableFilterSelection: true,
+        });
+        cy.getTableRowByText(hubUser.username, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');
@@ -99,7 +104,12 @@ describe('Namespace - team and user access', () => {
       cy.wait('@teamRoleAssignment');
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
-        cy.selectTableRow(hubTeam.name);
+        cy.filterTableByTextFilter('name', hubTeam.name, {
+          disableFilterSelection: true,
+        });
+        cy.getTableRowByText(hubTeam.name, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');

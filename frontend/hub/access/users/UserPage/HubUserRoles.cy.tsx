@@ -37,10 +37,11 @@ describe('Hub user roles', () => {
         }
       );
       cy.mount(component, params);
-      cy.clickTableRowAction('resource-name', 'published', 'remove-role', {
-        inKebab: false,
-        disableFilter: true,
-      });
+      cy.contains(`[data-cy="resource-name-column-cell"]`, 'published')
+        .parents('tr')
+        .within(() => {
+          cy.get(`button[data-cy="remove-role"]`).click();
+        });
       cy.get('div[role="dialog"]').within(() => {
         cy.contains('published');
         cy.get('input[id="confirm"]').click();

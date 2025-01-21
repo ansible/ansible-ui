@@ -1,5 +1,5 @@
-import { InventoryAddUsers } from './InventoryAddUsers';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { InventoryAddUsers } from './InventoryAddUsers';
 
 describe('InventoryAddUsers', () => {
   const component = <InventoryAddUsers />;
@@ -42,6 +42,7 @@ describe('InventoryAddUsers', () => {
     cy.intercept(awxAPI`/users/?is_superuser=false&username__icontains=e2e-user-avAE*`, {
       fixture: 'users.json',
     }).as('nameFilterRequest');
+    cy.selectTableFilter('username');
     cy.filterTableByText('e2e-user-avAE');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();

@@ -77,35 +77,37 @@ describe('Workflow Visualizer', () => {
       });
     });
 
-    // it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
-    //   cy.intercept(
-    //     'GET',
-    //     awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&order_by=name&page=1&page_size=10`
-    //   ).as('getWorkflowJobTemplates');
-    //   cy.navigateTo('awx', 'templates');
-    //   cy.verifyPageTitle('Templates');
-    //   cy.wait('@getWorkflowJobTemplates').then(() => {
-    //     cy.filterTableBySingleSelect('name', `${workflowJobTemplate?.name}`);
-    //     cy.clickTableRowAction('name', `${workflowJobTemplate?.name}`, 'launch-template', {
-    //       inKebab: false,
-    //       disableFilter: true,
-    //     });
-    //     cy.intercept(
-    //       'POST',
-    //       awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
-    //     ).as('launchWJT-WithNodes');
-    //     cy.wait('@launchWJT-WithNodes')
-    //       .its('response.body.id')
-    //       .then((jobId: string) => {
-    //         cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
-    //       });
-    //   });
-    // });
+    it('Should launch a workflow job template from the visualizer, and navigate to the output page.', function () {
+      cy.intercept(
+        'GET',
+        awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&order_by=name&page=1&page_size=10`
+      ).as('getWorkflowJobTemplates');
+      cy.navigateTo('awx', 'templates');
+      cy.verifyPageTitle('Templates');
+      cy.wait('@getWorkflowJobTemplates').then(() => {
+        cy.filterTableBySearch(`${workflowJobTemplate?.name}`);
+        cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
+        cy.clickTableRowAction('name', `${workflowJobTemplate?.name}`, 'launch-template', {
+          inKebab: false,
+          disableFilter: true,
+        });
+        cy.intercept(
+          'POST',
+          awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
+        ).as('launchWJT-WithNodes');
+        cy.wait('@launchWJT-WithNodes')
+          .its('response.body.id')
+          .then((jobId: string) => {
+            cy.url().should('contain', `/jobs/workflow/${jobId}/output`);
+          });
+      });
+    });
 
     it('Can configure the prompt on launch values of a node, launch the job, and view the output screen', function () {
       cy.navigateTo('awx', 'templates');
       cy.verifyPageTitle('Templates');
-      cy.filterTableBySingleSelect('name', `${jobTemplate?.name}`);
+      cy.filterTableBySearch(`${jobTemplate?.name}`);
+      cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
       cy.clickTableRowAction('name', `${jobTemplate?.name}`, 'edit-template', {
         inKebab: false,
         disableFilter: true,
@@ -122,7 +124,8 @@ describe('Workflow Visualizer', () => {
         'Job Templates and Workflow Templates for automating and orchestrating IT tasks efficiently.'
       );
       cy.url().should('contain', '/templates');
-      cy.singleSelectByDataCy('filter-input', `${workflowJobTemplate?.name}`, false);
+      cy.filterTableBySearch(`${workflowJobTemplate?.name}`);
+      cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
       cy.clickTableRowAction('name', `${workflowJobTemplate?.name}`, 'view-workflow-visualizer', {
         inKebab: false,
         disableFilter: true,
@@ -180,7 +183,7 @@ describe('Workflow Visualizer', () => {
 
     it('can view the details pages of related job on a WFJT either by clicking the job nodes or by toggling the Workflow Jobs dropdown', function () {
       cy.navigateTo('awx', 'templates');
-      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+      cy.filterTableBySearch(workflowJobTemplate.name);
       cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
       cy.get('a[href*="/visualizer"]').click();
       cy.contains('Workflow Visualizer').should('be.visible');
@@ -208,7 +211,7 @@ describe('Workflow Visualizer', () => {
           cy.navigateTo('awx', 'jobs');
           const jobId = job.id ? job.id.toString() : '';
           const jobName = job.name ? job.name : '';
-          cy.filterTableByMultiSelect('id', [jobId]);
+          cy.filterTableById(jobId);
           cy.clickTableRowPinnedAction(jobName, 'relaunch-job', false);
           cy.wait('@job', { timeout: 10000 });
           cy.wait('@relaunchWJT-WithNodes')
@@ -231,6 +234,7 @@ describe('Workflow Visualizer', () => {
                     .getBy('[data-cy="successful-icon"]')
                     .should('be.visible');
                   cy.getBy('button[id="fit-to-screen"]').click();
+                  cy.getBy('button[id="zoom-out"]').click();
                   cy.getBy('button[id="zoom-out"]').click();
                   cy.getBy('g[data-id]')
                     .contains(project.name)

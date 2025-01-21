@@ -41,13 +41,11 @@ describe('Templates', () => {
     it('Launch action item should call API /launch endpoint', () => {
       cy.intercept(
         { method: 'GET', url: awxAPI`/job_templates/7/launch/` },
-        { fixture: 'jobTemplateLaunch' }
+        { fixture: 'jobTemplateLaunch.json' }
       ).as('launchRequest');
       cy.mount(<Templates />);
-      cy.clickTableRowAction('name', 'Demo Job Template', 'launch-template', {
-        disableFilter: true,
-      });
-      // cy.wait('@launchRequest');
+      cy.get('[data-cy="launch-template"]').first().click();
+      cy.wait('@launchRequest');
     });
   });
 });

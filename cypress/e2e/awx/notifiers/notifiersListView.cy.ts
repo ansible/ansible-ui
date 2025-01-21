@@ -2,6 +2,7 @@ import { Organization } from '@ansible/awx-ui/interfaces/Organization';
 import { awxAPI } from '../../../support/formatApiPathForAwx';
 import { randomE2Ename } from '../../../support/utils';
 import { testNotification } from './notifiersSharedFunctions';
+import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTemplate';
 
 describe('Notifications: List View', () => {
   let organization: Organization;
@@ -58,13 +59,14 @@ describe('Notifications: List View', () => {
     const notificationName = randomE2Ename();
     cy.createNotificationTemplate(notificationName, organization).then((notificationTemplate) => {
       cy.navigateTo('awx', 'notification-templates');
-      cy.filterTableByMultiSelect('name', [notificationTemplate.name]);
-      // test fail message
+      cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+      cy.filterTableBySearch(notificationTemplate.name);
+      cy.wait('@search');
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('test-notifier').click();
       });
       cy.contains(`[data-cy="status-column-cell"]`, 'Failed', { timeout: 100000 });
-      cy.intercept(awxAPI`/notification_templates/?name=${notificationName}*`, (req) => {
+      cy.intercept(awxAPI`/notification_templates/?search=${notificationName}*`, (req) => {
         req.reply((res) => {
           res.body?.results?.[0]?.summary_fields?.recent_notifications?.forEach(
             (notification: { status: string }) => {
@@ -87,7 +89,9 @@ describe('Notifications: List View', () => {
     const name = randomE2Ename();
     cy.createNotificationTemplate(name, organization).then((notificationTemplate) => {
       cy.navigateTo('awx', 'notification-templates');
-      cy.filterTableByMultiSelect('name', [name]);
+      cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+      cy.filterTableBySearch(name);
+      cy.wait('@search');
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('actions-dropdown').click();
       });
@@ -95,10 +99,10 @@ describe('Notifications: List View', () => {
       cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
       cy.clickButton(/^Clear all filters/);
       cy.deleteNotificationTemplate(notificationTemplate, { failOnStatusCode: false });
-      cy.filterTableByMultiSelect('name', [`${notificationTemplate.name} @`]);
-      cy.get('[data-cy="checkbox-column-cell"]').within(() => {
-        cy.get('input').click();
-      });
+      cy.filterTableBySearch(`${notificationTemplate.name} @`);
+      cy.verifyPageTitle('Notifiers');
+      cy.wait('@search');
+      cy.selectTableRow(`${notificationTemplate.name} @`);
       cy.clickToolbarKebabAction('delete-notifiers');
       cy.getModal().within(() => {
         cy.get('#confirm').click();
@@ -109,32 +113,35 @@ describe('Notifications: List View', () => {
   });
 
   it('can bulk delete a Notification and assert deletion', () => {
-    const name1 = randomE2Ename();
-    const name2 = randomE2Ename();
+    let name1: NotificationTemplate;
+    let name2: NotificationTemplate;
 
-    cy.createNotificationTemplate(name1, organization).then(() => {
-      cy.createNotificationTemplate(name2, organization).then(() => {
+    cy.createNotificationTemplate(randomE2Ename(), organization).then((notifier) => {
+      name1 = notifier;
+      cy.createNotificationTemplate(randomE2Ename(), organization).then((notifier) => {
+        name2 = notifier;
         cy.navigateTo('awx', 'notification-templates');
-        cy.filterTableByMultiSelect('name', [name1, name2]);
-        cy.get('[data-cy="checkbox-column-cell"]')
-          .eq(0)
-          .within(() => {
-            cy.get('input').click();
-          });
-        cy.get('[data-cy="checkbox-column-cell"]')
-          .eq(1)
-          .within(() => {
-            cy.get('input').click();
-          });
+        cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+        cy.filterTableBySearch(name1.name);
+        cy.wait('@search');
+        cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+          cy.get('input').click();
+        });
+        cy.clickButton('Clear all filters');
+        cy.filterTableBySearch(name2.name);
+        cy.wait('@search');
+        cy.get('[data-cy="checkbox-column-cell"]').within(() => {
+          cy.get('input').click();
+        });
         cy.clickToolbarKebabAction('delete-notifiers');
         cy.getModal().within(() => {
           cy.get('#confirm').click();
           cy.clickButton(/^Delete notifiers/);
           cy.contains(/^Success$/);
         });
-        cy.contains('No results found');
-        cy.contains(name1).should('not.exist');
-        cy.contains(name2).should('not.exist');
+        cy.clickButton('Clear all filters');
+        cy.contains(name1.name).should('not.exist');
+        cy.contains(name2.name).should('not.exist');
       });
     });
   });

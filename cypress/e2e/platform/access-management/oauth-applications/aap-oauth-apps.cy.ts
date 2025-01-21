@@ -57,7 +57,6 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
         cy.contains('dd', oauthApplicationName);
         cy.contains('dd', authGrantType);
         cy.contains('dd', appClientType);
-        //edit from list row and delete from details page
         cy.navigateTo('platform', 'applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
           cy.clickTableRowPinnedAction(oauthApplicationName, 'edit-oauth-application', false);
@@ -67,7 +66,8 @@ describe('AAP OAuth Applications CRUD actions List page', () => {
             .type(`${authGrantType} with ${appClientType} edited`);
           cy.getByDataCy('Submit').click();
           cy.verifyPageTitle(oauthApplicationName);
-          cy.clickKebabAction('actions-dropdown', 'delete-oauth-application');
+          cy.getBy(`[data-cy="actions-dropdown"]`).click();
+          cy.get('[data-cy="delete-oauth-application"]').click();
           cy.intercept('DELETE', gatewayAPI`/applications/*/`).as('deleteApplication');
           cy.getModal().within(() => {
             cy.get('#confirm').click();
@@ -136,7 +136,6 @@ describe('AAP OAuth Applications CRUD actions Details page', () => {
         cy.contains('dd', oauthApplicationName);
         cy.contains('dd', authGrantType);
         cy.contains('dd', appClientType);
-        //delete from list page
         cy.navigateTo('platform', 'applications');
         cy.verifyPageTitle('Applications');
         cy.searchAndDisplayResource(oauthApplicationName).then(() => {
@@ -178,8 +177,12 @@ describe('AAP OAuth Applications CRUD actions and Bulk Deletion', () => {
 
   it('create an auth code applications (confidential & public clients) and performs bulk delete from the list toolbar', () => {
     cy.verifyPageTitle('Applications');
-    cy.selectTableRow(platformApplication1.name);
-    cy.selectTableRow(platformApplication2.name);
+    cy.getTableRowByText(platformApplication1.name, false).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
+    cy.getTableRowByText(platformApplication2.name, false).within(() => {
+      cy.get('input[type=checkbox]').click();
+    });
     cy.clickToolbarKebabAction('delete-oauth-applications');
     cy.clickModalConfirmCheckbox();
     cy.intercept('DELETE', gatewayAPI`/applications/*/`).as('deleteOAuthApp1');
@@ -192,7 +195,6 @@ describe('AAP OAuth Applications CRUD actions and Bulk Deletion', () => {
         cy.contains(/^Success$/);
       });
     });
-    cy.clickButton(/^Clear all filters$/);
   });
 });
 
@@ -240,7 +242,9 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
           '.pf-v5-c-empty-state__body',
           'When a user authorizes using an OAuth application, a token will be created and displayed here.'
         ).should('not.exist');
-        cy.selectTableRow(currentPlatformUser.username);
+        cy.getTableRowByText(currentPlatformUser.username, false).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
       });
       cy.clickToolbarKebabAction('delete-tokens');
       cy.clickModalConfirmCheckbox();
@@ -252,10 +256,11 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
           cy.contains(/^Success$/);
         });
       });
-      cy.clickButton(/^Clear all filters$/);
       cy.clickTab('Back to Applications', true);
       cy.verifyPageTitle('Applications');
-      cy.selectTableRow(platformApplication.name);
+      cy.getTableRowByText(platformApplication.name, false).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
       cy.clickToolbarKebabAction('delete-oauth-applications');
       cy.clickModalConfirmCheckbox();
       cy.intercept('DELETE', gatewayAPI`/applications/*/`).as('deleteOAuthApp');
@@ -266,7 +271,6 @@ describe('AAP OAuth Application Creation and AAP token association with it', () 
           cy.contains(/^Success$/);
         });
       });
-      cy.clickButton(/^Clear all filters$/);
     });
   });
 });

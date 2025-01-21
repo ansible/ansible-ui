@@ -39,8 +39,10 @@ describe('AwxInventoryAddTeams', () => {
   });
 
   it('can filter teams by name', () => {
-    cy.intercept(awxAPI`/teams/?name=Sample*`, { fixtures: 'teams.json' }).as('nameFilterRequest');
-    cy.filterTableByMultiSelect('name', ['Sample']);
+    cy.intercept(awxAPI`/teams/?search=Sample*`, { fixtures: 'teams.json' }).as(
+      'nameFilterRequest'
+    );
+    cy.filterTableBySearch('Sample');
     cy.wait('@nameFilterRequest');
     cy.clearAllFilters();
   });

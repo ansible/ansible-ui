@@ -59,8 +59,7 @@ describe('Workflow Approvals List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
-      cy.filterTableByMultiSelect('name', ['read only approval']);
-      cy.getByDataCy('filter-input').click();
+      cy.filterTableBySearch('read only approval');
       cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
     });
@@ -71,7 +70,7 @@ describe('Workflow Approvals List', () => {
         { fixture: 'mock_options.json' }
       );
       cy.mount(<WorkflowApprovals />);
-      cy.filterTableByMultiSelect('id', ['130']);
+      cy.filterTableById('130');
       cy.getByDataCy('filter-input').click();
       cy.get('tr').should('have.length.greaterThan', 0);
       cy.clickButton(/^Clear all filters$/);
@@ -80,30 +79,30 @@ describe('Workflow Approvals List', () => {
     it('Clicking name table header sorts workflow approvals by name', () => {
       cy.mount(<WorkflowApprovals />);
       cy.intercept('api/v2/workflow_approvals/?order_by=-name*').as('nameDescSortRequest');
-      cy.clickTableHeader(/^Name$/);
+      cy.contains('th', 'Name').click();
       cy.wait('@nameDescSortRequest');
       cy.intercept('api/v2/workflow_approvals/?order_by=name*').as('nameAscSortRequest');
-      cy.clickTableHeader(/^Name$/);
+      cy.contains('th', 'Name').click();
       cy.wait('@nameAscSortRequest');
     });
 
     it('Clicking started table header sorts workflow approvals by start time', () => {
       cy.mount(<WorkflowApprovals />);
       cy.intercept('api/v2/workflow_approvals/?order_by=-started*').as('startedDescSortRequest');
-      cy.clickTableHeader(/^Started$/);
+      cy.contains('th', 'Started').click();
       cy.wait('@startedDescSortRequest');
       cy.intercept('api/v2/workflow_approvals/?order_by=started*').as('startedAscSortRequest');
-      cy.clickTableHeader(/^Started$/);
+      cy.contains('th', 'Started').click();
       cy.wait('@startedAscSortRequest');
     });
 
     it('Clicking status table header sorts workflow approvals by status', () => {
       cy.mount(<WorkflowApprovals />);
       cy.intercept('api/v2/workflow_approvals/?order_by=-status*').as('statusDescSortRequest');
-      cy.clickTableHeader(/^Status$/);
+      cy.contains('th', 'Status').click();
       cy.wait('@statusDescSortRequest');
       cy.intercept('api/v2/workflow_approvals/?order_by=status*').as('statusAscSortRequest');
-      cy.clickTableHeader(/^Status$/);
+      cy.contains('th', 'Status').click();
       cy.wait('@statusAscSortRequest');
     });
 
@@ -220,7 +219,28 @@ describe('Workflow Approvals List', () => {
       cy.intercept('api/v2/workflow_approvals/131/', {
         statusCode: 204,
       }).as('deleteRequest');
-      cy.filterTableByMultiSelect('name', ['can delete approval']);
+      cy.intercept('GET', awxAPI`/workflow_approvals/?search=can*`, {
+        statusCode: 200,
+        body: {
+          count: 1,
+          next: null,
+          previous: null,
+          results: [
+            {
+              id: 131,
+              name: 'can delete approval',
+              status: 'successful',
+              summary_fields: {
+                user_capabilities: {
+                  delete: true,
+                  start: true,
+                },
+              },
+            },
+          ],
+        },
+      });
+      cy.filterTableBySearch('can delete approval');
       cy.clickTableRowAction('name', 'can delete approval', 'delete-workflow-approval', {
         disableFilter: true,
         inKebab: true,

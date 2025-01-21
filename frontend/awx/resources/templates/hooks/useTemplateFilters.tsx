@@ -2,6 +2,7 @@ import {
   useCreatedByToolbarFilter,
   useLabelsToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
   useTemplateTypeToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
@@ -21,6 +22,7 @@ export function useTemplateFilters({
 } = {}) {
   const splitUrl = url ? url.split('/') : [];
   const optionsPath = splitUrl[splitUrl.length - 2] || 'unified_job_templates';
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
   const labelsToolbarFilter = useLabelsToolbarFilter();
@@ -52,6 +54,7 @@ export function useTemplateFilters({
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: optionsPath,
     preSortedKeys: [
+      'search',
       'name',
       'labels',
       'description',
@@ -71,6 +74,7 @@ export function useTemplateFilters({
       },
     },
     additionalFilters: [
+      searchFilter,
       createdByToolbarFilter,
       modifiedByToolbarFilter,
       typeToolbarFilter,

@@ -91,9 +91,20 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('filterTableByMultiSelect', (filterDataCy: string, optionLabels: string[]) => {
-  cy.selectTableFilter(filterDataCy);
-  cy.multiSelectByDataCy('filter-input', optionLabels);
+Cypress.Commands.add('filterTableBySearch', (searchString: string) => {
+  cy.selectTableFilter('search');
+  cy.get('[data-cy="text-input"]').clear().type(searchString);
+});
+
+Cypress.Commands.add('filterTableById', (idString: string) => {
+  cy.selectTableFilter('id');
+  cy.get('#filters').within(() => {
+    cy.contains('button', 'Select id').click();
+  });
+  cy.get('[data-cy="search-input"]').within(() => {
+    cy.get('input').clear().type(idString);
+  });
+  cy.get(`li[data-cy="${idString}"]`).find('input').click();
 });
 
 Cypress.Commands.add(
@@ -135,14 +146,11 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('clickKebabAction', (kebabDataCy: string, actionDataCy: string) => {
-  cy.getByDataCy(kebabDataCy).click();
-  cy.document()
-    .its('body')
-    .find('.pf-v5-c-menu__content ul[role="menu"]')
-    .within(() => {
-      cy.get(`[data-cy="${actionDataCy}"] button`).click();
-    });
+Cypress.Commands.add('clickKebabAction', (actionDataCy: string) => {
+  cy.getBy(`[data-cy="actions-dropdown"]`);
+  // cy.get('ul', { timeout: 10000 }).within(() => {
+  cy.get(`[data-cy="${actionDataCy}"]`).click();
+  // });
 });
 
 Cypress.Commands.add(
@@ -158,13 +166,14 @@ Cypress.Commands.add(
   ) => {
     cy.getTableRow(columnDataCy, text, options).within(() => {
       cy.get(`[data-cy="actions-column-cell"]`).within(() => {
-        if (options?.inKebab) {
-          cy.clickKebabAction('actions-dropdown', actionDataCy);
-        } else {
-          cy.getByDataCy(actionDataCy).click();
-        }
+        cy.getBy(`[data-cy="actions-dropdown"]`).click();
       });
     });
+    if (options?.inKebab) {
+      cy.clickKebabAction(actionDataCy);
+    } else {
+      cy.getByDataCy(actionDataCy).click();
+    }
   }
 );
 

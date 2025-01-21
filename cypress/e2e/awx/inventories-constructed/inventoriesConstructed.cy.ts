@@ -48,9 +48,7 @@ describe('Constructed Inventories CRUD Tests', () => {
   it('can create a constructed inventory using specific source_vars and limit and then delete that inventory', () => {
     cy.intercept('POST', awxAPI`/constructed_inventories/`).as('createInv');
     const constInvName = 'E2E Constructed Inventory ' + randomString(4);
-    // generates random values to be used during the test.
     const cacheTimeoutValue = generateRandom(0, 15);
-    // which combination should be used to test verbosity from 1 to 5 - UI forces to use only 0-2
     const verbosityValue = generateRandom(0, 2);
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
@@ -72,7 +70,8 @@ describe('Constructed Inventories CRUD Tests', () => {
         expect(statusCode).to.be.equal(201);
         cy.verifyPageTitle(constInvName);
       });
-    cy.clickKebabAction('actions-dropdown', 'delete-inventory');
+    cy.getBy(`[data-cy="actions-dropdown"]`).click();
+    cy.getBy('[data-cy="delete-inventory"]').click();
     cy.getModal().within(() => {
       cy.get('header').contains('Permanently delete inventory');
       cy.get('button').contains('Delete inventory').should('have.attr', 'aria-disabled', 'true');
@@ -177,20 +176,15 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     });
   });
 
-  afterEach(() => {
-    constrInvToDelete.push(constructedInv);
-  });
-
   after(() => {
-    cy.deleteAwxInstanceGroup(instanceGroup);
-    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
-    cy.deleteAwxOrganization(organization);
+    cy.deleteAwxInstanceGroup(instanceGroup, { failOnStatusCode: false });
+    cy.deleteAwxOrganization(organization, { failOnStatusCode: false });
   });
 
   it('can edit the input_inventories, verify the preservation of the order they were added in, and manually change the order', () => {
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
-    cy.filterTableByMultiSelect('name', [constructedInv.name]);
+    cy.filterTableBySearch(constructedInv.name);
     cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
     cy.contains('a', constructedInv.name).click();
     let expectedOrder: string[] = [];
@@ -215,7 +209,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
         cy.getByDataCy('input-inventories');
         cy.navigateTo('awx', 'inventories');
         cy.verifyPageTitle('Inventories');
-        cy.filterTableByMultiSelect('name', [constructedInv.name]);
+        cy.filterTableBySearch(constructedInv.name);
         cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
         cy.contains('a', constructedInv.name).click();
         cy.getByDataCy('input-inventories');
@@ -224,6 +218,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
           expect(actualOrder).to.deep.equal(expectedOrder);
         });
       });
+    constrInvToDelete.map((constrInventory) => cy.deleteAwxConstructedInventory(constrInventory));
   });
 });
 

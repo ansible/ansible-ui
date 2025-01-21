@@ -6,6 +6,15 @@ describe('InventorySources.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
       {
+        method: 'OPTIONS',
+        url: awxAPI`/inventories/1/inventory_sources/`,
+      },
+      {
+        fixture: 'mock_options.json',
+      }
+    ).as('getOptions');
+    cy.intercept(
+      {
         method: 'GET',
         url: awxAPI`/inventories/**`,
         hostname: 'localhost',
@@ -22,8 +31,17 @@ describe('InventorySources.cy.ts', () => {
       .its('results')
       .should('be.an', 'array')
       .then((results: InventorySource[]) => {
-        const source = results[0];
-        cy.selectTableRow(source.name, false);
+        const source = results[3];
+        cy.intercept('GET', awxAPI`/inventories/1/inventory_sources/?search=${source.name}*`, {
+          statusCode: 200,
+          body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [source],
+          },
+        });
+        cy.selectTableRow(source.name);
         cy.clickToolbarKebabAction('delete-sources');
         cy.contains('Permanently delete source').should('be.visible');
       });

@@ -14,71 +14,57 @@ export function testNotification(
     cy.navigateTo('awx', 'notification-templates');
     cy.contains('Create notifier').click();
     cy.verifyPageTitle('Create notifier');
-
     selectOrganization(orgName);
     fillBasicData(notificationName, type);
     fillNotificationType(type);
     verifyDefaultsMessages(type);
-
     cy.get(`[data-cy="Submit"]`).click();
-
-    // test detail
     testBasicData(notificationName, type, orgName);
     testNotificationType(type);
-
-    // test edit
     if (options?.details === true) {
       cy.getByDataCy(`edit-notifier`).click();
     } else {
-      // if not in detail, we go back to list and click edit there
       cy.getByDataCy('back-to notifiers').click();
-      cy.filterTableByMultiSelect('name', [notificationName]);
+      cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+      cy.filterTableBySearch(notificationName);
+      cy.wait('@search');
       cy.contains(notificationName);
       cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
       cy.getByDataCy(`edit-notifier`).click();
     }
-
     const name2 = randomE2Ename();
     editBasicData(name2);
     editNotificationType(type);
-
     if (!options?.skipMessages) {
       editCustomMessages(type);
     }
     cy.get(`[data-cy="Submit"]`).click();
-
     testBasicDataEdited(name2, orgName);
     testNotificationTypeEdited(type);
-
     if (!options?.skipMessages) {
       verifyEditedMessages(type);
     }
-
     testDelete(name2, options);
   });
 }
 
 export function testDelete(name: string, options?: { details?: boolean }) {
-  // validate its here and delete it
   if (options?.details === true) {
     cy.get(`[data-cy="actions-dropdown"]`).click();
     cy.get(`[data-cy="delete-notifier"]`).click();
   } else {
-    // if not in detail, we go back to list and click delete there
     cy.getByDataCy('back-to notifiers').click();
-    cy.filterTableByMultiSelect('name', [name]);
+    cy.intercept('GET', awxAPI`/notification_templates/?search*`).as('search');
+    cy.filterTableBySearch(name);
+    cy.wait('@search');
     cy.contains(name);
-
     cy.get(`[aria-label="Simple table"] [data-cy="actions-dropdown"]`).click();
     cy.get(`[data-cy="delete-notifier"]`).click();
   }
-
   cy.get(`[role="dialog"] input`).click();
   cy.contains(`[role="dialog"] button`, `Delete notifiers`).click();
-
   cy.verifyPageTitle('Notifiers');
   cy.contains('Configure custom notifications to be sent based on predefined events.');
-
   cy.requestGet<AwxItemsResponse<Notification>>(awxAPI`/notification_templates/?name={name}`)
     .its('results')
     .then((results) => {
@@ -93,9 +79,7 @@ export function selectOrganization(orgName: string) {
 function fillBasicData(notificationName: string, type: string) {
   cy.get(`[data-cy="name"]`).type(notificationName);
   cy.get(`[data-cy="description"]`).type('this is test description');
-
   cy.get(`[data-cy="notification_type"]`).click();
-
   cy.contains('span', type).click();
 }
 
@@ -113,7 +97,6 @@ function testBasicDataEdited(notificationName: string, organization: string) {
 function testBasicData(notificationName: string, type: string, organization: string) {
   cy.contains(`[data-cy="name"]`, notificationName);
   cy.contains(`[data-cy="description"]`, 'this is test description');
-
   cy.contains(`[data-cy="notification-type"]`, TransformTypeName(type));
   cy.contains(`[data-cy="organization"]`, organization);
 }
@@ -209,7 +192,6 @@ function verifyDefaultsMessages(type: string) {
       defaults.workflow_approval.timed_out.message
     );
   }
-
   if (defaults.started.body) {
     cy.get('[data-cy="messages-started-body"]').should('have.value', defaults.started.body);
   }
@@ -314,7 +296,6 @@ function verifyEditedMessages(type: string) {
   if (defaults.started.message) {
     cy.contains('[data-cy="start-message"]', 'started message edited');
   }
-
   if (defaults.success.message) {
     cy.contains('[data-cy="success-message"]', 'success message edited');
   }
@@ -481,7 +462,6 @@ function TransformTypeName(type: string) {
   } else if (type === 'IRC') {
     return 'irc';
   }
-
   return '';
 }
 

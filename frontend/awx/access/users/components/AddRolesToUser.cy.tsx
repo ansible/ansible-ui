@@ -59,7 +59,7 @@ describe('AWX user: Add roles', () => {
     );
     cy.clickButton(/^Next$/);
     cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one resource.');
-    cy.selectTableRow('Demo Inventory', false);
+    cy.selectTableRowByCheckbox('name', 'Demo Inventory', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
@@ -70,7 +70,7 @@ describe('AWX user: Add roles', () => {
     cy.get('button[data-cy="inventory"]').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select inventories$/);
-    cy.selectTableRow('Demo Inventory', false);
+    cy.selectTableRowByCheckbox('name', 'Demo Inventory', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected inventories.$/);
     cy.clickButton(/^Next$/);
@@ -88,7 +88,7 @@ describe('AWX user: Add roles', () => {
     cy.get('button[data-cy="inventory"]').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select inventories$/);
-    cy.selectTableRow('Demo Inventory', false);
+    cy.selectTableRowByCheckbox('name', 'Demo Inventory', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected inventories.$/);
     cy.selectTableRowByCheckbox('name', 'Inventory use', { disableFilter: true });

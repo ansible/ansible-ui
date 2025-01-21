@@ -65,7 +65,9 @@ describe('Execution Environment User Access tab', () => {
       cy.clickTab(/^User Access$/, true);
       cy.getByDataCy('add-roles').click();
       cy.getWizard().within(() => {
-        cy.selectTableRow(hubUser.username);
+        cy.getTableRowByText(hubUser.username, true).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');
@@ -107,7 +109,9 @@ describe('Execution Environment User Access tab', () => {
       cy.verifyPageTitle('Add roles');
       cy.getWizard().within(() => {
         cy.contains('h1', 'Select team(s)').should('be.visible');
-        cy.selectTableRow(hubTeam.name);
+        cy.getTableRowByText(hubTeam.name, true).within(() => {
+          cy.get('input[type=checkbox]').click();
+        });
         cy.intercept('GET', hubAPI`/_ui/v2/role_definitions/*`).as('roleDefinitions');
         cy.clickButton(/^Next/);
         cy.wait('@roleDefinitions');

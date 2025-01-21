@@ -2,6 +2,7 @@ import { awxApiPath } from '../../../common/api/awx-utils';
 import {
   useCreatedByToolbarFilter,
   useModifiedByToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
@@ -12,12 +13,13 @@ export function useSchedulesFilter({
 } = {}) {
   const urlPath = url ? url.replace(awxApiPath, '') : '';
   const optionsPath = urlPath || 'schedules';
+  const searchFilter = useSearchToolbarFilter();
   const createdByToolbarFilter = useCreatedByToolbarFilter();
   const modifiedByToolbarFilter = useModifiedByToolbarFilter();
 
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: optionsPath,
-    preSortedKeys: ['name', 'id', 'created-by', 'modified-by'],
+    preSortedKeys: ['search', 'name', 'id', 'created-by', 'modified-by'],
     preFilledValueKeys: {
       name: {
         apiPath: optionsPath,
@@ -26,7 +28,7 @@ export function useSchedulesFilter({
         apiPath: optionsPath,
       },
     },
-    additionalFilters: [createdByToolbarFilter, modifiedByToolbarFilter],
+    additionalFilters: [searchFilter, createdByToolbarFilter, modifiedByToolbarFilter],
   });
   return toolbarFilters;
 }

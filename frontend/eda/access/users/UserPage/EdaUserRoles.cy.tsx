@@ -35,10 +35,11 @@ describe('EDA user roles', () => {
           statusCode: 204,
         }
       );
-      cy.clickTableRowAction('resource-name', 'Project VN', 'remove-role', {
-        inKebab: false,
-        disableFilter: true,
-      });
+      cy.contains(`[data-cy="resource-name-column-cell"]`, 'Project VN')
+        .parents('tr')
+        .within(() => {
+          cy.get(`button[data-cy="remove-role"]`).click();
+        });
       cy.get('div[role="dialog"]').within(() => {
         cy.contains('Project VN');
         cy.get('input[id="confirm"]').click();

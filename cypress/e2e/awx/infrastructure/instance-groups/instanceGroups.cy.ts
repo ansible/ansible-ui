@@ -148,9 +148,11 @@ describe(`Instance Groups`, () => {
       }
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableByMultiSelect('name', arrayOfElementText);
-      cy.get('tbody tr').should('have.length', 5);
-      cy.getByDataCy('select-all').check();
+      cy.selectTableRow(arrayOfElementText[0]);
+      cy.selectTableRow(arrayOfElementText[1]);
+      cy.selectTableRow(arrayOfElementText[2]);
+      cy.selectTableRow(arrayOfElementText[3]);
+      cy.selectTableRow(arrayOfElementText[4]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -181,9 +183,8 @@ describe(`Instance Groups`, () => {
       }
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableByMultiSelect('name', arrayOfElementText);
-      cy.get('tbody tr').should('have.length', 2);
-      cy.getByDataCy('select-all').check();
+      cy.selectTableRow(arrayOfElementText[0]);
+      cy.selectTableRow(arrayOfElementText[1]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -319,9 +320,11 @@ describe(`Instance Groups`, () => {
       }
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableByMultiSelect('name', arrayOfElementText);
-      cy.get('tbody tr').should('have.length', 5);
-      cy.getByDataCy('select-all').check();
+      cy.selectTableRow(arrayOfElementText[0]);
+      cy.selectTableRow(arrayOfElementText[1]);
+      cy.selectTableRow(arrayOfElementText[2]);
+      cy.selectTableRow(arrayOfElementText[3]);
+      cy.selectTableRow(arrayOfElementText[4]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -354,9 +357,8 @@ describe(`Instance Groups`, () => {
       }
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableByMultiSelect('name', arrayOfElementText);
-      cy.get('tbody tr').should('have.length', 2);
-      cy.getByDataCy('select-all').check();
+      cy.selectTableRow(arrayOfElementText[0]);
+      cy.selectTableRow(arrayOfElementText[1]);
       cy.clickToolbarKebabAction('delete-instance-groups');
       cy.intercept('DELETE', awxAPI`/instance_groups/*/`).as('deleteInstanceGroup');
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
@@ -917,7 +919,7 @@ describe(`Instance Groups`, () => {
         });
       cy.navigateTo('awx', 'instance-groups');
       cy.verifyPageTitle('Instance Groups');
-      cy.filterTableByMultiSelect('name', [containerGroup.name]);
+      cy.filterTableBySearch(containerGroup.name);
       cy.clickTableRowLink('name', containerGroup.name, { disableFilter: true });
       cy.verifyPageTitle(containerGroup.name);
       cy.get('a[href*="user-access"]').click();

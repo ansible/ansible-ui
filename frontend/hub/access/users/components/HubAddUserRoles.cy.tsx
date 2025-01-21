@@ -67,7 +67,7 @@ describe('Hub user: Add roles', () => {
     );
     cy.clickButton(/^Next$/);
     cy.get('.pf-v5-c-alert__title').should('contain.text', 'Select at least one resource.');
-    cy.selectTableRow('demo', false);
+    cy.selectTableRowByCheckbox('name', 'demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-roles"] button').should('have.class', 'pf-m-current');
   });
@@ -77,7 +77,7 @@ describe('Hub user: Add roles', () => {
     cy.get('button[data-cy="namespace"]').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select namespaces$/);
-    cy.selectTableRow('demo', false);
+    cy.selectTableRowByCheckbox('name', 'demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected namespaces.$/);
     cy.clickButton(/^Next$/);
@@ -96,7 +96,7 @@ describe('Hub user: Add roles', () => {
     cy.get('button[data-cy="namespace"]').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select namespaces$/);
-    cy.selectTableRow('demo', false);
+    cy.selectTableRowByCheckbox('name', 'demo', { disableFilter: true });
     cy.clickButton(/^Next$/);
     cy.contains(/^Select roles to apply to all of your selected namespaces.$/);
     cy.selectTableRowByCheckbox('name', 'galaxy.collection_namespace_owner', {

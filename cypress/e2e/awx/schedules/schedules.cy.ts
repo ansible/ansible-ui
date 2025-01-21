@@ -184,7 +184,15 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule Project' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Project sync');
-      cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
+      cy.getBy('button[id="project"]').click();
+      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
+      cy.getModal().within(() => {
+        cy.intercept('GET', awxAPI`/projects/?search**`).as('search');
+        cy.get('[data-cy="text-input"]').type(project.name);
+        cy.wait('@search');
+        cy.getBy('[data-cy="checkbox-column-cell"]').click();
+        cy.clickButton('Confirm');
+      });
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);
@@ -548,7 +556,7 @@ describe('Schedules - Bulk deletion', () => {
       organization = org;
       cy.createAwxProject(organization).then((proj) => {
         project = proj;
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
           const scheduleName = generateScheduleName();
           cy.createAWXSchedule({
             name: scheduleName,
@@ -568,18 +576,18 @@ describe('Schedules - Bulk deletion', () => {
 
   it('user can bulk delete schedules from the Schedules list page ', () => {
     cy.intercept('DELETE', awxAPI`/schedules/*`).as('deletedSchedule');
-
     cy.navigateTo('awx', 'schedules');
     cy.verifyPageTitle('Schedules');
-    cy.filterTableByMultiSelect('name', arrayOfElementText);
-    cy.get('tbody tr').should('have.length', 5);
-    cy.getByDataCy('select-all').check();
+    cy.selectTableRow(arrayOfElementText[0]);
+    cy.selectTableRow(arrayOfElementText[1]);
+    cy.selectTableRow(arrayOfElementText[2]);
     cy.clickToolbarKebabAction('delete-schedules');
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Permanently delete schedule');
       cy.get('button').contains('Delete schedule').should('have.attr', 'aria-disabled', 'true');
       cy.get('input[id="confirm"]').click();
       cy.get('button').contains('Delete schedule').click();
+      cy.get('tbody').find('tr').should('have.length', 3);
     });
     cy.wait('@deletedSchedule')
       .its('response')
@@ -915,11 +923,12 @@ describe('Schedules - Edit', () => {
           cy.deleteAwxInventory(inv).then(() => {
             cy.navigateTo('awx', 'inventories');
             cy.verifyPageTitle('Inventories');
-            cy.contains('Select name').click().type(inv.name);
+            cy.getBy('[data-cy="text-input"]').click().type(inv.name);
             cy.contains(inv.name).should('not.exist');
             cy.navigateTo('awx', 'templates');
             cy.verifyPageTitle('Templates');
-            cy.filterTableByMultiSelect('name', [jt.name]);
+            cy.filterTableBySearch(jt.name);
+            cy.get('tbody').find('tr').should('have.length', 1);
             cy.get('[data-cy="name-column-cell"]').within(() => {
               cy.get('a').click();
             });

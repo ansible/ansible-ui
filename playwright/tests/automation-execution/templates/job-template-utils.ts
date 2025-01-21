@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
+import { selectTableFilter } from '../../../commands/selectTableFilter';
 
 export async function createJobTemplate(
   options: { name?: string; inventoryName?: string; projectName?: string },
@@ -35,6 +36,7 @@ export async function createJobTemplate(
 
 export async function runJobTemplate(jobTemplateName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Templates');
+  await selectTableFilter('Name', page);
   await page.getByRole('button', { name: 'Select name' }).click();
   await page.getByLabel('Search input').fill(jobTemplateName);
   await page.getByLabel(jobTemplateName).check();
@@ -49,6 +51,7 @@ export async function runJobTemplate(jobTemplateName: string, page: Page) {
 
 export async function deleteJobTemplate(jobTemplateName: string, page: Page) {
   await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
+  await selectTableFilter('Name', page);
   await page.getByRole('button', { name: 'Select name' }).click();
   await page.getByLabel('Search input').fill(jobTemplateName);
   await page.getByLabel(jobTemplateName).check();

@@ -25,7 +25,6 @@ describe('Workflow Approvals Tests', () => {
   before(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-
       cy.createAwxProject(
         organization,
         { name: randomE2Ename() },
@@ -80,7 +79,7 @@ describe('Workflow Approvals Tests', () => {
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
               ).as('thisWfjt');
               cy.navigateTo('awx', 'templates');
-              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
               cy.wait('@thisWfjt');
@@ -106,16 +105,16 @@ describe('Workflow Approvals Tests', () => {
                           'POST',
                           awxAPI`/workflow_approvals/${approval.id.toString()}/approve/`
                         ).as('WFaction');
-                        cy.filterTableByMultiSelect('id', [approval.id.toString()]);
-                        cy.getTableRow('id', approval.id.toString(), { disableFilter: true })
-                          .within(() => {
-                            cy.getByDataCy('actions-column-cell').within(() => {
-                              cy.getByDataCy('approve').click();
-                            });
-                          })
-                          .then(() => {
-                            cy.actionsWFApprovalConfirmModal('approve');
-                          });
+                        cy.intercept(
+                          'GET',
+                          awxAPI`/workflow_approvals/?page_size=20&order_by=id&id__icontains=${approval.id.toString()}`
+                        ).as('searchId');
+                        cy.filterTableById(approval.id.toString());
+                        cy.wait('@searchId');
+                        cy.getByDataCy('actions-column-cell').within(() => {
+                          cy.getByDataCy('approve').click();
+                        });
+                        cy.actionsWFApprovalConfirmModal('approve');
                         cy.wait('@WFaction')
                           .its('response')
                           .then((response) => {
@@ -128,9 +127,9 @@ describe('Workflow Approvals Tests', () => {
                         ).as('deleteWFA');
                         cy.waitForWorkflowJobStatus(response.id.toString());
                         cy.getByDataCy('actions-column-cell').within(() => {
-                          cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
+                          cy.getBy(`[data-cy="actions-dropdown"]`).click();
                         });
-
+                        cy.getBy('[data-cy="delete-workflow-approval"]').click();
                         cy.actionsWFApprovalConfirmModal('delete');
                         cy.wait('@deleteWFA')
                           .its('response')
@@ -160,7 +159,7 @@ describe('Workflow Approvals Tests', () => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
               cy.navigateTo('awx', 'templates');
-              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
               cy.intercept(
@@ -179,7 +178,7 @@ describe('Workflow Approvals Tests', () => {
                         'POST',
                         awxAPI`/workflow_approvals/${approval.id.toString()}/deny/`
                       ).as('WFaction');
-                      cy.filterTableByMultiSelect('id', [approval.id.toString()]);
+                      cy.filterTableById(approval.id.toString());
                       cy.getTableRow('id', approval.id.toString(), { disableFilter: true })
                         .within(() => {
                           cy.getByDataCy('actions-column-cell').within(() => {
@@ -201,8 +200,9 @@ describe('Workflow Approvals Tests', () => {
                       ).as('deleteWFA');
                       cy.waitForWorkflowJobStatus(response.id.toString());
                       cy.getByDataCy('actions-column-cell').within(() => {
-                        cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
+                        cy.getBy(`[data-cy="actions-dropdown"]`).click();
                       });
+                      cy.getBy('[data-cy="delete-workflow-approval"]').click();
                       cy.actionsWFApprovalConfirmModal('delete');
                       cy.wait('@deleteWFA')
                         .its('response')
@@ -231,7 +231,7 @@ describe('Workflow Approvals Tests', () => {
               approvalWFNode = appNode;
               cy.createWorkflowJTAlwaysNodeLink(approvalWFNode, jobTemplateNode);
               cy.navigateTo('awx', 'templates');
-              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
               cy.intercept(
@@ -250,7 +250,7 @@ describe('Workflow Approvals Tests', () => {
                         'POST',
                         awxAPI`/workflow_jobs/${response.id.toString()}/cancel/`
                       ).as('WFaction');
-                      cy.filterTableByMultiSelect('id', [approval.id.toString()]);
+                      cy.filterTableById(approval.id.toString());
                       cy.getTableRow('id', approval.id.toString(), { disableFilter: true }).within(
                         () => {
                           cy.getByDataCy('actions-column-cell').within(() => {
@@ -270,8 +270,9 @@ describe('Workflow Approvals Tests', () => {
                       ).as('deleteWFA');
                       cy.waitForWorkflowJobStatus(response.id.toString());
                       cy.getByDataCy('actions-column-cell').within(() => {
-                        cy.clickKebabAction('actions-dropdown', 'delete-workflow-approval');
+                        cy.getBy(`[data-cy="actions-dropdown"]`).click();
                       });
+                      cy.getBy('[data-cy="delete-workflow-approval"]').click();
                       cy.actionsWFApprovalConfirmModal('delete');
                       cy.wait('@deleteWFA')
                         .its('response')
@@ -338,9 +339,9 @@ describe('Workflow Approvals Tests', () => {
   **/
   function editWorkflowJobTemplate() {
     cy.navigateTo('awx', 'templates');
-    cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+    cy.filterTableBySearch(workflowJobTemplate.name);
     cy.getTableRow('name', workflowJobTemplate.name, { disableFilter: true }).should('be.visible');
-    cy.selectTableRow(workflowJobTemplate.name, false);
+    cy.selectTableRow(workflowJobTemplate.name);
     cy.getBy('[data-cy="edit-template"]').click();
     cy.verifyPageTitle(`Edit ${workflowJobTemplate.name}`);
     cy.getByDataCy('allow_simultaneous').click();
@@ -399,7 +400,7 @@ describe('Workflow Approvals Tests', () => {
                           cy.navigateTo('awx', 'workflow-approvals');
                           cy.wait('@options');
                           jobName = wfApprovalC.name.split(' ').slice(-1).toString();
-                          cy.filterTableBySingleSelect('name', jobName);
+                          cy.filterTableBySearch(jobName);
                           cy.get('tbody').find('tr').should('have.length', 3);
                           cy.getByDataCy('select-all').check();
                           cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
@@ -428,9 +429,11 @@ describe('Workflow Approvals Tests', () => {
   function deleteApprovalFromListToolbar() {
     cy.get('tbody').find('tr').should('have.length', 3);
     cy.getByDataCy('select-all').check();
-    cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
-      cy.clickKebabAction('actions-dropdown', 'delete-workflow-approvals');
-    });
+    // cy.getBy('[data-ouia-component-id="page-toolbar"]').within(() => {
+    //   cy.getBy(`[data-cy="actions-dropdown"]`).click();
+    // });
+    // cy.getBy('[data-cy="delete-workflow-approvals"]').click();
+    cy.clickToolbarKebabAction('delete-workflow-approvals');
     cy.getModal().within(() => {
       cy.get('[data-ouia-component-id="confirm"]').click();
       cy.get('[data-ouia-component-id="submit"]').click();
@@ -441,7 +444,6 @@ describe('Workflow Approvals Tests', () => {
   describe('Workflow Approvals - User Access', () => {
     let workflowApproval: WorkflowApproval;
 
-    // Skipping this test that includes a logout (awxLoginTestUser): since we're seeing issues with Cypress sessions not being restored properly and leading to 401s
     it('can assign normal user the access to approve a workflow approval from the list toolbar', () => {
       cy.createAwxWorkflowJobTemplate({
         name: 'E2E Workflow Approval-USER APPROVE-' + randomString(4),
@@ -458,7 +460,7 @@ describe('Workflow Approvals Tests', () => {
                 awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/launch/`
               ).as('launched');
               cy.navigateTo('awx', 'templates');
-              cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+              cy.filterTableBySearch(workflowJobTemplate.name);
               cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
               cy.verifyPageTitle(workflowJobTemplate.name);
               cy.getByDataCy('launch-template').click();
@@ -470,7 +472,7 @@ describe('Workflow Approvals Tests', () => {
                       workflowApproval = wfApprovalA;
                       cy.url().should('contain', '/output');
                       cy.navigateTo('awx', 'templates');
-                      cy.filterTableByMultiSelect('name', [workflowJobTemplate.name]);
+                      cy.filterTableBySearch(workflowJobTemplate.name);
                       cy.clickTableRowLink('name', workflowJobTemplate.name, {
                         disableFilter: true,
                       });
@@ -479,9 +481,7 @@ describe('Workflow Approvals Tests', () => {
                       cy.get('tbody tr').should('have.length', 0);
                       cy.getByDataCy('add-roles').click();
                       cy.verifyPageTitle('Add roles');
-                      cy.filterTableByTextFilter('username', userWFApprove.username, {
-                        disableFilterSelection: true,
-                      }).click();
+                      cy.filterTableBySearch(userWFApprove.username);
                       cy.get('tbody tr')
                         .should('have.length', 1)
                         .within(() => {
@@ -503,7 +503,7 @@ describe('Workflow Approvals Tests', () => {
                       cy.awxLoginTestUser(`${userWFApprove.username}`, `pw`);
                       cy.navigateTo('awx', 'workflow-approvals');
                       cy.verifyPageTitle('Workflow Approvals');
-                      cy.filterTableBySingleSelect('name', workflowApproval.name);
+                      cy.filterTableBySearch(workflowApproval.name);
                       cy.get('tbody tr').should('have.length', 1);
                       cy.get('[data-ouia-component-id="simple-table"]').within(() => {
                         cy.getByDataCy('checkbox-column-cell').click();
@@ -535,7 +535,6 @@ describe('Workflow Approvals Tests', () => {
             });
           }
         );
-
         if (workflowJobTemplate) {
           cy.deleteAwxWorkflowJobTemplate(workflowJobTemplate, { failOnStatusCode: false });
         }

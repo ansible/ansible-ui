@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useInitiatedByToolbarFilter,
-  useKeywordToolbarFilter,
+  useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useActivityStreamFilter() {
-  const keywordToolbarFilter = useKeywordToolbarFilter();
+  const searchFilter = useSearchToolbarFilter();
   const initiatedByToolbarFilter = useInitiatedByToolbarFilter();
   const { t } = useTranslation();
   const typeToolbarFilter = useMemo<IToolbarFilter>(
@@ -65,8 +65,8 @@ export function useActivityStreamFilter() {
         apiPath: 'activity_stream',
       },
     },
-    additionalFilters: [keywordToolbarFilter, initiatedByToolbarFilter, typeToolbarFilter],
-    preSortedKeys: ['keyword', 'initiated-by', 'id'],
+    additionalFilters: [searchFilter, initiatedByToolbarFilter, typeToolbarFilter],
+    preSortedKeys: ['search', 'initiated-by', 'id'],
   });
   return toolbarFilters;
 }

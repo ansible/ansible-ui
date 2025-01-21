@@ -1,6 +1,8 @@
+import { useSearchToolbarFilter } from '../../../common/awx-toolbar-filters';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useInventorySourceFilters(url?: string) {
+  const searchFilter = useSearchToolbarFilter();
   const toolbarFilters = useDynamicToolbarFilters({
     optionsPath: url ? url : 'inventory_sources',
     preFilledValueKeys: {
@@ -11,7 +13,8 @@ export function useInventorySourceFilters(url?: string) {
         apiPath: url ? url : 'inventory_sources',
       },
     },
-    preSortedKeys: ['name', 'id', 'description'],
+    preSortedKeys: ['search', 'name', 'id', 'description'],
+    additionalFilters: [searchFilter],
   });
   return toolbarFilters;
 }

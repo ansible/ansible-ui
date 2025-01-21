@@ -6,12 +6,10 @@ function visitImports(namespace: string) {
   cy.verifyPageTitle('Namespaces');
   cy.getByDataCy('table-view').click();
   cy.filterTableBySingleText(namespace);
-  // dropdown is not within row: cy.clickTableRowKebabAction(namespace, 'imports', false);
   cy.getTableRowByText(namespace, false).within(() => {
     cy.get('[data-cy*="actions-dropdown"]').click();
   });
   cy.getByDataCy('imports').click();
-
   cy.verifyPageTitle('My imports');
 }
 
@@ -40,7 +38,6 @@ describe('GalaxyKit Installation Check for My Imports', () => {
           validCollection.version,
           'staging'
         );
-        cy.waitForAllTasks();
       });
     });
 
@@ -50,11 +47,9 @@ describe('GalaxyKit Installation Check for My Imports', () => {
     });
 
     it('should render empty states', () => {
-      // Go to Imports and de-select namespace
       const { namespace } = validCollection;
       visitImports(namespace);
       cy.getByDataCy('reset').click();
-      // Check Empty state when no namespace is selected
       cy.contains('No namespace selected.');
       cy.contains('No data');
       cy.get('#namespace-selector').contains('Select namespace');
@@ -64,7 +59,6 @@ describe('GalaxyKit Installation Check for My Imports', () => {
     it('should be able to inspect completed collection import', () => {
       const { name, namespace, version } = validCollection;
       visitImports(namespace);
-      // test correctly set label params
       cy.get('#namespace-selector').contains(namespace);
       cy.get(`[data-cy="row-id-${name}"]`).within(() => {
         cy.get('h4').contains(`${name} v${version}`);
@@ -85,7 +79,6 @@ describe('GalaxyKit Installation Check for My Imports', () => {
       cy.get('#namespace-selector').contains(namespace);
       cy.get('#namespace-selector').click();
       cy.get('.pf-v5-c-menu__footer').contains('Browse').click();
-      // search and select namespace in button
       cy.get('.pf-v5-c-modal-box__header').click();
       cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
         cy.getTableRowBySingleText(validCollection.namespace).within(() => {

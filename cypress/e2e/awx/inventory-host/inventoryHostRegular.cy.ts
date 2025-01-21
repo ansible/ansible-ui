@@ -82,10 +82,10 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       }
     );
     cy.navigateTo('awx', 'inventories');
-    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.filterTableBySearch(inventory.name);
     cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
     cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
-    cy.filterTableByMultiSelect('name', [hostName]);
+    cy.filterTableBySearch(hostName);
     cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
     cy.containsBy('a', 'Facts').click();
     cy.get('code').should('contain', 'ansible_dns');
@@ -108,12 +108,12 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       project: project.id,
     }).then((jobTemplate) => {
       cy.navigateTo('awx', 'inventories');
-      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
       cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
       const hostName = createHost('inventory_host', inventory.id);
       cy.navigateTo('awx', 'inventories');
-      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
       cy.get('.pf-v5-c-tabs__item > a').contains('Job Templates').click();
       cy.intercept('POST', awxAPI`/job_templates/*/launch/`).as('launch');
@@ -123,10 +123,10 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
       cy.url().should('contain', '/output');
       cy.verifyPageTitle(jobTemplate.name);
       cy.navigateTo('awx', 'inventories');
-      cy.filterTableByMultiSelect('name', [inventory.name]);
+      cy.filterTableBySearch(inventory.name);
       cy.get('[data-cy="name-column-cell"]').contains(inventory.name).click();
       cy.get('.pf-v5-c-tabs__item > a').contains('Hosts').click();
-      cy.filterTableByMultiSelect('name', [hostName]);
+      cy.filterTableBySearch(hostName);
       cy.get('[data-cy="name-column-cell"]').contains(hostName).click();
       cy.intercept(
         { method: 'GET', url: awxAPI`/unified_jobs/*` },
@@ -144,10 +144,10 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     createHost('inventory_host', inventory.id);
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${encodeURIComponent(inventory.name)}*`).as(
+    cy.intercept('GET', awxAPI`/inventories/?search=${encodeURIComponent(inventory.name)}*`).as(
       'getInventories'
     );
-    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.filterTableBySearch(inventory.name);
     cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
     cy.contains(`a[role="tab"]`, 'Hosts').click();
@@ -167,19 +167,17 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     createHost('inventory_host', inventory.id);
     const groupName = 'E2E group ' + randomString(4);
     cy.createInventoryGroup(inventory, groupName);
-    cy.log(`inv: ${inventory.name}, group: ${groupName}`);
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?name=${encodeURIComponent(inventory.name)}*`).as(
+    cy.intercept('GET', awxAPI`/inventories/?search=${encodeURIComponent(inventory.name)}*`).as(
       'getInventories'
     );
-    cy.filterTableByMultiSelect('name', [inventory.name]);
+    cy.filterTableBySearch(inventory.name);
     cy.wait('@getInventories');
     cy.contains('a', inventory.name).click();
     cy.contains(`a[role="tab"]`, 'Groups').click();
     cy.reload();
     cy.contains('a', groupName).click();
     cy.contains(`a[role="tab"]`, 'Hosts').click();
-    // add existing host
     cy.getByDataCy('add-existing-host').click();
     cy.getByDataCy('select-all').check();
     cy.clickModalButton('Add hosts');

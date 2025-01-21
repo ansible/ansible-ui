@@ -33,7 +33,6 @@ describe('Platform Teams - Create, Edit and Delete', function () {
     cy.getByDataCy('name').type(teamName);
     cy.singleSelectByDataCy('organization', platformOrganization.name);
     cy.getByDataCy('Submit').click();
-
     cy.wait('@createPlatformTeam')
       .its('response.body')
       .then((platformTeam: PlatformTeam) => {
@@ -129,8 +128,18 @@ describe('Platform Teams - Create, Edit and Delete', function () {
       name: `Platform E2E Team ${randomE2Ename()}`,
       organization: platformOrganization.id,
     }).then((testPlatformTeam1: PlatformTeam) => {
-      cy.selectTableRow(platformTeam.name);
-      cy.selectTableRow(testPlatformTeam1.name);
+      cy.filterTableByTextFilter('name', platformTeam.name, {
+        disableFilterSelection: true,
+      });
+      cy.getTableRowByText(platformTeam.name, false).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
+      cy.filterTableByTextFilter('name', testPlatformTeam1.name, {
+        disableFilterSelection: true,
+      });
+      cy.getTableRowByText(testPlatformTeam1.name, false).within(() => {
+        cy.get('input[type=checkbox]').click();
+      });
       cy.clickToolbarKebabAction('delete-teams');
       cy.get('#confirm').click();
       cy.intercept('DELETE', gatewayAPI`/teams/${platformTeam.id.toString()}/`).as('deleteTeam1');
@@ -172,9 +181,6 @@ describe('Platform Teams - Tabs Tests', function () {
     cy.deletePlatformOrganization(platformOrganization, { failOnStatusCode: false });
   });
 
-  // tests for tabs Roles, Users, Administrators, and Resource Access
-
-  // Team - Users Tab
   it('can add and remove users to the team via the team users tab', function () {
     cy.createPlatformUser().then((user1) => {
       cy.createPlatformUser().then((user2) => {
@@ -190,9 +196,18 @@ describe('Platform Teams - Tabs Tests', function () {
               cy.getBy('#submit').click();
             });
             cy.getModal().should('not.exist');
-            cy.clickTableRowAction('username', user1.username, 'remove-user', {
-              inKebab: false,
+            cy.filterTableByTextFilter('name', user1.username, {
+              disableFilterSelection: true,
             });
+            cy.getBy('[data-cy="remove-user"]').click();
+            cy.getModal().within(() => {
+              cy.getBy('#confirm').click();
+              cy.getBy('#submit').click();
+            });
+            cy.filterTableByTextFilter('name', user2.username, {
+              disableFilterSelection: true,
+            });
+            cy.getBy('[data-cy="remove-user"]').click();
             cy.getModal().within(() => {
               cy.getBy('#confirm').click();
               cy.getBy('#submit').click();
@@ -206,7 +221,6 @@ describe('Platform Teams - Tabs Tests', function () {
     });
   });
 
-  // Team - Administrators Tab
   it('can add and remove users to the team from the administrators tab', function () {
     cy.createPlatformUser().then((user1) => {
       cy.createPlatformUser().then((user2) => {
@@ -222,9 +236,19 @@ describe('Platform Teams - Tabs Tests', function () {
               cy.getBy('#submit').click();
             });
             cy.getModal().should('not.exist');
-            cy.clickTableRowAction('username', user1.username, 'remove-administrator', {
-              inKebab: false,
+            cy.filterTableByTextFilter('name', user1.username, {
+              disableFilterSelection: true,
             });
+            cy.getBy('[data-cy="remove-administrator"]').click();
+            cy.getModal().within(() => {
+              cy.getBy('#confirm').click();
+              cy.getBy('#submit').click();
+            });
+            cy.getModal().should('not.exist');
+            cy.filterTableByTextFilter('name', user2.username, {
+              disableFilterSelection: true,
+            });
+            cy.getBy('[data-cy="remove-administrator"]').click();
             cy.getModal().within(() => {
               cy.getBy('#confirm').click();
               cy.getBy('#submit').click();
