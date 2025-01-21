@@ -30,7 +30,7 @@ export function ConstructedInventoryHint() {
       isExpandable
       isInline
       variant="info"
-      title={t`How to use constructed inventory plugin`}
+      title={t`How to use the constructed inventory plugin`}
       actionLinks={
         <AlertActionLink
           href={useGetDocsUrl(config, 'constructedInventories')}
