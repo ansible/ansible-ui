@@ -44,6 +44,17 @@ export default defineConfig({
   ],
   define: { 'process.env': env },
   optimizeDeps: {
+    include: [
+      '@patternfly/quickstarts',
+      '@patternfly/react-catalog-view-extension',
+      '@patternfly/react-charts',
+      '@patternfly/react-core',
+      '@patternfly/react-icons',
+      '@patternfly/react-styles',
+      '@patternfly/react-table',
+      '@patternfly/react-tokens',
+      '@patternfly/react-topology',
+    ],
     exclude: ['monaco-editor'],
   },
   server: {
@@ -81,8 +92,13 @@ export default defineConfig({
           patternfly: [
             '@patternfly/react-core',
             '@patternfly/react-icons',
+            '@patternfly/react-styles',
             '@patternfly/react-table',
+            '@patternfly/react-tokens',
           ],
+          pfcharts: ['@patternfly/react-charts'],
+          pfquickstarts: ['@patternfly/quickstarts', '@patternfly/react-catalog-view-extension'],
+          pftopology: ['@patternfly/react-topology'],
           'monaco-editor': ['monaco-editor'],
           'monaco-yaml': ['monaco-yaml'],
         },
