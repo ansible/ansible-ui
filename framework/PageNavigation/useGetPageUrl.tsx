@@ -19,7 +19,7 @@ export function useGetPageUrl() {
         if (params) {
           url = Object.keys(params).reduce((acc, key) => {
             let value = params[key];
-            if (value === undefined) return acc;
+            if (value === undefined || value === null) return acc;
             value = encodeURIComponent(value.toString());
             const stringToReplace = ':' + key;
             // search for longest string is necessary, because without it, we can replace substring
