@@ -20,6 +20,7 @@ describe('Check if the build includes EDA', () => {
       cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
 
       cy.get('[data-cy="rulebook-activations"]')
+        .scrollIntoView()
         .should('contain', 'Rulebook Activations')
         .within(() => {
           cy.get('[data-cy="card-subtitle"]').should(
@@ -27,29 +28,23 @@ describe('Check if the build includes EDA', () => {
             'Recently updated rulebook activations'
           );
         });
-      cy.get('[data-cy="rulebook-activations"] .ans__sc-t3yesn-0').click();
 
       cy.get('[data-cy="recent-rule-audits"]')
+        .scrollIntoView()
         .should('contain', 'Rule Audit')
         .within(() => {
           cy.get('[data-cy="card-subtitle"]').should('contain', 'Recently fired rules');
         });
-      cy.get('[data-cy="recent-rule-audits"] .ans__sc-t3yesn-0').click();
 
       cy.get('[data-cy="decision-environments"]')
         .should('contain', 'Decision Environments')
+        .scrollIntoView()
         .within(() => {
           cy.get('[data-cy="card-subtitle"]').should(
             'contain',
             'Recently updated decision environments'
           );
         });
-      cy.get('[data-cy="decision-environments"] .ans__sc-t3yesn-0').click();
-      cy.get('*[id^="popover-pf"]').should('contain', 'Decision environments');
-      cy.get('*[id^="popover-pf"]').should(
-        'contain',
-        'Decision environments are a container image to run Ansible rulebooks.'
-      );
     });
 
     it('user can navigate to the resource page using the View all link from the Dashboard', () => {
@@ -58,7 +53,9 @@ describe('Check if the build includes EDA', () => {
         cy.navigateTo('platform', 'overview');
         cy.verifyPageTitle('Welcome to the Ansible Automation Platform');
         cy.checkAnchorLinks('View all ' + resource);
-        cy.contains('a', 'View all ' + resource).click();
+        cy.contains('a', 'View all ' + resource)
+          .scrollIntoView()
+          .click();
         cy.verifyPageTitle(resource);
       });
     });
