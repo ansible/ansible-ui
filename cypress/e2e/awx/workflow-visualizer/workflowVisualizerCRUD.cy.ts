@@ -130,16 +130,7 @@ describe('Workflow Visualizer', () => {
           });
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-
-          const templateID = jobTemplate.name
-            .split(' ')
-            .map((i) => i.toLowerCase())
-            .join('-');
-          cy.getBy('button[id="job-template-select"]').click();
-          cy.get('div#job-template-select-select').within(() => {
-            cy.get("input[aria-label='Search input']").type(`${jobTemplate.name}`);
-            cy.get(`button#${templateID}`).click();
-          });
+          cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
           cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Test Node');
@@ -193,15 +184,8 @@ describe('Workflow Visualizer', () => {
           });
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-          cy.getBy('button[id="job-template-select"]').click();
-          cy.get('button#browse').scrollIntoView().click({
-            force: true,
-          });
-          cy.getModal().within(() => {
-            cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-            cy.get('[data-cy="checkbox-column-cell"]').first().click();
-            cy.clickButton('Confirm');
-          });
+          cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
+
           cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Test Node');
@@ -306,15 +290,7 @@ describe('Workflow Visualizer', () => {
       cy.contains('Workflow Visualizer').should('be.visible');
       cy.clickButton('Add step');
       cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-      cy.getBy('button[id="job-template-select"]').click();
-      cy.get('button#browse').scrollIntoView().click({
-        force: true,
-      });
-      cy.getModal().within(() => {
-        cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-        cy.get('[data-cy="checkbox-column-cell"]').first().click();
-        cy.clickButton('Confirm');
-      });
+      cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
       cy.selectDropdownOptionByResourceName('node-convergence', 'All');
       cy.getByDataCy('node-alias').type('Test Node');
       cy.clickButton('Next');
@@ -371,15 +347,8 @@ describe('Workflow Visualizer', () => {
             cy.getByDataCy('alert-toaster').should('be.visible');
             cy.clickButton('Add step');
             cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-            cy.getBy('button[id="job-template-select"]').click();
-            cy.get('button#browse').scrollIntoView().click({
-              force: true,
-            });
-            cy.getModal().within(() => {
-              cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-              cy.get('[data-cy="checkbox-column-cell"]').first().click();
-              cy.clickButton('Confirm');
-            });
+            cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
+
             cy.selectDropdownOptionByResourceName('node-convergence', 'All');
             cy.getByDataCy('node-alias').type('Test Node');
             cy.clickButton('Next');
@@ -428,15 +397,7 @@ describe('Workflow Visualizer', () => {
                 cy.contains('button', 'Save').should('be.visible').click();
                 cy.clickButton('Add step');
                 cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-                cy.getBy('button[id="job-template-select"]').click();
-                cy.get('button#browse').scrollIntoView().click({
-                  force: true,
-                });
-                cy.getModal().within(() => {
-                  cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-                  cy.get('[data-cy="checkbox-column-cell"]').first().click();
-                  cy.clickButton('Confirm');
-                });
+                cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
                 cy.selectDropdownOptionByResourceName('node-convergence', 'All');
                 cy.getByDataCy('node-alias').type('Test Node');
                 cy.clickButton('Next');
@@ -505,15 +466,7 @@ describe('Workflow Visualizer', () => {
           });
           cy.getByDataCy('add-node-and-link').click();
           cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-          cy.getBy('button[id="job-template-select"]').click();
-          cy.get('button#browse').scrollIntoView().click({
-            force: true,
-          });
-          cy.getModal().within(() => {
-            cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-            cy.get('[data-cy="checkbox-column-cell"]').first().click();
-            cy.clickButton('Confirm');
-          });
+          cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
           cy.selectDropdownOptionByResourceName('node-status-type', 'Always');
           cy.selectDropdownOptionByResourceName('node-convergence', 'All');
           cy.getByDataCy('node-alias').type('Test Node');
@@ -635,15 +588,7 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.contains('Workflow Visualizer').should('be.visible');
     cy.clickButton('Add step');
     cy.selectDropdownOptionByResourceName('node-type', 'Job Template');
-    cy.getBy('button[id="job-template-select"]').click();
-    cy.get('button#browse').scrollIntoView().click({
-      force: true,
-    });
-    cy.getModal().within(() => {
-      cy.filterTableByMultiSelect('name', [jobTemplate.name]);
-      cy.get('[data-cy="checkbox-column-cell"]').first().click();
-      cy.clickButton('Confirm');
-    });
+    cy.selectAsyncSingleSelectOption('job-template-select', `${jobTemplate.name}`);
     cy.selectDropdownOptionByResourceName('node-convergence', 'All');
     cy.getByDataCy('node-alias').type('Test Node');
     cy.clickButton('Next');
@@ -666,6 +611,5 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.get('span.pf-v5-c-label__text').each(($el, index) => {
       cy.wrap($el).should('have.text', `${skipTagLabels[index]}`);
     });
-    cy.pause();
   });
 });
