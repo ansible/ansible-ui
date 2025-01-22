@@ -131,7 +131,10 @@ export function InstanceDetailsTab(props: {
       ) : null}
       <PageDetail label={t('Used capacity')} data-cy="used-capacity">
         {instance.enabled ? (
-          <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
+          <Progress
+            value={Math.round(100 - instance.percent_capacity_remaining)}
+            aria-label={t('used capacity')}
+          />
         ) : (
           <Unavailable>{t('Unavailable')}</Unavailable>
         )}

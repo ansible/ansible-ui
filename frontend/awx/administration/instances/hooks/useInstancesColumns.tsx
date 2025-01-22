@@ -88,7 +88,10 @@ export function useInstancesColumns(options?: { disableSort?: boolean; disableLi
         header: t('Used capacity'),
         cell: (instance) =>
           instance.node_type === 'hop' ? undefined : instance.enabled ? (
-            <Progress value={Math.round(100 - instance.percent_capacity_remaining)} />
+            <Progress
+              value={Math.round(100 - instance.percent_capacity_remaining)}
+              aria-label={t('used capacity')}
+            />
           ) : (
             <Unavailable>{t(`Unavailable`)}</Unavailable>
           ),
