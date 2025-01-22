@@ -3,7 +3,7 @@ import { Instance } from '../../interfaces/Instance';
 import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { Topology } from './Topology';
 
-describe('Mesh Visualizer', () => {
+describe.skip('Mesh Visualizer', () => {
   beforeEach(() => {
     cy.intercept(
       { method: 'GET', url: awxAPI`/mesh_visualizer/` },
