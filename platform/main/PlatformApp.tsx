@@ -119,7 +119,7 @@ export function PlatformApp() {
     <PageApp
       masthead={<PlatformMasthead />}
       navigation={navigation}
-      basename={process.env.ROUTE_PREFIX}
+      basename={process.env.ROUTE_PREFIX ?? '/'}
       defaultRefreshInterval={10}
       banner={
         <>
