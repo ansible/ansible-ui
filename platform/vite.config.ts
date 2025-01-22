@@ -8,7 +8,6 @@ import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
-import env2 from '../webpack/environment.cjs';
 
 const pems = selfsigned.generate([{ name: 'commonName', value: 'contoso.com' }], {
   days: 365,
@@ -21,9 +20,14 @@ const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: u
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER as string;
 const AWX_WEBSOCKET_PREFIX = '/api/controller/v2/websocket/';
 
-let env = { PLATFORM_SERVER, AWX_WEBSOCKET_PREFIX };
-env = { ...env, ...env2 };
-console.log('Environment', env);
+const environment: Record<string, string> = {
+  PLATFORM_SERVER,
+  AWX_API_PREFIX: '/api/controller/v2',
+  AWX_WEBSOCKET_PREFIX,
+  EDA_API_PREFIX: '/api/eda/v1',
+  HUB_API_PREFIX: '/api/galaxy',
+};
+console.log('Environment', environment);
 
 const proxyUrl = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
 const wsURL = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
@@ -42,7 +46,7 @@ export default defineConfig({
     viteStaticCopy({ targets: [{ src: '../locales', dest: '' }] }) as PluginOption,
     compression(),
   ],
-  define: { 'process.env': env },
+  define: { 'process.env': environment },
   optimizeDeps: {
     include: [
       '@patternfly/quickstarts',
@@ -73,13 +77,10 @@ export default defineConfig({
         },
       },
       [AWX_WEBSOCKET_PREFIX]: {
-        target: PLATFORM_SERVER,
+        target: wsURL?.origin,
         secure: false,
         ws: true,
-        headers: {
-          host: wsURL?.host ?? '',
-          origin: wsURL?.origin ?? '',
-        },
+        rewriteWsOrigin: true,
       },
     },
   },
