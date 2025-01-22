@@ -66,7 +66,10 @@ export function useInstanceGroupsColumns(options?: {
           if (!instanceGroup.is_container_group) {
             if (instanceGroup.capacity) {
               return (
-                <Progress value={Math.round(100 - instanceGroup.percent_capacity_remaining)} />
+                <Progress
+                  value={Math.round(100 - instanceGroup.percent_capacity_remaining)}
+                  aria-label={t('used capacity')}
+                />
               );
             }
             return <TextCell text={t('Unavailable')} color="red" />;
