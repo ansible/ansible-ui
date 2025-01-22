@@ -9,10 +9,10 @@ import {
   NodeModel,
   NodeShape,
   NodeStatus,
+  TopologyView as PFTopologyView,
   SELECTION_EVENT,
   TopologyControlBar,
   TopologySideBar,
-  TopologyView as PFTopologyView,
   Visualization,
   VisualizationProvider,
   VisualizationSurface,
@@ -24,6 +24,7 @@ import {
 } from '@patternfly/react-topology';
 import * as d3 from 'd3';
 import { ComponentType, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { Legend } from './Legend';
@@ -32,7 +33,7 @@ import { InstanceDetailSidebar } from './Sidebar';
 import { MeshEdge } from './components/MeshEdge';
 import { MeshNode } from './components/MeshNode';
 import { WebWorkerResponse } from './types';
-import { useTranslation } from 'react-i18next';
+import Worker from './worker.ts?worker';
 
 const ContentLoading = styled(Loader)`
   height: 100%;
@@ -117,7 +118,7 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     }, 100);
   }
 
-  const getData: Worker = useMemo(() => new Worker(new URL('./worker.ts', import.meta.url)), []);
+  const getData: Worker = useMemo(() => new Worker(), []);
   function getWidth(selector: string) {
     const selected = d3.select(selector).node();
     return selected ? (selected as HTMLElement).getBoundingClientRect().width : 1200;
