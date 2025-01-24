@@ -32,7 +32,7 @@ export type FormGroupSingleSelectTypeAheadProps = {
   placeholderText?: string;
   options: { value: string; label: string }[];
   onHandleSelection: (value: { name: string }) => void;
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
   value: string | string[] | Partial<{ name: string }> | null;
   onHandleClear: () => void;
   isRequired?: boolean;
