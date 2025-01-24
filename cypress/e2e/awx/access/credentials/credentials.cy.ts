@@ -542,8 +542,9 @@ describe('Credentials: Credential Types Tests', () => {
     cy.contains('Type Details').should('be.visible');
     // Use custom component to render the privilege escalation method is sudo
     cy.contains('Privilege Escalation Method ').should('be.visible');
-    cy.get('button[aria-label="Options menu"]').click();
-    cy.getByDataCy('select-option-sudo').click();
+    cy.get('button[aria-label="Typeahead creatable menu toggle"]').click();
+
+    cy.get('button#select-create-typeahead-sudo').click();
     cy.clickButton(/^Create credential$/);
     cy.verifyPageTitle(credentialName);
     cy.getByDataCy('name').contains(credentialName);

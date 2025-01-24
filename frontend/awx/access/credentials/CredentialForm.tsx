@@ -42,8 +42,9 @@ import {
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 
-interface CredentialForm extends Credential {
+interface CredentialForm extends Omit<Credential, 'inputs'> {
   user?: number;
+  inputs: Record<string, string | number | { name: string } | undefined>;
 }
 
 interface CredentialSelectProps extends CredentialInputField {
@@ -71,7 +72,7 @@ export function CreateCredential() {
   const pageNavigate = usePageNavigate();
   const navigate = useNavigate();
   const { activeAwxUser } = useAwxActiveUser();
-  const postRequest = usePostRequest<Credential | CredentialInputSource>();
+  const postRequest = usePostRequest<CredentialForm | CredentialInputSource, Credential>();
   const getPageUrl = useGetPageUrl();
   const [selectedCredentialTypeId, setSelectedCredentialTypeId] = useState<number>(0);
   const [watchedSubFormFields, setWatchedSubFormFields] = useState<unknown[]>([]);
@@ -121,7 +122,7 @@ export function CreateCredential() {
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
-    const pluginInputs: Record<string, string | number> = {};
+    const pluginInputs: CredentialForm['inputs'] = {};
     const isHandledByCredentialPlugin = (field: string) =>
       accumulatedPluginValues.some((cp) => cp.input_field_name === field);
     const possibleFields = credentialTypeInputs?.fields || [];
@@ -149,10 +150,17 @@ export function CreateCredential() {
         delete credential[key as keyof CredentialForm];
       }
     });
-    const newCredential = await postRequest(awxAPI`/credentials/`, {
-      ...credential,
-      inputs: { ...pluginInputs },
-    });
+    let payload = { ...credential, inputs: pluginInputs };
+    if (typeof pluginInputs.become_method === 'object' && 'name' in pluginInputs.become_method) {
+      payload = {
+        ...credential,
+        inputs: {
+          ...pluginInputs,
+          become_method: pluginInputs.become_method?.name ?? undefined,
+        },
+      };
+    }
+    const newCredential = await postRequest(awxAPI`/credentials/`, payload);
     const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
       ...credentialInputSource,
       target_credential: newCredential.id,
@@ -346,7 +354,7 @@ export function EditCredential() {
     if (!editedCredential.organization) {
       editedCredential.user = activeAwxUser?.id;
     }
-    const pluginInputs: Record<string, string | number> = {};
+    const pluginInputs: CredentialForm['inputs'] = {};
     const isHandledByCredentialPlugin = (field: string) =>
       accumulatedPluginValues.some((cp) => cp.input_field_name === field);
 
@@ -379,7 +387,16 @@ export function EditCredential() {
       }
     });
 
-    const modifiedCredential = { ...editedCredential, inputs: pluginInputs };
+    let modifiedCredential = { ...editedCredential, inputs: pluginInputs };
+    if (typeof pluginInputs.become_method === 'object' && 'name' in pluginInputs.become_method) {
+      modifiedCredential = {
+        ...modifiedCredential,
+        inputs: {
+          ...pluginInputs,
+          become_method: pluginInputs.become_method?.name ?? undefined,
+        },
+      };
+    }
     const credentialInputSourcePayload = accumulatedPluginValues.map((credentialInputSource) => ({
       ...credentialInputSource,
       target_credential: credential?.id,
