@@ -81,3 +81,9 @@ The Platform UI has downstream pages for authentication, access management, sett
    The built Platform UI static files should be in the `build/platform` directory.
    These should be served using a service like `nginx`.
    An example nginx config for optimal client side caching is at `/platform/platform.conf`
+
+## Troubleshooting Platform-UI
+
+   [How to Retrieve Logs from Jenkins Build](TROUBLESHOOTING.md#how-to-retrieve-logs-from-jenkins-build)
+
+   [How to Retrieve Logs from a Kubernetes Deployment](TROUBLESHOOTING.md#how-to-retrieve-logs-from-a-kubernetes-deployment)
