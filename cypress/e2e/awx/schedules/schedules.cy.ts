@@ -184,15 +184,7 @@ describe('Schedules - Create and Delete', () => {
       const scheduleName = 'E2E Simple Schedule Project' + randomString(4);
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Project sync');
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.intercept('GET', awxAPI`/projects/?search**`).as('search');
-        cy.get('[data-cy="text-input"]').type(project.name);
-        cy.wait('@search');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
-      });
+      cy.selectAsyncSingleSelectOption('project-select', project.name);
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');
       cy.clickButton(/^Next$/);

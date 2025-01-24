@@ -61,15 +61,7 @@ describe('Job Templates Tests', function () {
         });
       });
       cy.get('li').contains(`${awxInventory.name}`).click();
-      cy.getBy('button[id="project"]').click();
-      cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-      cy.getModal().within(() => {
-        cy.intercept('GET', awxAPI`/projects/?search**`).as('search');
-        cy.get('[data-cy="text-input"]').type(awxProject.name);
-        cy.wait('@search');
-        cy.getBy('[data-cy="checkbox-column-cell"]').click();
-        cy.clickButton('Confirm');
-      });
+      cy.selectAsyncSingleSelectOption('project-select', awxProject.name);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.getBy('[data-cy="Submit"]').click();
       cy.wait('@createJT')
@@ -104,15 +96,7 @@ describe('Job Templates Tests', function () {
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
         cy.getBy('[data-cy="extra-vars"]').type('foo: bar');
         cy.selectPromptOnLaunch('inventory');
-        cy.getBy('button[id="project"]').click();
-        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-        cy.getModal().within(() => {
-          cy.intercept('GET', awxAPI`/projects/?search**`).as('search');
-          cy.get('[data-cy="text-input"]').type(awxProject.name);
-          cy.wait('@search');
-          cy.getBy('[data-cy="checkbox-column-cell"]').click();
-          cy.clickButton('Confirm');
-        });
+        cy.selectAsyncSingleSelectOption('project-select', awxProject.name);
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
         cy.selectPromptOnLaunch('variables');
@@ -172,15 +156,7 @@ describe('Job Templates Tests', function () {
         cy.getBy('[data-cy="name"]').type(jtName);
         cy.getBy('[data-cy="description"]').type('This is a JT with POL wizard description');
         cy.selectPromptOnLaunch('inventory');
-        cy.getBy('button[id="project"]').click();
-        cy.get('button[data-cy="browse-button"]').scrollIntoView().click();
-        cy.getModal().within(() => {
-          cy.intercept('GET', awxAPI`/projects/?search**`).as('search');
-          cy.get('[data-cy="text-input"]').type(awxProject.name);
-          cy.wait('@search');
-          cy.getBy('[data-cy="checkbox-column-cell"]').click();
-          cy.clickButton('Confirm');
-        });
+        cy.selectAsyncSingleSelectOption('project-select', awxProject.name);
         cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
         cy.selectPromptOnLaunch('execution_environment');
         cy.selectPromptOnLaunch('credential');
