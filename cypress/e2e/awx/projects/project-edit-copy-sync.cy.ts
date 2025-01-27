@@ -85,9 +85,9 @@ describe('Project Edit, Copy, Sync', () => {
         project = proj;
         cy.navigateTo('awx', 'projects');
         cy.verifyPageTitle('Projects');
-        cy.intercept('GET', awxAPI`/projects/?*`).as('projectsList');
+        cy.intercept('GET', awxAPI`/projects/?*search=*`).as('projectSearch');
         cy.filterTableBySearch(project.name);
-        cy.wait('@projectsList');
+        cy.wait('@projectSearch');
         cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
         cy.clickTableRowAction('name', project.name, 'copy-project', {
           inKebab: true,
