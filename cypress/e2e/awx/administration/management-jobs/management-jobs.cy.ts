@@ -6,6 +6,7 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
   it('render the management jobs list page, assert the management jobs listed', () => {
     const managementJobsList = [
       'Cleanup Activity Stream',
+      'Cleanup Expired OAuth 2 Tokens',
       'Cleanup Expired Sessions',
       'Cleanup Job Details',
     ];

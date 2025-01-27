@@ -78,8 +78,6 @@ describe('Inventory Sources', () => {
               cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
             });
           });
-          cy.get('#inventory-typeahead-select-input').click();
-          cy.get('#select-create-typeahead-Dockerfile').click();
           cy.singleSelectByDataCy('executionEnvironment-form-group', executionEnvironment.name);
           cy.singleSelectByDataCy('credential', credentialName);
           cy.getByDataCy('host-filter').type('/^test$/');
@@ -347,8 +345,6 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
         cy.get('button#select-create-typeahead-CREATE_NEW_VALUE').click();
       });
     });
-    cy.get('#inventory-typeahead-select-input').click();
-    cy.get('#select-create-typeahead-Dockerfile').click();
     cy.getByDataCy('Submit').click();
     cy.location('pathname').should('match', /\/details$/);
     cy.verifyPageTitle('new project');
