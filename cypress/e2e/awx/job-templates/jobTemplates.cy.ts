@@ -465,7 +465,11 @@ describe('Job Templates Tests', function () {
 
     it('can copy an existing job template from the list', function () {
       cy.navigateTo('awx', 'templates');
+      cy.intercept(
+        awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
+      ).as('getSearchResults');
       cy.filterTableBySearch(jobTemplate.name);
+      cy.wait('@getSearchResults');
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
         'copyTemplate'
       );
@@ -532,7 +536,11 @@ describe('Job Templates Tests', function () {
 
     it('can delete a job template from the list line item', function () {
       cy.navigateTo('awx', 'templates');
+      cy.intercept(
+        awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
+      ).as('getSearchResults');
       cy.filterTableBySearch(jobTemplate.name);
+      cy.wait('@getSearchResults');
       cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
         inKebab: true,
         disableFilter: true,

@@ -66,7 +66,9 @@ describe('Credentials', () => {
 
     it('can delete machine credential from the list row action', () => {
       cy.navigateTo('awx', 'credentials');
+      cy.intercept(awxAPI`/credentials/?search=*`).as('getSearchResults');
       cy.filterTableBySearch(credential.name);
+      cy.wait('@getSearchResults');
       cy.clickTableRowAction('name', credential.name, 'delete-credential', {
         disableFilter: true,
         inKebab: true,
@@ -104,7 +106,9 @@ describe('Credentials', () => {
 
     it('copies a credential from the list row action', () => {
       cy.navigateTo('awx', 'credentials');
+      cy.intercept(awxAPI`/credentials/?search=*`).as('getSearchResults');
       cy.filterTableBySearch(credential.name);
+      cy.wait('@getSearchResults');
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('copy-credential').click();
       });
@@ -112,8 +116,10 @@ describe('Credentials', () => {
       cy.clickButton(/^Clear all filters/);
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.filterTableBySearch(`${credential.name} @`);
-      cy.getByDataCy('checkbox-column-cell').within(() => {
-        cy.get('input').click();
+      cy.wait('@getSearchResults');
+      cy.get('[data-ouia-component-id="simple-table"]').within(() => {
+        cy.get('tbody tr').should('have.length', 1);
+        cy.get('[data-cy="checkbox-column-cell"] input').click();
       });
       cy.clickToolbarKebabAction('delete-credentials');
       cy.getModal().within(() => {

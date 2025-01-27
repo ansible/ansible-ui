@@ -271,7 +271,11 @@ describe('Projects', () => {
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
       cy.createAwxProject(awxOrganization).then((thisProject) => {
         cy.navigateTo('awx', 'templates');
+        cy.intercept(
+          awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
+        ).as('getSearchResults');
         cy.filterTableBySearch(jobTemplate.name);
+        cy.wait('@getSearchResults');
         cy.getTableRow('name', jobTemplate.name, { disableFilter: true }).should('be.visible');
         cy.selectTableRow(jobTemplate.name);
         cy.getBy('[data-cy="edit-template"]').click();
@@ -309,7 +313,11 @@ describe('Projects', () => {
           'contain',
           `/projects/${thisProject.id}/job-templates?page=1&perPage=10&sort=name`
         );
+        cy.intercept(
+          awxAPI`/job_templates/?type=job_template%2Cworkflow_job_template&project__id=${thisProject.id.toString()}&search=*`
+        ).as('getSearchJTResults');
         cy.filterTableBySearch(jobTemplate.name);
+        cy.wait('@getSearchJTResults');
         cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
         cy.clickTableRowAction('name', jobTemplate.name, 'delete-template', {
           inKebab: true,
