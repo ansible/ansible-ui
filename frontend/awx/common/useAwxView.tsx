@@ -2,10 +2,10 @@ import {
   ISelected,
   ITableColumn,
   IToolbarFilter,
-  ToolbarFilterType,
   useSelected,
+  QueryParams,
+  buildQueryString,
 } from '@ansible/ansible-ui-framework';
-import { DateRangeFilterPresets } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
 import { IView, useView } from '@ansible/ansible-ui-framework/useView';
 import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
@@ -23,26 +23,6 @@ export type IAwxView<T extends { id: number }> = IView &
     limitFiltersToOneOrOperation: true;
     updateItem: (item: T) => void;
   };
-
-export type QueryParams = {
-  [key: string]: string | Array<string>;
-};
-
-export function getQueryString(queryParams: QueryParams) {
-  return Object.entries(queryParams)
-    .map(([key, value = '']) => {
-      if (Array.isArray(value)) {
-        const listKeyVals = value.map(
-          (subval) => `${encodeURIComponent(key)}=${encodeURIComponent(subval)}`
-        );
-        const queryString = listKeyVals.join('&');
-        return queryString;
-      } else {
-        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-      }
-    })
-    .join('&');
-}
 
 export function useAwxView<T extends { id: number }>(options: {
   /** The base url for the view. */
@@ -68,7 +48,7 @@ export function useAwxView<T extends { id: number }>(options: {
   defaultFilters?: { [key: string]: string[] };
 }): IAwxView<T> {
   let { url } = options;
-  const { toolbarFilters, tableColumns, disableQueryString } = options;
+  const { toolbarFilters, tableColumns, disableQueryString, queryParams } = options;
 
   let defaultSort: string | undefined = options.defaultSort;
   let defaultSortDirection: 'asc' | 'desc' | undefined = options.defaultSortDirection;
@@ -90,97 +70,7 @@ export function useAwxView<T extends { id: number }>(options: {
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filterState } = view;
-
-  let queryString =
-    options?.queryParams && Object.keys(options.queryParams).length
-      ? `?${getQueryString(options.queryParams)}`
-      : '';
-  if (filterState) {
-    for (const key in filterState) {
-      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
-      if (toolbarFilter) {
-        let values = filterState[key];
-        if (values) values = values.filter((value) => value !== null);
-        if (values && values.length > 0) {
-          queryString ? (queryString += '&') : (queryString += '?');
-
-          // Support for Activity Stream needing two values
-          if (toolbarFilter.query === 'object1__in') {
-            if (values.length === 1 && values.some((value) => value !== '')) {
-              queryString += `or__object1__in=${values[0]
-                .split('+')
-                .join(',')}&or__object2__in=${values[0].split('+').join(',')}`;
-            }
-          } else if (toolbarFilter.query === 'search') {
-            queryString += values.map((value) => `${toolbarFilter.query}=${value}`).join('&');
-          } else {
-            if (values.length > 1) {
-              if (toolbarFilter.type === ToolbarFilterType.DateRange) {
-                queryString += `${toolbarFilter.query}__gte=${values[0]}&${toolbarFilter.query}__lte=${values[1]}`;
-              } else {
-                if ('useAndOperator' in toolbarFilter && toolbarFilter.useAndOperator) {
-                  // In a few cases such as the labels filter, we want to use an AND operator which needs a chain__ prefix
-                  queryString += values
-                    .map((value) => `chain__${toolbarFilter.query}=${value}`)
-                    .join('&');
-                } else {
-                  queryString += values
-                    .map((value) => `or__${toolbarFilter.query}=${value}`)
-                    .join('&');
-                }
-              }
-            } else {
-              if (toolbarFilter.type === ToolbarFilterType.DateRange) {
-                const date = new Date(Date.now());
-                date.setSeconds(0);
-                date.setMilliseconds(0);
-                switch (values[0] as DateRangeFilterPresets) {
-                  case DateRangeFilterPresets.LastHour:
-                    queryString += `${toolbarFilter.query}__gte=${new Date(
-                      date.getTime() - 60 * 60 * 1000
-                    ).toISOString()}`;
-                    break;
-                  case DateRangeFilterPresets.Last24Hours:
-                    queryString += `${toolbarFilter.query}__gte=${new Date(
-                      date.getTime() - 24 * 60 * 60 * 1000
-                    ).toISOString()}`;
-                    break;
-                  case DateRangeFilterPresets.LastWeek:
-                    queryString += `${toolbarFilter.query}__gte=${new Date(
-                      date.getTime() - 7 * 24 * 60 * 60 * 1000
-                    ).toISOString()}`;
-                    break;
-                  case DateRangeFilterPresets.LastMonth:
-                    queryString += `${toolbarFilter.query}__gte=${new Date(
-                      date.getTime() - 30 * 24 * 60 * 60 * 1000
-                    ).toISOString()}`;
-                    break;
-                }
-              } else {
-                queryString += `${toolbarFilter.query}=${values[0]}`;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  if (sort && !queryString.includes('order_by')) {
-    queryString ? (queryString += '&') : (queryString += '?');
-    if (sortDirection === 'desc') {
-      queryString += `order_by=-${sort}`;
-    } else {
-      queryString += `order_by=${sort}`;
-    }
-  }
-
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `page=${page}`;
-
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `page_size=${perPage}`;
+  const queryString = buildQueryString(view, toolbarFilters || [], queryParams || {});
 
   url += queryString;
   const fetcher = useFetcher();

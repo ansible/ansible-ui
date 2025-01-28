@@ -105,22 +105,6 @@ export type QueryParams = {
   [key: string]: string | string[];
 };
 
-export function getQueryString(queryParams: QueryParams) {
-  return Object.entries(queryParams)
-    .map(([key, value = '']) => {
-      if (Array.isArray(value)) {
-        const listKeyVals = value.map(
-          (subval) => `${encodeURIComponent(key)}=${encodeURIComponent(subval)}`
-        );
-        const queryString = listKeyVals.join('&');
-        return queryString;
-      } else {
-        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-      }
-    })
-    .join('&');
-}
-
 const UUIDRegEx = /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/i;
 
 export function parsePulpIDFromURL(url: string | undefined | null): string | null {

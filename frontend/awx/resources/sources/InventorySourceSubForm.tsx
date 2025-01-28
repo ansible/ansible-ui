@@ -1,4 +1,4 @@
-import { PageFormDataEditor } from '@ansible/ansible-ui-framework';
+import { PageFormDataEditor, QueryParams } from '@ansible/ansible-ui-framework';
 import { PageFormCheckbox } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCheckbox';
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
@@ -7,7 +7,6 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
-import { QueryParams } from '../../common/useAwxView';
 import { InventorySourceForm } from '../../interfaces/InventorySource';
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { PageFormInventoryFileSelect } from './component/PageFormInventoryFileSelect';

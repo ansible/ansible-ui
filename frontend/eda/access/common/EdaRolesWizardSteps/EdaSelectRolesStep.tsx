@@ -1,11 +1,10 @@
-import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
+import { ITableColumn, TextCell, QueryParams } from '@ansible/ansible-ui-framework';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { SelectRolesStep } from '@ansible/common-ui/access/RolesWizard/steps/SelectRolesStep';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../../common/eda-utils';
 import { useEdaMultiSelectListView } from '../../../common/useEdaMultiSelectListView';
-import { QueryParams } from '../../../common/useEventDrivenView';
 import { EdaRbacRole } from '../../../interfaces/EdaRbacRole';
 import { useEdaRolesFilters } from '../../roles/hooks/useEdaRolesFilters';
 

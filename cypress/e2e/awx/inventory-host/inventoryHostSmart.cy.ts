@@ -33,7 +33,7 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
 
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('get', awxAPI`/inventories/?search=${encodeURIComponent(inventory.name)}*`).as(
+    cy.intercept('get', awxAPI`/inventories/?search=${encodeParam(inventory.name)}*`).as(
       'getInventories'
     );
     cy.filterTableBySearch(inventory.name);
@@ -70,3 +70,9 @@ describe('Inventory Host Tab Tests for smart inventory', () => {
     checkHiddenTab('inventory_host', inventory, 'Facts');
   });
 });
+
+// encode URI params with `+` for spaces to match URLSearchParam behavior
+// in the query string builder
+function encodeParam(str: string) {
+  return encodeURIComponent(str).replaceAll('%20', '+');
+}

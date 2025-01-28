@@ -1,8 +1,8 @@
-import { ITableColumn, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import { ITableColumn, IToolbarFilter, QueryParams } from '@ansible/ansible-ui-framework';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { QueryParams, useEdaView } from './useEventDrivenView';
+import { useEdaView } from './useEventDrivenView';
 
 /**
  * Hook for defining the view for a multi-select list in the context of a wizard. The selections made in the list

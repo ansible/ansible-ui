@@ -142,7 +142,7 @@ describe('RuleAudit.cy.ts', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/eda/v1/audit-rules/?activation_instance__name__icontains=Activation%204&page=1&page_size=10',
+        url: '/api/eda/v1/audit-rules/?activation_instance__name__icontains=Activation+4&page=1&page_size=10',
       },
       {
         count: 2,

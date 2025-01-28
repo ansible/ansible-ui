@@ -1,8 +1,8 @@
+import { QueryParams } from '@ansible/ansible-ui-framework';
 import {
   useLabelsToolbarFilter,
   useSearchToolbarFilter,
 } from '../../../common/awx-toolbar-filters';
-import { QueryParams } from '../../../common/useAwxView';
 import { useDynamicToolbarFilters } from '../../../common/useDynamicFilters';
 
 export function useJobsFilters(queryParams: QueryParams = {}) {

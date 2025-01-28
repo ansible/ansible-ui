@@ -109,7 +109,7 @@ describe('Inventory Groups', () => {
       cy.createInventoryHostGroup(organization).then((result) => {
         const { inventory } = result;
         cy.navigateTo('awx', 'inventories');
-        const intercept_url = awxAPI`/inventories/?page_size=20&order_by=name&name__icontains=${encodeURI(inventory.name)}`;
+        const intercept_url = awxAPI`/inventories/?page_size=20&order_by=name&name__icontains=${encodeURIComponent(inventory.name)}`;
         cy.intercept('GET', intercept_url).as('filteredInventories');
         cy.filterTableBySingleSelect('name', inventory.name);
         cy.wait('@filteredInventories');

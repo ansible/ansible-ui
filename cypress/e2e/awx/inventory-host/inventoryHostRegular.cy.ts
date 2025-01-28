@@ -144,7 +144,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
   it(`can run an ad-hoc command against a host on the inventory hosts tab`, () => {
     createHost('inventory_host', inventory.id);
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('GET', awxAPI`/inventories/?search=${encodeURIComponent(inventory.name)}*`).as(
+    cy.intercept('GET', awxAPI`/inventories/?search=${encodeParam(inventory.name)}*`).as(
       'getInventories'
     );
     cy.filterTableBySearch(inventory.name);
@@ -168,7 +168,7 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     const groupName = 'E2E group ' + randomString(4);
     cy.createInventoryGroup(inventory, groupName);
     cy.navigateTo('awx', 'inventories');
-    cy.intercept('GET', awxAPI`/inventories/?search=${encodeURIComponent(inventory.name)}*`).as(
+    cy.intercept('GET', awxAPI`/inventories/?search=${encodeParam(inventory.name)}*`).as(
       'getInventories'
     );
     cy.filterTableBySearch(inventory.name);
@@ -193,3 +193,9 @@ describe('Inventory Host Tab Tests for regular inventory', () => {
     });
   });
 });
+
+// encode URI params with `+` for spaces to match URLSearchParam behavior
+// in the query string builder
+function encodeParam(str: string) {
+  return encodeURIComponent(str).replaceAll('%20', '+');
+}
