@@ -41,6 +41,7 @@ export function useAwxTemplateRoutes() {
   const { t } = useTranslation();
   const templateRoutes = useMemo<PageNavigationItem>(
     () => ({
+      id: AwxRoute.Templates,
       label: t('Templates'),
       path: 'templates',
       children: [
@@ -322,7 +323,6 @@ export function useAwxTemplateRoutes() {
           ],
         },
         {
-          id: AwxRoute.Templates,
           path: '',
           element: <Templates />,
         },

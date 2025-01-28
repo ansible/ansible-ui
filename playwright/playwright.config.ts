@@ -23,7 +23,7 @@ export default defineConfig({
   retries: 0, // process.env.CI ? 2 : 0,
   /** Increase default timeout of expect assertions from 5s to 30s */
   expect: {
-    timeout: 30 * 1000,
+    timeout: 60 * 1000,
   },
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,

@@ -161,7 +161,8 @@
     "vite-plugin-svgr": "4.2.0",
     "webpack": "5.95.0",
     "webpack-cli": "5.1.4",
-    "yaml": "2.5.1"
+    "yaml": "2.5.1",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.2.5",

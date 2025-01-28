@@ -36,6 +36,7 @@ import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
+import { usePersonaView } from './persona-view/usePersonaView';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -47,6 +48,8 @@ export function usePlatformNavigation() {
   const platformAccessNavigation = usePlatformAccessNavigation();
   const platformSettingsNavigation = usePlatformSettingsNavigation();
   const platformResourcesNavigation = useGetPlatformResourceRoutes();
+
+  const { activePersonaViewId } = usePersonaView();
 
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
 
@@ -114,6 +117,42 @@ export function usePlatformNavigation() {
       element: <Navigate to="overview" />,
     });
 
+    switch (activePersonaViewId) {
+      case 'operator': {
+        findNavigationItemById(navigationItems, PlatformRoute.AWX)!.hidden = true;
+        findNavigationItemById(navigationItems, PlatformRoute.EDA)!.hidden = true;
+        findNavigationItemById(navigationItems, PlatformRoute.HUB)!.hidden = true;
+        findNavigationItemById(navigationItems, AwxRoute.Analytics)!.hidden = true;
+        findNavigationItemById(navigationItems, PlatformRoute.Lightspeed)!.hidden = true;
+        findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
+        findNavigationItemById(navigationItems, AwxRoute.Settings)!.hidden = true;
+        navigationItems.push(removeNavigationItemById(navigationItems, AwxRoute.Jobs)!);
+        navigationItems.push(removeNavigationItemById(navigationItems, AwxRoute.Templates)!);
+        navigationItems.push(removeNavigationItemById(navigationItems, AwxRoute.Credentials)!);
+        navigationItems.push(
+          removeNavigationItemById(navigationItems, AwxRoute.SettingsPreferences)!
+        );
+        removeNavigationItemById(navigationItems, PlatformRoute.Overview);
+        removeNavigationItemById(navigationItems, PlatformRoute.Root);
+        navigationItems.push({
+          id: PlatformRoute.Root,
+          path: '',
+          element: <Navigate to="jobs" />,
+        });
+        navigationItems.push(removeNavigationItemById(navigationItems, PlatformRoute.QuickStarts)!);
+
+        break;
+      }
+      case 'developer': {
+        findNavigationItemById(navigationItems, AwxRoute.Instances)!.hidden = true;
+        findNavigationItemById(navigationItems, AwxRoute.InstanceGroups)!.hidden = true;
+        findNavigationItemById(navigationItems, AwxRoute.ManagementJobs)!.hidden = true;
+        findNavigationItemById(navigationItems, AwxRoute.Analytics)!.hidden = true;
+        findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
+        break;
+      }
+    }
+
     return navigationItems;
   }, [
     t,
@@ -125,7 +164,9 @@ export function usePlatformNavigation() {
     platformSettingsNavigation,
     platformResourcesNavigation,
     managedCloudInstall,
+    activePersonaViewId,
   ]);
+
   return pageNavigationItems;
 }
 
