@@ -67,7 +67,7 @@ export function ProjectPage() {
       <PageHeader
         title={project?.name}
         breadcrumbs={[
-          { label: t('Automation Execution Projects'), to: getPageUrl(AwxRoute.Projects) },
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           { label: project?.name },
         ]}
         headerActions={

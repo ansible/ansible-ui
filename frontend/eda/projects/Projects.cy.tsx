@@ -60,7 +60,7 @@ describe('Projects.cy.ts', () => {
   });
 
   it('Renders the correct projects columns', () => {
-    cy.verifyPageTitle('Automation Decisions Projects');
+    cy.verifyPageTitle('Projects');
     cy.get('tbody').find('tr').should('have.length', 10);
     cy.contains(/^A project is a logical collection of rulebooks.$/).should('be.visible');
     cy.contains('th', 'Name');

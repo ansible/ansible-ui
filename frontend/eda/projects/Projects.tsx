@@ -35,9 +35,9 @@ export function Projects() {
   return (
     <PageLayout>
       <PageHeader
-        title={t('Automation Decisions Projects')}
+        title={t('Projects')}
         description={t('A project is a logical collection of rulebooks.')}
-        titleHelpTitle={t('Automation Decisions Projects')}
+        titleHelpTitle={t('Projects')}
         titleHelp={t('A project is a logical collection of rulebooks.')}
         titleDocLink={useGetDocsUrl(config, 'edaProjects')}
       />
