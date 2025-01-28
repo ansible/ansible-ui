@@ -3,6 +3,7 @@ import {
   IToolbarFilter,
   MultiSelectDialog,
   usePageDialog,
+  QueryParams,
 } from '@ansible/ansible-ui-framework';
 import { PageFormAsyncMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncMultiSelect';
 import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
@@ -12,7 +13,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { QueryParams, useAwxView } from './useAwxView';
+import { useAwxView } from './useAwxView';
 
 export function PageFormMultiSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },

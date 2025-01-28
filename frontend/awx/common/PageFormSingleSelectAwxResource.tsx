@@ -1,4 +1,9 @@
-import { ITableColumn, IToolbarFilter, usePageDialog } from '@ansible/ansible-ui-framework';
+import {
+  ITableColumn,
+  IToolbarFilter,
+  usePageDialog,
+  QueryParams,
+} from '@ansible/ansible-ui-framework';
 import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
@@ -8,7 +13,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { QueryParams, useAwxView } from './useAwxView';
+import { useAwxView } from './useAwxView';
 
 export function PageFormSingleSelectAwxResource<
   Resource extends { id: number; name: string; description?: string | null | undefined },

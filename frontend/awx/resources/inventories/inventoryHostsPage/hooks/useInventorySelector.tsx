@@ -1,16 +1,16 @@
+import { ITableColumn, TextCell, QueryParams } from '@ansible/ansible-ui-framework';
 import {
   AsyncSelectFilterBuilderProps,
   useAsyncSingleSelectFilterBuilder,
 } from '@ansible/hub-ui/common/ToolbarAsyncSelectFilterBuilder';
 import { useTranslation } from 'react-i18next';
 
-import { QueryParams, useAwxView } from '../../../../common/useAwxView';
+import { useAwxView } from '../../../../common/useAwxView';
 
 import { Inventory } from '../../../../interfaces/Inventory';
 import { useInventoriesColumns } from '../../hooks/useInventoriesColumns';
 import { useInventoriesFilters } from '../../hooks/useInventoriesFilters';
 
-import { ITableColumn, TextCell } from '@ansible/ansible-ui-framework';
 import { useMemo } from 'react';
 import { awxAPI } from '../../../../common/api/awx-utils';
 

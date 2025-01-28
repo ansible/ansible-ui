@@ -5,6 +5,8 @@ import {
   IView,
   useSelected,
   useView,
+  QueryParams,
+  buildQueryString,
 } from '@ansible/ansible-ui-framework';
 import { getItemKey, swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
@@ -21,26 +23,6 @@ export type IEdaView<T extends { id: number | string }> = IView &
     unselectItemsAndRefresh: (items: T[]) => void;
     updateItem: (item: T) => void;
   };
-
-export type QueryParams = {
-  [key: string]: string | Array<string>;
-};
-
-function getQueryString(queryParams: QueryParams) {
-  return Object.entries(queryParams)
-    .map(([key, value = '']) => {
-      if (Array.isArray(value)) {
-        const listKeyVals = value.map(
-          (subval) => `${encodeURIComponent(key)}=${encodeURIComponent(subval)}`
-        );
-        const queryString = listKeyVals.join('&');
-        return queryString;
-      } else {
-        return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-      }
-    })
-    .join('&');
-}
 
 export function useEdaView<T extends { id: number | string }>(options: {
   url: string;
@@ -73,41 +55,7 @@ export function useEdaView<T extends { id: number | string }>(options: {
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filterState } = view;
-
-  let queryString = options?.queryParams ? `?${getQueryString(options.queryParams)}` : '';
-
-  if (filterState) {
-    for (const key in filterState) {
-      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
-      if (toolbarFilter) {
-        const values = filterState[key];
-        if (values && values.length > 0) {
-          queryString ? (queryString += '&') : (queryString += '?');
-          if (values.length > 1) {
-            queryString += values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&');
-          } else {
-            queryString += `${toolbarFilter.query}=${values.join(',')}`;
-          }
-        }
-      }
-    }
-  }
-
-  if (sort && !queryString.includes('order_by')) {
-    queryString ? (queryString += '&') : (queryString += '?');
-    if (sortDirection === 'desc') {
-      queryString += `order_by=-${sort}`;
-    } else {
-      queryString += `order_by=${sort}`;
-    }
-  }
-
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `page=${options?.viewPage || page}`;
-
-  queryString ? (queryString += '&') : (queryString += '?');
-  queryString += `page_size=${options?.viewPerPage || perPage}`;
+  const queryString = buildQueryString(view, toolbarFilters || [], options.queryParams || {});
 
   url += queryString;
   const fetcher = useFetcher();

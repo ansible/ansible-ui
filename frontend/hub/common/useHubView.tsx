@@ -5,12 +5,14 @@ import {
   IView,
   useSelected,
   useView,
+  QueryParams,
+  buildQueryString,
 } from '@ansible/ansible-ui-framework';
 import { useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
-import { QueryParams, getQueryString, serverlessURL } from './api/hub-api-utils';
+import { serverlessURL } from './api/hub-api-utils';
 import { url2keys } from './api/query-string';
 
 export interface HubItemsResponse<T extends object> {
@@ -107,49 +109,27 @@ export function useHubView<T extends object>({
   });
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
-  const { page, perPage, sort, sortDirection, filterState } = view;
+  const { page, perPage, sort, sortDirection } = view;
 
-  const queryString = queryParams ? [getQueryString(queryParams)] : [];
-
-  if (filterState) {
-    for (const key in filterState) {
-      const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
-      if (toolbarFilter) {
-        const values = filterState[key];
-        if (values && values.length > 0) {
-          if (values.length > 1) {
-            // FIXME: this doesn't seem to be something hub api supports yet - is it useful anywhere specific?
-            queryString.push(
-              values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&')
-            );
-          } else {
-            queryString.push(`${toolbarFilter.query}=${values.join(',')}`);
-          }
-        }
-      }
-    }
-  }
+  const queryString = buildQueryString(view, toolbarFilters || [], queryParams || {});
 
   const { pageKey, sortKey } = url2keys(url);
 
-  if (sort) {
-    if (sortDirection === 'desc') {
-      queryString.push(`${sortKey}=-${sort}`);
-    } else {
-      queryString.push(`${sortKey}=${sort}`);
-    }
+  // adjust sort & pagination params if needed
+  const params = new URLSearchParams(queryString);
+  if (sort && sortKey !== 'order_by') {
+    params.delete('order_by');
+    params.append(sortKey, sortDirection === 'desc' ? `-${sort}` : sort);
   }
-
   if (pageKey === 'offset') {
-    queryString.push(`offset=${(page - 1) * perPage}`);
-    queryString.push(`limit=${perPage}`);
-  } else if (pageKey === 'page') {
-    queryString.push(`page=${page}`);
-    queryString.push(`page_size=${perPage}`);
+    params.delete('page');
+    params.delete('page_size');
+    params.append('offset', `${(page - 1) * perPage}`);
+    params.append('limit', perPage.toString());
   }
 
-  if (queryString.length) {
-    url += '?' + queryString.join('&');
+  if (params.size) {
+    url += '?' + params.toString();
   }
 
   const fetcher = useFetcher();

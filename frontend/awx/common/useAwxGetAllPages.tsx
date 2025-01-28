@@ -1,9 +1,9 @@
+import { QueryParams } from '@ansible/ansible-ui-framework';
 import { normalizeQueryString } from '@ansible/common-ui/crud/normalizeQueryString';
 import { useGetRequest } from '@ansible/common-ui/crud/useGet';
 import { useCallback, useMemo } from 'react';
 import useSWRInfinite from 'swr/infinite';
 import { AwxItemsResponse } from './AwxItemsResponse';
-import { QueryParams } from './useAwxView';
 
 export function useAwxGetAllPages<T extends object>(url: string, queryParams?: QueryParams) {
   const getRequest = useGetRequest<AwxItemsResponse<T>>();

@@ -127,7 +127,7 @@ describe('Activity Stream Tests', () => {
     it('visit the Activity Stream list page filtered by templates', () => {
       cy.mount(<ActivityStreams />);
       cy.intercept(
-        'api/v2/activity_stream/?or__object1__in=job_template,workflow_job_template,workflow_job_template_node&or__object2__in=job_template,workflow_job_template,workflow_job_template_node*'
+        'api/v2/activity_stream/?or__object1__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node&or__object2__in=job_template%2Cworkflow_job_template%2Cworkflow_job_template_node*'
       ).as('templateFilterRequest');
       cy.get('[data-cy="filter-input"]')
         .click()

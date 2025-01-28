@@ -1,12 +1,12 @@
 import { ReactElement } from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { QueryParams } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { useCredentialsColumns } from '../hooks/useCredentialsColumns';
 import { useCredentialsFilters } from '../hooks/useCredentialsFilters';
-import { QueryParams } from '../../../common/useAwxView';
 import { PageFormMultiSelectAwxResource } from '../../../common/PageFormMultiSelectAwxResource';
 import { useCredentialsValidate } from '../hooks/useCredentialsValidate';
 
