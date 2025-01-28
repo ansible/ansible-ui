@@ -8,6 +8,7 @@ import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import { gatewayAPI } from '../utils/gateway-api-utils';
+import { PersonaViewSwitcher } from './persona-view/PersonaViewSwitcher';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
 
@@ -128,6 +129,7 @@ export function PlatformApp() {
           {sessionBanner}
         </>
       }
+      contextSwitcher={<PersonaViewSwitcher />}
     />
   );
 }
