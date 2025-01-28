@@ -289,7 +289,7 @@ export function CreateProject() {
       <PageHeader
         title={t('Create project')}
         breadcrumbs={[
-          { label: t('Automation Decisions Projects'), to: getPageUrl(EdaRoute.Projects) },
+          { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
           { label: t('Create project') },
         ]}
       />
@@ -332,7 +332,7 @@ export function EditProject() {
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Automation Decisions Projects'), to: getPageUrl(EdaRoute.Projects) },
+            { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
             { label: t('Edit Project') },
           ]}
         />
@@ -344,7 +344,7 @@ export function EditProject() {
         <PageHeader
           title={`${t('Edit')} ${project?.name || t('Project')}`}
           breadcrumbs={[
-            { label: t('Automation Decisions Projects'), to: getPageUrl(EdaRoute.Projects) },
+            { label: t('Projects'), to: getPageUrl(EdaRoute.Projects) },
             { label: `${t('Edit')} ${project?.name || t('Project')}` },
           ]}
         />

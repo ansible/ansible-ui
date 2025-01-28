@@ -52,7 +52,5 @@ export async function deleteAwxProject(projectName: string, page: Page) {
   await clickPageAction('Delete project', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();
-  await expect(
-    page.getByRole('heading', { name: 'Automation Execution Projects', exact: true })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 }

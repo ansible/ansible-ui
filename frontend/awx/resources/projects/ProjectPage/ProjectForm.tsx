@@ -69,7 +69,7 @@ export function CreateProject() {
       <PageHeader
         title={t('Create project')}
         breadcrumbs={[
-          { label: t('Automation Execution Projects'), to: getPageUrl(AwxRoute.Projects) },
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           { label: t('Create project') },
         ]}
       />
@@ -118,7 +118,7 @@ export function EditProject() {
       <PageLayout>
         <PageHeader
           breadcrumbs={[
-            { label: t('Automation Execution Projects'), to: getPageUrl(AwxRoute.Projects) },
+            { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
             { label: t('Edit Project') },
           ]}
         />
@@ -133,7 +133,7 @@ export function EditProject() {
           project?.name ? t('Edit {{projectName}}', { projectName: project?.name }) : t('Project')
         }
         breadcrumbs={[
-          { label: t('Automation Execution Projects'), to: getPageUrl(AwxRoute.Projects) },
+          { label: t('Projects'), to: getPageUrl(AwxRoute.Projects) },
           {
             label: project?.name
               ? t('Edit {{projectName}}', { projectName: project?.name })
