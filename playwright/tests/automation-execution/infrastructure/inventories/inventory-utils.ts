@@ -4,11 +4,15 @@ import { clickTableRowWithFilter } from '../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { navigateTo } from '../../../../commands/navigateTo';
 
-export async function createInventory(options: { name?: string }, page: Page) {
+export async function createInventory(options: { name?: string; type?: string }, page: Page) {
   const inventoryName = options.name ?? createE2EName('inventory');
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
   await page.getByLabel('dropdown toggle', { exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Create inventory' }).click();
+  await page
+    .getByRole('menuitem', {
+      name: options.type === 'smart' ? 'Create smart inventory' : 'Create inventory',
+    })
+    .click();
   await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
   await page.getByLabel('Organization *').click();
   await page.getByLabel('Search input').fill('Default');
