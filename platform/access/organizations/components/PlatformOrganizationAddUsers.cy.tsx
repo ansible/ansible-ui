@@ -126,7 +126,7 @@ describe('PlatformOrganizationAddUsers', () => {
     // AWX role definitions filter request
     cy.intercept(
       'GET',
-      awxAPI`/role_definitions/?content_type__model=organization&not__name__contains=Organization%20Member&not__name__contains=Organization%20Admin*`,
+      awxAPI`/role_definitions/?content_type__model=organization&not__name__contains=Organization+Member&not__name__contains=Organization+Admin*`,
       {
         fixture: 'platformAwxOrganizationRoles.json',
       }
@@ -141,7 +141,7 @@ describe('PlatformOrganizationAddUsers', () => {
     // EDA role definitions filter request
     cy.intercept(
       'GET',
-      edaAPI`/role_definitions/?content_type__model=organization&not__name__contains=Organization%20Member&not__name__contains=Organization%20Admin*`,
+      edaAPI`/role_definitions/?content_type__model=organization&not__name__contains=Organization+Member&not__name__contains=Organization+Admin*`,
       {
         fixture: 'platformEdaOrganizationRoles.json',
       }
