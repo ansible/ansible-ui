@@ -17,7 +17,6 @@ export interface PeerInstanceModalProps {
 function PeerInstanceModal(props: PeerInstanceModalProps) {
   const { t } = useTranslation();
   const { instanceId, onPeer } = props;
-
   const toolbarFilters = usePeersTabFilters();
   const columns = usePeersColumns({ disableLinks: true });
   const tableColumns = useMemo(
@@ -80,6 +79,9 @@ function PeerInstanceModal(props: PeerInstanceModalProps) {
       tableColumns={tableColumns}
       view={view}
       confirmText={t('Associate peers')}
+      description={t(
+        'A peer relationship is strictly one-directional. For instance, if you establish a peer relationship from Instance 1 to Instance 2, you cannot create a peer relationship in the reverse direction, from Instance 2 back to Instance 1.\n\nAn instance must have a port number assigned to it before it can be designated as a peer to another instance.'
+      )}
     />
   );
 }
