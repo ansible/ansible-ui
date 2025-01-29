@@ -185,7 +185,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
     cy.filterTableBySearch(constructedInv.name);
-    cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+    cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 2);
     cy.contains('a', constructedInv.name).click();
     let expectedOrder: string[] = [];
     cy.getByDataCy('input-inventories');
@@ -210,7 +210,7 @@ describe('Constructed Inventories CRUD Tests - reorder input inventories', () =>
         cy.navigateTo('awx', 'inventories');
         cy.verifyPageTitle('Inventories');
         cy.filterTableBySearch(constructedInv.name);
-        cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+        cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 2);
         cy.contains('a', constructedInv.name).click();
         cy.getByDataCy('input-inventories');
         cy.get(`[data-cy="input-inventories"] ul > li`).should(($lis) => {

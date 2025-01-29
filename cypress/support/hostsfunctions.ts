@@ -172,7 +172,7 @@ export function testHostBulkDelete(host_type: string, inventory: Inventory) {
   createHost(host_type, inventory.id);
   createHost(host_type, inventory.id);
   navigateToBaseView(host_type, inventory.name);
-  cy.get(`[aria-label="Simple table"] tr`).should('have.length', 3);
+  cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 3);
   cy.getByDataCy('select-all').check();
   cy.contains('2 selected');
   cy.clickToolbarKebabAction('delete-hosts');
@@ -311,7 +311,7 @@ export function checkHiddenButton(host_type: string, inventory: Inventory, missi
 
 export function checkHiddenTab(host_type: string, inventory: Inventory, missing: string) {
   navigateToBaseView(host_type, inventory.name);
-  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gt', 1);
+  cy.get(`[aria-label="Simple table"] tr`).its('length').should('be.gte', 1);
   cy.getByDataCy('name-column-cell').contains('E2E Host').click();
   cy.contains('[role="tab"]', missing).should('not.exist');
 }

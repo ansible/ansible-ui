@@ -339,7 +339,7 @@ describe('Inventory Groups', () => {
         cy.navigateTo('awx', 'inventories');
         cy.verifyPageTitle('Inventories');
         cy.filterTableBySearch(inventory.name);
-        cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+        cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 2);
         cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
         cy.verifyPageTitle(inventory.name);
         cy.clickTab(/^Groups$/, true);

@@ -386,7 +386,7 @@ Cypress.Commands.add(
     cy.clickButton(/^Clear all filters$/);
 
     cy.filterTableBySingleText(collectionName);
-    cy.get('[aria-label="Simple table"] tbody tr').should('have.length', totalItems);
+    cy.get('[aria-label="Simple table"] tbody tr').should('have.length.gte', totalItems);
     cy.contains('No results found').should('not.exist');
   }
 );

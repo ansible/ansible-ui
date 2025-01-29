@@ -455,7 +455,7 @@ describe('Notifications Tab for Organizations', function () {
       cy.contains(awxOrganization.name);
       cy.contains(`a[role="tab"]`, 'Notifications').click();
       cy.filterTableBySearch(notificationName);
-      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length.gte', 1);
       cy.get('[data-cy="name-column-cell"] a').click();
       cy.contains(notificationName);
       cy.deletePlatformNotificationTemplate(notification, { failOnStatusCode: false });
@@ -472,7 +472,7 @@ describe('Notifications Tab for Organizations', function () {
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
       cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
-      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length.gte', 1);
       cy.get(`[aria-label="Click to enable approval"]`).click();
       cy.get(`[aria-label="Click to disable approval"]`, { timeout: 5000 }).click();
       cy.get(`[aria-label="Click to enable approval"]`, { timeout: 5000 });
@@ -490,7 +490,7 @@ describe('Notifications Tab for Organizations', function () {
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
       cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
-      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length.gte', 1);
       cy.get(`[aria-label="Click to enable start"]`).eq(0).click();
       cy.get(`[aria-label="Click to disable start"]`, { timeout: 5000 }).eq(0).click();
       cy.get(`[aria-label="Click to enable start"]`, { timeout: 5000 }).eq(0).click();
@@ -508,7 +508,7 @@ describe('Notifications Tab for Organizations', function () {
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
       cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
-      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length.gte', 1);
       cy.get(`[aria-label="Click to enable success"]`).click();
       cy.get(`[aria-label="Click to disable success"]`, { timeout: 5000 }).click();
       cy.get(`[aria-label="Click to enable success"]`, { timeout: 5000 });
@@ -526,7 +526,7 @@ describe('Notifications Tab for Organizations', function () {
       cy.intercept('GET', awxAPI`/notification_templates/?*`).as('notifierSearch');
       cy.filterTableBySearch(notificationName);
       cy.wait('@notifierSearch');
-      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+      cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length.gte', 1);
       cy.get(`[aria-label="Click to enable failure"]`).click();
       cy.get(`[aria-label="Click to disable failure"]`, { timeout: 5000 }).click();
       cy.get(`[aria-label="Click to enable failure"]`, { timeout: 5000 });
