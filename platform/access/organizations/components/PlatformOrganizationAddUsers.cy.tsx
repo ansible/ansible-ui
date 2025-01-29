@@ -114,6 +114,44 @@ describe('PlatformOrganizationAddUsers', () => {
     cy.get('[data-cy="wizard-nav-item-review"] button').should('have.class', 'pf-m-current');
   });
 
+  it('Displayed service-specific roles filter out organization admin and member roles', () => {
+    cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
+      if (serviceType === 'controller') {
+        return '/api/controller/';
+      } else if (serviceType === 'eda') {
+        return '/api/eda/';
+      }
+      return undefined;
+    });
+    // AWX role definitions filter request
+    cy.intercept(
+      'GET',
+      awxAPI`/role_definitions/?content_type__model=organization&not__name__contains=Organization%20Member&not__name__contains=Organization%20Admin*`,
+      {
+        fixture: 'platformAwxOrganizationRoles.json',
+      }
+    ).as('awxFilteredRoles');
+    cy.mount(component, params);
+    cy.selectTableRowByCheckbox('username', 'test', { disableFilter: true });
+    cy.clickButton(/^Next$/);
+    cy.wait('@awxFilteredRoles');
+    cy.contains('Select Automation Execution roles');
+    cy.clearAllFilters();
+
+    // EDA role definitions filter request
+    cy.intercept(
+      'GET',
+      edaAPI`/role_definitions/?content_type__model=organization&not__name__contains=Organization%20Member&not__name__contains=Organization%20Admin*`,
+      {
+        fixture: 'platformEdaOrganizationRoles.json',
+      }
+    ).as('edaFilteredRoles');
+    cy.clickButton(/^Next$/);
+    cy.wait('@edaFilteredRoles');
+    cy.contains('Select Automation Decisions roles');
+    cy.clearAllFilters();
+  });
+
   it('should display selected users and roles in the Review step', () => {
     cy.stub(GatewayServices, 'useGatewayService').callsFake((serviceType) => {
       if (serviceType === 'controller') {

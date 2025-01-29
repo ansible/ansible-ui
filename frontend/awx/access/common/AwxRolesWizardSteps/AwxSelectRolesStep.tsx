@@ -73,11 +73,7 @@ export function AwxSelectRolesStep(props: {
   const queryParams = useMemo<QueryParams>(() => {
     const params: QueryParams = { content_type__model: contentType };
     if (contentType === 'organization') {
-      params['not__name'] = [
-        'Organization Member',
-        'Organization Admin',
-        'Organization Organization Admin',
-      ];
+      params['not__name__contains'] = ['Organization Member', 'Organization Admin'];
     }
     return params;
   }, [contentType]);
