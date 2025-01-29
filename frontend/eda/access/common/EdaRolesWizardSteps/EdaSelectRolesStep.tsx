@@ -73,7 +73,7 @@ export function EdaSelectRolesStep(props: {
   const queryParams = useMemo<QueryParams>(() => {
     const params: QueryParams = { content_type__model: contentType };
     if (contentType === 'organization') {
-      params['not__name'] = ['Organization Member', 'Admin'];
+      params['not__name__contains'] = ['Organization Member', 'Organization Admin'];
     }
     return params;
   }, [contentType]);
