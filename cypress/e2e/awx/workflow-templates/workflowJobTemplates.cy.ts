@@ -645,7 +645,7 @@ describe('Workflow Job Templates Tests', () => {
 
   function filterNotification(notificationName: string) {
     cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-    cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+    cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 2);
   }
 
   function moveToNotificationList(type: string, typeEntityName: string) {

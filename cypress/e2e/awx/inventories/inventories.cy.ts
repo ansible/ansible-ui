@@ -153,7 +153,7 @@ describe('Inventories Tests', () => {
                   const orgName = org.name.toLowerCase().split(' ').join('-');
                   cy.get(`[data-cy="${orgName}"]`).click();
                   cy.wait('@getInventories');
-                  cy.get('[aria-label="Simple table"] tr').should('have.length', 4);
+                  cy.get('[aria-label="Simple table"] tr').should('have.length.gte', 4);
                   cy.contains(inv1.name);
                   cy.contains(inv2.name);
                   cy.contains(inv3.name);

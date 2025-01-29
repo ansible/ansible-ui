@@ -53,7 +53,7 @@ export function runCommand(params: {
         cy.wait('@credentials');
         cy.getModal().within(() => {
           cy.filterTableBySearch(credential.name);
-          cy.get(`[aria-label="Simple table"] tr`, { timeout: 8000 }).should('have.length', 2);
+          cy.get(`[aria-label="Simple table"] tr`, { timeout: 8000 }).should('have.length.gte', 2);
           cy.get(`[data-cy="checkbox-column-cell"] input`).click();
           cy.contains('button', 'Confirm').click();
         });

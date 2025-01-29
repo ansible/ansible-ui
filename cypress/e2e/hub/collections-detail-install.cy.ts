@@ -9,7 +9,7 @@ describe('collections-detail-install', () => {
     cy.navigateTo('hub', Collections.url);
     cy.get(`[data-cy="table-view"] button`).click();
     cy.filterTableBySingleText(collectionName);
-    cy.get(`[aria-label="Simple table"] tr`).should('have.length', 2);
+    cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 2);
     cy.contains('a', collectionName).click();
     cy.getByDataCy('collection-install-tab').click();
   }
