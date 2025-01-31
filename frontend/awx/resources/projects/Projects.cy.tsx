@@ -185,7 +185,7 @@ describe('projects.cy.ts', () => {
       cy.clickButton(/^Clear all filters$/);
     });
 
-    it('Sync, Copy, Delete Project button is disabled if the user does not have permission(s)', () => {
+    it('Sync, Duplicate, Delete Project button is disabled if the user does not have permission(s)', () => {
       cy.mount(<Projects />);
       cy.contains('td', ' Project 1 Org 0')
         .parent()
@@ -193,7 +193,11 @@ describe('projects.cy.ts', () => {
           cy.get('#sync-project').should('have.attr', 'aria-disabled', 'true');
           cy.getByDataCy('actions-dropdown').click();
         });
-      cy.contains('#copy-project', /^Copy project$/).should('have.attr', 'aria-disabled', 'true');
+      cy.contains('#duplicate-project', /^Duplicate project$/).should(
+        'have.attr',
+        'aria-disabled',
+        'true'
+      );
       cy.contains('#delete-project', /^Delete project$/).should(
         'have.attr',
         'aria-disabled',

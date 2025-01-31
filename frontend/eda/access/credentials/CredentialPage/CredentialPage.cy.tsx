@@ -22,7 +22,7 @@ describe('CredentialPage', () => {
     cy.get('h1').should('have.text', 'EDA Credential 1');
   });
 
-  it('Can copy the credential', () => {
+  it('Can duplicate the credential', () => {
     cy.intercept(
       { method: 'OPTIONS', url: edaAPI`/eda-credentials/1/` },
       {
@@ -34,19 +34,19 @@ describe('CredentialPage', () => {
     }).as('copyCredential');
 
     cy.mount(<CredentialPage />);
-    cy.contains('#copy-credential', /^Copy credential$/).should(
+    cy.contains('#duplicate-credential', /^Duplicate credential$/).should(
       'have.attr',
       'aria-disabled',
       'false'
     );
-    cy.get('[data-cy="copy-credential"]').click();
+    cy.get('[data-cy="duplicate-credential"]').click();
     cy.wait('@copyCredential');
-    cy.get('.pf-v5-c-alert__title').should('contain', 'EDA Credential 1 copied');
+    cy.get('.pf-v5-c-alert__title').should('contain', 'EDA Credential 1 duplicated');
   });
 
-  it('The Copy button is disabled if the user does not have PATCH permission', () => {
+  it('The duplicate button is disabled if the user does not have PATCH permission', () => {
     cy.mount(<CredentialPage />);
-    cy.contains('#copy-credential', /^Copy credential$/).should(
+    cy.contains('#duplicate-credential', /^Duplicate credential$/).should(
       'have.attr',
       'aria-disabled',
       'true'

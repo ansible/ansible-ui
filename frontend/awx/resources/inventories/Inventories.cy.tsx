@@ -102,7 +102,7 @@ describe('Inventories', () => {
         });
     });
 
-    it('disable copy row action if the user does not have permissions', () => {
+    it('disable duplicate row action if the user does not have permissions', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
         .its('results')
@@ -112,16 +112,16 @@ describe('Inventories', () => {
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
           });
-          cy.contains('button', /^Copy inventory$/).as('copyButton');
+          cy.contains('button', /^Duplicate inventory$/).as('copyButton');
           cy.get('@copyButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@copyButton').click();
           cy.get('@copyButton').hasTooltip(
-            'The inventory cannot be copied due to insufficient permission'
+            'The inventory cannot be duplicated due to insufficient permission'
           );
         });
     });
 
-    it('disable copy row action if the inventory has inventory sources', () => {
+    it('disable duplicate row action if the inventory has inventory sources', () => {
       cy.mount(<Inventories />);
       cy.fixture('inventories.json')
         .its('results')
@@ -131,10 +131,10 @@ describe('Inventories', () => {
           cy.contains('tr', (inventory as Inventory).name).within(() => {
             cy.get('button.toggle-kebab').click();
           });
-          cy.contains('button', /^Copy inventory$/).as('copyButton');
+          cy.contains('button', /^Duplicate inventory$/).as('copyButton');
           cy.get('@copyButton').should('have.attr', 'aria-disabled', 'true');
           cy.get('@copyButton').click();
-          cy.get('@copyButton').hasTooltip('Inventories with sources cannot be copied');
+          cy.get('@copyButton').hasTooltip('Inventories with sources cannot be duplicated');
         });
     });
   });

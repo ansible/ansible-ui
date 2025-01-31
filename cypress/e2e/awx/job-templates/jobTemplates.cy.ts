@@ -473,7 +473,7 @@ describe('Job Templates Tests', function () {
       cy.intercept('POST', awxAPI`/job_templates/${jobTemplate.id.toString()}/copy/`).as(
         'copyTemplate'
       );
-      cy.clickTableRowAction('name', jobTemplate.name, 'copy-template', {
+      cy.clickTableRowAction('name', jobTemplate.name, 'duplicate-template', {
         inKebab: true,
         disableFilter: true,
       });
@@ -501,8 +501,8 @@ describe('Job Templates Tests', function () {
         'copyTemplate'
       );
       cy.getBy(`[data-cy="actions-dropdown"]`).click();
-      cy.getBy('[data-cy="copy-template"]').click();
-      cy.getByDataCy('alert-toaster').contains(`${jobTemplate.name} copied.`);
+      cy.getBy('[data-cy="duplicate-template"]').click();
+      cy.getByDataCy('alert-toaster').contains(`${jobTemplate.name} duplicated.`);
       cy.wait('@copyTemplate')
         .its('response.body')
         .then((jt: JobTemplate) => {

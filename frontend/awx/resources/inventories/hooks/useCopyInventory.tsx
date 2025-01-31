@@ -13,7 +13,7 @@ export function useCopyInventory(onComplete: () => void) {
   const copyInventory = (inventory: Inventory) => {
     const alert: AlertProps = {
       variant: 'success',
-      title: t(`${inventory.name} copied.`),
+      title: t(`${inventory.name} duplicated.`),
       timeout: 2000,
     };
     postRequest(awxAPI`/inventories/${inventory.id.toString()}/copy/`, {
@@ -27,7 +27,7 @@ export function useCopyInventory(onComplete: () => void) {
       .catch((error) => {
         alertToaster.replaceAlert(alert, {
           variant: 'danger',
-          title: t('Failed to copy inventory'),
+          title: t('Failed to duplicate inventory'),
           children: error instanceof Error && error.message,
         });
       })

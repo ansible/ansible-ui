@@ -95,8 +95,8 @@ describe('Notifications: List View', () => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('actions-dropdown').click();
       });
-      cy.getByDataCy('copy-notifier').click();
-      cy.get('[data-cy="alert-toaster"]').contains('copied').should('be.visible');
+      cy.getByDataCy('duplicate-notifier').click();
+      cy.get('[data-cy="alert-toaster"]').contains('duplicated').should('be.visible');
       cy.clickButton(/^Clear all filters/);
       cy.deleteNotificationTemplate(notificationTemplate, { failOnStatusCode: false });
       cy.filterTableBySearch(`${notificationTemplate.name} @`);

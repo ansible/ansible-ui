@@ -89,7 +89,7 @@ describe('Project Edit, Copy, Sync', () => {
         cy.filterTableBySearch(project.name);
         cy.wait('@projectSearch');
         cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
-        cy.clickTableRowAction('name', project.name, 'copy-project', {
+        cy.clickTableRowAction('name', project.name, 'duplicate-project', {
           inKebab: true,
           disableFilter: true,
         });
@@ -120,7 +120,7 @@ describe('Project Edit, Copy, Sync', () => {
         cy.clickTableRowLink('name', project.name, { disableFilter: true });
         cy.intercept('POST', awxAPI`/projects/${project.id.toString()}/copy/`).as('copiedProject');
         cy.getBy(`[data-cy="actions-dropdown"]`).click();
-        cy.getBy('[data-cy="copy-project"]').click();
+        cy.getBy('[data-cy="duplicate-project"]').click();
         cy.wait('@copiedProject')
           .its('response.body')
           .then((copiedProject: Project) => {

@@ -13,7 +13,7 @@ export function useCopyCredential(onComplete?: () => void) {
   return (credential: EdaCredential) => {
     const alert: AlertProps = {
       variant: 'success',
-      title: t(`${credential.name} copied.`),
+      title: t(`${credential.name} duplicated.`),
       timeout: 2000,
     };
     postRequest(edaAPI`/eda-credentials/${credential.id.toString()}/copy/`, {
@@ -25,12 +25,12 @@ export function useCopyCredential(onComplete?: () => void) {
       .catch((error) => {
         alertToaster.addAlert({
           variant: 'danger',
-          title: t('Failed to copy credential'),
+          title: t('Failed to duplicate credential'),
           timeout: 2000,
           children:
             error instanceof Error &&
             (error.message === 'Forbidden'
-              ? t('You do not have permission to copy this credential')
+              ? t('You do not have permission to duplicate this credential')
               : error.message),
         });
       })

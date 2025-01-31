@@ -13,7 +13,7 @@ export function useCopyCredential(onComplete?: () => void) {
   const copyCredential = (credential: Credential) => {
     const alert: AlertProps = {
       variant: 'success',
-      title: t(`${credential.name} copied.`),
+      title: t(`${credential.name} duplicated.`),
       timeout: 2000,
     };
     postRequest(awxAPI`/credentials/${credential.id.toString()}/copy/`, {
@@ -27,7 +27,7 @@ export function useCopyCredential(onComplete?: () => void) {
       .catch((error) => {
         alertToaster.replaceAlert(alert, {
           variant: 'danger',
-          title: t('Failed to copy credential'),
+          title: t('Failed to duplicate credential'),
           children: error instanceof Error && error.message,
         });
       })

@@ -72,7 +72,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.get('[data-cy="create-notifier"]').should('have.attr', 'aria-disabled', 'false');
     });
 
-    it('Copy notifier button is enabled if the user has the correct permissions', () => {
+    it('Duplicate notifier button is enabled if the user has the correct permissions', () => {
       cy.intercept(
         { method: 'OPTIONS', url: awxAPI`/notification_templates/` },
         { fixture: 'awx_notifier_options.json' }
@@ -85,7 +85,7 @@ describe('Notifiers.cy.tsx', () => {
       cy.getByDataCy('actions-column-cell').within(() => {
         cy.getByDataCy('actions-dropdown').click();
       });
-      cy.getByDataCy('copy-notifier').should('not.be.disabled');
+      cy.getByDataCy('duplicate-notifier').should('not.be.disabled');
     });
 
     it('Edit notifier button is enabled if the user has the correct permissions', () => {

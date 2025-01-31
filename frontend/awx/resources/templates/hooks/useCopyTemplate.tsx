@@ -14,7 +14,7 @@ export function useCopyTemplate(onComplete: () => void) {
   const copyTemplate = (template: JobTemplate | WorkflowJobTemplate) => {
     const alert: AlertProps = {
       variant: 'success',
-      title: t(`${template.name} copied.`),
+      title: t(`${template.name} duplicated.`),
       timeout: 2000,
     };
     if (template.type === 'job_template') {
@@ -29,7 +29,7 @@ export function useCopyTemplate(onComplete: () => void) {
         .catch((error) => {
           alertToaster.replaceAlert(alert, {
             variant: 'danger',
-            title: t('Failed to copy template'),
+            title: t('Failed to duplicate template'),
             children: error instanceof Error && error.message,
           });
         })
@@ -46,7 +46,7 @@ export function useCopyTemplate(onComplete: () => void) {
         .catch((error) => {
           alertToaster.replaceAlert(alert, {
             variant: 'danger',
-            title: t('Failed to copy template'),
+            title: t('Failed to duplicate template'),
             children: error instanceof Error && error.message,
           });
         })
