@@ -115,9 +115,6 @@ Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: strin
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
   });
-  cy.getModal().within(() => {
-    cy.clickButton(/^Close$/);
-  });
 });
 Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: string) => {
   cy.navigateTo('platform', 'organizations');
@@ -140,8 +137,5 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
     cy.clickButton(/^Next/);
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
-  });
-  cy.getModal().within(() => {
-    cy.clickButton(/^Close$/);
   });
 });

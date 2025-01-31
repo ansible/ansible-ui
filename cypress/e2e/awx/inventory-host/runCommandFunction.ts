@@ -1,5 +1,4 @@
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 export function runCommand(params: {
   selections: string;
@@ -48,13 +47,10 @@ export function runCommand(params: {
         cy.contains(`[data-cy='credential']`, 'Select credential');
         cy.getByDataCy('credential').click();
         cy.get(`[role='listbox'] button`);
-        cy.intercept('GET', awxAPI`/credentials/?*`).as('credentials');
         cy.contains('button', 'Browse').click();
-        cy.wait('@credentials');
         cy.getModal().within(() => {
           cy.filterTableBySearch(credential.name);
-          cy.get(`[aria-label="Simple table"] tr`, { timeout: 8000 }).should('have.length.gte', 2);
-          cy.get(`[data-cy="checkbox-column-cell"] input`).click();
+          cy.contains(credential.name).should('be.visible').click();
           cy.contains('button', 'Confirm').click();
         });
         cy.getByDataCy('Submit').click();
