@@ -65,7 +65,7 @@ export function useProjectActions(
     const cannotCopyProject = (project: Project) =>
       project?.summary_fields?.user_capabilities?.copy
         ? ''
-        : t(`The project cannot be copied due to insufficient permission`);
+        : t(`The project cannot be duplicated due to insufficient permission`);
 
     return [
       {
@@ -125,12 +125,12 @@ export function useProjectActions(
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t('Copy project'),
+        label: t('Duplicate project'),
         isDisabled: (project: Project) => cannotCopyProject(project),
         onClick: (project: Project) => {
           const alert: AlertProps = {
             variant: 'success',
-            title: t(`${project.name} copied.`),
+            title: t(`${project.name} duplicated.`),
             timeout: 2000,
           };
           postRequest(awxAPI`/projects/${project?.id.toString() ?? ''}/copy/`, {
@@ -144,7 +144,7 @@ export function useProjectActions(
             .catch((error) => {
               alertToaster.replaceAlert(alert, {
                 variant: 'danger',
-                title: t('Failed to copy project'),
+                title: t('Failed to duplicate project'),
                 children: error instanceof Error && error.message,
               });
             });

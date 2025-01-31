@@ -301,7 +301,8 @@ describe('Workflow Job Templates Tests', () => {
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/copy/`
       ).as('copiedWFJT');
-      cy.clickTableRowAction('name', workflowJobTemplate?.name, 'copy-template', {
+      cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
+      cy.clickTableRowAction('name', workflowJobTemplate?.name, 'duplicate-template', {
         inKebab: true,
         disableFilter: true,
       });
@@ -330,7 +331,7 @@ describe('Workflow Job Templates Tests', () => {
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/copy/`
       ).as('copiedWFJT');
       cy.getBy(`[data-cy="actions-dropdown"]`).click();
-      cy.getBy('[data-cy="copy-template"]').click();
+      cy.getBy('[data-cy="duplicate-template"]').click();
       cy.wait('@copiedWFJT')
         .its('response.body')
         .then((response: WorkflowJobTemplate) => {

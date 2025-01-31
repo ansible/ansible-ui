@@ -190,19 +190,19 @@ describe('Credentials.cy.ts', () => {
     cy.get('[data-cy="status-column-cell"] > span').contains('Success');
   });
 
-  it('there is a row action to copy credential', () => {
+  it('there is a row action to duplicate credential', () => {
     cy.intercept('POST', edaAPI`/eda-credentials/100/copy/`, (req) => {
       return req.reply({ statusCode: 204 });
     }).as('copyEdaCredential');
     cy.mount(<Credentials />);
     cy.contains('tr', 'EDA Credential 1').within(() => {
-      cy.get('[data-cy="copy-credential"]').should('have.attr', 'aria-disabled', 'false');
+      cy.get('[data-cy="duplicate-credential"]').should('have.attr', 'aria-disabled', 'false');
     });
     cy.contains('tr', 'EDA Credential 1').within(() => {
-      cy.get('[data-cy="copy-credential"]').click();
+      cy.get('[data-cy="duplicate-credential"]').click();
     });
     cy.wait('@copyEdaCredential');
-    cy.get('.pf-v5-c-alert__title').should('contain', 'EDA Credential 1 copied');
+    cy.get('.pf-v5-c-alert__title').should('contain', 'EDA Credential 1 duplicated');
   });
 });
 

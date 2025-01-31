@@ -51,12 +51,12 @@ export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnviron
         selection: PageActionSelection.Single,
         icon: CopyIcon,
         isPinned: false,
-        label: t('Copy execution environment'),
+        label: t('Duplicate execution environment'),
         isDisabled: (executionEnvironment) => cannotCopyResource(executionEnvironment, t),
         onClick: (ee) => {
           const alert: AlertProps = {
             variant: 'success',
-            title: t(`${ee.name} copied.`),
+            title: t(`${ee.name} duplicated.`),
             timeout: 2000,
           };
           postRequest(awxAPI`/execution_environments/${ee?.id.toString() ?? ''}/copy/`, {
@@ -69,7 +69,7 @@ export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnviron
             .catch((error) => {
               alertToaster.replaceAlert(alert, {
                 variant: 'danger',
-                title: t('Failed to copy execution environment'),
+                title: t('Failed to duplicate execution environment'),
                 children: error instanceof Error && error.message,
               });
             });

@@ -101,18 +101,18 @@ describe('Inventories Tests', () => {
           cy.filterTableBySingleSelect('name', inventory.name);
           cy.clickTableRowLink('name', inventory.name, { disableFilter: true });
           cy.verifyPageTitle(inventory.name);
-          cy.clickPageAction('copy-inventory');
-          cy.hasAlert(`${inventory.name} copied`);
+          cy.clickPageAction('duplicate-inventory');
+          cy.hasAlert(`${inventory.name} duplicated`);
         });
 
         it('can copy an inventory on the list view and assert that the copy has been successful', () => {
           cy.navigateTo('awx', 'inventories');
           cy.filterTableBySingleSelect('name', inventory.name);
-          cy.clickTableRowAction('name', inventory.name, 'copy-inventory', {
+          cy.clickTableRowAction('name', inventory.name, 'duplicate-inventory', {
             disableFilter: true,
             inKebab: true,
           });
-          cy.hasAlert(`${inventory.name.toString()} copied`);
+          cy.hasAlert(`${inventory.name.toString()} duplicated`);
         });
 
         it('can delete an inventory from the inventory list row item', () => {

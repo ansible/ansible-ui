@@ -61,12 +61,12 @@ export function CredentialPage() {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t(`Copy credential`),
+        label: t(`Duplicate credential`),
         onClick: (credential: EdaCredential) => copyCredential(credential),
         isDisabled: () =>
           canPatchCredential
             ? ''
-            : t(`The credential cannot be copied due to insufficient permission.`),
+            : t(`The credential cannot be duplicated due to insufficient permission.`),
         isDanger: false,
         isPinned: true,
       },

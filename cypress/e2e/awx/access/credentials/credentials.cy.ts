@@ -110,9 +110,9 @@ describe('Credentials', () => {
       cy.filterTableBySearch(credential.name);
       cy.wait('@getSearchResults');
       cy.getByDataCy('actions-column-cell').within(() => {
-        cy.getByDataCy('copy-credential').click();
+        cy.getByDataCy('duplicate-credential').click();
       });
-      cy.getByDataCy('alert-toaster').contains('copied').should('be.visible');
+      cy.getByDataCy('alert-toaster').contains('duplicated').should('be.visible');
       cy.clickButton(/^Clear all filters/);
       cy.deleteAwxCredential(credential, { failOnStatusCode: false });
       cy.filterTableBySearch(`${credential.name} @`);

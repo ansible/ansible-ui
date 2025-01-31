@@ -87,7 +87,7 @@ export function useNotifiersRowActions(params: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t(`Copy notifier`),
+        label: t(`Duplicate notifier`),
         onClick: (notification: NotificationTemplate) => copyNotifier(notification),
         isDisabled: (notification) => cannotCopyResource(notification, t),
         isDanger: false,

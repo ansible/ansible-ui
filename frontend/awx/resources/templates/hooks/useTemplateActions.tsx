@@ -88,11 +88,11 @@ export function useTemplateActions({
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t('Copy template'),
+        label: t('Duplicate template'),
         onClick: (template: Template) => copyTemplate(template),
         isDisabled: (template: Template) =>
           !template?.summary_fields.user_capabilities.copy
-            ? t('You do not have permission to copy this template')
+            ? t('You do not have permission to duplicate this template')
             : undefined,
         ouiaId: 'job-template-detail-copy-button',
         isDanger: false,

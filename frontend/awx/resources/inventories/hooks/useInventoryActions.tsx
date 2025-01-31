@@ -97,9 +97,9 @@ export function useInventoryActions({
 
     const cannotCopyInventory = (inventory: Inventory): string => {
       if (!inventory?.summary_fields?.user_capabilities?.copy) {
-        return t(`The inventory cannot be copied due to insufficient permission`);
+        return t(`The inventory cannot be duplicated due to insufficient permission`);
       } else if (inventory?.has_inventory_sources) {
-        return t(`Inventories with sources cannot be copied`);
+        return t(`Inventories with sources cannot be duplicated`);
       } else {
         return '';
       }
@@ -134,7 +134,7 @@ export function useInventoryActions({
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t('Copy inventory'),
+        label: t('Duplicate inventory'),
         isDisabled: (inventory: Inventory) => cannotCopyInventory(inventory),
         onClick: (inventory: Inventory) => copyInventory(inventory),
       },

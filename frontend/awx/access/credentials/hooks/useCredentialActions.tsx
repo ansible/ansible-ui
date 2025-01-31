@@ -43,7 +43,7 @@ export function useCredentialActions(options?: {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: CopyIcon,
-        label: t(`Copy credential`),
+        label: t(`Duplicate credential`),
         onClick: (credential: Credential) => copyCredential(credential),
         isDisabled: (credential) => cannotCopyResource(credential, t),
         isDanger: false,

@@ -102,7 +102,7 @@ describe('Credentials.cy.ts', () => {
       });
   });
 
-  it('row action to copy credential is enabled if the user does have permissions', () => {
+  it('row action to duplicate credential is enabled if the user does have permissions', () => {
     cy.mount(<Credentials />);
     cy.fixture('credentials.json')
       .its('results')
@@ -110,12 +110,12 @@ describe('Credentials.cy.ts', () => {
       .then((results: Credential[]) => {
         const credential = results[0]; // credential with summary_fields.user_capabilities.copy: true
         cy.contains('tr', credential.name).within(() => {
-          cy.get('[data-cy="copy-credential"]').should('have.attr', 'aria-disabled', 'false');
+          cy.get('[data-cy="duplicate-credential"]').should('have.attr', 'aria-disabled', 'false');
         });
       });
   });
 
-  it('row action to copy credential is disabled if the user does not have permissions', () => {
+  it('row action to duplicate credential is disabled if the user does not have permissions', () => {
     cy.mount(<Credentials />);
     cy.fixture('credentials.json')
       .its('results')
@@ -123,7 +123,7 @@ describe('Credentials.cy.ts', () => {
       .then((results: Credential[]) => {
         const credential = results[1]; // credential with summary_fields.user_capabilities.copy: false
         cy.contains('tr', credential.name).within(() => {
-          cy.get('[data-cy="copy-credential"]').should('have.attr', 'aria-disabled', 'true');
+          cy.get('[data-cy="duplicate-credential"]').should('have.attr', 'aria-disabled', 'true');
         });
       });
   });

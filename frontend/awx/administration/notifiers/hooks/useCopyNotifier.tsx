@@ -13,7 +13,7 @@ export function useCopyNotifier(onComplete: () => void) {
   const copyNotifier = (notification: NotificationTemplate) => {
     const alert: AlertProps = {
       variant: 'success',
-      title: t(`${notification.name} copied.`),
+      title: t(`${notification.name} duplicated.`),
       timeout: 2000,
     };
     postRequest(awxAPI`/notification_templates/${notification.id.toString()}/copy/`, {
@@ -27,7 +27,7 @@ export function useCopyNotifier(onComplete: () => void) {
       .catch((error) => {
         alertToaster.replaceAlert(alert, {
           variant: 'danger',
-          title: t('Failed to copy notifier'),
+          title: t('Failed to duplicate notifier'),
           children: error instanceof Error && error.message,
         });
       })
