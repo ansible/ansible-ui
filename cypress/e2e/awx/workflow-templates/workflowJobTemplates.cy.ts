@@ -46,7 +46,7 @@ describe('Workflow Job Templates Tests', () => {
         .then((newWfjt: WorkflowJobTemplate) => {
           cy.get('button[data-cy="workflow-visualizer-toolbar-close"]').should('be.visible');
           cy.navigateTo('awx', 'templates');
-          cy.filterTableBySearch(newWfjt.name);
+          cy.filterTableBySingleSelect('name', newWfjt.name);
           cy.clickTableRowAction('name', newWfjt.name, 'edit-template', {
             disableFilter: true,
           });
@@ -157,7 +157,7 @@ describe('Workflow Job Templates Tests', () => {
     it('can edit a workflow job template from the details view', () => {
       const newName = (workflowJobTemplate.name ?? '') + ' edited';
       cy.navigateTo('awx', 'templates');
-      cy.filterTableBySearch(workflowJobTemplate?.name);
+      cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
       cy.clickTableRowLink('name', workflowJobTemplate?.name, { disableFilter: true });
       cy.verifyPageTitle(workflowJobTemplate.name);
       cy.clickLink('Edit template');
@@ -178,7 +178,7 @@ describe('Workflow Job Templates Tests', () => {
       }).then((cred) => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
-        cy.filterTableBySearch(workflowJobTemplate?.name);
+        cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
         expect(workflowJobTemplate.webhook_service).equals('');
         cy.clickTableRowAction('name', workflowJobTemplate.name, 'edit-template', {
           disableFilter: true,
@@ -220,7 +220,7 @@ describe('Workflow Job Templates Tests', () => {
       }).then((cred) => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
-        cy.filterTableBySearch(workflowJobTemplate?.name);
+        cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
         expect(workflowJobTemplate.webhook_service).equals('');
         cy.clickTableRowAction('name', workflowJobTemplate.name, 'edit-template', {
           disableFilter: true,
@@ -295,12 +295,12 @@ describe('Workflow Job Templates Tests', () => {
 
     it('can copy an existing workflow job template from the list', () => {
       cy.navigateTo('awx', 'templates');
-      cy.filterTableBySearch(workflowJobTemplate.name);
+      cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
+      cy.contains(workflowJobTemplate.name).should('be.visible');
       cy.intercept(
         'POST',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/copy/`
       ).as('copiedWFJT');
-      cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
       cy.clickTableRowAction('name', workflowJobTemplate?.name, 'copy-template', {
         inKebab: true,
         disableFilter: true,
@@ -308,8 +308,8 @@ describe('Workflow Job Templates Tests', () => {
       cy.wait('@copiedWFJT')
         .its('response.body')
         .then((response: WorkflowJobTemplate) => {
-          cy.filterTableBySearch(response.name);
-          cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
+          cy.filterTableBySingleSelect('name', response.name);
+          cy.contains(response.name).should('be.visible');
           cy.clickTableRowAction('name', `${response.name}`, 'delete-template', {
             inKebab: true,
             disableFilter: true,
@@ -452,8 +452,8 @@ describe('Workflow Job Templates Tests', () => {
         'DELETE',
         awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/`
       ).as('deleted');
-      cy.filterTableBySearch(workflowJobTemplate?.name);
-      cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
+      cy.filterTableBySingleSelect('name', workflowJobTemplate?.name);
+      cy.contains(workflowJobTemplate?.name).should('be.visible');
       cy.clickTableRowAction('name', workflowJobTemplate?.name, 'delete-template', {
         inKebab: true,
         disableFilter: true,
@@ -640,17 +640,18 @@ describe('Workflow Job Templates Tests', () => {
     moveToNotificationList(type, typeEntityName);
     filterNotification(notificationName);
     cy.get('[data-cy="name-column-cell"] a').click();
-    cy.contains(notificationName);
   }
 
   function filterNotification(notificationName: string) {
     cy.get(`[aria-label="Type to filter"]`).type(notificationName);
-    cy.get(`[aria-label="Simple table"] tr`).should('have.length.gte', 2);
+    cy.get(`[aria-label="Simple table"] tbody`).find('tr').should('have.length', 1);
+    cy.contains(notificationName).should('be.visible');
   }
 
   function moveToNotificationList(type: string, typeEntityName: string) {
     cy.navigateTo('awx', type);
-    cy.filterTableBySearch(typeEntityName);
+    cy.filterTableBySingleSelect('name', typeEntityName);
+    cy.contains(typeEntityName).should('be.visible');
     cy.get('table').find('tr', { timeout: 10000 }).should('have.length', 2);
     cy.get('[data-cy="name-column-cell"] a').click();
     cy.contains(typeEntityName);
