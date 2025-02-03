@@ -26,7 +26,7 @@ import { PageFormCancelButton, PageFormSubmitButton } from './PageFormButtons';
 import { ErrorAdapter } from './typesErrorAdapter';
 
 const FormContainer = styled(PageSection)`
-  margin-block-end: var(--pf-v5-global--spacer--xl);
+  padding-bottom: var(--pf-v5-global--spacer--xl);
 `;
 
 const FormActionGroup = styled(ActionGroup)`

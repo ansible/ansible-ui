@@ -1,12 +1,13 @@
-import { Config as AwxConfig } from '@ansible/common-ui/interfaces/Config';
 import { Credential } from '@ansible/awx-ui/interfaces/Credential';
 import { CredentialType } from '@ansible/awx-ui/interfaces/CredentialType';
 import { ExecutionEnvironment } from '@ansible/awx-ui/interfaces/ExecutionEnvironment';
+import { WorkflowJob } from '@ansible/awx-ui/interfaces/generated-from-swagger/api';
 import { InstanceGroup } from '@ansible/awx-ui/interfaces/InstanceGroup';
 import { Inventory } from '@ansible/awx-ui/interfaces/Inventory';
 import { InventorySource } from '@ansible/awx-ui/interfaces/InventorySource';
 import { Job } from '@ansible/awx-ui/interfaces/Job';
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Label } from '@ansible/awx-ui/interfaces/Label';
 import { Organization as AwxOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { Project } from '@ansible/awx-ui/interfaces/Project';
 import { Schedule } from '@ansible/awx-ui/interfaces/Schedule';
@@ -14,6 +15,7 @@ import { Team as AwxTeam } from '@ansible/awx-ui/interfaces/Team';
 import { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import { WorkflowApproval } from '@ansible/awx-ui/interfaces/WorkflowApproval';
 import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
+import { Config as AwxConfig } from '@ansible/common-ui/interfaces/Config';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
@@ -41,6 +43,7 @@ interface IControllerData {
   inventory_sources: DeepPartial<InventorySource>[];
   job_templates: DeepPartial<JobTemplate>[];
   jobs: DeepPartial<Job>[];
+  workflow_jobs: DeepPartial<WorkflowJob>[];
   me: DeepPartial<AwxUser>[];
   organizations: DeepPartial<AwxOrganization>[];
   projects: DeepPartial<Project>[];
@@ -51,7 +54,7 @@ interface IControllerData {
   workflow_approvals: DeepPartial<WorkflowApproval>[];
   workflow_job_templates: DeepPartial<WorkflowJobTemplate>[];
   hosts: object[];
-  labels: object[];
+  labels: DeepPartial<Label>[];
   dashboard: object;
   execution_environments: DeepPartial<ExecutionEnvironment>[];
 }
@@ -132,7 +135,7 @@ export const mockData: IApiData = {
         jobs: [],
         projects: [{ id: 1, name: 'Demo Project' }],
         schedules: [],
-        job_templates: [{ id: 1, name: 'Demo Job Template' }],
+        job_templates: [{ id: 1, name: 'Demo Job Template', type: 'job_template' }],
         workflow_job_templates: [],
         organizations: [{ id: 1, name: 'Default' }],
         teams: [],
@@ -141,6 +144,7 @@ export const mockData: IApiData = {
         users: [],
         workflow_approvals: [],
         unified_jobs: [],
+        workflow_jobs: [],
         execution_environments: [{ id: 1, name: 'Default' }],
         instance_groups: [],
         hosts: [{ id: 1, name: 'localhost' }],

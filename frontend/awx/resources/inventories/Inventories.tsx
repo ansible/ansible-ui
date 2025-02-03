@@ -1,16 +1,17 @@
 import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
+import { Domains } from '../../common/domains/Domains';
+import { useDomainsStore } from '../../common/domains/useDomains';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
-
 import { type Inventory } from '../../interfaces/Inventory';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { useInventoriesColumns } from './hooks/useInventoriesColumns';
@@ -31,6 +32,8 @@ type WebSocketMessage = {
 
 export function Inventories() {
   const { t } = useTranslation();
+  const { activeDomains: activeFocusAreas } = useDomainsStore();
+  const focusLabels = activeFocusAreas.map((fa) => fa.labels.map((l) => l.name)).flat();
   const { data } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/inventories/`);
   const canCreateInventory = Boolean(data && data.actions && data.actions['POST']);
   const toolbarFilters = useInventoriesFilters();
@@ -39,6 +42,7 @@ export function Inventories() {
     url: awxAPI`/inventories/`,
     toolbarFilters,
     tableColumns,
+    queryParams: focusLabels.length > 0 ? { or__labels__name: focusLabels } : undefined,
   });
   const { refresh, pageItems } = view;
   const toolbarActions = useInventoriesToolbarActions(view);
@@ -107,6 +111,7 @@ export function Inventories() {
         )}
         headerActions={<ActivityStreamIcon type={'inventory'} />}
       />
+      <Domains />
       <PageTable<Inventory>
         id="awx-inventories-table"
         toolbarFilters={toolbarFilters}

@@ -6,12 +6,14 @@ import { controllerDashboardJobs } from './controller/controllerDashboardJobs';
 import { getJobEvents, getJobEventsChildrenSummary } from './controller/controllerJobs';
 import {
   getJobTemplateLaunch,
+  postJobTemplateLabels,
   postJobTemplateLaunch,
   processJobTemplate,
 } from './controller/controllerJobTemplates';
 import { processProject } from './controller/controllerProcessProject';
 import { getProjectPlaybooks } from './controller/controllerProjectPlaybooks';
 import { controllerRelations } from './controller/controllerRelations';
+import { getUnifiedJobs } from './controller/controllerUnifiedJobs';
 import { getUnifiedTemplates } from './controller/controllerUnifiedTemplates';
 import { gatewayRelations } from './gateway/gatewayRelations';
 import { authenticatedGuard } from './handlers/authenticatedGuard';
@@ -78,6 +80,7 @@ export async function mock(page: Page) {
       postItem({ relations: controllerRelations, process: processProject })
     )
     .GET('/api/controller/v2/projects/:id/playbooks', getProjectPlaybooks)
+    .GET('/api/controller/v2/unified_jobs', getUnifiedJobs)
     .GET('/api/controller/v2/unified_job_templates', getUnifiedTemplates)
     .POST(
       '/api/controller/v2/job_templates',
@@ -85,6 +88,7 @@ export async function mock(page: Page) {
     )
     .GET('/api/controller/v2/job_templates/:id/launch', getJobTemplateLaunch)
     .POST('/api/controller/v2/job_templates/:id/launch', postJobTemplateLaunch)
+    .POST('/api/controller/v2/job_templates/:id/labels', postJobTemplateLabels)
     .GET('/api/controller/v2/jobs/:id/job_events/children_summary', getJobEventsChildrenSummary)
     .GET('/api/controller/v2/jobs/:id/job_events', getJobEvents)
     // .GET('/api/controller/v2/workflow_jobs/:id/workflow_nodes', TODO)

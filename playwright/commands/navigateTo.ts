@@ -6,10 +6,11 @@ export async function navigateTo(page: Page, ...labels: string[]) {
 
   let listItem: Locator | undefined = undefined;
   for (const label of labels) {
+    const labelRegEx = new RegExp(`^${label}`, 'i');
     if (!listItem) {
-      listItem = nav.locator('li').filter({ hasText: label });
+      listItem = nav.locator('li').filter({ hasText: labelRegEx });
     } else {
-      listItem = listItem.locator('li').filter({ hasText: label });
+      listItem = listItem.locator('li').filter({ hasText: labelRegEx });
     }
     await expect(listItem).toBeVisible();
 

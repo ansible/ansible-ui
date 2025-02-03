@@ -190,6 +190,7 @@
     "mochawesome": "7.1.3",
     "monocart-coverage-reports": "2.11.2",
     "prettier": "3.3.3",
+    "sift": "^17.1.3",
     "v8-to-istanbul": "9.3.0",
     "webpack-dev-server": "5.1.0"
   },

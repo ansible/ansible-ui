@@ -1,5 +1,5 @@
-import { CreateCredential, EditCredential } from '../CredentialForm';
 import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { CreateCredential, EditCredential } from '../CredentialForm';
 
 describe('CredentialsExternalTestModal.tsx', () => {
   beforeEach(() => {
@@ -270,6 +270,7 @@ describe('CredentialsExternalTestModal.tsx', () => {
         field.choice &&
           cy.getByDataCy(`${field.id}-form-group`).within(() => {
             cy.get('.pf-v5-c-select__toggle-arrow').click({ force: true });
+            cy.get('.pf-v5-c-select__menu').scrollIntoView();
             cy.getByDataCy(field.choice).click();
           });
       });

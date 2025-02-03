@@ -13,11 +13,12 @@ export function PageFormLabelSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(props: {
-  labelHelpTitle: string;
-  labelHelp: string;
+  labelHelpTitle?: string;
+  labelHelp?: string;
   name: TFieldName;
   placeholderText?: string;
   additionalControls?: ReactElement;
+  shouldUnregister?: boolean;
 }) {
   const { labelHelpTitle, labelHelp, name, placeholderText, additionalControls } = props;
   const { t } = useTranslation();
@@ -37,6 +38,8 @@ export function PageFormLabelSelect<
       label={t('Labels')}
       additionalControls={additionalControls ?? undefined}
       options={options}
+      shouldUnregister={props.shouldUnregister}
+      isMulti={true}
     />
   );
 }

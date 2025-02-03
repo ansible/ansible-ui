@@ -1,18 +1,17 @@
 import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
+import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
+import { Domains } from '../../common/domains/Domains';
 import { useAwxConfig } from '../../common/useAwxConfig';
-import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { TemplatesList } from './TemplatesList';
 
 export function Templates() {
   const { t } = useTranslation();
-
   usePersistentFilters('templates');
   const config = useAwxConfig();
-
   return (
     <PageLayout>
       <PageHeader
@@ -45,6 +44,7 @@ export function Templates() {
           />
         }
       />
+      <Domains />
       <TemplatesList url={awxAPI`/unified_job_templates/`} />
     </PageLayout>
   );
