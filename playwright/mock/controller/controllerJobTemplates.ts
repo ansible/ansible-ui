@@ -1,5 +1,6 @@
 import { Job } from '@ansible/awx-ui/interfaces/Job';
 import { JobTemplate } from '@ansible/awx-ui/interfaces/JobTemplate';
+import { Label } from '@ansible/awx-ui/interfaces/Label';
 import { MockResponse } from '../router/MockResponse';
 import { RouteOptions } from '../router/Router';
 import { controllerRelations } from './controllerRelations';
@@ -81,7 +82,6 @@ export function getJobTemplateLaunch(options: RouteOptions): MockResponse {
 }
 
 export function postJobTemplateLaunch(options: RouteOptions): MockResponse {
-  // TODO create a job and return the job
   const { params, mockData, requestData } = options;
   if (!requestData) {
     return { status: 400, body: { error: 'Missing request data' } };
@@ -97,10 +97,11 @@ export function postJobTemplateLaunch(options: RouteOptions): MockResponse {
   while (mockData.api.controller.v2.jobs.find((j) => j.id === jobId)) {
     jobId++;
   }
+
   const job: Partial<Job> = {
     id: jobId,
     type: 'job',
-    url: '/api/v2/jobs/1/',
+    // url: '/api/v2/jobs/1/',
     name: jobTemplate.name!,
     event_processing_finished: true,
     status: 'successful',
@@ -108,9 +109,60 @@ export function postJobTemplateLaunch(options: RouteOptions): MockResponse {
     // job_template_id: jobTemplateId,
     // job_template_name: 'Demo Job Template',
   };
+
+  // Labels
+  (job as { labels?: number[] }).labels = (
+    jobTemplate as {
+      labels?: number[];
+    }
+  ).labels;
+
   mockData.api.controller.v2.jobs.push(job);
+
   return {
     status: 201,
     body: controllerRelations(job, mockData),
+  };
+}
+
+export function postJobTemplateLabels(options: RouteOptions): MockResponse {
+  const { params, mockData, requestData } = options;
+
+  if (!requestData) {
+    return { status: 400, body: { error: 'Missing request data' } };
+  }
+
+  const jobTemplateId = Number(params.id);
+  const jobTemplate = mockData.api.controller.v2.job_templates.find(
+    (jt) => jt.id === jobTemplateId
+  );
+  if (!jobTemplate) {
+    return { status: 404, body: { error: 'Job template not found' } };
+  }
+
+  const data = requestData as { name: string; organization: number };
+
+  let labelId = 1;
+  while (mockData.api.controller.v2.labels.find((l) => l.id === labelId)) {
+    labelId++;
+  }
+
+  // This creates a fake relation between the job template and the label
+  // which is then expeanded with the controllerRelations function
+  const jobTemplateWithLabels = jobTemplate as { labels: number[] };
+  if (!jobTemplateWithLabels.labels) {
+    jobTemplateWithLabels.labels = [];
+  }
+  jobTemplateWithLabels.labels.push(labelId);
+
+  const label: Partial<Label> = {
+    id: labelId,
+    name: data.name,
+    organization: data.organization,
+  };
+  mockData.api.controller.v2.labels.push(label);
+  return {
+    status: 201,
+    body: controllerRelations(label, mockData),
   };
 }

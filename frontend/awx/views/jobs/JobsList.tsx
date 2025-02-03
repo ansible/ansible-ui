@@ -4,6 +4,7 @@ import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useDomainsStore } from '../../common/domains/useDomains';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
@@ -18,13 +19,15 @@ export function JobsList(props: {
   columns: ITableColumn<UnifiedJob>[];
 }) {
   const { t } = useTranslation();
+  const { activeDomains: activeFocusAreas } = useDomainsStore();
+  const focusLabels = activeFocusAreas.map((fa) => fa.labels.map((l) => l.name)).flat();
   const toolbarFilters = useJobsFilters(props.queryParams ?? {});
   const tableColumns = props.columns;
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
     toolbarFilters,
     tableColumns,
-    queryParams: props?.queryParams ?? {},
+    queryParams: { ...props?.queryParams, or__labels__name: focusLabels },
   });
   const rowActions = useJobRowActions(view.unselectItemsAndRefresh);
   const toolbarActions = useJobToolbarActions(view.unselectItemsAndRefresh);

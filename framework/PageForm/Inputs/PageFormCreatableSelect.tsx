@@ -7,9 +7,9 @@ import {
   Validate,
   useFormContext,
 } from 'react-hook-form';
-import { useRequiredValidationRule } from './validation-hooks';
-import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
 import { FormGroupSingleSelectTypeAhead } from './FormGroupSingleSelectTypeAhead';
+import { FormGroupTypeAheadMultiSelect } from './FormGroupTypeAheadMultiSelect';
+import { useRequiredValidationRule } from './validation-hooks';
 
 export interface SelectOptionObject {
   /** Function returns a string to represent the select option object */
@@ -35,6 +35,7 @@ export type PageFormCreatableSelectProps<
   validate?:
     | Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>
     | Record<string, Validate<FieldPathValue<TFieldValues, TFieldName>, TFieldValues>>;
+  shouldUnregister?: boolean;
   isMulti?: boolean;
   toggleButtonId?: string;
 };
@@ -85,7 +86,7 @@ export function PageFormCreatableSelect<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={props.shouldUnregister !== false ? true : false}
       render={({ field: { onChange, value }, fieldState: { error } }) =>
         isMulti ? (
           <FormGroupTypeAheadMultiSelect

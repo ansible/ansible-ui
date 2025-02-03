@@ -187,6 +187,8 @@ export type PageFormTextInputProps<
 
   enableUndo?: boolean;
   enableReset?: boolean;
+
+  shouldUnregister?: boolean;
 };
 
 /**
@@ -248,7 +250,7 @@ export function PageFormTextInput<
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
-      shouldUnregister
+      shouldUnregister={props.shouldUnregister !== false ? true : false}
       defaultValue={props.defaultValue}
       render={({ field: { onChange, value, name }, fieldState: { error } }) => {
         const helperTextInvalid = error?.message

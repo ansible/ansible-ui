@@ -27,5 +27,7 @@ export async function deleteHost(hostName: string, page: Page) {
   await clickPageAction('Delete host', page);
   await page.locator('#confirm').click();
   await page.locator('#submit').click();
+
+  // On a live server this can fail with "Resource is being used by live jobs"
   await expect(page.getByRole('heading', { name: 'Hosts', exact: true })).toBeVisible();
 }

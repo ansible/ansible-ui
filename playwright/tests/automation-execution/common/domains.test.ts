@@ -1,0 +1,97 @@
+import { expect, test } from '@playwright/test';
+import { navigateTo } from '../../../commands/navigateTo';
+import { setupAfter, setupBefore } from '../../../commands/setup';
+import { randomString } from '../../../upgrades-tests/utils/random-string';
+import {
+  createJobTemplate,
+  deleteJobTemplate,
+  runJobTemplate,
+} from '../templates/job-template-utils';
+
+test.beforeEach(setupBefore({ path: '/execution/templates' }));
+test.afterEach(setupAfter);
+
+test('domains of interest', { tag: [] }, async ({ page }) => {
+  test.setTimeout(2 * 60 * 1000);
+
+  // Create Job Template A with label A
+  const labelA = randomString(12);
+  const jobTemplateAName = await createJobTemplate({ labels: [labelA] }, page);
+
+  // Create Job Template B with label B
+  const labelB = randomString(12);
+  const jobTempalteBName = await createJobTemplate({ labels: [labelB] }, page);
+
+  // Create Domains
+  await navigateTo(page, 'Automation Execution', 'Templates');
+  await page.getByRole('button', { name: 'Configure Domains' }).click();
+
+  // Add Domain A for Label A
+  const domainA = randomString(12);
+  await page.getByRole('button', { name: 'Add Domain' }).click();
+  await page.getByLabel('Name *').fill(domainA);
+  await page.getByPlaceholder('Select labels').click();
+  await page.getByRole('option', { name: labelA }).click();
+  await page.getByLabel('Collapse').click();
+
+  // Add Domain B for label B
+  const domainB = randomString(12);
+  await page.getByRole('button', { name: 'Add Domain' }).click();
+  await page.getByLabel('Name *').fill(domainB);
+  await page.getByPlaceholder('Select labels').click();
+  await page.getByRole('option', { name: labelB }).click();
+  await page.getByLabel('Collapse').click();
+
+  // Save Domains
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  // Verify Domains Work for Job Templates
+  await navigateTo(page, 'Automation Execution', 'Templates');
+
+  // Enable Domain A for Job Templates
+  await page.getByRole('button', { name: domainA }).click();
+  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
+  await expect(page.locator('tbody')).not.toContainText(jobTempalteBName);
+
+  // Enable Domain B for Job Templates
+  await page.getByRole('button', { name: domainB }).click();
+  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
+  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
+
+  // Disable Domain A for Job Templates
+  await page.getByRole('button', { name: domainA }).click();
+  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
+  await expect(page.locator('tbody')).not.toContainText(jobTemplateAName);
+
+  // Clear Active Domains
+  await page.getByRole('button', { name: 'Clear Active Domains' }).click();
+
+  // Run Job Templates so we can verify Domains for Jobs
+  await runJobTemplate(jobTemplateAName, page, { doNotWait: true });
+  await runJobTemplate(jobTempalteBName, page, { doNotWait: true });
+
+  // Verify Domains Work for Jobs
+  await navigateTo(page, 'Automation Execution', 'Jobs');
+
+  // Enable Domain A for Jobs
+  await page.getByRole('button', { name: domainA }).click();
+  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
+  await expect(page.locator('tbody')).not.toContainText(jobTempalteBName);
+
+  // Enable Domain B for Jobs
+  await page.getByRole('button', { name: domainB }).click();
+  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
+  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
+
+  // Disable Domain A for Jobs
+  await page.getByRole('button', { name: domainA }).click();
+  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
+  await expect(page.locator('tbody')).not.toContainText(jobTemplateAName);
+
+  // Clear Active Domains
+  await page.getByRole('button', { name: 'Clear Active Domains' }).click();
+
+  // Clean up Job Templates
+  await deleteJobTemplate(jobTemplateAName, page);
+  await deleteJobTemplate(jobTempalteBName, page);
+});

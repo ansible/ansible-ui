@@ -1,19 +1,20 @@
+import { ButtonVariant } from '@patternfly/react-core';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   IPageAction,
   PageActionSelection,
   PageActionType,
   PageTable,
   useGetPageUrl,
-} from '@ansible/ansible-ui-framework';
-import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
-import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
-import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
-import { ButtonVariant } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+} from '../../../../framework';
+import { ButtonLink } from '../../../../framework/components/ButtonLink';
+import { PageTableEmptyState } from '../../../../framework/PageTable/PageTableEmptyState';
+import { useOptions } from '../../../common/crud/useOptions';
+import { usePersistentFilters } from '../../../common/PersistentFilters';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useDomainsStore } from '../../common/domains/useDomains';
 import { useAwxView } from '../../common/useAwxView';
 import { JobTemplate } from '../../interfaces/JobTemplate';
 import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
@@ -32,6 +33,8 @@ export function TemplatesList(props: {
   executionEnvironmentId?: string;
 }) {
   const { t } = useTranslation();
+  const { activeDomains: activeFocusAreas } = useDomainsStore();
+  const focusLabels = activeFocusAreas.map((fa) => fa.labels.map((l) => l.name)).flat();
   const getPageUrl = useGetPageUrl();
   const toolbarFilters = useTemplateFilters({
     url: props.url,
@@ -67,12 +70,16 @@ export function TemplatesList(props: {
   };
   const view = useAwxView<JobTemplate | WorkflowJobTemplate>({
     url: props.url ? props.url : awxAPI`/unified_job_templates/`,
-    queryParams: getQueryParams(
-      props.projectId,
-      props.inventoryId,
-      props.credentialsId,
-      props.executionEnvironmentId
-    ),
+    queryParams: {
+      ...getQueryParams(
+        props.projectId,
+        props.inventoryId,
+        props.credentialsId,
+        props.executionEnvironmentId
+      ),
+      or__labels__name: focusLabels,
+    },
+
     toolbarFilters,
     tableColumns,
   });

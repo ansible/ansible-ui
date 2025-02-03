@@ -15,6 +15,8 @@ export function useProjectNameColumn(options?: { disableLinks?: boolean }) {
   const column = useMemo<ITableColumn<Project>>(
     () => ({
       header: t('Name'),
+      value: (project) => project.name,
+      to: (project: Project) => getPageUrl(AwxRoute.ProjectDetails, { params: { id: project.id } }),
       cell: (project) =>
         project.custom_virtualenv && !project.default_environment ? (
           <Split>

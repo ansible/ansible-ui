@@ -4,10 +4,10 @@ import { MockResponse } from '../router/MockResponse';
 import { RouteOptions } from '../router/Router';
 import { controllerRelations } from './controllerRelations';
 
-export function getUnifiedTemplates({ mockData: data, url }: RouteOptions): MockResponse {
-  const jobTemplates = data.api.controller.v2.job_templates;
-  const workflowJobTemplates = data.api.controller.v2.workflow_job_templates;
-  let results: unknown[] = klona([...jobTemplates, ...workflowJobTemplates]).map((item) =>
+export function getUnifiedJobs({ mockData: data, url }: RouteOptions): MockResponse {
+  const jobs = data.api.controller.v2.jobs;
+  const workflowJobs = data.api.controller.v2.workflow_jobs;
+  let results: unknown[] = klona([...jobs, ...workflowJobs]).map((item) =>
     controllerRelations(item, data)
   );
   results = filterItems(results, url.searchParams);

@@ -1,10 +1,11 @@
 import { Page, expect } from '@playwright/test';
+import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
 import { selectTableFilter } from '../../../commands/selectTableFilter';
 
 export async function createJobTemplate(
-  options: { name?: string; inventoryName?: string; projectName?: string },
+  options: { name?: string; inventoryName?: string; projectName?: string; labels?: string[] },
   page: Page
 ) {
   const jobTemplateName = options.name ?? createE2EName('job-template');
@@ -21,8 +22,18 @@ export async function createJobTemplate(
   await page.locator('#project-select').click();
   await page.getByRole('option', { name: projectName }).click();
 
-  await new Promise((r) => setTimeout(r, 1000)); // TODO need to figure this out...
+  if (options.labels) {
+    for (const label of options.labels) {
+      // await page.getByLabel('Labels').click();
+      await page.getByPlaceholder('Select or create labels').fill(label);
+      await page.getByRole('option', { name: label }).click();
+    }
+  }
+
+  await expect(page.getByLabel('hello_world.yml')).toBeVisible({ timeout: 2 * 60 * 1000 });
+
   await page.getByRole('button', { name: 'Create job template' }).click();
+
   await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(jobTemplateName);
   await expect(page.locator('#inventory')).toContainText(inventoryName);
@@ -31,10 +42,15 @@ export async function createJobTemplate(
   //   'Default execution environment'
   // );
   await expect(page.locator('#playbook')).toContainText('hello_world.yml');
+
   return jobTemplateName;
 }
 
-export async function runJobTemplate(jobTemplateName: string, page: Page) {
+export async function runJobTemplate(
+  jobTemplateName: string,
+  page: Page,
+  options?: { doNotWait?: boolean }
+) {
   await navigateTo(page, 'Automation Execution', 'Templates');
   await selectTableFilter('Name', page);
   await page.getByRole('button', { name: 'Select name' }).click();
@@ -42,20 +58,21 @@ export async function runJobTemplate(jobTemplateName: string, page: Page) {
   await page.getByLabel(jobTemplateName).check();
   await page.getByRole('row', { name: jobTemplateName }).getByLabel('Launch template').click();
   await expect(page.getByRole('main')).toContainText(jobTemplateName);
-  await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 60000 });
+  if (!options?.doNotWait) {
+    await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 60000 });
+  }
   await page.getByRole('tab', { name: 'Details' }).click();
   await expect(page.locator('#name')).toContainText(jobTemplateName);
-  await expect(page.locator('#status')).toContainText('Success');
+  if (!options?.doNotWait) {
+    await expect(page.locator('#status')).toContainText('Success');
+  }
   await expect(page.locator('#job-template')).toContainText(jobTemplateName);
 }
 
 export async function deleteJobTemplate(jobTemplateName: string, page: Page) {
   await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-  await selectTableFilter('Name', page);
-  await page.getByRole('button', { name: 'Select name' }).click();
-  await page.getByLabel('Search input').fill(jobTemplateName);
-  await page.getByLabel(jobTemplateName).check();
-  await page.getByRole('link', { name: jobTemplateName }).click();
+  await clickTableRowWithFilter(jobTemplateName, page);
+
   await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
   await page.getByLabel('kebab dropdown toggle').click();
   await page.getByRole('menuitem', { name: 'Delete template' }).click();

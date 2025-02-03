@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
+import { Label } from '@ansible/awx-ui/interfaces/Label';
 import { IApiData } from '../mockData';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -11,7 +12,18 @@ export function controllerRelations(item: Record<string, any>, data: IApiData) {
   if (!item.summary_fields.labels) {
     item.summary_fields.labels = {
       results: [],
-    };
+    } as { results: Label[] };
+    if ('labels' in item && Array.isArray(item.labels)) {
+      item.labels.forEach((labelId: unknown) => {
+        if (typeof labelId !== 'number') {
+          return;
+        }
+        const label = data.api.controller.v2.labels.find((l) => l.id === labelId);
+        if (label) {
+          (item.summary_fields.labels.results as Label[]).push(label as Label);
+        }
+      });
+    }
   }
   if (!item.summary_fields.recent_jobs) {
     item.summary_fields.recent_jobs = [];
