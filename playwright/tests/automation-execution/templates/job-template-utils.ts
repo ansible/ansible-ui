@@ -52,6 +52,7 @@ export async function runJobTemplate(
   options?: { doNotWait?: boolean }
 ) {
   await navigateTo(page, 'Automation Execution', 'Templates');
+  await page.getByLabel('table view', { exact: true }).click();
   await selectTableFilter('Name', page);
   await page.getByRole('button', { name: 'Select name' }).click();
   await page.getByLabel('Search input').fill(jobTemplateName);

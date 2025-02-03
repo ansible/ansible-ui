@@ -87,6 +87,7 @@ describe('TemplatesList', () => {
 
     it('Component renders', () => {
       cy.mount(<TemplatesList />);
+      cy.setTableView('table');
       cy.get('tbody').find('tr').should('have.length', 2);
     });
 
@@ -166,6 +167,7 @@ describe('TemplatesList', () => {
 
     it('Delete Template button renders delete modal', () => {
       cy.mount(<TemplatesList />);
+      cy.setTableView('table');
       cy.clickTableRowAction('name', 'Test Job Template', 'delete-template', {
         inKebab: true,
         disableFilter: true,
@@ -175,6 +177,7 @@ describe('TemplatesList', () => {
 
     it('Clicking Sort button changes the order of listed templates', () => {
       cy.mount(<TemplatesList />);
+      cy.setTableView('table');
       cy.intercept('api/v2/unified_job_templates/*order_by=-name*');
       cy.contains('th', 'Name').click();
       cy.intercept('api/v2/unified_job_templates/*order_by=name*');

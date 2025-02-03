@@ -32,12 +32,6 @@ describe('Templates', () => {
       );
     });
 
-    it('Component renders', () => {
-      cy.mount(<Templates />);
-      cy.verifyPageTitle('Templates');
-      cy.get('tbody').find('tr').should('have.length', 2);
-    });
-
     it('Launch action item should call API /launch endpoint', () => {
       cy.intercept(
         { method: 'GET', url: awxAPI`/job_templates/7/launch/` },

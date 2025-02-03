@@ -161,6 +161,7 @@ export function TemplatesList(props: {
   return (
     <PageTable<JobTemplate | WorkflowJobTemplate>
       id="awx-job-templates-table"
+      defaultTableView="cards"
       toolbarFilters={toolbarFilters}
       toolbarActions={toolbarActions}
       tableColumns={tableColumns}

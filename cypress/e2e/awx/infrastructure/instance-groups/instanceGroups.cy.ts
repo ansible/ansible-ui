@@ -978,6 +978,7 @@ describe(`Instance Groups`, () => {
 
     it('can visit the instance group -> jobs tab, trigger a job, let the job finish, then view the job on the jobs list tab of the IG and delete job', () => {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.verifyPageTitle('Templates');
       cy.filterTableBySingleSelect('name', job_template.name);
       cy.intercept('POST', awxAPI`/job_templates/${job_template.id.toString()}/launch/`).as(

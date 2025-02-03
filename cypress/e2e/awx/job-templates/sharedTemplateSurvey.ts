@@ -15,6 +15,7 @@ export class ReusableTemplateSurveyTestSuite {
 
   navigateToTemplateDetails() {
     cy.navigateTo('awx', 'templates');
+    cy.setTableView('table');
     cy.verifyPageTitle('Templates');
     cy.intercept('GET', awxAPI`/unified_job_templates/?*`).as('search');
     cy.filterTableBySearch(this.template.name);
