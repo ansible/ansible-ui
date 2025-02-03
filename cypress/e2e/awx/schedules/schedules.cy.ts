@@ -918,6 +918,7 @@ describe('Schedules - Edit', () => {
             cy.getBy('[data-cy="text-input"]').click().type(inv.name);
             cy.contains(inv.name).should('not.exist');
             cy.navigateTo('awx', 'templates');
+            cy.setTableView('table');
             cy.verifyPageTitle('Templates');
             cy.filterTableBySearch(jt.name);
             cy.get('tbody').find('tr').should('have.length', 1);

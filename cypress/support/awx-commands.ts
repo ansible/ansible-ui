@@ -1046,6 +1046,7 @@ Cypress.Commands.add(
           .as('newVisualizerView')
           .then(() => {
             cy.navigateTo('awx', 'templates');
+            cy.setTableView('table');
             cy.filterTableBySearch(results.name);
             cy.clickTableRowLink('name', results.name, { disableFilter: true });
             cy.get('a[href*="/visualizer"]').click();
@@ -1670,6 +1671,7 @@ Cypress.Commands.add(
   'createTemplateSurvey',
   (template: JobTemplate | WorkflowJobTemplate, label: string, spec: Spec) => {
     cy.navigateTo('awx', 'templates');
+    cy.setTableView('table');
     cy.verifyPageTitle('Templates');
     cy.intercept('GET', awxAPI`/unified_job_templates/?*`).as('search');
     cy.filterTableBySearch(template.name);

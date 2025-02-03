@@ -49,6 +49,7 @@ describe('Job Templates Tests', function () {
 
       cy.intercept('POST', awxAPI`/job_templates`).as('createJT');
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.getBy('[data-cy="create-template"]').click();
       cy.clickLink(/^Create job template$/);
       cy.getBy('[data-cy="name"]').type(jtName);
@@ -90,6 +91,7 @@ describe('Job Templates Tests', function () {
 
         cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
         cy.navigateTo('awx', 'templates');
+        cy.setTableView('table');
         cy.getBy('[data-cy="create-template"]').click();
         cy.clickLink(/^Create job template$/);
         cy.getBy('[data-cy="name"]').type(jtName);
@@ -109,6 +111,7 @@ describe('Job Templates Tests', function () {
             jobTemplate = jt;
             cy.verifyPageTitle(jtName);
             cy.navigateTo('awx', 'templates');
+            cy.setTableView('table');
             cy.filterTableBySearch(jtName);
             cy.getTableRow('name', jtName, { disableFilter: true }).should('be.visible');
             cy.clickTableRowAction('name', jtName, 'launch-template', { disableFilter: true });
@@ -151,6 +154,7 @@ describe('Job Templates Tests', function () {
         machineCredential = cred;
         cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
         cy.navigateTo('awx', 'templates');
+        cy.setTableView('table');
         cy.getBy('[data-cy="create-template"]').click();
         cy.clickLink(/^Create job template$/);
         cy.getBy('[data-cy="name"]').type(jtName);
@@ -224,6 +228,7 @@ describe('Job Templates Tests', function () {
       const newDescription = 'this is a new description after editing';
 
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.selectTableRow(jobTemplate.name);
       cy.getBy('[data-cy="edit-template"]').click();
       cy.verifyPageTitle(`Edit ${jobTemplate.name}`);
@@ -246,6 +251,7 @@ describe('Job Templates Tests', function () {
       const newDescription = 'this is a new description after editing';
 
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
@@ -277,6 +283,7 @@ describe('Job Templates Tests', function () {
           }).then((jt) => {
             jobTemplateToEdit = jt;
             cy.navigateTo('awx', 'templates');
+            cy.setTableView('table');
             cy.filterTableBySearch(jobTemplateToEdit.name);
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
               disableFilter: true,
@@ -295,6 +302,7 @@ describe('Job Templates Tests', function () {
             cy.wait('@deleteInventory');
             cy.verifyPageTitle('Inventories');
             cy.navigateTo('awx', 'templates');
+            cy.setTableView('table');
             cy.filterTableBySearch(jobTemplateToEdit.name);
             cy.clickTableRowLink('name', jobTemplateToEdit.name, {
               disableFilter: true,
@@ -326,6 +334,7 @@ describe('Job Templates Tests', function () {
     it('can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options', function () {
       const jtURL = document.location.origin + awxAPI`/job_templates/${jobTemplate.id.toString()}`;
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.get('[data-cy="enabled-options"]').should('not.exist');
@@ -388,6 +397,7 @@ describe('Job Templates Tests', function () {
       }).then((ghCred) => {
         githubCredential = ghCred;
         cy.navigateTo('awx', 'templates');
+        cy.setTableView('table');
         cy.verifyPageTitle('Templates');
         cy.filterTableBySearch(jobTemplate.name);
         cy.clickTableRowAction('name', jobTemplate.name, 'edit-template', {
@@ -465,6 +475,7 @@ describe('Job Templates Tests', function () {
 
     it('can copy an existing job template from the list', function () {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.intercept(
         awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
       ).as('getSearchResults');
@@ -492,6 +503,7 @@ describe('Job Templates Tests', function () {
 
     it('can copy an existing job template from the details page', function () {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -508,6 +520,7 @@ describe('Job Templates Tests', function () {
         .then((jt: JobTemplate) => {
           copiedJobTemplate = jt;
           cy.navigateTo('awx', 'templates');
+          cy.setTableView('table');
           cy.filterTableBySearch(copiedJobTemplate.name);
           cy.clickTableRowLink('name', copiedJobTemplate.name, {
             disableFilter: true,
@@ -536,6 +549,7 @@ describe('Job Templates Tests', function () {
 
     it('can delete a job template from the list line item', function () {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.intercept(
         awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
       ).as('getSearchResults');
@@ -561,6 +575,7 @@ describe('Job Templates Tests', function () {
 
     it('can delete a job template from the details page', function () {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, { disableFilter: true });
       cy.verifyPageTitle(jobTemplate.name);
@@ -584,6 +599,7 @@ describe('Job Templates Tests', function () {
       }).then((jt) => {
         jobTemplate2 = jt;
         cy.navigateTo('awx', 'templates');
+        cy.setTableView('table');
         cy.selectTableRow(jobTemplate.name);
         cy.selectTableRow(jobTemplate2.name);
         cy.clickToolbarKebabAction('delete-templates');
@@ -662,6 +678,7 @@ describe('Job Templates Tests', function () {
 
     it('can navigate to the Job Templates -> Notifications list and then to the details page of the Notification', () => {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -677,6 +694,7 @@ describe('Job Templates Tests', function () {
 
     it('can toggle the Job Templates -> Notification on and off for job start', () => {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -688,6 +706,7 @@ describe('Job Templates Tests', function () {
 
     it('can toggle the Job Templates -> Notification on and off for job success', () => {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -699,6 +718,7 @@ describe('Job Templates Tests', function () {
 
     it('can toggle the Job Templates -> Notification on and off for job failure', () => {
       cy.navigateTo('awx', 'templates');
+      cy.setTableView('table');
       cy.filterTableBySearch(jobTemplate.name);
       cy.clickTableRowLink('name', jobTemplate.name, {
         disableFilter: true,
@@ -736,6 +756,7 @@ describe('Job Templates Tests', function () {
           cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
           const jtName = 'E2E-POLJT ' + randomString(4);
           cy.navigateTo('awx', 'templates');
+          cy.setTableView('table');
           cy.getBy('[data-cy="create-template"]').click();
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);
@@ -799,6 +820,7 @@ describe('Job Templates Tests', function () {
           cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
           const jtName = 'E2E-POLJT ' + randomString(4);
           cy.navigateTo('awx', 'templates');
+          cy.setTableView('table');
           cy.getBy('[data-cy="create-template"]').click();
           cy.clickLink(/^Create job template$/);
           cy.getBy('[data-cy="name"]').type(jtName);

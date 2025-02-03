@@ -271,6 +271,7 @@ describe('Projects', () => {
     it('can associate a project with a newly created job template and view that JT on the templates tab of the project', () => {
       cy.createAwxProject(awxOrganization).then((thisProject) => {
         cy.navigateTo('awx', 'templates');
+        cy.setTableView('table');
         cy.intercept(
           awxAPI`/unified_job_templates/?type=job_template%2Cworkflow_job_template&search=*`
         ).as('getSearchResults');
