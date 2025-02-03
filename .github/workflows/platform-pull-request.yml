@@ -90,6 +90,7 @@ jobs:
     uses: ./.github/workflows/playwright.yml
     with:
       PARALLEL_TESTS: 2
+      NOT_TAGS: "@not_mock"
 
   awx-component:
     name: AWX Component
