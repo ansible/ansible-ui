@@ -34,16 +34,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-  # pr-queue:
-  #   name: PR Queue
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: ahmadnassri/action-workflow-queue@v1
-  #       with:
-  #         delay: 60000
-  #         timeout: 28800000
-
   checks:
     name: Checks
     runs-on: ubuntu-latest
@@ -71,8 +61,7 @@ jobs:
 
   platform-ui-image:
     name: Platform UI Image
-    needs:
-      - packages
+    needs: packages
     uses: ./.github/workflows/image.yml
     with:
       build-directory: platform
@@ -85,79 +74,28 @@ jobs:
       
   playwright:
     name: Playwright
-    needs:
-      - platform-ui-image
+    needs: platform-ui-image
     uses: ./.github/workflows/playwright.yml
     with:
       PARALLEL_TESTS: 2
       NOT_TAGS: "@not_mock"
 
-  awx-component:
-    name: AWX Component
+  component:
+    name: Component
     needs: packages
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: 
+          - frontend/awx
+          - frontend/eda
+          - frontend/hub
+          - frontend/common
+          - framework
+          - platform
     uses: ./.github/workflows/component.yml
     with:
-      directory: frontend/awx
-
-  eda-component:
-    name: EDA Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: frontend/eda
-
-  hub-component:
-    name: HUB Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: frontend/hub
-
-  common-component:
-    name: Common Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: frontend/common
-
-  framework-component:
-    name: Framework Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: framework
-
-  platform-component:
-    name: Platform Component
-    needs: packages
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: platform
-
-  # cleanup:
-  #   name: Cleanup
-  #   needs:
-  #     - pr-queue
-  #   uses: ./.github/workflows/cleanup.yml
-  #   with:
-  #     PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
-  #   secrets:
-  #     PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
-
-  # platform-e2e:
-  #   name: Platform E2E
-  #   needs:
-  #     - packages
-  #     - cleanup
-  #     - image
-  #   uses: ./.github/workflows/e2e.yml
-  #   with:
-  #     PLATFORM_SERVER: ${{ vars.PLATFORM_SERVER }}
-  #     PARALLEL_TESTS: 16
-  #   secrets:
-  #     PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
-  #     PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
-  #     PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+      directory: ${{ matrix.directory }}
 
   success:
     name: Success
@@ -165,34 +103,14 @@ jobs:
     needs:
         - checks
         - playwright
-        - awx-component
-        - eda-component
-        - hub-component
-        - common-component
-        - framework-component
-        - platform-component
-        # - platform-e2e
+        - component
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.checks.result == 'success' &&
-                needs.playwright.result == 'success' &&
-                needs.awx-component.result == 'success' &&
-                needs.eda-component.result == 'success' &&
-                needs.hub-component.result == 'success' &&
-                needs.common-component.result == 'success' &&
-                needs.framework-component.result == 'success' &&
-                needs.platform-component.result == 'success' }}
+        if: ${{ needs.checks.result == 'success' && needs.playwright.result == 'success' && needs.component.result == 'success' }}
         run: echo "All jobs succeeded"
       - name: Failure or Cancelled
-        if: ${{ needs.checks.result != 'success' ||
-                needs.playwright.result != 'success' ||
-                needs.awx-component.result != 'success' ||
-                needs.eda-component.result != 'success' ||
-                needs.hub-component.result != 'success' ||
-                needs.common-component.result != 'success' ||
-                needs.framework-component.result != 'success' ||
-                needs.platform-component.result != 'success' }}
+        if: ${{ needs.checks.result != 'success' || needs.playwright.result != 'success' || needs.component.result != 'success' }}
         run: |
-          echo playwright: ${{ needs.playwright.result }}
+          echo "One or more jobs failed or were canceled."
           exit 1
