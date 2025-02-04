@@ -569,7 +569,7 @@ Cypress.Commands.add(
     const requestPayload: Partial<EdaDecisionEnvironment> = {
       name: 'E2E Decision Environment ' + randomString(4),
       organization_id: organizationId,
-      image_url: imageUrl ? imageUrl : 'brew.registry.redhat.io',
+      image_url: imageUrl ? imageUrl : 'quay.io/ansible/ansible-rulebook:main',
     };
     if (edaCredential) {
       requestPayload.eda_credential_id = edaCredential?.id ? edaCredential?.id : 1;

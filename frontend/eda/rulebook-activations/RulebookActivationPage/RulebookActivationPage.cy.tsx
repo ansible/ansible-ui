@@ -1,5 +1,4 @@
 /* eslint-disable i18next/no-literal-string */
-
 import { RulebookActivationPage } from './RulebookActivationPage';
 
 describe('RulebookActivationPage', () => {
@@ -15,6 +14,9 @@ describe('RulebookActivationPage', () => {
     cy.intercept('POST', '/api/eda/v1/activations/1/enable/', (req) => {
       return req.reply({ statusCode: 204 });
     }).as('enableActivation');
+    cy.intercept('POST', '/api/eda/v1/activations/1/copy/', (req) => {
+      return req.reply({ statusCode: 204 });
+    }).as('copyActivation');
   });
 
   it('Component renders and displays the rulebook activation', () => {
@@ -63,6 +65,34 @@ describe('RulebookActivationPage', () => {
       cy.get('button').contains('Disable rulebook activations').click();
       cy.get('td').should('contain', 'Success');
     });
+  });
+
+  it('Can duplicate the rulebook activation', () => {
+    cy.intercept(
+      { method: 'OPTIONS', url: '/api/eda/v1/activations/1/' },
+      {
+        fixture: 'edaActivationOptions.json',
+      }
+    );
+    cy.intercept('PATCH', '/api/eda/v1/activations/1/copy/', (req) => {
+      return req.reply({ statusCode: 204 });
+    }).as('copyActivation');
+
+    cy.mount(<RulebookActivationPage />);
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.get('#duplicate-rulebook-activation').should('exist').click();
+    cy.wait('@copyActivation');
+    cy.get('.pf-v5-c-alert__title').should('contain', 'Activation 1 duplicated');
+  });
+
+  it('The Duplicate button is disabled if the user does not have PATCH permission', () => {
+    cy.mount(<RulebookActivationPage />);
+    cy.get('[data-cy="actions-dropdown"]').click();
+    cy.contains('#duplicate-rulebook-activation', /^Duplicate rulebook activation$/).should(
+      'have.attr',
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('Should render all the tabs', () => {
