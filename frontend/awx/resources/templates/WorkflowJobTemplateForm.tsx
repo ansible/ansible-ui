@@ -9,6 +9,7 @@ import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPag
 import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -34,6 +35,7 @@ export function EditWorkflowJobTemplate() {
   const pageNavigate = usePageNavigate();
   const getPageUrl = useGetPageUrl();
   const params = useParams<{ id?: string }>();
+  const { clearCacheByKey } = useClearCache();
 
   const id = Number(params.id);
   const {
@@ -60,6 +62,7 @@ export function EditWorkflowJobTemplate() {
     (cache as unknown as { clear: () => void }).clear?.();
 
     await submitLabels(workflowJobTemplate as WorkflowJobTemplate, labels);
+    clearCacheByKey(awxAPI`/labels/`);
     pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id: id.toString() } });
   };
 
@@ -137,6 +140,7 @@ export function CreateWorkflowJobTemplate() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<WorkflowJobTemplateCreate, WorkflowJobTemplate>();
+  const { clearCacheByKey } = useClearCache();
 
   const onSubmit: PageFormSubmitHandler<WorkflowJobTemplateForm> = async (values) => {
     const { labels, webhook_credential, ...rest } = values;
@@ -151,6 +155,7 @@ export function CreateWorkflowJobTemplate() {
     });
 
     await submitLabels(template, labels);
+    clearCacheByKey(awxAPI`/labels/`);
 
     pageNavigate(AwxRoute.WorkflowVisualizer, {
       params: { id: template.id.toString() },

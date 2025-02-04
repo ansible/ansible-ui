@@ -28,7 +28,7 @@ export function useClearCache() {
       for (const cacheKey of cache.keys()) {
         if (
           typeof cacheKey === 'string' &&
-          removeQueryString(cacheKey) === removeQueryString(key)
+          removeQueryString(cacheKey).startsWith(removeQueryString(key))
         ) {
           cache.delete(cacheKey);
         }
