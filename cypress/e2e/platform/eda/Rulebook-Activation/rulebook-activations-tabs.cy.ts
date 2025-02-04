@@ -4,7 +4,6 @@ import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
 import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
 import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
-import { IAwxResources } from '../../../../support/awx-commands';
 
 describe('Check if the build includes EDA', () => {
   before(function () {
@@ -18,7 +17,6 @@ describe('Check if the build includes EDA', () => {
   });
 
   describe('EDA rulebook activations- Create, Edit, Delete', () => {
-    let awxResources: IAwxResources;
     let edaProject: EdaProject;
     let edaDecisionEnvironment: EdaDecisionEnvironment;
     let edaRBA: EdaRulebookActivation;
@@ -52,7 +50,6 @@ describe('Check if the build includes EDA', () => {
     });
 
     after(() => {
-      cy.deleteAwxResources(awxResources, { failOnStatusCode: false });
       cy.deleteEdaRulebookActivation(edaRBA);
       cy.deleteEdaDecisionEnvironment(edaDecisionEnvironment, { failOnStatusCode: false });
       cy.deleteEdaProject(edaProject, { failOnStatusCode: false });

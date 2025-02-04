@@ -70,7 +70,7 @@ jobs:
         run: npm ci
 
       - name: Install build dependencies
-        run: npm i @rollup/rollup-linux-x64-gnu
+        run: npm i @rollup/rollup-linux-x64-gnu @swc/core
 
       - name: NPM Build
         if: ${{ inputs.build-script }}
