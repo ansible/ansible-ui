@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { TemplateSurvey } from './TemplateSurvey';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplateSurvey', () => {
   describe('Non-empty survey', () => {

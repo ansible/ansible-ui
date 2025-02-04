@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { CredentialAddTeams } from './CredentialAddTeams';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxCredentialAddTeams', () => {
   const component = <CredentialAddTeams />;

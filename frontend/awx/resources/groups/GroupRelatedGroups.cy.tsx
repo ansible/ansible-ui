@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventoryGroup } from '../../interfaces/InventoryGroup';
 import { GroupRelatedGroups } from './GroupRelatedGroups';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 const inventories = ['inventory', 'constructed_inventory'];
 

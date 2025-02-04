@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import mockAwxTeam from '../../../../../cypress/fixtures/team.json';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import mockAwxTeam from '@ansible/cypress/fixtures/team.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxTeamDetails } from './AwxTeamDetails';
 
 describe('TeamDetails', () => {

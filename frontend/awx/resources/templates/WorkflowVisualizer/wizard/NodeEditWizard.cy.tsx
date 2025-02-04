@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { BaseNode, VisualizationProvider } from '@patternfly/react-topology';
 import { NodeEditWizard } from './NodeEditWizard';
-import { VisualizationProvider, BaseNode } from '@patternfly/react-topology';
-import { awxAPI } from '../../../../../../cypress/support/formatApiPathForAwx';
 
 describe('NodeEditWizard', () => {
   describe('Prompted node', () => {

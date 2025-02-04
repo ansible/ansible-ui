@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { ExecutionEnvironmentAddTeams } from './ExecutionEnvironmentAddTeams';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxExecutionEnvironmentAddTeams', () => {
   const component = <ExecutionEnvironmentAddTeams />;

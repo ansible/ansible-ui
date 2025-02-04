@@ -1,6 +1,6 @@
-import { Survey, Spec } from '../../../interfaces/Survey';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { Spec, Survey } from '../../../interfaces/Survey';
 import { AddTemplateSurveyForm, TemplateSurveyForm } from './TemplateSurveyForm';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 const verifyRequestBody = (
   request: ({ spec, body }: { spec: Spec; body: Survey }) => void,

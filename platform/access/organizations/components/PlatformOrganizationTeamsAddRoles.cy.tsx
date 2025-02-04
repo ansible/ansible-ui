@@ -1,6 +1,6 @@
-import mockPlatformOrganizations from '../../../../cypress/fixtures/platformOrganizations.json';
-import { edaAPI } from '../../../../cypress/support/formatApiPathForEDA';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import mockPlatformOrganizations from '@ansible/cypress/fixtures/platformOrganizations.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { edaAPI } from '@ansible/cypress/support/formatApiPathForEDA';
 import * as GatewayServices from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformOrganizationTeamsAddRoles } from './PlatformOrganizationTeamsAddRoles';

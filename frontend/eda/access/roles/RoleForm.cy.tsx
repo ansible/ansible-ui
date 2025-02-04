@@ -1,6 +1,6 @@
-import { CreateRole, EditRole } from './RoleForm';
-import mockEdaCustomRole from '../../../../cypress/fixtures/edaCustomRoleDefinition.json';
+import mockEdaCustomRole from '@ansible/cypress/fixtures/edaCustomRoleDefinition.json';
 import { EdaRbacRole } from '../../interfaces/EdaRbacRole';
+import { CreateRole, EditRole } from './RoleForm';
 
 describe('RoleForm', () => {
   describe('Create Role', () => {

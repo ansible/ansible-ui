@@ -1,7 +1,7 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { getJobsAPIUrl, relaunchEndpoint } from './jobUtils';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('jobUtils', () => {
   it('Returns correct endpoint based on job type', () => {

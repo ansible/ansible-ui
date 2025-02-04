@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { JobHeader } from './JobHeader';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Job Page', () => {
   beforeEach(() => {

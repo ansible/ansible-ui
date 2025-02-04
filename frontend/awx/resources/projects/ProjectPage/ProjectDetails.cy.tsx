@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { ProjectDetails } from './ProjectDetails';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('ProjectDetails', () => {
   it('Component renders and displays project', () => {

@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Templates } from './Templates';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Templates', () => {
   describe('Error list', () => {

@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { UserTokenPage } from './UserTokenPage';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('UserTokenPage', () => {
   beforeEach(() => {

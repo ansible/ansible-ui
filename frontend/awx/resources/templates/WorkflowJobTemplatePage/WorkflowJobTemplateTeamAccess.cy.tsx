@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { WorkflowJobTemplateTeamAccess } from './WorkflowJobTemplateTeamAccess';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('WorkflowJobTemplateTeamAccess', () => {
   beforeEach(() => {

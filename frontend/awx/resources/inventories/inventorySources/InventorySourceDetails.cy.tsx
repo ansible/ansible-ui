@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventorySourceDetails } from './InventorySourceDetails';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventorySourceDetails', () => {
   before(() => {

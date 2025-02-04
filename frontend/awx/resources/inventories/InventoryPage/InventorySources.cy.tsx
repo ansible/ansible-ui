@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { InventorySources } from './InventorySources';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventorySources.cy.ts', () => {
   beforeEach(() => {

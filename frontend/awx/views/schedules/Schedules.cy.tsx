@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import * as useOptions from '@ansible/common-ui/crud/useOptions';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { Schedule } from '../../interfaces/Schedule';
 import { Schedules } from './Schedules';

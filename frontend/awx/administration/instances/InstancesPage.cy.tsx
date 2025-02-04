@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InstancePage } from './InstancesPage';
 
 describe('Instances Page', () => {

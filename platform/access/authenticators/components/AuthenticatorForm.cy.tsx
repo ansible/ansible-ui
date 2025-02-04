@@ -1,5 +1,5 @@
-import plugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.json';
-import authenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
+import plugins from '@ansible/cypress/fixtures/platformAuthenticatorPlugins.json';
+import authenticators from '@ansible/cypress/fixtures/platformAuthenticators.json';
 import { Authenticator } from '../../../interfaces/Authenticator';
 import { AuthenticatorMap } from '../../../interfaces/AuthenticatorMap';
 import { AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';

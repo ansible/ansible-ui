@@ -1,15 +1,12 @@
 import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
-import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaUser } from '../../../../frontend/eda/interfaces/EdaUser';
-import {
-  LogLevelEnum,
-  RoleDefinition,
-} from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
+import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
+import { EdaUser } from '@ansible/eda-ui/interfaces/EdaUser';
+import { LogLevelEnum, RoleDefinition } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Check if the build includes EDA', () => {

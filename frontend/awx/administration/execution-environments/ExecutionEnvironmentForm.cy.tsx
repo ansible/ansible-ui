@@ -1,8 +1,8 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { Organization } from '../../interfaces/Organization';
 import { CreateExecutionEnvironment, EditExecutionEnvironment } from './ExecutionEnvironmentForm';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Execution Environment Form', () => {
   describe('Create Execution Environment', () => {

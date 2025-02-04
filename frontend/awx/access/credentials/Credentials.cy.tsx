@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Credential } from '../../interfaces/Credential';
 import { Credentials } from './Credentials';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Credentials.cy.ts', () => {
   beforeEach(() => {

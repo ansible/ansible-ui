@@ -1,4 +1,4 @@
-import { hubAPI } from '../../../../cypress/support/formatApiPathForHub';
+import { hubAPI } from '@ansible/cypress/support/formatApiPathForHub';
 import { PlatformHubTeamUsers } from './PlatformHubTeamUsers';
 
 describe('Platform team users hub list', () => {

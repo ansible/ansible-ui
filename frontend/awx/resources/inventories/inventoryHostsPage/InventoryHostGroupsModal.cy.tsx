@@ -1,9 +1,9 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import {
   InventoryHostGroupsAddModal,
   InventoryHostGroupsAddModalProps,
 } from './InventoryHostGroupsModal';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('Inventory Host Groups List', () => {
   const props: InventoryHostGroupsAddModalProps = {

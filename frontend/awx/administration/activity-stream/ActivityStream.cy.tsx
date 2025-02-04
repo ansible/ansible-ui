@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { ActivityStreams } from './ActivityStream';
 
 beforeEach(() => {

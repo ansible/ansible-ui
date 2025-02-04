@@ -1,5 +1,5 @@
 import * as useOptions from '@ansible/common-ui/crud/useOptions';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
 import { ExecutionEnvironments } from './ExecutionEnvironments';

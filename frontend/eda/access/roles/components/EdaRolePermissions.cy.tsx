@@ -1,6 +1,6 @@
-import { EdaRolePermissions } from './EdaRolePermissions';
+import mockEdaCustomRole from '@ansible/cypress/fixtures/edaCustomRoleDefinition.json';
 import { ContentTypeEnum, PermissionsEnum } from '../../../interfaces/generated/eda-api';
-import mockEdaCustomRole from '../../../../../cypress/fixtures/edaCustomRoleDefinition.json';
+import { EdaRolePermissions } from './EdaRolePermissions';
 
 describe('EdaRolePermissions', () => {
   it('renders correctly', () => {

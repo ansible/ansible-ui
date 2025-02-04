@@ -1,7 +1,7 @@
 import * as useAwxConfig from '@ansible/awx-ui/common/useAwxConfig';
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import controllerOrganization from '../../../../cypress/fixtures/organization.json';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import controllerOrganization from '@ansible/cypress/fixtures/organization.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { GatewayServicesContext } from '../../../main/GatewayServices';
 import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';

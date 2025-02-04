@@ -1,7 +1,7 @@
 import { AwxActiveUserProvider } from '@ansible/awx-ui/common/useAwxActiveUser';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { hubAPI } from '@ansible/cypress/support/formatApiPathForHub';
 import { HubActiveUserProvider } from '@ansible/hub-ui/common/useHubActiveUser';
-import { awxAPI } from '../../cypress/support/formatApiPathForAwx';
-import { hubAPI } from '../../cypress/support/formatApiPathForHub';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewayServicesProvider } from './GatewayServices';
 import { GatewayUIAuthProvider } from './GatewayUIAuth';

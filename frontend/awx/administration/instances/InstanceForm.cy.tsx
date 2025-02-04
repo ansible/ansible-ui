@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Instance } from '../../interfaces/Instance';
 import { AddInstance, EditInstance } from './InstanceForm';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Add instance Form', () => {
   it('should validate required fields on save', () => {

@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxHost } from '../../interfaces/AwxHost';
 import { GroupHosts } from './GroupHosts';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('GroupHosts', () => {
   beforeEach(() => {

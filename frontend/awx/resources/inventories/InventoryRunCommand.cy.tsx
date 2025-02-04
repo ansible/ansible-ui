@@ -1,7 +1,7 @@
-import { InventoryRunCommand } from './InventoryRunCommand';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { ExecutionEnvironment } from '../../interfaces/ExecutionEnvironment';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { InventoryRunCommand } from './InventoryRunCommand';
 
 describe('Run command wizard', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxRoles } from './AwxRoles';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxRoles', () => {
   beforeEach(() => {

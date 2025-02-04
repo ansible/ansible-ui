@@ -1,12 +1,9 @@
 //Tests a user's ability to create, edit, and delete a Credential in the EDA UI.
 //Do we want to add create tests for all credential types now or wait until next release cycle?
 import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
-import {
-  EdaCredential,
-  EdaCredentialCreate,
-} from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
+import { EdaCredential, EdaCredentialCreate } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Check if the build includes EDA', () => {
