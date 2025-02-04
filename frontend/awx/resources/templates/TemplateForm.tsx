@@ -9,6 +9,7 @@ import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPag
 import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -47,6 +48,7 @@ export function EditJobTemplate() {
   } = useGet<AwxItemsResponse<InstanceGroup>>(
     awxAPI`/job_templates/${id.toString()}/instance_groups/`
   );
+  const { clearCacheByKey } = useClearCache();
 
   const defaultValues = useMemo(
     () => getJobTemplateDefaultValues(t, jobTemplate, instanceGroups?.results ?? []),
@@ -84,6 +86,7 @@ export function EditJobTemplate() {
     promises.push(submitLabels(jobTemplate as JobTemplate, labels));
     promises.push(submitInstanceGroups(id, instance_groups));
     await Promise.all(promises);
+    clearCacheByKey(awxAPI`/labels/`);
     pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } });
   };
 
@@ -133,6 +136,7 @@ export function CreateJobTemplate() {
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<JobTemplateCreate, JobTemplate>();
   const defaultValues = useMemo(() => getJobTemplateDefaultValues(t, {} as JobTemplate), [t]);
+  const { clearCacheByKey } = useClearCache();
 
   const onSubmit: PageFormSubmitHandler<JobTemplateForm> = async (values) => {
     const { credentials, labels, instance_groups, webhook_key, webhook_url, ...rest } = values;
@@ -161,6 +165,7 @@ export function CreateJobTemplate() {
     }
     if (promises.length > 0) await Promise.all(promises);
 
+    clearCacheByKey(awxAPI`/labels/`);
     pageNavigate(AwxRoute.JobTemplateDetails, { params: { id: template.id } });
   };
 

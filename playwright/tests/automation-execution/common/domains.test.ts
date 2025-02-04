@@ -47,6 +47,7 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Verify Domains Work for Job Templates
   await navigateTo(page, 'Automation Execution', 'Templates');
+  await page.getByLabel('table view', { exact: true }).click();
 
   // Enable Domain A for Job Templates
   await page.getByRole('button', { name: domainA }).click();
