@@ -220,13 +220,13 @@ describe('Job Templates Surveys', function () {
         cy.createTemplateSurvey(jobTemplate, 'Multiple Choice (single select)', question);
         reusableTemplateSurveyTestSuite.canEnableSurvey(question);
         const groupType = reusableTemplateSurveyTestSuite.canLaunchSurvey(question);
-        cy.getByDataCy(groupType).within(() => {
-          cy.contains(question.default);
-          cy.get('div[data-ouia-component-id="menu-select"]').click();
-          question?.choices?.forEach((choice) => {
-            cy.getByDataCy('survey-multiplechoice-answer').contains(choice);
+        cy.get(`button[data-cy="${groupType}"]`)
+          .click()
+          .then(() => {
+            question?.choices?.forEach((choice) => {
+              cy.get(`li[data-cy="${choice}"]`);
+            });
           });
-        });
         reusableTemplateSurveyTestSuite.canFinishSurvey(question);
       });
 

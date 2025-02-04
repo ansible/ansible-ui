@@ -731,7 +731,7 @@ describe('Schedules - Edit', () => {
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Next$/);
     cy.clickButton(/^Create exception$/);
-    cy.getByDataCy('freq-form-group').click();
+    cy.getByDataCy('freq-form-group').last().click();
     cy.getByDataCy('freq').within(() => {
       cy.clickButton('Hourly');
     });
@@ -827,7 +827,7 @@ describe('Schedules - Edit', () => {
       cy.getByDataCy('row-id-1').within(() => {
         cy.getByDataCy('delete-rule').click();
       });
-      cy.getByDataCy('freq-form-group').click();
+      cy.getByDataCy('freq-form-group').last().click();
       cy.getByDataCy('freq').within(() => {
         cy.clickButton('Monthly');
       });

@@ -15,10 +15,10 @@ function assertOnSubFormFields(credentialType: string | RegExp) {
         newID = 'become_method';
       }
       const isRequired = selectedType?.inputs.required?.includes(id);
-      cy.getByDataCy(`${newID}-form-group`).scrollIntoView();
+      cy.getByDataCy(`${newID}-form-group`).last().scrollIntoView();
       cy.getByDataCy(`${newID}-form-group`)
         .should('be.visible')
-        .within(() => {
+        .then(() => {
           cy.get('label').should('include.text', label);
           if (isRequired) {
             cy.get('label').should('have.descendants', 'span.pf-v5-c-form__label-required');

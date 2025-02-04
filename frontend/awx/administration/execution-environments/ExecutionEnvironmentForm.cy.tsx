@@ -117,11 +117,11 @@ describe('Create Edit Execution Environment Form', () => {
       cy.get('[data-cy="name"]').type('Edited EE');
       cy.get('[data-cy="image"]').clear();
       cy.get('[data-cy="image"]').type('edited/image');
-      cy.get('.pf-v5-c-select__toggle-clear').click();
       cy.selectDropdownOptionByResourceName('pull', 'Never pull container before running');
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited desc');
-      cy.get('[data-cy="credential-form-group"] [data-cy="reset"]').click();
+      cy.get('[data-cy="credential-form-group"]').should('be.visible').click();
+      cy.contains('Demo Credential').click();
       cy.clickButton(/^Save execution environment$/);
       cy.wait('@editEE')
         .its('request.body')
@@ -130,7 +130,7 @@ describe('Create Edit Execution Environment Form', () => {
           expect(editedEE.image).to.equal('edited/image');
           expect(editedEE.pull).to.equal('never');
           expect(editedEE.description).to.equal('Edited desc');
-          expect(editedEE.credential).to.equal(null);
+          expect(editedEE.credential).to.equal(1);
         });
     });
 

@@ -51,18 +51,18 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Enable Domain A for Job Templates
   await page.getByRole('button', { name: domainA }).click();
-  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
-  await expect(page.locator('tbody')).not.toContainText(jobTempalteBName);
+  await expect(page.getByRole('main')).toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).not.toContainText(jobTempalteBName);
 
   // Enable Domain B for Job Templates
   await page.getByRole('button', { name: domainB }).click();
-  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
-  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
+  await expect(page.getByRole('main')).toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).toContainText(jobTempalteBName);
 
   // Disable Domain A for Job Templates
   await page.getByRole('button', { name: domainA }).click();
-  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
-  await expect(page.locator('tbody')).not.toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).toContainText(jobTempalteBName);
+  await expect(page.getByRole('main')).not.toContainText(jobTemplateAName);
 
   // Clear Active Domains
   await page.getByRole('button', { name: 'Clear Active Domains' }).click();
@@ -76,18 +76,18 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Enable Domain A for Jobs
   await page.getByRole('button', { name: domainA }).click();
-  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
-  await expect(page.locator('tbody')).not.toContainText(jobTempalteBName);
+  await expect(page.getByRole('main')).toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).not.toContainText(jobTempalteBName);
 
   // Enable Domain B for Jobs
   await page.getByRole('button', { name: domainB }).click();
-  await expect(page.locator('tbody')).toContainText(jobTemplateAName);
-  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
+  await expect(page.getByRole('main')).toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).toContainText(jobTempalteBName);
 
   // Disable Domain A for Jobs
   await page.getByRole('button', { name: domainA }).click();
-  await expect(page.locator('tbody')).toContainText(jobTempalteBName);
-  await expect(page.locator('tbody')).not.toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).toContainText(jobTempalteBName);
+  await expect(page.getByRole('main')).not.toContainText(jobTemplateAName);
 
   // Clear Active Domains
   await page.getByRole('button', { name: 'Clear Active Domains' }).click();

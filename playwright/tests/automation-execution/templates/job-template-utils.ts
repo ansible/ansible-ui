@@ -30,7 +30,9 @@ export async function createJobTemplate(
     }
   }
 
-  await expect(page.getByLabel('hello_world.yml')).toBeVisible({ timeout: 2 * 60 * 1000 });
+  await expect(page.getByRole('button', { name: 'hello_world.yml' })).toBeVisible({
+    timeout: 2 * 60 * 1000,
+  });
 
   await page.getByRole('button', { name: 'Create job template' }).click();
 

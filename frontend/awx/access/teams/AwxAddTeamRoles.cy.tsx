@@ -39,7 +39,7 @@ describe('AWX team: Add roles', () => {
     cy.contains('Resource type is required.').should('be.visible');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should(
       'not.have.class',
@@ -51,7 +51,7 @@ describe('AWX team: Add roles', () => {
   it('should validate that a resource is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
     cy.contains(
@@ -67,7 +67,7 @@ describe('AWX team: Add roles', () => {
   it('should validate that a role is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
@@ -85,7 +85,7 @@ describe('AWX team: Add roles', () => {
   it('should display selected resources and roles in the Review step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });

@@ -138,8 +138,8 @@ describe('Create job template ', () => {
     });
     cy.mount(<CreateJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.get('button[aria-describedby="job_type-form-group"]').click();
-    cy.clickButton(/^Check$/);
+    cy.get('[data-cy="job_type-form-group"] button').last().click();
+    cy.contains('Check').click();
     cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
     cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');

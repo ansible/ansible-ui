@@ -18,10 +18,11 @@ export function runCommand(params: {
         organization: organization.id,
         credential_type: 1,
       }).then((credential) => {
-        cy.get('[data-cy="module-name-form-group"] [aria-label="Options menu"]').click();
+        cy.contains('Select a module').click();
         cy.getByDataCy(params.module).click();
         cy.getByDataCy('module-args').type('echo "Hello World"');
-        cy.get(`[data-cy="verbosity-form-group"] [aria-label="Options menu"]`).click();
+        cy.contains('0 (Normal)').click();
+
         cy.getByDataCy(params.verbosity).click();
         cy.getByDataCy('limit').should('have.value', params.selections);
         cy.getByDataCy('forks').type(params.forks.toString());

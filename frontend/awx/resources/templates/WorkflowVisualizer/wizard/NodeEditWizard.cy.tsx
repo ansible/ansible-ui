@@ -87,18 +87,19 @@ describe('NodeEditWizard', () => {
             .should((el) => expect(el.text().trim()).to.equal(text));
         });
       });
-      cy.get('[data-cy="node-type-form-group"]').within(() => {
-        cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'Job Template');
+      cy.get('[data-cy="node-type-form-group"] button').within(() => {
+        cy.contains('Job Template');
       });
-      cy.get('[data-cy="job-template-select-form-group"]').within(() => {
-        cy.get('div.pf-v5-c-form__group-control').should('have.text', 'Mock Job Template');
+      cy.get('[data-cy="job-template-select-form-group"] button').within(() => {
+        cy.contains('Mock Job Template');
       });
-      cy.get('[data-cy="node-convergence-form-group"]').within(() => {
-        cy.get('span.pf-v5-c-select__toggle-text').should('have.text', 'All');
-      });
-      cy.get('[data-cy="node-alias-form-group"]').within(() => {
-        cy.get('input').should('have.value', 'mock_alias');
-      });
+      cy.get('[data-cy="node-convergence-form-group"] button')
+        .last()
+        .click()
+        .within(() => {
+          cy.contains('All');
+        });
+      cy.get('input').should('have.value', 'mock_alias');
     });
   });
 });

@@ -82,13 +82,11 @@ describe('Check if the build includes EDA', () => {
         const roleName = `${roleType.role}` + `${randomString(5)}`;
         cy.getByDataCy('name').type(`${roleName}`);
         cy.getByDataCy('description').type(`${roleType.role} description`);
-        cy.get(`[data-cy="content-type-form-group"]`)
-          .click()
-          .within(() => {
-            cy.contains('li', `${roleType.role}`).click();
-          });
+        cy.selectDropdownOptionByResourceName('content-type', roleType.role);
         const permissions = roleType.rolePermission;
         cy.get(`[data-cy="permissions-form-group"]`)
+          .find('button')
+          .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {
@@ -190,6 +188,7 @@ describe('Check if the build includes EDA', () => {
           });
         cy.verifyPageTitle(`Edit ${editableRole.name}`);
         cy.get(`[data-cy="permissions-form-group"]`)
+          .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {
@@ -240,6 +239,7 @@ describe('Check if the build includes EDA', () => {
         cy.getByDataCy('edit-role').click();
         cy.verifyPageTitle(`Edit ${editableRole.name}`);
         cy.get(`[data-cy="permissions-form-group"]`)
+          .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {

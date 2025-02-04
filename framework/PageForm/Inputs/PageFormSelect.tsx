@@ -1,5 +1,12 @@
-import { ButtonVariant } from '@patternfly/react-core';
-import { Select, SelectOption } from '@patternfly/react-core/deprecated';
+import {
+  Select,
+  SelectOption,
+  MenuToggle,
+  MenuToggleElement,
+  ButtonVariant,
+  SelectList,
+  MenuFooter,
+} from '@patternfly/react-core';
 import getValue from 'get-value';
 import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
@@ -70,9 +77,9 @@ export type PageFormSelectProps<
    */
   placeholderText?: string;
 
-  options: PageSelectOption<TSelection>[];
-
   footer?: ReactNode;
+
+  options: PageSelectOption<TSelection>[];
 
   helperText?: string;
 
@@ -100,7 +107,6 @@ export type PageFormSelectProps<
    * Note: The required attribute works with the following input types: text, search, url, tel, email, password, date pickers, number, checkbox, radio, and file.
    */
   isRequired?: boolean;
-  fieldNameToResetOnFieldChange?: TFieldName;
   onChange?: (option?: TSelection) => void;
 
   validate?:
@@ -119,20 +125,19 @@ export function PageFormSelect<
   TSelection = unknown,
 >(props: PageFormSelectProps<TFieldValues, TFieldName, TSelection>) {
   const {
-    name,
-    label,
-    labelHelpTitle,
-    labelHelp,
     additionalControls,
-    placeholderText,
-    options,
     footer,
     helperText,
     isDisabled,
     isReadOnly,
     isRequired,
+    label,
+    labelHelp,
+    labelHelpTitle,
+    name,
+    options,
+    placeholderText,
     validate,
-    fieldNameToResetOnFieldChange,
   } = props;
 
   const id = useID(props);
@@ -144,11 +149,10 @@ export function PageFormSelect<
     setValue,
     getValues,
     formState: { isSubmitting, isValidating, defaultValues },
-    resetField,
   } = useFormContext<TFieldValues>();
 
-  const [open, setOpen] = useState(false);
-  const onToggle = useCallback(() => setOpen(!open), [open]);
+  const [isOpen, setIsOpen] = useState(false);
+  const onToggle = useCallback(() => setIsOpen(!isOpen), [isOpen]);
 
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
@@ -167,6 +171,20 @@ export function PageFormSelect<
     }
   }, [getValues, isRequired, options, props.name, setValue]);
 
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>, selected?: string) => (
+    <MenuToggle
+      data-cy={`${id}-form-group`}
+      id={`${id}-form-group`}
+      isDisabled={isDisabled || isReadOnly || isSubmitting}
+      ref={toggleRef}
+      onClick={onToggle}
+      isExpanded={isOpen}
+      isFullWidth
+    >
+      {selected ?? placeholderText}
+    </MenuToggle>
+  );
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
@@ -175,18 +193,17 @@ export function PageFormSelect<
       shouldUnregister
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const onSelectHandler = (
-          _event: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
-          label: string | SelectOptionObject
+          _event?: React.MouseEvent<Element, MouseEvent> | ChangeEvent<Element>,
+          value?: string | number
         ) => {
-          const option = options.find((option) => option.label === label.toString())?.value;
-          onChange(option);
-          if (fieldNameToResetOnFieldChange) {
-            resetField(fieldNameToResetOnFieldChange);
+          const selectedOption = options.find((option) => option.value === value);
+          if (selectedOption) {
+            onChange(selectedOption.value);
+            if (props.onChange) {
+              props.onChange(selectedOption.value);
+            }
           }
-          if (props.onChange) {
-            props.onChange(option);
-          }
-          setOpen(false);
+          setIsOpen(false);
         };
 
         const helperTextInvalid = error?.message
@@ -210,46 +227,37 @@ export function PageFormSelect<
           >
             <div style={{ display: 'flex' }}>
               <Select
-                id={id}
-                itemID={id}
-                placeholderText={placeholderText}
-                variant="single"
-                aria-describedby={`${id}-form-group`}
-                selections={selected?.label}
-                onSelect={onSelectHandler}
-                isOpen={open}
-                onToggle={onToggle}
-                onClear={
-                  isRequired
-                    ? undefined
-                    : () => {
-                        onChange(null);
-                        setOpen(false);
-                      }
-                }
-                maxHeight={280}
-                validated={helperTextInvalid ? 'error' : undefined}
-                isDisabled={isDisabled || isReadOnly || isSubmitting}
-                hasPlaceholderStyle
-                footer={footer}
-                ouiaId="menu-select"
+                aria-describedby={`${id}-form-group-select`}
                 data-cy={id}
+                id={id}
+                isOpen={isOpen}
+                itemID={id}
+                onOpenChange={(isOpen) => setIsOpen(isOpen)}
+                onSelect={onSelectHandler}
+                ouiaId="menu-select"
+                shouldFocusToggleOnSelect
+                toggle={(ref) => toggle(ref, selected?.label)}
               >
-                {options.map((option) => {
-                  const optionId = getID(option);
-                  return (
-                    <SelectOption
-                      id={optionId}
-                      key={option.label}
-                      value={option.label}
-                      label={option.label}
-                      description={option.description}
-                      data-cy={optionId}
-                    >
-                      {option.label}
-                    </SelectOption>
-                  );
-                })}
+                <>
+                  <SelectList>
+                    {options.map((option) => {
+                      const optionId = getID(option);
+                      return (
+                        <SelectOption
+                          id={optionId}
+                          key={option.label}
+                          value={option.value}
+                          label={option.label}
+                          description={option.description}
+                          data-cy={optionId}
+                        >
+                          {option.label}
+                        </SelectOption>
+                      );
+                    })}
+                  </SelectList>
+                  {footer && <MenuFooter>{footer}</MenuFooter>}
+                </>
               </Select>
               <PageActions
                 actions={[

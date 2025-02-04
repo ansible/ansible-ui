@@ -57,8 +57,8 @@ describe('Automation Execution: Roles', () => {
 
   describe('Automation Execution: Create and Delete Roles', () => {
     const roleTypes = [
-      { role: 'Job template', rolePermission: ['view-job-template', 'execute-job-template'] },
-      { role: 'Project', rolePermission: ['view-project', 'update-project'] },
+      { role: 'job-template', rolePermission: ['view-job-template', 'execute-job-template'] },
+      { role: 'project', rolePermission: ['view-project', 'update-project'] },
     ];
 
     roleTypes.forEach((roleType) => {
@@ -74,12 +74,18 @@ describe('Automation Execution: Roles', () => {
         cy.getByDataCy('name').type(`${roleName}`);
         cy.getByDataCy('description').type(`${roleType.role} description`);
         cy.get(`[data-cy="content-type-form-group"]`)
+          .find('button')
+          .first()
           .click()
-          .within(() => {
-            cy.contains('li', `${roleType.role}`).click();
+          .then(() => {
+            cy.get('#content-type').within(() => {
+              cy.get(`li[data-cy="${roleType.role}"]`).click();
+            });
           });
         const permissions = roleType.rolePermission;
         cy.get(`[data-cy="permissions-form-group"]`)
+          .find('button')
+          .first()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {
@@ -181,6 +187,7 @@ describe('Automation Execution: Roles', () => {
           });
         cy.verifyPageTitle(`Edit ${editableRole.name}`);
         cy.get(`[data-cy="permissions-form-group"]`)
+          .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {
@@ -225,6 +232,7 @@ describe('Automation Execution: Roles', () => {
         cy.getByDataCy('edit-role').click();
         cy.verifyPageTitle(`Edit ${roleName}`);
         cy.get(`[data-cy="permissions-form-group"]`)
+          .last()
           .click()
           .then(() => {
             cy.get('#permissions-select').within(() => {

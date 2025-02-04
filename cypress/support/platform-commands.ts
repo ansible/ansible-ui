@@ -501,18 +501,11 @@ Cypress.Commands.add('selectItemFromLookupModalPlatform', () => {
 });
 
 Cypress.Commands.add('selectAuthenticationType', (authenticationType: string) => {
-  cy.get('[data-cy="authentication-type-select-form-group"] [data-ouia-component-id="menu-select"]')
-    .click()
+  cy.get('div[data-cy="authentication-type-select-form-group"]')
+    .first()
     .within(() => {
-      cy.get(`[data-cy="${authenticationType}"]`).click();
-    });
-});
-
-Cypress.Commands.add('selectResourceFromDropDown', (resourceName: string) => {
-  cy.get('[data-ouia-component-id="menu-select"]')
-    .click()
-    .within(() => {
-      cy.get(`[data-cy="${resourceName}"]`).click();
+      cy.get('button[data-cy="authentication-type-select-form-group"]').last().click();
+      cy.get(`li[data-cy="${authenticationType.toLowerCase()}"]`).click();
     });
 });
 
@@ -531,10 +524,17 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'selectResourceFromSpecificDropDown',
   (dropdownDataCy: string, resourceName: string) => {
-    cy.get(`[data-cy="${dropdownDataCy}"] [data-ouia-component-id="menu-select"]`)
-      .click()
+    cy.get(`div[data-cy="${dropdownDataCy}"]`)
+      .first()
       .within(() => {
-        cy.get(`[data-cy="${resourceName}"]`).click();
+        cy.get(`button[data-cy="${dropdownDataCy}"]`)
+          .first()
+          .click()
+          .then(() => {
+            // cy.get('[data-ouia-component-id="menu-select"]').within(() => {
+            cy.get(`li[data-cy="${resourceName}"]`).click();
+            // });
+          });
       });
   }
 );

@@ -354,7 +354,7 @@ Cypress.Commands.add('selectItemFromLookupModal', (resource: string, itemName: s
 });
 
 Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, itemName: string) => {
-  const menuSelector = `[data-cy*="${resource}-form-group"] div[data-ouia-component-id="menu-select"]`;
+  const menuSelector = `[data-cy*="${resource}-form-group"]`;
   cy.get('[data-cy="loading-spinner"]').should('not.exist');
   cy.get(`${menuSelector}`)
     .find('svg[data-cy="lookup-button"]', { timeout: 1000 })
@@ -370,10 +370,16 @@ Cypress.Commands.add('selectDropdownOptionByResourceName', (resource: string, it
           cy.clickButton('Confirm');
         });
       } else {
-        cy.get(`${menuSelector} button`)
+        cy.get(`${menuSelector}`)
+          .find('button')
+          .last()
           .click()
           .then(() => {
-            cy.contains('li', itemName).click();
+            cy.get(`${menuSelector}`)
+              .first()
+              .within(() => {
+                cy.contains('li', itemName).click();
+              });
           });
       }
     });

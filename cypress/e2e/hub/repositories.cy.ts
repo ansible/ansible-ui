@@ -80,8 +80,8 @@ describe('GalaxyKit Installation Check for Repositories', () => {
       cy.clickTableRowAction('name', repositoryName, 'edit-repository', { inKebab: false });
       cy.verifyPageTitle(`Edit ${repositoryName}`);
       cy.getByDataCy('description').clear().type(editDescription);
-      cy.getByDataCy('retain-repo-versions-form-group').clear().type(RetainedNumber);
-      cy.getByDataCy('pipeline-form-group').click().getByDataCy('approved').click();
+      cy.getByDataCy('retain-repo-versions-form-group').last().clear().type(RetainedNumber);
+      cy.getByDataCy('pipeline-form-group').last().click().getByDataCy('approved').click();
       cy.get('[id="remote"]').click();
       cy.get('li').contains(`${remote.name}`).click();
       cy.getByDataCy('Submit').click();
