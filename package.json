@@ -9,7 +9,8 @@
     "frontend/common",
     "frontend/eda",
     "frontend/hub",
-    "platform"
+    "platform",
+    "cypress"
   ],
   "scripts": {
     "start": "echo Usage: npm run [awx:hub:eda]",

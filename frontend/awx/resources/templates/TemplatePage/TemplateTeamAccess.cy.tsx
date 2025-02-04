@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { TemplateTeamAccess } from './TemplateTeamAccess';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplateTeamAccess', () => {
   beforeEach(() => {

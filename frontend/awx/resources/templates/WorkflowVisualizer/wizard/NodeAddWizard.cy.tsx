@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { VisualizationProvider } from '@patternfly/react-topology';
-import { awxAPI } from '../../../../../../cypress/support/formatApiPathForAwx';
 import { NodeAddWizard } from './NodeAddWizard';
 
 describe('NodeAddWizard', () => {

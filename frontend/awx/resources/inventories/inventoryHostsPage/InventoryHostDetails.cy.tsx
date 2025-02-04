@@ -1,5 +1,5 @@
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import mockAwxHost from '../../../../../cypress/fixtures/awxHost.json';
+import mockAwxHost from '@ansible/cypress/fixtures/awxHost.json';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { InventoryHostDetailsInner as InventoryHostDetails } from './InventoryHostDetails';
 

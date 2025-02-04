@@ -1,5 +1,5 @@
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { InstanceGroupDetails } from './InstanceGroupDetails';
 

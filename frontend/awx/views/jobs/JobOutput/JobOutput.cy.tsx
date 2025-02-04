@@ -1,7 +1,7 @@
-import job from '../../../../../cypress/fixtures/job.json';
+import job from '@ansible/cypress/fixtures/job.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import type { Job } from '../../../interfaces/Job';
 import { JobOutputInner as JobOutput } from './JobOutput';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('JobOutput.cy.tsx', () => {
   beforeEach(() => {

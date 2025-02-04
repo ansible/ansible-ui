@@ -1,5 +1,5 @@
 import * as useOptions from '@ansible/common-ui/crud/useOptions';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import * as useAwxConfig from '../../../common/useAwxConfig';
 import { Project } from '../../../interfaces/Project';
 import { CreateProject, EditProject } from './ProjectForm';

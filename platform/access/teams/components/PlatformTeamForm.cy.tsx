@@ -1,5 +1,5 @@
-import mockPlatformTeams from '../../../../cypress/fixtures/platformTeams.json';
-import mockPlatformUsers from '../../../../cypress/fixtures/platformUsers.json';
+import mockPlatformTeams from '@ansible/cypress/fixtures/platformTeams.json';
+import mockPlatformUsers from '@ansible/cypress/fixtures/platformUsers.json';
 import * as usePlatformActiveUser from '../../../main/PlatformActiveUserProvider';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { CreatePlatformTeam, EditPlatformTeam } from './PlatformTeamForm';

@@ -1,8 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPage } from './CredentialPage';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CredentialPage', () => {
   beforeEach(() => {

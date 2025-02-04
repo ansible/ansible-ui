@@ -1,11 +1,11 @@
 //Tests a user's ability to perform certain actions on the rulebook activations list in the EDA UI.
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
+import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
+import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 describe('Check if the build includes EDA', () => {
   before(function () {

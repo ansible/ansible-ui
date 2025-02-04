@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { NotificationTemplate } from '../../interfaces/NotificationTemplate';
 import { ResourceNotifications } from './ResourceNotifications';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('ResourceNotifications', () => {
   beforeEach(() => {

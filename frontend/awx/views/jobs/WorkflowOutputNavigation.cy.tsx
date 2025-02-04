@@ -1,6 +1,6 @@
-import { WorkflowOutputNavigation } from './WorkflowOutputNavigation';
-import jobWorkflowNodesData from '../../../../cypress/fixtures/workflow_nodes.json';
+import jobWorkflowNodesData from '@ansible/cypress/fixtures/workflow_nodes.json';
 import { WorkflowJobNode } from '../../interfaces/WorkflowNode';
+import { WorkflowOutputNavigation } from './WorkflowOutputNavigation';
 
 describe('WorkflowOutputNavigation', () => {
   beforeEach(() => {

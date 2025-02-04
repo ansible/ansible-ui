@@ -1,5 +1,5 @@
 import { AwxConfigProvider } from '@ansible/awx-ui/common/useAwxConfig';
-import { awxAPI } from '../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformApp } from './PlatformApp';
 

@@ -1,8 +1,8 @@
+import mockCredential from '@ansible/cypress/fixtures/credential.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
+import { Credential } from '../../../interfaces/Credential';
 import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialDetailsInner as CredentialDetails } from './CredentialDetails';
-import mockCredential from '../../../../../cypress/fixtures/credential.json';
-import { Credential } from '../../../interfaces/Credential';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CredentialDetails', () => {
   it('Component renders and displays Credential', () => {

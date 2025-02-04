@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { CreateTeam } from './TeamForm';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('TeamForm.cy.ts', () => {
   it('Create Team - Submit error message on internal server error', () => {

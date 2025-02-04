@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { CreateGroup, EditGroup } from './InventoryGroupForm';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('CreateGroup', () => {
   beforeEach(() => {

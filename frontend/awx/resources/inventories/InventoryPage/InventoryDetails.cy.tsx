@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Inventory } from '../../../interfaces/Inventory';
 import { InventoryDetailsInner as InventoryDetails } from './InventoryDetails';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InventoryDetails', () => {
   const kinds: Array<'' | 'smart' | 'constructed'> = ['', 'smart', 'constructed'];

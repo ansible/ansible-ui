@@ -1,5 +1,5 @@
-import { EdaControllerToken } from '../../../../frontend/eda/interfaces/EdaControllerToken';
-import { EdaResult } from '../../../../frontend/eda/interfaces/EdaResult';
+import { EdaControllerToken } from '@ansible/eda-ui/interfaces/EdaControllerToken';
+import { EdaResult } from '@ansible/eda-ui/interfaces/EdaResult';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
 
 describe('Check if the build includes EDA', () => {

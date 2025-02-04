@@ -1,4 +1,4 @@
-import { gatewayAPI } from '../../../../cypress/support/formatApiPathForPlatform';
+import { gatewayAPI } from '@ansible/cypress/support/formatApiPathForPlatform';
 import { PlatformUserTeams } from './PlatformUserTeams';
 
 describe('User teams list', () => {

@@ -1,15 +1,15 @@
 //Tests a user's ability to give permissions to a team from the roles tab.
-import { EdaCredential } from '../../../../frontend/eda/interfaces/EdaCredential';
-import { EdaDecisionEnvironment } from '../../../../frontend/eda/interfaces/EdaDecisionEnvironment';
-import { EdaProject } from '../../../../frontend/eda/interfaces/EdaProject';
-import { EdaRulebook } from '../../../../frontend/eda/interfaces/EdaRulebook';
-import { EdaRulebookActivation } from '../../../../frontend/eda/interfaces/EdaRulebookActivation';
-import { EdaTeam } from '../../../../frontend/eda/interfaces/EdaTeam';
-import { LogLevelEnum } from '../../../../frontend/eda/interfaces/generated/eda-api';
+import { EdaCredential } from '@ansible/eda-ui/interfaces/EdaCredential';
+import { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
+import { EdaEventStream } from '@ansible/eda-ui/interfaces/EdaEventStream';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
+import { EdaProject } from '@ansible/eda-ui/interfaces/EdaProject';
+import { EdaRulebook } from '@ansible/eda-ui/interfaces/EdaRulebook';
+import { EdaRulebookActivation } from '@ansible/eda-ui/interfaces/EdaRulebookActivation';
+import { EdaTeam } from '@ansible/eda-ui/interfaces/EdaTeam';
+import { LogLevelEnum } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { user_team_access_tab_resources } from '../../../support/constants';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
-import { EdaEventStream } from '../../../../frontend/eda/interfaces/EdaEventStream';
 
 describe('Check if the build includes EDA', () => {
   before(function () {

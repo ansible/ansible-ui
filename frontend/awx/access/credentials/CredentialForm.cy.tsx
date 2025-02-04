@@ -1,5 +1,5 @@
-import credentialTypes from '../../../../cypress/fixtures/credentialTypes.json';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import credentialTypes from '@ansible/cypress/fixtures/credentialTypes.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { CreateCredential } from './CredentialForm';
 
 function assertOnSubFormFields(credentialType: string | RegExp) {

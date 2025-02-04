@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /// <reference types="cypress" />
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 import { edaAPI } from '../../../support/formatApiPathForEDA';
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
 
 describe('Check if the build includes EDA', () => {
   before(function () {

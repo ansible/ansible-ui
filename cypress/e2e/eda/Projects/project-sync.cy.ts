@@ -1,4 +1,4 @@
-import { EdaOrganization } from '../../../../frontend/eda/interfaces/EdaOrganization';
+import { EdaOrganization } from '@ansible/eda-ui/interfaces/EdaOrganization';
 
 describe('Check if the build includes EDA', () => {
   before(function () {

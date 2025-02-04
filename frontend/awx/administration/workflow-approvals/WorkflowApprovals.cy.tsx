@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { WorkflowApprovals } from './WorkflowApprovals';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Workflow Approvals List', () => {
   describe('Empty list', () => {

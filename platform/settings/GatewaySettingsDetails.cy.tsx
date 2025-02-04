@@ -1,8 +1,8 @@
+import platformSettings from '@ansible/cypress/fixtures/PlatformSettings.json';
+import platformSettingsOptions from '@ansible/cypress/fixtures/PlatformSettingsOptions.json';
+import { RenderRouteWithOutletContext } from '@ansible/cypress/support/componentUtils';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsDetails } from './GatewaySettingsDetails';
-import platformSettings from '../../cypress/fixtures/PlatformSettings.json';
-import platformSettingsOptions from '../../cypress/fixtures/PlatformSettingsOptions.json';
-import { RenderRouteWithOutletContext } from '../../cypress/support/componentUtils';
 
 describe('Gateway Settings Details', () => {
   it('Should render correct information', () => {

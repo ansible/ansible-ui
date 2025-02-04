@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import type { IHostInput } from './InventoryHostForm';
 import { CreateHost, EditHost } from './InventoryHostForm';

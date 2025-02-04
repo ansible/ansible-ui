@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Team } from '../../../interfaces/Team';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 import { TeamAccess } from './TeamAccess';
 
 describe('TeamAccess', () => {

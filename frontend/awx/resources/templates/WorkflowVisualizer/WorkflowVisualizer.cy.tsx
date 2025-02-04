@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { WorkflowVisualizer } from './WorkflowVisualizer';

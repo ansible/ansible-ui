@@ -1,6 +1,6 @@
+import instanceGroupsResponse from '@ansible/cypress/fixtures/instance_groups.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { CyHttpMessages } from 'cypress/types/net-stubbing';
-import instanceGroupsResponse from '../../../../cypress/fixtures/instance_groups.json';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';

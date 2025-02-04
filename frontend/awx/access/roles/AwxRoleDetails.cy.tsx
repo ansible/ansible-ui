@@ -1,7 +1,7 @@
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import mockBuiltInRole from '../../../../cypress/fixtures/awxBuiltInRoleDefinition.json';
-import mockCustomRole from '../../../../cypress/fixtures/awxCustomRoleDefinition.json';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import mockBuiltInRole from '@ansible/cypress/fixtures/awxBuiltInRoleDefinition.json';
+import mockCustomRole from '@ansible/cypress/fixtures/awxCustomRoleDefinition.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxRoleDetails } from './AwxRoleDetails';
 
 describe('AwxRoleDetails', () => {

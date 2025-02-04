@@ -1,7 +1,7 @@
-import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
-import mockHubCustomRole from '../../../../../cypress/fixtures/hubCustomRoleDefinition.json';
-import { CreateRole, EditRole } from './HubRoleForm';
+import mockHubCustomRole from '@ansible/cypress/fixtures/hubCustomRoleDefinition.json';
 import { hubAPI } from '../../../common/api/formatPath';
+import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
+import { CreateRole, EditRole } from './HubRoleForm';
 
 const mockHubSystemRole = { ...mockHubCustomRole, content_type: null };
 

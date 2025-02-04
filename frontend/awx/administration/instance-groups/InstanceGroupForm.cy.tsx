@@ -1,6 +1,6 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { CreateInstanceGroup, EditInstanceGroup } from './InstanceGroupForm';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
 
 describe('Create Edit Instance Group Form', () => {
   describe('Create instance group', () => {

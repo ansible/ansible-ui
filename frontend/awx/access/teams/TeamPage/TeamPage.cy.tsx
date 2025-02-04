@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { TeamPage } from './TeamPage';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TeamPage', () => {
   beforeEach(() => {

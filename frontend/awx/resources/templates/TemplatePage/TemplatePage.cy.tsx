@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { TemplatePage } from './TemplatePage';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('TemplatePage', () => {
   beforeEach(() => {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable i18next/no-literal-string */
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { Organization } from '../../../interfaces/Organization';
 import { WorkflowJobTemplatePage } from './WorkflowJobTemplatePage';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('WorflowJobTemplatePage', () => {
   beforeEach(() => {

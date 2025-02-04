@@ -1,6 +1,6 @@
-import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { Instance } from '../../interfaces/Instance';
-import { awxAPI } from '../../../../cypress/support/formatApiPathForAwx';
+import { MeshVisualizer } from '../../interfaces/MeshVisualizer';
 import { Topology } from './Topology';
 
 describe.skip('Mesh Visualizer', () => {

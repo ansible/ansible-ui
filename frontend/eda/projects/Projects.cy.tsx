@@ -1,5 +1,5 @@
+import { edaAPI } from '@ansible/cypress/support/formatApiPathForEDA';
 import { Projects } from './Projects';
-import { edaAPI } from '../../../cypress/support/formatApiPathForEDA';
 
 describe('Projects.cy.ts', () => {
   beforeEach(() => {

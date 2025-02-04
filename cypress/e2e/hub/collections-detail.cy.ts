@@ -1,5 +1,5 @@
+import { QueryParamsType } from '@ansible/eda-ui/interfaces/generated/eda-api';
 import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
-import { QueryParamsType } from '../../../frontend/eda/interfaces/generated/eda-api';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';

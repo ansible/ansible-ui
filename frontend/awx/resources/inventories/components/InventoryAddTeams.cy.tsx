@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InventoryAddTeams } from './InventoryAddTeams';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('AwxInventoryAddTeams', () => {
   const component = <InventoryAddTeams />;

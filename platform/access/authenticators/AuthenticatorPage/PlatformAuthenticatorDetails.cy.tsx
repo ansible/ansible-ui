@@ -1,6 +1,6 @@
-import mockPlatformAuthenticatorMaps from '../../../../cypress/fixtures/platformAuthenticatorMaps.json';
-import mockPlatformAuthenticatorPlugins from '../../../../cypress/fixtures/platformAuthenticatorPlugins.json';
-import mockPlatformAuthenticators from '../../../../cypress/fixtures/platformAuthenticators.json';
+import mockPlatformAuthenticatorMaps from '@ansible/cypress/fixtures/platformAuthenticatorMaps.json';
+import mockPlatformAuthenticatorPlugins from '@ansible/cypress/fixtures/platformAuthenticatorPlugins.json';
+import mockPlatformAuthenticators from '@ansible/cypress/fixtures/platformAuthenticators.json';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformAuthenticatorDetails } from './PlatformAuthenticatorDetails';
 

@@ -1,4 +1,4 @@
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxTeamRoles } from './AwxTeamRoles';
 
 describe('AWX team roles', () => {

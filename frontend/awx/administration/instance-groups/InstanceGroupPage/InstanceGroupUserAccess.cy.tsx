@@ -1,5 +1,5 @@
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { InstanceGroupUserAccess } from './InstanceGroupUserAccess';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
 
 describe('InstanceGroupUserAccess', () => {
   beforeEach(() => {

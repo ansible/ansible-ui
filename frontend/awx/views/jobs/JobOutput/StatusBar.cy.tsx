@@ -1,9 +1,9 @@
-import { WorkflowNodesStatusBar, HostStatusBar } from './StatusBar';
-import job from '../../../../../cypress/fixtures/job.json';
-import jobWorkflowNodes from '../../../../../cypress/fixtures/job_workflow_nodes.json';
-import workflowNodes from '../../../../../cypress/fixtures/workflow_nodes.json';
+import job from '@ansible/cypress/fixtures/job.json';
+import jobWorkflowNodes from '@ansible/cypress/fixtures/job_workflow_nodes.json';
+import workflowNodes from '@ansible/cypress/fixtures/workflow_nodes.json';
 import type { Job } from '../../../interfaces/Job';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
+import { HostStatusBar, WorkflowNodesStatusBar } from './StatusBar';
 
 describe('HostStatusBar and WorkflowNodesStatusBar (StatusBar)', () => {
   before(() => {

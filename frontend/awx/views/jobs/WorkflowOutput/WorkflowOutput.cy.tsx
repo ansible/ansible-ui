@@ -1,7 +1,7 @@
-import { WorkflowOutput } from './WorkflowOutput';
-import job from '../../../../../cypress/fixtures/workflow_job.json';
-import workflowNodes from '../../../../../cypress/fixtures/workflow_nodes.json';
+import job from '@ansible/cypress/fixtures/workflow_job.json';
+import workflowNodes from '@ansible/cypress/fixtures/workflow_nodes.json';
 import { Job } from '../../../interfaces/Job';
+import { WorkflowOutput } from './WorkflowOutput';
 describe('Workflow Output', () => {
   before(() => {
     cy.intercept(

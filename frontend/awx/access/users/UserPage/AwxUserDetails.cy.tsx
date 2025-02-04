@@ -1,6 +1,6 @@
 import { formatDateString } from '@ansible/ansible-ui-framework/utils/formatDateString';
-import mockAwxUser from '../../../../../cypress/fixtures/awxUser.json';
-import { awxAPI } from '../../../../../cypress/support/formatApiPathForAwx';
+import mockAwxUser from '@ansible/cypress/fixtures/awxUser.json';
+import { awxAPI } from '@ansible/cypress/support/formatApiPathForAwx';
 import { AwxUserDetails } from './AwxUserDetails';
 
 describe('User details', () => {
