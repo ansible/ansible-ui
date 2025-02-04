@@ -65,11 +65,7 @@ describe('RoleForm', () => {
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited Description');
       cy.get('[data-cy="content-type-form-group"]').contains('Project');
-      cy.get('[data-cy="content-type-form-group"]')
-        .should('be.visible')
-        .within(() => {
-          cy.get('button').should('be.visible').should('be.disabled');
-        });
+      cy.get('[data-cy="content-type-form-group"]').find('button').should('be.disabled');
       cy.multiSelectShouldHaveSelectedOption('#permissions', 'View project');
       cy.get('#permissions').click();
       cy.selectMultiSelectOption('#permissions-select', 'Change');

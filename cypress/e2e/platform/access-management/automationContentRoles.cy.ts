@@ -7,12 +7,12 @@ describe('Automation Content: Roles', () => {
     const roleTypes = [
       {
         role: 'galaxy.namespace',
-        type: 'Namespace',
+        type: 'namespace',
         rolePermission: ['add-collection-import'],
       },
       {
         role: 'galaxy.system',
-        type: 'System',
+        type: 'system',
         rolePermission: ['add-collection-remote'],
       },
     ];
@@ -29,9 +29,13 @@ describe('Automation Content: Roles', () => {
         cy.getByDataCy('name').type(`${roleName}`);
         cy.getByDataCy('description').type(`${roleType.role} description`);
         cy.get(`[data-cy="content-type-form-group"]`)
+          .find('button')
+          .first()
           .click()
-          .within(() => {
-            cy.contains('li', roleType.type).click();
+          .then(() => {
+            cy.get('#content-type').within(() => {
+              cy.get(`li[data-cy="${roleType.type}"]`).click();
+            });
           });
         const permissions = roleType.rolePermission;
         cy.get(`[data-cy="permissions-form-group"]`)

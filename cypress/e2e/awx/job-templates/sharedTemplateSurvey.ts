@@ -177,11 +177,13 @@ export class ReusableTemplateSurveyTestSuite {
     cy.wait('@launchTemplate');
     cy.contains('Prompt on Launch');
     const groupType = `survey-${survey.type}-answer-form-group`;
-    cy.getByDataCy(groupType).within(() => {
-      cy.contains(survey.question_name);
-      cy.contains('*');
-      cy.get('.pf-v5-c-icon').click();
-    });
+    cy.get(`[data-cy="${groupType}"]`)
+      .first()
+      .within(() => {
+        cy.contains(survey.question_name);
+        cy.contains('*');
+        cy.get('.pf-v5-c-icon').click();
+      });
     cy.contains(survey.question_description);
     return groupType;
   }

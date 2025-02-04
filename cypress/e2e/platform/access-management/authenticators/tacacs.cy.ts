@@ -16,13 +16,20 @@ describe('TACACS Authentication form - create, edit, update and delete', () => {
 
       // Authentication Wizard - Authentication Type Step
       cy.verifyPageTitle('Create authentication');
-      cy.selectAuthenticationType('tacacs+');
+      cy.selectAuthenticationType('TACACS+');
       cy.clickButton('Next');
 
       // Authentication Wizard - Authentication Details Step
       cy.get('[data-cy="name"]').type(tacacsAuthenticator);
       cy.get('[data-cy="configuration-input-HOST"]').type(tacacsData.hostname);
-      cy.selectResourceFromDropDown(tacacsData.protocol);
+      // cy.selectResourceFromDropDown(tacacsData.protocol);
+      cy.get(`div[data-cy="configuration-input-AUTH_PROTOCOL-form-group"]`)
+        .find('button')
+        .last()
+        .click()
+        .then(() => {
+          cy.get(`li[data-cy="${tacacsData.protocol.toLowerCase()}"]`).click();
+        });
       cy.get('[data-cy="configuration-input-SECRET"]').type(tacacsData.sharedSecret);
       cy.clickButton('Next');
       cy.clickButton('Next');

@@ -108,10 +108,9 @@ describe('Edit instance Form', () => {
     cy.get('[data-cy="node-state"]').should('be.visible').should('be.disabled');
     cy.get('[data-cy="listener-port"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="node-type-form-group"]')
+      .find('button')
       .should('be.visible')
-      .within(() => {
-        cy.get('button').should('be.visible').should('be.disabled');
-      });
+      .should('be.disabled');
     cy.get('[data-cy="enabled"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="managed_by_policy"]').should('be.visible').should('not.be.disabled');
     cy.get('[data-cy="peers_from_control_nodes"]').should('be.visible').should('not.be.disabled');

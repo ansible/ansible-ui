@@ -35,7 +35,7 @@ describe('Hub user: Add roles', () => {
     cy.contains('Resource type is required.').should('be.visible');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="namespace"]').click();
+    cy.contains('Namespace').click();
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should(
       'not.have.class',
@@ -47,7 +47,7 @@ describe('Hub user: Add roles', () => {
   it('the select resources step is hidden for System roles', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="system"]').click();
+    cy.contains('System').click();
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should(
       'not.have.class',
@@ -59,7 +59,7 @@ describe('Hub user: Add roles', () => {
   it('should validate that a resource is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="namespace"]').click();
+    cy.contains('Namespace').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select namespaces$/);
     cy.contains(
@@ -74,7 +74,7 @@ describe('Hub user: Add roles', () => {
   it('should validate that a role is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="namespace"]').click();
+    cy.contains('Namespace').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select namespaces$/);
     cy.selectTableRowByCheckbox('name', 'demo', { disableFilter: true });
@@ -93,7 +93,7 @@ describe('Hub user: Add roles', () => {
   it('should display selected resources and roles in the Review step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="namespace"]').click();
+    cy.contains('Namespace').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select namespaces$/);
     cy.selectTableRowByCheckbox('name', 'demo', { disableFilter: true });

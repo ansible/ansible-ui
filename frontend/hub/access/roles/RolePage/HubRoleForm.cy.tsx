@@ -73,12 +73,7 @@ describe('HubRoleForm', () => {
       cy.get('[data-cy="description"]').should('have.value', mockHubCustomRole.description);
       cy.get('[data-cy="description"]').clear();
       cy.get('[data-cy="description"]').type('Edited Description');
-      cy.get('[data-cy="content-type-form-group"]').contains('Repository');
-      cy.get('[data-cy="content-type-form-group"]')
-        .should('be.visible')
-        .within(() => {
-          cy.get('button').should('be.visible').should('be.disabled');
-        });
+      cy.get('[data-cy="content-type-form-group"]').contains('Repository').should('be.disabled');
       cy.multiSelectShouldHaveSelectedOption('#permissions', 'View Ansible repository');
       cy.get('#permissions').click();
       cy.selectMultiSelectOption('#permissions-select', 'Change Ansible repository');

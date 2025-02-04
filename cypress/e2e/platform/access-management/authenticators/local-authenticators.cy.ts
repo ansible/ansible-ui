@@ -39,7 +39,7 @@ describe('Authenticators - Local CRUD UI', () => {
     const localAuthenticator = randomE2Ename();
     cy.get('[data-cy="create-authentication"]').click();
     cy.url().should('contain', '/access/authenticators/create');
-    cy.selectAuthenticationType('local');
+    cy.selectAuthenticationType('Local');
     cy.clickButton('Next');
     cy.getByDataCy('name').type(localAuthenticator);
     cy.clickButton('Next');

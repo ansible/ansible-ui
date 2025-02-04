@@ -30,7 +30,7 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
 
       // Authentication Wizard - Authentication Type Step
       cy.verifyPageTitle('Create authentication');
-      cy.selectAuthenticationType('ldap');
+      cy.selectAuthenticationType('LDAP');
       cy.clickButton('Next');
 
       // Authentication Wizard - Authentication Details Step
@@ -38,7 +38,14 @@ describe('LDAP Authentication form - create, edit, update and delete', () => {
       cy.get('[data-cy="configuration-input-SERVER_URI"]').type(ldapData.SERVER_URI[0]);
       cy.get('[data-cy="configuration-input-BIND_DN"]').type(ldapData.BIND_DN);
       cy.get('[data-cy="configuration-input-BIND_PASSWORD"]').type(ldapData.BIND_PASSWORD);
-      cy.selectResourceFromDropDown(ldapData.GROUP_TYPE.toLowerCase());
+      // cy.selectResourceFromDropDown(ldapData.GROUP_TYPE.toLowerCase());
+      cy.get(`div[data-cy="configuration-input-GROUP_TYPE-form-group"]`)
+        .find('button')
+        .last()
+        .click()
+        .then(() => {
+          cy.get(`li[data-cy="nested${ldapData.GROUP_TYPE.toLowerCase()}"]`).click();
+        });
       cy.get('[data-cy="configuration-input-USER_DN_TEMPLATE"]').type(ldapData.USER_DN_TEMPLATE);
 
       function setEditorContent(editorId: string, jsonData: string) {

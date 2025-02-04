@@ -1795,7 +1795,6 @@ declare global {
        * This command returns the current Platform User
        */
       getCurrentPlatformUser(): Chainable<PlatformUser>;
-      selectResourceFromDropDown(resourceName: string): Cypress.Chainable<void>;
       selectResourceFromSpecificDropDown(
         dropdownDataCy: string,
         resourceName: string

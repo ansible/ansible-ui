@@ -260,24 +260,29 @@ describe('CredentialsExternalTestModal.tsx', () => {
         },
       },
     ];
+
     cy.mount(<CreateCredential />);
     cy.getByDataCy('name').type('foo');
+
     credentialTypes.forEach((type) => {
       cy.getByDataCy('credential_type').click();
       cy.getByDataCy(type.name).click();
-      type.inputs.fields.map((field) => {
-        field.input && cy.getByDataCy(field.id).type(field.input);
-        field.choice &&
-          cy.getByDataCy(`${field.id}-form-group`).within(() => {
-            cy.get('.pf-v5-c-select__toggle-arrow').click({ force: true });
-            cy.get('.pf-v5-c-select__menu').scrollIntoView();
-            cy.getByDataCy(field.choice).click();
-          });
+
+      type.inputs.fields.forEach((field) => {
+        if (field.input) {
+          cy.getByDataCy(field.id).clear().type(field.input);
+        } else if (field.choice) {
+          cy.get(`div[data-cy="${field.id}-form-group"] button`).click({ multiple: true });
+          cy.getByDataCy(field.choice).click();
+        }
       });
+
       cy.get('button').contains('Test').should('have.attr', 'aria-disabled', 'false').click();
-      type.inputs.modal_fields.map((field) => {
-        cy.getByDataCy(`${field}-form-group`).should('be.visible');
+
+      type.inputs.modal_fields.forEach((modalField) => {
+        cy.getByDataCy(`${modalField}-form-group`).should('be.visible');
       });
+
       cy.clickModalButton('Cancel');
     });
   });

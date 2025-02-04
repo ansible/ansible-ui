@@ -10,7 +10,7 @@ describe('Platform Basic Authentication', () => {
     cy.containsBy('a', 'Create authentication').click();
     // Create a new local authenticator
     cy.verifyPageTitle('Create authentication');
-    cy.selectAuthenticationType('local');
+    cy.selectAuthenticationType('Local');
     cy.clickButton('Next');
     cy.get('[data-cy="name"]').type(localAuthenticator);
     cy.clickButton('Next');

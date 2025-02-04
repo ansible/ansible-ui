@@ -30,7 +30,7 @@ export async function createAwxProject(
   await page.getByLabel('Name').fill(projectName);
   const organizationName = options.organizationName;
   await singleSelectByLabel('Organization', organizationName ?? 'Default', page);
-  await page.getByLabel('Select source control type').click();
+  await page.getByRole('button', { name: 'Select source control type' }).click();
   await page.getByRole('option', { name: 'Git' }).click();
   await page.getByLabel('Source Control URL').fill('https://github.com/ansible/ansible-ui');
   await page.getByRole('button', { name: 'Create project', exact: true }).click();

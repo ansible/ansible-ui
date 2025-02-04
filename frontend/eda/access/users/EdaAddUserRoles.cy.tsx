@@ -23,6 +23,7 @@ describe('EDA user: Add roles', () => {
     cy.intercept('GET', edaAPI`/projects/*`, { fixture: 'edaProjects.json' });
     cy.mount(component, params);
   });
+
   it('should render with correct steps', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(0).should('contain.text', 'Select a resource type');
     cy.get('[data-cy="wizard-nav"] li').eq(1).should('contain.text', 'Select resources');
@@ -30,13 +31,14 @@ describe('EDA user: Add roles', () => {
     cy.get('[data-cy="wizard-nav"] li').eq(3).should('contain.text', 'Review');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a resource type is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.clickButton(/^Next$/);
     cy.contains('Resource type is required.').should('be.visible');
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should('have.class', 'pf-m-current');
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.get('[data-cy="wizard-nav-item-resource-type"] button').should(
       'not.have.class',
@@ -44,10 +46,11 @@ describe('EDA user: Add roles', () => {
     );
     cy.get('[data-cy="wizard-nav-item-resources"] button').should('have.class', 'pf-m-current');
   });
+
   it('should validate that a resource is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
     cy.contains(
@@ -62,7 +65,7 @@ describe('EDA user: Add roles', () => {
   it('should validate that a role is selected for moving to next step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });
@@ -79,7 +82,7 @@ describe('EDA user: Add roles', () => {
   it('should display selected resources and roles in the Review step', () => {
     cy.contains(/^Select a resource type$/);
     cy.get('div[data-cy="resourcetype-form-group"] button').click();
-    cy.get('button[data-cy="project"]').click();
+    cy.contains('Project').click();
     cy.clickButton(/^Next$/);
     cy.contains(/^Select projects$/);
     cy.selectTableRowByCheckbox('name', 'Project 1', { disableFilter: true });

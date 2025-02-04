@@ -15,7 +15,7 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
       // Authentication Wizard - Authentication Type Step
       cy.verifyPageTitle('Create authentication');
-      cy.selectAuthenticationType('github');
+      cy.selectAuthenticationType('Github');
       cy.clickButton('Next');
 
       // Authentication Wizard - Authentication Details Step
