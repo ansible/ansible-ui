@@ -51,7 +51,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 20
           
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
