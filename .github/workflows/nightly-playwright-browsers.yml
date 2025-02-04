@@ -13,6 +13,7 @@ jobs:
       build-directory: platform
       build-script: build
       docker-file: platform/Dockerfile
+      docker-context: platform
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
