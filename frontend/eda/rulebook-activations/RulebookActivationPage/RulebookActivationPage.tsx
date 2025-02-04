@@ -14,7 +14,8 @@ import {
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { CopyIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -28,6 +29,8 @@ import {
   useRestartRulebookActivations,
 } from '../hooks/useControlRulebookActivations';
 import { useDeleteRulebookActivations } from '../hooks/useDeleteRulebookActivations';
+import { useCopyRulebookActivation } from '../hooks/useCopyRulebookactivation';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 
 export function RulebookActivationPage() {
   const { t } = useTranslation();
@@ -36,6 +39,11 @@ export function RulebookActivationPage() {
   const getPageUrl = useGetPageUrl();
   const alertToaster = usePageAlertToaster();
   const parseError = useEdaErrorMessageParser();
+
+  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/activations/${params.id ?? ''}/`
+  );
+  const canPatchActivation = Boolean(data?.actions?.['PATCH']);
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
     edaAPI`/activations/${params.id ?? ''}/`
@@ -52,6 +60,8 @@ export function RulebookActivationPage() {
       refresh();
     }
   });
+
+  const copyRulebookActivation = useCopyRulebookActivation();
 
   const deleteRulebookActivations = useDeleteRulebookActivations((deleted) => {
     if (deleted.length > 0) {
@@ -118,6 +128,18 @@ export function RulebookActivationPage() {
             onClick: (activation: EdaRulebookActivation) => restartRulebookActivation([activation]),
           },
           {
+            type: PageActionType.Button,
+            selection: PageActionSelection.Single,
+            icon: CopyIcon,
+            label: t(`Duplicate rulebook activation`),
+            onClick: (activation: EdaRulebookActivation) => copyRulebookActivation(activation),
+            isDisabled: () =>
+              canPatchActivation
+                ? ''
+                : t(`The rulebook activation cannot be duplicated due to insufficient permission.`),
+            isDanger: false,
+          },
+          {
             type: PageActionType.Seperator,
           },
           {
@@ -138,6 +160,8 @@ export function RulebookActivationPage() {
     enableRulebookActivation,
     disableRulebookActivation,
     restartRulebookActivation,
+    copyRulebookActivation,
+    canPatchActivation,
     deleteRulebookActivations,
   ]);
 

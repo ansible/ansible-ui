@@ -6,7 +6,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { AlertProps } from '@patternfly/react-core';
-import { RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
@@ -19,12 +19,14 @@ import {
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
 import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
+import { useCopyRulebookActivation } from './useCopyRulebookactivation';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
   const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
+  const copyRulebookActivation = useCopyRulebookActivation(view.refresh as () => void);
   const alertToaster = usePageAlertToaster();
   const parseError = useEdaErrorMessageParser();
   const enableActivation: (activation: EdaRulebookActivation) => Promise<void> = useCallback(
@@ -81,6 +83,17 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         onClick: (activation: EdaRulebookActivation) => restartActivations([activation]),
       },
       {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: CopyIcon,
+        label: t(`Duplicate rulebook activation`),
+        onClick: (activation: EdaRulebookActivation) => {
+          return copyRulebookActivation(activation);
+        },
+        isDanger: false,
+        isPinned: true,
+      },
+      {
         type: PageActionType.Seperator,
       },
       {
@@ -95,5 +108,12 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       },
     ];
     return actions;
-  }, [t, restartActivations, deleteRulebookActivations, disableActivations, enableActivation]);
+  }, [
+    t,
+    enableActivation,
+    disableActivations,
+    restartActivations,
+    copyRulebookActivation,
+    deleteRulebookActivations,
+  ]);
 }
