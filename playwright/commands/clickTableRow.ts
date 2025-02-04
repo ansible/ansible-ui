@@ -8,6 +8,7 @@ export async function clickTableRow(text: string, page: Page) {
 }
 
 export async function clickTableRowWithFilter(name: string, page: Page) {
+  await page.getByLabel('table view', { exact: true }).click();
   await clearTableFilters(page);
   await selectTableFilter('Name', page);
   await filterTableBySelect(name, page);
