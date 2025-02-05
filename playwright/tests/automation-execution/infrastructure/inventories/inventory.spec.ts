@@ -154,29 +154,86 @@ test(
   }
 );
 
-//Pratyush
-test.skip(
+test(
   'inventory - can delete an inventory from the inventory list toolbar',
   { tag: ['@not_mock'] },
-  async () => {
-    //to-do
+  async ({ page }) => {
+    const inventoryName = await createInventory({}, page);
+    await page.getByRole('tab', { name: 'Back to Inventories' }).click();
+    await page.getByPlaceholder('Enter search').click();
+    await page.getByPlaceholder('Enter search').fill(`${inventoryName}`);
+    await page.waitForResponse('**/inventories/?search=**', { timeout: 5000 });
+    await page.getByLabel('Select all').first().check();
+    await page.getByLabel('toolbar actions').click();
+    await page.getByRole('menuitem', { name: 'Delete inventories' }).click();
+    await page
+      .getByLabel('Yes, I confirm that I want to delete these 1 inventories.', { exact: true })
+      .check();
+    await page.getByRole('button', { name: 'Delete inventory' }).click();
+    await page.getByPlaceholder('Enter search').click();
+    await page.getByPlaceholder('Enter search').fill(`${inventoryName}`);
+    await expect(page.getByRole('main')).toContainText('No results found');
   }
 );
 
-//Pratyush
-test.skip(
+test(
   'inventory - can bulk delete inventories from the list view and verify deletion',
   { tag: ['@not_mock'] },
-  async () => {
-    //to-do
+  async ({ page }) => {
+    const inventoryNameA = await createInventory({}, page);
+    const inventoryNameB = await createInventory({}, page);
+    await page.getByRole('tab', { name: 'Back to Inventories' }).click();
+    await page.getByPlaceholder('Enter search').click();
+    await page.getByPlaceholder('Enter search').fill(`${inventoryNameA}`);
+    await page.waitForResponse('**/inventories/?search=**', { timeout: 5000 });
+    await page.getByLabel('Select all').first().check();
+    await clearTableFilters(page);
+    await page.getByPlaceholder('Enter search').click();
+    await page.getByPlaceholder('Enter search').fill(`${inventoryNameB}`);
+    await page.waitForResponse('**/inventories/?search=**', { timeout: 5000 });
+    await page.getByLabel('Select all').first().check();
+    await clearTableFilters(page);
+    await page.getByLabel('toolbar actions').click();
+    await page.getByRole('menuitem', { name: 'Delete inventories' }).click();
+    await page
+      .getByLabel('Yes, I confirm that I want to delete these 2 inventories.', { exact: true })
+      .check();
+    await page.getByRole('button', { name: 'Delete inventories' }).click();
+    await page.getByPlaceholder('Enter search').click();
+    await page.getByPlaceholder('Enter search').fill(`${inventoryNameA}`);
+    await expect(page.getByRole('main')).toContainText('No results found');
+    await clearTableFilters(page);
+    await page.getByPlaceholder('Enter search').fill(`${inventoryNameB}`);
+    await expect(page.getByRole('main')).toContainText('No results found');
   }
 );
 
-//Pratyush
-test.skip(
+test(
   'inventory - can create, edit a smart inventory, assert info on details page, and delete inventory',
   { tag: ['@not_mock'] },
-  async () => {
-    //to-do
+  async ({ page }) => {
+    const smartInvName = await createInventory({ type: 'smart' }, page);
+    await page.getByRole('button', { name: 'Edit inventory' }).click();
+    await page.getByPlaceholder('Enter inventory name').click();
+    await page.getByPlaceholder('Enter inventory name').fill(`${smartInvName} edited`);
+    await page.getByPlaceholder('Enter description').click();
+    await page.getByPlaceholder('Enter description').fill('edited');
+    await page.getByPlaceholder('Enter smart host filter').click();
+    await page.getByPlaceholder('Enter smart host filter').fill('name__icontains=RedHat_edited');
+    await page.getByRole('button', { name: 'Save inventory' }).click();
+    await expect(page.locator('#description')).toContainText('edited');
+    await expect(page.locator('#name')).toContainText(`${smartInvName} edited`);
+    await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
+      'name__icontains=RedHat_edited'
+    );
+    await page.getByLabel('kebab dropdown toggle').click();
+    await page.getByRole('menuitem', { name: 'Delete inventory' }).click();
+    await page
+      .getByLabel('Yes, I confirm that I want to delete these 1 inventories.', { exact: true })
+      .check();
+    await page.getByRole('button', { name: 'Delete inventory' }).click();
+    await page.getByPlaceholder('Enter search').click();
+    await page.getByPlaceholder('Enter search').fill(`${smartInvName} edited`);
+    await expect(page.getByRole('main')).toContainText('No results found');
   }
 );
