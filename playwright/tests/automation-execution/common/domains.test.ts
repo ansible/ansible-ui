@@ -68,8 +68,8 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
   await page.getByRole('button', { name: 'Clear Active Domains' }).click();
 
   // Run Job Templates so we can verify Domains for Jobs
-  await runJobTemplate(jobTemplateAName, page, { doNotWait: true });
-  await runJobTemplate(jobTempalteBName, page, { doNotWait: true });
+  await runJobTemplate(jobTemplateAName, { doNotWait: true }, page);
+  await runJobTemplate(jobTempalteBName, { doNotWait: true }, page);
 
   // Verify Domains Work for Jobs
   await navigateTo(page, 'Automation Execution', 'Jobs');
