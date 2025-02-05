@@ -13,6 +13,11 @@ export async function createInventory(options: { name?: string; type?: string },
       name: options.type === 'smart' ? 'Create smart inventory' : 'Create inventory',
     })
     .click();
+  if (options.type === 'smart') {
+    const smartHostFilterVal = 'name__icontains=RedHat';
+    await page.getByPlaceholder('Enter smart host filter').click();
+    await page.getByPlaceholder('Enter smart host filter').fill(`${smartHostFilterVal}`);
+  }
   await page.getByPlaceholder('Enter inventory name').fill(inventoryName);
   await page.getByLabel('Organization *').click();
   await page.getByLabel('Search input').fill('Default');
