@@ -17,6 +17,9 @@ export async function createInventory(options: { name?: string; type?: string },
   await page.getByLabel('Organization *').click();
   await page.getByLabel('Search input').fill('Default');
   await page.getByRole('option', { name: 'Default' }).click();
+  if (options.type !== 'smart') {
+    await page.getByLabel('Prevent instance group').check();
+  }
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(inventoryName);
