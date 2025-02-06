@@ -16,21 +16,31 @@ Solution
 
 ## Getting Started
 
-1. Install Playwright:
+1. **Install Playwright**
+
     ```bash
     npm ci
     ```
 
-2. Add the vscode plugin for Playwright
-   > https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright
+    Fedora users may also need to run this command:
 
-3. Install the browser binaries:
+    ```bash
+    npm init playwright@latest
+    ```
+
+2. **Add the vscode plugin for Playwright**
+
+   [Link to Plugin](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
+
+3. **Install the browser binaries**
+
     ```bash
     npx playwright install
     ```
 
-4. Setup environment variable by creating a `.env` file in the `/playwright` directory.
-   ```
+4. **Setup environment variable by creating a `.env` file in the `/playwright` directory**
+
+   ```bash
    PLATFORM_UI=https://localhost:4100
    PLATFORM_USERNAME=username
    PLATFORM_PASSWORD=password
@@ -42,13 +52,20 @@ Solution
    >
    > For nightly runs PLATFORM_UI will be pointed at a PLATFORM_SERVER to run tests.
 
-5. Run the Platform UI
-   ```
+5. **Run the Platform UI**
+
+   ```bash
    cd platform
    npm start
    ```
 
-6. Run Playwright tests from the VSCode test explorer.
+6. **Run Playwright tests from the VSCode test explorer.**
+
+7. **Check Playwright version**
+
+   ```bash
+   npx playwright --version
+   ```
 
 ### Developer Experience
 
@@ -64,48 +81,73 @@ Playwright tests should closely mimic how users interact with your UI. This ensu
 
 Follow the best practices suggested [here](https://docs.cypress.io/guides/references/best-practices).
 
-### Test the UI Like a User
+1. **Helper functions should always include a relevant assertion**
 
-Ensure that tests simulate user interactions rather than internal mechanics like API calls or database operations.
+2. **All helper functions should include JS docs**
 
-### Use Labels for Interactions
+   Docs should include:
 
-Users interact with the UI via labels, buttons, and visual elements—so should your tests.
+   - short description of what the function does
+   - example of how to use the function
+   - parameter descriptions
 
-> Best Practice: Every input element must have an associated label, and tests should use labels to find and interact with inputs.
+3. **Helper functions that create a child resource should include the creation of the parent   resource as well**
 
-```js
-await page.getByLabel('Username').fill('user1');
-await page.getByLabel('Password').fill('secret');
-await page.getByRole('button', { name: 'Login' }).click();
-```
+4. **Assertions**
 
-### Ignore API Requests and Responses
+   - Avoid assertion redundancy
+   - Make sure relevant assertions are utilized strategically
 
-Users are unaware of backend operations like API requests; they focus solely on what they see.
+5. **Filter a list in the UI and assert text showing**
 
-> Best Practice: Do not test for API calls or responses in UI tests. Focus instead on verifying the visible changes in the UI.
+   Example of best implementation:
 
-```js
-// Don't do this:
-// expect(apiCall).toHaveBeenMade();
+   ```js
+   await expect(page.locator('tr', { hasText: resourceName })).toBeVisible();
+   ```
 
-// Do this instead:
-await expect(page).toHaveText('Welcome, user1!');
-```
+6. **Test the UI Like a User**
 
-### Check UI State After Actions
+   Ensure that tests simulate user interactions rather than internal mechanics like API calls or database operations.
 
-Users validate actions by checking the changes in the UI, such as new content, messages, or redirects.
+7. **Use Labels for Interactions**
 
-> Best Practice: Always validate that the UI reflects the desired result of the user action.
+   Users interact with the UI via labels, buttons, and visual elements—so should your tests.
 
-```js
-// After a form submission, check the UI state, not API responses
-await expect(page.getByText('Submission successful')).toBeVisible();
-```
+   Best Practice: Every input element must have an associated label, and tests should use labels to find and interact with inputs.
 
-### Be User-Centric
+   ```js
+   await page.getByLabel('Username').fill('user1');
+   await page.getByLabel('Password').fill('secret');
+   await page.getByRole('button', { name: 'Login' }).click();
+   ```
 
-Avoid relying on technical aspects such as element IDs or class names for interactions.
-Prioritize tests that reflect the user’s journey and behavior.
+8. **Ignore API Requests and Responses**
+
+   Users are unaware of backend operations like API requests; they focus solely on what they see.
+
+   Best Practice: Do not test for API calls or responses in UI tests. Focus instead on verifying the visible changes in the UI.
+
+   ```js
+   // Don't do this:
+   expect(apiCall).toHaveBeenMade();
+
+   // Do this instead:
+   await expect(page).toHaveText('Welcome, user1!');
+   ```
+
+9. **Check UI State After Actions**
+
+   Users validate actions by checking the changes in the UI, such as new content, messages, or redirects.
+
+   Best Practice: Always validate that the UI reflects the desired result of the user action.
+
+   ```js
+   // After a form submission, check the UI state, not API responses
+   await expect(page.getByText('Submission successful')).toBeVisible();
+   ```
+
+10. **Be User-Centric**
+
+   Avoid relying on technical aspects such as element IDs or class names for interactions.
+   Prioritize tests that reflect the user’s journey and behavior.
