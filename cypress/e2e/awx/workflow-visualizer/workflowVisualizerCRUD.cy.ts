@@ -227,9 +227,9 @@ describe('Workflow Visualizer', () => {
                   force: true,
                 });
                 cy.getByDataCy('edit-node').click();
-                cy.getByDataCy('node-type-form-group').should(
+                cy.get('button[data-cy="node-type-form-group"]').should(
                   'have.text',
-                  'Node type * Project Sync'
+                  'Project Sync'
                 );
                 cy.selectDropdownOptionByResourceName('node-type', 'Inventory Source Sync');
                 cy.get('[id="inventory-source-select"]').click();
