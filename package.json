@@ -101,7 +101,7 @@
     "@types/styled-components": "5.1.34",
     "@types/uuid": "10.0.0",
     "@types/webpack": "5.28.5",
-    "@vitejs/plugin-react-swc": "3.7.2",
+    "@vitejs/plugin-react": "4.3.4",
     "anser": "2.3.0",
     "antsibull-docs": "1.1.1",
     "babel-loader": "9.2.1",
