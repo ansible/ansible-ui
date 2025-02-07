@@ -505,7 +505,7 @@ Cypress.Commands.add('selectAuthenticationType', (authenticationType: string) =>
     .first()
     .within(() => {
       cy.get('button[data-cy="authentication-type-select-form-group"]').last().click();
-      cy.get(`li[data-cy="${authenticationType.toLowerCase()}"]`).click();
+      cy.get(`li[data-cy="${authenticationType.toLowerCase().replace(/\s+/g, '-')}"]`).click();
     });
 });
 
