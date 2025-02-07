@@ -360,7 +360,8 @@ describe('Job Templates Tests', function () {
       cy.getByDataCy('enabled-options').contains('Webhooks');
       cy.clickLink('Edit template');
       cy.getByDataCy('isWebhookEnabled').should('be.checked');
-      cy.getByDataCy('webhook-service-form-group', { scrollIntoView: true }).contains('GitHub');
+      cy.get('button[data-cy="webhook-service-form-group"]').scrollIntoView();
+      cy.get('button[data-cy="webhook-service-form-group"]').should('have.text', 'GitHub');
       cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
       cy.getByDataCy('webhook-key', { scrollIntoView: true }).should(
         'not.have.value',
@@ -371,7 +372,8 @@ describe('Job Templates Tests', function () {
       cy.contains('Webhook details').should('not.exist');
       cy.getByDataCy('isWebhookEnabled').click();
       cy.getByDataCy('isWebhookEnabled').should('be.checked');
-      cy.getByDataCy('webhook-service-form-group', { scrollIntoView: true }).contains('GitHub');
+      cy.get('button[data-cy="webhook-service-form-group"]').scrollIntoView();
+      cy.get('button[data-cy="webhook-service-form-group"]').should('have.text', 'GitHub');
       cy.getByDataCy('related-webhook-receiver').should('have.value', `${jtURL}/github/`);
       cy.getByDataCy('isProvisioningCallbackEnabled').click();
       cy.contains('Provisioning callback details');
@@ -406,6 +408,7 @@ describe('Job Templates Tests', function () {
         });
         cy.getByDataCy('isWebhookEnabled').click();
         cy.selectDropdownOptionByResourceName('webhook-service', 'GitHub');
+        cy.get('[data-cy="webhook_credential"]').scrollIntoView();
         cy.singleSelectByDataCy('webhook_credential', ghCred.name);
         cy.clickButton('Save job template');
         cy.contains('Webhook credential');
@@ -421,9 +424,8 @@ describe('Job Templates Tests', function () {
 
             cy.get('[data-cy="webhook_credential"]').scrollIntoView();
             cy.getByDataCy('webhook_credential').should('have.text', ghCred.name);
-            cy.getByDataCy('webhook-service-form-group', { scrollIntoView: true }).contains(
-              'GitHub'
-            );
+            cy.get('button[data-cy="webhook-service-form-group"]').scrollIntoView();
+            cy.get('button[data-cy="webhook-service-form-group"]').should('have.text', 'GitHub');
             cy.getByDataCy('webhook-key', { scrollIntoView: true }).should(
               'have.value',
               webhookKey
