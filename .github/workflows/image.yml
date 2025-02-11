@@ -69,9 +69,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Install build dependencies
-        run: npm i @rollup/rollup-linux-x64-gnu @swc/core
-
       - name: NPM Build
         if: ${{ inputs.build-script }}
         working-directory: ${{ inputs.build-directory }}
