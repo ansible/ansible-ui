@@ -99,7 +99,7 @@ jobs:
       working-directory: playwright
       run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
-        PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
+        PLATFORM_UI: ${{ inputs.PLATFORM_UI != '' && inputs.PLATFORM_UI || 'https://localhost:4100' }}
         PLATFORM_USERNAME: mock
         PLATFORM_PASSWORD: mock
         TAGS: ${{ inputs.TAGS }}

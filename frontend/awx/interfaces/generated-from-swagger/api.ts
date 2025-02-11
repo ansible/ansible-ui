@@ -8209,7 +8209,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'https://localhost:8043'
+  public baseUrl: string = 'http://localhost:8043'
   private securityData: SecurityDataType | null = null
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker']
   private abortControllers = new Map<CancelToken, AbortController>()
@@ -8388,7 +8388,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  * @license BSD License
  * @termsOfService https://www.google.com/policies/terms/
- * @baseUrl https://localhost:8043
+ * @baseUrl http://localhost:8043
  * @contact <contact@snippets.local>
  *
  * Test description

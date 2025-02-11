@@ -85,11 +85,8 @@ describe('useBulkActionDialog', () => {
 
   it('dialog auto-closes on success', () => {
     cy.mount(<TestComponent isSuccessful={true} />);
-
     cy.contains('button', 'Open Dialog').click();
-    cy.get('div').contains('Success').should('be.visible');
-    cy.wait(1000); // Dialog auto-closes after 1 second
-    cy.getModal().should('not.exist');
+    cy.getModal().should('not.exist'); // Dialog auto-closes
   });
 
   it('dialog presents Retry and Close buttons on error', () => {

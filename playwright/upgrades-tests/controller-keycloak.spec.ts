@@ -59,11 +59,11 @@ test.beforeEach(async ({ page }) => {
     mockData.api.controller.v2.auth = {
       oidc: {
         login_url: '/sso/login/oidc/',
-        complete_url: `https://localhost:4100/sso/complete/oidc/`,
+        complete_url: `http://localhost:4100/sso/complete/oidc/`,
       },
       'saml:keycloak': {
         login_url: '/sso/login/saml/?idp=keycloak',
-        complete_url: 'https://localhost:4100/sso/complete/saml/',
+        complete_url: 'http://localhost:4100/sso/complete/saml/',
         metadata_url: '/sso/metadata/saml/',
       },
     };
