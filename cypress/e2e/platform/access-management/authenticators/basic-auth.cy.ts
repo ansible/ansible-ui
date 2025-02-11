@@ -21,10 +21,10 @@ describe('Platform Basic Authentication', () => {
     cy.verifyPageTitle('Authentication Methods');
     // Enable the newly created local authenticator
     cy.intercept('PATCH', gatewayAPI`/authenticators/*/`).as('editedAuth');
+    cy.intercept('GET', gatewayAPI`/authenticators/*`).as('authenticators');
     cy.getTableRow('name', localAuthenticator).within(() => {
       cy.get('[data-cy=toggle-switch]').click();
     });
-    cy.intercept('GET', gatewayAPI`/authenticators/*`).as('authenticators');
     cy.wait('@editedAuth');
     cy.wait('@authenticators');
     cy.getBy('[data-cy="alert-toaster"]').within(() => {
