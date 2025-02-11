@@ -59,6 +59,23 @@ jobs:
       - name: Checks
         run: npm run checks
 
+  component:
+    name: Component
+    needs: packages
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: 
+          - frontend/awx
+          - frontend/eda
+          - frontend/hub
+          - frontend/common
+          - framework
+          - platform
+    uses: ./.github/workflows/component.yml
+    with:
+      directory: ${{ matrix.directory }}
+
   platform-ui-image:
     name: Platform UI Image
     needs: packages
@@ -79,23 +96,6 @@ jobs:
     with:
       PARALLEL_TESTS: 2
       NOT_TAGS: "@not_mock"
-
-  component:
-    name: Component
-    needs: packages
-    strategy:
-      fail-fast: false
-      matrix:
-        directory: 
-          - frontend/awx
-          - frontend/eda
-          - frontend/hub
-          - frontend/common
-          - framework
-          - platform
-    uses: ./.github/workflows/component.yml
-    with:
-      directory: ${{ matrix.directory }}
 
   success:
     name: Success
