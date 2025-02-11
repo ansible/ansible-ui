@@ -84,12 +84,17 @@ export function SurveyStep({
   const getChoices = (name: string): PageSelectOption<string>[] => {
     const choices: PageSelectOption<string>[] = [];
     survey_spec?.spec.forEach((element: Spec) => {
-      if (
-        (element.type === 'multiplechoice' || element.type === 'multiselect') &&
-        Array.isArray(element.choices)
-      ) {
+      if (element.type === 'multiplechoice' || element.type === 'multiselect') {
+        let choicesArray: string[] = [];
+
+        if (Array.isArray(element.choices)) {
+          choicesArray = element.choices;
+        } else if (typeof element.choices === 'string') {
+          choicesArray = element.choices.split('\n');
+        }
+
         if (element.question_name === name) {
-          element.choices?.forEach((choice: string) => {
+          choicesArray?.forEach((choice: string) => {
             choices.push({ value: choice, label: t(choice) });
           });
         }
