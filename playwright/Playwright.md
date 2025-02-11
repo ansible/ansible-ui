@@ -41,7 +41,7 @@ Solution
 4. **Setup environment variable by creating a `.env` file in the `/playwright` directory**
 
    ```bash
-   PLATFORM_UI=https://localhost:4100
+   PLATFORM_UI=http://localhost:4100
    PLATFORM_USERNAME=username
    PLATFORM_PASSWORD=password
    ```

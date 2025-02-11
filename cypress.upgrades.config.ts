@@ -8,7 +8,7 @@ let PLATFORM_SERVER = process.env.PLATFORM_SERVER;
 if (!PLATFORM_SERVER) throw new Error('PLATFORM_SERVER is not defined');
 if (PLATFORM_SERVER.endsWith('/')) PLATFORM_SERVER = PLATFORM_SERVER.slice(0, -1);
 
-baseConfig.e2e!.baseUrl = 'https://localhost:4100';
+baseConfig.e2e!.baseUrl = 'http://localhost:4100';
 baseConfig.e2e!.env = {
   ...baseConfig.e2e!.env,
   PLATFORM_SERVER,
