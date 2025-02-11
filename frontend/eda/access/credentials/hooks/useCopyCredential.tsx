@@ -17,7 +17,7 @@ export function useCopyCredential(onComplete?: () => void) {
       timeout: 2000,
     };
     postRequest(edaAPI`/eda-credentials/${credential.id.toString()}/copy/`, {
-      name: `${credential.name} @ ${new Date().toTimeString().substring(0, 7)}`,
+      name: `${credential.name} @ ${new Date().toTimeString().substring(0, 8)}`,
     })
       .then(() => {
         alertToaster.addAlert(alert);
