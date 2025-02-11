@@ -182,7 +182,6 @@ export const WorkflowOutput = (props: {
     };
 
     visualization.fromModel(model, true);
-    visualization.getGraph().reset();
   }, [t, visualization, createEdge, workflowNodes]);
 
   return (
