@@ -25,7 +25,7 @@ baseConfig.e2e!.excludeSpecPattern = [
   'cypress/e2e/eda/Roles/*.cy.ts',
   'cypress/e2e/eda/Users/*.cy.ts',
 ];
-baseConfig.e2e!.baseUrl = 'https://localhost:4100';
+baseConfig.e2e!.baseUrl = 'http://localhost:4100';
 baseConfig.component!.specPattern = 'platform/**/*.cy.{js,jsx,ts,tsx}';
 baseConfig.e2e!.env = {
   ...baseConfig.e2e!.env,
