@@ -11,7 +11,8 @@ export function setupBefore(options?: { path?: string }) {
       await page.coverage.startJSCoverage({ resetOnNavigation: false });
     }
     await mock(page);
-    await login(page, options?.path ? platformUI + options.path : undefined);
+    const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1) : platformUI;
+    await login(page, options?.path ? platformUIWithoutSlash + options.path : undefined);
   };
 }
 
