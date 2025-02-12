@@ -110,6 +110,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
           CYPRESS_AWX_API_PREFIX: /api/controller/v2
           CYPRESS_EDA_API_PREFIX: /api/eda/v1
+          CYPRESS_BASE_URL: https://localhost:4100
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
           CYPRESS_LABELS: '!upstream'
