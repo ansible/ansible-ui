@@ -17,7 +17,7 @@ export function useCopyRulebookActivation(onComplete?: () => void) {
       timeout: 2000,
     };
     postRequest(edaAPI`/activations/${rulebookActivation.id.toString()}/copy/`, {
-      name: `${rulebookActivation.name} @ ${new Date().toTimeString().substring(0, 7)}`,
+      name: `${rulebookActivation.name} @ ${new Date().toTimeString().substring(0, 8)}`,
     })
       .then(() => {
         alertToaster.addAlert(alert);
