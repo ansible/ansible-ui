@@ -31,6 +31,18 @@ export function useJobOutput(
   const [jobEventCount, setJobEventCount] = useState(1);
   const [jobEvents, setJobEvents] = useState<Record<number, JobEvent>>({});
 
+  useEffect(() => {
+    const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+
+    requestGet<AwxItemsResponse<JobEvent>>(
+      awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/?order_by=-counter&page_size=1`
+    )
+      .then((itemsResponse) => {
+        setJobEventCount(itemsResponse.results[0].counter);
+      })
+      .catch(() => {});
+  }, [job.id, job.type]);
+
   const getJobOutputEvent = useCallback(
     (counter: number) => {
       return jobEvents[counter];
