@@ -8,6 +8,7 @@ import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
 import { gatewayAPI } from '../utils/gateway-api-utils';
+import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { PersonaViewSwitcher } from './persona-view/PersonaViewSwitcher';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
@@ -71,8 +72,9 @@ export function PlatformApp() {
   }, [location.pathname, debouceRefreshSession]);
 
   const { awxConfig, serviceDown } = useAwxConfigState();
+  const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const subscriptionBanner = useMemo(() => {
-    if (!awxConfig || !awxConfig.license_info) return null;
+    if (!awxConfig?.license_info || managedCloudInstall) return null;
     if (!awxConfig.license_info.compliant) {
       if (awxConfig.license_info.grace_period_remaining) {
         return (
@@ -103,7 +105,7 @@ export function PlatformApp() {
       );
     }
     return null;
-  }, [awxConfig]);
+  }, [awxConfig, managedCloudInstall]);
 
   const controllerDownBanner = useMemo(() => {
     if (serviceDown) {
