@@ -1,13 +1,15 @@
 **/.env
 **/blob-report/
+**/coverage/
 **/dist/
 **/node_modules/
 **/playwright-report/
 **/playwright/.cache/
 **/test-results/
-**/coverage/
 .DS_Store
 .eslintcache
+.nx/cache
+.nx/workspace-data
 .vscode
 /.nyc_output
 /build

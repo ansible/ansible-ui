@@ -54,7 +54,7 @@ export function HubLogin(props: {
           void mutate(() => true);
         }}
         brandImg={props.brandImg ? props.brandImg : '/assets/galaxy-logo.svg'}
-        brandImgAlt={process.env.PRODUCT}
+        brandImgAlt={process.env.PRODUCT as unknown as string}
         otherOptions={props.otherOptions}
       />
     );

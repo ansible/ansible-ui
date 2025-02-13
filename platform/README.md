@@ -84,6 +84,6 @@ The Platform UI has downstream pages for authentication, access management, sett
 
 ## Troubleshooting Platform-UI
 
-   [How to Retrieve Logs from Jenkins Build](TROUBLESHOOTING.md#how-to-retrieve-logs-from-jenkins-build)
+[How to Retrieve Logs from Jenkins Build](TROUBLESHOOTING.md#how-to-retrieve-logs-from-jenkins-build)
 
-   [How to Retrieve Logs from a Kubernetes Deployment](TROUBLESHOOTING.md#how-to-retrieve-logs-from-a-kubernetes-deployment)
+[How to Retrieve Logs from a Kubernetes Deployment](TROUBLESHOOTING.md#how-to-retrieve-logs-from-a-kubernetes-deployment)

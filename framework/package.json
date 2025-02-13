@@ -5,6 +5,14 @@
   "main": "./index.ts",
   "scripts": {
     "clean": "rm -rf publish",
-    "build": "npm run clean && vite build && NODE_OPTIONS=--max-old-space-size=8192 tsc --project tsconfig.production.json"
+    "build": "npm run clean && vite build && NODE_OPTIONS=--max-old-space-size=8192 tsc --project tsconfig.production.json",
+    "test": "npm run eslint && npm run prettier && npm run tsc && npm run vitest",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
+    "vitest": "vitest --run"
   }
 }

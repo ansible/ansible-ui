@@ -5,5 +5,19 @@
   "dependencies": {
     "@ansible/common-ui": "^0.0.0",
     "@ansible/ansible-ui-framework": "^0.0.0"
+  },
+  "scripts": {
+    "start": "vite --open --port 4103",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "preview": "vite preview --port 4103",
+    "serve": "concurrently --kill-others-on-fail npm:preview npm:build:watch -c auto",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
   }
 }

@@ -1,8 +1,10 @@
 // vite.config.js
 /* eslint-disable no-restricted-exports */
+import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  plugins: [react()],
   build: {
     lib: {
       name: '@ansible/ansible-ui-framework',
@@ -34,6 +36,15 @@ export default defineConfig({
           'monaco-editor': 'MonacoEditor',
           'monaco-yaml': 'MonacoYaml',
         },
+      },
+    },
+  },
+  test: {
+    environment: 'happy-dom',
+    setupFiles: ['vitest.setup.ts'],
+    server: {
+      deps: {
+        inline: ['@patternfly/react-styles'],
       },
     },
   },

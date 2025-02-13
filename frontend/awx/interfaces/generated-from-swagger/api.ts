@@ -11,77 +11,77 @@
 
 export interface ActivityStream {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /**
    * Timestamp
    * @format date-time
    */
-  timestamp?: string
+  timestamp?: string;
   /**
    * Operation
    * The action taken with respect to the given object(s).
    */
-  operation?: 'create' | 'update' | 'delete' | 'associate' | 'disassociate' | null
+  operation?: 'create' | 'update' | 'delete' | 'associate' | 'disassociate' | null;
   /**
    * Changes
    * A summary of the new and changed values when an object is created, updated, or deleted
    */
-  changes?: string
+  changes?: string;
   /**
    * Object1
    * For create, update, and delete events this is the object type that was affected. For associate and disassociate events this is the object type associated or disassociated with object2.
    * @minLength 1
    */
-  object1?: string | null
+  object1?: string | null;
   /**
    * Object2
    * Unpopulated for create, update, and delete events. For associate and disassociate events this is the object type that object1 is being associated with.
    * @minLength 1
    */
-  object2?: string | null
+  object2?: string | null;
   /**
    * Object association
    * When present, shows the field name of the role or relationship that changed.
    */
-  object_association?: string
+  object_association?: string;
   /**
    * Action node
    * The cluster node the activity took place on.
    * @minLength 1
    */
-  action_node?: string
+  action_node?: string;
   /**
    * Object type
    * When present, shows the model on which the role or relationship was defined.
    */
-  object_type?: string
+  object_type?: string;
 }
 
 export interface AdHocCommandEvent {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Ad hoc command */
-  ad_hoc_command?: string
+  ad_hoc_command?: string;
   /** Event */
   event?:
     | 'runner_on_failed'
@@ -94,80 +94,80 @@ export interface AdHocCommandEvent {
     | 'warning'
     | 'system_warning'
     | 'error'
-    | null
+    | null;
   /**
    * Counter
    * @min 0
    */
-  counter?: number
+  counter?: number;
   /**
    * Event display
    * @minLength 1
    */
-  event_display?: string
+  event_display?: string;
   /**
    * Event data
    * @default {}
    */
-  event_data?: object
+  event_data?: object;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /** Changed */
-  changed?: boolean
+  changed?: boolean;
   /**
    * Uuid
    * @minLength 1
    */
-  uuid?: string
+  uuid?: string;
   /** Host */
-  host?: number
+  host?: number;
   /**
    * Host name
    * @minLength 1
    */
-  host_name?: string
+  host_name?: string;
   /**
    * Stdout
    * @minLength 1
    */
-  stdout?: string
+  stdout?: string;
   /**
    * Start line
    * @min 0
    */
-  start_line?: number
+  start_line?: number;
   /**
    * End line
    * @min 0
    */
-  end_line?: number
+  end_line?: number;
   /**
    * Verbosity
    * @min 0
    */
-  verbosity?: number
+  verbosity?: number;
 }
 
 export interface AdHocCommandList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    */
-  name?: string | null
+  name?: string | null;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -178,7 +178,7 @@ export interface AdHocCommandList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -188,78 +188,78 @@ export interface AdHocCommandList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /**
    * Job type
    * @default "run"
    */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /**
    * Limit
    * @default ""
    */
-  limit?: string | null
+  limit?: string | null;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Module name
    * @default "command"
@@ -283,61 +283,61 @@ export interface AdHocCommandList {
     | 'win_service'
     | 'win_updates'
     | 'win_group'
-    | 'win_user'
+    | 'win_user';
   /**
    * Module args
    * @default ""
    */
-  module_args?: string | null
+  module_args?: string | null;
   /**
    * Forks
    * @min 0
    * @max 2147483647
    * @default 0
    */
-  forks?: number
+  forks?: number;
   /**
    * Verbosity
    * @default 0
    */
-  verbosity?: 0 | 1 | 2 | 3 | 4 | 5
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Become enabled
    * @default false
    */
-  become_enabled?: boolean | null
+  become_enabled?: boolean | null;
   /**
    * Diff mode
    * @default false
    */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
 }
 
 export interface AdHocCommandDetail {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    */
-  name?: string | null
+  name?: string | null;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -348,7 +348,7 @@ export interface AdHocCommandDetail {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -358,100 +358,100 @@ export interface AdHocCommandDetail {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** Job env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /**
    * Event processing finished
    * Indicates whether all of the events generated by this unified job have been saved to the database.
    */
-  event_processing_finished?: boolean
+  event_processing_finished?: boolean;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /**
    * Job type
    * @default "run"
    */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /**
    * Limit
    * @default ""
    */
-  limit?: string | null
+  limit?: string | null;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Module name
    * @default "command"
@@ -475,77 +475,77 @@ export interface AdHocCommandDetail {
     | 'win_service'
     | 'win_updates'
     | 'win_group'
-    | 'win_user'
+    | 'win_user';
   /**
    * Module args
    * @default ""
    */
-  module_args?: string | null
+  module_args?: string | null;
   /**
    * Forks
    * @min 0
    * @max 2147483647
    * @default 0
    */
-  forks?: number
+  forks?: number;
   /**
    * Verbosity
    * @default 0
    */
-  verbosity?: 0 | 1 | 2 | 3 | 4 | 5
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Become enabled
    * @default false
    */
-  become_enabled?: boolean | null
+  become_enabled?: boolean | null;
   /**
    * Diff mode
    * @default false
    */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /**
    * Host status counts
    * Playbook stats from the Ansible playbook_on_stats event.
    */
-  host_status_counts?: object
+  host_status_counts?: object;
 }
 
 export interface AdHocCommandCancel {
   /** Can cancel */
-  can_cancel?: boolean
+  can_cancel?: boolean;
 }
 
 export interface Notification {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Notification template */
-  notification_template?: number
+  notification_template?: number;
   /**
    * Error
    * @minLength 1
    */
-  error?: string
+  error?: string;
   /** Status */
-  status?: 'pending' | 'successful' | 'failed'
+  status?: 'pending' | 'successful' | 'failed';
   /** Notifications sent */
-  notifications_sent?: number
+  notifications_sent?: number;
   /** Notification type */
   notification_type?:
     | 'email'
@@ -557,202 +557,202 @@ export interface Notification {
     | 'slack'
     | 'twilio'
     | 'webhook'
-    | null
+    | null;
   /**
    * Recipients
    * @minLength 1
    */
-  recipients?: string
+  recipients?: string;
   /**
    * Subject
    * @minLength 1
    */
-  subject?: string
+  subject?: string;
   /**
    * Body
    * Notification body
    */
-  body?: string
+  body?: string;
 }
 
-export type AdHocCommandRelaunch = object
+export type AdHocCommandRelaunch = object;
 
 export interface UnifiedJobStdout {
   /** Result stdout */
-  result_stdout?: string
+  result_stdout?: string;
 }
 
 export interface OAuth2Application {
   /** Id */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @maxLength 255
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Client id
    * @minLength 1
    */
-  client_id?: string | null
+  client_id?: string | null;
   /**
    * Client Secret
    * Used for more stringent verification of access to an application when creating a token.
    * @minLength 1
    */
-  client_secret?: string | null
+  client_secret?: string | null;
   /**
    * Client Type
    * Set to Public or Confidential depending on how secure the client device is.
    */
-  client_type?: 'confidential' | 'public' | null
+  client_type?: 'confidential' | 'public' | null;
   /**
    * Redirect URIs
    * Allowed URIs list, space separated
    */
-  redirect_uris?: string | null
+  redirect_uris?: string | null;
   /**
    * Authorization Grant Type
    * The Grant type the user must use for acquire tokens for this application.
    */
-  authorization_grant_type?: 'authorization-code' | 'password' | null
+  authorization_grant_type?: 'authorization-code' | 'password' | null;
   /**
    * Skip Authorization
    * Set True to skip authorization step for completely trusted applications.
    * @default false
    */
-  skip_authorization?: boolean | null
+  skip_authorization?: boolean | null;
   /**
    * Organization
    * Organization containing this application.
    */
-  organization: number
+  organization: number;
 }
 
 export interface OAuth2Token {
   /** Id */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * User
    * The user representing the token owner
    */
-  user?: number
+  user?: number;
   /** Token */
-  token?: string
+  token?: string;
   /** Refresh token */
-  refresh_token?: string
+  refresh_token?: string;
   /** Application */
-  application?: number | null
+  application?: number | null;
   /**
    * Expires
    * @format date-time
    */
-  expires?: string
+  expires?: string;
   /**
    * Scope
    * Allowed scopes, further restricts user's permissions. Must be a simple space-separated string with allowed scopes ['read', 'write'].
    * @default "write"
    */
-  scope?: string | null
+  scope?: string | null;
 }
 
 export interface CredentialInputSource {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Input field name
    * @minLength 1
    * @maxLength 1024
    */
-  input_field_name?: string | null
+  input_field_name?: string | null;
   /**
    * Metadata
    * @default {}
    */
-  metadata?: object
+  metadata?: object;
   /** Target credential */
-  target_credential?: number | null
+  target_credential?: number | null;
   /** Source credential */
-  source_credential?: number | null
+  source_credential?: number | null;
 }
 
 export interface CredentialType {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Kind */
   kind?:
     | 'ssh'
@@ -767,156 +767,156 @@ export interface CredentialType {
     | 'kubernetes'
     | 'galaxy'
     | 'cryptography'
-    | null
+    | null;
   /**
    * Namespace
    * @minLength 1
    */
-  namespace?: string
+  namespace?: string;
   /** Managed */
-  managed?: string
+  managed?: string;
   /**
    * Inputs
    * Enter inputs using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  inputs?: object
+  inputs?: object;
   /**
    * Injectors
    * Enter injectors using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  injectors?: object
+  injectors?: object;
 }
 
 export interface Credential {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Organization */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Credential Type
    * Specify the type of credential you want to create. Refer to the documentation for details on each type.
    */
-  credential_type: number
+  credential_type: number;
   /** Managed */
-  managed?: string
+  managed?: string;
   /**
    * Inputs
    * Enter inputs using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  inputs?: object
+  inputs?: object;
   /** Kind */
-  kind?: string
+  kind?: string;
   /** Cloud */
-  cloud?: string
+  cloud?: string;
   /** Kubernetes */
-  kubernetes?: string
+  kubernetes?: string;
 }
 
-export type Empty = object
+export type Empty = object;
 
 export interface CredentialSerializerCreate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Organization
    * Inherit permissions from organization roles. If provided on creation, do not give either user or team.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Credential Type
    * Specify the type of credential you want to create. Refer to the documentation for details on each type.
    */
-  credential_type: number
+  credential_type: number;
   /** Managed */
-  managed?: string
+  managed?: string;
   /**
    * Inputs
    * Enter inputs using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  inputs?: object
+  inputs?: object;
   /** Kind */
-  kind?: string
+  kind?: string;
   /** Cloud */
-  cloud?: string
+  cloud?: string;
   /** Kubernetes */
-  kubernetes?: string
+  kubernetes?: string;
   /**
    * User
    * Write-only field used to add user to owner role. If provided, do not give either team or organization. Only valid for creation.
    */
-  user?: number | null
+  user?: number | null;
   /**
    * Team
    * Write-only field used to add team to owner role. If provided, do not give either user or organization. Only valid for creation.
    */
-  team?: number | null
+  team?: number | null;
 }
 
 export interface ResourceAccessListElement {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Username
    * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
@@ -924,55 +924,55 @@ export interface ResourceAccessListElement {
    * @maxLength 150
    * @pattern ^[\w.@+-]+$
    */
-  username?: string | null
+  username?: string | null;
   /**
    * First name
    * @maxLength 150
    */
-  first_name?: string | null
+  first_name?: string | null;
   /**
    * Last name
    * @maxLength 150
    */
-  last_name?: string | null
+  last_name?: string | null;
   /**
    * Email address
    * @maxLength 254
    */
-  email?: string | null
+  email?: string | null;
   /**
    * Superuser status
    * Designates that this user has all permissions without explicitly assigning them.
    * @default false
    */
-  is_superuser?: boolean | null
+  is_superuser?: boolean | null;
   /**
    * Is system auditor
    * @default false
    */
-  is_system_auditor?: boolean
+  is_system_auditor?: boolean;
   /**
    * Password
    * Write-only field used to change the password.
    * @minLength 1
    * @default ""
    */
-  password?: string
+  password?: string;
   /**
    * Ldap dn
    * @minLength 1
    */
-  ldap_dn?: string
+  ldap_dn?: string;
   /**
    * Last login
    * @format date-time
    */
-  last_login?: string | null
+  last_login?: string | null;
   /**
    * External account
    * Set if the account is managed by an external service
    */
-  external_account?: string
+  external_account?: string;
 }
 
 export interface Copy {
@@ -980,71 +980,71 @@ export interface Copy {
    * Name
    * @minLength 1
    */
-  name: string
+  name: string;
 }
 
 export interface Role {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Name */
-  name?: string
+  name?: string;
   /** Description */
-  description?: string
+  description?: string;
 }
 
 export interface Team {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Organization */
-  organization: number
+  organization: number;
 }
 
 export interface User {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Username
    * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
@@ -1052,145 +1052,145 @@ export interface User {
    * @maxLength 150
    * @pattern ^[\w.@+-]+$
    */
-  username?: string | null
+  username?: string | null;
   /**
    * First name
    * @maxLength 150
    */
-  first_name?: string | null
+  first_name?: string | null;
   /**
    * Last name
    * @maxLength 150
    */
-  last_name?: string | null
+  last_name?: string | null;
   /**
    * Email address
    * @maxLength 254
    */
-  email?: string | null
+  email?: string | null;
   /**
    * Superuser status
    * Designates that this user has all permissions without explicitly assigning them.
    * @default false
    */
-  is_superuser?: boolean | null
+  is_superuser?: boolean | null;
   /**
    * Is system auditor
    * @default false
    */
-  is_system_auditor?: boolean
+  is_system_auditor?: boolean;
   /**
    * Password
    * Write-only field used to change the password.
    * @minLength 1
    * @default ""
    */
-  password?: string
+  password?: string;
   /**
    * Ldap dn
    * @minLength 1
    */
-  ldap_dn?: string
+  ldap_dn?: string;
   /**
    * Last login
    * @format date-time
    */
-  last_login?: string | null
+  last_login?: string | null;
   /**
    * External account
    * Set if the account is managed by an external service
    */
-  external_account?: string
+  external_account?: string;
 }
 
 export interface ExecutionEnvironment {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Organization
    * The organization used to determine access to this execution environment.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Image location
    * The full image location, including the container registry, image name, and version tag.
    * @minLength 1
    * @maxLength 1024
    */
-  image?: string | null
+  image?: string | null;
   /** Managed */
-  managed?: string
+  managed?: string;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Pull
    * Pull image before running?
    * @default ""
    */
-  pull?: 'always' | 'missing' | 'never' | null
+  pull?: 'always' | 'missing' | 'never' | null;
 }
 
 export interface UnifiedJobTemplate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -1205,139 +1205,139 @@ export interface UnifiedJobTemplate {
     | 'ok'
     | 'missing'
     | 'none'
-    | 'updating'
+    | 'updating';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
 }
 
 export interface Group {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Inventory */
-  inventory: number
+  inventory: number;
   /**
    * Variables
    * Group variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
 }
 
 export interface Host {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Inventory */
-  inventory: number
+  inventory: number;
   /**
    * Enabled
    * Is this host online and available for running jobs?
    * @default true
    */
-  enabled?: boolean | null
+  enabled?: boolean | null;
   /**
    * Instance id
    * The value used by the remote inventory source to uniquely identify the host
    * @maxLength 1024
    * @default ""
    */
-  instance_id?: string | null
+  instance_id?: string | null;
   /**
    * Variables
    * Host variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
   /** Has active failures */
-  has_active_failures?: string
+  has_active_failures?: string;
   /** Has inventory sources */
-  has_inventory_sources?: string
+  has_inventory_sources?: string;
   /** Last job */
-  last_job?: string
+  last_job?: string;
   /** Last job host summary */
-  last_job_host_summary?: number
+  last_job_host_summary?: number;
   /**
    * Ansible facts modified
    * The date and time ansible_facts was last modified.
    * @format date-time
    */
-  ansible_facts_modified?: string
+  ansible_facts_modified?: string;
 }
 
 export interface InventorySource {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Source */
   source?:
     | 'file'
@@ -1351,61 +1351,61 @@ export interface InventorySource {
     | 'rhv'
     | 'controller'
     | 'insights'
-    | null
+    | null;
   /**
    * Source path
    * @maxLength 1024
    * @default ""
    */
-  source_path?: string | null
+  source_path?: string | null;
   /**
    * Source vars
    * Inventory source variables in YAML or JSON format.
    * @default ""
    */
-  source_vars?: string | null
+  source_vars?: string | null;
   /**
    * Credential
    * Cloud credential to use for inventory updates.
    * @min 1
    */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Enabled var
    * Retrieve the enabled state from the given dict of host variables. The enabled variable may be specified as "foo.bar", in which case the lookup will traverse into nested dicts, equivalent to: from_dict.get("foo", {}).get("bar", default)
    * @default ""
    */
-  enabled_var?: string | null
+  enabled_var?: string | null;
   /**
    * Enabled value
    * Only used when enabled_var is set. Value when the host is considered enabled. For example if enabled_var="status.power_state"and enabled_value="powered_on" with host variables:{   "status": {     "power_state": "powered_on",     "created": "2020-08-04T18:13:04+00:00",     "healthy": true    },    "name": "foobar",    "ip_address": "192.168.2.1"}The host would be marked enabled. If power_state where any value other than powered_on then the host would be disabled when imported. If the key is not found then the host will be enabled
    * @default ""
    */
-  enabled_value?: string | null
+  enabled_value?: string | null;
   /**
    * Host filter
    * Regex where only matching hosts will be imported.
    * @default ""
    */
-  host_filter?: string | null
+  host_filter?: string | null;
   /**
    * Overwrite
    * Overwrite local groups and hosts from remote inventory source.
    * @default false
    */
-  overwrite?: boolean | null
+  overwrite?: boolean | null;
   /**
    * Overwrite vars
    * Overwrite local variables from remote inventory source.
    * @default false
    */
-  overwrite_vars?: boolean | null
+  overwrite_vars?: boolean | null;
   /**
    * Custom virtualenv
    * Local absolute file path containing a custom Python virtualenv to use
    * @minLength 1
    */
-  custom_virtualenv?: string | null
+  custom_virtualenv?: string | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -1413,24 +1413,24 @@ export interface InventorySource {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Verbosity
    * @default 1
    */
-  verbosity?: 0 | 1 | 2
+  verbosity?: 0 | 1 | 2;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -1442,57 +1442,57 @@ export interface InventorySource {
     | 'error'
     | 'canceled'
     | 'never updated'
-    | 'none'
+    | 'none';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /**
    * Update on launch
    * @default false
    */
-  update_on_launch?: boolean | null
+  update_on_launch?: boolean | null;
   /**
    * Update cache timeout
    * @min 0
    * @max 2147483647
    * @default 0
    */
-  update_cache_timeout?: number
+  update_cache_timeout?: number;
   /**
    * Source project
    * Project containing inventory file used as source.
    */
-  source_project?: string | null
+  source_project?: string | null;
   /** Last update failed */
-  last_update_failed?: boolean
+  last_update_failed?: boolean;
   /**
    * Last updated
    * @format date-time
    */
-  last_updated?: string
+  last_updated?: string;
 }
 
 export interface JobEvent {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Job */
-  job?: string
+  job?: string;
   /** Event */
   event?:
     | 'runner_on_failed'
@@ -1528,154 +1528,154 @@ export interface JobEvent {
     | 'warning'
     | 'system_warning'
     | 'error'
-    | null
+    | null;
   /**
    * Counter
    * @min 0
    */
-  counter?: number
+  counter?: number;
   /**
    * Event display
    * @minLength 1
    */
-  event_display?: string
+  event_display?: string;
   /**
    * Event data
    * @default {}
    */
-  event_data?: object
+  event_data?: object;
   /** Event level */
-  event_level?: number
+  event_level?: number;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /** Changed */
-  changed?: boolean
+  changed?: boolean;
   /**
    * Uuid
    * @minLength 1
    */
-  uuid?: string
+  uuid?: string;
   /**
    * Parent uuid
    * @minLength 1
    */
-  parent_uuid?: string
+  parent_uuid?: string;
   /** Host */
-  host?: number
+  host?: number;
   /**
    * Host name
    * @minLength 1
    */
-  host_name?: string
+  host_name?: string;
   /**
    * Playbook
    * @minLength 1
    */
-  playbook?: string
+  playbook?: string;
   /**
    * Play
    * @minLength 1
    */
-  play?: string
+  play?: string;
   /**
    * Task
    * @minLength 1
    */
-  task?: string
+  task?: string;
   /**
    * Role
    * @minLength 1
    */
-  role?: string
+  role?: string;
   /**
    * Stdout
    * @minLength 1
    */
-  stdout?: string
+  stdout?: string;
   /**
    * Start line
    * @min 0
    */
-  start_line?: number
+  start_line?: number;
   /**
    * End line
    * @min 0
    */
-  end_line?: number
+  end_line?: number;
   /**
    * Verbosity
    * @min 0
    */
-  verbosity?: number
+  verbosity?: number;
 }
 
 export interface JobHostSummary {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Job */
-  job?: string
+  job?: string;
   /** Host */
-  host?: number
+  host?: number;
   /**
    * Host name
    * @minLength 1
    * @default ""
    */
-  host_name?: string
+  host_name?: string;
   /**
    * Changed
    * @min 0
    */
-  changed?: number
+  changed?: number;
   /**
    * Dark
    * @min 0
    */
-  dark?: number
+  dark?: number;
   /**
    * Failures
    * @min 0
    */
-  failures?: number
+  failures?: number;
   /**
    * Ok
    * @min 0
    */
-  ok?: number
+  ok?: number;
   /**
    * Processed
    * @min 0
    */
-  processed?: number
+  processed?: number;
   /**
    * Skipped
    * @min 0
    */
-  skipped?: number
+  skipped?: number;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Ignored
    * @min 0
    */
-  ignored?: number
+  ignored?: number;
   /**
    * Rescued
    * @min 0
    */
-  rescued?: number
+  rescued?: number;
 }
 
 export interface GroupVariableData {
@@ -1684,136 +1684,136 @@ export interface GroupVariableData {
    * Group variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
 }
 
 export interface AnsibleFacts {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
 }
 
 export interface Inventory {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Organization
    * Organization containing this inventory.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Kind
    * Kind of inventory being represented.
    * @default ""
    */
-  kind?: '' | 'smart' | null
+  kind?: '' | 'smart' | null;
   /**
    * Host filter
    * Filter that will be applied to the hosts of this inventory.
    */
-  host_filter?: string | null
+  host_filter?: string | null;
   /**
    * Variables
    * Inventory variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
   /**
    * Has active failures
    * This field is deprecated and will be removed in a future release. Flag indicating whether any hosts in this inventory have failed.
    */
-  has_active_failures?: boolean
+  has_active_failures?: boolean;
   /**
    * Total hosts
    * This field is deprecated and will be removed in a future release. Total number of hosts in this inventory.
    * @min 0
    */
-  total_hosts?: number
+  total_hosts?: number;
   /**
    * Hosts with active failures
    * This field is deprecated and will be removed in a future release. Number of hosts in this inventory with active failures.
    * @min 0
    */
-  hosts_with_active_failures?: number
+  hosts_with_active_failures?: number;
   /**
    * Total groups
    * This field is deprecated and will be removed in a future release. Total number of groups in this inventory.
    * @min 0
    */
-  total_groups?: number
+  total_groups?: number;
   /**
    * Has inventory sources
    * This field is deprecated and will be removed in a future release. Flag indicating whether this inventory has any external inventory sources.
    */
-  has_inventory_sources?: boolean
+  has_inventory_sources?: boolean;
   /**
    * Total inventory sources
    * Total number of external inventory sources configured within this inventory.
    * @min 0
    */
-  total_inventory_sources?: number
+  total_inventory_sources?: number;
   /**
    * Inventory sources with failures
    * Number of external inventory sources in this inventory with failures.
    * @min 0
    */
-  inventory_sources_with_failures?: number
+  inventory_sources_with_failures?: number;
   /**
    * Pending deletion
    * Flag indicating the inventory is being deleted.
    */
-  pending_deletion?: boolean
+  pending_deletion?: boolean;
   /**
    * Prevent instance group fallback
    * If enabled, the inventory will prevent adding any organization instance groups to the list of preferred instances groups to run associated job templates on.If this setting is enabled and you provided an empty list, the global instance groups will be applied.
    * @default false
    */
-  prevent_instance_group_fallback?: boolean | null
+  prevent_instance_group_fallback?: boolean | null;
 }
 
 export interface HostVariableData {
@@ -1822,53 +1822,53 @@ export interface HostVariableData {
    * Host variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
 }
 
 export interface InstanceGroup {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 250
    */
-  name?: string | null
+  name?: string | null;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Capacity */
-  capacity?: string
+  capacity?: string;
   /** Consumed capacity */
-  consumed_capacity?: string
+  consumed_capacity?: string;
   /** Percent capacity remaining */
-  percent_capacity_remaining?: string
+  percent_capacity_remaining?: string;
   /**
    * Jobs running
    * Count of jobs in the running or waiting state that are targeted for this instance group
    */
-  jobs_running?: number
+  jobs_running?: number;
   /**
    * Jobs total
    * Count of all jobs that target this instance group
    */
-  jobs_total?: number
+  jobs_total?: number;
   /** Instances */
-  instances?: string
+  instances?: string;
   /**
    * Is container group
    * Indicates whether instances in this group are containerized.Containerized groups have a designated Openshift or Kubernetes cluster.
    */
-  is_container_group?: boolean
+  is_container_group?: boolean;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Policy Instance Percentage
    * Minimum percentage of all instances that will be automatically assigned to this group when new instances come online.
@@ -1876,137 +1876,137 @@ export interface InstanceGroup {
    * @max 100
    * @default 0
    */
-  policy_instance_percentage?: number
+  policy_instance_percentage?: number;
   /**
    * Policy Instance Minimum
    * Static minimum number of Instances that will be automatically assign to this group when new instances come online.
    * @min 0
    * @default 0
    */
-  policy_instance_minimum?: number
+  policy_instance_minimum?: number;
   /** List of exact-match Instances that will be assigned to this group */
-  policy_instance_list?: string[]
+  policy_instance_list?: string[];
   /**
    * Pod spec override
    * @default ""
    */
-  pod_spec_override?: string | null
+  pod_spec_override?: string | null;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
 }
 
 export interface Instance {
   /** ID */
-  id?: number
+  id?: number;
   /**
    * Hostname
    * @minLength 1
    * @maxLength 250
    */
-  hostname?: string | null
+  hostname?: string | null;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /**
    * Uuid
    * @minLength 1
    */
-  uuid?: string | null
+  uuid?: string | null;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Last seen
    * Last time instance ran its heartbeat task for main cluster nodes. Last known connection to receptor mesh for execution nodes.
    * @format date-time
    */
-  last_seen?: string
+  last_seen?: string;
   /**
    * Health check started
    * The last time a health check was initiated on this instance.
    * @format date-time
    */
-  health_check_started?: string
+  health_check_started?: string;
   /** Health check pending */
-  health_check_pending?: string
+  health_check_pending?: string;
   /**
    * Last health check
    * Last time a health check was ran on this instance to refresh cpu, memory, and capacity.
    * @format date-time
    */
-  last_health_check?: string
+  last_health_check?: string;
   /**
    * Errors
    * Any error details from the last health check.
    * @minLength 1
    */
-  errors?: string
+  errors?: string;
   /**
    * Capacity adjustment
    * @format decimal
    * @default "1.00"
    */
-  capacity_adjustment?: string
+  capacity_adjustment?: string;
   /**
    * Version
    * @minLength 1
    */
-  version?: string | null
+  version?: string | null;
   /**
    * Capacity
    * @min 0
    */
-  capacity?: number
+  capacity?: number;
   /** Consumed capacity */
-  consumed_capacity?: string
+  consumed_capacity?: string;
   /** Percent capacity remaining */
-  percent_capacity_remaining?: string
+  percent_capacity_remaining?: string;
   /**
    * Jobs running
    * Count of jobs in the running or waiting state that are targeted for this instance
    */
-  jobs_running?: number
+  jobs_running?: number;
   /**
    * Jobs total
    * Count of all jobs that target this instance
    */
-  jobs_total?: number
+  jobs_total?: number;
   /**
    * Cpu
    * @format decimal
    */
-  cpu?: string
+  cpu?: string;
   /**
    * Memory
    * Total system memory of this instance in bytes.
    */
-  memory?: number
+  memory?: number;
   /** Cpu capacity */
-  cpu_capacity?: number
+  cpu_capacity?: number;
   /** Mem capacity */
-  mem_capacity?: number
+  mem_capacity?: number;
   /**
    * Enabled
    * @default true
    */
-  enabled?: boolean | null
+  enabled?: boolean | null;
   /**
    * Managed by policy
    * @default true
    */
-  managed_by_policy?: boolean | null
+  managed_by_policy?: boolean | null;
   /**
    * Node type
    * Role that this node plays in the mesh.
    * @default "execution"
    */
-  node_type?: 'control' | 'execution' | 'hybrid' | 'hop' | null
+  node_type?: 'control' | 'execution' | 'hybrid' | 'hop' | null;
   /**
    * Node state
    * Indicates the current life cycle stage of this instance.
@@ -2020,12 +2020,12 @@ export interface Instance {
     | 'unavailable'
     | 'deprovisioning'
     | 'deprovision-fail'
-    | null
+    | null;
   /**
    * Ip address
    * @minLength 1
    */
-  ip_address?: string | null
+  ip_address?: string | null;
   /**
    * Listener port
    * Port that Receptor will listen for incoming connections on.
@@ -2033,37 +2033,37 @@ export interface Instance {
    * @max 65535
    * @default 27199
    */
-  listener_port?: number
+  listener_port?: number;
 }
 
 export interface UnifiedJobList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -2074,7 +2074,7 @@ export interface UnifiedJobList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -2084,64 +2084,64 @@ export interface UnifiedJobList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
 }
 
 export interface InstanceHealthCheck {
@@ -2149,139 +2149,139 @@ export interface InstanceHealthCheck {
    * Uuid
    * @minLength 1
    */
-  uuid?: string | null
+  uuid?: string | null;
   /**
    * Hostname
    * @minLength 1
    */
-  hostname?: string | null
+  hostname?: string | null;
   /**
    * Version
    * @minLength 1
    */
-  version?: string | null
+  version?: string | null;
   /**
    * Last health check
    * Last time a health check was ran on this instance to refresh cpu, memory, and capacity.
    * @format date-time
    */
-  last_health_check?: string
+  last_health_check?: string;
   /**
    * Errors
    * Any error details from the last health check.
    * @minLength 1
    */
-  errors?: string
+  errors?: string;
   /**
    * Cpu
    * @format decimal
    */
-  cpu?: string
+  cpu?: string;
   /**
    * Memory
    * Total system memory of this instance in bytes.
    */
-  memory?: number
+  memory?: number;
   /** Cpu capacity */
-  cpu_capacity?: number
+  cpu_capacity?: number;
   /** Mem capacity */
-  mem_capacity?: number
+  mem_capacity?: number;
   /** Capacity */
-  capacity?: number
+  capacity?: number;
 }
 
 export interface JobTemplate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Job type
    * @default "run"
    */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /** Project */
-  project?: string | null
+  project?: string | null;
   /**
    * Playbook
    * @maxLength 1024
    * @default ""
    */
-  playbook?: string | null
+  playbook?: string | null;
   /**
    * Scm branch
    * Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.
    * @maxLength 1024
    * @default ""
    */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * Forks
    * @min 0
    * @max 2147483647
    * @default 0
    */
-  forks?: number
+  forks?: number;
   /**
    * Limit
    * @default ""
    */
-  limit?: string | null
+  limit?: string | null;
   /**
    * Verbosity
    * @default 0
    */
-  verbosity?: 0 | 1 | 2 | 3 | 4 | 5
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Job tags
    * @default ""
    */
-  job_tags?: string | null
+  job_tags?: string | null;
   /**
    * Force handlers
    * @default false
    */
-  force_handlers?: boolean | null
+  force_handlers?: boolean | null;
   /**
    * Skip tags
    * @maxLength 1024
    * @default ""
    */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /**
    * Start at task
    * @maxLength 1024
    * @default ""
    */
-  start_at_task?: string | null
+  start_at_task?: string | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -2289,30 +2289,30 @@ export interface JobTemplate {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Use fact cache
    * If enabled, the service will act as an Ansible Fact Cache Plugin; persisting facts at the end of a playbook run to the database and caching facts for use by Ansible.
    * @default false
    */
-  use_fact_cache?: boolean | null
+  use_fact_cache?: boolean | null;
   /**
    * Organization
    * The organization used to determine access to this template.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -2323,125 +2323,125 @@ export interface JobTemplate {
     | 'failed'
     | 'error'
     | 'canceled'
-    | 'never updated'
+    | 'never updated';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Host config key
    * @maxLength 1024
    * @default ""
    */
-  host_config_key?: string | null
+  host_config_key?: string | null;
   /**
    * Ask scm branch on launch
    * @default false
    */
-  ask_scm_branch_on_launch?: boolean | null
+  ask_scm_branch_on_launch?: boolean | null;
   /**
    * Ask diff mode on launch
    * @default false
    */
-  ask_diff_mode_on_launch?: boolean | null
+  ask_diff_mode_on_launch?: boolean | null;
   /**
    * Ask variables on launch
    * @default false
    */
-  ask_variables_on_launch?: boolean | null
+  ask_variables_on_launch?: boolean | null;
   /**
    * Ask limit on launch
    * @default false
    */
-  ask_limit_on_launch?: boolean | null
+  ask_limit_on_launch?: boolean | null;
   /**
    * Ask tags on launch
    * @default false
    */
-  ask_tags_on_launch?: boolean | null
+  ask_tags_on_launch?: boolean | null;
   /**
    * Ask skip tags on launch
    * @default false
    */
-  ask_skip_tags_on_launch?: boolean | null
+  ask_skip_tags_on_launch?: boolean | null;
   /**
    * Ask job type on launch
    * @default false
    */
-  ask_job_type_on_launch?: boolean | null
+  ask_job_type_on_launch?: boolean | null;
   /**
    * Ask verbosity on launch
    * @default false
    */
-  ask_verbosity_on_launch?: boolean | null
+  ask_verbosity_on_launch?: boolean | null;
   /**
    * Ask inventory on launch
    * @default false
    */
-  ask_inventory_on_launch?: boolean | null
+  ask_inventory_on_launch?: boolean | null;
   /**
    * Ask credential on launch
    * @default false
    */
-  ask_credential_on_launch?: boolean | null
+  ask_credential_on_launch?: boolean | null;
   /**
    * Ask execution environment on launch
    * @default false
    */
-  ask_execution_environment_on_launch?: boolean | null
+  ask_execution_environment_on_launch?: boolean | null;
   /**
    * Ask labels on launch
    * @default false
    */
-  ask_labels_on_launch?: boolean | null
+  ask_labels_on_launch?: boolean | null;
   /**
    * Ask forks on launch
    * @default false
    */
-  ask_forks_on_launch?: boolean | null
+  ask_forks_on_launch?: boolean | null;
   /**
    * Ask job slice count on launch
    * @default false
    */
-  ask_job_slice_count_on_launch?: boolean | null
+  ask_job_slice_count_on_launch?: boolean | null;
   /**
    * Ask timeout on launch
    * @default false
    */
-  ask_timeout_on_launch?: boolean | null
+  ask_timeout_on_launch?: boolean | null;
   /**
    * Ask instance groups on launch
    * @default false
    */
-  ask_instance_groups_on_launch?: boolean | null
+  ask_instance_groups_on_launch?: boolean | null;
   /**
    * Survey enabled
    * @default false
    */
-  survey_enabled?: boolean | null
+  survey_enabled?: boolean | null;
   /**
    * Become enabled
    * @default false
    */
-  become_enabled?: boolean | null
+  become_enabled?: boolean | null;
   /**
    * Diff mode
    * If enabled, textual changes made to any templated files on the host are shown in the standard output
    * @default false
    */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /**
    * Allow simultaneous
    * @default false
    */
-  allow_simultaneous?: boolean | null
+  allow_simultaneous?: boolean | null;
   /**
    * Custom virtualenv
    * Local absolute file path containing a custom Python virtualenv to use
    * @minLength 1
    */
-  custom_virtualenv?: string | null
+  custom_virtualenv?: string | null;
   /**
    * Job slice count
    * The number of jobs to slice into at runtime. Will cause the Job Template to launch a workflow if value is greater than 1.
@@ -2449,96 +2449,96 @@ export interface JobTemplate {
    * @max 2147483647
    * @default 1
    */
-  job_slice_count?: number
+  job_slice_count?: number;
   /**
    * Webhook service
    * Service that webhook requests will be accepted from
    */
-  webhook_service?: 'github' | 'gitlab' | null
+  webhook_service?: 'github' | 'gitlab' | null;
   /**
    * Webhook credential
    * Personal Access Token for posting back the status to the service API
    */
-  webhook_credential?: number | null
+  webhook_credential?: number | null;
   /**
    * Prevent instance group fallback
    * If enabled, the job template will prevent adding any inventory or organization instance groups to the list of preferred instances groups to run on.If this setting is enabled and you provided an empty list, the global instance groups will be applied.
    * @default false
    */
-  prevent_instance_group_fallback?: boolean | null
+  prevent_instance_group_fallback?: boolean | null;
 }
 
 export interface Label {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Organization
    * Organization this label belongs to.
    */
-  organization: number
+  organization: number;
 }
 
-export type InventoryScript = object
+export type InventoryScript = object;
 
 export interface GroupTree {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Inventory */
-  inventory: number
+  inventory: number;
   /**
    * Variables
    * Group variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
   /** Children */
-  children?: string
+  children?: string;
 }
 
 export interface InventorySourceUpdate {
   /** Can update */
-  can_update?: boolean
+  can_update?: boolean;
 }
 
 export interface InventoryVariableData {
@@ -2547,37 +2547,37 @@ export interface InventoryVariableData {
    * Inventory variables in JSON or YAML format.
    * @default ""
    */
-  variables?: string | null
+  variables?: string | null;
 }
 
 export interface InventoryUpdateList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -2588,7 +2588,7 @@ export interface InventoryUpdateList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -2598,64 +2598,64 @@ export interface InventoryUpdateList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Source */
   source?:
     | 'file'
@@ -2669,57 +2669,57 @@ export interface InventoryUpdateList {
     | 'rhv'
     | 'controller'
     | 'insights'
-    | null
+    | null;
   /**
    * Source path
    * @maxLength 1024
    * @default ""
    */
-  source_path?: string | null
+  source_path?: string | null;
   /**
    * Source vars
    * Inventory source variables in YAML or JSON format.
    * @default ""
    */
-  source_vars?: string | null
+  source_vars?: string | null;
   /**
    * Credential
    * Cloud credential to use for inventory updates.
    * @min 1
    */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Enabled var
    * Retrieve the enabled state from the given dict of host variables. The enabled variable may be specified as "foo.bar", in which case the lookup will traverse into nested dicts, equivalent to: from_dict.get("foo", {}).get("bar", default)
    * @default ""
    */
-  enabled_var?: string | null
+  enabled_var?: string | null;
   /**
    * Enabled value
    * Only used when enabled_var is set. Value when the host is considered enabled. For example if enabled_var="status.power_state"and enabled_value="powered_on" with host variables:{   "status": {     "power_state": "powered_on",     "created": "2020-08-04T18:13:04+00:00",     "healthy": true    },    "name": "foobar",    "ip_address": "192.168.2.1"}The host would be marked enabled. If power_state where any value other than powered_on then the host would be disabled when imported. If the key is not found then the host will be enabled
    * @default ""
    */
-  enabled_value?: string | null
+  enabled_value?: string | null;
   /**
    * Host filter
    * Regex where only matching hosts will be imported.
    * @default ""
    */
-  host_filter?: string | null
+  host_filter?: string | null;
   /**
    * Overwrite
    * Overwrite local groups and hosts from remote inventory source.
    * @default false
    */
-  overwrite?: boolean | null
+  overwrite?: boolean | null;
   /**
    * Overwrite vars
    * Overwrite local variables from remote inventory source.
    * @default false
    */
-  overwrite_vars?: boolean | null
+  overwrite_vars?: boolean | null;
   /** Custom virtualenv */
-  custom_virtualenv?: string
+  custom_virtualenv?: string;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -2727,66 +2727,66 @@ export interface InventoryUpdateList {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Verbosity
    * @default 1
    */
-  verbosity?: 0 | 1 | 2
+  verbosity?: 0 | 1 | 2;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /** Inventory source */
-  inventory_source?: string
+  inventory_source?: string;
   /** License error */
-  license_error?: boolean
+  license_error?: boolean;
   /** Org host limit error */
-  org_host_limit_error?: boolean
+  org_host_limit_error?: boolean;
   /**
    * Source project update
    * Inventory files from this Project Update were used for the inventory update.
    */
-  source_project_update?: string | null
+  source_project_update?: string | null;
   /**
    * Instance group
    * The Instance group the job was run under
    */
-  instance_group?: number | null
+  instance_group?: number | null;
   /**
    * SCM Revision
    * The SCM Revision from the Project used for this inventory update.  Only applicable to inventories source from scm
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
 }
 
 export interface NotificationTemplate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Organization */
-  organization?: number | null
+  organization?: number | null;
   /** Notification type */
   notification_type?:
     | 'email'
@@ -2798,18 +2798,18 @@ export interface NotificationTemplate {
     | 'slack'
     | 'twilio'
     | 'webhook'
-    | null
+    | null;
   /**
    * Notification configuration
    * @default {}
    */
-  notification_configuration?: object
+  notification_configuration?: object;
   /**
    * Messages
    * Optional custom messages for notification template.
    * @default {}
    */
-  messages?: object | null
+  messages?: object | null;
 }
 
 export interface Schedule {
@@ -2818,137 +2818,137 @@ export interface Schedule {
    * A value representing the schedules iCal recurrence rule.
    * @minLength 1
    */
-  rrule?: string | null
+  rrule?: string | null;
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Extra data
    * @default {}
    */
-  extra_data?: object
+  extra_data?: object;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /** Job type */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Diff mode */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /** Verbosity */
-  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null
+  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null;
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Forks
    * @min 0
    */
-  forks?: number | null
+  forks?: number | null;
   /**
    * Job slice count
    * @min 0
    */
-  job_slice_count?: number | null
+  job_slice_count?: number | null;
   /** Timeout */
-  timeout?: number | null
+  timeout?: number | null;
   /** Unified job template */
-  unified_job_template: number
+  unified_job_template: number;
   /**
    * Enabled
    * Enables processing of this schedule.
    * @default true
    */
-  enabled?: boolean | null
+  enabled?: boolean | null;
   /**
    * Dtstart
    * The first occurrence of the schedule occurs on or after this time.
    * @format date-time
    */
-  dtstart?: string
+  dtstart?: string;
   /**
    * Dtend
    * The last occurrence of the schedule occurs before this time, aftewards the schedule expires.
    * @format date-time
    */
-  dtend?: string
+  dtend?: string;
   /**
    * Next run
    * The next time that the scheduled action will run.
    * @format date-time
    */
-  next_run?: string
+  next_run?: string;
   /**
    * Timezone
    * The timezone this schedule runs in. This field is extracted from the RRULE. If the timezone in the RRULE is a link to another timezone, the link will be reflected in this field.
    */
-  timezone?: string
+  timezone?: string;
   /**
    * Until
    * The date this schedule will end. This field is computed from the RRULE. If the schedule does not end an emptry string will be returned
    */
-  until?: string
+  until?: string;
 }
 
 export interface InventoryUpdateDetail {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** Source */
   source?:
     | 'file'
@@ -2962,57 +2962,57 @@ export interface InventoryUpdateDetail {
     | 'rhv'
     | 'controller'
     | 'insights'
-    | null
+    | null;
   /**
    * Source path
    * @maxLength 1024
    * @default ""
    */
-  source_path?: string | null
+  source_path?: string | null;
   /**
    * Source vars
    * Inventory source variables in YAML or JSON format.
    * @default ""
    */
-  source_vars?: string | null
+  source_vars?: string | null;
   /**
    * Credential
    * Cloud credential to use for inventory updates.
    * @min 1
    */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Enabled var
    * Retrieve the enabled state from the given dict of host variables. The enabled variable may be specified as "foo.bar", in which case the lookup will traverse into nested dicts, equivalent to: from_dict.get("foo", {}).get("bar", default)
    * @default ""
    */
-  enabled_var?: string | null
+  enabled_var?: string | null;
   /**
    * Enabled value
    * Only used when enabled_var is set. Value when the host is considered enabled. For example if enabled_var="status.power_state"and enabled_value="powered_on" with host variables:{   "status": {     "power_state": "powered_on",     "created": "2020-08-04T18:13:04+00:00",     "healthy": true    },    "name": "foobar",    "ip_address": "192.168.2.1"}The host would be marked enabled. If power_state where any value other than powered_on then the host would be disabled when imported. If the key is not found then the host will be enabled
    * @default ""
    */
-  enabled_value?: string | null
+  enabled_value?: string | null;
   /**
    * Host filter
    * Regex where only matching hosts will be imported.
    * @default ""
    */
-  host_filter?: string | null
+  host_filter?: string | null;
   /**
    * Overwrite
    * Overwrite local groups and hosts from remote inventory source.
    * @default false
    */
-  overwrite?: boolean | null
+  overwrite?: boolean | null;
   /**
    * Overwrite vars
    * Overwrite local variables from remote inventory source.
    * @default false
    */
-  overwrite_vars?: boolean | null
+  overwrite_vars?: boolean | null;
   /** Custom virtualenv */
-  custom_virtualenv?: string
+  custom_virtualenv?: string;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -3020,14 +3020,14 @@ export interface InventoryUpdateDetail {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Verbosity
    * @default 1
    */
-  verbosity?: 0 | 1 | 2
+  verbosity?: 0 | 1 | 2;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -3038,7 +3038,7 @@ export interface InventoryUpdateDetail {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -3048,215 +3048,215 @@ export interface InventoryUpdateDetail {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** job_env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /**
    * Event processing finished
    * Indicates whether all of the events generated by this unified job have been saved to the database.
    */
-  event_processing_finished?: boolean
+  event_processing_finished?: boolean;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /** Inventory source */
-  inventory_source?: string
+  inventory_source?: string;
   /** License error */
-  license_error?: boolean
+  license_error?: boolean;
   /** Org host limit error */
-  org_host_limit_error?: boolean
+  org_host_limit_error?: boolean;
   /**
    * Source project update
    * Inventory files from this Project Update were used for the inventory update.
    */
-  source_project_update?: string | null
+  source_project_update?: string | null;
   /**
    * Instance group
    * The Instance group the job was run under
    */
-  instance_group?: number | null
+  instance_group?: number | null;
   /**
    * SCM Revision
    * The SCM Revision from the Project used for this inventory update.  Only applicable to inventories source from scm
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
   /**
    * Source project
    * The project used for this job.
    */
-  source_project?: string
+  source_project?: string;
 }
 
 export interface InventoryUpdateCancel {
   /** Can cancel */
-  can_cancel?: boolean
+  can_cancel?: boolean;
 }
 
 export interface InventoryUpdateEvent {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Event */
-  event?: string
+  event?: string;
   /**
    * Counter
    * @min 0
    */
-  counter?: number
+  counter?: number;
   /**
    * Event display
    * @minLength 1
    */
-  event_display?: string
+  event_display?: string;
   /**
    * Event data
    * @default {}
    */
-  event_data?: object
+  event_data?: object;
   /** Failed */
-  failed?: string
+  failed?: string;
   /** Changed */
-  changed?: string
+  changed?: string;
   /**
    * Uuid
    * @minLength 1
    */
-  uuid?: string
+  uuid?: string;
   /**
    * Stdout
    * @minLength 1
    */
-  stdout?: string
+  stdout?: string;
   /**
    * Start line
    * @min 0
    */
-  start_line?: number
+  start_line?: number;
   /**
    * End line
    * @min 0
    */
-  end_line?: number
+  end_line?: number;
   /**
    * Verbosity
    * @min 0
    */
-  verbosity?: number
+  verbosity?: number;
   /** Inventory update */
-  inventory_update?: string
+  inventory_update?: string;
 }
 
 export interface JobList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -3267,7 +3267,7 @@ export interface JobList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -3277,130 +3277,130 @@ export interface JobList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /**
    * Job type
    * @default "run"
    */
-  job_type?: 'run' | 'check' | 'scan' | null
+  job_type?: 'run' | 'check' | 'scan' | null;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /** Project */
-  project?: string | null
+  project?: string | null;
   /**
    * Playbook
    * @maxLength 1024
    * @default ""
    */
-  playbook?: string | null
+  playbook?: string | null;
   /**
    * Scm branch
    * Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.
    * @maxLength 1024
    * @default ""
    */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * Forks
    * @min 0
    * @max 2147483647
    * @default 0
    */
-  forks?: number
+  forks?: number;
   /**
    * Limit
    * @default ""
    */
-  limit?: string | null
+  limit?: string | null;
   /**
    * Verbosity
    * @default 0
    */
-  verbosity?: 0 | 1 | 2 | 3 | 4 | 5
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Job tags
    * @default ""
    */
-  job_tags?: string | null
+  job_tags?: string | null;
   /**
    * Force handlers
    * @default false
    */
-  force_handlers?: boolean | null
+  force_handlers?: boolean | null;
   /**
    * Skip tags
    * @maxLength 1024
    * @default ""
    */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /**
    * Start at task
    * @maxLength 1024
    * @default ""
    */
-  start_at_task?: string | null
+  start_at_task?: string | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -3408,46 +3408,46 @@ export interface JobList {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Use fact cache
    * If enabled, the service will act as an Ansible Fact Cache Plugin; persisting facts at the end of a playbook run to the database and caching facts for use by Ansible.
    * @default false
    */
-  use_fact_cache?: boolean | null
+  use_fact_cache?: boolean | null;
   /**
    * Organization
    * The organization used to determine access to this unified job.
    */
-  organization?: number | null
+  organization?: number | null;
   /** Job template */
-  job_template?: string | null
+  job_template?: string | null;
   /** Passwords needed to start */
-  passwords_needed_to_start?: string
+  passwords_needed_to_start?: string;
   /**
    * Allow simultaneous
    * @default false
    */
-  allow_simultaneous?: boolean | null
+  allow_simultaneous?: boolean | null;
   /** Artifacts */
-  artifacts?: string
+  artifacts?: string;
   /**
    * SCM Revision
    * The SCM Revision from the Project used for this job, if available
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
   /**
    * Instance group
    * The Instance group the job was run under
    */
-  instance_group?: number | null
+  instance_group?: number | null;
   /**
    * Diff mode
    * If enabled, textual changes made to any templated files on the host are shown in the standard output
    * @default false
    */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /**
    * Job slice number
    * If part of a sliced job, the ID of the inventory slice operated on. If not part of sliced job, parameter is not used.
@@ -3455,7 +3455,7 @@ export interface JobList {
    * @max 2147483647
    * @default 0
    */
-  job_slice_number?: number
+  job_slice_number?: number;
   /**
    * Job slice count
    * If ran as part of sliced jobs, the total number of slices. If 1, job is not part of a sliced job.
@@ -3463,144 +3463,144 @@ export interface JobList {
    * @max 2147483647
    * @default 1
    */
-  job_slice_count?: number
+  job_slice_count?: number;
   /**
    * Webhook service
    * Service that webhook requests will be accepted from
    */
-  webhook_service?: 'github' | 'gitlab' | null
+  webhook_service?: 'github' | 'gitlab' | null;
   /**
    * Webhook credential
    * Personal Access Token for posting back the status to the service API
    */
-  webhook_credential?: number | null
+  webhook_credential?: number | null;
   /**
    * Webhook guid
    * Unique identifier of the event that triggered this webhook
    * @maxLength 128
    */
-  webhook_guid?: string | null
+  webhook_guid?: string | null;
 }
 
 export interface JobLaunch {
   /** Can start without user input */
-  can_start_without_user_input?: boolean
+  can_start_without_user_input?: boolean;
   /** Passwords needed to start */
-  passwords_needed_to_start?: string
+  passwords_needed_to_start?: string;
   /** Extra vars */
-  extra_vars?: object
+  extra_vars?: object;
   /** Inventory */
-  inventory?: number
+  inventory?: number;
   /** Scm branch */
-  scm_branch?: string
+  scm_branch?: string;
   /** Limit */
-  limit?: string
+  limit?: string;
   /** Job tags */
-  job_tags?: string
+  job_tags?: string;
   /** Skip tags */
-  skip_tags?: string
+  skip_tags?: string;
   /** Job type */
-  job_type?: 'run' | 'check'
+  job_type?: 'run' | 'check';
   /** Verbosity */
-  verbosity?: 0 | 1 | 2 | 3 | 4 | 5
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   /** Diff mode */
-  diff_mode?: boolean
+  diff_mode?: boolean;
   /** @uniqueItems true */
-  credentials?: number[]
+  credentials?: number[];
   /** Credential passwords */
-  credential_passwords?: string
+  credential_passwords?: string;
   /** Ask scm branch on launch */
-  ask_scm_branch_on_launch?: boolean | null
+  ask_scm_branch_on_launch?: boolean | null;
   /** Ask variables on launch */
-  ask_variables_on_launch?: boolean | null
+  ask_variables_on_launch?: boolean | null;
   /** Ask tags on launch */
-  ask_tags_on_launch?: boolean | null
+  ask_tags_on_launch?: boolean | null;
   /** Ask diff mode on launch */
-  ask_diff_mode_on_launch?: boolean | null
+  ask_diff_mode_on_launch?: boolean | null;
   /** Ask skip tags on launch */
-  ask_skip_tags_on_launch?: boolean | null
+  ask_skip_tags_on_launch?: boolean | null;
   /** Ask job type on launch */
-  ask_job_type_on_launch?: boolean | null
+  ask_job_type_on_launch?: boolean | null;
   /** Ask limit on launch */
-  ask_limit_on_launch?: boolean | null
+  ask_limit_on_launch?: boolean | null;
   /** Ask verbosity on launch */
-  ask_verbosity_on_launch?: boolean | null
+  ask_verbosity_on_launch?: boolean | null;
   /** Ask inventory on launch */
-  ask_inventory_on_launch?: boolean | null
+  ask_inventory_on_launch?: boolean | null;
   /** Ask credential on launch */
-  ask_credential_on_launch?: boolean | null
+  ask_credential_on_launch?: boolean | null;
   /** Ask execution environment on launch */
-  ask_execution_environment_on_launch?: boolean | null
+  ask_execution_environment_on_launch?: boolean | null;
   /** Ask labels on launch */
-  ask_labels_on_launch?: boolean | null
+  ask_labels_on_launch?: boolean | null;
   /** Ask forks on launch */
-  ask_forks_on_launch?: boolean | null
+  ask_forks_on_launch?: boolean | null;
   /** Ask job slice count on launch */
-  ask_job_slice_count_on_launch?: boolean | null
+  ask_job_slice_count_on_launch?: boolean | null;
   /** Ask timeout on launch */
-  ask_timeout_on_launch?: boolean | null
+  ask_timeout_on_launch?: boolean | null;
   /** Ask instance groups on launch */
-  ask_instance_groups_on_launch?: boolean | null
+  ask_instance_groups_on_launch?: boolean | null;
   /** Survey enabled */
-  survey_enabled?: string
+  survey_enabled?: string;
   /** Variables needed to start */
-  variables_needed_to_start?: string
+  variables_needed_to_start?: string;
   /** Credential needed to start */
-  credential_needed_to_start?: string
+  credential_needed_to_start?: string;
   /** Inventory needed to start */
-  inventory_needed_to_start?: string
+  inventory_needed_to_start?: string;
   /** Job template data */
-  job_template_data?: string
+  job_template_data?: string;
   /** Defaults */
-  defaults?: string
+  defaults?: string;
   /** Execution environment */
-  execution_environment?: number
+  execution_environment?: number;
   /** @uniqueItems true */
-  labels?: number[]
+  labels?: number[];
   /**
    * Forks
    * @min 0
    */
-  forks?: number
+  forks?: number;
   /**
    * Job slice count
    * @min 0
    */
-  job_slice_count?: number
+  job_slice_count?: number;
   /** Timeout */
-  timeout?: number
+  timeout?: number;
   /** @uniqueItems true */
-  instance_groups?: number[]
+  instance_groups?: number[];
 }
 
 export interface WorkflowJobList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -3611,7 +3611,7 @@ export interface WorkflowJobList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -3621,192 +3621,192 @@ export interface WorkflowJobList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Workflow job template */
-  workflow_job_template?: string | null
+  workflow_job_template?: string | null;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Allow simultaneous
    * @default false
    */
-  allow_simultaneous?: boolean | null
+  allow_simultaneous?: boolean | null;
   /**
    * Job template
    * If automatically created for a sliced job run, the job template the workflow job was created from.
    */
-  job_template?: string | null
+  job_template?: string | null;
   /**
    * Is sliced job
    * @default false
    */
-  is_sliced_job?: boolean | null
+  is_sliced_job?: boolean | null;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * Webhook service
    * Service that webhook requests will be accepted from
    */
-  webhook_service?: 'github' | 'gitlab' | null
+  webhook_service?: 'github' | 'gitlab' | null;
   /**
    * Webhook credential
    * Personal Access Token for posting back the status to the service API
    */
-  webhook_credential?: number | null
+  webhook_credential?: number | null;
   /**
    * Webhook guid
    * Unique identifier of the event that triggered this webhook
    * @maxLength 128
    */
-  webhook_guid?: string | null
+  webhook_guid?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
 }
 
 export interface JobDetail {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Job type
    * @default "run"
    */
-  job_type?: 'run' | 'check' | 'scan' | null
+  job_type?: 'run' | 'check' | 'scan' | null;
   /** Inventory */
-  inventory?: number | null
+  inventory?: number | null;
   /** Project */
-  project?: string | null
+  project?: string | null;
   /**
    * Playbook
    * @maxLength 1024
    * @default ""
    */
-  playbook?: string | null
+  playbook?: string | null;
   /**
    * Scm branch
    * Branch to use in job run. Project default used if blank. Only allowed if project allow_override field is set to true.
    * @maxLength 1024
    * @default ""
    */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * Forks
    * @min 0
    * @max 2147483647
    * @default 0
    */
-  forks?: number
+  forks?: number;
   /**
    * Limit
    * @default ""
    */
-  limit?: string | null
+  limit?: string | null;
   /**
    * Verbosity
    * @default 0
    */
-  verbosity?: 0 | 1 | 2 | 3 | 4 | 5
+  verbosity?: 0 | 1 | 2 | 3 | 4 | 5;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Job tags
    * @default ""
    */
-  job_tags?: string | null
+  job_tags?: string | null;
   /**
    * Force handlers
    * @default false
    */
-  force_handlers?: boolean | null
+  force_handlers?: boolean | null;
   /**
    * Skip tags
    * @maxLength 1024
    * @default ""
    */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /**
    * Start at task
    * @maxLength 1024
    * @default ""
    */
-  start_at_task?: string | null
+  start_at_task?: string | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -3814,20 +3814,20 @@ export interface JobDetail {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Use fact cache
    * If enabled, the service will act as an Ansible Fact Cache Plugin; persisting facts at the end of a playbook run to the database and caching facts for use by Ansible.
    * @default false
    */
-  use_fact_cache?: boolean | null
+  use_fact_cache?: boolean | null;
   /**
    * Organization
    * The organization used to determine access to this unified job.
    */
-  organization?: number | null
+  organization?: number | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -3838,7 +3838,7 @@ export interface JobDetail {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -3848,114 +3848,114 @@ export interface JobDetail {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** job_env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Controller node
    * The instance that managed the execution environment.
    * @minLength 1
    */
-  controller_node?: string
+  controller_node?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /**
    * Event processing finished
    * Indicates whether all of the events generated by this unified job have been saved to the database.
    */
-  event_processing_finished?: boolean
+  event_processing_finished?: boolean;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Job template */
-  job_template?: string | null
+  job_template?: string | null;
   /** Passwords needed to start */
-  passwords_needed_to_start?: string
+  passwords_needed_to_start?: string;
   /**
    * Allow simultaneous
    * @default false
    */
-  allow_simultaneous?: boolean | null
+  allow_simultaneous?: boolean | null;
   /** Artifacts */
-  artifacts?: string
+  artifacts?: string;
   /**
    * SCM Revision
    * The SCM Revision from the Project used for this job, if available
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
   /**
    * Instance group
    * The Instance group the job was run under
    */
-  instance_group?: number | null
+  instance_group?: number | null;
   /**
    * Diff mode
    * If enabled, textual changes made to any templated files on the host are shown in the standard output
    * @default false
    */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /**
    * Job slice number
    * If part of a sliced job, the ID of the inventory slice operated on. If not part of sliced job, parameter is not used.
@@ -3963,7 +3963,7 @@ export interface JobDetail {
    * @max 2147483647
    * @default 0
    */
-  job_slice_number?: number
+  job_slice_number?: number;
   /**
    * Job slice count
    * If ran as part of sliced jobs, the total number of slices. If 1, job is not part of a sliced job.
@@ -3971,89 +3971,89 @@ export interface JobDetail {
    * @max 2147483647
    * @default 1
    */
-  job_slice_count?: number
+  job_slice_count?: number;
   /**
    * Webhook service
    * Service that webhook requests will be accepted from
    */
-  webhook_service?: 'github' | 'gitlab' | null
+  webhook_service?: 'github' | 'gitlab' | null;
   /**
    * Webhook credential
    * Personal Access Token for posting back the status to the service API
    */
-  webhook_credential?: number | null
+  webhook_credential?: number | null;
   /**
    * Webhook guid
    * Unique identifier of the event that triggered this webhook
    * @maxLength 128
    */
-  webhook_guid?: string | null
+  webhook_guid?: string | null;
   /**
    * Host status counts
    * Playbook stats from the Ansible playbook_on_stats event.
    */
-  host_status_counts?: object
+  host_status_counts?: object;
   /**
    * Playbook counts
    * A count of all plays and tasks for the job run.
    */
-  playbook_counts?: string
+  playbook_counts?: string;
   /** Custom virtualenv */
-  custom_virtualenv?: string
+  custom_virtualenv?: string;
 }
 
 export interface JobCancel {
   /** Can cancel */
-  can_cancel?: boolean
+  can_cancel?: boolean;
 }
 
 export interface JobCreateSchedule {
   /** Can schedule */
-  can_schedule?: string
+  can_schedule?: string;
   /** Prompts */
-  prompts?: string
+  prompts?: string;
 }
 
 export interface JobRelaunch {
   /** Passwords needed to start */
-  passwords_needed_to_start?: string
+  passwords_needed_to_start?: string;
   /** Retry counts */
-  retry_counts?: string
+  retry_counts?: string;
   /**
    * Hosts
    * @default "all"
    */
-  hosts?: 'all' | 'failed' | null
+  hosts?: 'all' | 'failed' | null;
   /** Credential passwords */
-  credential_passwords: string
+  credential_passwords: string;
 }
 
 export interface Organization {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Max hosts
    * Maximum number of hosts allowed to be managed by this organization.
@@ -4061,151 +4061,151 @@ export interface Organization {
    * @max 2147483647
    * @default 0
    */
-  max_hosts?: number
+  max_hosts?: number;
   /**
    * Custom virtualenv
    * Local absolute file path containing a custom Python virtualenv to use
    * @minLength 1
    */
-  custom_virtualenv?: string | null
+  custom_virtualenv?: string | null;
   /**
    * Default environment
    * The default execution environment for jobs run by this organization.
    */
-  default_environment?: number | null
+  default_environment?: number | null;
 }
 
 export interface OrganizationCredentialSerializerCreate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Organization
    * Inherit permissions from organization roles. If provided on creation, do not give either user or team.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Credential Type
    * Specify the type of credential you want to create. Refer to the documentation for details on each type.
    */
-  credential_type: number
+  credential_type: number;
   /** Managed */
-  managed?: string
+  managed?: string;
   /**
    * Inputs
    * Enter inputs using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  inputs?: object
+  inputs?: object;
   /** Kind */
-  kind?: string
+  kind?: string;
   /** Cloud */
-  cloud?: string
+  cloud?: string;
   /** Kubernetes */
-  kubernetes?: string
+  kubernetes?: string;
 }
 
 export interface Project {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Local path
    * Local path (relative to PROJECTS_ROOT) containing playbooks and related files for this project.
    * @maxLength 1024
    */
-  local_path?: string | null
+  local_path?: string | null;
   /**
    * SCM Type
    * Specifies the source control system used to store the project.
    * @default ""
    */
-  scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | null
+  scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | null;
   /**
    * SCM URL
    * The location where the project is stored.
    * @maxLength 1024
    * @default ""
    */
-  scm_url?: string | null
+  scm_url?: string | null;
   /**
    * SCM Branch
    * Specific branch, tag or commit to checkout.
    * @maxLength 256
    * @default ""
    */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * SCM refspec
    * For git projects, an additional refspec to fetch.
    * @maxLength 1024
    * @default ""
    */
-  scm_refspec?: string | null
+  scm_refspec?: string | null;
   /**
    * Scm clean
    * Discard any local changes before syncing the project.
    * @default false
    */
-  scm_clean?: boolean | null
+  scm_clean?: boolean | null;
   /**
    * Scm track submodules
    * Track submodules latest commits on defined branch.
    * @default false
    */
-  scm_track_submodules?: boolean | null
+  scm_track_submodules?: boolean | null;
   /**
    * Scm delete on update
    * Delete the project before syncing.
    * @default false
    */
-  scm_delete_on_update?: boolean | null
+  scm_delete_on_update?: boolean | null;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -4213,25 +4213,25 @@ export interface Project {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * SCM Revision
    * The last revision fetched by a project update
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -4244,18 +4244,18 @@ export interface Project {
     | 'canceled'
     | 'never updated'
     | 'ok'
-    | 'missing'
+    | 'missing';
   /**
    * Organization
    * The organization used to determine access to this template.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Scm update on launch
    * Update the project when a job is launched that uses the project.
    * @default false
    */
-  scm_update_on_launch?: boolean | null
+  scm_update_on_launch?: boolean | null;
   /**
    * Scm update cache timeout
    * The number of seconds after the last project update ran that a new project update will be launched as a job dependency.
@@ -4263,76 +4263,76 @@ export interface Project {
    * @max 2147483647
    * @default 0
    */
-  scm_update_cache_timeout?: number
+  scm_update_cache_timeout?: number;
   /**
    * Allow override
    * Allow changing the SCM branch or revision in a job template that uses this project.
    * @default false
    */
-  allow_override?: boolean | null
+  allow_override?: boolean | null;
   /**
    * Custom virtualenv
    * Local absolute file path containing a custom Python virtualenv to use
    * @minLength 1
    */
-  custom_virtualenv?: string | null
+  custom_virtualenv?: string | null;
   /**
    * Default environment
    * The default execution environment for jobs run using this project.
    */
-  default_environment?: number | null
+  default_environment?: number | null;
   /**
    * Signature validation credential
    * An optional credential used for validating files in the project against unexpected changes.
    */
-  signature_validation_credential?: number | null
+  signature_validation_credential?: number | null;
   /** Last update failed */
-  last_update_failed?: boolean
+  last_update_failed?: boolean;
   /**
    * Last updated
    * @format date-time
    */
-  last_updated?: string
+  last_updated?: string;
 }
 
 export interface WorkflowJobTemplate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -4347,115 +4347,115 @@ export interface WorkflowJobTemplate {
     | 'ok'
     | 'missing'
     | 'none'
-    | 'updating'
+    | 'updating';
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Organization
    * The organization used to determine access to this template.
    */
-  organization?: number | null
+  organization?: number | null;
   /**
    * Survey enabled
    * @default false
    */
-  survey_enabled?: boolean | null
+  survey_enabled?: boolean | null;
   /**
    * Allow simultaneous
    * @default false
    */
-  allow_simultaneous?: boolean | null
+  allow_simultaneous?: boolean | null;
   /**
    * Ask variables on launch
    * @default false
    */
-  ask_variables_on_launch?: boolean | null
+  ask_variables_on_launch?: boolean | null;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * Ask inventory on launch
    * @default false
    */
-  ask_inventory_on_launch?: boolean | null
+  ask_inventory_on_launch?: boolean | null;
   /**
    * Ask scm branch on launch
    * @default false
    */
-  ask_scm_branch_on_launch?: boolean | null
+  ask_scm_branch_on_launch?: boolean | null;
   /**
    * Ask limit on launch
    * @default false
    */
-  ask_limit_on_launch?: boolean | null
+  ask_limit_on_launch?: boolean | null;
   /**
    * Webhook service
    * Service that webhook requests will be accepted from
    */
-  webhook_service?: 'github' | 'gitlab' | null
+  webhook_service?: 'github' | 'gitlab' | null;
   /**
    * Webhook credential
    * Personal Access Token for posting back the status to the service API
    */
-  webhook_credential?: number | null
+  webhook_credential?: number | null;
   /**
    * Ask labels on launch
    * @default false
    */
-  ask_labels_on_launch?: boolean | null
+  ask_labels_on_launch?: boolean | null;
   /**
    * Ask skip tags on launch
    * @default false
    */
-  ask_skip_tags_on_launch?: boolean | null
+  ask_skip_tags_on_launch?: boolean | null;
   /**
    * Ask tags on launch
    * @default false
    */
-  ask_tags_on_launch?: boolean | null
+  ask_tags_on_launch?: boolean | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
 }
 
 export interface ProjectUpdateList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -4466,7 +4466,7 @@ export interface ProjectUpdateList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -4476,111 +4476,111 @@ export interface ProjectUpdateList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /**
    * Local path
    * Local path (relative to PROJECTS_ROOT) containing playbooks and related files for this project.
    * @maxLength 1024
    */
-  local_path?: string | null
+  local_path?: string | null;
   /**
    * SCM Type
    * Specifies the source control system used to store the project.
    * @default ""
    */
-  scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | null
+  scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | null;
   /**
    * SCM URL
    * The location where the project is stored.
    * @maxLength 1024
    * @default ""
    */
-  scm_url?: string | null
+  scm_url?: string | null;
   /**
    * SCM Branch
    * Specific branch, tag or commit to checkout.
    * @maxLength 256
    * @default ""
    */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * SCM refspec
    * For git projects, an additional refspec to fetch.
    * @maxLength 1024
    * @default ""
    */
-  scm_refspec?: string | null
+  scm_refspec?: string | null;
   /**
    * Scm clean
    * Discard any local changes before syncing the project.
    * @default false
    */
-  scm_clean?: boolean | null
+  scm_clean?: boolean | null;
   /**
    * Scm track submodules
    * Track submodules latest commits on defined branch.
    * @default false
    */
-  scm_track_submodules?: boolean | null
+  scm_track_submodules?: boolean | null;
   /**
    * Scm delete on update
    * Delete the project before syncing.
    * @default false
    */
-  scm_delete_on_update?: boolean | null
+  scm_delete_on_update?: boolean | null;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -4588,108 +4588,108 @@ export interface ProjectUpdateList {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * SCM Revision
    * The SCM Revision discovered by this update for the given project and branch.
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
   /** Project */
-  project?: string
+  project?: string;
   /**
    * Job type
    * @default "check"
    */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /**
    * Job tags
    * Parts of the project update playbook that will be run.
    * @maxLength 1024
    * @default ""
    */
-  job_tags?: string | null
+  job_tags?: string | null;
 }
 
 export interface ProjectUpdateDetail {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Local path
    * Local path (relative to PROJECTS_ROOT) containing playbooks and related files for this project.
    * @maxLength 1024
    */
-  local_path?: string | null
+  local_path?: string | null;
   /**
    * SCM Type
    * Specifies the source control system used to store the project.
    * @default ""
    */
-  scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | null
+  scm_type?: '' | 'git' | 'svn' | 'insights' | 'archive' | null;
   /**
    * SCM URL
    * The location where the project is stored.
    * @maxLength 1024
    * @default ""
    */
-  scm_url?: string | null
+  scm_url?: string | null;
   /**
    * SCM Branch
    * Specific branch, tag or commit to checkout.
    * @maxLength 256
    * @default ""
    */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * SCM refspec
    * For git projects, an additional refspec to fetch.
    * @maxLength 1024
    * @default ""
    */
-  scm_refspec?: string | null
+  scm_refspec?: string | null;
   /**
    * Scm clean
    * Discard any local changes before syncing the project.
    * @default false
    */
-  scm_clean?: boolean | null
+  scm_clean?: boolean | null;
   /**
    * Scm track submodules
    * Track submodules latest commits on defined branch.
    * @default false
    */
-  scm_track_submodules?: boolean | null
+  scm_track_submodules?: boolean | null;
   /**
    * Scm delete on update
    * Delete the project before syncing.
    * @default false
    */
-  scm_delete_on_update?: boolean | null
+  scm_delete_on_update?: boolean | null;
   /** Credential */
-  credential?: number | null
+  credential?: number | null;
   /**
    * Timeout
    * The amount of time (in seconds) to run before the task is canceled.
@@ -4697,15 +4697,15 @@ export interface ProjectUpdateDetail {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * SCM Revision
    * The SCM Revision discovered by this update for the given project and branch.
    * @minLength 1
    */
-  scm_revision?: string
+  scm_revision?: string;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -4716,7 +4716,7 @@ export interface ProjectUpdateDetail {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -4726,126 +4726,126 @@ export interface ProjectUpdateDetail {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** job_env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /**
    * Event processing finished
    * Indicates whether all of the events generated by this unified job have been saved to the database.
    */
-  event_processing_finished?: boolean
+  event_processing_finished?: boolean;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Project */
-  project?: string
+  project?: string;
   /**
    * Job type
    * @default "check"
    */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /**
    * Job tags
    * Parts of the project update playbook that will be run.
    * @maxLength 1024
    * @default ""
    */
-  job_tags?: string | null
+  job_tags?: string | null;
   /**
    * Host status counts
    * Playbook stats from the Ansible playbook_on_stats event.
    */
-  host_status_counts?: object
+  host_status_counts?: object;
   /**
    * Playbook counts
    * A count of all plays and tasks for the job run.
    */
-  playbook_counts?: string
+  playbook_counts?: string;
 }
 
 export interface ProjectUpdateCancel {
   /** Can cancel */
-  can_cancel?: boolean
+  can_cancel?: boolean;
 }
 
 export interface ProjectUpdateEvent {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Event */
   event?:
     | 'runner_on_failed'
@@ -4881,71 +4881,71 @@ export interface ProjectUpdateEvent {
     | 'warning'
     | 'system_warning'
     | 'error'
-    | null
+    | null;
   /**
    * Counter
    * @min 0
    */
-  counter?: number
+  counter?: number;
   /**
    * Event display
    * @minLength 1
    */
-  event_display?: string
+  event_display?: string;
   /** Event data */
-  event_data?: string
+  event_data?: string;
   /** Event level */
-  event_level?: number
+  event_level?: number;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /** Changed */
-  changed?: boolean
+  changed?: boolean;
   /**
    * Uuid
    * @minLength 1
    */
-  uuid?: string
+  uuid?: string;
   /** Host name */
-  host_name?: string
+  host_name?: string;
   /**
    * Playbook
    * @minLength 1
    */
-  playbook?: string
+  playbook?: string;
   /**
    * Play
    * @minLength 1
    */
-  play?: string
+  play?: string;
   /**
    * Task
    * @minLength 1
    */
-  task?: string
+  task?: string;
   /**
    * Role
    * @minLength 1
    */
-  role?: string
+  role?: string;
   /** Stdout */
-  stdout?: string
+  stdout?: string;
   /**
    * Start line
    * @min 0
    */
-  start_line?: number
+  start_line?: number;
   /**
    * End line
    * @min 0
    */
-  end_line?: number
+  end_line?: number;
   /**
    * Verbosity
    * @min 0
    */
-  verbosity?: number
+  verbosity?: number;
   /** Project update */
-  project_update?: string
+  project_update?: string;
 }
 
 export interface ProjectInventories {
@@ -4953,7 +4953,7 @@ export interface ProjectInventories {
    * Inventory files
    * Array of inventory files and directories available within this project, not comprehensive.
    */
-  inventory_files?: string
+  inventory_files?: string;
 }
 
 export interface ProjectPlaybooks {
@@ -4961,12 +4961,12 @@ export interface ProjectPlaybooks {
    * Playbooks
    * Array of playbooks available within this project.
    */
-  playbooks?: string
+  playbooks?: string;
 }
 
 export interface ProjectUpdateView {
   /** Can update */
-  can_update?: boolean
+  can_update?: boolean;
 }
 
 export interface SchedulePreview {
@@ -4975,7 +4975,7 @@ export interface SchedulePreview {
    * A value representing the schedules iCal recurrence rule.
    * @minLength 1
    */
-  rrule?: string | null
+  rrule?: string | null;
 }
 
 export interface SettingCategory {
@@ -4983,17 +4983,17 @@ export interface SettingCategory {
    * Url
    * @minLength 1
    */
-  url?: string
+  url?: string;
   /**
    * Slug
    * @minLength 1
    */
-  slug?: string
+  slug?: string;
   /**
    * Name
    * @minLength 1
    */
-  name?: string
+  name?: string;
 }
 
 export interface SettingSingleton {
@@ -5002,286 +5002,286 @@ export interface SettingSingleton {
    * Enable capturing activity for the activity stream.
    * @default true
    */
-  ACTIVITY_STREAM_ENABLED: boolean
+  ACTIVITY_STREAM_ENABLED: boolean;
   /**
    * Enable Activity Stream for Inventory Sync
    * Enable capturing activity for the activity stream when running inventory sync.
    * @default false
    */
-  ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC: boolean
+  ACTIVITY_STREAM_ENABLED_FOR_INVENTORY_SYNC: boolean;
   /**
    * All Users Visible to Organization Admins
    * Controls whether any Organization Admin can view all users and teams, even those not associated with their Organization.
    * @default true
    */
-  ORG_ADMINS_CAN_SEE_ALL_USERS: boolean
+  ORG_ADMINS_CAN_SEE_ALL_USERS: boolean;
   /**
    * Organization Admins Can Manage Users and Teams
    * Controls whether any Organization Admin has the privileges to create and manage users and teams. You may want to disable this ability if you are using an LDAP or SAML integration.
    * @default true
    */
-  MANAGE_ORGANIZATION_AUTH: boolean
+  MANAGE_ORGANIZATION_AUTH: boolean;
   /**
    * Base URL of the service
    * This setting is used by services like notifications to render a valid url to the service.
    * @minLength 1
    * @default "https://towerhost"
    */
-  TOWER_URL_BASE: string
+  TOWER_URL_BASE: string;
   /**
    * HTTP headers and meta keys to search to determine remote host name or IP. Add additional items to this list, such as "HTTP_X_FORWARDED_FOR", if behind a reverse proxy. See the "Proxy Support" section of the AAP Installation guide for more details.
    * @default ["REMOTE_ADDR","REMOTE_HOST"]
    */
-  REMOTE_HOST_HEADERS: string[]
+  REMOTE_HOST_HEADERS: string[];
   /**
    * If the service is behind a reverse proxy/load balancer, use this setting to configure the proxy IP addresses from which the service should trust custom REMOTE_HOST_HEADERS header values. If this setting is an empty list (the default), the headers specified by REMOTE_HOST_HEADERS will be trusted unconditionally')
    * @default []
    */
-  PROXY_IP_ALLOWED_LIST: string[]
+  PROXY_IP_ALLOWED_LIST: string[];
   /**
    * License
    * The license controls which features and functionality are enabled. Use /api/v2/config/ to update or change the license.
    * @default {}
    */
-  LICENSE?: Record<string, string | null>
+  LICENSE?: Record<string, string | null>;
   /**
    * Red Hat customer username
    * This username is used to send data to Automation Analytics
    * @default ""
    */
-  REDHAT_USERNAME?: string
+  REDHAT_USERNAME?: string;
   /**
    * Red Hat customer password
    * This password is used to send data to Automation Analytics
    * @default ""
    */
-  REDHAT_PASSWORD?: string
+  REDHAT_PASSWORD?: string;
   /**
    * Red Hat or Satellite username
    * This username is used to retrieve subscription and content information
    * @default ""
    */
-  SUBSCRIPTIONS_USERNAME?: string
+  SUBSCRIPTIONS_USERNAME?: string;
   /**
    * Red Hat or Satellite password
    * This password is used to retrieve subscription and content information
    * @default ""
    */
-  SUBSCRIPTIONS_PASSWORD?: string
+  SUBSCRIPTIONS_PASSWORD?: string;
   /**
    * Automation Analytics upload URL
    * This setting is used to to configure the upload URL for data collection for Automation Analytics.
    * @minLength 1
    * @default "https://example.com"
    */
-  AUTOMATION_ANALYTICS_URL?: string
+  AUTOMATION_ANALYTICS_URL?: string;
   /**
    * Unique identifier for an installation
    * @minLength 1
    * @default "00000000-0000-0000-0000-000000000000"
    */
-  INSTALL_UUID?: string
+  INSTALL_UUID?: string;
   /**
    * The instance group where control plane tasks run
    * @minLength 1
    * @default "controlplane"
    */
-  DEFAULT_CONTROL_PLANE_QUEUE_NAME?: string
+  DEFAULT_CONTROL_PLANE_QUEUE_NAME?: string;
   /**
    * The instance group where user jobs run (currently only on non-VM installs)
    * @minLength 1
    * @default "default"
    */
-  DEFAULT_EXECUTION_QUEUE_NAME?: string
+  DEFAULT_EXECUTION_QUEUE_NAME?: string;
   /**
    * Global default execution environment
    * The Execution Environment to be used when one has not been configured for a job template.
    */
-  DEFAULT_EXECUTION_ENVIRONMENT?: number | null
+  DEFAULT_EXECUTION_ENVIRONMENT?: number | null;
   /**
    * Paths where Tower will look for custom virtual environments (in addition to /var/lib/awx/venv/). Enter one path per line.
    * @default []
    */
-  CUSTOM_VENV_PATHS?: string[]
+  CUSTOM_VENV_PATHS?: string[];
   /**
    * List of modules allowed to be used by ad-hoc jobs.
    * @default ["command","shell","yum","apt","apt_key","apt_repository","apt_rpm","service","group","user","mount","ping","selinux","setup","win_ping","win_service","win_updates","win_group","win_user"]
    */
-  AD_HOC_COMMANDS?: string[]
+  AD_HOC_COMMANDS?: string[];
   /**
    * When can extra variables contain Jinja templates?
    * Ansible allows variable substitution via the Jinja2 templating language for --extra-vars. This poses a potential security risk where users with the ability to specify extra vars at job launch time can use Jinja2 templates to run arbitrary Python.  It is recommended that this value be set to "template" or "never".
    * @default "template"
    */
-  ALLOW_JINJA_IN_EXTRA_VARS: 'always' | 'never' | 'template'
+  ALLOW_JINJA_IN_EXTRA_VARS: 'always' | 'never' | 'template';
   /**
    * Job execution path
    * The directory in which the service will create new temporary directories for job execution and isolation (such as credential files).
    * @minLength 1
    * @default "/tmp"
    */
-  AWX_ISOLATION_BASE_PATH: string
+  AWX_ISOLATION_BASE_PATH: string;
   /**
    * List of paths that would otherwise be hidden to expose to isolated jobs. Enter one path per line. Volumes will be mounted from the execution node to the container. The supported format is HOST-DIR[:CONTAINER-DIR[:OPTIONS]].
    * @default []
    */
-  AWX_ISOLATION_SHOW_PATHS?: string[]
+  AWX_ISOLATION_SHOW_PATHS?: string[];
   /**
    * Extra Environment Variables
    * Additional environment variables set for playbook runs, inventory updates, project updates, and notification sending.
    * @default {}
    */
-  AWX_TASK_ENV?: Record<string, string>
+  AWX_TASK_ENV?: Record<string, string>;
   /**
    * Environment Variables for Galaxy Commands
    * Additional environment variables set for invocations of ansible-galaxy within project updates. Useful if you must use a proxy server for ansible-galaxy but not git.
    * @default {"ANSIBLE_FORCE_COLOR":"false","GIT_SSH_COMMAND":"ssh -o StrictHostKeyChecking=no"}
    */
-  GALAXY_TASK_ENV: Record<string, string>
+  GALAXY_TASK_ENV: Record<string, string>;
   /**
    * Gather data for Automation Analytics
    * Enables the service to gather data on automation and send it to Automation Analytics.
    * @default false
    */
-  INSIGHTS_TRACKING_STATE?: boolean
+  INSIGHTS_TRACKING_STATE?: boolean;
   /**
    * Run Project Updates With Higher Verbosity
    * Adds the CLI -vvv flag to ansible-playbook runs of project_update.yml used for project updates.
    * @default false
    */
-  PROJECT_UPDATE_VVV: boolean
+  PROJECT_UPDATE_VVV: boolean;
   /**
    * Enable Role Download
    * Allows roles to be dynamically downloaded from a requirements.yml file for SCM projects.
    * @default true
    */
-  AWX_ROLES_ENABLED?: boolean
+  AWX_ROLES_ENABLED?: boolean;
   /**
    * Enable Collection(s) Download
    * Allows collections to be dynamically downloaded from a requirements.yml file for SCM projects.
    * @default true
    */
-  AWX_COLLECTIONS_ENABLED?: boolean
+  AWX_COLLECTIONS_ENABLED?: boolean;
   /**
    * Follow symlinks
    * Follow symbolic links when scanning for playbooks. Be aware that setting this to True can lead to infinite recursion if a link points to a parent directory of itself.
    * @default false
    */
-  AWX_SHOW_PLAYBOOK_LINKS?: boolean
+  AWX_SHOW_PLAYBOOK_LINKS?: boolean;
   /**
    * Expose host paths for Container Groups
    * Expose paths via hostPath for the Pods created by a Container Group. HostPath volumes present many security risks, and it is a best practice to avoid the use of HostPaths when possible.
    * @default false
    */
-  AWX_MOUNT_ISOLATED_PATHS_ON_K8S?: boolean
+  AWX_MOUNT_ISOLATED_PATHS_ON_K8S?: boolean;
   /**
    * Ignore Ansible Galaxy SSL Certificate Verification
    * If set to true, certificate validation will not be done when installing content from any Galaxy server.
    * @default false
    */
-  GALAXY_IGNORE_CERTS?: boolean
+  GALAXY_IGNORE_CERTS?: boolean;
   /**
    * Standard Output Maximum Display Size
    * Maximum Size of Standard Output in bytes to display before requiring the output be downloaded.
    * @min 0
    * @default 1048576
    */
-  STDOUT_MAX_BYTES_DISPLAY: number
+  STDOUT_MAX_BYTES_DISPLAY: number;
   /**
    * Job Event Standard Output Maximum Display Size
    * Maximum Size of Standard Output in bytes to display for a single job or ad hoc command event. `stdout` will end with `…` when truncated.
    * @min 0
    * @default 1024
    */
-  EVENT_STDOUT_MAX_BYTES_DISPLAY: number
+  EVENT_STDOUT_MAX_BYTES_DISPLAY: number;
   /**
    * Job Event Maximum Websocket Messages Per Second
    * Maximum number of messages to update the UI live job output with per second. Value of 0 means no limit.
    * @min 0
    * @default 30
    */
-  MAX_WEBSOCKET_EVENT_RATE?: number
+  MAX_WEBSOCKET_EVENT_RATE?: number;
   /**
    * Maximum Scheduled Jobs
    * Maximum number of the same job template that can be waiting to run when launching from a schedule before no more are created.
    * @min 1
    * @default 10
    */
-  SCHEDULE_MAX_JOBS: number
+  SCHEDULE_MAX_JOBS: number;
   /**
    * List of paths to search for extra callback plugins to be used when running jobs. Enter one path per line.
    * @default []
    */
-  AWX_ANSIBLE_CALLBACK_PLUGINS?: string[]
+  AWX_ANSIBLE_CALLBACK_PLUGINS?: string[];
   /**
    * Default Job Timeout
    * Maximum time in seconds to allow jobs to run. Use value of 0 to indicate that no timeout should be imposed. A timeout set on an individual job template will override this.
    * @min 0
    * @default 0
    */
-  DEFAULT_JOB_TIMEOUT?: number
+  DEFAULT_JOB_TIMEOUT?: number;
   /**
    * Default Job Idle Timeout
    * If no output is detected from ansible in this number of seconds the execution will be terminated. Use value of 0 to indicate that no idle timeout should be imposed.
    * @min 0
    * @default 0
    */
-  DEFAULT_JOB_IDLE_TIMEOUT?: number
+  DEFAULT_JOB_IDLE_TIMEOUT?: number;
   /**
    * Default Inventory Update Timeout
    * Maximum time in seconds to allow inventory updates to run. Use value of 0 to indicate that no timeout should be imposed. A timeout set on an individual inventory source will override this.
    * @min 0
    * @default 0
    */
-  DEFAULT_INVENTORY_UPDATE_TIMEOUT?: number
+  DEFAULT_INVENTORY_UPDATE_TIMEOUT?: number;
   /**
    * Default Project Update Timeout
    * Maximum time in seconds to allow project updates to run. Use value of 0 to indicate that no timeout should be imposed. A timeout set on an individual project will override this.
    * @min 0
    * @default 0
    */
-  DEFAULT_PROJECT_UPDATE_TIMEOUT?: number
+  DEFAULT_PROJECT_UPDATE_TIMEOUT?: number;
   /**
    * Per-Host Ansible Fact Cache Timeout
    * Maximum time, in seconds, that stored Ansible facts are considered valid since the last time they were modified. Only valid, non-stale, facts will be accessible by a playbook. Note, this does not influence the deletion of ansible_facts from the database. Use a value of 0 to indicate that no timeout should be imposed.
    * @min 0
    * @default 0
    */
-  ANSIBLE_FACT_CACHE_TIMEOUT?: number
+  ANSIBLE_FACT_CACHE_TIMEOUT?: number;
   /**
    * Maximum number of forks per job
    * Saving a Job Template with more than this number of forks will result in an error. When set to 0, no limit is applied.
    * @default 200
    */
-  MAX_FORKS?: number
+  MAX_FORKS?: number;
   /**
    * Logging Aggregator
    * Hostname/IP where external logs will be sent to.
    * @minLength 1
    */
-  LOG_AGGREGATOR_HOST?: string | null
+  LOG_AGGREGATOR_HOST?: string | null;
   /**
    * Logging Aggregator Port
    * Port on Logging Aggregator to send logs to (if required and not provided in Logging Aggregator).
    */
-  LOG_AGGREGATOR_PORT?: number | null
+  LOG_AGGREGATOR_PORT?: number | null;
   /**
    * Logging Aggregator Type
    * Format messages for the chosen log aggregator.
    */
-  LOG_AGGREGATOR_TYPE?: 'logstash' | 'splunk' | 'loggly' | 'sumologic' | 'other' | null
+  LOG_AGGREGATOR_TYPE?: 'logstash' | 'splunk' | 'loggly' | 'sumologic' | 'other' | null;
   /**
    * Logging Aggregator Username
    * Username for external log aggregator (if required; HTTP/s only).
    * @default ""
    */
-  LOG_AGGREGATOR_USERNAME?: string
+  LOG_AGGREGATOR_USERNAME?: string;
   /**
    * Logging Aggregator Password/Token
    * Password or authentication token for external log aggregator (if required; HTTP/s only).
    * @default ""
    */
-  LOG_AGGREGATOR_PASSWORD?: string
+  LOG_AGGREGATOR_PASSWORD?: string;
   /**
    * List of loggers that will send HTTP logs to the collector, these can include any or all of:
    * awx - service logs
@@ -5290,69 +5290,69 @@ export interface SettingSingleton {
    * system_tracking - facts gathered from scan jobs.
    * @default ["awx","activity_stream","job_events","system_tracking"]
    */
-  LOG_AGGREGATOR_LOGGERS?: string[]
+  LOG_AGGREGATOR_LOGGERS?: string[];
   /**
    * Log System Tracking Facts Individually
    * If set, system tracking facts will be sent for each package, service, or other item found in a scan, allowing for greater search query granularity. If unset, facts will be sent as a single dictionary, allowing for greater efficiency in fact processing.
    * @default false
    */
-  LOG_AGGREGATOR_INDIVIDUAL_FACTS?: boolean
+  LOG_AGGREGATOR_INDIVIDUAL_FACTS?: boolean;
   /**
    * Enable External Logging
    * Enable sending logs to external log aggregator.
    * @default false
    */
-  LOG_AGGREGATOR_ENABLED?: boolean
+  LOG_AGGREGATOR_ENABLED?: boolean;
   /**
    * Cluster-wide unique identifier.
    * Useful to uniquely identify instances.
    * @default ""
    */
-  LOG_AGGREGATOR_TOWER_UUID?: string
+  LOG_AGGREGATOR_TOWER_UUID?: string;
   /**
    * Logging Aggregator Protocol
    * Protocol used to communicate with log aggregator.  HTTPS/HTTP assumes HTTPS unless http:// is explicitly used in the Logging Aggregator hostname.
    * @default "https"
    */
-  LOG_AGGREGATOR_PROTOCOL?: 'https' | 'tcp' | 'udp'
+  LOG_AGGREGATOR_PROTOCOL?: 'https' | 'tcp' | 'udp';
   /**
    * TCP Connection Timeout
    * Number of seconds for a TCP connection to external log aggregator to timeout. Applies to HTTPS and TCP log aggregator protocols.
    * @default 5
    */
-  LOG_AGGREGATOR_TCP_TIMEOUT?: number
+  LOG_AGGREGATOR_TCP_TIMEOUT?: number;
   /**
    * Enable/disable HTTPS certificate verification
    * Flag to control enable/disable of certificate verification when LOG_AGGREGATOR_PROTOCOL is "https". If enabled, the log handler will verify certificate sent by external log aggregator before establishing connection.
    * @default true
    */
-  LOG_AGGREGATOR_VERIFY_CERT?: boolean
+  LOG_AGGREGATOR_VERIFY_CERT?: boolean;
   /**
    * Logging Aggregator Level Threshold
    * Level threshold used by log handler. Severities from lowest to highest are DEBUG, INFO, WARNING, ERROR, CRITICAL. Messages less severe than the threshold will be ignored by log handler. (messages under category awx.anlytics ignore this setting)
    * @default "INFO"
    */
-  LOG_AGGREGATOR_LEVEL?: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL'
+  LOG_AGGREGATOR_LEVEL?: 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
   /**
    * Maximum disk persistance for external log aggregation (in GB)
    * Amount of data to store (in gigabytes) during an outage of the external log aggregator (defaults to 1). Equivalent to the rsyslogd queue.maxdiskspace setting.
    * @min 1
    * @default 1
    */
-  LOG_AGGREGATOR_MAX_DISK_USAGE_GB?: number
+  LOG_AGGREGATOR_MAX_DISK_USAGE_GB?: number;
   /**
    * File system location for rsyslogd disk persistence
    * Location to persist logs that should be retried after an outage of the external log aggregator (defaults to /var/lib/awx). Equivalent to the rsyslogd queue.spoolDirectory setting.
    * @minLength 1
    * @default "/var/lib/awx"
    */
-  LOG_AGGREGATOR_MAX_DISK_USAGE_PATH?: string
+  LOG_AGGREGATOR_MAX_DISK_USAGE_PATH?: string;
   /**
    * Enable rsyslogd debugging
    * Enabled high verbosity debugging for rsyslogd.  Useful for debugging connection issues for external log aggregation.
    * @default false
    */
-  LOG_AGGREGATOR_RSYSLOGD_DEBUG?: boolean
+  LOG_AGGREGATOR_RSYSLOGD_DEBUG?: boolean;
   /**
    * Log Format For API 4XX Errors
    * The format of logged messages when an API 4XX error occurs, the following variables will be substituted:
@@ -5365,30 +5365,30 @@ export interface SettingSingleton {
    * @minLength 1
    * @default "status {status_code} received by user {user_name} attempting to access {url_path} from {remote_addr}"
    */
-  API_400_ERROR_LOG_FORMAT?: string
+  API_400_ERROR_LOG_FORMAT?: string;
   /**
    * Last gather date for Automation Analytics.
    * @format date-time
    */
-  AUTOMATION_ANALYTICS_LAST_GATHER?: string | null
+  AUTOMATION_ANALYTICS_LAST_GATHER?: string | null;
   /**
    * Last gathered entries from the data collection service of Automation Analytics
    * @default ""
    */
-  AUTOMATION_ANALYTICS_LAST_ENTRIES?: string
+  AUTOMATION_ANALYTICS_LAST_ENTRIES?: string;
   /**
    * Automation Analytics Gather Interval
    * Interval (in seconds) between data gathering.
    * @min 1800
    * @default 14400
    */
-  AUTOMATION_ANALYTICS_GATHER_INTERVAL?: number
+  AUTOMATION_ANALYTICS_GATHER_INTERVAL?: number;
   /**
    * Is k8s
    * Indicates whether the instance is part of a kubernetes-based deployment.
    * @default false
    */
-  IS_K8S?: boolean
+  IS_K8S?: boolean;
   /**
    * Idle Time Force Log Out
    * Number of seconds that a user is inactive before they will need to login again.
@@ -5396,80 +5396,80 @@ export interface SettingSingleton {
    * @max 30000000000
    * @default 1800
    */
-  SESSION_COOKIE_AGE: number
+  SESSION_COOKIE_AGE: number;
   /**
    * Maximum number of simultaneous logged in sessions
    * Maximum number of simultaneous logged in sessions a user may have. To disable enter -1.
    * @min -1
    * @default -1
    */
-  SESSIONS_PER_USER: number
+  SESSIONS_PER_USER: number;
   /**
    * Disable the built-in authentication system
    * Controls whether users are prevented from using the built-in authentication system. You probably want to do this if you are using an LDAP or SAML integration.
    * @default false
    */
-  DISABLE_LOCAL_AUTH: boolean
+  DISABLE_LOCAL_AUTH: boolean;
   /**
    * Enable HTTP Basic Auth
    * Enable HTTP Basic Auth for the API Browser.
    * @default true
    */
-  AUTH_BASIC_ENABLED: boolean
+  AUTH_BASIC_ENABLED: boolean;
   /**
    * OAuth 2 Timeout Settings
    * Dictionary for customizing OAuth 2 timeouts, available items are `ACCESS_TOKEN_EXPIRE_SECONDS`, the duration of access tokens in the number of seconds, `AUTHORIZATION_CODE_EXPIRE_SECONDS`, the duration of authorization codes in the number of seconds, and `REFRESH_TOKEN_EXPIRE_SECONDS`, the duration of refresh tokens, after expired access tokens, in the number of seconds.
    * @default {"ACCESS_TOKEN_EXPIRE_SECONDS":31536000000,"AUTHORIZATION_CODE_EXPIRE_SECONDS":600,"REFRESH_TOKEN_EXPIRE_SECONDS":2628000}
    */
-  OAUTH2_PROVIDER?: Record<string, number>
+  OAUTH2_PROVIDER?: Record<string, number>;
   /**
    * Allow External Users to Create OAuth2 Tokens
    * For security reasons, users from external auth providers (LDAP, SAML, SSO, Radius, and others) are not allowed to create OAuth2 tokens. To change this behavior, enable this setting. Existing tokens will not be deleted when this setting is toggled off.
    * @default false
    */
-  ALLOW_OAUTH2_FOR_EXTERNAL_USERS?: boolean
+  ALLOW_OAUTH2_FOR_EXTERNAL_USERS?: boolean;
   /**
    * Login redirect override URL
    * URL to which unauthorized users will be redirected to log in.  If blank, users will be sent to the login page.
    * @default ""
    */
-  LOGIN_REDIRECT_OVERRIDE?: string
+  LOGIN_REDIRECT_OVERRIDE?: string;
   /**
    * User Analytics Tracking State
    * Enable or Disable User Analytics Tracking.
    * @default "off"
    */
-  PENDO_TRACKING_STATE?: 'off' | 'anonymous' | 'detailed'
+  PENDO_TRACKING_STATE?: 'off' | 'anonymous' | 'detailed';
   /**
    * Custom Login Info
    * If needed, you can add specific information (such as a legal notice or a disclaimer) to a text box in the login modal using this setting. Any content added must be in plain text or an HTML fragment, as other markup languages are not supported.
    * @default ""
    */
-  CUSTOM_LOGIN_INFO?: string
+  CUSTOM_LOGIN_INFO?: string;
   /**
    * Custom Logo
    * To set up a custom logo, provide a file that you create. For the custom logo to look its best, use a .png file with a transparent background. GIF, PNG and JPEG formats are supported.
    * @default ""
    */
-  CUSTOM_LOGO?: string
+  CUSTOM_LOGO?: string;
   /**
    * Max Job Events Retrieved by UI
    * Maximum number of job events for the UI to retrieve within a single request.
    * @min 100
    * @default 4000
    */
-  MAX_UI_JOB_EVENTS: number
+  MAX_UI_JOB_EVENTS: number;
   /**
    * Enable Live Updates in the UI
    * If disabled, the page will not refresh when events are received. Reloading the page will be required to get the latest details.
    * @default true
    */
-  UI_LIVE_UPDATES_ENABLED: boolean
+  UI_LIVE_UPDATES_ENABLED: boolean;
   /**
    * List of authentication backends that are enabled based on license features and other authentication settings.
    * @default ["awx.sso.backends.TACACSPlusBackend","awx.main.backends.AWXModelBackend"]
    */
-  AUTHENTICATION_BACKENDS?: string[]
+  AUTHENTICATION_BACKENDS?: string[];
   /**
    * Social Auth Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -5477,66 +5477,66 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * Social Auth Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_TEAM_MAP?: Record<string, Record<string, string>>;
   /** When set to an empty list `[]`, this setting prevents new user accounts from being created. Only users who have previously logged in using social auth or have a user account with a matching email address will be able to login. */
-  SOCIAL_AUTH_USER_FIELDS?: string[] | null
+  SOCIAL_AUTH_USER_FIELDS?: string[] | null;
   /**
    * LDAP Server URI
    * URI to connect to LDAP server, such as "ldap://ldap.example.com:389" (non-SSL) or "ldaps://ldap.example.com:636" (SSL). Multiple LDAP servers may be specified by separating with spaces or commas. LDAP authentication is disabled if this parameter is empty.
    * @default ""
    */
-  AUTH_LDAP_SERVER_URI?: string
+  AUTH_LDAP_SERVER_URI?: string;
   /**
    * LDAP Bind DN
    * DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.
    * @default ""
    */
-  AUTH_LDAP_BIND_DN?: string
+  AUTH_LDAP_BIND_DN?: string;
   /**
    * LDAP Bind Password
    * Password used to bind LDAP user account.
    * @default ""
    */
-  AUTH_LDAP_BIND_PASSWORD?: string
+  AUTH_LDAP_BIND_PASSWORD?: string;
   /**
    * LDAP Start TLS
    * Whether to enable TLS when the LDAP connection is not using SSL.
    * @default false
    */
-  AUTH_LDAP_START_TLS?: boolean
+  AUTH_LDAP_START_TLS?: boolean;
   /**
    * LDAP Connection Options
    * Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. "OPT_REFERRALS"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.
    * @default {"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}
    */
-  AUTH_LDAP_CONNECTION_OPTIONS?: Record<string, string | null>
+  AUTH_LDAP_CONNECTION_OPTIONS?: Record<string, string | null>;
   /**
    * LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of "LDAPUnion" is possible. See the documentation for details.
    * @default []
    */
-  AUTH_LDAP_USER_SEARCH?: (string | null)[]
+  AUTH_LDAP_USER_SEARCH?: (string | null)[];
   /**
    * LDAP User DN Template
    * Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.
    */
-  AUTH_LDAP_USER_DN_TEMPLATE?: string | null
+  AUTH_LDAP_USER_DN_TEMPLATE?: string | null;
   /**
    * LDAP User Attribute Map
    * Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.
    * @default {}
    */
-  AUTH_LDAP_USER_ATTR_MAP?: Record<string, string>
+  AUTH_LDAP_USER_ATTR_MAP?: Record<string, string>;
   /**
    * Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.
    * @default []
    */
-  AUTH_LDAP_GROUP_SEARCH?: (string | null)[]
+  AUTH_LDAP_GROUP_SEARCH?: (string | null)[];
   /**
    * LDAP Group Type
    * The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups
@@ -5554,92 +5554,92 @@ export interface SettingSingleton {
     | 'NestedActiveDirectoryGroupType'
     | 'NestedOrganizationalRoleGroupType'
     | 'NestedMemberDNGroupType'
-    | 'PosixUIDGroupType'
+    | 'PosixUIDGroupType';
   /**
    * LDAP Group Type Parameters
    * Key value parameters to send the chosen group type init method.
    * @default {"member_attr":"member","name_attr":"cn"}
    */
-  AUTH_LDAP_GROUP_TYPE_PARAMS?: Record<string, string | null>
+  AUTH_LDAP_GROUP_TYPE_PARAMS?: Record<string, string | null>;
   /**
    * LDAP Require Group
    * Group DN required to login. If specified, user must be a member of this group to login via LDAP. If not set, everyone in LDAP that matches the user search will be able to login to the service. Only one require group is supported.
    */
-  AUTH_LDAP_REQUIRE_GROUP?: string | null
+  AUTH_LDAP_REQUIRE_GROUP?: string | null;
   /**
    * LDAP Deny Group
    * Group DN denied from login. If specified, user will not be allowed to login if a member of this group.  Only one deny group is supported.
    */
-  AUTH_LDAP_DENY_GROUP?: string | null
+  AUTH_LDAP_DENY_GROUP?: string | null;
   /**
    * LDAP User Flags By Group
    * Retrieve users from a given group. At this time, superuser and system auditors are the only groups supported. Refer to the documentation for more detail.
    * @default {}
    */
-  AUTH_LDAP_USER_FLAGS_BY_GROUP?: Record<string, string[]>
+  AUTH_LDAP_USER_FLAGS_BY_GROUP?: Record<string, string[]>;
   /**
    * LDAP Organization Map
    * Mapping between organization admins/users and LDAP groups. This controls which users are placed into which organizations relative to their LDAP group memberships. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Team Map
    * Mapping between team members (users) and LDAP groups. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_TEAM_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Server URI
    * URI to connect to LDAP server, such as "ldap://ldap.example.com:389" (non-SSL) or "ldaps://ldap.example.com:636" (SSL). Multiple LDAP servers may be specified by separating with spaces or commas. LDAP authentication is disabled if this parameter is empty.
    * @default ""
    */
-  AUTH_LDAP_1_SERVER_URI?: string
+  AUTH_LDAP_1_SERVER_URI?: string;
   /**
    * LDAP Bind DN
    * DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.
    * @default ""
    */
-  AUTH_LDAP_1_BIND_DN?: string
+  AUTH_LDAP_1_BIND_DN?: string;
   /**
    * LDAP Bind Password
    * Password used to bind LDAP user account.
    * @default ""
    */
-  AUTH_LDAP_1_BIND_PASSWORD?: string
+  AUTH_LDAP_1_BIND_PASSWORD?: string;
   /**
    * LDAP Start TLS
    * Whether to enable TLS when the LDAP connection is not using SSL.
    * @default false
    */
-  AUTH_LDAP_1_START_TLS?: boolean
+  AUTH_LDAP_1_START_TLS?: boolean;
   /**
    * LDAP Connection Options
    * Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. "OPT_REFERRALS"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.
    * @default {"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}
    */
-  AUTH_LDAP_1_CONNECTION_OPTIONS?: Record<string, string | null>
+  AUTH_LDAP_1_CONNECTION_OPTIONS?: Record<string, string | null>;
   /**
    * LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of "LDAPUnion" is possible. See the documentation for details.
    * @default []
    */
-  AUTH_LDAP_1_USER_SEARCH?: (string | null)[]
+  AUTH_LDAP_1_USER_SEARCH?: (string | null)[];
   /**
    * LDAP User DN Template
    * Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.
    */
-  AUTH_LDAP_1_USER_DN_TEMPLATE?: string | null
+  AUTH_LDAP_1_USER_DN_TEMPLATE?: string | null;
   /**
    * LDAP User Attribute Map
    * Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.
    * @default {}
    */
-  AUTH_LDAP_1_USER_ATTR_MAP?: Record<string, string>
+  AUTH_LDAP_1_USER_ATTR_MAP?: Record<string, string>;
   /**
    * Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.
    * @default []
    */
-  AUTH_LDAP_1_GROUP_SEARCH?: (string | null)[]
+  AUTH_LDAP_1_GROUP_SEARCH?: (string | null)[];
   /**
    * LDAP Group Type
    * The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups
@@ -5657,92 +5657,92 @@ export interface SettingSingleton {
     | 'NestedActiveDirectoryGroupType'
     | 'NestedOrganizationalRoleGroupType'
     | 'NestedMemberDNGroupType'
-    | 'PosixUIDGroupType'
+    | 'PosixUIDGroupType';
   /**
    * LDAP Group Type Parameters
    * Key value parameters to send the chosen group type init method.
    * @default {"member_attr":"member","name_attr":"cn"}
    */
-  AUTH_LDAP_1_GROUP_TYPE_PARAMS?: Record<string, string | null>
+  AUTH_LDAP_1_GROUP_TYPE_PARAMS?: Record<string, string | null>;
   /**
    * LDAP Require Group
    * Group DN required to login. If specified, user must be a member of this group to login via LDAP. If not set, everyone in LDAP that matches the user search will be able to login to the service. Only one require group is supported.
    */
-  AUTH_LDAP_1_REQUIRE_GROUP?: string | null
+  AUTH_LDAP_1_REQUIRE_GROUP?: string | null;
   /**
    * LDAP Deny Group
    * Group DN denied from login. If specified, user will not be allowed to login if a member of this group.  Only one deny group is supported.
    */
-  AUTH_LDAP_1_DENY_GROUP?: string | null
+  AUTH_LDAP_1_DENY_GROUP?: string | null;
   /**
    * LDAP User Flags By Group
    * Retrieve users from a given group. At this time, superuser and system auditors are the only groups supported. Refer to the documentation for more detail.
    * @default {}
    */
-  AUTH_LDAP_1_USER_FLAGS_BY_GROUP?: Record<string, string[]>
+  AUTH_LDAP_1_USER_FLAGS_BY_GROUP?: Record<string, string[]>;
   /**
    * LDAP Organization Map
    * Mapping between organization admins/users and LDAP groups. This controls which users are placed into which organizations relative to their LDAP group memberships. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_1_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_1_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Team Map
    * Mapping between team members (users) and LDAP groups. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_1_TEAM_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_1_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Server URI
    * URI to connect to LDAP server, such as "ldap://ldap.example.com:389" (non-SSL) or "ldaps://ldap.example.com:636" (SSL). Multiple LDAP servers may be specified by separating with spaces or commas. LDAP authentication is disabled if this parameter is empty.
    * @default ""
    */
-  AUTH_LDAP_2_SERVER_URI?: string
+  AUTH_LDAP_2_SERVER_URI?: string;
   /**
    * LDAP Bind DN
    * DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.
    * @default ""
    */
-  AUTH_LDAP_2_BIND_DN?: string
+  AUTH_LDAP_2_BIND_DN?: string;
   /**
    * LDAP Bind Password
    * Password used to bind LDAP user account.
    * @default ""
    */
-  AUTH_LDAP_2_BIND_PASSWORD?: string
+  AUTH_LDAP_2_BIND_PASSWORD?: string;
   /**
    * LDAP Start TLS
    * Whether to enable TLS when the LDAP connection is not using SSL.
    * @default false
    */
-  AUTH_LDAP_2_START_TLS?: boolean
+  AUTH_LDAP_2_START_TLS?: boolean;
   /**
    * LDAP Connection Options
    * Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. "OPT_REFERRALS"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.
    * @default {"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}
    */
-  AUTH_LDAP_2_CONNECTION_OPTIONS?: Record<string, string | null>
+  AUTH_LDAP_2_CONNECTION_OPTIONS?: Record<string, string | null>;
   /**
    * LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of "LDAPUnion" is possible. See the documentation for details.
    * @default []
    */
-  AUTH_LDAP_2_USER_SEARCH?: (string | null)[]
+  AUTH_LDAP_2_USER_SEARCH?: (string | null)[];
   /**
    * LDAP User DN Template
    * Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.
    */
-  AUTH_LDAP_2_USER_DN_TEMPLATE?: string | null
+  AUTH_LDAP_2_USER_DN_TEMPLATE?: string | null;
   /**
    * LDAP User Attribute Map
    * Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.
    * @default {}
    */
-  AUTH_LDAP_2_USER_ATTR_MAP?: Record<string, string>
+  AUTH_LDAP_2_USER_ATTR_MAP?: Record<string, string>;
   /**
    * Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.
    * @default []
    */
-  AUTH_LDAP_2_GROUP_SEARCH?: (string | null)[]
+  AUTH_LDAP_2_GROUP_SEARCH?: (string | null)[];
   /**
    * LDAP Group Type
    * The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups
@@ -5760,92 +5760,92 @@ export interface SettingSingleton {
     | 'NestedActiveDirectoryGroupType'
     | 'NestedOrganizationalRoleGroupType'
     | 'NestedMemberDNGroupType'
-    | 'PosixUIDGroupType'
+    | 'PosixUIDGroupType';
   /**
    * LDAP Group Type Parameters
    * Key value parameters to send the chosen group type init method.
    * @default {"member_attr":"member","name_attr":"cn"}
    */
-  AUTH_LDAP_2_GROUP_TYPE_PARAMS?: Record<string, string | null>
+  AUTH_LDAP_2_GROUP_TYPE_PARAMS?: Record<string, string | null>;
   /**
    * LDAP Require Group
    * Group DN required to login. If specified, user must be a member of this group to login via LDAP. If not set, everyone in LDAP that matches the user search will be able to login to the service. Only one require group is supported.
    */
-  AUTH_LDAP_2_REQUIRE_GROUP?: string | null
+  AUTH_LDAP_2_REQUIRE_GROUP?: string | null;
   /**
    * LDAP Deny Group
    * Group DN denied from login. If specified, user will not be allowed to login if a member of this group.  Only one deny group is supported.
    */
-  AUTH_LDAP_2_DENY_GROUP?: string | null
+  AUTH_LDAP_2_DENY_GROUP?: string | null;
   /**
    * LDAP User Flags By Group
    * Retrieve users from a given group. At this time, superuser and system auditors are the only groups supported. Refer to the documentation for more detail.
    * @default {}
    */
-  AUTH_LDAP_2_USER_FLAGS_BY_GROUP?: Record<string, string[]>
+  AUTH_LDAP_2_USER_FLAGS_BY_GROUP?: Record<string, string[]>;
   /**
    * LDAP Organization Map
    * Mapping between organization admins/users and LDAP groups. This controls which users are placed into which organizations relative to their LDAP group memberships. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_2_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_2_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Team Map
    * Mapping between team members (users) and LDAP groups. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_2_TEAM_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_2_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Server URI
    * URI to connect to LDAP server, such as "ldap://ldap.example.com:389" (non-SSL) or "ldaps://ldap.example.com:636" (SSL). Multiple LDAP servers may be specified by separating with spaces or commas. LDAP authentication is disabled if this parameter is empty.
    * @default ""
    */
-  AUTH_LDAP_3_SERVER_URI?: string
+  AUTH_LDAP_3_SERVER_URI?: string;
   /**
    * LDAP Bind DN
    * DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.
    * @default ""
    */
-  AUTH_LDAP_3_BIND_DN?: string
+  AUTH_LDAP_3_BIND_DN?: string;
   /**
    * LDAP Bind Password
    * Password used to bind LDAP user account.
    * @default ""
    */
-  AUTH_LDAP_3_BIND_PASSWORD?: string
+  AUTH_LDAP_3_BIND_PASSWORD?: string;
   /**
    * LDAP Start TLS
    * Whether to enable TLS when the LDAP connection is not using SSL.
    * @default false
    */
-  AUTH_LDAP_3_START_TLS?: boolean
+  AUTH_LDAP_3_START_TLS?: boolean;
   /**
    * LDAP Connection Options
    * Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. "OPT_REFERRALS"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.
    * @default {"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}
    */
-  AUTH_LDAP_3_CONNECTION_OPTIONS?: Record<string, string | null>
+  AUTH_LDAP_3_CONNECTION_OPTIONS?: Record<string, string | null>;
   /**
    * LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of "LDAPUnion" is possible. See the documentation for details.
    * @default []
    */
-  AUTH_LDAP_3_USER_SEARCH?: (string | null)[]
+  AUTH_LDAP_3_USER_SEARCH?: (string | null)[];
   /**
    * LDAP User DN Template
    * Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.
    */
-  AUTH_LDAP_3_USER_DN_TEMPLATE?: string | null
+  AUTH_LDAP_3_USER_DN_TEMPLATE?: string | null;
   /**
    * LDAP User Attribute Map
    * Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.
    * @default {}
    */
-  AUTH_LDAP_3_USER_ATTR_MAP?: Record<string, string>
+  AUTH_LDAP_3_USER_ATTR_MAP?: Record<string, string>;
   /**
    * Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.
    * @default []
    */
-  AUTH_LDAP_3_GROUP_SEARCH?: (string | null)[]
+  AUTH_LDAP_3_GROUP_SEARCH?: (string | null)[];
   /**
    * LDAP Group Type
    * The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups
@@ -5863,92 +5863,92 @@ export interface SettingSingleton {
     | 'NestedActiveDirectoryGroupType'
     | 'NestedOrganizationalRoleGroupType'
     | 'NestedMemberDNGroupType'
-    | 'PosixUIDGroupType'
+    | 'PosixUIDGroupType';
   /**
    * LDAP Group Type Parameters
    * Key value parameters to send the chosen group type init method.
    * @default {"member_attr":"member","name_attr":"cn"}
    */
-  AUTH_LDAP_3_GROUP_TYPE_PARAMS?: Record<string, string | null>
+  AUTH_LDAP_3_GROUP_TYPE_PARAMS?: Record<string, string | null>;
   /**
    * LDAP Require Group
    * Group DN required to login. If specified, user must be a member of this group to login via LDAP. If not set, everyone in LDAP that matches the user search will be able to login to the service. Only one require group is supported.
    */
-  AUTH_LDAP_3_REQUIRE_GROUP?: string | null
+  AUTH_LDAP_3_REQUIRE_GROUP?: string | null;
   /**
    * LDAP Deny Group
    * Group DN denied from login. If specified, user will not be allowed to login if a member of this group.  Only one deny group is supported.
    */
-  AUTH_LDAP_3_DENY_GROUP?: string | null
+  AUTH_LDAP_3_DENY_GROUP?: string | null;
   /**
    * LDAP User Flags By Group
    * Retrieve users from a given group. At this time, superuser and system auditors are the only groups supported. Refer to the documentation for more detail.
    * @default {}
    */
-  AUTH_LDAP_3_USER_FLAGS_BY_GROUP?: Record<string, string[]>
+  AUTH_LDAP_3_USER_FLAGS_BY_GROUP?: Record<string, string[]>;
   /**
    * LDAP Organization Map
    * Mapping between organization admins/users and LDAP groups. This controls which users are placed into which organizations relative to their LDAP group memberships. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_3_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_3_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Team Map
    * Mapping between team members (users) and LDAP groups. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_3_TEAM_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_3_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Server URI
    * URI to connect to LDAP server, such as "ldap://ldap.example.com:389" (non-SSL) or "ldaps://ldap.example.com:636" (SSL). Multiple LDAP servers may be specified by separating with spaces or commas. LDAP authentication is disabled if this parameter is empty.
    * @default ""
    */
-  AUTH_LDAP_4_SERVER_URI?: string
+  AUTH_LDAP_4_SERVER_URI?: string;
   /**
    * LDAP Bind DN
    * DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.
    * @default ""
    */
-  AUTH_LDAP_4_BIND_DN?: string
+  AUTH_LDAP_4_BIND_DN?: string;
   /**
    * LDAP Bind Password
    * Password used to bind LDAP user account.
    * @default ""
    */
-  AUTH_LDAP_4_BIND_PASSWORD?: string
+  AUTH_LDAP_4_BIND_PASSWORD?: string;
   /**
    * LDAP Start TLS
    * Whether to enable TLS when the LDAP connection is not using SSL.
    * @default false
    */
-  AUTH_LDAP_4_START_TLS?: boolean
+  AUTH_LDAP_4_START_TLS?: boolean;
   /**
    * LDAP Connection Options
    * Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. "OPT_REFERRALS"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.
    * @default {"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}
    */
-  AUTH_LDAP_4_CONNECTION_OPTIONS?: Record<string, string | null>
+  AUTH_LDAP_4_CONNECTION_OPTIONS?: Record<string, string | null>;
   /**
    * LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of "LDAPUnion" is possible. See the documentation for details.
    * @default []
    */
-  AUTH_LDAP_4_USER_SEARCH?: (string | null)[]
+  AUTH_LDAP_4_USER_SEARCH?: (string | null)[];
   /**
    * LDAP User DN Template
    * Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.
    */
-  AUTH_LDAP_4_USER_DN_TEMPLATE?: string | null
+  AUTH_LDAP_4_USER_DN_TEMPLATE?: string | null;
   /**
    * LDAP User Attribute Map
    * Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.
    * @default {}
    */
-  AUTH_LDAP_4_USER_ATTR_MAP?: Record<string, string>
+  AUTH_LDAP_4_USER_ATTR_MAP?: Record<string, string>;
   /**
    * Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.
    * @default []
    */
-  AUTH_LDAP_4_GROUP_SEARCH?: (string | null)[]
+  AUTH_LDAP_4_GROUP_SEARCH?: (string | null)[];
   /**
    * LDAP Group Type
    * The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups
@@ -5966,92 +5966,92 @@ export interface SettingSingleton {
     | 'NestedActiveDirectoryGroupType'
     | 'NestedOrganizationalRoleGroupType'
     | 'NestedMemberDNGroupType'
-    | 'PosixUIDGroupType'
+    | 'PosixUIDGroupType';
   /**
    * LDAP Group Type Parameters
    * Key value parameters to send the chosen group type init method.
    * @default {"member_attr":"member","name_attr":"cn"}
    */
-  AUTH_LDAP_4_GROUP_TYPE_PARAMS?: Record<string, string | null>
+  AUTH_LDAP_4_GROUP_TYPE_PARAMS?: Record<string, string | null>;
   /**
    * LDAP Require Group
    * Group DN required to login. If specified, user must be a member of this group to login via LDAP. If not set, everyone in LDAP that matches the user search will be able to login to the service. Only one require group is supported.
    */
-  AUTH_LDAP_4_REQUIRE_GROUP?: string | null
+  AUTH_LDAP_4_REQUIRE_GROUP?: string | null;
   /**
    * LDAP Deny Group
    * Group DN denied from login. If specified, user will not be allowed to login if a member of this group.  Only one deny group is supported.
    */
-  AUTH_LDAP_4_DENY_GROUP?: string | null
+  AUTH_LDAP_4_DENY_GROUP?: string | null;
   /**
    * LDAP User Flags By Group
    * Retrieve users from a given group. At this time, superuser and system auditors are the only groups supported. Refer to the documentation for more detail.
    * @default {}
    */
-  AUTH_LDAP_4_USER_FLAGS_BY_GROUP?: Record<string, string[]>
+  AUTH_LDAP_4_USER_FLAGS_BY_GROUP?: Record<string, string[]>;
   /**
    * LDAP Organization Map
    * Mapping between organization admins/users and LDAP groups. This controls which users are placed into which organizations relative to their LDAP group memberships. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_4_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_4_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Team Map
    * Mapping between team members (users) and LDAP groups. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_4_TEAM_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_4_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Server URI
    * URI to connect to LDAP server, such as "ldap://ldap.example.com:389" (non-SSL) or "ldaps://ldap.example.com:636" (SSL). Multiple LDAP servers may be specified by separating with spaces or commas. LDAP authentication is disabled if this parameter is empty.
    * @default ""
    */
-  AUTH_LDAP_5_SERVER_URI?: string
+  AUTH_LDAP_5_SERVER_URI?: string;
   /**
    * LDAP Bind DN
    * DN (Distinguished Name) of user to bind for all search queries. This is the system user account we will use to login to query LDAP for other user information. Refer to the documentation for example syntax.
    * @default ""
    */
-  AUTH_LDAP_5_BIND_DN?: string
+  AUTH_LDAP_5_BIND_DN?: string;
   /**
    * LDAP Bind Password
    * Password used to bind LDAP user account.
    * @default ""
    */
-  AUTH_LDAP_5_BIND_PASSWORD?: string
+  AUTH_LDAP_5_BIND_PASSWORD?: string;
   /**
    * LDAP Start TLS
    * Whether to enable TLS when the LDAP connection is not using SSL.
    * @default false
    */
-  AUTH_LDAP_5_START_TLS?: boolean
+  AUTH_LDAP_5_START_TLS?: boolean;
   /**
    * LDAP Connection Options
    * Additional options to set for the LDAP connection.  LDAP referrals are disabled by default (to prevent certain LDAP queries from hanging with AD). Option names should be strings (e.g. "OPT_REFERRALS"). Refer to https://www.python-ldap.org/doc/html/ldap.html#options for possible options and values that can be set.
    * @default {"OPT_REFERRALS":0,"OPT_NETWORK_TIMEOUT":30}
    */
-  AUTH_LDAP_5_CONNECTION_OPTIONS?: Record<string, string | null>
+  AUTH_LDAP_5_CONNECTION_OPTIONS?: Record<string, string | null>;
   /**
    * LDAP search query to find users.  Any user that matches the given pattern will be able to login to the service.  The user should also be mapped into an organization (as defined in the AUTH_LDAP_ORGANIZATION_MAP setting).  If multiple search queries need to be supported use of "LDAPUnion" is possible. See the documentation for details.
    * @default []
    */
-  AUTH_LDAP_5_USER_SEARCH?: (string | null)[]
+  AUTH_LDAP_5_USER_SEARCH?: (string | null)[];
   /**
    * LDAP User DN Template
    * Alternative to user search, if user DNs are all of the same format. This approach is more efficient for user lookups than searching if it is usable in your organizational environment. If this setting has a value it will be used instead of AUTH_LDAP_USER_SEARCH.
    */
-  AUTH_LDAP_5_USER_DN_TEMPLATE?: string | null
+  AUTH_LDAP_5_USER_DN_TEMPLATE?: string | null;
   /**
    * LDAP User Attribute Map
    * Mapping of LDAP user schema to API user attributes. The default setting is valid for ActiveDirectory but users with other LDAP configurations may need to change the values. Refer to the documentation for additional details.
    * @default {}
    */
-  AUTH_LDAP_5_USER_ATTR_MAP?: Record<string, string>
+  AUTH_LDAP_5_USER_ATTR_MAP?: Record<string, string>;
   /**
    * Users are mapped to organizations based on their membership in LDAP groups. This setting defines the LDAP search query to find groups. Unlike the user search, group search does not support LDAPSearchUnion.
    * @default []
    */
-  AUTH_LDAP_5_GROUP_SEARCH?: (string | null)[]
+  AUTH_LDAP_5_GROUP_SEARCH?: (string | null)[];
   /**
    * LDAP Group Type
    * The group type may need to be changed based on the type of the LDAP server.  Values are listed at: https://django-auth-ldap.readthedocs.io/en/stable/groups.html#types-of-groups
@@ -6069,47 +6069,47 @@ export interface SettingSingleton {
     | 'NestedActiveDirectoryGroupType'
     | 'NestedOrganizationalRoleGroupType'
     | 'NestedMemberDNGroupType'
-    | 'PosixUIDGroupType'
+    | 'PosixUIDGroupType';
   /**
    * LDAP Group Type Parameters
    * Key value parameters to send the chosen group type init method.
    * @default {"member_attr":"member","name_attr":"cn"}
    */
-  AUTH_LDAP_5_GROUP_TYPE_PARAMS?: Record<string, string | null>
+  AUTH_LDAP_5_GROUP_TYPE_PARAMS?: Record<string, string | null>;
   /**
    * LDAP Require Group
    * Group DN required to login. If specified, user must be a member of this group to login via LDAP. If not set, everyone in LDAP that matches the user search will be able to login to the service. Only one require group is supported.
    */
-  AUTH_LDAP_5_REQUIRE_GROUP?: string | null
+  AUTH_LDAP_5_REQUIRE_GROUP?: string | null;
   /**
    * LDAP Deny Group
    * Group DN denied from login. If specified, user will not be allowed to login if a member of this group.  Only one deny group is supported.
    */
-  AUTH_LDAP_5_DENY_GROUP?: string | null
+  AUTH_LDAP_5_DENY_GROUP?: string | null;
   /**
    * LDAP User Flags By Group
    * Retrieve users from a given group. At this time, superuser and system auditors are the only groups supported. Refer to the documentation for more detail.
    * @default {}
    */
-  AUTH_LDAP_5_USER_FLAGS_BY_GROUP?: Record<string, string[]>
+  AUTH_LDAP_5_USER_FLAGS_BY_GROUP?: Record<string, string[]>;
   /**
    * LDAP Organization Map
    * Mapping between organization admins/users and LDAP groups. This controls which users are placed into which organizations relative to their LDAP group memberships. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_5_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_5_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * LDAP Team Map
    * Mapping between team members (users) and LDAP groups. Configuration details are available in the documentation.
    * @default {}
    */
-  AUTH_LDAP_5_TEAM_MAP?: Record<string, Record<string, string>>
+  AUTH_LDAP_5_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * RADIUS Server
    * Hostname/IP of RADIUS server. RADIUS authentication is disabled if this setting is empty.
    * @default ""
    */
-  RADIUS_SERVER?: string
+  RADIUS_SERVER?: string;
   /**
    * RADIUS Port
    * Port of RADIUS server.
@@ -6117,19 +6117,19 @@ export interface SettingSingleton {
    * @max 65535
    * @default 1812
    */
-  RADIUS_PORT?: number
+  RADIUS_PORT?: number;
   /**
    * RADIUS Secret
    * Shared secret for authenticating to RADIUS server.
    * @default ""
    */
-  RADIUS_SECRET?: string
+  RADIUS_SECRET?: string;
   /**
    * TACACS+ Server
    * Hostname of TACACS+ server.
    * @default ""
    */
-  TACACSPLUS_HOST?: string
+  TACACSPLUS_HOST?: string;
   /**
    * TACACS+ Port
    * Port number of TACACS+ server.
@@ -6137,56 +6137,56 @@ export interface SettingSingleton {
    * @max 65535
    * @default 49
    */
-  TACACSPLUS_PORT?: number
+  TACACSPLUS_PORT?: number;
   /**
    * TACACS+ Secret
    * Shared secret for authenticating to TACACS+ server.
    * @default ""
    */
-  TACACSPLUS_SECRET?: string
+  TACACSPLUS_SECRET?: string;
   /**
    * TACACS+ Auth Session Timeout
    * TACACS+ session timeout value in seconds, 0 disables timeout.
    * @min 0
    * @default 5
    */
-  TACACSPLUS_SESSION_TIMEOUT?: number
+  TACACSPLUS_SESSION_TIMEOUT?: number;
   /**
    * TACACS+ Authentication Protocol
    * Choose the authentication protocol used by TACACS+ client.
    * @default "ascii"
    */
-  TACACSPLUS_AUTH_PROTOCOL?: 'ascii' | 'pap'
+  TACACSPLUS_AUTH_PROTOCOL?: 'ascii' | 'pap';
   /**
    * Google OAuth2 Callback URL
    * Provide this URL as the callback URL for your application as part of your registration process. Refer to the documentation for more detail.
    * @minLength 1
    * @default "https://towerhost/sso/complete/google-oauth2/"
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_CALLBACK_URL?: string
+  SOCIAL_AUTH_GOOGLE_OAUTH2_CALLBACK_URL?: string;
   /**
    * Google OAuth2 Key
    * The OAuth2 key from your web application.
    * @default ""
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY?: string
+  SOCIAL_AUTH_GOOGLE_OAUTH2_KEY?: string;
   /**
    * Google OAuth2 Secret
    * The OAuth2 secret from your web application.
    * @default ""
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET?: string
+  SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET?: string;
   /**
    * Update this setting to restrict the domains who are allowed to login using Google OAuth2.
    * @default []
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS?: string[]
+  SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS?: string[];
   /**
    * Google OAuth2 Extra Arguments
    * Extra arguments for Google OAuth2 login. You can restrict it to only allow a single domain to authenticate, even if the user is logged in with multple Google accounts. Refer to the documentation for more detail.
    * @default {}
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS?: Record<string, string | null>
+  SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS?: Record<string, string | null>;
   /**
    * Google OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6194,32 +6194,32 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GOOGLE_OAUTH2_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * Google OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GOOGLE_OAUTH2_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GOOGLE_OAUTH2_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub OAuth2 Callback URL
    * Provide this URL as the callback URL for your application as part of your registration process. Refer to the documentation for more detail.
    * @minLength 1
    * @default "https://towerhost/sso/complete/github/"
    */
-  SOCIAL_AUTH_GITHUB_CALLBACK_URL?: string
+  SOCIAL_AUTH_GITHUB_CALLBACK_URL?: string;
   /**
    * GitHub OAuth2 Key
    * The OAuth2 key (Client ID) from your GitHub developer application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_KEY?: string
+  SOCIAL_AUTH_GITHUB_KEY?: string;
   /**
    * GitHub OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your GitHub developer application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_SECRET?: string
+  SOCIAL_AUTH_GITHUB_SECRET?: string;
   /**
    * GitHub OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6227,38 +6227,38 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GITHUB_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GITHUB_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Organization OAuth2 Callback URL
    * Provide this URL as the callback URL for your application as part of your registration process. Refer to the documentation for more detail.
    * @minLength 1
    * @default "https://towerhost/sso/complete/github-org/"
    */
-  SOCIAL_AUTH_GITHUB_ORG_CALLBACK_URL?: string
+  SOCIAL_AUTH_GITHUB_ORG_CALLBACK_URL?: string;
   /**
    * GitHub Organization OAuth2 Key
    * The OAuth2 key (Client ID) from your GitHub organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ORG_KEY?: string
+  SOCIAL_AUTH_GITHUB_ORG_KEY?: string;
   /**
    * GitHub Organization OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your GitHub organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ORG_SECRET?: string
+  SOCIAL_AUTH_GITHUB_ORG_SECRET?: string;
   /**
    * GitHub Organization Name
    * The name of your GitHub organization, as used in your organization's URL: https://github.com/<yourorg>/.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ORG_NAME?: string
+  SOCIAL_AUTH_GITHUB_ORG_NAME?: string;
   /**
    * GitHub Organization OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6266,38 +6266,38 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GITHUB_ORG_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ORG_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Organization OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GITHUB_ORG_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ORG_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Team OAuth2 Callback URL
    * Create an organization-owned application at https://github.com/organizations/<yourorg>/settings/applications and obtain an OAuth2 key (Client ID) and secret (Client Secret). Provide this URL as the callback URL for your application.
    * @minLength 1
    * @default "https://towerhost/sso/complete/github-team/"
    */
-  SOCIAL_AUTH_GITHUB_TEAM_CALLBACK_URL?: string
+  SOCIAL_AUTH_GITHUB_TEAM_CALLBACK_URL?: string;
   /**
    * GitHub Team OAuth2 Key
    * The OAuth2 key (Client ID) from your GitHub organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_TEAM_KEY?: string
+  SOCIAL_AUTH_GITHUB_TEAM_KEY?: string;
   /**
    * GitHub Team OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your GitHub organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_TEAM_SECRET?: string
+  SOCIAL_AUTH_GITHUB_TEAM_SECRET?: string;
   /**
    * GitHub Team ID
    * Find the numeric team ID using the Github API: http://fabian-kostadinov.github.io/2015/01/16/how-to-find-a-github-team-id/.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_TEAM_ID?: string
+  SOCIAL_AUTH_GITHUB_TEAM_ID?: string;
   /**
    * GitHub Team OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6305,44 +6305,44 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GITHUB_TEAM_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_TEAM_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Team OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GITHUB_TEAM_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_TEAM_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Enterprise OAuth2 Callback URL
    * Provide this URL as the callback URL for your application as part of your registration process. Refer to the documentation for more detail.
    * @minLength 1
    * @default "https://towerhost/sso/complete/github-enterprise/"
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_CALLBACK_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_CALLBACK_URL?: string;
   /**
    * GitHub Enterprise URL
    * The URL for your Github Enterprise instance, e.g.: http(s)://hostname/. Refer to Github Enterprise documentation for more details.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_URL?: string;
   /**
    * GitHub Enterprise API URL
    * The API URL for your GitHub Enterprise instance, e.g.: http(s)://hostname/api/v3/. Refer to Github Enterprise documentation for more details.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_API_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_API_URL?: string;
   /**
    * GitHub Enterprise OAuth2 Key
    * The OAuth2 key (Client ID) from your GitHub Enterprise developer application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY?: string;
   /**
    * GitHub Enterprise OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your GitHub Enterprise developer application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET?: string;
   /**
    * GitHub Enterprise OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6350,50 +6350,50 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Enterprise OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Enterprise Organization OAuth2 Callback URL
    * Provide this URL as the callback URL for your application as part of your registration process. Refer to the documentation for more detail.
    * @minLength 1
    * @default "https://towerhost/sso/complete/github-enterprise-org/"
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_CALLBACK_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_CALLBACK_URL?: string;
   /**
    * GitHub Enterprise Organization URL
    * The URL for your Github Enterprise instance, e.g.: http(s)://hostname/. Refer to Github Enterprise documentation for more details.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_URL?: string;
   /**
    * GitHub Enterprise Organization API URL
    * The API URL for your GitHub Enterprise instance, e.g.: http(s)://hostname/api/v3/. Refer to Github Enterprise documentation for more details.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_API_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_API_URL?: string;
   /**
    * GitHub Enterprise Organization OAuth2 Key
    * The OAuth2 key (Client ID) from your GitHub Enterprise organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_KEY?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_KEY?: string;
   /**
    * GitHub Enterprise Organization OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your GitHub Enterprise organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_SECRET?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_SECRET?: string;
   /**
    * GitHub Enterprise Organization Name
    * The name of your GitHub Enterprise organization, as used in your organization's URL: https://github.com/<yourorg>/.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_NAME?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_NAME?: string;
   /**
    * GitHub Enterprise Organization OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6401,50 +6401,50 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Enterprise Organization OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_ORG_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Enterprise Team OAuth2 Callback URL
    * Create an organization-owned application at https://github.com/organizations/<yourorg>/settings/applications and obtain an OAuth2 key (Client ID) and secret (Client Secret). Provide this URL as the callback URL for your application.
    * @minLength 1
    * @default "https://towerhost/sso/complete/github-enterprise-team/"
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_CALLBACK_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_CALLBACK_URL?: string;
   /**
    * GitHub Enterprise Team URL
    * The URL for your Github Enterprise instance, e.g.: http(s)://hostname/. Refer to Github Enterprise documentation for more details.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_URL?: string;
   /**
    * GitHub Enterprise Team API URL
    * The API URL for your GitHub Enterprise instance, e.g.: http(s)://hostname/api/v3/. Refer to Github Enterprise documentation for more details.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_API_URL?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_API_URL?: string;
   /**
    * GitHub Enterprise Team OAuth2 Key
    * The OAuth2 key (Client ID) from your GitHub Enterprise organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_KEY?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_KEY?: string;
   /**
    * GitHub Enterprise Team OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your GitHub Enterprise organization application.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_SECRET?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_SECRET?: string;
   /**
    * GitHub Enterprise Team ID
    * Find the numeric team ID using the Github Enterprise API: http://fabian-kostadinov.github.io/2015/01/16/how-to-find-a-github-team-id/.
    * @default ""
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_ID?: string
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_ID?: string;
   /**
    * GitHub Enterprise Team OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6452,32 +6452,32 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * GitHub Enterprise Team OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_GITHUB_ENTERPRISE_TEAM_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * Azure AD OAuth2 Callback URL
    * Provide this URL as the callback URL for your application as part of your registration process. Refer to the documentation for more detail.
    * @minLength 1
    * @default "https://towerhost/sso/complete/azuread-oauth2/"
    */
-  SOCIAL_AUTH_AZUREAD_OAUTH2_CALLBACK_URL?: string
+  SOCIAL_AUTH_AZUREAD_OAUTH2_CALLBACK_URL?: string;
   /**
    * Azure AD OAuth2 Key
    * The OAuth2 key (Client ID) from your Azure AD application.
    * @default ""
    */
-  SOCIAL_AUTH_AZUREAD_OAUTH2_KEY?: string
+  SOCIAL_AUTH_AZUREAD_OAUTH2_KEY?: string;
   /**
    * Azure AD OAuth2 Secret
    * The OAuth2 secret (Client Secret) from your Azure AD application.
    * @default ""
    */
-  SOCIAL_AUTH_AZUREAD_OAUTH2_SECRET?: string
+  SOCIAL_AUTH_AZUREAD_OAUTH2_SECRET?: string;
   /**
    * Azure AD OAuth2 Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6485,112 +6485,112 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_AZUREAD_OAUTH2_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_AZUREAD_OAUTH2_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * Azure AD OAuth2 Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_AZUREAD_OAUTH2_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_AZUREAD_OAUTH2_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * OIDC Key
    * The OIDC key (Client ID) from your IDP.
    * @minLength 1
    */
-  SOCIAL_AUTH_OIDC_KEY?: string
+  SOCIAL_AUTH_OIDC_KEY?: string;
   /**
    * OIDC Secret
    * The OIDC secret (Client Secret) from your IDP.
    * @default ""
    */
-  SOCIAL_AUTH_OIDC_SECRET?: string
+  SOCIAL_AUTH_OIDC_SECRET?: string;
   /**
    * OIDC Provider URL
    * The URL for your OIDC provider including the path up to /.well-known/openid-configuration
    * @default ""
    */
-  SOCIAL_AUTH_OIDC_OIDC_ENDPOINT?: string
+  SOCIAL_AUTH_OIDC_OIDC_ENDPOINT?: string;
   /**
    * Verify OIDC Provider Certificate
    * Verify the OIDV provider ssl certificate.
    * @default true
    */
-  SOCIAL_AUTH_OIDC_VERIFY_SSL?: boolean
+  SOCIAL_AUTH_OIDC_VERIFY_SSL?: boolean;
   /**
    * Automatically Create Organizations and Teams on SAML Login
    * When enabled (the default), mapped Organizations and Teams will be created automatically on successful SAML login.
    * @default true
    */
-  SAML_AUTO_CREATE_OBJECTS?: boolean
+  SAML_AUTO_CREATE_OBJECTS?: boolean;
   /**
    * SAML Assertion Consumer Service (ACS) URL
    * Register the service as a service provider (SP) with each identity provider (IdP) you have configured. Provide your SP Entity ID and this ACS URL for your application.
    * @minLength 1
    * @default "https://towerhost/sso/complete/saml/"
    */
-  SOCIAL_AUTH_SAML_CALLBACK_URL?: string
+  SOCIAL_AUTH_SAML_CALLBACK_URL?: string;
   /**
    * SAML Service Provider Metadata URL
    * If your identity provider (IdP) allows uploading an XML metadata file, you can download one from this URL.
    * @minLength 1
    * @default "https://towerhost/sso/metadata/saml/"
    */
-  SOCIAL_AUTH_SAML_METADATA_URL?: string
+  SOCIAL_AUTH_SAML_METADATA_URL?: string;
   /**
    * SAML Service Provider Entity ID
    * The application-defined unique identifier used as the audience of the SAML service provider (SP) configuration. This is usually the URL for the service.
    * @default ""
    */
-  SOCIAL_AUTH_SAML_SP_ENTITY_ID?: string
+  SOCIAL_AUTH_SAML_SP_ENTITY_ID?: string;
   /**
    * SAML Service Provider Public Certificate
    * Create a keypair to use as a service provider (SP) and include the certificate content here.
    * @default ""
    */
-  SOCIAL_AUTH_SAML_SP_PUBLIC_CERT: string
+  SOCIAL_AUTH_SAML_SP_PUBLIC_CERT: string;
   /**
    * SAML Service Provider Private Key
    * Create a keypair to use as a service provider (SP) and include the private key content here.
    * @default ""
    */
-  SOCIAL_AUTH_SAML_SP_PRIVATE_KEY: string
+  SOCIAL_AUTH_SAML_SP_PRIVATE_KEY: string;
   /**
    * SAML Service Provider Organization Info
    * Provide the URL, display name, and the name of your app. Refer to the documentation for example syntax.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_ORG_INFO: Record<string, Record<string, string | null>>
+  SOCIAL_AUTH_SAML_ORG_INFO: Record<string, Record<string, string | null>>;
   /**
    * SAML Service Provider Technical Contact
    * Provide the name and email address of the technical contact for your service provider. Refer to the documentation for example syntax.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_TECHNICAL_CONTACT: Record<string, string | null>
+  SOCIAL_AUTH_SAML_TECHNICAL_CONTACT: Record<string, string | null>;
   /**
    * SAML Service Provider Support Contact
    * Provide the name and email address of the support contact for your service provider. Refer to the documentation for example syntax.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_SUPPORT_CONTACT: Record<string, string | null>
+  SOCIAL_AUTH_SAML_SUPPORT_CONTACT: Record<string, string | null>;
   /**
    * SAML Enabled Identity Providers
    * Configure the Entity ID, SSO URL and certificate for each identity provider (IdP) in use. Multiple SAML IdPs are supported. Some IdPs may provide user data using attribute names that differ from the default OIDs. Attribute names may be overridden for each IdP. Refer to the Ansible documentation for additional details and syntax.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_ENABLED_IDPS?: Record<string, Record<string, string | null>>
+  SOCIAL_AUTH_SAML_ENABLED_IDPS?: Record<string, Record<string, string | null>>;
   /**
    * SAML Security Config
    * A dict of key value pairs that are passed to the underlying python-saml security setting https://github.com/onelogin/python-saml#settings
    * @default {"requestedAuthnContext":false}
    */
-  SOCIAL_AUTH_SAML_SECURITY_CONFIG?: Record<string, string | null>
+  SOCIAL_AUTH_SAML_SECURITY_CONFIG?: Record<string, string | null>;
   /**
    * SAML Service Provider extra configuration data
    * A dict of key value pairs to be passed to the underlying python-saml Service Provider configuration setting.
    */
-  SOCIAL_AUTH_SAML_SP_EXTRA?: Record<string, string | null>
+  SOCIAL_AUTH_SAML_SP_EXTRA?: Record<string, string | null>;
   /** A list of tuples that maps IDP attributes to extra_attributes. Each attribute will be a list of values, even if only 1 value. */
-  SOCIAL_AUTH_SAML_EXTRA_DATA?: (string | null)[]
+  SOCIAL_AUTH_SAML_EXTRA_DATA?: (string | null)[];
   /**
    * SAML Organization Map
    * Mapping to organization admins/users from social auth accounts. This setting
@@ -6598,83 +6598,83 @@ export interface SettingSingleton {
    * username and email address. Configuration details are available in the
    * documentation.
    */
-  SOCIAL_AUTH_SAML_ORGANIZATION_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_SAML_ORGANIZATION_MAP?: Record<string, Record<string, string>>;
   /**
    * SAML Team Map
    * Mapping of team members (users) from social auth accounts. Configuration
    * details are available in the documentation.
    */
-  SOCIAL_AUTH_SAML_TEAM_MAP?: Record<string, Record<string, string>>
+  SOCIAL_AUTH_SAML_TEAM_MAP?: Record<string, Record<string, string>>;
   /**
    * SAML Organization Attribute Mapping
    * Used to translate user organization membership.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_ORGANIZATION_ATTR?: Record<string, string>
+  SOCIAL_AUTH_SAML_ORGANIZATION_ATTR?: Record<string, string>;
   /**
    * SAML Team Attribute Mapping
    * Used to translate user team membership.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_TEAM_ATTR?: Record<string, string>
+  SOCIAL_AUTH_SAML_TEAM_ATTR?: Record<string, string>;
   /**
    * SAML User Flags Attribute Mapping
    * Used to map super users and system auditors from SAML.
    * @default {}
    */
-  SOCIAL_AUTH_SAML_USER_FLAGS_BY_ATTR?: Record<string, string>
+  SOCIAL_AUTH_SAML_USER_FLAGS_BY_ATTR?: Record<string, string>;
   /**
    * Formats of all available named urls
    * Read-only list of key-value pairs that shows the standard format of all available named URLs.
    * @default {"execution_environments":"<name>","organizations":"<name>","teams":"<name>++<organization.name>","credential_types":"<name>+<kind>","credentials":"<name>++<credential_type.name>+<credential_type.kind>++<organization.name>","notification_templates":"<name>++<organization.name>","job_templates":"<name>++<organization.name>","projects":"<name>++<organization.name>","inventories":"<name>++<organization.name>","hosts":"<name>++<inventory.name>++<organization.name>","groups":"<name>++<inventory.name>++<organization.name>","inventory_sources":"<name>++<inventory.name>++<organization.name>","instance_groups":"<name>","workflow_job_templates":"<name>++<organization.name>","workflow_job_template_nodes":"<identifier>++<workflow_job_template.name>++<organization.name>","labels":"<name>++<organization.name>","applications":"<name>++<organization.name>","users":"<username>","instances":"<hostname>"}
    */
-  NAMED_URL_FORMATS?: Record<string, string | null>
+  NAMED_URL_FORMATS?: Record<string, string | null>;
   /**
    * List of all named url graph nodes.
    * Read-only list of key-value pairs that exposes named URL graph topology. Use this list to programmatically generate named URLs for resources
    * @default {"execution_environments":{"fields":["name"],"adj_list":[]},"organizations":{"fields":["name"],"adj_list":[]},"teams":{"fields":["name"],"adj_list":[["organization","organizations"]]},"credential_types":{"fields":["name","kind"],"adj_list":[]},"credentials":{"fields":["name"],"adj_list":[["credential_type","credential_types"],["organization","organizations"]]},"notification_templates":{"fields":["name"],"adj_list":[["organization","organizations"]]},"job_templates":{"fields":["name"],"adj_list":[["organization","organizations"]]},"projects":{"fields":["name"],"adj_list":[["organization","organizations"]]},"inventories":{"fields":["name"],"adj_list":[["organization","organizations"]]},"hosts":{"fields":["name"],"adj_list":[["inventory","inventories"]]},"groups":{"fields":["name"],"adj_list":[["inventory","inventories"]]},"inventory_sources":{"fields":["name"],"adj_list":[["inventory","inventories"]]},"instance_groups":{"fields":["name"],"adj_list":[]},"workflow_job_templates":{"fields":["name"],"adj_list":[["organization","organizations"]]},"workflow_job_template_nodes":{"fields":["identifier"],"adj_list":[["workflow_job_template","workflow_job_templates"]]},"labels":{"fields":["name"],"adj_list":[["organization","organizations"]]},"applications":{"fields":["name"],"adj_list":[["organization","organizations"]]},"users":{"fields":["username"],"adj_list":[]},"instances":{"fields":["hostname"],"adj_list":[]}}
    */
-  NAMED_URL_GRAPH_NODES?: Record<string, string | null>
+  NAMED_URL_GRAPH_NODES?: Record<string, string | null>;
 }
 
 export interface SystemJobTemplate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -6689,12 +6689,12 @@ export interface SystemJobTemplate {
     | 'ok'
     | 'missing'
     | 'none'
-    | 'updating'
+    | 'updating';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Job type
    * @default ""
@@ -6704,37 +6704,37 @@ export interface SystemJobTemplate {
     | 'cleanup_activitystream'
     | 'cleanup_sessions'
     | 'cleanup_tokens'
-    | null
+    | null;
 }
 
 export interface SystemJobList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -6745,7 +6745,7 @@ export interface SystemJobList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -6755,60 +6755,60 @@ export interface SystemJobList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** System job template */
-  system_job_template?: string | null
+  system_job_template?: string | null;
   /**
    * Job type
    * @default ""
@@ -6818,44 +6818,44 @@ export interface SystemJobList {
     | 'cleanup_activitystream'
     | 'cleanup_sessions'
     | 'cleanup_tokens'
-    | null
+    | null;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /** Result stdout */
-  result_stdout?: string
+  result_stdout?: string;
 }
 
 export interface SystemJob {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -6866,7 +6866,7 @@ export interface SystemJob {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -6876,82 +6876,82 @@ export interface SystemJob {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** job_env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Execution node
    * The node the job executed on.
    * @minLength 1
    */
-  execution_node?: string
+  execution_node?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /**
    * Event processing finished
    * Indicates whether all of the events generated by this unified job have been saved to the database.
    */
-  event_processing_finished?: boolean
+  event_processing_finished?: boolean;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** System job template */
-  system_job_template?: string | null
+  system_job_template?: string | null;
   /**
    * Job type
    * @default ""
@@ -6961,377 +6961,377 @@ export interface SystemJob {
     | 'cleanup_activitystream'
     | 'cleanup_sessions'
     | 'cleanup_tokens'
-    | null
+    | null;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /** Result stdout */
-  result_stdout?: string
+  result_stdout?: string;
 }
 
 export interface SystemJobCancel {
   /** Can cancel */
-  can_cancel?: boolean
+  can_cancel?: boolean;
 }
 
 export interface SystemJobEvent {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /** Event */
-  event?: string
+  event?: string;
   /**
    * Counter
    * @min 0
    */
-  counter?: number
+  counter?: number;
   /**
    * Event display
    * @minLength 1
    */
-  event_display?: string
+  event_display?: string;
   /**
    * Event data
    * @default {}
    */
-  event_data?: object
+  event_data?: object;
   /** Failed */
-  failed?: string
+  failed?: string;
   /** Changed */
-  changed?: string
+  changed?: string;
   /**
    * Uuid
    * @minLength 1
    */
-  uuid?: string
+  uuid?: string;
   /**
    * Stdout
    * @minLength 1
    */
-  stdout?: string
+  stdout?: string;
   /**
    * Start line
    * @min 0
    */
-  start_line?: number
+  start_line?: number;
   /**
    * End line
    * @min 0
    */
-  end_line?: number
+  end_line?: number;
   /**
    * Verbosity
    * @min 0
    */
-  verbosity?: number
+  verbosity?: number;
   /** System job */
-  system_job?: string
+  system_job?: string;
 }
 
 export interface TeamCredentialSerializerCreate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Credential Type
    * Specify the type of credential you want to create. Refer to the documentation for details on each type.
    */
-  credential_type: number
+  credential_type: number;
   /** Managed */
-  managed?: string
+  managed?: string;
   /**
    * Inputs
    * Enter inputs using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  inputs?: object
+  inputs?: object;
   /** Kind */
-  kind?: string
+  kind?: string;
   /** Cloud */
-  cloud?: string
+  cloud?: string;
   /** Kubernetes */
-  kubernetes?: string
+  kubernetes?: string;
   /**
    * Team
    * Write-only field used to add team to owner role. If provided, do not give either user or organization. Only valid for creation.
    */
-  team?: number | null
+  team?: number | null;
 }
 
 export interface RoleSerializerWithParentAccess {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Name */
-  name?: string
+  name?: string;
   /** Description */
-  description?: string
+  description?: string;
 }
 
 export interface OAuth2TokenDetail {
   /** Id */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * User
    * The user representing the token owner
    */
-  user?: number
+  user?: number;
   /** Token */
-  token?: string
+  token?: string;
   /** Refresh token */
-  refresh_token?: string
+  refresh_token?: string;
   /** Application */
-  application?: number | null
+  application?: number | null;
   /**
    * Expires
    * @format date-time
    */
-  expires?: string
+  expires?: string;
   /**
    * Scope
    * Allowed scopes, further restricts user's permissions. Must be a simple space-separated string with allowed scopes ['read', 'write'].
    * @default "write"
    */
-  scope?: string | null
+  scope?: string | null;
 }
 
 export interface UserAuthorizedToken {
   /** Id */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * User
    * The user representing the token owner
    */
-  user?: number
+  user?: number;
   /** Token */
-  token?: string
+  token?: string;
   /** Refresh token */
-  refresh_token?: string
+  refresh_token?: string;
   /** Application */
-  application: number
+  application: number;
   /**
    * Expires
    * @format date-time
    */
-  expires?: string
+  expires?: string;
   /**
    * Scope
    * Allowed scopes, further restricts user's permissions. Must be a simple space-separated string with allowed scopes ['read', 'write'].
    * @default "write"
    */
-  scope?: string | null
+  scope?: string | null;
 }
 
 export interface UserCredentialSerializerCreate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Credential Type
    * Specify the type of credential you want to create. Refer to the documentation for details on each type.
    */
-  credential_type: number
+  credential_type: number;
   /** Managed */
-  managed?: string
+  managed?: string;
   /**
    * Inputs
    * Enter inputs using either JSON or YAML syntax. Refer to the documentation for example syntax.
    * @default {}
    */
-  inputs?: object
+  inputs?: object;
   /** Kind */
-  kind?: string
+  kind?: string;
   /** Cloud */
-  cloud?: string
+  cloud?: string;
   /** Kubernetes */
-  kubernetes?: string
+  kubernetes?: string;
   /**
    * User
    * Write-only field used to add user to owner role. If provided, do not give either team or organization. Only valid for creation.
    */
-  user?: number | null
+  user?: number | null;
 }
 
 export interface UserPersonalToken {
   /** Id */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * User
    * The user representing the token owner
    */
-  user?: number
+  user?: number;
   /** Token */
-  token?: string
+  token?: string;
   /** Refresh token */
-  refresh_token?: string
+  refresh_token?: string;
   /** Application */
-  application?: number | null
+  application?: number | null;
   /**
    * Expires
    * @format date-time
    */
-  expires?: string
+  expires?: string;
   /**
    * Scope
    * Allowed scopes, further restricts user's permissions. Must be a simple space-separated string with allowed scopes ['read', 'write'].
    * @default "write"
    */
-  scope?: string | null
+  scope?: string | null;
 }
 
 export interface WorkflowApprovalTemplate {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /**
    * Last job run
    * @format date-time
    */
-  last_job_run?: string
+  last_job_run?: string;
   /** Last job failed */
-  last_job_failed?: boolean
+  last_job_failed?: boolean;
   /**
    * Next job run
    * @format date-time
    */
-  next_job_run?: string
+  next_job_run?: string;
   /** Status */
   status?:
     | 'new'
@@ -7346,12 +7346,12 @@ export interface WorkflowApprovalTemplate {
     | 'ok'
     | 'missing'
     | 'none'
-    | 'updating'
+    | 'updating';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Timeout
    * The amount of time (in seconds) before the approval node expires and fails.
@@ -7359,37 +7359,37 @@ export interface WorkflowApprovalTemplate {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
 }
 
 export interface WorkflowApprovalList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -7400,7 +7400,7 @@ export interface WorkflowApprovalList {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -7410,88 +7410,88 @@ export interface WorkflowApprovalList {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Can approve or deny */
-  can_approve_or_deny?: string
+  can_approve_or_deny?: string;
   /** Approval expiration */
-  approval_expiration?: string
+  approval_expiration?: string;
   /** Timed out */
-  timed_out?: string
+  timed_out?: string;
 }
 
 export interface WorkflowApproval {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -7502,7 +7502,7 @@ export interface WorkflowApproval {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -7512,332 +7512,332 @@ export interface WorkflowApproval {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** job_env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /**
    * Event processing finished
    * Indicates whether all of the events generated by this unified job have been saved to the database.
    */
-  event_processing_finished?: boolean
+  event_processing_finished?: boolean;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Can approve or deny */
-  can_approve_or_deny?: string
+  can_approve_or_deny?: string;
   /** Approval expiration */
-  approval_expiration?: string
+  approval_expiration?: string;
   /** Timed out */
-  timed_out?: string
+  timed_out?: string;
 }
 
-export type WorkflowApprovalView = object
+export type WorkflowApprovalView = object;
 
 export interface WorkflowJobNodeList {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Extra data
    * @default {}
    */
-  extra_data?: object
+  extra_data?: object;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /** Job type */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Diff mode */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /** Verbosity */
-  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null
+  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null;
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Forks
    * @min 0
    */
-  forks?: number | null
+  forks?: number | null;
   /**
    * Job slice count
    * @min 0
    */
-  job_slice_count?: number | null
+  job_slice_count?: number | null;
   /** Timeout */
-  timeout?: number | null
+  timeout?: number | null;
   /** Job */
-  job?: number | null
+  job?: number | null;
   /** Workflow job */
-  workflow_job?: string | null
+  workflow_job?: string | null;
   /** Unified job template */
-  unified_job_template?: number | null
+  unified_job_template?: number | null;
   /** @uniqueItems true */
-  success_nodes?: number[]
+  success_nodes?: number[];
   /** @uniqueItems true */
-  failure_nodes?: number[]
+  failure_nodes?: number[];
   /** @uniqueItems true */
-  always_nodes?: number[]
+  always_nodes?: number[];
   /**
    * All parents must converge
    * If enabled then the node will only run if all of the parent nodes have met the criteria to reach this node
    * @default false
    */
-  all_parents_must_converge?: boolean | null
+  all_parents_must_converge?: boolean | null;
   /**
    * Do not run
    * Indicates that a job will not be created when True. Workflow runtime semantics will mark this True if the node is in a path that will decidedly not be ran. A value of False means the node may not run.
    * @default false
    */
-  do_not_run?: boolean | null
+  do_not_run?: boolean | null;
   /**
    * Identifier
    * An identifier coresponding to the workflow job template node that this node was created from.
    * @maxLength 512
    */
-  identifier?: string | null
+  identifier?: string | null;
 }
 
 export interface WorkflowJobNodeDetail {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Extra data
    * @default {}
    */
-  extra_data?: object
+  extra_data?: object;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /** Job type */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Diff mode */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /** Verbosity */
-  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null
+  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null;
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Forks
    * @min 0
    */
-  forks?: number | null
+  forks?: number | null;
   /**
    * Job slice count
    * @min 0
    */
-  job_slice_count?: number | null
+  job_slice_count?: number | null;
   /** Timeout */
-  timeout?: number | null
+  timeout?: number | null;
   /** Job */
-  job?: number | null
+  job?: number | null;
   /** Workflow job */
-  workflow_job?: string | null
+  workflow_job?: string | null;
   /** Unified job template */
-  unified_job_template?: number | null
+  unified_job_template?: number | null;
   /** @uniqueItems true */
-  success_nodes?: number[]
+  success_nodes?: number[];
   /** @uniqueItems true */
-  failure_nodes?: number[]
+  failure_nodes?: number[];
   /** @uniqueItems true */
-  always_nodes?: number[]
+  always_nodes?: number[];
   /**
    * All parents must converge
    * If enabled then the node will only run if all of the parent nodes have met the criteria to reach this node
    * @default false
    */
-  all_parents_must_converge?: boolean | null
+  all_parents_must_converge?: boolean | null;
   /**
    * Do not run
    * Indicates that a job will not be created when True. Workflow runtime semantics will mark this True if the node is in a path that will decidedly not be ran. A value of False means the node may not run.
    * @default false
    */
-  do_not_run?: boolean | null
+  do_not_run?: boolean | null;
   /**
    * Identifier
    * An identifier coresponding to the workflow job template node that this node was created from.
    * @maxLength 512
    */
-  identifier?: string | null
+  identifier?: string | null;
 }
 
 export interface WorkflowJobTemplateNode {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Extra data
    * @default {}
    */
-  extra_data?: object
+  extra_data?: object;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /** Job type */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Diff mode */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /** Verbosity */
-  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null
+  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null;
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Forks
    * @min 0
    */
-  forks?: number | null
+  forks?: number | null;
   /**
    * Job slice count
    * @min 0
    */
-  job_slice_count?: number | null
+  job_slice_count?: number | null;
   /** Timeout */
-  timeout?: number | null
+  timeout?: number | null;
   /** Workflow job template */
-  workflow_job_template: string
+  workflow_job_template: string;
   /** Unified job template */
-  unified_job_template?: number | null
+  unified_job_template?: number | null;
   /** @uniqueItems true */
-  success_nodes?: number[]
+  success_nodes?: number[];
   /** @uniqueItems true */
-  failure_nodes?: number[]
+  failure_nodes?: number[];
   /** @uniqueItems true */
-  always_nodes?: number[]
+  always_nodes?: number[];
   /**
    * All parents must converge
    * If enabled then the node will only run if all of the parent nodes have met the criteria to reach this node
    * @default false
    */
-  all_parents_must_converge?: boolean | null
+  all_parents_must_converge?: boolean | null;
   /**
    * Identifier
    * An identifier for this node that is unique within its workflow. It is copied to workflow job nodes corresponding to this node.
@@ -7845,81 +7845,81 @@ export interface WorkflowJobTemplateNode {
    * @maxLength 512
    * @default "8dbb4a30-dc8d-418d-8fe5-ab680298abcd"
    */
-  identifier?: string | null
+  identifier?: string | null;
 }
 
 export interface WorkflowJobTemplateNodeDetail {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Extra data
    * @default {}
    */
-  extra_data?: object
+  extra_data?: object;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /** Job type */
-  job_type?: 'run' | 'check' | null
+  job_type?: 'run' | 'check' | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Diff mode */
-  diff_mode?: boolean | null
+  diff_mode?: boolean | null;
   /** Verbosity */
-  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null
+  verbosity?: '0' | '1' | '2' | '3' | '4' | '5' | null;
   /**
    * Execution environment
    * The container image to be used for execution.
    */
-  execution_environment?: number | null
+  execution_environment?: number | null;
   /**
    * Forks
    * @min 0
    */
-  forks?: number | null
+  forks?: number | null;
   /**
    * Job slice count
    * @min 0
    */
-  job_slice_count?: number | null
+  job_slice_count?: number | null;
   /** Timeout */
-  timeout?: number | null
+  timeout?: number | null;
   /** Workflow job template */
-  workflow_job_template: string
+  workflow_job_template: string;
   /** Unified job template */
-  unified_job_template?: number | null
+  unified_job_template?: number | null;
   /** @uniqueItems true */
-  success_nodes?: number[]
+  success_nodes?: number[];
   /** @uniqueItems true */
-  failure_nodes?: number[]
+  failure_nodes?: number[];
   /** @uniqueItems true */
-  always_nodes?: number[]
+  always_nodes?: number[];
   /**
    * All parents must converge
    * If enabled then the node will only run if all of the parent nodes have met the criteria to reach this node
    * @default false
    */
-  all_parents_must_converge?: boolean | null
+  all_parents_must_converge?: boolean | null;
   /**
    * Identifier
    * An identifier for this node that is unique within its workflow. It is copied to workflow job nodes corresponding to this node.
@@ -7927,7 +7927,7 @@ export interface WorkflowJobTemplateNodeDetail {
    * @maxLength 512
    * @default "e9d5e643-b54e-4af3-a270-6c8ce1ecf898"
    */
-  identifier?: string | null
+  identifier?: string | null;
 }
 
 export interface WorkflowJobTemplateNodeCreateApproval {
@@ -7938,93 +7938,93 @@ export interface WorkflowJobTemplateNodeCreateApproval {
    * @max 2147483647
    * @default 0
    */
-  timeout?: number
+  timeout?: number;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
 }
 
 export interface WorkflowJobLaunch {
   /** Ask inventory on launch */
-  ask_inventory_on_launch?: boolean | null
+  ask_inventory_on_launch?: boolean | null;
   /** Ask limit on launch */
-  ask_limit_on_launch?: boolean | null
+  ask_limit_on_launch?: boolean | null;
   /** Ask scm branch on launch */
-  ask_scm_branch_on_launch?: boolean | null
+  ask_scm_branch_on_launch?: boolean | null;
   /** Can start without user input */
-  can_start_without_user_input?: boolean
+  can_start_without_user_input?: boolean;
   /** Defaults */
-  defaults?: string
+  defaults?: string;
   /** Extra vars */
-  extra_vars?: string
+  extra_vars?: string;
   /** Inventory */
-  inventory?: number
+  inventory?: number;
   /** Limit */
-  limit?: string
+  limit?: string;
   /** Scm branch */
-  scm_branch?: string
+  scm_branch?: string;
   /** Survey enabled */
-  survey_enabled?: string
+  survey_enabled?: string;
   /** Variables needed to start */
-  variables_needed_to_start?: string
+  variables_needed_to_start?: string;
   /** Node templates missing */
-  node_templates_missing?: string
+  node_templates_missing?: string;
   /** Node prompts rejected */
-  node_prompts_rejected?: string
+  node_prompts_rejected?: string;
   /** Workflow job template data */
-  workflow_job_template_data?: string
+  workflow_job_template_data?: string;
   /** Ask variables on launch */
-  ask_variables_on_launch?: boolean | null
+  ask_variables_on_launch?: boolean | null;
   /** Ask labels on launch */
-  ask_labels_on_launch?: boolean | null
+  ask_labels_on_launch?: boolean | null;
   /** @uniqueItems true */
-  labels?: number[]
+  labels?: number[];
   /** Ask skip tags on launch */
-  ask_skip_tags_on_launch?: boolean | null
+  ask_skip_tags_on_launch?: boolean | null;
   /** Ask tags on launch */
-  ask_tags_on_launch?: boolean | null
+  ask_tags_on_launch?: boolean | null;
   /** Skip tags */
-  skip_tags?: string
+  skip_tags?: string;
   /** Job tags */
-  job_tags?: string
+  job_tags?: string;
 }
 
 export interface WorkflowJob {
   /** ID */
-  id?: number
+  id?: number;
   /** Type */
-  type?: string
+  type?: string;
   /** Url */
-  url?: string
+  url?: string;
   /** Related */
-  related?: string
+  related?: string;
   /** Summary fields */
-  summary_fields?: string
+  summary_fields?: string;
   /** Created */
-  created?: string
+  created?: string;
   /** Modified */
-  modified?: string
+  modified?: string;
   /**
    * Name
    * @minLength 1
    * @maxLength 512
    */
-  name?: string | null
+  name?: string | null;
   /**
    * Description
    * @default ""
    */
-  description?: string | null
+  description?: string | null;
   /** unified job template */
-  unified_job_template?: string
+  unified_job_template?: string;
   /** Launch type */
   launch_type?:
     | 'manual'
@@ -8035,7 +8035,7 @@ export interface WorkflowJob {
     | 'workflow'
     | 'webhook'
     | 'sync'
-    | 'scm'
+    | 'scm';
   /** Status */
   status?:
     | 'new'
@@ -8045,161 +8045,161 @@ export interface WorkflowJob {
     | 'successful'
     | 'failed'
     | 'error'
-    | 'canceled'
+    | 'canceled';
   /** Failed */
-  failed?: boolean
+  failed?: boolean;
   /**
    * Started
    * The date and time the job was queued for starting.
    * @format date-time
    */
-  started?: string
+  started?: string;
   /**
    * Finished
    * The date and time the job finished execution.
    * @format date-time
    */
-  finished?: string
+  finished?: string;
   /**
    * Canceled on
    * The date and time when the cancel request was sent.
    * @format date-time
    */
-  canceled_on?: string
+  canceled_on?: string;
   /**
    * Elapsed
    * Elapsed time in seconds that the job ran.
    * @format decimal
    */
-  elapsed?: string
+  elapsed?: string;
   /**
    * Job args
    * @minLength 1
    */
-  job_args?: string
+  job_args?: string;
   /**
    * Job cwd
    * @minLength 1
    */
-  job_cwd?: string
+  job_cwd?: string;
   /** job_env */
-  job_env?: object
+  job_env?: object;
   /**
    * Job explanation
    * A status field to indicate the state of the job if it wasn't able to run and capture stdout
    * @minLength 1
    */
-  job_explanation?: string
+  job_explanation?: string;
   /**
    * Result traceback
    * @minLength 1
    */
-  result_traceback?: string
+  result_traceback?: string;
   /** Launched by */
-  launched_by?: string
+  launched_by?: string;
   /**
    * Work unit id
    * The Receptor work unit ID associated with this job.
    * @minLength 1
    */
-  work_unit_id?: string
+  work_unit_id?: string;
   /** Workflow job template */
-  workflow_job_template?: string | null
+  workflow_job_template?: string | null;
   /**
    * Extra vars
    * @default ""
    */
-  extra_vars?: string | null
+  extra_vars?: string | null;
   /**
    * Allow simultaneous
    * @default false
    */
-  allow_simultaneous?: boolean | null
+  allow_simultaneous?: boolean | null;
   /**
    * Job template
    * If automatically created for a sliced job run, the job template the workflow job was created from.
    */
-  job_template?: string | null
+  job_template?: string | null;
   /**
    * Is sliced job
    * @default false
    */
-  is_sliced_job?: boolean | null
+  is_sliced_job?: boolean | null;
   /**
    * Inventory
    * Inventory applied as a prompt, assuming job template prompts for inventory
    */
-  inventory?: number | null
+  inventory?: number | null;
   /** Limit */
-  limit?: string | null
+  limit?: string | null;
   /** Scm branch */
-  scm_branch?: string | null
+  scm_branch?: string | null;
   /**
    * Webhook service
    * Service that webhook requests will be accepted from
    */
-  webhook_service?: 'github' | 'gitlab' | null
+  webhook_service?: 'github' | 'gitlab' | null;
   /**
    * Webhook credential
    * Personal Access Token for posting back the status to the service API
    */
-  webhook_credential?: number | null
+  webhook_credential?: number | null;
   /**
    * Webhook guid
    * Unique identifier of the event that triggered this webhook
    * @maxLength 128
    */
-  webhook_guid?: string | null
+  webhook_guid?: string | null;
   /** Skip tags */
-  skip_tags?: string | null
+  skip_tags?: string | null;
   /** Job tags */
-  job_tags?: string | null
+  job_tags?: string | null;
 }
 
 export interface WorkflowJobCancel {
   /** Can cancel */
-  can_cancel?: boolean
+  can_cancel?: boolean;
 }
 
-export type QueryParamsType = Record<string | number, any>
-export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
+export type QueryParamsType = Record<string | number, any>;
+export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>;
 
 export interface FullRequestParams extends Omit<RequestInit, 'body'> {
   /** set parameter to `true` for call `securityWorker` for this request */
-  secure?: boolean
+  secure?: boolean;
   /** request path */
-  path: string
+  path: string;
   /** content type of request body */
-  type?: ContentType
+  type?: ContentType;
   /** query params */
-  query?: QueryParamsType
+  query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: ResponseFormat
+  format?: ResponseFormat;
   /** request body */
-  body?: unknown
+  body?: unknown;
   /** base url */
-  baseUrl?: string
+  baseUrl?: string;
   /** request cancellation token */
-  cancelToken?: CancelToken
+  cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>
+export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string
-  baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>
+  baseUrl?: string;
+  baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
   securityWorker?: (
     securityData: SecurityDataType | null
-  ) => Promise<RequestParams | void> | RequestParams | void
-  customFetch?: typeof fetch
+  ) => Promise<RequestParams | void> | RequestParams | void;
+  customFetch?: typeof fetch;
 }
 
 export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
-  data: D
-  error: E
+  data: D;
+  error: E;
 }
 
-type CancelToken = Symbol | string | number
+type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = 'application/json',
@@ -8209,56 +8209,56 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:8043'
-  private securityData: SecurityDataType | null = null
-  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker']
-  private abortControllers = new Map<CancelToken, AbortController>()
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams)
+  public baseUrl: string = 'http://localhost:8043';
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
+  private abortControllers = new Map<CancelToken, AbortController>();
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
     headers: {},
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
-  }
+  };
 
   constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig)
+    Object.assign(this, apiConfig);
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
-    this.securityData = data
-  }
+    this.securityData = data;
+  };
 
   protected encodeQueryParam(key: string, value: any) {
-    const encodedKey = encodeURIComponent(key)
-    return `${encodedKey}=${encodeURIComponent(typeof value === 'number' ? value : `${value}`)}`
+    const encodedKey = encodeURIComponent(key);
+    return `${encodedKey}=${encodeURIComponent(typeof value === 'number' ? value : `${value}`)}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
-    return this.encodeQueryParam(key, query[key])
+    return this.encodeQueryParam(key, query[key]);
   }
 
   protected addArrayQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key]
-    return value.map((v: any) => this.encodeQueryParam(key, v)).join('&')
+    const value = query[key];
+    return value.map((v: any) => this.encodeQueryParam(key, v)).join('&');
   }
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {}
-    const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key])
+    const query = rawQuery || {};
+    const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key]);
     return keys
       .map((key) =>
         Array.isArray(query[key])
           ? this.addArrayQueryParam(query, key)
           : this.addQueryParam(query, key)
       )
-      .join('&')
+      .join('&');
   }
 
   protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery)
-    return queryString ? `?${queryString}` : ''
+    const queryString = this.toQueryString(rawQuery);
+    return queryString ? `?${queryString}` : '';
   }
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
@@ -8270,19 +8270,19 @@ export class HttpClient<SecurityDataType = unknown> {
       input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
-        const property = input[key]
+        const property = input[key];
         formData.append(
           key,
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`
-        )
-        return formData
+              ? JSON.stringify(property)
+              : `${property}`
+        );
+        return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-  }
+  };
 
   protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
     return {
@@ -8294,31 +8294,31 @@ export class HttpClient<SecurityDataType = unknown> {
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
-    }
+    };
   }
 
   protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken)
+      const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
-        return abortController.signal
+        return abortController.signal;
       }
-      return void 0
+      return void 0;
     }
 
-    const abortController = new AbortController()
-    this.abortControllers.set(cancelToken, abortController)
-    return abortController.signal
-  }
+    const abortController = new AbortController();
+    this.abortControllers.set(cancelToken, abortController);
+    return abortController.signal;
+  };
 
   public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken)
+    const abortController = this.abortControllers.get(cancelToken);
 
     if (abortController) {
-      abortController.abort()
-      this.abortControllers.delete(cancelToken)
+      abortController.abort();
+      this.abortControllers.delete(cancelToken);
     }
-  }
+  };
 
   public request = async <T = any, E = any>({
     body,
@@ -8335,11 +8335,11 @@ export class HttpClient<SecurityDataType = unknown> {
       ((typeof secure === 'boolean' ? secure : this.baseApiParams.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
-      {}
-    const requestParams = this.mergeRequestParams(params, secureParams)
-    const queryString = query && this.toQueryString(query)
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json]
-    const responseFormat = format || requestParams.format
+      {};
+    const requestParams = this.mergeRequestParams(params, secureParams);
+    const queryString = query && this.toQueryString(query);
+    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+    const responseFormat = format || requestParams.format;
 
     return this.customFetch(
       `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
@@ -8353,34 +8353,34 @@ export class HttpClient<SecurityDataType = unknown> {
         body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       }
     ).then(async (response) => {
-      const r = response as HttpResponse<T, E>
-      r.data = null as unknown as T
-      r.error = null as unknown as E
+      const r = response as HttpResponse<T, E>;
+      r.data = null as unknown as T;
+      r.error = null as unknown as E;
 
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
             .then((data) => {
               if (r.ok) {
-                r.data = data
+                r.data = data;
               } else {
-                r.error = data
+                r.error = data;
               }
-              return r
+              return r;
             })
             .catch((e) => {
-              r.error = e
-              return r
-            })
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
-        this.abortControllers.delete(cancelToken)
+        this.abortControllers.delete(cancelToken);
       }
 
-      if (!response.ok) throw data
-      return data
-    })
-  }
+      if (!response.ok) throw data;
+      return data;
+    });
+  };
 }
 
 /**
@@ -8521,22 +8521,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -8597,22 +8597,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandList[]
+          previous?: string | null;
+          results: AdHocCommandList[];
         },
         any
       >({
@@ -8692,22 +8692,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -8776,22 +8776,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandEvent[]
+          previous?: string | null;
+          results: AdHocCommandEvent[];
         },
         any
       >({
@@ -8817,22 +8817,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -8858,22 +8858,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandRelaunch[]
+          previous?: string | null;
+          results: AdHocCommandRelaunch[];
         },
         any
       >({
@@ -8941,22 +8941,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OAuth2Application[]
+          previous?: string | null;
+          results: OAuth2Application[];
         },
         any
       >({
@@ -9084,22 +9084,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -9125,22 +9125,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OAuth2Token[]
+          previous?: string | null;
+          results: OAuth2Token[];
         },
         any
       >({
@@ -9285,22 +9285,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: CredentialInputSource[]
+          previous?: string | null;
+          results: CredentialInputSource[];
         },
         any
       >({
@@ -9431,22 +9431,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: CredentialType[]
+          previous?: string | null;
+          results: CredentialType[];
         },
         any
       >({
@@ -9574,22 +9574,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -9615,22 +9615,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -9721,22 +9721,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: CredentialSerializerCreate[]
+          previous?: string | null;
+          results: CredentialSerializerCreate[];
         },
         any
       >({
@@ -9869,22 +9869,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -9910,22 +9910,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -9950,22 +9950,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -10014,22 +10014,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: CredentialInputSource[]
+          previous?: string | null;
+          results: CredentialInputSource[];
         },
         any
       >({
@@ -10079,22 +10079,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -10120,22 +10120,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Team[]
+          previous?: string | null;
+          results: Team[];
         },
         any
       >({
@@ -10161,22 +10161,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -10276,22 +10276,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ExecutionEnvironment[]
+          previous?: string | null;
+          results: ExecutionEnvironment[];
         },
         any
       >({
@@ -10423,22 +10423,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -10463,22 +10463,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -10527,22 +10527,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UnifiedJobTemplate[]
+          previous?: string | null;
+          results: UnifiedJobTemplate[];
         },
         any
       >({
@@ -10567,22 +10567,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -10705,22 +10705,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -10746,22 +10746,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandList[]
+          previous?: string | null;
+          results: AdHocCommandList[];
         },
         any
       >({
@@ -10811,22 +10811,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Host[]
+          previous?: string | null;
+          results: Host[];
         },
         any
       >({
@@ -10852,22 +10852,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -10917,22 +10917,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Host[]
+          previous?: string | null;
+          results: Host[];
         },
         any
       >({
@@ -10977,22 +10977,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventorySource[]
+          previous?: string | null;
+          results: InventorySource[];
         },
         any
       >({
@@ -11018,22 +11018,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobEvent[]
+          previous?: string | null;
+          results: JobEvent[];
         },
         any
       >({
@@ -11059,22 +11059,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobHostSummary[]
+          previous?: string | null;
+          results: JobHostSummary[];
         },
         any
       >({
@@ -11100,22 +11100,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -11209,22 +11209,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Host[]
+          previous?: string | null;
+          results: Host[];
         },
         any
       >({
@@ -11342,22 +11342,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -11383,22 +11383,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandEvent[]
+          previous?: string | null;
+          results: AdHocCommandEvent[];
         },
         any
       >({
@@ -11424,22 +11424,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandList[]
+          previous?: string | null;
+          results: AdHocCommandList[];
         },
         any
       >({
@@ -11489,22 +11489,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -11548,22 +11548,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -11608,22 +11608,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventorySource[]
+          previous?: string | null;
+          results: InventorySource[];
         },
         any
       >({
@@ -11649,22 +11649,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobEvent[]
+          previous?: string | null;
+          results: JobEvent[];
         },
         any
       >({
@@ -11690,22 +11690,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobHostSummary[]
+          previous?: string | null;
+          results: JobHostSummary[];
         },
         any
       >({
@@ -11731,22 +11731,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Inventory[]
+          previous?: string | null;
+          results: Inventory[];
         },
         any
       >({
@@ -11840,22 +11840,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -11983,22 +11983,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Instance[]
+          previous?: string | null;
+          results: Instance[];
         },
         any
       >({
@@ -12048,22 +12048,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UnifiedJobList[]
+          previous?: string | null;
+          results: UnifiedJobList[];
         },
         any
       >({
@@ -12088,22 +12088,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Instance[]
+          previous?: string | null;
+          results: Instance[];
         },
         any
       >({
@@ -12209,22 +12209,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceHealthCheck[]
+          previous?: string | null;
+          results: InstanceHealthCheck[];
         },
         any
       >({
@@ -12274,22 +12274,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Instance[]
+          previous?: string | null;
+          results: Instance[];
         },
         any
       >({
@@ -12315,22 +12315,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -12380,22 +12380,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UnifiedJobList[]
+          previous?: string | null;
+          results: UnifiedJobList[];
         },
         any
       >({
@@ -12421,22 +12421,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Instance[]
+          previous?: string | null;
+          results: Instance[];
         },
         any
       >({
@@ -12461,22 +12461,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Inventory[]
+          previous?: string | null;
+          results: Inventory[];
         },
         any
       >({
@@ -12604,22 +12604,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -12645,22 +12645,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -12686,22 +12686,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: AdHocCommandList[]
+          previous?: string | null;
+          results: AdHocCommandList[];
         },
         any
       >({
@@ -12750,22 +12750,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -12814,22 +12814,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -12879,22 +12879,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Host[]
+          previous?: string | null;
+          results: Host[];
         },
         any
       >({
@@ -12944,22 +12944,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -13009,22 +13009,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventorySource[]
+          previous?: string | null;
+          results: InventorySource[];
         },
         any
       >({
@@ -13074,22 +13074,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobTemplate[]
+          previous?: string | null;
+          results: JobTemplate[];
         },
         any
       >({
@@ -13115,22 +13115,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -13180,22 +13180,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -13221,22 +13221,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -13436,22 +13436,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventorySource[]
+          previous?: string | null;
+          results: InventorySource[];
         },
         any
       >({
@@ -13583,22 +13583,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -13624,22 +13624,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -13689,22 +13689,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Group[]
+          previous?: string | null;
+          results: Group[];
         },
         any
       >({
@@ -13747,22 +13747,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Host[]
+          previous?: string | null;
+          results: Host[];
         },
         any
       >({
@@ -13805,22 +13805,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventoryUpdateList[]
+          previous?: string | null;
+          results: InventoryUpdateList[];
         },
         any
       >({
@@ -13846,22 +13846,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -13911,22 +13911,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -13976,22 +13976,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -14041,22 +14041,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Schedule[]
+          previous?: string | null;
+          results: Schedule[];
         },
         any
       >({
@@ -14147,22 +14147,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventoryUpdateList[]
+          previous?: string | null;
+          results: InventoryUpdateList[];
         },
         any
       >({
@@ -14266,22 +14266,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -14307,22 +14307,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventoryUpdateEvent[]
+          previous?: string | null;
+          results: InventoryUpdateEvent[];
         },
         any
       >({
@@ -14348,22 +14348,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -14425,22 +14425,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobEvent[]
+          previous?: string | null;
+          results: JobEvent[];
         },
         any
       >({
@@ -14483,22 +14483,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobTemplate[]
+          previous?: string | null;
+          results: JobTemplate[];
         },
         any
       >({
@@ -14626,22 +14626,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -14667,22 +14667,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -14708,22 +14708,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -14772,22 +14772,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -14836,22 +14836,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -14933,22 +14933,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -14998,22 +14998,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobList[]
+          previous?: string | null;
+          results: JobList[];
         },
         any
       >({
@@ -15039,22 +15039,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -15147,22 +15147,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -15212,22 +15212,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -15277,22 +15277,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -15342,22 +15342,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -15383,22 +15383,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Schedule[]
+          previous?: string | null;
+          results: Schedule[];
         },
         any
       >({
@@ -15448,22 +15448,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobList[]
+          previous?: string | null;
+          results: WorkflowJobList[];
         },
         any
       >({
@@ -15514,22 +15514,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -15595,22 +15595,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -15658,22 +15658,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobList[]
+          previous?: string | null;
+          results: JobList[];
         },
         any
       >({
@@ -15734,22 +15734,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -15861,22 +15861,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -15902,22 +15902,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobEvent[]
+          previous?: string | null;
+          results: JobEvent[];
         },
         any
       >({
@@ -15964,22 +15964,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobHostSummary[]
+          previous?: string | null;
+          results: JobHostSummary[];
         },
         any
       >({
@@ -16005,22 +16005,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -16046,22 +16046,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -16147,22 +16147,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -16267,22 +16267,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -16339,22 +16339,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -16485,22 +16485,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -16549,22 +16549,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -16612,22 +16612,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -16669,11 +16669,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
@@ -16798,22 +16798,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -16839,22 +16839,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -16880,22 +16880,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -16945,22 +16945,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OAuth2Application[]
+          previous?: string | null;
+          results: OAuth2Application[];
         },
         any
       >({
@@ -17010,22 +17010,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OrganizationCredentialSerializerCreate[]
+          previous?: string | null;
+          results: OrganizationCredentialSerializerCreate[];
         },
         any
       >({
@@ -17076,22 +17076,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ExecutionEnvironment[]
+          previous?: string | null;
+          results: ExecutionEnvironment[];
         },
         any
       >({
@@ -17141,22 +17141,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -17206,22 +17206,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -17271,22 +17271,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Inventory[]
+          previous?: string | null;
+          results: Inventory[];
         },
         any
       >({
@@ -17312,22 +17312,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: JobTemplate[]
+          previous?: string | null;
+          results: JobTemplate[];
         },
         any
       >({
@@ -17377,22 +17377,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -17442,22 +17442,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -17507,22 +17507,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -17572,22 +17572,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -17637,22 +17637,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -17702,22 +17702,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -17743,22 +17743,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Project[]
+          previous?: string | null;
+          results: Project[];
         },
         any
       >({
@@ -17808,22 +17808,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Team[]
+          previous?: string | null;
+          results: Team[];
         },
         any
       >({
@@ -17873,22 +17873,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -17938,22 +17938,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplate[]
+          previous?: string | null;
+          results: WorkflowJobTemplate[];
         },
         any
       >({
@@ -18019,22 +18019,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ProjectUpdateList[]
+          previous?: string | null;
+          results: ProjectUpdateList[];
         },
         any
       >({
@@ -18138,22 +18138,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ProjectUpdateEvent[]
+          previous?: string | null;
+          results: ProjectUpdateEvent[];
         },
         any
       >({
@@ -18179,22 +18179,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -18220,22 +18220,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventoryUpdateList[]
+          previous?: string | null;
+          results: InventoryUpdateList[];
         },
         any
       >({
@@ -18278,22 +18278,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Project[]
+          previous?: string | null;
+          results: Project[];
         },
         any
       >({
@@ -18416,22 +18416,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -18457,22 +18457,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -18497,22 +18497,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -18574,22 +18574,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -18639,22 +18639,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -18704,22 +18704,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -18769,22 +18769,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -18828,22 +18828,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ProjectUpdateList[]
+          previous?: string | null;
+          results: ProjectUpdateList[];
         },
         any
       >({
@@ -18869,22 +18869,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Schedule[]
+          previous?: string | null;
+          results: Schedule[];
         },
         any
       >({
@@ -18934,22 +18934,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InventorySource[]
+          previous?: string | null;
+          results: InventorySource[];
         },
         any
       >({
@@ -18975,22 +18975,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Team[]
+          previous?: string | null;
+          results: Team[];
         },
         any
       >({
@@ -19058,22 +19058,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -19117,22 +19117,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -19158,22 +19158,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -19199,22 +19199,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Team[]
+          previous?: string | null;
+          results: Team[];
         },
         any
       >({
@@ -19259,22 +19259,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -19318,22 +19318,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Schedule[]
+          previous?: string | null;
+          results: Schedule[];
         },
         any
       >({
@@ -19495,22 +19495,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -19560,22 +19560,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -19625,22 +19625,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UnifiedJobList[]
+          previous?: string | null;
+          results: UnifiedJobList[];
         },
         any
       >({
@@ -19666,22 +19666,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -19730,20 +19730,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: SettingCategory[]
+          previous?: string | null;
+          results: SettingCategory[];
         },
         any
       >({
@@ -19873,22 +19873,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: SystemJobTemplate[]
+          previous?: string | null;
+          results: SystemJobTemplate[];
         },
         any
       >({
@@ -19932,22 +19932,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: SystemJobList[]
+          previous?: string | null;
+          results: SystemJobList[];
         },
         any
       >({
@@ -19973,22 +19973,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -20038,22 +20038,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -20103,22 +20103,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -20168,22 +20168,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -20233,22 +20233,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Schedule[]
+          previous?: string | null;
+          results: Schedule[];
         },
         any
       >({
@@ -20297,22 +20297,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: SystemJobList[]
+          previous?: string | null;
+          results: SystemJobList[];
         },
         any
       >({
@@ -20416,22 +20416,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: SystemJobEvent[]
+          previous?: string | null;
+          results: SystemJobEvent[];
         },
         any
       >({
@@ -20457,22 +20457,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -20497,22 +20497,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Team[]
+          previous?: string | null;
+          results: Team[];
         },
         any
       >({
@@ -20630,22 +20630,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -20671,22 +20671,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -20712,22 +20712,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: TeamCredentialSerializerCreate[]
+          previous?: string | null;
+          results: TeamCredentialSerializerCreate[];
         },
         any
       >({
@@ -20778,22 +20778,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -20819,22 +20819,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Project[]
+          previous?: string | null;
+          results: Project[];
         },
         any
       >({
@@ -20860,22 +20860,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: RoleSerializerWithParentAccess[]
+          previous?: string | null;
+          results: RoleSerializerWithParentAccess[];
         },
         any
       >({
@@ -20925,22 +20925,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -20984,22 +20984,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OAuth2Token[]
+          previous?: string | null;
+          results: OAuth2Token[];
         },
         any
       >({
@@ -21127,22 +21127,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -21167,22 +21167,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UnifiedJobTemplate[]
+          previous?: string | null;
+          results: UnifiedJobTemplate[];
         },
         any
       >({
@@ -21207,22 +21207,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UnifiedJobList[]
+          previous?: string | null;
+          results: UnifiedJobList[];
         },
         any
       >({
@@ -21247,22 +21247,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: User[]
+          previous?: string | null;
+          results: User[];
         },
         any
       >({
@@ -21380,22 +21380,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -21421,22 +21421,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -21461,11 +21461,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
@@ -21491,22 +21491,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OAuth2Application[]
+          previous?: string | null;
+          results: OAuth2Application[];
         },
         any
       >({
@@ -21556,22 +21556,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UserAuthorizedToken[]
+          previous?: string | null;
+          results: UserAuthorizedToken[];
         },
         any
       >({
@@ -21622,22 +21622,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UserCredentialSerializerCreate[]
+          previous?: string | null;
+          results: UserCredentialSerializerCreate[];
         },
         any
       >({
@@ -21687,11 +21687,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
@@ -21717,22 +21717,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: UserPersonalToken[]
+          previous?: string | null;
+          results: UserPersonalToken[];
         },
         any
       >({
@@ -21783,22 +21783,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Project[]
+          previous?: string | null;
+          results: Project[];
         },
         any
       >({
@@ -21824,22 +21824,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: RoleSerializerWithParentAccess[]
+          previous?: string | null;
+          results: RoleSerializerWithParentAccess[];
         },
         any
       >({
@@ -21889,22 +21889,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Team[]
+          previous?: string | null;
+          results: Team[];
         },
         any
       >({
@@ -21930,22 +21930,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: OAuth2Token[]
+          previous?: string | null;
+          results: OAuth2Token[];
         },
         any
       >({
@@ -22078,22 +22078,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowApprovalList[]
+          previous?: string | null;
+          results: WorkflowApprovalList[];
         },
         any
       >({
@@ -22118,22 +22118,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowApprovalList[]
+          previous?: string | null;
+          results: WorkflowApprovalList[];
         },
         any
       >({
@@ -22301,22 +22301,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobNodeList[]
+          previous?: string | null;
+          results: WorkflowJobNodeList[];
         },
         any
       >({
@@ -22360,22 +22360,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobNodeList[]
+          previous?: string | null;
+          results: WorkflowJobNodeList[];
         },
         any
       >({
@@ -22401,22 +22401,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -22442,22 +22442,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobNodeList[]
+          previous?: string | null;
+          results: WorkflowJobNodeList[];
         },
         any
       >({
@@ -22483,22 +22483,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -22548,22 +22548,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -22589,22 +22589,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobNodeList[]
+          previous?: string | null;
+          results: WorkflowJobNodeList[];
         },
         any
       >({
@@ -22629,22 +22629,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplateNode[]
+          previous?: string | null;
+          results: WorkflowJobTemplateNode[];
         },
         any
       >({
@@ -22776,22 +22776,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplateNode[]
+          previous?: string | null;
+          results: WorkflowJobTemplateNode[];
         },
         any
       >({
@@ -22888,22 +22888,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Credential[]
+          previous?: string | null;
+          results: Credential[];
         },
         any
       >({
@@ -22953,22 +22953,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplateNode[]
+          previous?: string | null;
+          results: WorkflowJobTemplateNode[];
         },
         any
       >({
@@ -23018,22 +23018,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: InstanceGroup[]
+          previous?: string | null;
+          results: InstanceGroup[];
         },
         any
       >({
@@ -23083,22 +23083,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -23148,22 +23148,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplateNode[]
+          previous?: string | null;
+          results: WorkflowJobTemplateNode[];
         },
         any
       >({
@@ -23212,22 +23212,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplate[]
+          previous?: string | null;
+          results: WorkflowJobTemplate[];
         },
         any
       >({
@@ -23359,22 +23359,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ResourceAccessListElement[]
+          previous?: string | null;
+          results: ResourceAccessListElement[];
         },
         any
       >({
@@ -23400,22 +23400,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -23441,22 +23441,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Copy[]
+          previous?: string | null;
+          results: Copy[];
         },
         any
       >({
@@ -23546,22 +23546,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -23654,22 +23654,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -23719,22 +23719,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -23784,22 +23784,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -23849,22 +23849,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: NotificationTemplate[]
+          previous?: string | null;
+          results: NotificationTemplate[];
         },
         any
       >({
@@ -23914,22 +23914,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Role[]
+          previous?: string | null;
+          results: Role[];
         },
         any
       >({
@@ -23955,22 +23955,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Schedule[]
+          previous?: string | null;
+          results: Schedule[];
         },
         any
       >({
@@ -24020,22 +24020,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -24105,22 +24105,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -24169,22 +24169,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobList[]
+          previous?: string | null;
+          results: WorkflowJobList[];
         },
         any
       >({
@@ -24210,22 +24210,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobTemplateNode[]
+          previous?: string | null;
+          results: WorkflowJobTemplateNode[];
         },
         any
       >({
@@ -24274,22 +24274,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobList[]
+          previous?: string | null;
+          results: WorkflowJobList[];
         },
         any
       >({
@@ -24350,22 +24350,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: ActivityStream[]
+          previous?: string | null;
+          results: ActivityStream[];
         },
         any
       >({
@@ -24434,22 +24434,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Label[]
+          previous?: string | null;
+          results: Label[];
         },
         any
       >({
@@ -24475,22 +24475,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Notification[]
+          previous?: string | null;
+          results: Notification[];
         },
         any
       >({
@@ -24516,22 +24516,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: Empty[]
+          previous?: string | null;
+          results: Empty[];
         },
         any
       >({
@@ -24581,22 +24581,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       version: string,
       query?: {
         /** A search term. */
-        search?: string
+        search?: string;
         /** A page number within the paginated result set. */
-        page?: number
+        page?: number;
         /** Number of results to return per page. */
-        page_size?: number
+        page_size?: number;
       },
       params: RequestParams = {}
     ) =>
       this.request<
         {
-          count: number
+          count: number;
           /** @format uri */
-          next?: string | null
+          next?: string | null;
           /** @format uri */
-          previous?: string | null
-          results: WorkflowJobNodeList[]
+          previous?: string | null;
+          results: WorkflowJobNodeList[];
         },
         any
       >({
@@ -24607,5 +24607,5 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
-  }
+  };
 }

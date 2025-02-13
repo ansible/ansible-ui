@@ -1,4 +1,22 @@
 {
   "name": "@ansible/cypress",
-  "type": "module"
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check !**/*.scss .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
+  },
+  "dependencies": {
+    "@ansible/ansible-ui-framework": "*",
+    "@ansible/awx-ui": "*",
+    "@ansible/common-ui": "*",
+    "@ansible/eda-ui": "*",
+    "@ansible/hub-ui": "*",
+    "@ansible/platform-ui": "*"
+  }
 }

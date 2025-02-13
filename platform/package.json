@@ -24,10 +24,13 @@
     "docker:stop": "docker rm -f platform-ui || true",
     "docker:run": "npm run build && npm run docker:build && echo http://localhost:4100 && docker run --rm -p 4100:443 -e PLATFORM_SERVER=$PLATFORM_SERVER platform-ui",
     "docker:build:run": "npm run docker:build && npm run docker:run",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 .",
     "eslint:fix": "eslint --fix .",
-    "prettier": "prettier --check !**/*.scss .",
-    "prettier:fix": "prettier --write ."
+    "prettier": "prettier --check !dist/** .",
+    "prettier:fix": "prettier --write !dist/** .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
   },
   "dependencies": {
     "@ansible/ansible-ui-framework": "^0.0.0",
