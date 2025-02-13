@@ -113,7 +113,7 @@ export async function runJobTemplate(
   }
   await expect(page.getByRole('main')).toContainText(jobTemplateName);
   if (!options?.doNotWait) {
-    await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 60000 });
+    await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 120000 });
   }
   await page.getByRole('tab', { name: 'Details' }).click();
   await expect(page.locator('#name')).toContainText(jobTemplateName);

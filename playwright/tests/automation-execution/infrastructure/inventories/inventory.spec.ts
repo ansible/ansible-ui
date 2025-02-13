@@ -62,7 +62,7 @@ test(
     await page.getByRole('option', { name: `Create "${labelName}"` }).click();
     await page.locator('.view-line').click();
     await page
-      .getByLabel('Editor content;Press Alt+F1')
+      .getByRole('textbox', { name: 'Editor content' })
       .fill("remote_install_path: '/opt/my_app_config''");
     await page.getByRole('button', { name: 'Save inventory' }).click();
     await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
