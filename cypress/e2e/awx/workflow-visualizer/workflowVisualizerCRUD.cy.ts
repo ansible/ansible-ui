@@ -607,6 +607,7 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.selectDropdownOptionByResourceName('node-convergence', 'All');
     cy.getByDataCy('node-alias').type('Test Node');
     cy.clickButton('Next');
+    cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').contains('Prompts');
     cy.getByDataCy('prompt.skip_tags-form-group').should('exist');
 
     cy.getByDataCy('prompt.skip_tags-typeahead-input').within(() => {
