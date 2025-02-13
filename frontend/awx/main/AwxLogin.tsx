@@ -2,6 +2,7 @@ import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingSt
 import { AnsibleLogin } from '@ansible/common-ui/AnsibleLogin/AnsibleLogin';
 import type { AuthOption } from '@ansible/common-ui/SocialAuthLogin';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 import { Page } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import useSWR, { mutate } from 'swr';
@@ -9,7 +10,6 @@ import { awxAPI } from '../common/api/awx-utils';
 import { useAwxActiveUser } from '../common/useAwxActiveUser';
 import { AwxConfigProvider } from '../common/useAwxConfig';
 import { WebSocketProvider } from '../common/useAwxWebSocket';
-import { DocsVersionProvider } from '@ansible/common-ui/utils/useDocsVersion';
 
 type AwxAuthOptions = {
   [key: string]: {
@@ -59,7 +59,7 @@ export function AwxLogin(props: {
           void mutate(() => true);
         }}
         brandImg={props.brandImg ? props.brandImg : '/assets/awx-logo.svg'}
-        brandImgAlt={process.env.PRODUCT}
+        brandImgAlt={process.env.PRODUCT as unknown as string}
         otherOptions={props.otherOptions}
       />
     );

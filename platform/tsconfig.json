@@ -1,5 +1,5 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*.ts", "vite.config.ts"],
+  "include": ["**/*", "../cypress/support/**/*", "../frontend/hub/**/*", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

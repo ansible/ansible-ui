@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "eslint": {
+      "cache": true
+    },
+    "tsc": {
+      "cache": true
+    },
+    "prettier": {
+      "cache": true
+    }
+  },
+  "defaultBase": "main"
+}

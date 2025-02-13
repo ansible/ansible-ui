@@ -17,11 +17,11 @@ For example, to create an interface for `UnifiedJob`:
 1. Create a file `Credential.ts` under `controller/interfaces`
 2. Extend the interface from `./generated-from-swagger/api`'
 
-    ```
-    import { Credential as SwaggerCredential } from './generated-from-swagger/api';
+   ```
+   import { Credential as SwaggerCredential } from './generated-from-swagger/api';
 
-    export interface Credential extends Omit<SwaggerCredential, 'id' | 'name'> {
-      id: number;
-      name: string;
-    }
-    ```
+   export interface Credential extends Omit<SwaggerCredential, 'id' | 'name'> {
+     id: number;
+     name: string;
+   }
+   ```

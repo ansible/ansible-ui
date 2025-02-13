@@ -98,7 +98,7 @@ export function PlatformLogin(props: { children: ReactNode }) {
           }
           authOptions={hideAuthOptions ? undefined : options?.ssos}
           brandImg={brandImg}
-          brandImgAlt={process.env.PRODUCT}
+          brandImgAlt={process.env.PRODUCT as unknown as string}
           textContent={options?.custom_login_info}
           loginSubtitle={t('Enter your credentials.')}
         />

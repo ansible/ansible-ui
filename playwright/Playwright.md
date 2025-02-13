@@ -18,15 +18,15 @@ Solution
 
 1. **Install Playwright**
 
-    ```bash
-    npm ci
-    ```
+   ```bash
+   npm ci
+   ```
 
-    Fedora users may also need to run this command:
+   Fedora users may also need to run this command:
 
-    ```bash
-    npm init playwright@latest
-    ```
+   ```bash
+   npm init playwright@latest
+   ```
 
 2. **Add the vscode plugin for Playwright**
 
@@ -34,9 +34,9 @@ Solution
 
 3. **Install the browser binaries**
 
-    ```bash
-    npx playwright install
-    ```
+   ```bash
+   npx playwright install
+   ```
 
 4. **Setup environment variable by creating a `.env` file in the `/playwright` directory**
 
@@ -91,7 +91,7 @@ Follow the best practices suggested [here](https://docs.cypress.io/guides/refere
    - example of how to use the function
    - parameter descriptions
 
-3. **Helper functions that create a child resource should include the creation of the parent   resource as well**
+3. **Helper functions that create a child resource should include the creation of the parent resource as well**
 
 4. **Assertions**
 
@@ -149,5 +149,5 @@ Follow the best practices suggested [here](https://docs.cypress.io/guides/refere
 
 10. **Be User-Centric**
 
-   Avoid relying on technical aspects such as element IDs or class names for interactions.
-   Prioritize tests that reflect the user’s journey and behavior.
+Avoid relying on technical aspects such as element IDs or class names for interactions.
+Prioritize tests that reflect the user’s journey and behavior.

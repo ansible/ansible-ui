@@ -1,4 +1,15 @@
 {
   "name": "@ansible/playwright",
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "mock": "playwright test --project 'mock chromium'",
+    "live": "playwright test --project 'live chromium'",
+    "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
+    "tsc": "tsc --noEmit",
+    "eslint": "eslint --max-warnings=0 .",
+    "eslint:fix": "eslint --fix .",
+    "prettier": "prettier --check !**/*.scss .",
+    "prettier:fix": "prettier --write .",
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
+  }
 }

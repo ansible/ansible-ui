@@ -12,3 +12,8 @@ Dockerfile
 .*.sw[po]
 /framework/publish
 LICENSE.md
+**/dist
+**/node_modules
+**/build
+**/test-results
+**/coverage
