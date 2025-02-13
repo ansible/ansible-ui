@@ -80,7 +80,8 @@
     "docker:run:hub": "echo http://localhost:4102 && docker run --name hub-ui --rm -e LOG_LEVEL=debug -p 4102:443 -e HUB_SERVER=$HUB_SERVER hub-ui",
     "docker:run:eda": "echo http://localhost:4103 && docker run --name eda-ui --rm -e LOG_LEVEL=debug -p 4103:443 -e EDA_SERVER=$EDA_SERVER -e EDA_SERVER_UUID=$EDA_SERVER_UUID -e EDA_WEBHOOK_SERVER='http://example.com' eda-ui",
     "docker": "npm run build && npm run docker:build && npm run docker:run",
-    "playwright": "cd playwright && playwright test --project 'mock chromium'"
+    "playwright": "cd playwright && playwright test --project 'mock chromium'",
+    "playwright:compare": "cd playwright && REPORTER=junit playwright test --project compare"
   },
   "dependencies": {
     "@ansible/react-json-chart-builder": "2.0.1",

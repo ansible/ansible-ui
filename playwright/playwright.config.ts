@@ -28,7 +28,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'list',
+  reporter:
+    process.env.REPORTER === 'junit'
+      ? [['list'], ['junit', { outputFile: 'results.xml' }]]
+      : [['list']],
 
   // Split TAGS by comma and create a regular expression that matches any of the tags
   grep: process.env.TAGS
@@ -69,6 +72,15 @@ export default defineConfig({
       dependencies: ['coverage setup'],
       fullyParallel: false,
       timeout: 5 * 60 * 1000,
+    },
+    {
+      name: 'compare',
+      use: { ...devices['Desktop Chrome'] },
+      testIgnore: '**/upgrades-tests/**',
+      dependencies: ['coverage setup'],
+      fullyParallel: false,
+      timeout: 5 * 60 * 1000,
+      testMatch: ['tests/**/job-template.spec.ts', 'tests/**/inventory.spec.ts'],
     },
     {
       name: 'mock chromium',
