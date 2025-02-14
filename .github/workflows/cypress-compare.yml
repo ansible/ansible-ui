@@ -95,13 +95,12 @@ jobs:
         if: ${{ !inputs.SKIP_JOB }}
         uses: cypress-io/github-action@v6
         with:
-          config: specPattern=['cypress/**/jobTemplates.cy.ts','cypress/**/inventories.cy.ts','cypress/**/workflowVisualizerCRUD.cy.ts']
           install: false
           start: docker run --rm -p 4100:443 -e PLATFORM_SERVER=${{ env.PLATFORM_SERVER }} platform-ui
           wait-on: 'https://localhost:4100'
           record: true
           parallel: true
-          config-file: cypress.platform.config.ts
+          config-file: cypress.compare.config.ts
           tag: ${{ inputs.TAGS }}
         env:
           PLATFORM_SERVER: ${{ env.PLATFORM_SERVER }}
