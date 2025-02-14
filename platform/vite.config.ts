@@ -2,11 +2,17 @@
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
 import react from '@vitejs/plugin-react-swc';
+import selfsigned from 'selfsigned';
 import { defineConfig, PluginOption } from 'vite';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+
+const pems = selfsigned.generate([{ name: 'commonName', value: 'contoso.com' }], {
+  days: 365,
+  keySize: 2048,
+});
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -43,6 +49,10 @@ export default defineConfig({
   define: { 'process.env': environment },
   server: {
     cors: false,
+    https: {
+      key: pems.private,
+      cert: pems.cert,
+    },
     proxy: {
       '/api': {
         target: PLATFORM_SERVER,

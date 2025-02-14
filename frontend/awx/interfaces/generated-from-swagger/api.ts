@@ -8209,11 +8209,11 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:8043';
-  private securityData: SecurityDataType | null = null;
-  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
-  private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  public baseUrl: string = 'https://localhost:8043'
+  private securityData: SecurityDataType | null = null
+  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker']
+  private abortControllers = new Map<CancelToken, AbortController>()
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams)
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -8388,7 +8388,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version v1
  * @license BSD License
  * @termsOfService https://www.google.com/policies/terms/
- * @baseUrl http://localhost:8043
+ * @baseUrl https://localhost:8043
  * @contact <contact@snippets.local>
  *
  * Test description

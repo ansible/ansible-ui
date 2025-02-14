@@ -42,7 +42,7 @@
         "type": "boolean"
       },
       "gateway_proxy_url": {
-        "default": "http://localhost:9080",
+        "default": "https://localhost:9080",
         "help_text": "URL to the gateway proxy layer",
         "label": "Gateway proxy url",
         "read_only": false,
