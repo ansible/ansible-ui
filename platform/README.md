@@ -43,7 +43,7 @@ The Platform UI has downstream pages for authentication, access management, sett
    |    `PLATFORM_SERVER` | The AAP Platform server (protocol://host:port). |
 
    ```zsh
-   export PLATFORM_SERVER=http://localhost:443
+   export PLATFORM_SERVER=https://localhost:443
    ```
 
 1. Run the Platform UI
@@ -54,7 +54,7 @@ The Platform UI has downstream pages for authentication, access management, sett
    ```
 
    This will start the Platform UI in development mode.
-   It will be running on <http://localhost:4100>.
+   It will be running on <https://localhost:4100>.
    The Platform gateway ui will talk to the platform gateway api using the `PLATFORM_SERVER` environment variable.
 
 ## Building for Production

@@ -136,7 +136,7 @@ All engineers working with this code are responsible to help maintain the tests 
 | `HUB_GALAXYKIT_COMMAND` | The galaxykit command. (`galaxykit --ignore-certs`) |
 
 ```zsh
-export AWX_SERVER=http://localhost:8043
+export AWX_SERVER=https://localhost:8043
 export AWX_USERNAME='dev'
 export AWX_PASSWORD='nomeetingsfriday'
 
