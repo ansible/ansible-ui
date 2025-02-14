@@ -1,0 +1,118 @@
+name: Run Cypress Compare
+
+on:
+  workflow_dispatch:
+    inputs:
+      PLATFORM_SERVER:
+        type: string
+        required: true
+        description: 'Platform Server'
+      PARALLEL_TESTS:
+        description: 'Number of parallel test runners'
+        type: number
+        required: true
+        default: 16
+      UPDATE_SERVER:
+        type: boolean
+        required: true
+        default: false
+        description: 'Update server on success'
+
+jobs:
+  platform-ui-image:
+    name: Platform UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-context: platform
+      docker-file: platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+
+  cypress-compare:
+    name: Cypress Compare
+    needs:
+      - platform-ui-image
+    uses: ./.github/workflows/cypress-compare.yml
+    with:
+      PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+      PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      PLATFORM_PROJECT_ID: ${{ secrets.PLATFORM_PROJECT_ID }}
+      PLATFORM_RECORD_KEY: ${{ secrets.PLATFORM_RECORD_KEY }}
+
+  platform-update-server:
+    name: Platform Update Server
+    if: ${{ inputs.UPDATE_SERVER == 'true' }}
+    needs:
+      - cypress-compare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Server Variable
+        run: |
+          curl -f -L -X PATCH -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/variables/PLATFORM_SERVER" \
+          -d '{"name":"PLATFORM_SERVER","value":"${{ inputs.PLATFORM_SERVER }}"}'
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#00DD00",
+                    "blocks":
+                      [
+                        {
+                          "type": "section",
+                          "text":
+                            {
+                              "type": "mrkdwn",
+                              "text": "*AAP-UI E2E Server Updated* - <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Success> - <${{ inputs.PLATFORM_SERVER }}|Server>"
+                            }
+                        }
+                      ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  slack-failure-notification:
+    name: Slack Failure Notification
+    if: ${{ failure() && inputs.UPDATE_SERVER == 'true' }}
+    needs:
+      - platform-update-server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "attachments":
+                [
+                  {
+                    "color": "#FF0000",
+                    "blocks": [
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*AAP-UI E2E Server Update Failed* - *<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Failure>* - <${{inputs.PLATFORM_SERVER }}|Server>"
+                        }
+                      }
+                    ]
+                  }
+                ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
