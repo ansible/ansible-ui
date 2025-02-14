@@ -617,6 +617,7 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.getByDataCy('prompt.skip_tags-typeahead-select').within(() => {
       cy.get('button').should('have.text', 'Create "new skip tag"').click({ force: true });
     });
+    cy.get('[data-cy="prompt.skip_tags-typeahead-input"]').contains('new skip tag');
     cy.clickButton('Next');
     cy.clickButton('Finish');
     cy.clickButton('Save');
