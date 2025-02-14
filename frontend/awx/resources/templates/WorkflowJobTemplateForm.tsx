@@ -53,9 +53,9 @@ export function EditWorkflowJobTemplate() {
     await requestPatch<WorkflowJobTemplateForm>(awxAPI`/workflow_job_templates/${id.toString()}/`, {
       ...rest,
       inventory: values.inventory?.id || null,
-      job_tags: stringifyTags(values.job_tags) ?? '',
+      job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
       organization: values?.organization,
-      skip_tags: stringifyTags(values.skip_tags) ?? '',
+      skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
       webhook_credential: values.webhook_credential?.id || null,
       webhook_service: values.webhook_service || '',
     });
@@ -148,9 +148,9 @@ export function CreateWorkflowJobTemplate() {
     const template = await postRequest(awxAPI`/workflow_job_templates/`, {
       ...rest,
       inventory: values.inventory?.id,
-      job_tags: stringifyTags(values.job_tags || ''),
+      job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
       organization: (values?.organization as number) || undefined,
-      skip_tags: stringifyTags(values.skip_tags || ''),
+      skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
       webhook_credential: webhook_credential?.id ?? null,
     });
 

@@ -276,12 +276,12 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
       </PageDetail>
       <PageDetail label={t('Job tags')} isEmpty={!template.job_tags} fullWidth>
         <LabelGroup>
-          {template.job_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
+          {template.job_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Skip tags')} isEmpty={!template.skip_tags} fullWidth>
         <LabelGroup>
-          {template.skip_tags.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
+          {template.skip_tags?.split(',')?.map((tag) => <Label key={tag}>{tag}</Label>)}
         </LabelGroup>
       </PageDetail>
       <PageDetailCodeEditor

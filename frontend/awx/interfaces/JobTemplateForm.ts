@@ -74,7 +74,7 @@ export interface JobTemplateCreate {
   host_config_key: string;
   inventory: number | null;
   job_slice_count: number;
-  job_tags: string;
+  job_tags: string | null;
   job_type: string;
   limit: string;
   name: string;
@@ -82,7 +82,7 @@ export interface JobTemplateCreate {
   prevent_instance_group_fallback: boolean;
   project: number;
   scm_branch: string;
-  skip_tags: string;
+  skip_tags: string | null;
   survey_enabled?: boolean;
   timeout: number;
   use_fact_cache: boolean;
