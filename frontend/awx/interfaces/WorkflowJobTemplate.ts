@@ -29,8 +29,8 @@ export interface WorkflowJobTemplate
   allow_simultaneous: boolean;
   modified: string;
   webhook_service: string;
-  skip_tags: string;
-  job_tags: string;
+  skip_tags: string | null;
+  job_tags: string | null;
   webhook_credential: number | null;
   extra_vars: string;
   last_job_run: string | null;
@@ -178,8 +178,8 @@ export interface WorkflowJobTemplateCreate
   allow_simultaneous: boolean;
   webhook_service?: string;
   labels?: { id: number; name: string }[] | null;
-  skip_tags: string;
-  job_tags: string;
+  skip_tags: string | null;
+  job_tags: string | null;
   webhook_credential: number | null;
   extra_vars: string;
   organization?: number;

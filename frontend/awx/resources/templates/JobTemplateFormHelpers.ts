@@ -71,8 +71,8 @@ export function getJobTemplateDefaultValues(
   };
 }
 
-export function parseStringToTagArray(str: string) {
-  const string = str || '';
+export function parseStringToTagArray(str: string | null) {
+  const string = str ?? '';
   if (string.trim().length === 0) return [];
   return string?.split(',')?.map((tag) => ({ name: tag, label: tag, value: tag }));
 }
