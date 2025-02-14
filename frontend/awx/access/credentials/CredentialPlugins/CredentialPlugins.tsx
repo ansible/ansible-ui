@@ -57,7 +57,7 @@ export function CredentialPlugins({
     if (!credentialType) {
       return null;
     }
-    return (
+    return credentialType?.inputs?.metadata ? (
       <PageFormSection title={t('Metadata')}>
         {credentialType?.inputs?.metadata.map((input) => {
           if ('choices' in input) {
@@ -103,7 +103,7 @@ export function CredentialPlugins({
           }
         })}
       </PageFormSection>
-    );
+    ) : null;
   };
   return (
     <PageLayout>

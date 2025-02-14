@@ -229,6 +229,45 @@ describe('Credential form', () => {
     assertOnSubFormFields('Source Control');
   });
 
+  it('Create Source Control credential utilizing a GitHub App Lookup credential', () => {
+    cy.selectSingleSelectOption('[data-cy="credential_type"]', 'Source Control');
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/credentials/?page_size=10&order_by=name&credential_type__kind=external`,
+      },
+      {
+        fixture: 'externalCredentials.json',
+      }
+    ).as('externalCredentials');
+    cy.intercept(
+      {
+        method: 'GET',
+        url: awxAPI`/credentials/4/`,
+      },
+      {
+        fixture: 'githubAppLookupCredential.json',
+      }
+    ).as('githubAppLookupCredential');
+    assertOnSubFormFields('Source Control');
+    cy.get('div[id="username-form-group"] button[data-cy="secret-management-input"]').click();
+    cy.getModal().within(() => {
+      cy.contains('Secret Management System').should('exist');
+      cy.get('button[id="credential"]').click();
+    });
+    cy.get('button.pf-v5-c-menu__item').should('be.visible');
+    cy.get('button.pf-v5-c-menu__item').click();
+    cy.getModal().within(() => {
+      cy.contains('button[id="credential"]', 'demo-lookup').should('be.visible');
+      cy.getByDataCy('Submit').click();
+    });
+    cy.wait('@githubAppLookupCredential');
+    cy.get('input[id="username"]').should(
+      'have.value',
+      'Value is managed by github_app_lookup: demo-lookup'
+    );
+  });
+
   it('Create credential using Terraform Backend Configuration', () => {
     cy.selectSingleSelectOption('[data-cy="credential_type"]', 'Terraform backend configuration');
     assertOnSubFormFields('Terraform backend configuration');
