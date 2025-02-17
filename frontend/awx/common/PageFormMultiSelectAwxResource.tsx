@@ -10,7 +10,7 @@ import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInpu
 import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
 import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, ReactNode } from 'react';
 import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
 import { AwxItemsResponse } from './AwxItemsResponse';
 import { useAwxView } from './useAwxView';
@@ -128,7 +128,12 @@ export function PageFormMultiSelectAwxResource<
   );
 
   const queryLabel = useCallback(
-    (value: Value) => <AsyncQueryLabel url={props.url.split('?')[0]} id={value.id} />,
+    (value: Value) => {
+      if (value.name) {
+        return value.name as ReactNode;
+      }
+      return <AsyncQueryLabel url={props.url.split('?')[0]} id={value.id} />;
+    },
     [props.url]
   );
 

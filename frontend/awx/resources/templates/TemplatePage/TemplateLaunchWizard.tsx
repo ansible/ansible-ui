@@ -12,7 +12,6 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCredentialsValidate } from '../../../access/credentials/hooks/useCredentialsValidate';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
@@ -218,7 +217,6 @@ export function LaunchWizard({
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { defaults } = config;
-  const validateCredentials = useCredentialsValidate();
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
     isReadOnly: true,
@@ -257,14 +255,6 @@ export function LaunchWizard({
       label: t('Prompts'),
       inputs: <PromptStep />,
       hidden: () => shouldHideOtherStep(config),
-      validate: async (formData) => {
-        const {
-          resource,
-          prompt: { credentials: selectedCredentials = [] },
-        } = formData as TemplateLaunch;
-        if (resource?.type === 'workflow_job_template') return;
-        await validateCredentials(selectedCredentials);
-      },
     },
     {
       id: 'credential_passwords',

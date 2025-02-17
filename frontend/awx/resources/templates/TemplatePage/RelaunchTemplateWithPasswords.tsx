@@ -93,7 +93,7 @@ export function RelaunchTemplate() {
           <PageDetail label={t('Credentials')}>
             <LabelGroup>
               {template.summary_fields.credentials?.map((credential) => (
-                <CredentialDetail credentialID={credential.id} key={credential.id} />
+                <CredentialDetail credential={credential} key={credential.id} />
               ))}
             </LabelGroup>
           </PageDetail>

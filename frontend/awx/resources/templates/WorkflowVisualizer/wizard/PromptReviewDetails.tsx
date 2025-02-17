@@ -5,10 +5,8 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
-import type { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { Survey } from '../../../../interfaces/Survey';
@@ -17,6 +15,7 @@ import { AwxRoute } from '../../../../main/AwxRoutes';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import type { WizardFormValues } from '../types';
 import { processSurvey } from './helpers';
+import { CredentialDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
@@ -137,7 +136,7 @@ export function PromptReviewDetails() {
         <LabelGroup>
           {Array.isArray(credentials) && credentials.length > 0
             ? credentials?.map((credential) => (
-                <CredentialDetail credentialID={credential.id} key={credential.id} />
+                <CredentialDetail credential={credential} key={credential.id} />
               ))
             : null}
         </LabelGroup>
@@ -183,14 +182,6 @@ export function PromptReviewDetails() {
       <PageDetailCodeEditor label={t('Extra vars')} value={extraVarDetails} />
     </>
   );
-}
-
-export function CredentialDetail({ credentialID }: { credentialID: number }) {
-  const { data: credentialData } = useGet<Credential>(
-    awxAPI`/credentials/${credentialID?.toString()}/`
-  );
-  if (!credentialData) return null;
-  return <CredentialLabel credential={credentialData} key={credentialID} />;
 }
 
 function isEmpty(value: undefined | null | object[] | object | number): boolean {

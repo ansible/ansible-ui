@@ -23,7 +23,7 @@ export function useCredentialsValidate(
         originalCredentials.map((defCred) =>
           requestGet<Credential>(awxAPI`/credentials/${defCred.toString()}/`)
         )
-      );
+      ).catch(() => []);
       const allCredentials = [...(fullDefaultCredentials || []), ...newCredentials];
       const vaultIds = allCredentials
         .filter((credential) => credential.kind === 'vault' && credential.inputs.vault_id)
