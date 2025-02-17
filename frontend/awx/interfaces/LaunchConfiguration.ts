@@ -1,5 +1,15 @@
 import { InstanceGroup } from './InstanceGroup';
 
+export interface LaunchConfigCredential {
+  id: number;
+  name: string;
+  credential_type: number;
+  passwords_needed: string[];
+  inputs: {
+    [key: string]: string;
+  };
+}
+
 export interface LaunchConfiguration {
   can_start_without_user_input: boolean;
   passwords_needed_to_start: string[];
@@ -45,17 +55,7 @@ export interface LaunchConfiguration {
     diff_mode: false;
     job_type: 'run' | 'check';
     verbosity: 0 | 1 | 2 | 3 | 4 | 5;
-    credentials: [
-      {
-        id: number;
-        name: string;
-        credential_type: number;
-        passwords_needed: string[];
-        inputs: {
-          [key: string]: string;
-        };
-      },
-    ];
+    credentials: LaunchConfigCredential[];
     execution_environment: { id: number; name: string } | Record<string, never>;
     forks: number;
     job_slice_count: number;

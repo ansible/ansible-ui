@@ -6,7 +6,6 @@ import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
@@ -18,6 +17,9 @@ import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate'
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
 import { ConditionalField } from './ConditionalField';
+import { SummaryFieldCredential } from '../../../../interfaces/summary-fields/summary-fields';
+import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { LaunchConfigCredential } from '../../../../interfaces/LaunchConfiguration';
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   if (!template) return '';
@@ -150,9 +152,9 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
       )}
       <PageDetail label={t('Credentials')} isEmpty={isEmpty(prompt?.credentials)}>
         <LabelGroup>
-          {prompt?.credentials?.map((credential) => (
-            <CredentialDetail credentialID={credential.id} key={credential.id} />
-          ))}
+          {prompt?.credentials?.map((credential) => {
+            return <CredentialDetail credential={credential} key={credential.id} />;
+          })}
         </LabelGroup>
       </PageDetail>
       <PageDetail
@@ -202,12 +204,20 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
   );
 }
 
-export function CredentialDetail({ credentialID }: { credentialID: number }) {
-  const { data: credentialData } = useGet<Credential>(
-    awxAPI`/credentials/${credentialID.toString()}/`
+export function CredentialDetail({
+  credential,
+}: Readonly<{
+  credential: Credential | SummaryFieldCredential | LaunchConfigCredential;
+}>) {
+  if (!credential) return null;
+  if ('kind' in credential) {
+    return <CredentialLabel credential={credential as Credential} key={credential.id} />;
+  }
+  return (
+    <Label color="blue" key={credential.id}>
+      {credential.name}
+    </Label>
   );
-  if (!credentialData) return null;
-  return <CredentialLabel credential={credentialData} key={credentialID} />;
 }
 
 function isEmpty(value: undefined | null | object[] | object | number): boolean {
