@@ -32,5 +32,6 @@ describe('Gateway Settings Details', () => {
     );
     cy.verifyPageTitle('Platform gateway settings');
     cy.get('dd[data-cy="login-redirect-override"]').should('contain', 'https://www.google.com');
+    cy.get('[alt="Custom logo"]').should('be.visible');
   });
 });
