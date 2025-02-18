@@ -57,27 +57,35 @@ export function GatewaySettingsDetails(props: { categoryId: string }) {
             {Object.keys(section.options).map((key) => {
               const option = options[key];
               const value = settings[key];
-              switch (typeof value) {
-                case 'string':
-                  return (
-                    <PageDetail key={key} label={option.label} helpText={option.help_text}>
-                      {value}
-                    </PageDetail>
-                  );
-                case 'number':
-                  return (
-                    <PageDetail key={key} label={option.label} helpText={option.help_text}>
-                      {value}
-                    </PageDetail>
-                  );
-                case 'boolean':
-                  return (
-                    <PageDetail key={key} label={option.label} helpText={option.help_text}>
-                      {value ? t('Enabled') : t('Disabled')}
-                    </PageDetail>
-                  );
-                default:
-                  return null;
+              if (key === 'custom_logo' && value && value !== '') {
+                return (
+                  <PageDetail key={key} label={option.label} helpText={option.help_text}>
+                    <img src={value as string} alt={t('Custom logo')} style={{ height: 32 }} />
+                  </PageDetail>
+                );
+              } else {
+                switch (typeof value) {
+                  case 'string':
+                    return (
+                      <PageDetail key={key} label={option.label} helpText={option.help_text}>
+                        {value}
+                      </PageDetail>
+                    );
+                  case 'number':
+                    return (
+                      <PageDetail key={key} label={option.label} helpText={option.help_text}>
+                        {value}
+                      </PageDetail>
+                    );
+                  case 'boolean':
+                    return (
+                      <PageDetail key={key} label={option.label} helpText={option.help_text}>
+                        {value ? t('Enabled') : t('Disabled')}
+                      </PageDetail>
+                    );
+                  default:
+                    return null;
+                }
               }
             })}
           </Fragment>
