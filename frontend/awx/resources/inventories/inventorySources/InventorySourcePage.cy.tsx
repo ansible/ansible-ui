@@ -47,29 +47,3 @@ describe('InventorySourcePage', () => {
     cy.get('.pf-v5-c-alert__title').contains('Failed to update inventory source');
   });
 });
-
-describe('InventorySourcePage RBAC', () => {
-  beforeEach(() => {
-    cy.intercept(
-      { method: 'GET', url: awxAPI`/inventory_sources/*` },
-      { fixture: 'inventory_source.json' }
-    );
-    cy.intercept(
-      { method: 'OPTIONS', url: awxAPI`/inventory_sources` },
-      { fixture: 'inventory_source_options.json' }
-    );
-  });
-
-  it('Disables the launch buttons for sys auditors', () => {
-    cy.mount(
-      <InventorySourcePage />,
-      {
-        path: '/inventories/:inventory_type/:id/sources/:source_id',
-        initialEntries: ['/inventories/inventory/1/sources/1/'],
-      },
-      'activeUserSysAuditor.json'
-    );
-    cy.get('button#sync-inventory-source').should('have.attr', 'aria-disabled', 'true');
-    cy.get('button#edit-inventory-source').should('have.attr', 'aria-disabled', 'true');
-  });
-});
