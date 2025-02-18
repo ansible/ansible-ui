@@ -1,19 +1,19 @@
 import { expect, test } from '@playwright/test';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
-import { createInventory, deleteInventory } from './inventory-utils';
-import { createInstanceGroup, deleteInstanceGroup } from '../instance-groups/instance-group-utils';
+import { clearTableFilters } from '../../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../../commands/clickPageAction';
 import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
-import { selectTableFilter } from '../../../../commands/selectTableFilter';
 import { createE2EName } from '../../../../commands/createE2EName';
+import { selectTableFilter } from '../../../../commands/selectTableFilter';
+import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { createInstanceGroup, deleteInstanceGroup } from '../instance-groups/instance-group-utils';
+import { createInventory, deleteInventory } from './inventory-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
 
 test(
   'inventory - can create an inventory, assert info on details page, and delete inventory',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     await expect(page.locator('#name')).toContainText(inventoryName);
@@ -24,7 +24,7 @@ test(
 
 test(
   'inventory - can edit an inventory from the list view and assert info on details page',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const instanceGroupName = await createInstanceGroup({}, page);
     const inventoryName = await createInventory({}, page);
@@ -51,7 +51,7 @@ test(
 
 test(
   'inventory - can edit an inventory from the details view and assert info on details page',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     const labelName = createE2EName('label');
@@ -75,7 +75,7 @@ test(
 
 test(
   'inventory - can copy an inventory on the details view and assert that the copy has been successful',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     await clickPageAction('Duplicate inventory', page);
@@ -102,7 +102,7 @@ test(
 
 test(
   'inventory - can copy an inventory on the list view and assert that the copy has been successful',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     await page.getByRole('tab', { name: 'Back to Inventories' }).click();
@@ -136,7 +136,7 @@ test(
 
 test(
   'inventory - can delete an inventory from the inventory list row item',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     await page.getByRole('tab', { name: 'Back to Inventories' }).click();
@@ -156,7 +156,7 @@ test(
 
 test(
   'inventory - can delete an inventory from the inventory list toolbar',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryName = await createInventory({}, page);
     await page.getByRole('tab', { name: 'Back to Inventories' }).click();
@@ -178,7 +178,7 @@ test(
 
 test(
   'inventory - can bulk delete inventories from the list view and verify deletion',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const inventoryNameA = await createInventory({}, page);
     const inventoryNameB = await createInventory({}, page);
@@ -210,7 +210,7 @@ test(
 
 test(
   'inventory - can create, edit a smart inventory, assert info on details page, and delete inventory',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const smartInvName = await createInventory({ type: 'smart' }, page);
     await page.getByRole('button', { name: 'Edit inventory' }).click();

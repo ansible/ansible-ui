@@ -6,6 +6,12 @@ on:
       PLATFORM_UI:
         type: string
         required: false
+      PLATFORM_USERNAME:
+        type: string
+        required: false
+      PLATFORM_PASSWORD:
+        type: string
+        required: false
       TAGS: 
         type: string
         required: false
@@ -13,9 +19,9 @@ on:
         type: string
         required: false
       PARALLEL_TESTS:
-        type: number
+        type: string
         required: false
-        default: 2
+        default: '2'
       PROJECT:
         type: string
         default: "mock chromium"
@@ -30,6 +36,8 @@ on:
     secrets:
       SLACK_WEBHOOK_URL:
         required: false
+      PLATFORM_PASSWORD:
+        required: true
 
 jobs:
   matrix:
@@ -100,8 +108,8 @@ jobs:
       run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
         PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
-        PLATFORM_USERNAME: mock
-        PLATFORM_PASSWORD: mock
+        PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME != '' && inputs.PLATFORM_USERNAME || 'e2e' }}
+        PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD != '' && inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}
         TAGS: ${{ inputs.TAGS }}
         NOT_TAGS: ${{ inputs.NOT_TAGS }}
         AWX_API_PREFIX: '/api/controller/v2'

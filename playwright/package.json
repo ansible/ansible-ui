@@ -2,8 +2,9 @@
   "name": "@ansible/playwright",
   "type": "module",
   "scripts": {
-    "mock": "playwright test --project 'mock chromium'",
-    "live": "playwright test --project 'live chromium'",
+    "mock": "playwright test --project 'mock chromium' --grep-invert @not_mock",
+    "live": "playwright test --project 'live chromium' --grep-invert @not_live",
+    "compare": "playwright test --project 'live chromium' --grep @compare",
     "test": "concurrently npm:eslint npm:prettier npm:tsc -c auto",
     "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 .",

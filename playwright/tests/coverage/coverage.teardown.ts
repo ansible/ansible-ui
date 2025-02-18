@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { test } from '@playwright/test';
-import { exec } from 'child_process';
 import { existsSync } from 'fs';
 import MCR from 'monocart-coverage-reports';
 import { coverageOptions } from './coverage-options';
@@ -10,6 +9,6 @@ test('coverage - report', async () => {
     const mcr = MCR(coverageOptions);
     await mcr.generate();
     // Open the coverage report in the default browser
-    exec('open coverage/index.html');
+    // exec('open coverage/index.html');
   }
 });

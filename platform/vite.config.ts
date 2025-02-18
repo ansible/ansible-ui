@@ -72,6 +72,7 @@ export default defineConfig({
   },
   esbuild: { legalComments: 'none' },
   build: {
+    sourcemap: 'hidden',
     commonjsOptions: { transformMixedEsModules: true },
     rollupOptions: {
       output: {
