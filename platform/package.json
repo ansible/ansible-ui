@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "start": "vite --open --port 4100",
-    "build": "vite build",
-    "build:watch": "vite build --watch",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:watch": "NODE_OPTIONS=--max-old-space-size=8192 vite build --watch",
     "preview": "vite preview --port 4100",
     "serve": "concurrently --kill-others-on-fail npm:preview npm:build:watch -c auto",
     "clean": "rm -rf node_modules dist coverage",

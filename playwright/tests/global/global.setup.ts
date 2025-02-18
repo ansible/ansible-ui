@@ -1,8 +1,8 @@
 import { test } from '@playwright/test';
-import { existsSync, rmdirSync } from 'fs';
+import { existsSync, rmSync } from 'fs';
 
 test('global - setup', () => {
   if (existsSync('coverage')) {
-    rmdirSync('coverage', { recursive: true });
+    rmSync('coverage', { recursive: true });
   }
 });

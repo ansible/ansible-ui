@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
-import { createJobTemplate, deleteJobTemplate } from './job-template-utils';
 import { createSlackNotifier, deleteNotifier } from '../administration/notifiers/notifier-utils';
+import { createJobTemplate, deleteJobTemplate } from './job-template-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -10,7 +10,7 @@ test.afterEach(setupAfter);
 test.describe('Job Template - notifications tab', () => {
   test(
     'can navigate to the Job Templates -> Notifications list and then to the details page of the Notification',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
@@ -32,7 +32,7 @@ test.describe('Job Template - notifications tab', () => {
 
   test(
     'can toggle the Job Templates -> Notification on and off for job start',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
@@ -62,7 +62,7 @@ test.describe('Job Template - notifications tab', () => {
 
   test(
     'can toggle the Job Templates -> Notification on and off for job success',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
@@ -95,7 +95,7 @@ test.describe('Job Template - notifications tab', () => {
 
   test(
     'can toggle the Job Templates -> Notification on and off for job failure',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);

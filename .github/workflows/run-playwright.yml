@@ -7,6 +7,14 @@ on:
         type: string
         required: true
         description: "Server URL"
+      PLATFORM_USERNAME:
+        type: string
+        required: false
+        description: "Username"
+      PLATFORM_PASSWORD:
+        type: string
+        required: false
+        description: "Password"
       TAGS: 
         type: string
         required: false
@@ -49,7 +57,12 @@ jobs:
     uses: ./.github/workflows/playwright.yml
     with:
       PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
+      PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME }}
+      PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD }}
       TAGS: ${{ inputs.TAGS }}
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
-    
+      PROJECT: ${{ inputs.PROJECT }}
+    secrets:
+      PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
+      
