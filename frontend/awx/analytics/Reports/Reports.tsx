@@ -2,7 +2,7 @@ import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { Label, LabelGroup, Page, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -43,13 +43,10 @@ export function Reports() {
     }
   }, [error]);
 
-  function ReportsInternal() {
-    if (error || specificError) {
-      return specificError ? <AnalyticsErrorState error={specificError} /> : <></>;
-    } else {
-      return data ? <AutomationCalculator {...data.report?.layoutProps} /> : <></>;
-    }
-  }
+  const reportsInternal = useMemo(
+    () => <ReportsInternal error={error} specificError={specificError} data={data} />,
+    [error, specificError, data]
+  );
 
   const reportTags = (
     <ReportTagsLabelGroup numLabels={6}>
@@ -83,11 +80,7 @@ export function Reports() {
           titleHelpTitle={data?.report?.name || ''}
           titleDocLink={useGetDocsUrl(config, 'automationCalculator')}
         />
-        {activeAwxUser && !activeAwxUser?.is_superuser ? (
-          <AnalyticsErrorState />
-        ) : (
-          <ReportsInternal />
-        )}
+        {activeAwxUser && !activeAwxUser?.is_superuser ? <AnalyticsErrorState /> : reportsInternal}
       </PageLayout>
     </Page>
   );
@@ -96,3 +89,16 @@ export function Reports() {
 const ReportTagsLabelGroup = styled(LabelGroup)`
   flex-wrap: nowrap;
 `;
+
+function ReportsInternal(props: {
+  error?: Error;
+  specificError?: string;
+  data?: ReportItemsResponse;
+}) {
+  const { error, specificError, data } = props;
+  if (error || specificError) {
+    return specificError ? <AnalyticsErrorState error={specificError} /> : <></>;
+  } else {
+    return data ? <AutomationCalculator {...data.report?.layoutProps} /> : <></>;
+  }
+}
