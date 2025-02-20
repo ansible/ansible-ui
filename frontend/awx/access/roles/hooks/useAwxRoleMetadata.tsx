@@ -108,7 +108,7 @@ export function useAwxRoleMetadata(): AwxRoleMetadata {
             'awx.add_workflowjobtemplate': t('Add workflow job template'),
             'awx.change_workflowjobtemplate': t('Change workflow job template'),
             'awx.delete_workflowjobtemplate': t('Delete workflow job template'),
-            'awx.view_workflowjobtemplate': t('Delete workflow job template'),
+            'awx.view_workflowjobtemplate': t('View workflow job template'),
             'awx.execute_jobtemplate': t('Execute job template'),
             'awx.change_jobtemplate': t('Change job template'),
             'awx.delete_jobtemplate': t('Delete job template'),
