@@ -522,8 +522,9 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.selectDropdownOptionByResourceName('node-convergence', 'All');
     cy.getByDataCy('node-alias').type('Test Node');
     cy.clickButton('Next');
+    // Prompt steps don't show up right away in Cypress - assert that the "Prompt" step in the wizard nav is visible, as well as the form label name ("Skip tags")
     cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').contains('Prompts');
-    cy.getByDataCy('prompt.skip_tags-form-group').should('exist');
+    cy.get('[data-cy="prompt.skip_tags-form-group"]').contains('Skip tags');
 
     cy.getByDataCy('prompt.skip_tags-typeahead-input').within(() => {
       cy.get('span.pf-v5-c-chip__content').should('have.text', 'aap-ui');
