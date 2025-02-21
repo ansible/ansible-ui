@@ -1,6 +1,9 @@
 import { Page, expect } from '@playwright/test';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { navigateTo } from '../../../../commands/navigateTo';
+import { filterTableBySelect } from '../../../../commands/filterTableBySelect';
+import { clearTableFilters } from '../../../../commands/clearTableFilters';
+import { selectTableFilter } from '../../../../commands/selectTableFilter';
 
 export async function createSlackNotifier(page: Page) {
   const notifierName = createE2EName('notifier');
@@ -40,20 +43,13 @@ export async function deleteNotifier(page: Page, notifierName: string) {
     'Administration',
     'Notifiers'
   );
-
-  await page.getByPlaceholder('Enter search').click();
-  await page.getByPlaceholder('Enter search').fill(notifierName);
-  await page.getByLabel('Select row 0').check();
-  await page
-    .getByRole('row', { name: 'Select row 0 E2E notifier' })
-    .getByLabel('kebab dropdown toggle')
-    .click();
-  await page.getByRole('menuitem', { name: 'Delete notifier' }).click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^Yes, I confirm that I want to delete these 1 notifiers\.$/ })
-    .nth(1)
-    .click();
+  await clearTableFilters(page);
+  await selectTableFilter('Name', page);
+  await filterTableBySelect(notifierName, page);
+  await page.getByRole('row', { name: notifierName }).getByLabel('Select row').click();
+  await page.getByLabel('toolbar actions').click();
+  await page.getByRole('menuitem', { name: 'Delete Notifier' }).click();
+  await page.getByText('Yes, I confirm that I want to').click();
   await page.getByRole('button', { name: 'Delete notifiers' }).click();
   await expect(page.getByRole('heading', { name: 'Notifiers', exact: true })).toBeVisible();
 }
