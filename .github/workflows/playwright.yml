@@ -132,6 +132,7 @@ jobs:
         if-no-files-found: ignore
 
     - name: Stop container
+      if: ${{ inputs.PLATFORM_UI == '' }}
       run: docker stop platform-ui
 
   playwright-report:
