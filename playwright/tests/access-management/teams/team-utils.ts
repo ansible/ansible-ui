@@ -26,7 +26,7 @@ export async function createTeam(
 export async function deleteTeam(teamName: string, page: Page) {
   await navigateTo(page, 'Access Management', 'Teams');
   await clearTableFilters(page);
-  await filterTableByText(teamName, page);
+  await filterTableByText(teamName, 'contains', page, true);
   await clickTableRow(teamName, page);
   await expect(page.getByRole('heading', { name: teamName, exact: true })).toBeVisible();
   await clickPageAction('Delete team', page);

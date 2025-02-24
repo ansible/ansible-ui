@@ -27,8 +27,32 @@ export async function createInventory(options: { name?: string; type?: string },
   }
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
-  await expect(page.locator('#name')).toContainText(inventoryName);
   return inventoryName;
+}
+
+export async function createInventorySource(
+  options: {
+    name?: string;
+    projectName?: string;
+  },
+  page: Page
+) {
+  const inventorySourceName = options.name ?? createE2EName('inventory-source');
+  const projectName = options.projectName ?? 'Demo Project';
+  const inventoryName = await createInventory({}, page);
+  await page.getByRole('tab', { name: 'Sources' }).click();
+  await page.getByRole('link', { name: 'Create source' }).click();
+  await page.getByPlaceholder('Enter source name').click();
+  await page.getByPlaceholder('Enter source name').fill(inventorySourceName);
+  await page.getByRole('button', { name: 'Select source' }).click();
+  await page.getByRole('option', { name: 'Sourced from a Project' }).click();
+  await page.locator('#project-select').click();
+  await page.getByRole('option', { name: projectName }).click();
+  await page.getByPlaceholder('Select inventory file').click();
+  await page.getByRole('option', { name: '/ (project root)' }).click();
+  await page.getByRole('button', { name: 'Create source' }).click();
+  await expect(page.getByRole('heading', { name: inventorySourceName, exact: true })).toBeVisible();
+  return { inventorySourceName, inventoryName };
 }
 
 export async function deleteInventory(inventoryName: string, page: Page) {
@@ -38,4 +62,24 @@ export async function deleteInventory(inventoryName: string, page: Page) {
   await page.locator('#confirm').click();
   await page.locator('#submit').click();
   await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
+}
+
+export async function deleteInventorySource(
+  inventoryName: string,
+  inventorySourceName: string,
+  page: Page
+) {
+  await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+  await clickTableRowWithFilter(inventoryName, page);
+  await page.getByRole('tab', { name: 'Sources' }).click();
+  await page.getByRole('link', { name: inventorySourceName }).click();
+  await page.getByLabel('kebab dropdown toggle').click();
+  await page.getByRole('menuitem', { name: 'Delete inventory source' }).click();
+  await page
+    .getByLabel('Yes, I confirm that I want to delete these 1 inventory sources.', { exact: true })
+    .check();
+  await page.getByRole('button', { name: 'Delete inventory sources' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'There are currently no sources added to this inventory.' })
+  ).toBeVisible();
 }

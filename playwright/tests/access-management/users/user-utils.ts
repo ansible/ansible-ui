@@ -27,7 +27,7 @@ export async function createUser(
 export async function deleteUser(userName: string, page: Page) {
   await navigateTo(page, 'Access Management', 'Users');
   await clearTableFilters(page);
-  await filterTableByText(userName, page);
+  await filterTableByText(userName, 'contains', page, true);
   await clickTableRow(userName, page);
   await expect(page.getByRole('heading', { name: userName, exact: true })).toBeVisible();
   await clickPageAction('Delete user', page);
