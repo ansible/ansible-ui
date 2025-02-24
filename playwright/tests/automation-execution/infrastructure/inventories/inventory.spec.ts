@@ -1,12 +1,17 @@
 import { expect, test } from '@playwright/test';
 import { clearTableFilters } from '../../../../commands/clearTableFilters';
+import { setupAfter, setupBefore } from '../../../../commands/setup';
+import { createInstanceGroup, deleteInstanceGroup } from '../instance-groups/instance-group-utils';
 import { clickPageAction } from '../../../../commands/clickPageAction';
 import { clickTableRowAction } from '../../../../commands/clickTableRowAction';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { selectTableFilter } from '../../../../commands/selectTableFilter';
-import { setupAfter, setupBefore } from '../../../../commands/setup';
-import { createInstanceGroup, deleteInstanceGroup } from '../instance-groups/instance-group-utils';
-import { createInventory, deleteInventory } from './inventory-utils';
+import {
+  createInventory,
+  createInventorySource,
+  deleteInventory,
+  deleteInventorySource,
+} from './inventory-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -21,6 +26,11 @@ test(
     await deleteInventory(inventoryName, page);
   }
 );
+
+test('inventory source - create and delete', { tag: ['@not_mock'] }, async ({ page }) => {
+  const { inventorySourceName, inventoryName } = await createInventorySource({}, page);
+  await deleteInventorySource(inventoryName, inventorySourceName, page);
+});
 
 test(
   'inventory - can edit an inventory from the list view and assert info on details page',

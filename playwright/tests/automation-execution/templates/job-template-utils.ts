@@ -13,6 +13,7 @@ export async function createJobTemplate(
     projectName?: string;
     labels?: string[];
     PromptOnLaunch?: boolean;
+    skipTagsPrompt?: boolean;
   },
   page: Page
 ) {
@@ -20,11 +21,13 @@ export async function createJobTemplate(
   const jobTemplateDescription = 'This is a JT description';
   const inventoryName = options.inventoryName ?? 'Demo Inventory';
   await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
+  await expect(
+    page.getByRole('heading', { name: 'Automation Templates', exact: true })
+  ).toBeVisible();
   await page.getByLabel('dropdown toggle', { exact: true }).click();
   await page.getByRole('menuitem', { name: 'Create job template' }).click();
   await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
   await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
-
   if (options.PromptOnLaunch) {
     await page.getByPlaceholder('Select inventory').fill('');
     await page.getByPlaceholder('Select inventory').press('Backspace');
@@ -36,25 +39,22 @@ export async function createJobTemplate(
     await page.getByLabel('Inventory * Prompt on launch').click();
     await page.getByRole('option', { name: inventoryName }).click();
   }
-
   const projectName = options.projectName ?? 'Demo Project';
   await page.locator('#project-select').click();
   await page.getByRole('option', { name: projectName }).click();
-
   if (options.labels) {
     for (const label of options.labels) {
-      // await page.getByLabel('Labels').click();
       await page.getByPlaceholder('Select or create labels').fill(label);
       await page.getByRole('option', { name: label }).click();
     }
   }
-
+  if (options.skipTagsPrompt) {
+    await page.locator('#ask_skip_tags_on_launch').check();
+  }
   await expect(page.getByRole('button', { name: 'hello_world.yml' })).toBeVisible({
     timeout: 2 * 60 * 1000,
   });
-
   await page.getByRole('button', { name: 'Create job template' }).click();
-
   await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(jobTemplateName);
   await expect(page.locator('#description')).toContainText(jobTemplateDescription);
@@ -64,11 +64,7 @@ export async function createJobTemplate(
     await expect(page.locator('#inventory')).toContainText(inventoryName);
   }
   await expect(page.locator('#project')).toContainText(projectName);
-  // await expect(page.locator('#execution-environment')).toContainText(
-  //   'Default execution environment'
-  // );
   await expect(page.locator('#playbook')).toContainText('hello_world.yml');
-
   return jobTemplateName;
 }
 

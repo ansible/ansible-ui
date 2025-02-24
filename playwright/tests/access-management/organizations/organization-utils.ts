@@ -19,7 +19,7 @@ export async function createOrganization(page: Page, options: { organizationName
 export async function deleteOrganization(organizationName: string, page: Page) {
   await navigateTo(page, 'Access Management', 'Organizations');
   await clearTableFilters(page);
-  await filterTableByText(organizationName, page);
+  await filterTableByText(organizationName, 'contains', page, true);
   await clickTableRow(organizationName, page);
   await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
   await clickPageAction('Delete organization', page);
