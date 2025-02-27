@@ -105,7 +105,7 @@ jobs:
 
     - name: Run Playwright tests
       working-directory: playwright
-      run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
         PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
         PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME != '' && inputs.PLATFORM_USERNAME || 'e2e' }}
@@ -185,6 +185,33 @@ jobs:
       uses: test-summary/action@v2
       with:
         paths: ${{ inputs.BROWSER }}-junit.xml
+
+    - name: Merge into Allure Report
+      run: npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
+
+    - name: Load test report history
+      uses: actions/checkout@v3
+      if: always()
+      continue-on-error: true
+      with:
+        ref: gh-pages
+        path: gh-pages
+
+    - name: Build test report
+      uses: simple-elf/allure-report-action@v1.7
+      if: always()
+      with:
+        gh_pages: gh-pages
+        allure_history: allure-history
+        allure_results: allure-results
+
+    - name: Publish test report
+      uses: peaceiris/actions-gh-pages@v3
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-history
 
     - name: Slack Success Notification
       if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
