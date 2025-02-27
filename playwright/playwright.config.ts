@@ -28,7 +28,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['list'], ['junit', { outputFile: 'results.xml' }]],
+  reporter: [['list'], ['allure-playwright']],
 
   // Split TAGS by comma and create a regular expression that matches any of the tags
   grep: process.env.TAGS
