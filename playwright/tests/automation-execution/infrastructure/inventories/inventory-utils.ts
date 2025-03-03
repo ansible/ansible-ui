@@ -25,6 +25,7 @@ export async function createInventory(options: { name?: string; type?: string },
   if (options.type !== 'smart') {
     await page.getByLabel('Prevent instance group').check();
   }
+  await page.getByLabel('OPA policy').fill('test/opa');
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
   return inventoryName;

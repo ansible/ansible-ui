@@ -28,6 +28,7 @@ import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { PageFormMultiSelectAwxResource } from '../../common/PageFormMultiSelectAwxResource';
 import { awxAPI } from '../../common/api/awx-utils';
+import { useFeatureFlag } from '../../common/useFeatureFlags';
 import { getAddedAndRemoved } from '../../common/util/getAddedAndRemoved';
 import { InstanceGroup } from '../../interfaces/InstanceGroup';
 import { Inventory } from '../../interfaces/Inventory';
@@ -328,6 +329,7 @@ export function useInventoryFormDetailLabels() {
     input_inventories: t(
       `Input inventories for the constructed inventory plugin. The order of the displayed chips in the field will be the order of execution.`
     ),
+    opa_query_path: t(`The OPA policy should be in the format of {package}/{rule}.`),
   };
 }
 
@@ -335,6 +337,7 @@ function InventoryInputs(props: { inventoryKind: string }) {
   const { t } = useTranslation();
   const { inventoryKind } = props;
   const inventoryFormDetailLabels = useInventoryFormDetailLabels();
+  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   return (
     <>
       <PageFormTextInput<InventoryCreate>
@@ -426,6 +429,16 @@ function InventoryInputs(props: { inventoryKind: string }) {
           labelHelpTitle={t('Labels')}
           labelHelp={inventoryFormDetailLabels.labels}
           name="labels"
+        />
+      )}
+      {hasPolicyAsCodeFlag && (
+        <PageFormTextInput<InventoryCreate>
+          name="opa_query_path"
+          label={t('OPA policy')}
+          labelHelpTitle={t('OPA policy')}
+          labelHelp={inventoryFormDetailLabels.opa_query_path}
+          helperText={t('Format must be {package}/{rule}')}
+          placeholder={t('Enter OPA policy link')}
         />
       )}
       <PageFormSection singleColumn>
