@@ -42,6 +42,7 @@ export interface CommonInventory
   pending_deletion: boolean;
   total_inventory_sources: number;
   variables: string;
+  opa_query_path: string;
 }
 
 export interface ConstructedInventory extends CommonInventory {

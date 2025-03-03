@@ -23,6 +23,7 @@ test(
     const inventoryName = await createInventory({}, page);
     await expect(page.locator('#name')).toContainText(inventoryName);
     await expect(page.locator('#enabled-options')).toContainText('Prevent instance group fallback');
+    await expect(page.locator('#opa-policy')).toContainText('test/opa');
     await deleteInventory(inventoryName, page);
   }
 );
@@ -50,10 +51,13 @@ test(
     await page.getByLabel('Search input').click();
     await page.getByLabel('Search input').fill(instanceGroupName);
     await page.getByLabel(instanceGroupName).check();
+    await page.getByRole('textbox', { name: 'OPA policy' }).click();
+    await page.getByRole('textbox', { name: 'OPA policy' }).fill('test/opaEdited');
     await page.getByRole('button', { name: 'Save inventory' }).click();
     await expect(page.getByLabel('Label group category').getByRole('link')).toContainText(
       instanceGroupName
     );
+    await expect(page.locator('#opa-policy')).toContainText('test/opaEdited');
     await deleteInventory(inventoryName, page);
     await deleteInstanceGroup(instanceGroupName, page);
   }
@@ -74,11 +78,14 @@ test(
     await page
       .getByRole('textbox', { name: 'Editor content' })
       .fill("remote_install_path: '/opt/my_app_config''");
+    await page.getByRole('textbox', { name: 'OPA policy' }).click();
+    await page.getByRole('textbox', { name: 'OPA policy' }).fill('test/opaEdited');
     await page.getByRole('button', { name: 'Save inventory' }).click();
     await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
       labelName
     );
     await expect(page.getByRole('code')).toContainText('remote_install_path: /opt/my_app_config');
+    await expect(page.locator('#opa-policy')).toContainText('test/opaEdited');
     await deleteInventory(inventoryName, page);
   }
 );
