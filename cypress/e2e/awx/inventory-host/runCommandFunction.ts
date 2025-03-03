@@ -13,11 +13,13 @@ export function runCommand(params: {
 
   cy.createAwxExecutionEnvironment({ organization: organization.id }).then(
     (executionEnvironment) => {
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: organization.id,
-        credential_type: 1,
-      }).then((credential) => {
+      cy.createAWXCredential(
+        {
+          organization: organization.id,
+          kind: 'machine',
+        },
+        'Machine'
+      ).then((credential) => {
         cy.contains('Select a module').click();
         cy.getByDataCy(params.module).click();
         cy.getByDataCy('module-args').type('echo "Hello World"');

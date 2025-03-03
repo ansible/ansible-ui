@@ -175,11 +175,13 @@ describe('Workflow Job Templates Tests', () => {
     });
 
     it('can edit a WFJT to add, save, and then remove a webhook credential for github', () => {
-      cy.createAWXCredential({
-        kind: 'github-token',
-        organization: organization.id,
-        credential_type: 11,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'github-token',
+          organization: organization.id,
+        },
+        'GitHub Personal Access Token'
+      ).then((cred) => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
         cy.setTableView('table');
@@ -218,11 +220,13 @@ describe('Workflow Job Templates Tests', () => {
     });
 
     it('can edit a WFJT to add, save, and then remove a webhook credential for gitlab', () => {
-      cy.createAWXCredential({
-        kind: 'gitlab-token',
-        organization: organization.id,
-        credential_type: 12,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'gitlab-token',
+          organization: organization.id,
+        },
+        'GitLab Personal Access Token'
+      ).then((cred) => {
         tokenCredential = cred;
         cy.navigateTo('awx', 'templates');
         cy.setTableView('table');

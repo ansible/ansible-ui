@@ -32,11 +32,13 @@ describe('Credentials', () => {
   describe('Credentials: List View', () => {
     let credential: Credential;
     beforeEach(() => {
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: awxOrganization.id,
-        credential_type: 1,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'machine',
+          organization: awxOrganization.id,
+        },
+        'Machine'
+      ).then((cred) => {
         credential = cred;
       });
     });
@@ -133,13 +135,15 @@ describe('Credentials', () => {
   describe('Credentials: Details View', () => {
     let credential: Credential;
     beforeEach(() => {
-      cy.createAWXCredential({
-        name: 'E2E Credential ' + randomString(4),
-        kind: 'Centrify Vault Credential Provider Lookup',
-        organization: awxOrganization.id,
-        credential_type: 25,
-        inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          name: 'E2E Credential ' + randomString(4),
+          kind: 'Centrify Vault Credential Provider Lookup',
+          organization: awxOrganization.id,
+          inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
+        },
+        'Centrify Vault Credential Provider Lookup'
+      ).then((cred) => {
         credential = cred;
       });
     });
@@ -269,13 +273,15 @@ describe('Credentials', () => {
   describe('Credentials Edit: External test modal', () => {
     let credential: Credential;
     before(() => {
-      cy.createAWXCredential({
-        name: 'E2E Credential ' + randomString(4),
-        kind: 'Centrify Vault Credential Provider Lookup',
-        organization: awxOrganization.id,
-        credential_type: 25,
-        inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          name: 'E2E Credential ' + randomString(4),
+          kind: 'Centrify Vault Credential Provider Lookup',
+          organization: awxOrganization.id,
+          inputs: { url: 'http://foo.com', client_id: 'foo', client_password: 'foo' },
+        },
+        'Centrify Vault Credential Provider Lookup'
+      ).then((cred) => {
         credential = cred;
       });
     });
@@ -333,11 +339,13 @@ describe('Credentials', () => {
     beforeEach(() => {
       cy.createAwxOrganization().then((awxOrg) => {
         awxOrganization = awxOrg;
-        cy.createAWXCredential({
-          kind: 'machine',
-          organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
+        cy.createAWXCredential(
+          {
+            kind: 'machine',
+            organization: awxOrganization.id,
+          },
+          'Machine'
+        ).then((cred) => {
           machineCredential = cred;
         });
 
@@ -574,11 +582,13 @@ cyLabel(['upstream'], () => {
         awxOrganization = awxOrg;
         cy.createAwxUser({ organization: awxOrganization.id }).then((awxUser) => {
           createdAwxUser = awxUser;
-          cy.createAWXCredential({
-            kind: 'machine',
-            organization: awxOrganization.id,
-            credential_type: 1,
-          }).then((cred) => {
+          cy.createAWXCredential(
+            {
+              kind: 'machine',
+              organization: awxOrganization.id,
+            },
+            'Machine'
+          ).then((cred) => {
             machineCredential = cred;
           });
         });

@@ -31,12 +31,14 @@ describe('Execution Environments', () => {
 
   describe('Execution Environments: Create', () => {
     beforeEach(() => {
-      cy.createAWXCredential({
-        name: 'E2E Credential registry' + randomString(4),
-        kind: 'registry',
-        organization: awxOrganization.id,
-        credential_type: 18,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          name: 'E2E Credential registry' + randomString(4),
+          kind: 'registry',
+          organization: awxOrganization.id,
+        },
+        'Container Registry'
+      ).then((cred) => {
         credential = cred;
 
         cy.createAwxUser({ organization: awxOrganization.id }).then((testUser) => {

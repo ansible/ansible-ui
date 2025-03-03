@@ -22,12 +22,14 @@ describe('Credential Types', () => {
         cy.createAwxCredentialType().then((credentialType: CredentialType) => {
           credType1 = credentialType;
 
-          cy.createAWXCredential({
-            name: credentialName,
-            kind: 'gce',
-            organization: awxOrganization.id,
-            credential_type: credType1.id,
-          }).then((cred) => {
+          cy.createAWXCredential(
+            {
+              name: credentialName,
+              kind: 'gce',
+              organization: awxOrganization.id,
+            },
+            credType1.name
+          ).then((cred) => {
             credential = cred;
           });
         });
