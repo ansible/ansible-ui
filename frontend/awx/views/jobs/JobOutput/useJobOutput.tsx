@@ -1,4 +1,9 @@
-import type { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
+import {
+  DateRangeFilterPresets,
+  ToolbarFilterType,
+  type IFilterState,
+  type IToolbarFilter,
+} from '@ansible/ansible-ui-framework';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -192,10 +197,41 @@ function getFiltersQueryString(toolbarFilters: IToolbarFilter[], filterState: IF
         if (values.length > 1) {
           parts.push(values.map((value) => `or__${toolbarFilter.query}=${value}`).join('&'));
         } else {
-          parts.push(`${toolbarFilter.query}=${values.join(',')}`);
+          const [queryParamName, queryParamValue] = getQueryParamsForDateRangeFilters(
+            toolbarFilter,
+            values[0]
+          );
+          parts.push(`${queryParamName}=${queryParamValue}`);
         }
       }
     }
   }
   return parts.join('&');
+}
+
+function getQueryParamsForDateRangeFilters(toolbarFilter: IToolbarFilter, value: string) {
+  let queryParamName = toolbarFilter.query;
+  let queryParamValue = value;
+  // Update query params to handle date range filters
+  if (toolbarFilter.type === ToolbarFilterType.DateRange) {
+    queryParamName = `${toolbarFilter.query}__gte`;
+    const date = new Date(Date.now());
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    switch (value as DateRangeFilterPresets) {
+      case DateRangeFilterPresets.LastHour:
+        queryParamValue = new Date(date.getTime() - 60 * 60 * 1000).toISOString();
+        break;
+      case DateRangeFilterPresets.Last24Hours:
+        queryParamValue = new Date(date.getTime() - 24 * 60 * 60 * 1000).toISOString();
+        break;
+      case DateRangeFilterPresets.LastWeek:
+        queryParamValue = new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        break;
+      case DateRangeFilterPresets.LastMonth:
+        queryParamValue = new Date(date.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        break;
+    }
+  }
+  return [queryParamName, queryParamValue];
 }
