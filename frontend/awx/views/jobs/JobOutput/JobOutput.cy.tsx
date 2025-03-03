@@ -33,6 +33,16 @@ describe('JobOutput.cy.tsx', () => {
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 13);
   });
 
+  it('renders filter options with all the filterable keys', () => {
+    cy.intercept(
+      { method: 'OPTIONS', url: awxAPI`/jobs/26/job_events/` },
+      { fixture: 'jobEventsOptions.json' }
+    );
+    cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
+    cy.get('button[id="filter"]').click();
+    cy.get('li.pf-v5-c-menu__list-item').should('have.length', 22);
+  });
+
   it('collapses play output', () => {
     cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 13);
