@@ -567,16 +567,38 @@ Cypress.Commands.add('clickPageAction', (dataCy: string) => {
     });
 });
 
+Cypress.Commands.add('getCredentialTypeByName', (CredentialTypeName: string) => {
+  return cy
+    .requestGet<
+      AwxItemsResponse<CredentialType>
+    >(awxAPI`/credential_types/?name=${CredentialTypeName}`)
+    .then((result) => {
+      if (Array.isArray(result?.results) && result.results.length === 1) {
+        return result.results[0];
+      }
+    });
+});
+
 Cypress.Commands.add(
   'createAWXCredential',
-  (credential: SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>) => {
-    cy.requestPost<
-      SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>,
-      Credential
-    >(awxAPI`/credentials/`, {
-      name: 'E2E Credential ' + randomString(4),
-      ...credential,
-    });
+  (
+    credential: SetRequired<Partial<Omit<Credential, 'id'>>, 'organization' | 'kind'>,
+    credential_type_name: string
+  ) => {
+    cy.getCredentialTypeByName(credential_type_name).then(
+      (credentialType: CredentialType | undefined) => {
+        if (credentialType) {
+          cy.requestPost<
+            SetRequired<Partial<Credential>, 'organization' | 'kind' | 'credential_type'>,
+            Credential
+          >(awxAPI`/credentials/`, {
+            name: 'E2E Credential ' + randomString(4),
+            ...credential,
+            credential_type: credentialType.id,
+          });
+        }
+      }
+    );
   }
 );
 

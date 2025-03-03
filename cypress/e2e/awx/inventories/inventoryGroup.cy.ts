@@ -20,11 +20,13 @@ describe('Inventory Groups', () => {
   beforeEach(() => {
     cy.createAwxOrganization().then((org) => {
       organization = org;
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: organization.id,
-        credential_type: 1,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'machine',
+          organization: organization.id,
+        },
+        'Machine'
+      ).then((cred) => {
         machineCredential = cred;
       });
       cy.createAwxExecutionEnvironment({ organization: organization.id }).then((ee) => {

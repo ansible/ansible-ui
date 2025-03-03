@@ -716,13 +716,16 @@ declare global {
 
       /** Creates a credential in AWX */
       createAWXCredential(
-        credential: SetRequired<
-          Partial<Omit<Credential, 'id'>>,
-          'organization' | 'kind' | 'credential_type'
-        >
+        credential: SetRequired<Partial<Omit<Credential, 'id'>>, 'organization' | 'kind'>,
+        credential_type_name: string
       ): Chainable<Credential>;
       /** Creates a credential type in AWX */
       createAwxCredentialType(): Chainable<CredentialType>;
+
+      /**Identify a particular credential type by kind and make it available for use in testing. */
+      getCredentialTypeByName(
+        CredentialTypeName: string
+      ): Chainable<AwxItemsResponse<CredentialType, count>>;
 
       createAwxInventory(
         organization: Organization,

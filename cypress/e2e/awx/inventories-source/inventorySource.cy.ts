@@ -56,12 +56,14 @@ describe('Inventory Sources', () => {
 
       cy.createAwxExecutionEnvironment({ name: executionEnvironmentName }).then((ee) => {
         executionEnvironment = ee;
-        cy.createAWXCredential({
-          name: credentialName,
-          kind: 'gce',
-          organization: organization.id,
-          credential_type: 9,
-        }).then((cred) => {
+        cy.createAWXCredential(
+          {
+            name: credentialName,
+            kind: 'gce',
+            organization: organization.id,
+          },
+          'Google Compute Engine'
+        ).then((cred) => {
           credential = cred;
           goToSourceList(inventory.name);
           cy.clickButton(/^Create source/);
@@ -279,13 +281,15 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
           inventory = inv;
           cy.createAwxProject(organizationEC2).then((proj) => {
             project = proj;
-            cy.createAWXCredential({
-              name: credentialName,
-              inputs: { username: 'test', password: 'test' },
-              kind: 'aws',
-              organization: organizationEC2.id,
-              credential_type: 5,
-            }).then((credential) => {
+            cy.createAWXCredential(
+              {
+                name: credentialName,
+                inputs: { username: 'test', password: 'test' },
+                kind: 'aws',
+                organization: organizationEC2.id,
+              },
+              'Amazon Web Services'
+            ).then((credential) => {
               ec2Credential = credential;
             });
           });

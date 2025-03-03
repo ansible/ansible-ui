@@ -82,11 +82,13 @@ describe('Job Templates Tests', function () {
 
     it('can create a job template with prompted fields, launch from the list view, and complete launch via wizard', function () {
       const jtName = 'E2E-POLJT ' + randomString(4);
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: awxOrganization.id,
-        credential_type: 1,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'machine',
+          organization: awxOrganization.id,
+        },
+        'Machine'
+      ).then((cred) => {
         machineCredential = cred;
 
         cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
@@ -146,11 +148,13 @@ describe('Job Templates Tests', function () {
     it('can launch a job template from the details page launch button using the prompt on launch', function () {
       const jtName = 'E2E-POLJT ' + randomString(4);
 
-      cy.createAWXCredential({
-        kind: 'machine',
-        organization: awxOrganization.id,
-        credential_type: 1,
-      }).then((cred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'machine',
+          organization: awxOrganization.id,
+        },
+        'Machine'
+      ).then((cred) => {
         machineCredential = cred;
         cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
         cy.navigateTo('awx', 'templates');
@@ -392,11 +396,13 @@ describe('Job Templates Tests', function () {
     });
 
     it('can edit a job template to enable webhook, regenerate webhook key and set webhook credentials', function () {
-      cy.createAWXCredential({
-        kind: 'github_token',
-        organization: awxOrganization.id,
-        credential_type: 11,
-      }).then((ghCred) => {
+      cy.createAWXCredential(
+        {
+          kind: 'github_token',
+          organization: awxOrganization.id,
+        },
+        'GitHub Personal Access Token'
+      ).then((ghCred) => {
         githubCredential = ghCred;
         cy.navigateTo('awx', 'templates');
         cy.setTableView('table');
@@ -740,19 +746,23 @@ describe('Job Templates Tests', function () {
        * we need it to be a field error.  This test ensures that this error is placed on the credential field
        * instead of a generic form error.
        */
-      cy.createAWXCredential({
-        name: 'E2E' + randomE2Ename(),
-        kind: 'machine',
-        organization: awxOrganization.id,
-        credential_type: 1,
-      }).then((cred) => {
-        machineCredential2 = cred;
-        cy.createAWXCredential({
+      cy.createAWXCredential(
+        {
           name: 'E2E' + randomE2Ename(),
           kind: 'machine',
           organization: awxOrganization.id,
-          credential_type: 1,
-        }).then((cred) => {
+        },
+        'Machine'
+      ).then((cred) => {
+        machineCredential2 = cred;
+        cy.createAWXCredential(
+          {
+            name: 'E2E' + randomE2Ename(),
+            kind: 'machine',
+            organization: awxOrganization.id,
+          },
+          'Machine'
+        ).then((cred) => {
           machineCredential1 = cred;
 
           cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
@@ -796,27 +806,31 @@ describe('Job Templates Tests', function () {
        * instead of a generic form error.
        */
 
-      cy.createAWXCredential({
-        name: 'E2E' + randomE2Ename(),
-        kind: 'vault',
-        organization: awxOrganization.id,
-        credential_type: 3,
-        inputs: {
-          vault_id: 1,
-          vault_password: 'rd',
-        },
-      }).then((cred) => {
-        vaultCredential1 = cred;
-        cy.createAWXCredential({
+      cy.createAWXCredential(
+        {
           name: 'E2E' + randomE2Ename(),
           kind: 'vault',
           organization: awxOrganization.id,
-          credential_type: 3,
           inputs: {
             vault_id: 1,
             vault_password: 'rd',
           },
-        }).then((credential) => {
+        },
+        'Vault'
+      ).then((cred) => {
+        vaultCredential1 = cred;
+        cy.createAWXCredential(
+          {
+            name: 'E2E' + randomE2Ename(),
+            kind: 'vault',
+            organization: awxOrganization.id,
+            inputs: {
+              vault_id: 1,
+              vault_password: 'rd',
+            },
+          },
+          'Vault'
+        ).then((credential) => {
           vaultCredential2 = credential;
 
           cy.intercept('POST', awxAPI`/job_templates`).as('createPOLJT');
