@@ -16,10 +16,14 @@ Solution
 
 ## Getting Started
 
-1. **Install Playwright**
+1. **Install Playwright & Browsers**
+
+   Playwright is installed as part of `npm ci` at the root of the repo.
+
+   Playwright browsers are not installed as part of that, so the following needs to be run:
 
    ```bash
-   npm ci
+   npx playwright install
    ```
 
    Fedora users may also need to run this command:
@@ -28,17 +32,15 @@ Solution
    npm init playwright@latest
    ```
 
-2. **Add the vscode plugin for Playwright**
+2. **Add the VSCode plugin for Playwright**
 
    [Link to Plugin](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 
-3. **Install the browser binaries**
+3. **Setup environment variable by creating a `.env` file in the `/playwright` directory**
 
-   ```bash
-   npx playwright install
-   ```
-
-4. **Setup environment variable by creating a `.env` file in the `/playwright` directory**
+   Playwright will pickup environment variable from your enviroment,
+   but if you woulld like to override them you can create a `.env`
+   file in the playwright directory.
 
    ```bash
    PLATFORM_UI=https://localhost:4100
@@ -52,20 +54,47 @@ Solution
    >
    > For nightly runs PLATFORM_UI will be pointed at a PLATFORM_SERVER to run tests.
 
-5. **Run the Platform UI**
+4. **Run the Platform UI**
+
+   When running against a local UI, you need to have the local UI running.
+   Playwright will run much better against a production build.
+   While `npm start` will work, `npm serve` will use a production build.
 
    ```bash
    cd platform
-   npm start
+   npm run serve
    ```
 
-6. **Run Playwright tests from the VSCode test explorer.**
+5. **Run Playwright tests.**
 
-7. **Check Playwright version**
+   Either
 
-   ```bash
-   npx playwright --version
-   ```
+   - Run the tests from the VSCode test explorer
+   - or run from the CLI
+     ```
+     cd playwright
+     npm run mock
+     ```
+
+### NPM scripts
+
+|   Script | Description                                 |
+| -------: | ------------------------------------------- |
+|     mock | Run tests against a mock API.               |
+|     live | Run tests against a live server.            |
+|   allure | Generate a local allure report and open it. |
+| coverage | Open the coverage report.                   |
+|    clean | Cleanup all tha old test results.           |
+
+### Tags
+
+Tests should be tagged based on their capabilities. Tags are built into playwright and different playwright projects (i.e. "mock chromium") will default to the right flags.
+
+|       Tag | Description                                                          |
+| --------: | -------------------------------------------------------------------- |
+| @not_mock | This test should not run when testing against the mock API           |
+| @not_live | This test should not run when testing against a live API             |
+|  @upgrade | This test should only run against a server that is setup for upgrade |
 
 ### Developer Experience
 
@@ -151,3 +180,11 @@ Follow the best practices suggested [here](https://docs.cypress.io/guides/refere
 
 Avoid relying on technical aspects such as element IDs or class names for interactions.
 Prioritize tests that reflect the user’s journey and behavior.
+
+## Troubleshooting
+
+1. **Check Playwright version**
+
+   ```bash
+   npx playwright --version
+   ```
