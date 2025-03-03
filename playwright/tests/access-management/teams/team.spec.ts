@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
+import { assertNoResultsFoundForResource } from '../../../commands/assertNoResultsFoundForResource';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createTeam, deleteTeam } from './team-utils';
-import { assertNoResultsFoundForResource } from '../../../commands/assertNoResultsFoundForResource';
 
 test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);

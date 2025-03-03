@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-exports */
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -13,7 +13,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+const config: PlaywrightTestConfig = {
   testDir: '.',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -28,7 +28,11 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['list'], ['allure-playwright']],
+  reporter: [
+    ['list'],
+    ['junit', { outputFile: 'results.xml' }],
+    ['allure-playwright', { resultsDir: 'playwright/allure-results' }],
+  ],
 
   // Split TAGS by comma and create a regular expression that matches any of the tags
   grep: process.env.TAGS
@@ -65,45 +69,70 @@ export default defineConfig({
     {
       name: 'live chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: '**/upgrades-tests/**',
       dependencies: ['coverage setup'],
-      fullyParallel: false,
-      timeout: 5 * 60 * 1000,
+
+      // Commenting this out for now to see if it is really needed
+      // timeout: process.env.CI ? 30 * 1000 : 5 * 60 * 1000, // Tests should finish in 30s on CI (default)
+      // To avoid timeouts in dev we set it to 5 minutes - dev is slower when using a vite dev build - consider running `npm run serve`
+      // If you have a test that needs more time, you can set the timeout for that test only in the test (i.e. test.setTimeout(5 * 60 * 1000);)
+
+      grepInvert: [
+        /@not_live/, // We should not run tests that are marked to not run againt a live
+        /@upgrade/, // We should not run upgrade tests in this project
+      ],
     },
     {
       name: 'mock chromium',
       use: { ...devices['Desktop Chrome'] },
       metadata: { mock: true },
       dependencies: ['coverage setup'],
+      grepInvert: [
+        /@not_mock/, // We should not run tests that are marked to not run againt a mock
+      ],
     },
     {
       name: 'live firefox',
       use: { ...devices['Desktop Firefox'] },
-      testIgnore: '**/upgrades-tests/**',
-      fullyParallel: false,
+      grepInvert: [
+        /@not_live/, // We should not run tests that are marked to not run againt a live
+        /@upgrade/, // We should not run upgrade tests in this project
+      ],
     },
     {
       name: 'mock firefox',
       use: { ...devices['Desktop Firefox'] },
       metadata: { mock: true },
+      grepInvert: [
+        /@not_mock/, // We should not run tests that are marked to not run againt a mock
+      ],
     },
     {
       name: 'live webkit',
       use: { ...devices['Desktop Safari'] },
-      testIgnore: '**/upgrades-tests/**',
-      fullyParallel: false,
+      grepInvert: [
+        /@not_live/, // We should not run tests that are marked to not run againt a live
+        /@upgrade/, // We should not run upgrade tests in this project
+      ],
     },
     {
       name: 'mock webkit',
       use: { ...devices['Desktop Safari'] },
-      testIgnore: '**/upgrades-tests/**', // Webkit does not support the needed 301 redirects
       metadata: { mock: true },
+      grepInvert: [
+        /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@upgrade/, // We should not run upgrade tests in this project - Webkit does not support the needed 301 redirects
+      ],
     },
     {
-      name: 'live chromium upgrade tests',
+      name: 'live upgrade',
       use: { ...devices['Desktop Chrome'] },
       fullyParallel: false,
-      testIgnore: '**/tests/**',
+      grep: [
+        /@upgrade/, // We should only wan tot run upgrade tests
+      ],
+      grepInvert: [
+        /@not_mock/, // We should not run tests that are marked to not run againt a mock
+      ],
     },
     {
       name: 'global setup',
@@ -131,14 +160,24 @@ export default defineConfig({
     // },
 
     /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    {
+      name: 'mock edge',
+      use: { ...devices['Desktop Edge'], channel: 'msedge' },
+      metadata: { mock: true },
+      dependencies: ['coverage setup'],
+      grepInvert: [
+        /@not_mock/, // We should not run tests that are marked to not run againt a mock
+      ],
+    },
+    {
+      name: 'mock chrome',
+      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+      metadata: { mock: true },
+      dependencies: ['coverage setup'],
+      grepInvert: [
+        /@not_mock/, // We should not run tests that are marked to not run againt a mock
+      ],
+    },
   ],
 
   /* Run your local dev server before starting the tests */
@@ -147,4 +186,6 @@ export default defineConfig({
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-});
+};
+
+export default defineConfig(config);
