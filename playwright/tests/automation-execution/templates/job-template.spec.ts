@@ -12,6 +12,7 @@ import {
 } from '../infrastructure/credentials/credential-utils';
 import { createInventory, deleteInventory } from '../infrastructure/inventories/inventory-utils';
 import { createJobTemplate, deleteJobTemplate, runJobTemplate } from './job-template-utils';
+import { mockFeatureFlags } from '../../util/featureFlags';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -297,5 +298,48 @@ test(
     await expect(
       page.getByRole('heading', { name: 'Automation Templates', exact: true })
     ).toBeVisible();
+  }
+);
+
+test(
+  'can create a job template and assert the OPA is showing on the details page',
+  { tag: ['@compare', '@mock'] },
+  async ({ page }) => {
+    const jobTemplateName = createE2EName('job-template');
+    const jobTemplateDescription = 'This is a JT description';
+    const inventoryName = 'Demo Inventory';
+
+    await mockFeatureFlags(page, {
+      FEATURE_POLICY_AS_CODE_ENABLED: true,
+    });
+    await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
+    await expect(
+      page.getByRole('heading', { name: 'Automation Templates', exact: true })
+    ).toBeVisible();
+    await page.getByLabel('dropdown toggle', { exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Create job template' }).click();
+    await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
+    await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
+    await expect(page.getByLabel('OPA policy')).toBeVisible();
+    await page.getByLabel('OPA policy').fill('testpkg/testrule');
+    await page.getByLabel('Inventory * Prompt on launch').click();
+    await page.getByRole('option', { name: inventoryName }).click();
+    const projectName = 'Demo Project';
+    await page.locator('#project-select').click();
+    await page.getByRole('option', { name: projectName }).click();
+    await expect(page.getByRole('button', { name: 'hello_world.yml' })).toBeVisible({
+      timeout: 2 * 60 * 1000,
+    });
+    await page.getByRole('button', { name: 'Create job template' }).click();
+    await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
+    await expect(page.locator('#name')).toContainText(jobTemplateName);
+    await expect(page.locator('#description')).toContainText(jobTemplateDescription);
+    await expect(page.locator('#job-type')).toContainText('run');
+    await expect(page.locator('#organization')).toContainText('Default');
+    await expect(page.locator('#project')).toContainText(projectName);
+    await expect(page.locator('#playbook')).toContainText('hello_world.yml');
+    await expect(page.locator('#opa-policy')).toContainText('testpkg/testrule');
+
+    await deleteJobTemplate(jobTemplateName, page);
   }
 );

@@ -28,6 +28,7 @@ import { GraphNodeData, PromptFormValues } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
+import { useFeatureFlag } from '../../../../common/useFeatureFlags';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -181,6 +182,7 @@ export function JobTemplateDetails({
     webhookKey,
   } = useAggregateJobTemplateDetails({ template, node });
 
+  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   return (
     <>
       <PromptDetail
@@ -263,6 +265,12 @@ export function JobTemplateDetails({
       >
         {forks}
       </PromptDetail>
+      <PageDetail
+        label={t('OPA policy')}
+        isEmpty={!hasPolicyAsCodeFlag || !template.opa_query_path}
+      >
+        {template.opa_query_path}
+      </PageDetail>
       <PromptDetail
         label={t('Limit')}
         isEmpty={!limit}

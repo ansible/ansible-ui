@@ -46,6 +46,7 @@ export interface JobTemplateForm
   related: JobTemplateRelatedFields;
   skip_tags: { name: string; value: string; label: string }[];
   webhook_credential: number;
+  opa_query_path: string;
 }
 
 export interface JobTemplateCreate {

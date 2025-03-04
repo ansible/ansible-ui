@@ -24,6 +24,7 @@ import { PageFormInventorySelect } from '../inventories/components/PageFormInven
 import { PageFormProjectSelect } from '../projects/components/PageFormProjectSelect';
 import { WebhookSubForm } from './components/WebhookSubForm';
 import { Project } from '../../interfaces/Project';
+import { useFeatureFlag } from '../../common/useFeatureFlags';
 
 // This list below comes from the previous AWX code
 //https//github.com / ansible / awx / blob / c760577855bf2afacc58579e743111552dae38ef / awx / ui / src / api / models / CredentialTypes.js#L10
@@ -57,6 +58,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
   const askJobTypeOnLaunch = useWatch<JobTemplateForm, 'ask_job_type_on_launch'>({
     name: 'ask_job_type_on_launch',
   });
+  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   useEffect(() => {
     reset(getValues());
   }, [isProvisioningCallbackEnabled, reset, getValues]);
@@ -163,6 +165,16 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
         isMultiple
         queryParams={{ credential_type__kind__in: acceptableCredentialKinds.join(',') }}
       />
+      {hasPolicyAsCodeFlag && (
+        <PageFormTextInput<JobTemplateForm>
+          name="opa_query_path"
+          label={t('OPA policy')}
+          labelHelpTitle={t('OPA policy')}
+          labelHelp={t(`The OPA policy should be in the format of {package}/{rule}.`)}
+          helperText={t('Format must be {package}/{rule}')}
+          placeholder={t('Enter OPA policy link')}
+        />
+      )}
       <PageFormLabelSelect
         labelHelpTitle={t('Labels')}
         labelHelp={t(
