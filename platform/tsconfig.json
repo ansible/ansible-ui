@@ -1,5 +1,11 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*", "../cypress/support/**/*", "../frontend/hub/**/*", "vite.config.ts"],
+  "include": [
+    "**/*",
+    "../cypress/support/**/*",
+    "../frontend/hub/**/*",
+    "vite.config.ts",
+    "../frontend/awx/administration/settings/PolicySettingsEdit.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

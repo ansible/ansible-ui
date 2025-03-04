@@ -26,12 +26,14 @@ export type AwxSettingsOptionsAction =
   | IOptionStringAction
   | IOptionChoiceAction
   | IOptionIntegerAction
+  | IOptionFloatAction
   | IOptionBooleanAction
   | IOptionListAction
   | IOptionObjectAction
   | IOptionCertificateAction
   | IOptionDateTimeAction
-  | IOptionFieldAction;
+  | IOptionFieldAction
+  | IOptionDataAction;
 
 interface IOptionActionBase {
   label: string;
@@ -55,6 +57,14 @@ interface IOptionFieldAction extends IOptionActionBase {
 
 interface IOptionIntegerAction extends IOptionActionBase {
   type: 'integer';
+  default?: number;
+  min_value?: number;
+  max_value?: number;
+  unit?: string;
+}
+
+interface IOptionFloatAction extends IOptionActionBase {
+  type: 'float';
   default?: number;
   min_value?: number;
   max_value?: number;
@@ -89,6 +99,11 @@ interface IOptionChoiceAction extends IOptionActionBase {
 
 interface IOptionDateTimeAction extends IOptionActionBase {
   type: 'datetime';
+  default?: string;
+}
+
+interface IOptionDataAction extends IOptionActionBase {
+  type: 'data';
   default?: string;
 }
 
@@ -243,6 +258,27 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
   }
 
   if (
+    props.name.includes('OPA_AUTH_CLIENT_CERT') ||
+    props.name.includes('OPA_AUTH_CLIENT_KEY') ||
+    props.name.includes('OPA_AUTH_CA_CERT')
+  ) {
+    return (
+      <PageFormSection singleColumn>
+        <PageFormDataEditor
+          name={props.name}
+          label={option.label}
+          format={'object'}
+          labelHelpTitle={option.label}
+          labelHelp={option.help_text}
+          disableCopy
+          disableUpload
+          disableDownload
+        ></PageFormDataEditor>
+      </PageFormSection>
+    );
+  }
+
+  if (
     props.name.includes('SOCIAL_AUTH_SAML_SP_PUBLIC_CERT') ||
     props.name.includes('SOCIAL_AUTH_SAML_SP_PRIVATE_KEY')
   ) {
@@ -278,6 +314,7 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
         />
       );
     case 'integer':
+    case 'float':
       return (
         <PageFormTextInput
           label={option.label}

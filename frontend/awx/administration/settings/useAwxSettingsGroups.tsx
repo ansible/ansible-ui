@@ -80,6 +80,7 @@ export function useAwxSettingsGroupsBase() {
         ],
         categories: [],
       },
+      { id: 'policyascode', name: t('Policy Settings'), categories: [] },
       {
         id: 'other',
         name: t('Other'),
@@ -91,10 +92,10 @@ export function useAwxSettingsGroupsBase() {
   return groupsBase;
 }
 
-export function useAwxSettingsGroups() {
+export function useAwxSettingsGroups(categoryId: string = 'all') {
   const groupsBase = useAwxSettingsGroupsBase();
 
-  const optionsResponse = useOptions<AwxSettingsOptionsResponse>(awxAPI`/settings/all/`);
+  const optionsResponse = useOptions<AwxSettingsOptionsResponse>(awxAPI`/settings/${categoryId}/`);
 
   const options = useMemo(() => {
     if (!optionsResponse.data?.actions.PUT) return undefined;
