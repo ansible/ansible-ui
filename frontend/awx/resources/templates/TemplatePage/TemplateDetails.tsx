@@ -28,6 +28,7 @@ import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { WebhookService } from '../components/WebhookService';
+import { useFeatureFlag } from '../../../common/useFeatureFlags';
 
 const DangerText = styled.span`
   color: ${getPatternflyColor('danger')};
@@ -54,8 +55,9 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
   const instanceGroups = useInstanceGroups(urlId || '0');
   const getPageUrl = useGetPageUrl();
   const history = useNavigate();
-
   const verbosity: string = useVerbosityString(template?.verbosity);
+  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
+
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!template) return <LoadingPage breadcrumbs tabs />;
   const { summary_fields: summaryFields, ask_inventory_on_launch: askInventoryOnLaunch } = template;
@@ -207,6 +209,13 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         }
       >
         {template.forks || 0}
+      </PageDetail>
+      <PageDetail
+        label={t('OPA policy')}
+        helpText={template.opa_query_path}
+        isEmpty={!hasPolicyAsCodeFlag || !template.opa_query_path}
+      >
+        {template.opa_query_path}
       </PageDetail>
       <PageDetail label={t('Limit')}>{template.limit}</PageDetail>
       <PageDetail

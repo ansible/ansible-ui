@@ -68,6 +68,7 @@ export function getJobTemplateDefaultValues(
         : '',
       webhook_key: template.related?.webhook_key || '',
     },
+    opa_query_path: template.opa_query_path ?? '',
   };
 }
 

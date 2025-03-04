@@ -217,4 +217,5 @@ export interface JobTemplate
   webhook_key: string;
   webhook_service: 'github' | 'gitlab' | 'bitbucket_dc';
   project: number | null;
+  opa_query_path?: string;
 }

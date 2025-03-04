@@ -76,6 +76,7 @@ export function getJobTemplateLaunch(options: RouteOptions): MockResponse {
         job_slice_count: 1,
         timeout: 0,
         instance_groups: [],
+        opa_query_path: 'testpkg/testrule',
       },
     },
   };
