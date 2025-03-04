@@ -3,6 +3,7 @@ export interface Application {
   name: string;
   description?: string;
   url: string;
+  app_url?: string;
   client_type: 'confidential' | 'public';
   redirect_uris?: string;
   organization: number;

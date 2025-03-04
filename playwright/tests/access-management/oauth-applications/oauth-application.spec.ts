@@ -12,7 +12,15 @@ test('application - create and delete', async ({ page }) => {
   await page.getByRole('button', { name: 'Access Management' }).click();
   await page.getByRole('link', { name: 'OAuth Applications' }).click();
   await page.getByRole('link', { name: 'Create OAuth application' }).click();
+
+  // Enter Name
   await page.getByPlaceholder('Enter OAuth application name').fill(applicationName);
+
+  // Enter Description
+  await page.getByPlaceholder('Enter description').fill('My first OAuth application');
+
+  // Enter URL
+  await page.getByPlaceholder('Enter OAuth application URL').fill('http://example.com');
 
   // Select organization
   await page.getByLabel('Organization *').click();
@@ -32,6 +40,12 @@ test('application - create and delete', async ({ page }) => {
   // Verify OAuth application in the details page
   await expect(page.getByRole('heading', { name: applicationName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(applicationName);
+  if (page.mock.enabled) {
+    await expect(page.locator('#url')).toContainText('http://example.com');
+  }
+  await expect(page.locator('#description')).toContainText('My first OAuth application');
+  await expect(page.locator('#organization')).toContainText('Default');
+  await expect(page.locator('#redirect-uris')).toContainText('http://example.com');
 
   // Delete OAuth application
   await page.getByLabel('kebab dropdown toggle').click();

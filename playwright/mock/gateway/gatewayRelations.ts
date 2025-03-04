@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+import { IApiData } from '../mockData';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function gatewayRelations(item: Record<string, any>) {
+export function gatewayRelations(item: Record<string, any>, data: IApiData) {
   if (!item) return;
   if (!item.summary_fields) {
     item.summary_fields = {};
@@ -20,5 +23,13 @@ export function gatewayRelations(item: Record<string, any>) {
     item.summary_fields.resource = {
       ansible_id: '1234',
     };
+  }
+  if (typeof item.organization === 'number') {
+    const organization = data.api.gateway.v1.organizations.find(
+      (org) => org.id === item.organization
+    );
+    if (organization) {
+      item.summary_fields.organization = organization;
+    }
   }
 }
