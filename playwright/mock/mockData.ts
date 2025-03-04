@@ -19,6 +19,7 @@ import { Config as AwxConfig } from '@ansible/common-ui/interfaces/Config';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
+import { awxSettings, awxPolicySettings } from './controller/mockSettingsData';
 
 interface IGatewayData {
   ping: object;
@@ -57,6 +58,10 @@ interface IControllerData {
   labels: DeepPartial<Label>[];
   dashboard: object;
   execution_environments: DeepPartial<ExecutionEnvironment>[];
+  settings: {
+    all: Record<string, unknown>;
+    policyascode: Record<string, unknown>;
+  };
 }
 
 export interface IApiData {
@@ -149,6 +154,10 @@ export const mockData: IApiData = {
         instance_groups: [],
         hosts: [{ id: 1, name: 'localhost' }],
         labels: [],
+        settings: {
+          all: awxSettings,
+          policyascode: awxPolicySettings,
+        },
         dashboard: {
           related: { jobs_graph: '/api/controller/v2/dashboard/graphs/jobs/' },
           inventories: {

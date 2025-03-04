@@ -37,6 +37,9 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
+import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
+import { PolicySettingsCategoryForm } from '@ansible/awx-ui/administration/settings/PolicySettingsEdit';
+import { AwxPolicySettingsDetailsPage } from '@ansible/awx-ui/administration/settings/AwxPolicySettingsDetails';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -321,6 +324,7 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   const { activePlatformUser } = usePlatformActiveUser();
   const awxService = useHasAwxService();
   const navigate = useNavigate();
+  const hasPolicyAsCode = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   settingsNav.push({
     label: t('Subscription'),
@@ -389,6 +393,24 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
       !awxService ||
       (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
   });
+
+  if (hasPolicyAsCode) {
+    settingsNav.push({
+      id: AwxRoute.SettingsPolicy,
+      label: t('Policy'),
+      path: 'policy-settings',
+      children: [
+        {
+          path: 'edit',
+          element: <PolicySettingsCategoryForm />,
+        },
+        {
+          path: '',
+          element: <AwxPolicySettingsDetailsPage />,
+        },
+      ],
+    });
+  }
 
   settingsNav.push({
     id: AwxRoute.SettingsJobs,

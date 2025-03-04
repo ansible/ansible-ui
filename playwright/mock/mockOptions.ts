@@ -1,3 +1,5 @@
+import { awxSettingsOptions, awxPolicyOptions } from './controller/mockSettingsOptions';
+
 // Mock options for the API
 // Any request to the API will be mocked with these options
 export const mockOptions = {
@@ -4529,6 +4531,10 @@ export const mockOptions = {
             'modified_by__search',
           ],
           max_page_size: 200,
+        },
+        settings: {
+          all: awxSettingsOptions,
+          policyascode: awxPolicyOptions,
         },
       },
     },

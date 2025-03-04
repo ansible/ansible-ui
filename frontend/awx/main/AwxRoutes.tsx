@@ -284,6 +284,7 @@ export enum AwxRoute {
   SettingsTroubleshooting = 'awx-settings-troubleshooting',
   SettingsAuthentication = 'awx-settings-authentication',
   SettingsCategory = 'awx-settings-category',
+  SettingsPolicy = 'awx-settings-policy',
 
   Login = 'awx-login',
 }

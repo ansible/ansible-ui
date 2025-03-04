@@ -31,6 +31,7 @@ import { mockData } from './mockData';
 import { mockOptions } from './mockOptions';
 import { logApiCallResponse } from './router/logApiCallResponse';
 import { Router } from './router/Router';
+import { patchPolicySettings } from './controller/controllerSettings';
 
 /** Mocks the API calls for the tests. */
 export async function mock(page: Page) {
@@ -74,6 +75,11 @@ export async function mock(page: Page) {
     .GET('/api/controller/v2/dashboard', getData())
     .GET('/api/controller/v2/dashboard/graphs/jobs', controllerDashboardJobs)
 
+    .OPTIONS('/api/controller/v2/settings/all', getOptions())
+    .GET('/api/controller/v2/settings/all', getData())
+    .OPTIONS('/api/controller/v2/settings/policyascode/', getOptions())
+    .GET('/api/controller/v2/settings/policyascode/', getData())
+
     // Special handling
     .POST(
       '/api/controller/v2/projects',
@@ -92,6 +98,7 @@ export async function mock(page: Page) {
     .GET('/api/controller/v2/jobs/:id/job_events/children_summary', getJobEventsChildrenSummary)
     .GET('/api/controller/v2/jobs/:id/job_events', getJobEvents)
     // .GET('/api/controller/v2/workflow_jobs/:id/workflow_nodes', TODO)
+    .PATCH('/api/controller/v2/settings/policyascode/', patchPolicySettings)
 
     // Controller Resource API
     .OPTIONS('/api/controller/v2/:resource', getOptions())

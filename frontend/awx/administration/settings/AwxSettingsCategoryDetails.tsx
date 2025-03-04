@@ -9,6 +9,7 @@ import {
   PageHeader,
   PageLayout,
 } from '@ansible/ansible-ui-framework';
+import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
@@ -104,13 +105,23 @@ export function AwxSettingsCategoryDetail(props: {
   switch (option.type) {
     case 'string':
     case 'field':
-      return <PageDetail label={option.label}>{props.data[props.name] as string}</PageDetail>;
+      return (
+        <PageDetail label={option.label} helpText={option.help_text}>
+          {props.data[props.name] as string}
+        </PageDetail>
+      );
+
     case 'integer':
-      return <PageDetail label={option.label}>{props.data[props.name] as number}</PageDetail>;
+    case 'float':
+      return (
+        <PageDetail label={option.label} helpText={option.help_text}>
+          {props.data[props.name] as number}
+        </PageDetail>
+      );
 
     case 'boolean':
       return (
-        <PageDetail label={option.label}>
+        <PageDetail label={option.label} helpText={option.help_text}>
           {props.data[props.name] ? t('Enabled') : t('Disabled')}
         </PageDetail>
       );
@@ -118,7 +129,7 @@ export function AwxSettingsCategoryDetail(props: {
     case 'list':
       if ((props.data[props.name] as string[]).length === 0) return null;
       return (
-        <PageDetail label={option.label}>
+        <PageDetail label={option.label} helpText={option.help_text}>
           {(props.data[props.name] as string[]).map((line, index) => {
             return <div key={index}>{line}</div>;
           })}
@@ -128,7 +139,7 @@ export function AwxSettingsCategoryDetail(props: {
     case 'nested object':
       if (Object.keys(props.data[props.name] as object).length === 0) return null;
       return (
-        <PageDetail label={option.label} fullWidth>
+        <PageDetail label={option.label} helpText={option.help_text} fullWidth>
           <pre>{jsyaml.dump(props.data[props.name])}</pre>
         </PageDetail>
       );
@@ -146,16 +157,29 @@ export function AwxSettingsCategoryDetail(props: {
         if (!props.data[props.name] && choice[0] === '') return true;
         return false;
       });
-      return <PageDetail label={option.label}>{selected?.[1]}</PageDetail>;
+      return (
+        <PageDetail label={option.label} helpText={option.help_text}>
+          {selected?.[1]}
+        </PageDetail>
+      );
     }
 
     case 'datetime':
       if (!props.data[props.name]) return null;
       return (
-        <PageDetail label={option.label}>
+        <PageDetail label={option.label} helpText={option.help_text}>
           {new Date(props.data[props.name] as number).toLocaleDateString()} &nbsp;
           {new Date(props.data[props.name] as number).toLocaleTimeString()}
         </PageDetail>
+      );
+
+    case 'data':
+      return (
+        <PageDetailCodeEditor
+          label={option.label}
+          value={props.data[props.name] as string}
+          helpText={option.help_text}
+        />
       );
 
     default:
