@@ -24,6 +24,14 @@ export function useApplicationsColumns(options?: {
     to: nameTo,
     ...options,
   });
+  const appUrlColumn = useMemo<ITableColumn<Application>>(
+    () => ({
+      type: 'text',
+      header: 'URL',
+      value: (item) => item.app_url,
+    }),
+    []
+  );
   const descriptionColumn = useDescriptionColumn();
   const organizationColumn = useOrganizationNameColumn(PlatformRoute.OrganizationDetails, options);
   const createdColumn = useCreatedColumn({
@@ -36,8 +44,15 @@ export function useApplicationsColumns(options?: {
     userDetailsPageId: PlatformRoute.UserDetails,
   });
   const tableColumns = useMemo<ITableColumn<Application>[]>(
-    () => [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn],
-    [nameColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]
+    () => [
+      nameColumn,
+      appUrlColumn,
+      descriptionColumn,
+      organizationColumn,
+      createdColumn,
+      modifiedColumn,
+    ],
+    [nameColumn, appUrlColumn, descriptionColumn, organizationColumn, createdColumn, modifiedColumn]
   );
   return tableColumns;
 }

@@ -11,6 +11,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { validateUrl } from '@ansible/awx-ui/administration/notifiers/NotifierFormInner';
 import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
@@ -59,11 +60,15 @@ export function CreatePlatformApplication(props: {
           { label: t('Create OAuth application') },
         ]}
       />
-      <AwxPageForm
+      <AwxPageForm<Application>
         submitText={t('Create OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        defaultValue={{
+          authorization_grant_type: AuthorizationType.AuthorizationCode,
+          client_type: 'confidential',
+        }}
       >
         <ApplicationInputs mode="create" />
       </AwxPageForm>
@@ -232,6 +237,16 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
         maxLength={150}
       />
       <PageFormPlatformOrganizationSelect<Application> name="organization" isRequired />
+      <PageFormTextInput<Application>
+        name="app_url"
+        label={t('URL')}
+        labelHelp={t(
+          'The URL of the client application. This is used to add a link to the application in the main navigation.'
+        )}
+        placeholder={t('Enter OAuth application URL')}
+        validate={(value) => validateUrl(value, t)}
+        fullWidth
+      />
       <PageFormTextArea<Application>
         name="description"
         label={t('Description')}
@@ -288,17 +303,17 @@ function ApplicationInputs(props: { mode: 'create' | 'edit' }) {
           'Defines the security level of the client application based on whether it can securely store sensitive information like a client secret.'
         )}
       />
-      <PageFormSection singleColumn>
-        <PageFormTextInput<Application>
-          name="redirect_uris"
-          label={t('Redirect URIs')}
-          placeholder={t('Enter redirect URIs')}
-          isRequired={Boolean(authorizationGrantType === 'authorization-code')}
-          labelHelp={t(
-            'Provide one or more URIs where the authorization server will send the user after successful authentication. These URIs must be registered with the authorization server.'
-          )}
-        />
-      </PageFormSection>
+      <PageFormTextInput<Application>
+        name="redirect_uris"
+        label={t('Redirect URIs')}
+        placeholder={t('Enter redirect URIs')}
+        isRequired={Boolean(authorizationGrantType === 'authorization-code')}
+        labelHelp={t(
+          'Provide one or more URIs where the authorization server will send the user after successful authentication. These URIs must be registered with the authorization server.'
+        )}
+        validate={(value) => validateUrl(value, t)}
+        fullWidth
+      />
     </>
   );
 }

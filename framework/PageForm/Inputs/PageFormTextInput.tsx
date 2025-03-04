@@ -189,6 +189,8 @@ export type PageFormTextInputProps<
   enableReset?: boolean;
 
   shouldUnregister?: boolean;
+
+  fullWidth?: boolean;
 };
 
 /**
@@ -225,6 +227,7 @@ export function PageFormTextInput<
     selectValue,
     autoFocus,
     autoComplete,
+    fullWidth,
   } = props;
 
   const id = useID(props);
@@ -310,6 +313,7 @@ export function PageFormTextInput<
             helperText={helperText}
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
+            fullWidth={fullWidth}
           >
             <InputGroup>
               <InputGroupItem isFill>

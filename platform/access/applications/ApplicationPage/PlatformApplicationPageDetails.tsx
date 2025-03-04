@@ -20,6 +20,9 @@ export function ApplicationDetailInner(props: { application: Application }) {
       <PageDetail label={t('Organization')}>
         {props.application.summary_fields.organization?.name}
       </PageDetail>
+      <PageDetail label={t('URL')} fullWidth>
+        {props.application.app_url}
+      </PageDetail>
       <PageDetail label={t('Description')} fullWidth>
         {props.application.description}
       </PageDetail>
