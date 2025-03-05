@@ -858,6 +858,39 @@ describe('Schedules - Edit', () => {
       cy.deleteAWXSchedule(schedToEdit, { failOnStatusCode: false });
     });
   });
+  it('can edit a simple schedule with existing rules', () => {
+    let schedToEdit: Schedule;
+    cy.createAWXSchedule({
+      name: 'E2E Edit Existing rule' + randomString(4),
+      unified_job_template: project.id,
+      rrule:
+        'DTSTART;TZID=Etc/Zulu:20240507T230000 RRULE:FREQ=WEEKLY;INTERVAL=1;WKST=SU;BYDAY=TU;BYHOUR=17;BYMINUTE=0;BYSECOND=0 EXRULE:FREQ=YEARLY;INTERVAL=1;WKST=SU;BYMONTH=5;BYMONTHDAY=7;BYHOUR=17;BYMINUTE=0;BYSECOND=0',
+    }).then((sched: Schedule) => {
+      schedToEdit = sched;
+      cy.filterTableBySingleSelect('name', schedToEdit.name);
+      cy.getByDataCy('edit-schedule').click();
+      cy.getByDataCy('wizard-nav').within(() => {
+        ['Details', 'Rules', 'Exceptions', 'Review'].forEach((text, index) => {
+          cy.get('li')
+            .eq(index)
+            .should((el) => expect(el.text().trim()).to.equal(text));
+        });
+      });
+      cy.clickButton(/^Next$/);
+      cy.getByDataCy('row-id-1').within(() => {
+        cy.get('[data-cy="edit-rule"]').click();
+      });
+      cy.get('[data-cy="wkst-form-group"]').last().click();
+      cy.get('#friday').click();
+      cy.clickButton(/^Update rule$/);
+      cy.clickButton(/^Next$/);
+      cy.clickButton(/^Next$/);
+      cy.intercept('PATCH', awxAPI`/schedules/*`).as('editedSchedule');
+      cy.clickButton(/^Finish$/);
+      cy.get('dd#rruleset span').contains('WKST=FR;');
+      cy.deleteAWXSchedule(schedToEdit, { failOnStatusCode: false });
+    });
+  });
 
   it('can toggle a schedule from the details page and confirm the change on the list view', () => {
     cy.intercept('PATCH', awxAPI`/schedules/*`).as('toggleSchedule');

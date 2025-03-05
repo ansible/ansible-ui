@@ -41,15 +41,19 @@ export function ScheduleSummary(props: {
       {!props.hideColumnTitle && <FlexItem>{t('Schedule summary')}</FlexItem>}
       <FlexItem>
         <LabelGroupWrapper numLabels={5}>
-          {timesArray?.map((value, i) => {
-            return (
-              <Label key={i}>
-                {DateTime.fromISO(value, { setZone: true }).toLocaleString(
-                  DateTime.DATETIME_SHORT_WITH_SECONDS
-                )}
-              </Label>
-            );
-          })}
+          {timesArray && timesArray.length > 0 ? (
+            timesArray.map((value, i) => {
+              return (
+                <Label key={i}>
+                  {DateTime.fromISO(value, { setZone: true }).toLocaleString(
+                    DateTime.DATETIME_SHORT_WITH_SECONDS
+                  )}
+                </Label>
+              );
+            })
+          ) : (
+            <span>{t('No schedule occurrences found')}</span>
+          )}
         </LabelGroupWrapper>
       </FlexItem>
     </Flex>

@@ -1,6 +1,6 @@
 import { parseVariableField } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useTranslation } from 'react-i18next';
-import { Frequency, RRule } from 'rrule';
+import { Frequency, Options, RRule } from 'rrule';
 import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 
@@ -127,3 +127,37 @@ export function mungeSurveyAndExtraVarsData(survey: { [key: string]: string }, e
 
   return { ...extraData, ...parseVariableField(extra_vars) };
 }
+
+export const normalizeOptions = (options: Partial<Options>) => {
+  // compiled from https://github.com/jkbrzt/rrule/blob/master/src/types.ts#L59
+  const propertiesToNormalize = [
+    'bysetpos',
+    'bymonth',
+    'bymonthday',
+    'bynmonthday',
+    'byyearday',
+    'byweekno',
+    'byhour',
+    'byminute',
+    'bysecond',
+  ];
+  const normalizeValue = (value: Options[keyof Options] | null) => {
+    if (value === null || value === undefined) {
+      return [];
+    }
+    if (Array.isArray(value)) {
+      return value;
+    } else {
+      return [value];
+    }
+  };
+  return Object.fromEntries(
+    Object.entries(options).map(([key, value]) => {
+      let parsedValue = value;
+      if (propertiesToNormalize.includes(key)) {
+        parsedValue = normalizeValue(value) as Options[keyof Options] | null;
+      }
+      return [key, parsedValue];
+    })
+  );
+};

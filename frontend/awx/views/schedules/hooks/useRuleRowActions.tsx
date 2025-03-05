@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { RRule } from 'rrule';
 import { RuleListItemType } from '../types';
 import { RULES_DEFAULT_VALUES } from '../wizard/constants';
+import { normalizeOptions } from './ruleHelpers';
 
 export function useRuleRowActions(
   rules: RuleListItemType[],
@@ -52,15 +53,15 @@ export function useRuleRowActions(
           let untilDateTime!: string[];
           if (rule === undefined || !rule.rule) return;
           const ruleObject = RRule.fromString(rule.rule);
+          const normalizedOptions = normalizeOptions(ruleObject.origOptions);
           if (ruleObject.origOptions.until) {
             untilDateTime = dateToInputDateTime(
               ruleObject.origOptions.until?.toISOString() ?? '',
               ruleObject.origOptions.tzid
             );
           }
-
           const ruleData = {
-            ...ruleObject.origOptions,
+            ...normalizedOptions,
             endType: ruleObject.origOptions.count
               ? 'count'
               : ruleObject.origOptions.until
