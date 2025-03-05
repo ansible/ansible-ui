@@ -8,6 +8,7 @@ import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfac
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useHasAwxService } from '../../../../main/GatewayServices';
+import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 
 export function OrganizationDetailsStep(props: {
   controllerOrganization?: ControllerOrganization;
@@ -47,6 +48,7 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
   const { t } = useTranslation();
   const controllerOrganization = props.controllerOrganization;
   const config = useAwxConfig();
+  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   return (
     <>
@@ -87,6 +89,16 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
             }
             return t('This field must be an integer and have a value between 0 and 2147483647.');
           }}
+        />
+      )}
+      {hasPolicyAsCodeFlag && (
+        <PageFormTextInput
+          label={t('OPA policy')}
+          name="policy"
+          placeholder={t('Enter OPA policy link')}
+          labelHelp={t('The OPA policy should be in the format of {package}/{rule}.')}
+          labelHelpTitle={t('OPA policy')}
+          helperText={t('Format must be {package}/{rule}')}
         />
       )}
     </>
