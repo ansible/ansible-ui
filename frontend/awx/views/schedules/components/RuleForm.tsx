@@ -138,6 +138,7 @@ export function RuleForm(
           name={`freq`}
           isRequired
           label={t('Frequency')}
+          placeholderText={t('Select frequency')}
           labelHelp={[
             t(
               'This is the freq field. Select how often the schedule runs. For example, if the frequency is yearly, and the interval is 8, the schedule will run every 8 years.'
@@ -156,6 +157,7 @@ export function RuleForm(
         <PageFormSelect<RuleFields>
           name={`wkst`}
           label={t('Week start')}
+          placeholderText={t('Select start day')}
           labelHelp={t(
             'This is the wkst field. Select the day of the week that the schedule will start.'
           )}
