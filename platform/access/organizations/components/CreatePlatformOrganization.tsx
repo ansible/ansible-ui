@@ -36,7 +36,8 @@ export function CreatePlatformOrganization() {
     const updateControllerOrg: boolean =
       (Array.isArray(values.instanceGroups) && values.instanceGroups.length > 0) ||
       (Array.isArray(values.galaxyCredentials) && values.galaxyCredentials.length > 0) ||
-      values.executionEnvironment !== undefined;
+      values.executionEnvironment !== undefined ||
+      values.policy !== undefined;
     // Wait for the organization to be present in Controller before associating instance groups
     if (!createdOrganization.summary_fields?.resource?.ansible_id) {
       throw new Error(t('Organization resource ansible_id is not available'));
@@ -68,15 +69,24 @@ export function CreatePlatformOrganization() {
             }
           );
         }
-        if (values.executionEnvironment) {
-          await updateControllerOrganizationRequest(
-            awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
-            {
-              default_environment: values.executionEnvironment,
-              max_hosts: values?.maxHosts ?? 0,
-            }
-          );
+        const controllerOrganizationPayload: {
+          max_hosts: number;
+          opa_query_path?: string | null;
+          default_environment?: number;
+        } = {
+          max_hosts: values?.maxHosts ?? 0,
+        };
+        if (values?.policy) {
+          controllerOrganizationPayload.opa_query_path = values.policy;
         }
+        if (values?.executionEnvironment) {
+          controllerOrganizationPayload.default_environment = values.executionEnvironment;
+        }
+
+        await updateControllerOrganizationRequest(
+          awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
+          controllerOrganizationPayload
+        );
       }
       pageNavigate(PlatformRoute.OrganizationDetails, { params: { id: createdOrganization.id } });
     }

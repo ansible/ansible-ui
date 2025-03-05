@@ -123,6 +123,7 @@ export function EditPlatformOrganization() {
         await updateControllerOrganizationRequest(
           awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
           {
+            opa_query_path: values?.policy ?? null,
             default_environment: values?.executionEnvironment ?? null,
             max_hosts: values?.maxHosts ? values?.maxHosts : 0,
           }

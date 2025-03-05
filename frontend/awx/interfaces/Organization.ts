@@ -49,6 +49,7 @@ export interface Organization
     };
     default_environment?: SummaryFieldsExecutionEnvironment;
   };
+  opa_query_path?: string;
 }
 
 export type AwxOrganizationCreate = Omit<Organization, 'id' | 'related' | 'summary_fields'>;

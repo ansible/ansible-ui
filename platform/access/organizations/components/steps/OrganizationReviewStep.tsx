@@ -20,8 +20,14 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
   const getPageUrl = useGetPageUrl();
   const config = useAwxConfig();
 
-  const { organization, instanceGroups, galaxyCredentials, maxHosts, executionEnvironment } =
-    wizardData as OrganizationWizardFormValues;
+  const {
+    organization,
+    instanceGroups,
+    galaxyCredentials,
+    maxHosts,
+    executionEnvironment,
+    policy,
+  } = wizardData as OrganizationWizardFormValues;
 
   let fetchedEE: ExecutionEnvironment | undefined;
 
@@ -88,6 +94,7 @@ export function OrganizationReviewStep(props: { controllerOrganization?: Control
             {maxHosts}
           </PageDetail>
         )}
+        {policy && <PageDetail label={t('OPA policy')}>{policy}</PageDetail>}
       </PageDetails>
     </>
   );

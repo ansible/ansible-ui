@@ -23,6 +23,7 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useOrganizationColumns } from '../hooks/useOrganizationColumns';
+import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 
 export function PlatformOrganizationDetails() {
   const params = useParams<{ id?: string }>();
@@ -57,6 +58,7 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
   const { platformOrganization } = props;
   const getPageUrl = useGetPageUrl();
   const config = useAwxConfig();
+  const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
 
   const { resource: controllerOrganization, isLoading } = useAwxResource<AwxOrganization>(
     'organizations/',
@@ -120,6 +122,15 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
           isEmpty={controllerOrganization?.max_hosts === undefined}
         >
           {controllerOrganization?.max_hosts}
+        </PageDetail>
+      )}
+      {hasPolicyAsCodeFlag && (
+        <PageDetail
+          label={t('OPA policy')}
+          isEmpty={controllerOrganization?.opa_query_path === null}
+          helpText={t('The OPA policy should be in the format of {package}/{rule}.')}
+        >
+          {controllerOrganization?.opa_query_path}
         </PageDetail>
       )}
     </>
