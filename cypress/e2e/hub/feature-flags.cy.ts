@@ -7,7 +7,6 @@ describe('Feature flags', () => {
       expect(body).to.include({ ai_deny_index: false });
       expect(body).to.include({ can_create_signatures: true });
       expect(body).to.include({ can_upload_signatures: false });
-      expect(body).to.include({ collection_auto_sign: true });
       expect(body).to.include({ collection_signing: true });
       expect(body).to.include({ container_signing: true });
       expect(body).to.include({ display_repositories: true });

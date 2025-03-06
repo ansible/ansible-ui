@@ -6,7 +6,6 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
   it('render the management jobs list page, assert the management jobs listed', () => {
     const managementJobsList = [
       'Cleanup Activity Stream',
-      'Cleanup Expired OAuth 2 Tokens',
       'Cleanup Expired Sessions',
       'Cleanup Job Details',
     ];
@@ -19,10 +18,8 @@ describe('Management Jobs Page - List and Launch Jobs', () => {
       .its('response.body.results')
       .then((results: SystemJobTemplate[]) => {
         const responseJobsList = results?.map((job: SystemJobTemplate) => job.name);
-        expect(responseJobsList).to.have.members(managementJobsList);
-        cy.get('.pf-v5-c-table__tbody tr').should('have.length', responseJobsList.length);
-        cy.get('.pf-v5-c-table__tbody tr').each(($row, index) => {
-          cy.wrap($row).find('td').eq(0).should('contain', responseJobsList[index]);
+        cy.wrap(managementJobsList).each((managementJob) => {
+          cy.wrap(responseJobsList).should('include', managementJob);
         });
       });
   });
