@@ -1,8 +1,13 @@
 import { Page, expect } from '@playwright/test';
 
-export const platformUI = process.env.PLATFORM_UI
-  ? process.env.PLATFORM_UI
-  : 'https://localhost:4100';
+export let platformUI = process.env.PLATFORM_UI ?? '';
+if (!platformUI) {
+  if (process.env.DEV_SERVER_PROTOCOL === 'http') {
+    platformUI = 'http://localhost:4100';
+  } else {
+    platformUI = 'https://localhost:4100';
+  }
+}
 export const platformURL = new URL(platformUI);
 
 /**

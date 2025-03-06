@@ -3,20 +3,16 @@
 /* eslint-disable no-console */
 import react from '@vitejs/plugin-react-swc';
 import selfsigned from 'selfsigned';
-import { defineConfig, PluginOption } from 'vite';
+import { defineConfig, PluginOption, UserConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 
-const pems = selfsigned.generate([{ name: 'commonName', value: 'contoso.com' }], {
-  days: 365,
-  keySize: 2048,
-});
-
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
 
+const DEV_SERVER_PROTOCOL = process.env.DEV_SERVER_PROTOCOL ?? 'https';
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER as string;
 const AWX_WEBSOCKET_PREFIX = '/api/controller/v2/websocket/';
 
@@ -26,6 +22,7 @@ const environment: Record<string, string> = {
   AWX_WEBSOCKET_PREFIX,
   EDA_API_PREFIX: '/api/eda/v1',
   HUB_API_PREFIX: '/api/galaxy',
+  DEV_SERVER_PROTOCOL,
 };
 console.log('Environment', environment);
 
@@ -34,7 +31,7 @@ const wsURL = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
 if (wsURL) wsURL.protocol = 'wss:';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+const config: UserConfig = {
   plugins: [
     react(),
     svgr(),
@@ -49,10 +46,6 @@ export default defineConfig({
   define: { 'process.env': environment },
   server: {
     cors: false,
-    https: {
-      key: pems.private,
-      cert: pems.cert,
-    },
     proxy: {
       '/api': {
         target: PLATFORM_SERVER,
@@ -93,4 +86,17 @@ export default defineConfig({
       },
     },
   },
-});
+};
+
+if (DEV_SERVER_PROTOCOL !== 'http') {
+  const pems = selfsigned.generate([{ name: 'commonName', value: 'contoso.com' }], {
+    days: 365,
+    keySize: 2048,
+  });
+  config.server!.https = {
+    key: pems.private,
+    cert: pems.cert,
+  };
+}
+
+export default defineConfig(config);
