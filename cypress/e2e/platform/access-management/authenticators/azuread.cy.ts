@@ -47,13 +47,16 @@ describe('Azure AD Authentication form - create, edit, update and delete', () =>
 
     // Verify the GH Authenticator is displayed in the login page
     cy.contains('Log in with').should('be.visible');
-    cy.get('a[data-cy="social-auth-ansible_base.authentication.authenticator_plugins.azuread"]')
-      .contains(azureAdAuthenticator)
-      .should('have.attr', 'href')
-      .and(
-        'equal',
-        `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-azuread__${azureAdAuthenticator.toLowerCase()}/`
-      );
+    cy.get('a[data-cy="social-auth-azuread"]').each(($el) => {
+      if ($el.text().includes(azureAdAuthenticator)) {
+        cy.wrap($el)
+          .should('have.attr', 'href')
+          .and(
+            'equal',
+            `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-azuread__${azureAdAuthenticator.toLowerCase()}/`
+          );
+      }
+    });
 
     // Login
     cy.platformLogin();

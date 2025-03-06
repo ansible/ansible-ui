@@ -22,11 +22,11 @@ describe('Platform Basic Authentication', () => {
     // Enable the newly created local authenticator
     cy.intercept('PATCH', gatewayAPI`/authenticators/*/`).as('editedAuth');
     cy.intercept('GET', gatewayAPI`/authenticators/*`).as('authenticators');
+    cy.wait('@authenticators');
     cy.getTableRow('name', localAuthenticator).within(() => {
       cy.get('[data-cy=toggle-switch]').click();
     });
     cy.wait('@editedAuth');
-    cy.wait('@authenticators');
     cy.getBy('[data-cy="alert-toaster"]').within(() => {
       cy.get('button').click();
     });
@@ -41,7 +41,6 @@ describe('Platform Basic Authentication', () => {
       .then((responseBody: UIAuth) => {
         const localDbAuth = {
           name: 'Local Database Authenticator',
-          type: 'ansible_base.authentication.authenticator_plugins.local',
         };
         expect(responseBody.passwords.some((password) => password.name === localAuthenticator)).to
           .be.true;

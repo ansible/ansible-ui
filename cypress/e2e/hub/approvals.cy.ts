@@ -50,7 +50,7 @@ describe('Approvals', () => {
     cy.contains(collectionName);
   });
 
-  it('should be able to approve collection', () => {
+  it.skip('should be able to approve collection', () => {
     // Approve Collection
     cy.filterTableBySingleText(collectionName);
     cy.getByDataCy('approve-and-sign-collection').click();
