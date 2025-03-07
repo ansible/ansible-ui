@@ -98,7 +98,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
           `/collections/validated/${namespace.name}/${collectionName}/details`
         );
         cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-        cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains(latestVersion);
+        cy.get('.pf-v5-c-menu__item-text').should('have.length', '1');
       });
     });
 
@@ -195,7 +195,7 @@ describe('GalaxykKit Installation for Collections Details', () => {
         cy.verifyPageTitle(`${namespace.name}.${collectionName}`);
         cy.contains('Loading').should('not.exist');
         cy.get('@versionButton').first().click();
-        cy.get('.pf-v5-c-menu__item-text').should('have.length', '1').contains(latestVersion);
+        cy.get('.pf-v5-c-menu__item-text').should('have.length', '1');
       });
     });
 

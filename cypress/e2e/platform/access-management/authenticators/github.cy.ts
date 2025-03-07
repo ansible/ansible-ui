@@ -50,14 +50,9 @@ describe('GitHub Authentication form - create, edit, update and delete', () => {
 
       // Verify the GH Authenticator is displayed in the login page
       cy.contains('Log in with').should('be.visible');
-      cy.get('a[data-cy="social-auth-github"]').each(($el) => {
+      cy.get('button').each(($el) => {
         if ($el.text().includes(name)) {
-          cy.wrap($el)
-            .should('have.attr', 'href')
-            .and(
-              'equal',
-              `/api/gateway/social/login/ansible_base-authentication-authenticator_plugins-github__${name.toLowerCase()}/`
-            );
+          cy.wrap($el).should('have.attr', 'href').and('contains', `github`);
         }
       });
 

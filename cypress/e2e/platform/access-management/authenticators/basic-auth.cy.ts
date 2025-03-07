@@ -22,29 +22,30 @@ describe('Platform Basic Authentication', () => {
     // Enable the newly created local authenticator
     cy.intercept('PATCH', gatewayAPI`/authenticators/*/`).as('editedAuth');
     cy.intercept('GET', gatewayAPI`/authenticators/*`).as('authenticators');
-    cy.wait('@authenticators');
     cy.getTableRow('name', localAuthenticator).within(() => {
       cy.get('[data-cy=toggle-switch]').click();
     });
     cy.wait('@editedAuth');
+    cy.wait('@authenticators');
     cy.getBy('[data-cy="alert-toaster"]').within(() => {
       cy.get('button').click();
     });
     // Log out
     cy.platformLogout();
-    cy.get('.pf-v5-c-login').should('be.visible');
+    cy.contains('button', 'Log in').should('be.visible');
     cy.intercept('GET', gatewayAPI`/ui_auth/`).as('getUIAuthRequest');
     // Login
     cy.platformLogin();
     cy.wait('@getUIAuthRequest')
       .its('response.body')
       .then((responseBody: UIAuth) => {
-        const localDbAuth = {
-          name: 'Local Database Authenticator',
-        };
         expect(responseBody.passwords.some((password) => password.name === localAuthenticator)).to
           .be.true;
-        expect(responseBody.passwords).to.deep.include(localDbAuth);
+        expect(
+          responseBody.passwords.some(
+            (password) => password.name === 'Local Database Authenticator'
+          )
+        ).to.be.true;
       });
     // Authentication List Page
     cy.navigateTo('platform', 'authentications');
