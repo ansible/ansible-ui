@@ -13,6 +13,7 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
-    "vitest": "vitest --run"
+    "vitest": "vitest --run",
+    "vitest:watch": "vitest watch"
   }
 }
