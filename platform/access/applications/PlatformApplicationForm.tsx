@@ -16,6 +16,7 @@ import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { Alert, TextContent } from '@patternfly/react-core';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -42,8 +43,10 @@ export function CreatePlatformApplication(props: {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<Application>();
+  const { clearCacheByKey } = useClearCache();
   const onSubmit: PageFormSubmitHandler<Application> = async (application: Application) => {
     const newApplication = await postRequest(gatewayAPI`/applications/`, application);
+    clearCacheByKey(gatewayAPI`/app_urls/`);
     if (props.onSuccessfulCreate) props.onSuccessfulCreate(newApplication);
     pageNavigate(PlatformRoute.ApplicationDetails, { params: { id: newApplication.id } });
   };
@@ -80,6 +83,7 @@ export function EditPlatformApplication() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
+  const { clearCacheByKey } = useClearCache();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: application } = useSWR<Application>(
@@ -106,6 +110,7 @@ export function EditPlatformApplication() {
       gatewayAPI`/applications/${id.toString()}/`,
       application
     );
+    clearCacheByKey(gatewayAPI`/app_urls/`);
     pageNavigate(PlatformRoute.ApplicationDetails, { params: { id: editedApplication.id } });
   };
 

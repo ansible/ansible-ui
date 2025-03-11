@@ -13,8 +13,10 @@ import {
 import { processProject } from './controller/controllerProcessProject';
 import { getProjectPlaybooks } from './controller/controllerProjectPlaybooks';
 import { controllerRelations } from './controller/controllerRelations';
+import { patchPolicySettings } from './controller/controllerSettings';
 import { getUnifiedJobs } from './controller/controllerUnifiedJobs';
 import { getUnifiedTemplates } from './controller/controllerUnifiedTemplates';
+import { getGatewayAppUrls } from './gateway/gatewayAppUrls';
 import { gatewayRelations } from './gateway/gatewayRelations';
 import { authenticatedGuard } from './handlers/authenticatedGuard';
 import { deleteItem } from './handlers/deleteItem';
@@ -31,7 +33,6 @@ import { mockData } from './mockData';
 import { mockOptions } from './mockOptions';
 import { logApiCallResponse } from './router/logApiCallResponse';
 import { Router } from './router/Router';
-import { patchPolicySettings } from './controller/controllerSettings';
 
 /** Mocks the API calls for the tests. */
 export async function mock(page: Page) {
@@ -61,6 +62,7 @@ export async function mock(page: Page) {
 
     // Gateway API
     .GET('/api/gateway/v1/session', () => ({ status: 200 }))
+    .GET('/api/gateway/v1/app_urls', getGatewayAppUrls)
 
     // Gateway Resource API
     .OPTIONS('/api/gateway/v1/:resource', getOptions())
