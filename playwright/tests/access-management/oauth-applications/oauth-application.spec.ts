@@ -37,6 +37,12 @@ test('application - create and delete', async ({ page }) => {
   await expect(page.getByLabel('Application').locator('#name')).toContainText(applicationName);
   await page.getByLabel('Close').click();
 
+  await expect(page.locator('#application-links')).toBeVisible();
+  await page.locator('#application-links').click();
+  await expect(
+    page.getByRole('navigation').getByRole('link', { name: applicationName, exact: true })
+  ).toBeVisible();
+
   // Verify OAuth application in the details page
   await expect(page.getByRole('heading', { name: applicationName, exact: true })).toBeVisible();
   await expect(page.locator('#name')).toContainText(applicationName);

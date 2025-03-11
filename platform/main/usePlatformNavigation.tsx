@@ -40,6 +40,10 @@ import { usePersonaView } from './persona-view/usePersonaView';
 import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 import { PolicySettingsCategoryForm } from '@ansible/awx-ui/administration/settings/PolicySettingsEdit';
 import { AwxPolicySettingsDetailsPage } from '@ansible/awx-ui/administration/settings/AwxPolicySettingsDetails';
+import { useGet } from '@ansible/common-ui/crud/useGet';
+import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
+import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -51,6 +55,8 @@ export function usePlatformNavigation() {
   const platformAccessNavigation = usePlatformAccessNavigation();
   const platformSettingsNavigation = usePlatformSettingsNavigation();
   const platformResourcesNavigation = useGetPlatformResourceRoutes();
+
+  const { data: oauthApplications } = useGet<AwxItemsResponse<Application>>(gatewayAPI`/app_urls/`);
 
   const { activePersonaViewId } = usePersonaView();
 
@@ -80,13 +86,39 @@ export function usePlatformNavigation() {
     // Automation Content
     navigationItems.push(automationContentNavigation);
 
+    if (oauthApplications && oauthApplications.results.length > 0) {
+      const appsWithLinks = oauthApplications.results
+        .filter((app) => !!app.app_url)
+        .filter((app, index, self) => {
+          return self.findIndex((a) => a.name === app.name && a.app_url === app.app_url) === index;
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+      if (appsWithLinks.length > 0) {
+        navigationItems.push({
+          label: t('Application Links'),
+          path: 'links',
+          children: oauthApplications.results.map((app) => ({
+            label: app.name,
+            href: app.app_url,
+            path: '',
+            element: <></>,
+          })),
+        });
+      }
+    }
+
     // Lightspeed
-    navigationItems.push({
-      id: PlatformRoute.Lightspeed,
-      label: t('Ansible Lightspeed'),
-      path: 'lightspeed',
-      element: <Lightspeed />,
-    });
+    const lightspeedApplication = oauthApplications?.results.find((app) =>
+      app.name.toLocaleLowerCase().includes('lightspeed')
+    );
+    if (!lightspeedApplication || !lightspeedApplication.app_url) {
+      navigationItems.push({
+        id: PlatformRoute.Lightspeed,
+        label: t('Ansible Lightspeed'),
+        path: 'lightspeed',
+        element: <Lightspeed />,
+      });
+    }
 
     // Access
     navigationItems.push(platformAccessNavigation);
@@ -168,6 +200,7 @@ export function usePlatformNavigation() {
     platformResourcesNavigation,
     managedCloudInstall,
     activePersonaViewId,
+    oauthApplications,
   ]);
 
   return pageNavigationItems;
