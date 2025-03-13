@@ -282,6 +282,7 @@ describe('Workflow Visualizer', () => {
           cy.navigateTo('awx', 'templates');
           cy.setTableView('table');
           cy.filterTableBySearch(workflowJobTemplate.name);
+          cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
           cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
           cy.get('a[href*="/visualizer"]').click();
           cy.contains('Workflow Visualizer').should('be.visible');
@@ -512,7 +513,7 @@ describe('Workflow Visualizer Prompt Step', () => {
   it('Should update skip tags', () => {
     cy.navigateTo('awx', 'templates');
     cy.setTableView('table');
-    cy.filterTableBySearch(workflowJobTemplate.name);
+    cy.filterTableBySingleSelect('name', workflowJobTemplate.name);
     cy.clickTableRowLink('name', workflowJobTemplate.name, { disableFilter: true });
     cy.get('a[href*="/visualizer"]').click();
     cy.contains('Workflow Visualizer').should('be.visible');
@@ -523,7 +524,7 @@ describe('Workflow Visualizer Prompt Step', () => {
     cy.getByDataCy('node-alias').type('Test Node');
     cy.clickButton('Next');
     // Prompt steps don't show up right away in Cypress - assert that the "Prompt" step in the wizard nav is visible, as well as the form label name ("Skip tags")
-    cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').contains('Prompts');
+    cy.get('[data-cy="wizard-nav-item-nodePromptsStep"]').contains('Prompts').click();
     cy.get('[data-cy="prompt.skip_tags-form-group"]').contains('Skip tags');
 
     cy.getByDataCy('prompt.skip_tags-typeahead-input').within(() => {
