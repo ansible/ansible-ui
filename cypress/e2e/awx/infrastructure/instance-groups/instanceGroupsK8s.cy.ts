@@ -59,9 +59,7 @@ describe('Instance Groups: Instances Tab', () => {
 
     cy.clickTab(/^Instances$/, true);
     cy.contains('There are currently no instances added').should('be.visible');
-    cy.get('[data-cy="Please associate an instance by using the button below."]').should(
-      'be.visible'
-    );
+    cy.contains('Please associate an instance by using the button below.').should('be.visible');
     cy.getByDataCy('associate-instance').click();
     cy.get('[data-ouia-component-type="PF5/ModalContent"]').within(() => {
       cy.get('header').contains('Select instances');
@@ -79,7 +77,6 @@ describe('Instance Groups: Instances Tab', () => {
       .then((response) => {
         expect(response?.statusCode).to.eql(204);
       });
-    cy.clickModalButton('Close');
     cy.intercept('PATCH', awxAPI`/instances/*/`).as('disableInstance');
     cy.getByDataCy('toggle-switch').should('be.visible').click();
     cy.wait('@disableInstance')
@@ -150,11 +147,8 @@ describe('Instance Groups: Instances Tab', () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(204);
         });
-      cy.clickModalButton('Close');
       cy.contains('There are currently no instances added').should('be.visible');
-      cy.get('[data-cy="Please associate an instance by using the button below."]').should(
-        'be.visible'
-      );
+      cy.contains('Please associate an instance by using the button below.').should('be.visible');
       cy.deleteAwxInstanceGroup(instanceGroupDisassociate, { failOnStatusCode: false });
       arrayOfInstance.map(({ id }) => cy.removeAwxInstance(id?.toString()));
     });
@@ -188,7 +182,6 @@ describe('Instance Groups: Instances Tab', () => {
       cy.get('button').contains('Run health check').click();
     });
     cy.assertModalSuccess();
-    cy.clickModalButton('Close');
     cy.wait('@runHealthCheck')
       .then((response) => {
         expect(response.response?.statusCode).to.eql(200);

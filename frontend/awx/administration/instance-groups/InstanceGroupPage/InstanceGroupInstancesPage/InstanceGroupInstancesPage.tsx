@@ -14,6 +14,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { Instance } from '../../../../interfaces/Instance';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { useIGInstanceRowActions } from '../hooks/useIGInstanceRowActions';
+import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 
 export function InstanceGroupInstancesPage() {
   const { t } = useTranslation();
@@ -24,7 +25,7 @@ export function InstanceGroupInstancesPage() {
     refresh,
   } = useGetItem<Instance>(awxAPI`/instances`, params.instance_id);
 
-  const { data: instanceGroup } = useGetItem<Instance>(awxAPI`/instance_groups`, params.id);
+  const { data: instanceGroup } = useGetItem<InstanceGroup>(awxAPI`/instance_groups`, params.id);
 
   const itemActions = useIGInstanceRowActions(refresh);
   const getPageUrl = useGetPageUrl();
@@ -42,7 +43,7 @@ export function InstanceGroupInstancesPage() {
             to: getPageUrl(AwxRoute.InstanceGroups),
           },
           {
-            label: instanceGroup?.hostname,
+            label: instanceGroup?.name,
           },
           {
             label: t('Instances'),

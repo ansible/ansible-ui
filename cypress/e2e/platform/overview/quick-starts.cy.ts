@@ -1,13 +1,10 @@
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
 
 describe('If SaaS Build', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL) {
+        cy.log('Test/tests should not run on this deployment.');
         this.skip();
       } else {
         cy.log('Run these tests');
