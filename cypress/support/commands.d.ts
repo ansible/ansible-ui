@@ -1873,6 +1873,8 @@ declare global {
 
       getHubTeamByAnsibleId(teamAnsibleId: string | undefined): Chainable<HubTeam>;
 
+      checkBuildType(): Chainable<string | undefined>;
+
       createPlatformUser(user?: Partial<PlatformUser>): Chainable<PlatformUser>;
       getUserForMigration(
         userType: UpgradeUserType

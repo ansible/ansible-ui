@@ -1,11 +1,9 @@
 import { randomString } from '@ansible/ansible-ui-framework/utils/random-string';
 import { NotificationTemplate } from '@ansible/awx-ui/interfaces/NotificationTemplate';
 import { Organization } from '@ansible/awx-ui/interfaces/Organization';
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { AZURE_URL, SAAS_URL } from '../../../support/constants';
 import { gatewayAPI } from '../../../support/formatApiPathForPlatform';
 import { randomE2Ename } from '../../../support/utils';
 
@@ -139,10 +137,9 @@ describe('Platform Organizations - Create, Edit and Delete', () => {
 
 describe('If SaaS Build', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        cy.log('Test/tests should not run on this deployment.');
         this.skip();
       } else {
         cy.log('Run these tests');

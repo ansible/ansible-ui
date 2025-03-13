@@ -13,6 +13,7 @@ export enum SERVER_NAME {
 }
 
 export const SAAS_URL: string = 'aws.ansiblecloud.com';
+export const AZURE_URL: string = 'az.ansiblecloud.com';
 
 export interface AccessTabResource {
   name: string;

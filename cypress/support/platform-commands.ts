@@ -18,12 +18,13 @@ import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformI
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
-import { UpgradeUserType, usersForMigration } from './constants';
+import { AZURE_URL, SAAS_URL, UpgradeUserType, usersForMigration } from './constants';
 import { awxAPI } from './formatApiPathForAwx';
 import { edaAPI } from './formatApiPathForEDA';
 import { hubAPI } from './formatApiPathForHub';
 import { gatewayAPI } from './formatApiPathForPlatform';
 import './rest-commands';
+import { Settings } from '@ansible/awx-ui/interfaces/Settings';
 
 /* The `Cypress.Commands.add('platformLogin', () => { ... })` function is a custom Cypress command that
 handles the login process for a platform application. Here's a breakdown of what it does: */
@@ -610,4 +611,20 @@ Cypress.Commands.add('getPlatformApis', () => {
       galaxy?: string;
     };
   }>('/api/');
+});
+
+Cypress.Commands.add('checkBuildType', () => {
+  cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
+    const baseUrl = data.TOWER_URL_BASE;
+    const parseAzure = baseUrl.includes(AZURE_URL);
+    const parseSaas = baseUrl.includes(SAAS_URL);
+    if (parseSaas) {
+      return SAAS_URL;
+    }
+    if (parseAzure) {
+      return AZURE_URL;
+    } else {
+      return '';
+    }
+  });
 });
