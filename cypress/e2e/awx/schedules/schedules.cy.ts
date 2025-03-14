@@ -291,15 +291,8 @@ describe('Schedules - Create and Delete', () => {
       cy.getBy('[data-cy="create-schedule"]').click();
       cy.selectDropdownOptionByResourceName('schedule_type', 'Inventory source');
       const endOfInvName = inventory.name.split(' ').slice(-1).toString();
-      cy.get('input[id="inventory-select-typeahead"]').click();
-      cy.get('[data-cy="inventory-form-group"]').within(() => {
-        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
-          delay: 200,
-        });
-      });
-      cy.get('li').contains(`${inventory.name}`).click();
-      cy.get('[id="inventory-source-select"]').click();
-      cy.get('li').contains(`${inventorySource.name}`).click();
+      cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
+      cy.singleSelectBy('[data-cy="inventory-source-select"]', inventorySource.name);
       cy.getBy('[data-cy="Submit"]').click();
       cy.getByDataCy('name').type(`${scheduleName}`);
       cy.singleSelectByDataCy('timezone', 'Zulu');

@@ -14,7 +14,6 @@ export interface JobTemplateForm
     | 'created_by'
     | 'execution_environment'
     | 'id'
-    | 'inventory'
     | 'job_tags'
     | 'last_job'
     | 'modified'
@@ -36,7 +35,6 @@ export interface JobTemplateForm
   execution_environment: { id: number; name: string } | null;
   id?: number;
   instance_groups: InstanceGroup[];
-  inventory: { name?: string; id?: number } | null;
   isProvisioningCallbackEnabled: boolean;
   isWebhookEnabled: boolean;
   job_tags: { name: string; value: string; label: string }[];
@@ -73,7 +71,7 @@ export interface JobTemplateCreate {
   extra_vars: string;
   forks: number;
   host_config_key: string;
-  inventory: number | null;
+  inventory: number;
   job_slice_count: number;
   job_tags: string | null;
   job_type: string;

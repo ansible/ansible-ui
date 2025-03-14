@@ -31,7 +31,7 @@ import { RESOURCE_TYPE } from '../constants';
 import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
 import { getResourceURL, shouldHideOtherStep } from './helpers';
 
-export function NodeTypeStep(props: { hasSourceNode?: boolean }) {
+export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
     useFormContext<WizardFormValues>();
 

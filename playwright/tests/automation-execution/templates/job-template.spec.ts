@@ -322,7 +322,7 @@ test(
     await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
     await expect(page.getByLabel('OPA policy')).toBeVisible();
     await page.getByLabel('OPA policy').fill('testpkg/testrule');
-    await page.getByLabel('Inventory * Prompt on launch').click();
+    await page.getByRole('button', { name: 'Inventory' }).click();
     await page.getByRole('option', { name: inventoryName }).click();
     const projectName = 'Demo Project';
     await page.locator('#project-select').click();

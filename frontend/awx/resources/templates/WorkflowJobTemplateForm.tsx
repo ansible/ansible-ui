@@ -52,12 +52,12 @@ export function EditWorkflowJobTemplate() {
 
     await requestPatch<WorkflowJobTemplateForm>(awxAPI`/workflow_job_templates/${id.toString()}/`, {
       ...rest,
-      inventory: values.inventory?.id || null,
+      inventory: values.inventory?.id ?? null,
       job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
       organization: values?.organization,
       skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
-      webhook_credential: values.webhook_credential?.id || null,
-      webhook_service: values.webhook_service || '',
+      webhook_credential: values.webhook_credential?.id ?? null,
+      webhook_service: values.webhook_service ?? '',
     });
     (cache as unknown as { clear: () => void }).clear?.();
 
@@ -81,13 +81,13 @@ export function EditWorkflowJobTemplate() {
       extra_vars: workflowJobTemplate.extra_vars || '---',
       inventory: workflowJobTemplate.summary_fields.inventory || null,
       isWebhookEnabled: Boolean(workflowJobTemplate.related?.webhook_receiver),
-      job_tags: parseStringToTagArray(workflowJobTemplate.job_tags || ''),
-      organization: workflowJobTemplate?.organization || null,
+      job_tags: parseStringToTagArray(workflowJobTemplate.job_tags ?? ''),
+      organization: workflowJobTemplate?.organization ?? null,
       labels: workflowJobTemplate.summary_fields?.labels?.results || [],
-      limit: workflowJobTemplate.limit || '',
+      limit: workflowJobTemplate.limit ?? '',
       name: workflowJobTemplate.name || '',
-      scm_branch: workflowJobTemplate.scm_branch || '',
-      skip_tags: parseStringToTagArray(workflowJobTemplate.skip_tags || ''),
+      scm_branch: workflowJobTemplate.scm_branch ?? '',
+      skip_tags: parseStringToTagArray(workflowJobTemplate.skip_tags ?? ''),
       webhook_credential: workflowJobTemplate.summary_fields.webhook_credential || null,
       webhook_key: t('a new webhook key will be generated on save.').toUpperCase(),
       webhook_url: workflowJobTemplate.related?.webhook_receiver

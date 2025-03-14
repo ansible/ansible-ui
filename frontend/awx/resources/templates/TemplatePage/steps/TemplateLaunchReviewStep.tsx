@@ -16,7 +16,6 @@ import { Survey } from '../../../../interfaces/Survey';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
-import { ConditionalField } from './ConditionalField';
 import { SummaryFieldCredential } from '../../../../interfaces/summary-fields/summary-fields';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { LaunchConfigCredential } from '../../../../interfaces/LaunchConfiguration';
@@ -70,7 +69,7 @@ function processSurvey(
   return jsonToYaml(JSON.stringify(mergedData));
 }
 
-export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
+export function TemplateLaunchReviewStep(props: Readonly<{ template: JobTemplate }>) {
   const { template } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
@@ -87,7 +86,7 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
     prompt?.inventory?.id ?? ''
   );
 
-  let extraVarDetails = prompt?.extra_vars || '{}';
+  let extraVarDetails = prompt?.extra_vars ?? '{}';
   if (survey) {
     extraVarDetails = processSurvey(prompt?.extra_vars ?? '', survey, surveyConfig ?? null);
   }
@@ -112,20 +111,21 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           {template.summary_fields?.organization?.name}
         </Link>
       </PageDetail>
-      <ConditionalField isHidden={!fullInventory}>
-        <PageDetail label={t`Inventory`} isEmpty={!fullInventory?.id}>
-          <Link
-            to={getPageUrl(AwxRoute.InventoryDetails, {
-              params: {
-                id: fullInventory?.id,
-                inventory_type: inventoryUrlPaths[fullInventory?.kind as string],
-              },
-            })}
-          >
-            {prompt?.inventory?.name}
-          </Link>
-        </PageDetail>
-      </ConditionalField>
+      <PageDetail
+        label={t`Inventory`}
+        isEmpty={!fullInventory?.id && !template?.summary_fields?.inventory?.id}
+      >
+        <Link
+          to={getPageUrl(AwxRoute.InventoryDetails, {
+            params: {
+              id: fullInventory?.id,
+              inventory_type: inventoryUrlPaths[fullInventory?.kind as string],
+            },
+          })}
+        >
+          {fullInventory?.name ?? template?.summary_fields?.inventory?.name}
+        </Link>
+      </PageDetail>
       {template.type === 'job_template' && (
         <PageDetail label={t`Project`} isEmpty={!template.summary_fields.project}>
           <Link
@@ -178,10 +178,10 @@ export function TemplateLaunchReviewStep(props: { template: JobTemplate }) {
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Forks')}>{prompt?.forks || 0}</PageDetail>
+      <PageDetail label={t('Forks')}>{prompt?.forks ?? 0}</PageDetail>
       <PageDetail label={t('Limit')}>{prompt?.limit}</PageDetail>
       <PageDetail label={t('Verbosity')}>{verbosityString}</PageDetail>
-      <PageDetail label={t('Timeout')}>{prompt?.timeout || 0}</PageDetail>
+      <PageDetail label={t('Timeout')}>{prompt?.timeout ?? 0}</PageDetail>
       <PageDetail label={t('Show changes')}>{prompt?.diff_mode ? t`On` : t`Off`}</PageDetail>
       <PageDetail label={t('Job slicing')}>{prompt?.job_slice_count}</PageDetail>
       <PageDetail label={t('Labels')} isEmpty={isEmpty(prompt?.labels)}>

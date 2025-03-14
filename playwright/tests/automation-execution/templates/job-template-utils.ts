@@ -36,7 +36,7 @@ export async function createJobTemplate(
     await page.locator('#ask_credential_on_launch').check();
     await page.locator('#ask_instance_groups_on_launch').check();
   } else {
-    await page.getByLabel('Inventory * Prompt on launch').click();
+    await page.getByRole('button', { name: 'Inventory' }).click();
     await page.getByRole('option', { name: inventoryName }).click();
   }
   const projectName = options.projectName ?? 'Demo Project';

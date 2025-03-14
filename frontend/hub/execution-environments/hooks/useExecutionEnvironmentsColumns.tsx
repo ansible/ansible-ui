@@ -20,9 +20,13 @@ export function useExecutionEnvironmentsColumns(_options?: {
         cell: (executionEnvironment) => (
           <TextCell
             text={executionEnvironment.name}
-            to={getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
-              params: { id: executionEnvironment.name },
-            })}
+            to={
+              _options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.ExecutionEnvironmentDetails, {
+                    params: { id: executionEnvironment.name },
+                  })
+            }
           />
         ),
         value: (executionEnvironment) => executionEnvironment.name,
@@ -59,7 +63,7 @@ export function useExecutionEnvironmentsColumns(_options?: {
         cell: (ee) => <Label>{ee.pulp?.repository?.remote ? t`Remote` : t`Local`}</Label>,
       },
     ],
-    [getPageUrl, t]
+    [_options?.disableLinks, getPageUrl, t]
   );
   return tableColumns;
 }

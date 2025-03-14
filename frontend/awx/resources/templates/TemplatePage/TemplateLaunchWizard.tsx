@@ -208,12 +208,12 @@ export function LaunchWizard({
   config,
   handleSubmit,
   jobType,
-}: {
+}: Readonly<{
   template: JobTemplate;
   config: LaunchConfiguration;
   handleSubmit: (values: TemplateLaunch) => Promise<void>;
   jobType: string;
-}) {
+}>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { defaults } = config;

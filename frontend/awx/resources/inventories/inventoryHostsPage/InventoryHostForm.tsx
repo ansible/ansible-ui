@@ -25,7 +25,7 @@ import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetHost } from '../../hosts/hooks/useGetHost';
 import { useGetInventory } from '../InventoryPage/InventoryPage';
-import { PageFormSelectInventory } from '../components/PageFormInventorySelect';
+import { PageFormInventorySelect } from '../components/PageFormInventorySelect';
 
 export interface IHostInput {
   name: string;
@@ -62,7 +62,7 @@ export function CreateHost() {
   }, [getRequest, params?.group_id]);
 
   const onSubmit: PageFormSubmitHandler<IHostInput> = async (hostInput: IHostInput) => {
-    const inventory_id = params.id || hostInput.inventory?.id;
+    const inventory_id = params.id ?? hostInput.inventory?.id;
 
     const modifiedHostInput = { ...hostInput, inventory: Number(inventory_id) };
     const newHost = params?.group_id
@@ -292,7 +292,7 @@ export function EditHost() {
   );
 }
 
-function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
+function HostInputs(props: Readonly<{ edit_mode?: boolean; inventory_host?: boolean }>) {
   const { t } = useTranslation();
 
   return (
@@ -318,7 +318,7 @@ function HostInputs(props: { edit_mode?: boolean; inventory_host?: boolean }) {
         />
       )}
       {!props.inventory_host && !props.edit_mode && (
-        <PageFormSelectInventory
+        <PageFormInventorySelect
           name="inventory.id"
           isRequired
           labelHelp={t('Select the inventory that this host will belong to.')}

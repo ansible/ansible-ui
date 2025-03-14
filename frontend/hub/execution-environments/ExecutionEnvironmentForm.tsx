@@ -7,7 +7,6 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { useGet } from '@ansible/common-ui/crud/useGet';
@@ -15,7 +14,7 @@ import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalida
 import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import { TagIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { HubError } from '../common/HubError';
@@ -26,7 +25,9 @@ import { hubAPIPatch, hubAPIPost, hubAPIPut } from '../common/api/hub-api-utils'
 import { HubItemsResponse } from '../common/useHubView';
 import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
-import { useSelectRegistrySingle } from './hooks/useRegistrySelector';
+import { PageFormSingleSelectHubResource } from '../common/PageFormSingleSelectHubResource';
+import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
+import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -36,7 +37,7 @@ export function EditExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="edit" />;
 }
 
-function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
+function ExecutionEnvironmentForm(props: Readonly<{ mode: 'add' | 'edit' }>) {
   const page_size = 50;
   const { t } = useTranslation();
   const navigate = usePageNavigate();
@@ -44,6 +45,11 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const mode = props.mode;
   const params = useParams<{ id?: string }>();
   const { clearCacheByKey } = useClearCache();
+
+  const columns = useExecutionEnvironmentsColumns({
+    disableLinks: true,
+  });
+  const filters = useExecutionEnvironmentFilters();
 
   const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
   const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
@@ -61,9 +67,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
   const executionEnvironment = useGet<ExecutionEnvironment>(eeUrl);
 
   const singleRegistryUrl =
-    mode === 'edit' &&
-    executionEnvironment.data &&
-    executionEnvironment.data?.pulp?.repository?.remote?.registry
+    mode === 'edit' && executionEnvironment.data?.pulp?.repository?.remote?.registry
       ? hubAPI`/_ui/v1/execution-environments/registries/${executionEnvironment.data?.pulp?.repository?.remote?.registry}/`
       : '';
 
@@ -83,17 +87,6 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
     setTagsToExclude(executionEnvironment.data?.pulp?.repository?.remote?.exclude_tags || []);
     setTagsToInclude(executionEnvironment.data?.pulp?.repository?.remote?.include_tags || []);
   }
-
-  const selectRegistrySingle = useSelectRegistrySingle();
-  const registrySelector = selectRegistrySingle.openBrowse;
-
-  const query = useCallback(() => {
-    return Promise.resolve({
-      total: registry?.data?.meta?.count || 0,
-      values: registry?.data?.data || [],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registry.data]);
 
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironmentFormProps> = async (
     formData: ExecutionEnvironmentFormProps
@@ -115,7 +108,7 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       if (isRemote && !isNew) {
         await hubAPIPut<ExecutionEnvironment>(
           hubAPI`/_ui/v1/execution-environments/remotes/${
-            executionEnvironment.data?.pulp?.repository?.remote?.id || ''
+            executionEnvironment.data?.pulp?.repository?.remote?.id ?? ''
           }/`,
           payload
         );
@@ -125,9 +118,9 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
       if (formData.description !== executionEnvironment.data?.description) {
         await hubAPIPatch(
           pulpAPI`/distributions/container/container/${
-            executionEnvironment.data?.pulp?.distribution?.id || ''
+            executionEnvironment.data?.pulp?.distribution?.id ?? ''
           }/`,
-          { description: formData.description || null }
+          { description: formData.description ?? null }
         );
         clearCacheByKey(pulpAPI`/distributions/container/container/`);
       }
@@ -234,20 +227,17 @@ function ExecutionEnvironmentForm(props: { mode: 'add' | 'edit' }) {
                 placeholder={t('Enter upstream name')}
                 isRequired
               />
-
-              <PageFormAsyncSelect<ExecutionEnvironmentFormProps>
+              <PageFormSingleSelectHubResource<ExecutionEnvironment>
                 name="registry"
                 label={t('Registry')}
                 placeholder={t('Select registry')}
-                query={query}
-                loadingPlaceholder={t('Loading registry...')}
-                loadingErrorText={t('Error loading registry')}
-                limit={page_size}
-                valueToString={(value: ExecutionEnvironment) => value.name}
-                openSelectDialog={registrySelector}
-                isRequired
+                queryPlaceholder={t('Loading registry...')}
+                queryErrorText={t('Error loading registry')}
+                isRequired={true}
+                url={hubAPI`/_ui/v1/execution-environments/registries/`}
+                tableColumns={columns}
+                toolbarFilters={filters}
               />
-
               <TagsSelector tags={tagsToInclude} setTags={setTagsToInclude} mode={'include'} />
               <TagsSelector tags={tagsToExclude} setTags={setTagsToExclude} mode={'exclude'} />
             </>
@@ -290,11 +280,13 @@ type Registry = {
   name: string;
 };
 
-function TagsSelector(props: {
-  tags: string[];
-  setTags: (tags: string[]) => void;
-  mode: 'exclude' | 'include';
-}) {
+function TagsSelector(
+  props: Readonly<{
+    tags: string[];
+    setTags: (tags: string[]) => void;
+    mode: 'exclude' | 'include';
+  }>
+) {
   const [tagsText, setTagsText] = useState<string>('');
   const { tags, setTags, mode } = props;
   const { t } = useTranslation();

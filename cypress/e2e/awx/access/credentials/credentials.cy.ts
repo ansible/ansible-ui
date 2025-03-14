@@ -371,8 +371,7 @@ describe('Credentials', () => {
       cy.clickLink(/^Create template$/);
       cy.verifyPageTitle('Create job template');
       cy.getByDataCy('name').type(jobTemplateName);
-      cy.getBy('[data-cy="inventory-form-group"]').click();
-      cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}{downArrow}{enter}`);
+      cy.singleSelectBy('[data-cy="inventory"]', awxInventory.name);
       cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.multiSelectByDataCy('credential', [machineCredential.name]);

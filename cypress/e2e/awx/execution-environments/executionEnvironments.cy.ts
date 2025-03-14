@@ -342,13 +342,7 @@ describe('Execution Environments', () => {
       cy.clickLink(/^Create job template$/);
       cy.getByDataCy('name').type(jtName);
       const endOfInvName = inventory.name.split(' ').slice(-1).toString();
-      cy.get('input[id="inventory-select-typeahead"]').click();
-      cy.get('[data-cy="inventory-form-group"]').within(() => {
-        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
-          delay: 200,
-        });
-      });
-      cy.get('li').contains(`${inventory.name}`).click();
+      cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
       cy.selectAsyncSingleSelectOption('project-select', project.name);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.singleSelectBy('[data-cy="executionEnvironment"]', execEnvName);
