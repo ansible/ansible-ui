@@ -55,13 +55,7 @@ describe('Job Templates Tests', function () {
       cy.getBy('[data-cy="name"]').type(jtName);
       cy.getBy('[data-cy="description"]').type(jtDescription);
       const endOfInvName = awxInventory.name.split(' ').slice(-1).toString();
-      cy.get('input[id="inventory-select-typeahead"]').click();
-      cy.get('[data-cy="inventory-form-group"]').within(() => {
-        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
-          delay: 200,
-        });
-      });
-      cy.get('li').contains(`${awxInventory.name}`).click();
+      cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
       cy.selectAsyncSingleSelectOption('project-select', awxProject.name);
       cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
       cy.getBy('[data-cy="Submit"]').click();
@@ -121,10 +115,8 @@ describe('Job Templates Tests', function () {
             cy.getBy('button[data-cy="credential"]').click();
             cy.get('[data-cy="search-input"]').find('input').type(`${machineCredential.name}`);
             cy.get('li').contains(`${machineCredential.name}`).click();
-            cy.getBy('[data-cy="inventory-form-group"]').click();
-            cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}`);
-            cy.get('li').contains(`${awxInventory.name}`).click();
             cy.get('body').click(0, 0);
+            cy.singleSelectBy('[data-cy="inventory"]', awxInventory.name);
             cy.singleSelectBy(
               '[data-cy="executionEnvironment"]',
               'Control Plane Execution Environment'
@@ -179,10 +171,8 @@ describe('Job Templates Tests', function () {
             cy.getBy('button[data-cy="credential"]').click();
             cy.get('[data-cy="search-input"]').find('input').type(`${machineCredential.name}`);
             cy.get('li').contains(`${machineCredential.name}`).click();
-            cy.getBy('[data-cy="inventory-form-group"]').click();
-            cy.getBy('[id="inventory-select-typeahead"]').type(`${awxInventory.name}`);
-            cy.get('li').contains(`${awxInventory.name}`).click();
             cy.get('body').click(0, 0);
+            cy.singleSelectBy('[data-cy="inventory"]', awxInventory.name);
             cy.singleSelectBy(
               '[data-cy="executionEnvironment"]',
               'Control Plane Execution Environment'
@@ -319,13 +309,7 @@ describe('Job Templates Tests', function () {
               'saveJT'
             );
             const endOfInvName = inventoryToAssign.name.split(' ').slice(-1).toString();
-            cy.get('input[id="inventory-select-typeahead"]').click();
-            cy.get('[data-cy="inventory-form-group"]').within(() => {
-              cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
-                delay: 200,
-              });
-            });
-            cy.get('li').contains(`${inventoryToAssign.name}`).click();
+            cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
             cy.getBy('[data-cy="Submit"]').click();
             cy.verifyPageTitle(jobTemplateToEdit.name);
             cy.hasDetail(/^Name$/, jobTemplateToEdit.name);

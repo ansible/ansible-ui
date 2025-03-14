@@ -3,31 +3,34 @@ import {
   IToolbarFilter,
   usePageDialog,
   QueryParams,
+  PageSelectOption,
 } from '@ansible/ansible-ui-framework';
 import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
 import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
 import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
-import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useMemo } from 'react';
-import { FieldPath, FieldValues, PathValue, useFormContext, useWatch } from 'react-hook-form';
-import { AwxItemsResponse } from './AwxItemsResponse';
-import { useAwxView } from './useAwxView';
-import { AllResources } from '../resources/templates/WorkflowVisualizer/types';
+import {
+  FieldPath,
+  FieldPathByValue,
+  FieldValues,
+  PathValue,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
+import { HubItemsResponse, PulpItemsResponse, useHubView } from './useHubView';
 
-type ResourceType = {
-  resource: AllResources;
-};
-
-export function PageFormSingleSelectAwxResource<
-  Resource extends { id: number; name: string; description?: string | null },
+export function PageFormSingleSelectHubResource<
+  Resource extends { name: string },
   FormData extends FieldValues = FieldValues,
   Name extends FieldPath<FormData> = FieldPath<FormData>,
   Value extends number = PathValue<FormData, Name>,
+  FieldName extends FieldPathByValue<FieldValues, number> = FieldPathByValue<FieldValues, number>,
 >(
   props: Readonly<{
     id?: string;
+    description?: string;
     name: Name;
     label: string;
     isRequired?: boolean;
@@ -43,13 +46,9 @@ export function PageFormSingleSelectAwxResource<
     additionalControls?: React.ReactNode;
     labelHelp?: string;
     queryParams?: QueryParams;
-    summaryFieldsPath?: string;
   }>
 ) {
   const id = useID(props);
-  const resourceObject = useWatch<ResourceType, 'resource'>({
-    name: 'resource',
-  });
   const queryOptions = useCallback<PageAsyncSelectOptionsFn<PathValue<FormData, Name>>>(
     async (options) => {
       try {
@@ -58,8 +57,6 @@ export function PageFormSingleSelectAwxResource<
         const urlSearchParams = new URLSearchParams(queryString);
         urlSearchParams.delete('page_size');
         urlSearchParams.set('page_size', '10');
-        urlSearchParams.delete('order_by');
-        urlSearchParams.set('order_by', 'name');
         if (props.queryParams) {
           for (const [key, value] of Object.entries(props.queryParams)) {
             if (Array.isArray(value)) {
@@ -71,21 +68,39 @@ export function PageFormSingleSelectAwxResource<
             }
           }
         }
+
         if (options.next) urlSearchParams.set('name__gt', options.next.toString());
         if (options.search) urlSearchParams.set('name__icontains', options.search);
-        const response = await requestGet<AwxItemsResponse<Resource>>(
+        let response;
+        if (props.name === 'remote') {
+          response = await requestGet<PulpItemsResponse<Resource>>(
+            baseUrl + '?' + decodeURIComponent(urlSearchParams.toString()),
+            options.signal
+          );
+          return {
+            remaining: response.count - response.results.length,
+            options:
+              response.results?.map((resource) => ({
+                label: resource.name,
+                value: resource as PathValue<FormData, Name>,
+              })) ?? [],
+            next: response.results[response.results.length - 1]?.name,
+          };
+        }
+        // props.name === 'registry'
+        response = await requestGet<HubItemsResponse<Resource>>(
           baseUrl + '?' + decodeURIComponent(urlSearchParams.toString()),
           options.signal
         );
+
         return {
-          remaining: response.count - response.results.length,
+          remaining: response.meta.count - response.data.length,
           options:
-            response.results?.map((resource) => ({
+            response.data?.map((resource) => ({
               label: resource.name,
-              value: resource.id as PathValue<FormData, Name>,
-              description: resource.description,
+              value: resource as PathValue<FormData, Name>,
             })) ?? [],
-          next: response.results[response.results.length - 1]?.name,
+          next: response.data[response.data.length - 1]?.name,
         };
       } catch (error) {
         return {
@@ -95,13 +110,23 @@ export function PageFormSingleSelectAwxResource<
         };
       }
     },
-    [props.url, props.queryParams]
+    [props.url, props.queryParams, props.name]
   );
 
   const [_, setDialog] = usePageDialog();
 
   const { setValue } = useFormContext<FormData>();
-  const value = useWatch<FormData>({ name: props.name });
+  const { registry, remote } = useWatch<FormData>();
+
+  const value = useMemo<string>(() => {
+    if (props.name === 'remote') {
+      /* eslint-disable @typescript-eslint/no-unsafe-member-access*/
+      /* eslint-disable @typescript-eslint/no-unsafe-return*/
+      return remote?.name;
+    }
+    return registry?.name;
+  }, [props.name, registry?.name, remote?.name]);
+
   const openSelectDialog = useCallback(
     (onSelect: (resource: Resource) => void) => {
       setDialog(
@@ -111,35 +136,29 @@ export function PageFormSingleSelectAwxResource<
           onSelect={onSelect}
           toolbarFilters={props.toolbarFilters}
           tableColumns={props.tableColumns}
-          defaultSelection={value ? [{ id: value }] : []}
+          defaultSelection={value ? [{ name: value }] : []}
           queryParams={props.queryParams}
         />
       );
     },
     [
-      props.label,
-      props.tableColumns,
-      props.toolbarFilters,
-      props.url,
       setDialog,
-      value,
+      props.label,
+      props.url,
+      props.toolbarFilters,
+      props.tableColumns,
       props.queryParams,
+      value,
     ]
   );
 
-  const queryLabel = useCallback(
-    (value: Value) => (
-      <AsyncQueryLabel
-        url={props.url.split('?')[0]}
-        id={value as unknown as number}
-        resourceName={
-          (resourceObject?.summary_fields as Record<string, { name: string }>)?.[
-            props.summaryFieldsPath ?? ''
-          ]?.name
-        }
-      />
-    ),
-    [props.summaryFieldsPath, props.url, resourceObject?.summary_fields]
+  const writeInOption = useCallback(
+    (searchString: string) =>
+      ({
+        label: searchString,
+        value: searchString,
+      }) as PageSelectOption<PathValue<FieldValues, FieldName>>,
+    []
   );
 
   return (
@@ -156,43 +175,43 @@ export function PageFormSingleSelectAwxResource<
       helperText={props.helperText}
       labelHelp={props.labelHelp}
       onBrowse={() =>
-        openSelectDialog((resource) =>
-          setValue(props.name, resource.id as PathValue<FormData, Name>)
-        )
+        openSelectDialog((resource) => setValue(props.name, resource as PathValue<FormData, Name>))
       }
-      queryLabel={queryLabel}
+      queryLabel={(value: Resource) => value.name}
       additionalControls={props.additionalControls}
+      writeInOption={writeInOption}
     />
   );
 }
 
-function SelectResource<Resource extends { id: number; name: string; description?: string | null }>(
+function SelectResource<Resource extends { name: string }>(
   props: Readonly<{
     title: string;
     url: string;
     onSelect: (resource: Resource) => void;
-    defaultSelection?: { id: number }[];
+    defaultSelection?: { name: string }[];
     toolbarFilters?: IToolbarFilter[];
     tableColumns: ITableColumn<Resource>[];
     queryParams?: QueryParams;
   }>
 ) {
   const urlSearchParams = useMemo(() => new URLSearchParams(props.url.split('?')[1]), [props.url]);
-
   const queryParams = useMemo(() => {
     const query: QueryParams = {};
     urlSearchParams.forEach((value, key) => (query[key] = value));
     return query;
   }, [urlSearchParams]);
 
-  const view = useAwxView<Resource>({
+  const view = useHubView<Resource>({
     url: props.url.split('?')[0],
     toolbarFilters: props.toolbarFilters,
     tableColumns: props.tableColumns,
+    keyFn: (v) => v.name,
     disableQueryString: true,
     defaultSelection: props.defaultSelection as Resource[],
     queryParams: props.queryParams ?? queryParams,
   });
+
   return (
     <SingleSelectDialog<Resource>
       title={props.title}

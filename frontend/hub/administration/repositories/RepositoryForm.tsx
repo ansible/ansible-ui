@@ -9,12 +9,11 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { PageFormAsyncSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSelect';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label } from '@patternfly/react-core';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode } from 'react';
 import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -32,7 +31,9 @@ import { PulpItemsResponse } from '../../common/useHubView';
 import { HubRoute } from '../../main/HubRoutes';
 import { HubRemote } from './../remotes/Remotes';
 import { Repository } from './Repository';
-import { useSelectRemoteSingle } from './hooks/useRemoteSelector';
+import { PageFormSingleSelectHubResource } from '../../common/PageFormSingleSelectHubResource';
+import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
+import { useRepositoryFilters } from './hooks/useRepositorySelector';
 
 interface RepositoryFormProps {
   remote: HubRemote | string | null;
@@ -55,6 +56,9 @@ export function RepositoryForm() {
   const isEdit = !!id;
   let isDistributionDisabled = false;
   let repo: Repository | null;
+
+  const columns = useRepositoriesColumns({ disableLinks: true });
+  const filters = useRepositoryFilters();
   const onSubmit = (data: RepositoryFormProps) => {
     // format inputs to correct payload
     const payload = { ...data };
@@ -78,14 +82,14 @@ export function RepositoryForm() {
 
     const getDistribution = (repositoryPulpHref: string) => {
       const basePathTransform = (name: string) => name.replaceAll(/[^-a-zA-Z0-9_/]/g, '_');
-      let distributionName: string = data?.name || '';
+      let distributionName: string = data?.name ?? '';
       return postHubRequest(pulpAPI`/distributions/ansible/ansible/`, {
         base_path: basePathTransform(distributionName),
         name: data.name,
         repository: repositoryPulpHref,
       }).catch(() => {
         // if distribution already exists, try a numeric suffix to name & base_path
-        distributionName = data.name || '' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+        distributionName = data.name ?? '' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
         return postHubRequest(pulpAPI`/distributions/ansible/ansible/`, {
           base_path: basePathTransform(distributionName),
           name: data.name,
@@ -97,7 +101,7 @@ export function RepositoryForm() {
     const promise = isEdit
       ? putHubRequest(
           pulpAPI`/repositories/ansible/ansible/${
-            parsePulpIDFromURL(repo?.pulp_href || '') || ''
+            parsePulpIDFromURL(repo?.pulp_href ?? '') ?? ''
           }/`,
           payload
         )
@@ -117,7 +121,7 @@ export function RepositoryForm() {
         let distroPromise = undefined;
         if (data.createDistribution && !error) {
           if (isEdit) {
-            distroPromise = getDistribution(repo?.pulp_href || '');
+            distroPromise = getDistribution(repo?.pulp_href ?? '');
           } else {
             distroPromise = getDistribution(pulp_href || '');
           }
@@ -151,20 +155,10 @@ export function RepositoryForm() {
   const remote = useGet<PulpItemsResponse<HubRemote>>(
     pulpAPI`/remotes/ansible/collection/?offset=0&limit=${page_size.toString()}`
   );
-  const query = useCallback(() => {
-    return Promise.resolve({
-      total: remote?.data?.count || 0,
-      values: remote?.data?.results || [],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [remote.data]);
-
-  const selectRemoteSingle = useSelectRemoteSingle();
-  const remoteSelector = selectRemoteSingle.openBrowse;
 
   const { basePath: baseData, loading: baseLoading } = useRepositoryBasePath(
-    repo?.name || '',
-    repo?.pulp_href || undefined
+    repo?.name ?? '',
+    repo?.pulp_href ?? undefined
   );
 
   if (isLoading || baseLoading) {
@@ -177,16 +171,17 @@ export function RepositoryForm() {
   const getRemote = (url: string): HubRemote | null => {
     return remote?.data?.results?.find((r) => r.pulp_href === url) || null;
   };
+
   if (!baseLoading && !!baseData && isEdit) {
     isDistributionDisabled = true;
   }
 
   const repositoryFormValues: RepositoryFormProps = {
-    name: repo?.name || '',
-    description: repo?.description || null,
-    retain_repo_versions: repo?.retain_repo_versions || 1,
+    name: repo?.name ?? '',
+    description: repo?.description ?? null,
+    retain_repo_versions: repo?.retain_repo_versions ?? 1,
     private: repo?.private || false,
-    pipeline: repo?.pulp_labels?.pipeline || 'none',
+    pipeline: repo?.pulp_labels?.pipeline ?? 'none',
     hide_from_search: repo?.pulp_labels
       ? Object.keys(repo.pulp_labels).includes('hide_from_search')
       : false,
@@ -194,12 +189,7 @@ export function RepositoryForm() {
     pulp_labels: repo?.pulp_labels || {},
     createDistribution: !isDistributionDisabled,
   };
-  function HookWrapper<TFieldValues extends FieldValues>(props: {
-    children: (value: UseFormSetValue<TFieldValues>) => ReactNode;
-  }) {
-    const { setValue } = useFormContext<TFieldValues>();
-    return <>{props.children(setValue)}</>;
-  }
+
   return (
     <PageLayout>
       <PageHeader
@@ -235,6 +225,7 @@ export function RepositoryForm() {
           label={t('Description')}
           placeholder={t('Enter description')}
         />
+
         <PageFormTextInput<RepositoryFormProps>
           name="retain_repo_versions"
           type="number"
@@ -328,22 +319,27 @@ export function RepositoryForm() {
         >
           <PageFormCheckbox<RepositoryFormProps> name="private" label={t('Make private')} />
         </PageFormGroup>
-        <PageFormAsyncSelect<RepositoryFormProps>
+        <PageFormSingleSelectHubResource<Repository>
           name="remote"
           label={t('Remote')}
-          labelHelpTitle={t('Remote')}
-          labelHelp={t('Setting a remote allows a repository to sync from elsewhere.')}
           placeholder={t('Select remote')}
-          query={query}
-          loadingPlaceholder={t('Loading remote...')}
-          loadingErrorText={t('Error loading remote')}
-          limit={page_size}
-          valueToString={(value: HubRemote) => {
-            return value.name;
-          }}
-          openSelectDialog={remoteSelector}
+          queryPlaceholder={t('Loading remote...')}
+          queryErrorText={t('Error loading remote')}
+          labelHelp={t('Setting a remote allows a repository to sync from elsewhere.')}
+          url={pulpAPI`/remotes/ansible/collection/`}
+          tableColumns={columns}
+          toolbarFilters={filters}
         />
       </HubPageForm>
     </PageLayout>
   );
+}
+
+export function HookWrapper<TFieldValues extends FieldValues>(
+  props: Readonly<{
+    children: (value: UseFormSetValue<TFieldValues>) => ReactNode;
+  }>
+) {
+  const { setValue } = useFormContext<TFieldValues>();
+  return <>{props.children(setValue)}</>;
 }

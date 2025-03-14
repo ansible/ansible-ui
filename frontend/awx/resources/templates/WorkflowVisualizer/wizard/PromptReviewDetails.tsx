@@ -16,6 +16,7 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import type { WizardFormValues } from '../types';
 import { processSurvey } from './helpers';
 import { CredentialDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
+import { Inventory } from '../../../../interfaces/Inventory';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
@@ -67,6 +68,11 @@ export function PromptReviewDetails() {
     awxAPI`/execution_environments/`,
     execution_environment?.id?.toString() ?? ''
   );
+  const { data: inventoryData } = useGetItem<Inventory>(
+    awxAPI`/inventories/`,
+    inventory?.id?.toString()
+  );
+
   const jobTags = typeof job_tags === 'string' ? parseStringToTagArray(job_tags) : job_tags;
   const skipTags = typeof skip_tags === 'string' ? parseStringToTagArray(skip_tags) : skip_tags;
   const verbosityString = useVerbosityString(Number(verbosity));
@@ -76,7 +82,7 @@ export function PromptReviewDetails() {
     constructed: 'constructed_inventory',
   };
 
-  let extraVarDetails = extra_vars || '{}';
+  let extraVarDetails = extra_vars ?? '{}';
   if (survey) {
     extraVarDetails = processSurvey(extra_vars ?? '', survey, surveyConfig ?? null);
   }
@@ -96,7 +102,10 @@ export function PromptReviewDetails() {
           {organization?.name}
         </Link>
       </PageDetail>
-      <PageDetail label={t`Inventory`} isEmpty={!inventory?.id}>
+      <PageDetail
+        label={t`Inventory`}
+        isEmpty={!inventoryData?.id && !template?.summary_fields?.inventory?.id}
+      >
         <Link
           to={getPageUrl(AwxRoute.InventoryDetails, {
             params: {
@@ -105,7 +114,7 @@ export function PromptReviewDetails() {
             },
           })}
         >
-          {inventory?.name}
+          {inventoryData?.name ?? template?.summary_fields?.inventory?.name}
         </Link>
       </PageDetail>
       {template.type === 'job_template' && (
@@ -162,10 +171,10 @@ export function PromptReviewDetails() {
           ))}
         </LabelGroup>
       </PageDetail>
-      <PageDetail label={t('Forks')}>{forks || 0}</PageDetail>
+      <PageDetail label={t('Forks')}>{forks ?? 0}</PageDetail>
       <PageDetail label={t('Limit')}>{limit}</PageDetail>
       <PageDetail label={t('Verbosity')}>{verbosityString}</PageDetail>
-      <PageDetail label={t('Timeout')}>{timeout || 0}</PageDetail>
+      <PageDetail label={t('Timeout')}>{timeout ?? 0}</PageDetail>
       <PageDetail label={t('Show changes')}>{diff_mode ? t`On` : t`Off`}</PageDetail>
       <PageDetail label={t('Job slicing')}>{job_slice_count}</PageDetail>
       <PageDetail label={t('Labels')} isEmpty={isEmpty(labels)}>

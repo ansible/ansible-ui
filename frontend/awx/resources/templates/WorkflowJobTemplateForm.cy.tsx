@@ -44,8 +44,8 @@ describe('Create job template ', () => {
   it('Should update fields properly', () => {
     cy.mount(<CreateWorkflowJobTemplate />);
     cy.get('[data-cy="name"]').type('Test');
-    cy.getBy('button[id="inventory"]').click();
-    cy.get('button[data-cy="browse-button"]').scrollIntoView().click({
+    cy.getBy('[data-cy="inventory"]').click();
+    cy.get('button[id="browse"]').scrollIntoView().click({
       force: true,
     });
     cy.getModal().within(() => {

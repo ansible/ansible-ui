@@ -5,7 +5,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PageFormManagementJobsSelect } from '../../../administration/management-jobs/components/PageFormManagementJobsSelect';
-import { RegularInventory } from '../../../interfaces/Inventory';
 import { PageFormInventorySelect } from '../../../resources/inventories/components/PageFormInventorySelect';
 import { PageFormInventorySourceSelect } from '../../../resources/inventories/components/PageFormInventorySourceSelect';
 import { PageFormProjectSelect } from '../../../resources/projects/components/PageFormProjectSelect';
@@ -18,7 +17,7 @@ export function ScheduleTypeInputs() {
   const params: { [string: string]: string } = useParams<{ id?: string; source_id?: string }>();
   const { resetField } = useFormContext();
 
-  const resourceInventory = useWatch({ name: 'resourceInventory' }) as RegularInventory;
+  const resourceInventory = useWatch({ name: 'resourceInventory' }) as number;
   const scheduleType = useWatch({
     name: 'schedule_type',
   }) as string;
@@ -64,10 +63,10 @@ export function ScheduleTypeInputs() {
                   )}
                   name="resourceInventory"
                 />
-                {resourceInventory && resourceInventory?.id ? (
+                {resourceInventory ? (
                   <PageFormInventorySourceSelect<ScheduleFormWizard>
                     isRequired
-                    inventoryId={resourceInventory?.id}
+                    inventoryId={resourceInventory}
                     name="resourceId"
                   />
                 ) : null}

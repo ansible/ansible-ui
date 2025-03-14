@@ -72,8 +72,8 @@ export function WorkflowJobTemplateDetails(props: {
           {summaryFields.organization?.name}
         </Link>
       </PageDetail>
-      <PageDetail label={t('Inventory')} isEmpty={!summaryFields.inventory}>
-        {summaryFields.inventory ? (
+      <PageDetail label={t('Inventory')} isEmpty={!summaryFields?.inventory}>
+        {summaryFields?.inventory ? (
           <Link
             to={getPageUrl(AwxRoute.InventoryDetails, {
               params: {
@@ -82,7 +82,7 @@ export function WorkflowJobTemplateDetails(props: {
               },
             })}
           >
-            {summaryFields.inventory?.name}
+            {summaryFields?.inventory?.name}
           </Link>
         ) : null}
       </PageDetail>

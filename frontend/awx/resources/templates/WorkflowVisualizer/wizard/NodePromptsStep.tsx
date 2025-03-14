@@ -47,7 +47,7 @@ export function NodePromptsStep({
   return (
     <PageFormGrid isVertical singleColumn>
       <ConditionalField isHidden={!config.ask_inventory_on_launch}>
-        <PageFormInventorySelect<WizardFormValues> name="prompt.inventory" isRequired />
+        <PageFormInventorySelect<WizardFormValues> name="prompt.inventory.id" isRequired />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_credential_on_launch}>
         <PageFormCredentialSelect<WizardFormValues>

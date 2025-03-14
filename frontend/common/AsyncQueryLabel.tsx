@@ -4,11 +4,14 @@ import { RequestError } from './crud/RequestError';
 import { useGetItem } from './crud/useGet';
 
 /** Asychronously queries a label from a URL */
-export function AsyncQueryLabel(props: {
-  url: string;
-  id: number | string | undefined;
-  field?: string;
-}): ReactNode {
+export function AsyncQueryLabel(
+  props: Readonly<{
+    url: string;
+    id: number | string | undefined;
+    field?: string;
+    resourceName?: string;
+  }>
+): ReactNode {
   const { data, isLoading, error } = useGetItem<Record<string, unknown>>(props.url, props.id, {
     refreshInterval: 0, // Disable refresh on querying labels
   });
@@ -23,8 +26,15 @@ export function AsyncQueryLabel(props: {
       if (requestError.statusCode === 404) {
         return props.id.toString();
       }
+      // AAP-40529
+      // Workaround for RBAC issues: a user with no permissions should
+      // still be able to see the value even if it can't access to it.
+      if (requestError.statusCode === 403) {
+        return props.resourceName;
+      } else {
+        return error.message;
+      }
     }
-    return error.message;
   }
 
   if (!data) {

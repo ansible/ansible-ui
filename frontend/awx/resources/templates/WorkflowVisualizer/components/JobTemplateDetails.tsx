@@ -29,6 +29,7 @@ import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
 import { useFeatureFlag } from '../../../../common/useFeatureFlags';
+import { Inventory } from '../../../../interfaces/Inventory';
 
 function useAggregateJobTemplateDetails({
   template,
@@ -55,7 +56,7 @@ function useAggregateJobTemplateDetails({
 
   const { data: fetchedEE } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,
-    String(promptValues?.execution_environment)
+    String(promptValues?.execution_environment?.id)
   );
 
   const credentials =
@@ -81,14 +82,14 @@ function useAggregateJobTemplateDetails({
   const jobSliceCount =
     promptValues?.job_slice_count ?? nodeValues?.job_slice_count ?? template.job_slice_count;
   const jobTags =
-    promptValues?.job_tags ?? parseStringToTagArray(nodeValues?.job_tags || template.job_tags);
+    promptValues?.job_tags ?? parseStringToTagArray(nodeValues?.job_tags ?? template.job_tags);
   const jobType = promptValues?.job_type ?? nodeValues?.job_type ?? template.job_type;
   const labels =
     promptValues?.labels ?? nodeLabels?.results ?? template.summary_fields.labels?.results;
   const limit = promptValues?.limit ?? nodeValues?.limit ?? template.limit;
   const scmBranch = promptValues?.scm_branch ?? nodeValues?.scm_branch ?? template.scm_branch;
   const skipTags =
-    promptValues?.skip_tags ?? parseStringToTagArray(nodeValues?.skip_tags || template.skip_tags);
+    promptValues?.skip_tags ?? parseStringToTagArray(nodeValues?.skip_tags ?? template.skip_tags);
   const timeout = Number(promptValues?.timeout ?? nodeValues?.timeout ?? template.timeout);
   const timeoutString = useGetTimeoutString(timeout);
   const templateTimeoutString = useGetTimeoutString(template.timeout);
@@ -149,10 +150,10 @@ function useAggregateJobTemplateDetails({
 export function JobTemplateDetails({
   node,
   template,
-}: {
+}: Readonly<{
   node: GraphNodeData;
   template: JobTemplate;
-}) {
+}>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
 
@@ -182,6 +183,11 @@ export function JobTemplateDetails({
     webhookKey,
   } = useAggregateJobTemplateDetails({ template, node });
 
+  const { data: inventoryData } = useGetItem<Inventory>(
+    awxAPI`/inventories/`,
+    inventory?.id?.toString()
+  );
+
   const hasPolicyAsCodeFlag = useFeatureFlag('FEATURE_POLICY_AS_CODE_ENABLED');
   return (
     <>
@@ -204,11 +210,11 @@ export function JobTemplateDetails({
       <PromptDetail
         label={t('Inventory')}
         isOverridden={inventory?.id !== template.summary_fields.inventory?.id}
-        overriddenValue={template.summary_fields.inventory?.name}
+        overriddenValue={inventoryData?.name ?? template.summary_fields.inventory?.name}
         isEmpty={!inventory}
       >
         <TextCell
-          text={inventory?.name}
+          text={inventoryData?.name}
           to={getPageUrl(AwxRoute.InventoryDetails, {
             params: { id: inventory?.id },
           })}
@@ -360,10 +366,10 @@ export function JobTemplateDetails({
 function CredentialsDetail({
   credentials = [],
   templateCredentials = [],
-}: {
+}: Readonly<{
   credentials: PromptFormValues['credentials'];
   templateCredentials: Credential[];
-}) {
+}>) {
   const { t } = useTranslation();
   const isMatch = arrayIdsMatch(
     credentials.map(({ id }) => ({ id })),
@@ -389,10 +395,10 @@ function CredentialsDetail({
 function InstanceGroupsDetail({
   instanceGroups = [],
   templateInstanceGroups = [],
-}: {
+}: Readonly<{
   instanceGroups: InstanceGroup[];
   templateInstanceGroups: InstanceGroup[];
-}) {
+}>) {
   const { t } = useTranslation();
   const isMatch = arrayIdsMatch(
     instanceGroups.map(({ id }) => ({

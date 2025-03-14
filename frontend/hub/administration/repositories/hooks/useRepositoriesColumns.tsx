@@ -19,7 +19,11 @@ export function useRepositoriesColumns(_options?: {
         cell: (repository) => (
           <TextCell
             text={repository.name}
-            to={getPageUrl(HubRoute.RepositoryPage, { params: { id: repository.name } })}
+            to={
+              _options?.disableLinks
+                ? undefined
+                : getPageUrl(HubRoute.RepositoryPage, { params: { id: repository.name } })
+            }
           />
         ),
         sort: 'name',
@@ -69,7 +73,7 @@ export function useRepositoriesColumns(_options?: {
         defaultSortDirection: 'desc',
       },
     ],
-    [t, getPageUrl]
+    [t, _options?.disableLinks, getPageUrl]
   );
   return tableColumns;
 }

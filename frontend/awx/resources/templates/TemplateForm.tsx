@@ -70,8 +70,7 @@ export function EditJobTemplate() {
     const formValues = {
       ...rest,
       project: values.project,
-      execution_environment: values.execution_environment?.id || null,
-      inventory: values.inventory?.id || null,
+      execution_environment: values.execution_environment?.id ?? null,
       job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
       skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
       webhook_credential: values.webhook_credential || null,
@@ -146,7 +145,6 @@ export function CreateJobTemplate() {
       execution_environment: values.execution_environment?.id
         ? values.execution_environment?.id
         : null,
-      inventory: values.inventory?.id || null,
       job_tags: stringifyTags(values.job_tags) === '' ? null : stringifyTags(values.job_tags),
       skip_tags: stringifyTags(values.skip_tags) === '' ? null : stringifyTags(values.skip_tags),
       webhook_credential: values.webhook_credential || null,

@@ -49,7 +49,7 @@ export function WorkflowJobTemplateInputs(
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_inventory_on_launch" />
         }
-        name="inventory"
+        name="inventory.id"
       />
       <PageFormTextInput<WorkflowJobTemplateForm>
         placeholder={t('Enter limit to reduce number of hosts')}

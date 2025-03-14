@@ -55,13 +55,7 @@ describe('Workflow Job Templates Tests', () => {
           cy.get('[data-cy="description"]').type('this is a new description');
           cy.singleSelectBy('[data-cy="organization"]', organization.name);
           const endOfInvName = inventory.name.split(' ').slice(-1).toString();
-          cy.get('input[id="inventory-select-typeahead"]').click();
-          cy.get('[data-cy="inventory-form-group"]').within(() => {
-            cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
-              delay: 200,
-            });
-          });
-          cy.get('li').contains(`${inventory.name}`).click();
+          cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
           cy.get('[data-cy="limit"]').type('mock-limit');
           cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
           cy.get('[data-cy="labels-typeahead-input"]').type(label.name.toString());
@@ -101,12 +95,7 @@ describe('Workflow Job Templates Tests', () => {
       cy.get('[data-cy="description"]').type('this is a description');
       cy.singleSelectBy('[data-cy="organization"]', organization.name);
       const endOfInvName = inventory.name.split(' ').slice(-1).toString();
-      cy.get('input[id="inventory-select-typeahead"]').click();
-      cy.get('[data-cy="inventory-form-group"]').within(() => {
-        cy.get('[data-ouia-component-id="menu-select"] input').type(`${endOfInvName}`, {
-          delay: 200,
-        });
-      });
+      cy.singleSelectBy('[data-cy="inventory"]', endOfInvName);
       cy.get('[data-cy="limit"]').type('mock-limit');
       cy.get('[data-cy="scm-branch"]').type('mock-scm-branch');
       cy.get('[data-cy="labels-typeahead-input"]').type(label.name.toString());

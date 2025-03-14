@@ -93,19 +93,6 @@ describe('Create job template ', () => {
     cy.verifyPageTitle('Create job template');
   });
 
-  it('Should display field error messages on internal server error', () => {
-    cy.intercept(
-      { method: 'GET', url: awxAPI`/inventories/*` },
-      { statusCode: 500, message: 'Internal Server Error' }
-    );
-    cy.intercept(
-      { method: 'GET', url: awxAPI`/projects/*` },
-      { statusCode: 500, message: 'Internal Server Error' }
-    );
-    cy.mount(<CreateJobTemplate />);
-    cy.contains('Error loading inventories').should('be.visible');
-  });
-
   it('Should validate required form fields', () => {
     cy.mount(<CreateJobTemplate />);
     cy.clickButton(/^Create job template$/);
@@ -140,7 +127,7 @@ describe('Create job template ', () => {
     cy.get('[data-cy="name"]').type('Test');
     cy.get('[data-cy="job_type-form-group"] button').last().click();
     cy.contains('Check').click();
-    cy.selectDropdownOptionByResourceName('inventory', 'Demo Inventory');
+    cy.singleSelectBy('[data-cy="inventory"]', 'Demo Inventory');
     cy.selectAsyncSingleSelectOption('project-select', 'Demo Project');
     cy.selectDropdownOptionByResourceName('playbook', 'hello_world.yml');
     cy.multiSelectByDataCy('instance-group-select-form-group', [instanceGroups[0].name]);
