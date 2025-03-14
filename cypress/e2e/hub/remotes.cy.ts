@@ -2,6 +2,7 @@ import { randomString } from '@ansible/ansible-ui-framework/utils/random-string'
 import { HubRemote } from '@ansible/hub-ui/administration/remotes/Remotes';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { Remotes } from './constants';
+import { AZURE_URL, SAAS_URL } from '../../support/constants';
 
 describe('Remotes', () => {
   const testSignature: string = randomString(5, undefined, { isLowercase: true });
@@ -9,23 +10,29 @@ describe('Remotes', () => {
     return `e2e-test-${testSignature}-remote-${randomString(5, undefined, { isLowercase: true })}`;
   }
 
-  it('bulk delete remotes', () => {
-    const numberOfRemotes = 5;
-    for (let i = 0; i < numberOfRemotes; i++) {
-      const remoteName = generateRemoteName();
-      cy.createRemote(remoteName);
-    }
-    cy.navigateTo('hub', 'remotes');
-    cy.getBy('tbody').find('tr').its('length').should('be.greaterThan', 0);
-    cy.setTablePageSize('50');
-    cy.filterTableBySingleText(testSignature);
-    cy.getBy('tbody').find('tr').should('have.length', numberOfRemotes);
-    cy.getBy('[data-cy="select-all"]').click({ force: true });
-    cy.clickToolbarKebabAction('delete-remotes');
-    cy.getBy('#confirm').click();
-    cy.clickButton(/^Delete remotes$/);
-    cy.contains(/^Success$/);
-    cy.clickButton(/^Clear all filters$/);
+  it('bulk delete remotes', function () {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        this.skip();
+      } else {
+        const numberOfRemotes = 5;
+        for (let i = 0; i < numberOfRemotes; i++) {
+          const remoteName = generateRemoteName();
+          cy.createRemote(remoteName);
+        }
+        cy.navigateTo('hub', 'remotes');
+        cy.getBy('tbody').find('tr').its('length').should('be.greaterThan', 0);
+        cy.setTablePageSize('50');
+        cy.filterTableBySingleText(testSignature);
+        cy.getBy('tbody').find('tr').should('have.length', numberOfRemotes);
+        cy.getBy('[data-cy="select-all"]').click({ force: true });
+        cy.clickToolbarKebabAction('delete-remotes');
+        cy.getBy('#confirm').click();
+        cy.clickButton(/^Delete remotes$/);
+        cy.contains(/^Success$/);
+        cy.clickButton(/^Clear all filters$/);
+      }
+    });
   });
 
   it('explore different views and pagination', () => {
@@ -72,128 +79,144 @@ describe('Remotes', () => {
     cy.clickButton(/^Clear all filters$/);
   });
 
-  it('display alert when creating a remote with community URL and checking select `signed collections only`', () => {
-    cy.navigateTo('hub', 'remotes');
-    const remoteName = generateRemoteName();
-    cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
-    cy.getBy('[data-cy="name"]').type(remoteName);
-    cy.getBy('[data-cy="url"]').type(Remotes.remoteCommunityURL);
-    cy.getBy('[data-cy="signed_only"]').check();
-    cy.getBy('[data-cy="signed-only-warning"]').should('be.visible');
-    cy.contains(Remotes.showAdvancedOptions).click();
-    // cy.getBy('[data-cy="requirements-file-warning"]').should('be.visible');
-    cy.getBy('[data-cy="url"]').clear().type(Remotes.remoteURL);
-    // use get because it's checking element doesn't exist
-    cy.get('[data-cy="signed-only-warning"]').should('not.exist');
-    // cy.getBy('[data-cy="requirements-file-warning"]').should('not.exist');
-    cy.intercept({
-      method: 'GET',
-      url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
-    }).as('remote');
-    cy.getBy('[data-cy="Submit"]').click();
-    cy.url().should('include', `remotes/${remoteName}/details`);
-    cy.wait('@remote').then(() => {
-      cy.contains('Remotes').click();
-      cy.filterTableBySingleText(remoteName);
-      cy.clickTableRowAction('name', remoteName, 'delete-remote', {
-        disableFilter: true,
-        inKebab: true,
-      });
-      cy.getBy('#confirm').click();
-      cy.clickButton(/^Delete remote/);
-      cy.contains(/^Success$/);
-      cy.clickButton(/^Clear all filters$/);
+  it('display alert when creating a remote with community URL and checking select `signed collections only`', function () {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        this.skip();
+      } else {
+        cy.navigateTo('hub', 'remotes');
+        const remoteName = generateRemoteName();
+        cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
+        cy.getBy('[data-cy="name"]').type(remoteName);
+        cy.getBy('[data-cy="url"]').type(Remotes.remoteCommunityURL);
+        cy.getBy('[data-cy="signed_only"]').check();
+        cy.getBy('[data-cy="signed-only-warning"]').should('be.visible');
+        cy.contains(Remotes.showAdvancedOptions).click();
+        cy.getBy('[data-cy="url"]').clear().type(Remotes.remoteURL);
+        cy.get('[data-cy="signed-only-warning"]').should('not.exist');
+        cy.intercept({
+          method: 'GET',
+          url: pulpAPI`/remotes/ansible/collection/?name=${remoteName}`,
+        }).as('remote');
+        cy.getBy('[data-cy="Submit"]').click();
+        cy.url().should('include', `remotes/${remoteName}/details`);
+        cy.wait('@remote').then(() => {
+          cy.contains('Remotes').click();
+          cy.filterTableBySingleText(remoteName);
+          cy.clickTableRowAction('name', remoteName, 'delete-remote', {
+            disableFilter: true,
+            inKebab: true,
+          });
+          cy.getBy('#confirm').click();
+          cy.clickButton(/^Delete remote/);
+          cy.contains(/^Success$/);
+          cy.clickButton(/^Clear all filters$/);
+        });
+      }
     });
   });
 
-  it('edit a remote', () => {
-    const communityCollection = `
+  it('edit a remote', function () {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        this.skip();
+      } else {
+        const communityCollection = `
 ---
 collections:
   - name: ${Remotes.communityGeneral}
 `;
-    cy.navigateTo('hub', 'remotes');
-    const remoteName = generateRemoteName();
-    cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
-    cy.url().should('include', Remotes.urlCreate);
-    cy.getBy('[data-cy="name"]').type(remoteName);
-    cy.getBy('[data-cy="url"]').type(Remotes.remoteURL);
-    cy.getBy('[data-cy="signed_only"]').check();
-    cy.getBy('[data-cy="sync_dependencies"]').check();
-    cy.getBy('[data-cy="Submit"]').click();
-    cy.url().should('include', `remotes/${remoteName}/details`);
-    cy.contains('Remotes').click();
-    cy.filterTableBySingleText(remoteName);
-    cy.getBy('[data-cy="actions-column-cell"]').click();
-    cy.getBy('[data-cy="edit-remote"]').click({ force: true });
-    cy.url().should('include', `remotes/${remoteName}/edit`);
-    cy.getBy('[data-cy="url"]').clear().type(Remotes.editRemoteURL);
-    cy.getBy('[data-cy="username"]').type(Remotes.username);
-    cy.getBy('[data-cy="password"]').type(Remotes.password);
-    cy.getBy('[data-cy="expandable-section"]').find('button').first().click();
-    cy.getBy('[data-cy="token"]').type(Remotes.token);
-    cy.getBy('[data-cy="auth-url"]').type(Remotes.ssoURL);
-    cy.getBy('[data-cy="proxy-url"]').type(Remotes.proxyURL);
-    cy.getBy('[data-cy="proxy-username"]').type(Remotes.username);
-    cy.getBy('[data-cy="proxy-password"]').type(Remotes.password);
-    cy.getBy('[data-cy="download-concurrency"]').type(Remotes.downloadConcurrency);
-    cy.getBy('[data-cy="rate-limit"]').type(Remotes.rateLimit);
-    cy.getBy('[data-cy="tls_validation"]').click();
-    cy.getBy('[data-cy="requirements-file"]')
-      .click()
-      .focused()
-      .invoke('select')
-      .clear()
-      .type(communityCollection);
-    cy.clickButton(/^Save remote$/);
-    cy.url().should('include', `remotes/${remoteName}/details`);
-    cy.getBy('[data-cy="yaml-requirements"]');
-    cy.getBy('[data-cy="code-block-value"]').should('contain', Remotes.communityGeneral);
-    cy.url().should('include', `remotes/${remoteName}/details`);
-    cy.getBy('[data-cy="name"]').should('contain', remoteName);
-    cy.getBy('[data-cy="server-url"]').should('contain', Remotes.editRemoteURL);
-    cy.getBy('[data-cy="proxy-url"]').should('contain', Remotes.proxyURL);
-    cy.getBy('[data-cy="tls-validation"]').should('contain', Remotes.tlsValidation);
-    cy.getBy('[data-cy="rate-limit"]').should('contain', Remotes.rateLimit);
-    cy.getBy('[data-cy="download-concurrency"]').should('contain', Remotes.downloadConcurrency);
-    cy.getBy('[data-cy="download-only-signed-collections"]').should('contain', Remotes.signedOnly);
-    cy.getBy('[data-cy="include-all-dependencies-when-syncing-a-collection"]').should(
-      'contain',
-      Remotes.syncDependencies
-    );
-
-    // Delete the edited remote
-    cy.getBy('[data-cy="actions-dropdown"]').click();
-    cy.getBy('[data-cy="delete-remote"]').click();
-    cy.getBy('#confirm').click();
-    cy.clickButton(/^Delete remotes/);
+        cy.navigateTo('hub', 'remotes');
+        const remoteName = generateRemoteName();
+        cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
+        cy.url().should('include', Remotes.urlCreate);
+        cy.getBy('[data-cy="name"]').type(remoteName);
+        cy.getBy('[data-cy="url"]').type(Remotes.remoteURL);
+        cy.getBy('[data-cy="signed_only"]').check();
+        cy.getBy('[data-cy="sync_dependencies"]').check();
+        cy.getBy('[data-cy="Submit"]').click();
+        cy.url().should('include', `remotes/${remoteName}/details`);
+        cy.contains('Remotes').click();
+        cy.filterTableBySingleText(remoteName);
+        cy.getBy('[data-cy="actions-column-cell"]').click();
+        cy.getBy('[data-cy="edit-remote"]').click({ force: true });
+        cy.url().should('include', `remotes/${remoteName}/edit`);
+        cy.getBy('[data-cy="url"]').clear().type(Remotes.editRemoteURL);
+        cy.getBy('[data-cy="username"]').type(Remotes.username);
+        cy.getBy('[data-cy="password"]').type(Remotes.password);
+        cy.getBy('[data-cy="expandable-section"]').find('button').first().click();
+        cy.getBy('[data-cy="token"]').type(Remotes.token);
+        cy.getBy('[data-cy="auth-url"]').type(Remotes.ssoURL);
+        cy.getBy('[data-cy="proxy-url"]').type(Remotes.proxyURL);
+        cy.getBy('[data-cy="proxy-username"]').type(Remotes.username);
+        cy.getBy('[data-cy="proxy-password"]').type(Remotes.password);
+        cy.getBy('[data-cy="download-concurrency"]').type(Remotes.downloadConcurrency);
+        cy.getBy('[data-cy="rate-limit"]').type(Remotes.rateLimit);
+        cy.getBy('[data-cy="tls_validation"]').click();
+        cy.getBy('[data-cy="requirements-file"]')
+          .click()
+          .focused()
+          .invoke('select')
+          .clear()
+          .type(communityCollection);
+        cy.clickButton(/^Save remote$/);
+        cy.url().should('include', `remotes/${remoteName}/details`);
+        cy.getBy('[data-cy="yaml-requirements"]');
+        cy.getBy('[data-cy="code-block-value"]').should('contain', Remotes.communityGeneral);
+        cy.url().should('include', `remotes/${remoteName}/details`);
+        cy.getBy('[data-cy="name"]').should('contain', remoteName);
+        cy.getBy('[data-cy="server-url"]').should('contain', Remotes.editRemoteURL);
+        cy.getBy('[data-cy="proxy-url"]').should('contain', Remotes.proxyURL);
+        cy.getBy('[data-cy="tls-validation"]').should('contain', Remotes.tlsValidation);
+        cy.getBy('[data-cy="rate-limit"]').should('contain', Remotes.rateLimit);
+        cy.getBy('[data-cy="download-concurrency"]').should('contain', Remotes.downloadConcurrency);
+        cy.getBy('[data-cy="download-only-signed-collections"]').should(
+          'contain',
+          Remotes.signedOnly
+        );
+        cy.getBy('[data-cy="include-all-dependencies-when-syncing-a-collection"]').should(
+          'contain',
+          Remotes.syncDependencies
+        );
+        cy.getBy('[data-cy="actions-dropdown"]').click();
+        cy.getBy('[data-cy="delete-remote"]').click();
+        cy.getBy('#confirm').click();
+        cy.clickButton(/^Delete remotes/);
+      }
+    });
   });
 
-  it('create a remote with empty requirements file', () => {
-    cy.navigateTo('hub', 'remotes');
-    const remoteName = generateRemoteName();
+  it('create a remote with empty requirements file', function () {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        this.skip();
+      } else {
+        cy.navigateTo('hub', 'remotes');
+        const remoteName = generateRemoteName();
 
-    // Create a remote
-    cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
-    cy.url().should('include', Remotes.urlCreate);
-    cy.getBy('[data-cy="name"]').type(remoteName);
-    cy.getBy('[data-cy="url"]').type(Remotes.remoteURL);
-    cy.getBy('[data-cy="signed_only"]').check();
-    cy.getBy('[data-cy="sync_dependencies"]').check();
-    // Handle the requirements file field
-    cy.getBy('[data-cy="requirements-file"]').click().focused().invoke('select').clear();
-    cy.getBy('[data-cy="Submit"]').click();
+        // Create a remote
+        cy.getBy('[data-cy="create-remote"]').should('be.visible').click();
+        cy.url().should('include', Remotes.urlCreate);
+        cy.getBy('[data-cy="name"]').type(remoteName);
+        cy.getBy('[data-cy="url"]').type(Remotes.remoteURL);
+        cy.getBy('[data-cy="signed_only"]').check();
+        cy.getBy('[data-cy="sync_dependencies"]').check();
+        // Handle the requirements file field
+        cy.getBy('[data-cy="requirements-file"]').click().focused().invoke('select').clear();
+        cy.getBy('[data-cy="Submit"]').click();
 
-    // Verify URL and requirements file
-    cy.url().should('include', `remotes/${remoteName}/details`);
-    cy.get('[data-cy="label-yaml-requirements"]').should('contain', 'YAML requirements');
-    cy.get('.pf-v5-c-code-block__content').should('not.exist');
+        // Verify URL and requirements file
+        cy.url().should('include', `remotes/${remoteName}/details`);
+        cy.get('[data-cy="label-yaml-requirements"]').should('contain', 'YAML requirements');
+        cy.get('.pf-v5-c-code-block__content').should('not.exist');
 
-    // Delete the remote
-    cy.get('[data-cy="actions-dropdown"]').click();
-    cy.getBy('[data-cy="delete-remote"]').click();
-    cy.getBy('#confirm').click();
-    cy.clickButton(/^Delete remotes$/);
+        // Delete the remote
+        cy.get('[data-cy="actions-dropdown"]').click();
+        cy.getBy('[data-cy="delete-remote"]').click();
+        cy.getBy('#confirm').click();
+        cy.clickButton(/^Delete remotes$/);
+      }
+    });
   });
 
   it('edit a remote - save without changes', () => {

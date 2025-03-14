@@ -3,6 +3,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { MyImports, Namespaces } from './constants';
+import { AZURE_URL, SAAS_URL } from '../../support/constants';
 
 const apiPrefix = Cypress.env('HUB_API_PREFIX') as string;
 
@@ -151,47 +152,59 @@ describe('Namespaces - sign collections', () => {
     cy.deleteHubNamespace(namespace);
   });
 
-  it('can sign a collection', () => {
-    cy.waitForAllTasks();
-    cy.navigateTo('hub', 'namespaces');
-    cy.verifyPageTitle('Namespaces');
-    cy.setTableView('table');
-    cy.filterTableBySingleText(namespace.name, true);
-    cy.clickTableRow(namespace.name, false);
-    cy.getByDataCy('collections-tab').click();
-    cy.setTableView('table');
-    cy.filterTableBySingleText(collectionName, true);
-    cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
-    cy.get(`[data-cy="sign-collection"] button`).click();
-    cy.get('#confirm').click();
-    cy.clickButton(/^Sign collections$/);
-    cy.contains(/^Success$/);
-    cy.getModal().should('not.exist');
-    cy.get('div[data-cy="manage-view"]').within(() => {
-      cy.getBy(`[data-cy="actions-dropdown"]`).click();
+  it('can sign a collection', function () {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        this.skip();
+      } else {
+        cy.waitForAllTasks();
+        cy.navigateTo('hub', 'namespaces');
+        cy.verifyPageTitle('Namespaces');
+        cy.setTableView('table');
+        cy.filterTableBySingleText(namespace.name, true);
+        cy.clickTableRow(namespace.name, false);
+        cy.getByDataCy('collections-tab').click();
+        cy.setTableView('table');
+        cy.filterTableBySingleText(collectionName, true);
+        cy.get('[aria-label="Simple table"] [data-cy="actions-dropdown"]').click();
+        cy.get(`[data-cy="sign-collection"] button`).click();
+        cy.get('#confirm').click();
+        cy.clickButton(/^Sign collections$/);
+        cy.contains(/^Success$/);
+        cy.getModal().should('not.exist');
+        cy.get('div[data-cy="manage-view"]').within(() => {
+          cy.getBy(`[data-cy="actions-dropdown"]`).click();
+        });
+        cy.getBy('[data-cy="imports"]').click();
+        cy.getByDataCy('status').should('contain', 'Completed');
+        cy.getByDataCy('approval-status').should('be.visible');
+      }
     });
-    cy.getBy('[data-cy="imports"]').click();
-    cy.getByDataCy('status').should('contain', 'Completed');
-    cy.getByDataCy('approval-status').should('be.visible');
   });
 
-  it('can sign all collections', () => {
-    cy.navigateTo('hub', 'namespaces');
-    cy.verifyPageTitle('Namespaces');
-    cy.setTableView('table');
-    cy.filterTableBySingleText(namespace.name, true);
-    cy.clickTableRow(namespace.name, false);
-    cy.getByDataCy('collections-tab').click();
-    cy.setTableView('table');
-    cy.filterTableBySingleSelect('repository', 'validated');
-    cy.get('div[data-cy="manage-view"]').within(() => {
-      cy.getBy(`[data-cy="actions-dropdown"]`).click();
-    });
-    cy.getBy('[data-cy="sign-all-collections"]').click();
-    cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signAll');
-    cy.getByDataCy('modal-sign-button').click();
-    cy.wait('@signAll').then((response) => {
-      expect(response?.response?.statusCode).to.eql(202);
+  it('can sign all collections', function () {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        this.skip();
+      } else {
+        cy.navigateTo('hub', 'namespaces');
+        cy.verifyPageTitle('Namespaces');
+        cy.setTableView('table');
+        cy.filterTableBySingleText(namespace.name, true);
+        cy.clickTableRow(namespace.name, false);
+        cy.getByDataCy('collections-tab').click();
+        cy.setTableView('table');
+        cy.filterTableBySingleSelect('repository', 'validated');
+        cy.get('div[data-cy="manage-view"]').within(() => {
+          cy.getBy(`[data-cy="actions-dropdown"]`).click();
+        });
+        cy.getBy('[data-cy="sign-all-collections"]').click();
+        cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signAll');
+        cy.getByDataCy('modal-sign-button').click();
+        cy.wait('@signAll').then((response) => {
+          expect(response?.response?.statusCode).to.eql(202);
+        });
+      }
     });
   });
 });
