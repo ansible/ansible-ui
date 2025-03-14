@@ -106,6 +106,7 @@ export function ResourcePeersList(props: { url: string }) {
             onClick={() =>
               openPeerInstanceModal({ onPeer: associatePeerToInstance, instanceId: id ?? '' })
             }
+            data-cy="associate-peers"
           >
             {t('Associate peers')}
           </Button>

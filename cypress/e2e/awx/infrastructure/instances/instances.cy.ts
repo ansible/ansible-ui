@@ -210,7 +210,6 @@ describe('Instances K8S', () => {
         .then((response) => {
           expect(response?.statusCode).to.eql(200);
         });
-      cy.clickButton('Close');
     });
 
     it('can bulk remove instances', () => {
@@ -285,7 +284,6 @@ describe('Instances K8S', () => {
           .then((response) => {
             expect(response).contains(`Health check is running for ${instance.hostname}.`);
           });
-        cy.clickModalButton('Close');
         cy.get('[data-cy="status-column-cell"]').contains('Running');
       });
     });
@@ -367,7 +365,6 @@ describe('Instances K8S', () => {
         cy.getByDataCy('checkbox-column-cell').find('input').click();
         cy.wait('@instanceA');
         cy.get('button').contains('Associate peers').click();
-        cy.get('button').contains('Close').click();
       });
       cy.wait('@associatePeer')
         .its('response')

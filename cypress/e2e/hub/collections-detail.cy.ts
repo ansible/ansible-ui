@@ -3,6 +3,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { pulpAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
+import { AZURE_URL, SAAS_URL } from '../../support/constants';
 
 function visitCollection(collection: string, namespace: string) {
   cy.navigateTo('hub', Collections.url);
@@ -199,97 +200,112 @@ describe('GalaxykKit Installation for Collections Details', () => {
       });
     });
 
-    describe('Collections Details - Signing and deprecation', () => {
-      beforeEach(() => {
-        collectionName = randomE2Ename();
-        cy.navigateTo('hub', Collections.url);
-        cy.verifyPageTitle(Collections.title);
-        cy.uploadCollection(collectionName, namespace.name, firstVersion);
+    describe('If SaaS Build', () => {
+      before(function () {
+        cy.checkBuildType().then((buildType) => {
+          if (buildType === SAAS_URL || buildType === AZURE_URL) {
+            cy.log('Test/tests should not run on this deployment.');
+            this.skip();
+          } else {
+            cy.log('Run these tests');
+          }
+        });
       });
 
-      it('can sign a collection', () => {
-        visitCollection(collectionName, namespace.name);
-        cy.selectDetailsPageKebabAction('sign-collection');
-        cy.getModal().should('not.exist');
-        cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
-      });
+      describe('Collections Details - Signing and deprecation', () => {
+        beforeEach(() => {
+          collectionName = randomE2Ename();
+          cy.navigateTo('hub', Collections.url);
+          cy.verifyPageTitle(Collections.title);
+          cy.uploadCollection(collectionName, namespace.name, firstVersion);
+        });
 
-      // https://issues.redhat.com/browse/AAP-31186
-      // [ErrorDetail(string='Collection e2e_r1e6o.e2e_jul8w-1.0.0 already exists with a different artifact', code='invalid')]
-      it.skip('can sign a selected version of a collection', () => {
-        // This test won't work with the current resources created by the before each block
-        // find a better way to create these resources before the test.
-        cy.uploadCollection(collectionName, namespace.name, firstVersion).then(() => {
-          cy.waitForAllTasks();
-          cy.galaxykit(
-            'collection upload --skip-upload',
-            namespace.name,
-            collectionName,
-            latestVersion
-          ).then((result) => {
-            const filePath = (result as unknown as Record<string, string>).filename;
-            visitCollection(collectionName, namespace.name);
-            cy.getByDataCy('version').should('contain', firstVersion);
-            cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
-            cy.clickPageAction('upload-new-version');
-            cy.get('#file-browse-button').click();
-            cy.get('input[id="file-filename"]').selectFile(filePath, {
-              action: 'drag-drop',
+        it('can sign a collection', () => {
+          visitCollection(collectionName, namespace.name);
+          cy.selectDetailsPageKebabAction('sign-collection');
+          cy.getModal().should('not.exist');
+          cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
+        });
+
+        // https://issues.redhat.com/browse/AAP-31186
+        // [ErrorDetail(string='Collection e2e_r1e6o.e2e_jul8w-1.0.0 already exists with a different artifact', code='invalid')]
+        it.skip('can sign a selected version of a collection', () => {
+          // This test won't work with the current resources created by the before each block
+          // find a better way to create these resources before the test.
+          cy.uploadCollection(collectionName, namespace.name, firstVersion).then(() => {
+            cy.waitForAllTasks();
+            cy.galaxykit(
+              'collection upload --skip-upload',
+              namespace.name,
+              collectionName,
+              latestVersion
+            ).then((result) => {
+              const filePath = (result as unknown as Record<string, string>).filename;
+              visitCollection(collectionName, namespace.name);
+              cy.getByDataCy('version').should('contain', firstVersion);
+              cy.get(`[data-cy="${collectionName}"]`).should('contain', `${collectionName}`);
+              cy.clickPageAction('upload-new-version');
+              cy.get('#file-browse-button').click();
+              cy.get('input[id="file-filename"]').selectFile(filePath, {
+                action: 'drag-drop',
+              });
+              cy.get('#radio-non-pipeline').click();
+              cy.filterTableByTextFilter('repository', 'validated', {
+                disableFilterSelection: true,
+              });
+              cy.getTableRowByText('validated', false).within(() => {
+                cy.getByDataCy('checkbox-column-cell').click();
+              });
+              cy.get('[data-cy="Submit"]').click();
+              cy.verifyPageTitle(Collections.title);
+              cy.getByDataCy('table-view').click();
+              cy.filterTableByTextFilter('name', collectionName, { disableFilterSelection: true });
+              cy.clickTableRow(collectionName, false);
+              cy.verifyPageTitle(collectionName);
+              cy.get(`[data-cy="browse-collection-version"] button`).first().click();
+              cy.contains('[type="button"]', '1.0.0 updated').click();
+              cy.getByDataCy('version').should('contain', firstVersion);
+              cy.getByDataCy('signed-state').should('contain', 'Unsigned');
+              // FIXME: here, the version changes from 1.0.0 to 1.2.3
+              // could be autoreload when no version is explicitly selected, or sign-version forgetting state?
+              cy.selectDetailsPageKebabAction('sign-version');
+              cy.reload();
+              cy.getByDataCy('version').should('contain', firstVersion);
+              cy.getByDataCy('signed-state').should('contain', 'Signed');
+              cy.get(`[data-cy="browse-collection-version"] button`).first().click();
+              cy.contains('[type="button"]', '(latest)').click();
+              cy.getByDataCy('version').should('contain', latestVersion);
+              cy.getByDataCy('signed-state').should('contain', 'Unsigned');
+              cy.deleteHubCollectionByName(collectionName);
             });
-            cy.get('#radio-non-pipeline').click();
-            cy.filterTableByTextFilter('repository', 'validated', { disableFilterSelection: true });
-            cy.getTableRowByText('validated', false).within(() => {
-              cy.getByDataCy('checkbox-column-cell').click();
-            });
-            cy.get('[data-cy="Submit"]').click();
-            cy.verifyPageTitle(Collections.title);
-            cy.getByDataCy('table-view').click();
-            cy.filterTableByTextFilter('name', collectionName, { disableFilterSelection: true });
-            cy.clickTableRow(collectionName, false);
-            cy.verifyPageTitle(collectionName);
-            cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-            cy.contains('[type="button"]', '1.0.0 updated').click();
-            cy.getByDataCy('version').should('contain', firstVersion);
-            cy.getByDataCy('signed-state').should('contain', 'Unsigned');
-            // FIXME: here, the version changes from 1.0.0 to 1.2.3
-            // could be autoreload when no version is explicitly selected, or sign-version forgetting state?
-            cy.selectDetailsPageKebabAction('sign-version');
-            cy.reload();
-            cy.getByDataCy('version').should('contain', firstVersion);
-            cy.getByDataCy('signed-state').should('contain', 'Signed');
-            cy.get(`[data-cy="browse-collection-version"] button`).first().click();
-            cy.contains('[type="button"]', '(latest)').click();
-            cy.getByDataCy('version').should('contain', latestVersion);
-            cy.getByDataCy('signed-state').should('contain', 'Unsigned');
-            cy.deleteHubCollectionByName(collectionName);
           });
         });
-      });
 
-      it('can deprecate/undeprecate a collection', () => {
-        visitCollection(collectionName, namespace.name);
-        cy.selectDetailsPageKebabAction('deprecate-collection');
-        cy.getModal().should('not.exist');
-        cy.getByDataCy('deprecated-status').should('exist');
-        cy.selectDetailsPageKebabAction('undeprecate-collection');
-        cy.get('[data-cy="deprecated-status"]').should('not.exist');
-        cy.selectDetailsPageKebabAction('deprecate-collection');
-        cy.getByDataCy('deprecated-status').should('exist');
-        cy.contains('a', namespace.name).click();
-        cy.contains(`[role="tab"]`, 'Collections').click();
-        cy.getByDataCy('table-view').click();
-        cy.filterTableByTextFilter('name', collectionName);
-        cy.get(`[aria-label="Simple table"]`).within(() => {
-          cy.getByDataCy('actions-dropdown').click();
-        });
-        cy.contains('button', 'Undeprecate collection').click();
-        cy.getModal().within(() => {
-          cy.get(`input[type="checkbox"]`).click();
-        });
-        cy.contains('button', 'Undeprecate collections').click();
-        cy.getModal().should('not.exist');
-        cy.get(`[aria-label="Simple table"]`).within(() => {
+        it('can deprecate/undeprecate a collection', () => {
+          visitCollection(collectionName, namespace.name);
+          cy.selectDetailsPageKebabAction('deprecate-collection');
+          cy.getModal().should('not.exist');
+          cy.getByDataCy('deprecated-status').should('exist');
+          cy.selectDetailsPageKebabAction('undeprecate-collection');
           cy.get('[data-cy="deprecated-status"]').should('not.exist');
+          cy.selectDetailsPageKebabAction('deprecate-collection');
+          cy.getByDataCy('deprecated-status').should('exist');
+          cy.contains('a', namespace.name).click();
+          cy.contains(`[role="tab"]`, 'Collections').click();
+          cy.getByDataCy('table-view').click();
+          cy.filterTableByTextFilter('name', collectionName);
+          cy.get(`[aria-label="Simple table"]`).within(() => {
+            cy.getByDataCy('actions-dropdown').click();
+          });
+          cy.contains('button', 'Undeprecate collection').click();
+          cy.getModal().within(() => {
+            cy.get(`input[type="checkbox"]`).click();
+          });
+          cy.contains('button', 'Undeprecate collections').click();
+          cy.getModal().should('not.exist');
+          cy.get(`[aria-label="Simple table"]`).within(() => {
+            cy.get('[data-cy="deprecated-status"]').should('not.exist');
+          });
         });
       });
     });
