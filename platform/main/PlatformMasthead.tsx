@@ -26,6 +26,7 @@ import { useLegacyAuth } from './LegacyAuthProvider';
 import { PlatformAbout } from './PlatformAbout';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformRoute } from './PlatformRoutes';
+import { useIsManagedCloudInstall } from './GatewayUIAuth';
 
 export function PlatformMasthead() {
   const { t } = useTranslation();
@@ -39,6 +40,7 @@ export function PlatformMasthead() {
   const { refreshActiveEdaUser } = useEdaActiveUser();
   const { refreshActiveHubUser } = useHubActiveUser();
   const { refreshLegacyAuth } = useLegacyAuth();
+  const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const quickStarts = useQuickStarts();
 
   const logout = useCallback(async () => {
@@ -96,7 +98,7 @@ export function PlatformMasthead() {
             >
               {t('Documentation')}
             </DropdownItem>
-            {quickStarts.length > 0 ? (
+            {!managedCloudInstall && quickStarts.length > 0 ? (
               <DropdownItem
                 id="about"
                 onClick={() => pageNavigate(PlatformRoute.QuickStarts)}
