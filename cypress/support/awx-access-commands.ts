@@ -7,6 +7,7 @@ import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOr
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import '@cypress/code-coverage/support';
 import { awxAPI } from './formatApiPathForAwx';
+import { SAAS_URL, AZURE_URL } from './constants';
 
 // Base create and delete commands for AWX organizations, teams, and users
 
@@ -110,8 +111,14 @@ Cypress.Commands.add('addEERolesToUsersInOrganization', (organizationName: strin
       disableFilter: true,
     });
     cy.clickButton(/^Next/);
-    cy.getByDataCy('select-all').check();
-    cy.clickButton(/^Next/);
+    cy.checkBuildType().then((buildType) => {
+      if (buildType !== SAAS_URL && buildType !== AZURE_URL) {
+        cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
+        cy.getByDataCy('select-all').check();
+        cy.clickButton(/^Next/);
+      }
+    });
+
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
   });
@@ -133,8 +140,13 @@ Cypress.Commands.add('addEERolesToTeamsInOrganization', (organizationName: strin
       disableFilter: true,
     });
     cy.clickButton(/^Next/);
-    cy.getByDataCy('select-all').check();
-    cy.clickButton(/^Next/);
+    cy.checkBuildType().then((buildType) => {
+      if (buildType !== SAAS_URL && buildType !== AZURE_URL) {
+        cy.contains('h1', 'Select Automation Decisions roles').should('be.visible');
+        cy.getByDataCy('select-all').check();
+        cy.clickButton(/^Next/);
+      }
+    });
     cy.contains('h1', 'Review').should('be.visible');
     cy.clickButton(/^Finish/);
   });

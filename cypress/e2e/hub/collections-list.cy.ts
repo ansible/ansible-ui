@@ -4,6 +4,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
+import { SAAS_URL, AZURE_URL } from '../../support/constants';
 
 describe('GalaxyKit Installation Check for Collections List', () => {
   before(function () {
@@ -35,55 +36,67 @@ describe('GalaxyKit Installation Check for Collections List', () => {
       cy.verifyPageTitle(Collections.title);
     });
 
-    it('can sign a collection', () => {
-      cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
-        cy.waitForAllTasks();
-        cy.getBy('[data-cy="list-view"]').click();
-        cy.filterTableBySingleText(collectionName);
-        cy.getBy('[data-cy="data-list-action"]').within(() => {
-          cy.getBy(`[data-cy="actions-dropdown"]`).click();
-        });
-        cy.getBy('[data-cy="sign-collection"]').click();
-        cy.get('#confirm').click();
-        cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
-        cy.clickButton(/^Sign collections$/);
-        cy.wait('@signed');
-        cy.waitForAllTasks();
-        cy.reload();
-        cy.getBy('[data-cy="list-view"]').click();
-        cy.get('[data-cy="signed-status"]').should('contain', 'Signed');
-        cy.getModal().should('not.exist');
-        cy.reload();
-        cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
-        cy.deleteCollectionsInNamespace(namespace.name);
+    it('can sign a collection', function () {
+      cy.checkBuildType().then((buildType) => {
+        if (buildType === SAAS_URL || buildType === AZURE_URL) {
+          this.skip();
+        } else {
+          cy.uploadCollection(collectionName, namespace.name, '1.0.0').then(() => {
+            cy.waitForAllTasks();
+            cy.getBy('[data-cy="list-view"]').click();
+            cy.filterTableBySingleText(collectionName);
+            cy.getBy('[data-cy="data-list-action"]').within(() => {
+              cy.getBy(`[data-cy="actions-dropdown"]`).click();
+            });
+            cy.getBy('[data-cy="sign-collection"]').click();
+            cy.get('#confirm').click();
+            cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
+            cy.clickButton(/^Sign collections$/);
+            cy.wait('@signed');
+            cy.waitForAllTasks();
+            cy.reload();
+            cy.getBy('[data-cy="list-view"]').click();
+            cy.get('[data-cy="signed-status"]').should('contain', 'Signed');
+            cy.getModal().should('not.exist');
+            cy.reload();
+            cy.get('[data-cy="signed-status"]').contains(Collections.signedStatus);
+            cy.deleteCollectionsInNamespace(namespace.name);
+          });
+        }
       });
     });
 
-    it('can sign and approve a collection version', () => {
-      cy.uploadCollection(collectionName, namespace.name, '3.0.0').then(() => {
-        cy.navigateTo('hub', Collections.url);
-        cy.getBy('[data-cy="list-view"]').click();
-        cy.filterTableBySingleText(collectionName);
-        cy.getBy('[data-cy="data-list-action"]').within(() => {
-          cy.getBy(`[data-cy="actions-dropdown"]`).click();
-        });
-        cy.getBy('[data-cy="sign-collection"]').click();
-        cy.get('#confirm').click();
-        cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
-        cy.clickButton(/^Sign collections$/);
-        cy.wait('@signed');
-        cy.waitForAllTasks();
-        cy.get('[data-cy="signed-status"]').should('contain', 'Signed');
-        cy.contains('Signed state').should('be.visible');
-        cy.contains('a collection with some deps on other collections').should('be.visible');
-        cy.contains('3.0.0').should('be.visible');
-        cy.get('a[href*="/content/collections/validated/"]').click();
-        cy.url().should('contain', '/details');
-        cy.getBy('[data-cy="signed-status"]').contains(Collections.signedStatus);
-        cy.getBy(`[data-cy="actions-dropdown"]`).click();
-        cy.getBy('[data-cy="delete-entire-collection-from-system"]').click();
-        cy.get('#confirm').click();
-        cy.clickButton(/^Delete collections/);
+    it('can sign and approve a collection version', function () {
+      cy.checkBuildType().then((buildType) => {
+        if (buildType === SAAS_URL || buildType === AZURE_URL) {
+          this.skip();
+        } else {
+          cy.uploadCollection(collectionName, namespace.name, '3.0.0').then(() => {
+            cy.navigateTo('hub', Collections.url);
+            cy.getBy('[data-cy="list-view"]').click();
+            cy.filterTableBySingleText(collectionName);
+            cy.getBy('[data-cy="data-list-action"]').within(() => {
+              cy.getBy(`[data-cy="actions-dropdown"]`).click();
+            });
+            cy.getBy('[data-cy="sign-collection"]').click();
+            cy.get('#confirm').click();
+            cy.intercept('POST', hubAPI`/_ui/v1/collection_signing/`).as('signed');
+            cy.clickButton(/^Sign collections$/);
+            cy.wait('@signed');
+            cy.waitForAllTasks();
+            cy.get('[data-cy="signed-status"]').should('contain', 'Signed');
+            cy.contains('Signed state').should('be.visible');
+            cy.contains('a collection with some deps on other collections').should('be.visible');
+            cy.contains('3.0.0').should('be.visible');
+            cy.get('a[href*="/content/collections/validated/"]').click();
+            cy.url().should('contain', '/details');
+            cy.getBy('[data-cy="signed-status"]').contains(Collections.signedStatus);
+            cy.getBy(`[data-cy="actions-dropdown"]`).click();
+            cy.getBy('[data-cy="delete-entire-collection-from-system"]').click();
+            cy.get('#confirm').click();
+            cy.clickButton(/^Delete collections/);
+          });
+        }
       });
     });
 

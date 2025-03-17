@@ -68,6 +68,7 @@ export function ExecutionEnvironments() {
                 icon={<PlusCircleIcon />}
                 variant={ButtonVariant.primary}
                 href={getPageUrl(HubRoute.CreateExecutionEnvironment)}
+                data-cy="create-execution-environment"
               >
                 {t('Create execution environment')}
               </ButtonLink>
