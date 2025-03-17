@@ -1,14 +1,15 @@
 import { expect, Page } from '@playwright/test';
 import { clickPageAction } from '../../../commands/clickPageAction';
-import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
+import { clickTableRow } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
 import { createJobTemplate } from '../templates/job-template-utils';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 
 export async function createAwxJobTemplateSchedule(options: { scheduleName?: string }, page: Page) {
   const jobTemplateName = await createJobTemplate({}, page);
   await navigateTo(page, 'Automation Execution', 'Schedules');
-  await page.getByRole('link', { name: 'Create schedule', exact: true }).click();
+  await page.getByText('Create schedule', { exact: true }).click();
   const scheduleName = options.scheduleName ?? createE2EName();
   await page.getByRole('button', { name: 'Select resource type' }).click();
   await page.getByRole('option', { name: 'Job template', exact: true }).click();
@@ -29,11 +30,7 @@ export async function createAwxJobTemplateSchedule(options: { scheduleName?: str
 
 export async function deleteAwxSchedule(scheduleName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Schedules');
-  await clickTableRowWithFilter(scheduleName, page);
+  await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
   await clickPageAction('Delete schedule', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  // Deleting a schedule redirects to the resource list page, not the top level Schedules list page so we need to navigate back to the list page.
-  await navigateTo(page, 'Automation Execution', 'Schedules');
-  await expect(page.getByRole('heading', { name: 'Schedules', exact: true })).toBeVisible();
+  await confirmAndAssertDeletion(page);
 }

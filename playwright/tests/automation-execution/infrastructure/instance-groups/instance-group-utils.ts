@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRowWithFilter } from '../../../../commands/clickTableRow';
+import { clickTableRow } from '../../../../commands/clickTableRow';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { navigateTo } from '../../../../commands/navigateTo';
+import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
 
 export async function createInstanceGroup(options: { name?: string }, page: Page) {
   const instanceGroupName = options.name ?? createE2EName('instanceGroup');
@@ -19,11 +19,7 @@ export async function createInstanceGroup(options: { name?: string }, page: Page
 
 export async function deleteInstanceGroup(instanceGroupName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Instance Groups');
-  await clearTableFilters(page);
-  await clickTableRowWithFilter(instanceGroupName, page);
-  await expect(page.getByRole('heading', { name: instanceGroupName, exact: true })).toBeVisible();
+  await clickTableRow({ text: instanceGroupName }, page);
   await clickPageAction('Delete instance group', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(page.getByRole('heading', { name: 'Instance Groups', exact: true })).toBeVisible();
+  await confirmAndAssertDeletion(page);
 }

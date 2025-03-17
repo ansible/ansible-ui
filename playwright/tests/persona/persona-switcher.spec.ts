@@ -17,7 +17,6 @@ test('persona views', async ({ page }) => {
   await expect(page.locator('#awx-settings')).toContainText('Settings');
   await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
   await page.getByRole('button', { name: 'Administration View' }).click();
-
   // Developer View
   await page.getByRole('menuitem', { name: 'Developer View The developer' }).click();
   await expect(page.locator('#platform-overview')).toContainText('Overview');
@@ -28,10 +27,8 @@ test('persona views', async ({ page }) => {
   await expect(page.locator('#awx-settings')).toContainText('Settings');
   await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
   await page.getByRole('button', { name: 'Developer View' }).click();
-
   await expect(page.locator('#platform-access')).toBeHidden();
   await expect(page.locator('#awx-analytics')).toBeHidden();
-
   // Operator View
   await page.getByRole('menuitem', { name: 'Operator View The operator' }).click();
   await expect(page.locator('#awx-jobs')).toContainText('Jobs');
@@ -39,7 +36,6 @@ test('persona views', async ({ page }) => {
   await expect(page.locator('#awx-credentials')).toContainText('Credentials');
   await expect(page.locator('#awx-settings-preferences')).toContainText('User Preferences');
   await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
-
   await expect(page.locator('#platform-awx')).toBeHidden();
   await expect(page.locator('#platform-eda')).toBeHidden();
   await expect(page.locator('#platform-access')).toBeHidden();

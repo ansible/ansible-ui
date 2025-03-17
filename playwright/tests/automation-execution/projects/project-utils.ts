@@ -1,12 +1,11 @@
 import { expect, Page } from '@playwright/test';
-import { clearTableFilters } from '../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../commands/clickPageAction';
-import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
 import { expectRowToContain } from '../../../commands/expectRowToContain';
-import { filterTableBySelect } from '../../../commands/filterTableBySelect';
+import { filterTable } from '../../../commands/filterTable';
 import { navigateTo } from '../../../commands/navigateTo';
-import { selectTableFilter } from '../../../commands/selectTableFilter';
 import { singleSelectByLabel } from '../../../commands/singleSelectByLabel';
 
 export async function createAwxProject(
@@ -14,7 +13,7 @@ export async function createAwxProject(
   page: Page
 ) {
   await navigateTo(page, 'Automation Execution', 'Projects');
-  await page.getByRole('link', { name: 'Create project', exact: true }).click();
+  await page.getByText('Create project', { exact: true }).click();
   const projectName = options.projectName ?? createE2EName();
   await page.getByLabel('Name').fill(projectName);
   const organizationName = options.organizationName;
@@ -29,17 +28,14 @@ export async function createAwxProject(
 
 export async function syncAwxProject(projectName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Projects');
-  await clearTableFilters(page);
-  await selectTableFilter('Name', page);
-  await filterTableBySelect(projectName, page);
+  await filterTable({ filterLabel: 'Name', filterValue: projectName, clearFilters: true }, page);
   await expectRowToContain(projectName, 'Success', page, 60 * 1000);
 }
 
 export async function deleteAwxProject(projectName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Projects');
-  await clickTableRowWithFilter(projectName, page);
+  await clickTableRow({ text: projectName, clearFilters: true }, page);
   await clickPageAction('Delete project', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
+  await confirmAndAssertDeletion(page);
   await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 }

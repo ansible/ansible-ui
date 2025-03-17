@@ -1,14 +1,13 @@
 import { Page, expect } from '@playwright/test';
-import { clearTableFilters } from '../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
-import { filterTableByText } from '../../../commands/filterTableByText';
 import { navigateTo } from '../../../commands/navigateTo';
 
 export async function createOrganization(page: Page, options: { organizationName?: string } = {}) {
   await navigateTo(page, 'Access Management', 'Organizations');
-  await page.getByRole('link', { name: 'Create organization', exact: true }).click();
+  await page.getByText('Create organization', { exact: true }).click();
   const organizationName = options.organizationName ?? createE2EName();
   await page.getByLabel('Name').fill(organizationName);
   await page.getByRole('button', { name: 'Next', exact: true }).click();
@@ -16,14 +15,10 @@ export async function createOrganization(page: Page, options: { organizationName
   await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
   return organizationName;
 }
+
 export async function deleteOrganization(organizationName: string, page: Page) {
   await navigateTo(page, 'Access Management', 'Organizations');
-  await clearTableFilters(page);
-  await filterTableByText(organizationName, 'contains', page, true);
-  await clickTableRow(organizationName, page);
-  await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
+  await clickTableRow({ text: organizationName }, page);
   await clickPageAction('Delete organization', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(page.getByRole('heading', { name: 'Organizations', exact: true })).toBeVisible();
+  await confirmAndAssertDeletion(page);
 }

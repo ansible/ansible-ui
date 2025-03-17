@@ -187,7 +187,7 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
               data-cy={id}
               id={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               className={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
-              isDisabled={!!isDisabled}
+              aria-disabled={Boolean(isDisabled)}
               aria-label={
                 props.ariaLabel
                   ? props.ariaLabel
@@ -308,8 +308,7 @@ function PageActionLink<T extends object>(
   return (
     <Tooltip key={action.label} content={tooltip} trigger={tooltip ? undefined : 'manual'}>
       <DropdownItem
-        component={(p) => <Link {...p} to={to} />}
-        isAriaDisabled={Boolean(isDisabled)}
+        component={(p) => <Link {...p} to={to} aria-disabled={Boolean(isDisabled)} />}
         data-cy={getID(action)?.split('.').join('-')}
         style={{
           color: action.isDanger && !isDisabled ? getPatternflyColor(PFColorE.Danger) : undefined,

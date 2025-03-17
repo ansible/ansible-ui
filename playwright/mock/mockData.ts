@@ -62,6 +62,7 @@ interface IControllerData {
     all: Record<string, unknown>;
     policyascode: Record<string, unknown>;
   };
+  notification_templates: object[];
 }
 
 export interface IApiData {
@@ -151,6 +152,7 @@ export const mockData: IApiData = {
         unified_jobs: [],
         workflow_jobs: [],
         execution_environments: [{ id: 1, name: 'Default' }],
+        notification_templates: [],
         instance_groups: [],
         hosts: [{ id: 1, name: 'localhost' }],
         labels: [],

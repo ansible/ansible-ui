@@ -16,17 +16,16 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 const config: PlaywrightTestConfig = {
   testDir: '.',
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: 0, // process.env.CI ? 2 : 0,
-  /** Increase default timeout of expect assertions from 5s to 30s */
   expect: {
-    timeout: 60 * 1000,
+    // timeout: 60 * 1000, // default of playwright is 5s
   },
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['list'],

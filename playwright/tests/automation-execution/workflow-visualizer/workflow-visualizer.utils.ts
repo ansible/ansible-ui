@@ -1,13 +1,12 @@
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { APIRequestContext, Page, expect } from '@playwright/test';
 import { clickPageAction } from '../../../commands/clickPageAction';
-import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
+import { clickTableRow } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
 import { platformUI } from '../../../commands/login';
 import { navigateTo } from '../../../commands/navigateTo';
 import { controllerAPI } from './controller-api';
-import { filterTableByText } from '../../../commands/filterTableByText';
-import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 interface WFVizMock {
   mockData: PlatformItemsResponse<unknown> /** Object response from API */;
   id: number /** ID of the Workflow Job Template */;
@@ -63,10 +62,12 @@ export const createWFVizLink = async (options: WFVizLink) => {
 export async function createWorkflowJobTemplate(page: Page) {
   const name = 'Workflow job template' + createE2EName();
   await navigateTo(page, 'Automation Execution', 'Template');
-  await page.getByLabel('dropdown toggle', { exact: true }).click();
-  await page
-    .getByRole('menuitem', { name: 'Create workflow job template' })
-    .click({ timeout: 5000 });
+  await page.getByRole('button', { name: 'table view' }).click();
+  await expect(page.getByRole('button', { name: 'dropdown toggle', exact: true })).toBeVisible({
+    timeout: 5000,
+  });
+  await page.getByText('Create template', { exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Create workflow job template' }).click();
   await page.getByPlaceholder('Enter workflow job template').fill(name);
   await page.getByRole('button', { name: 'Create workflow job template' }).click();
   await expect(page.getByRole('heading', { name: 'Workflow Visualizer' })).toBeVisible();
@@ -75,13 +76,9 @@ export async function createWorkflowJobTemplate(page: Page) {
 
 export async function deleteWorkflowJobTemplate(wfjtName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Template');
-  await clickTableRowWithFilter(wfjtName, page);
+  await clickTableRow({ text: wfjtName, clearFilters: true }, page);
   await clickPageAction('Delete template', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(
-    page.getByRole('heading', { name: 'Automation Templates', exact: true })
-  ).toBeVisible();
+  await confirmAndAssertDeletion(page);
 }
 
 /**
@@ -92,11 +89,12 @@ export async function deleteWorkflowJobTemplate(wfjtName: string, page: Page) {
  */
 export async function deleteWorkflowApproval(approvalName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Administration', 'Workflow Approvals');
-  await clickTableRowWithFilter(approvalName, page);
+  await clickTableRow({ text: approvalName }, page);
   await clickPageAction('Delete template', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(page.getByRole('heading', { name: 'Worflow Approvals', exact: true })).toBeVisible();
+  await confirmAndAssertDeletion(page);
+  await expect(
+    page.getByRole('heading', { name: 'Workflow Approvals', exact: true })
+  ).toBeVisible();
 }
 
 /**
@@ -105,10 +103,9 @@ export async function deleteWorkflowApproval(approvalName: string, page: Page) {
  * @param page
  */
 export async function navigateToVisualizer(wfjtName: string, page: Page) {
-  await navigateTo(page, 'Automation Execution', 'Template');
+  await navigateTo(page, 'Automation Execution', 'Templates');
   await page.getByRole('button', { name: 'table view' }).click();
-  await filterTableByText(wfjtName, 'Enter search', page, false);
-  await clickTableRow(wfjtName, page);
+  await clickTableRow({ filterLabel: 'Name', text: wfjtName }, page);
   await page.getByRole('link', { name: 'View workflow visualizer' }).click();
 }
 
@@ -176,7 +173,9 @@ async function createNode(
   stepResourceName: string,
   resourceSelectInputLabel: string
 ) {
+  await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
   await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Job Template', exact: true }).click();
   await page.getByRole('option', { name: `${stepType}`, exact: true }).click();
   await page.getByLabel(`${resourceSelectInputLabel} *`).click();
@@ -192,7 +191,7 @@ async function createNode(
   await expect(page.getByText('Total nodes')).toBeVisible();
   await expect(page.getByText('1', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-  await expect(page.locator('[data-cy="alert-toaster"]')).toBeVisible();
+  await expect(page.getByText('Success alert:Successfully')).toBeVisible();
   await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
 }
 

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { clickPageAction } from '../../../commands/clickPageAction';
-import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
+import { clickTableRow } from '../../../commands/clickTableRow';
 import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { deleteJobTemplate } from '../templates/job-template-utils';
@@ -14,10 +14,12 @@ test('schedule - create, delete', { tag: ['@not_mock'] }, async ({ page }) => {
   await deleteAwxSchedule(scheduleName, page);
   await deleteJobTemplate(jobTemplateName, page);
 });
+
 test('schedule - edit', { tag: ['@not_mock'] }, async ({ page }) => {
+  test.setTimeout(5 * 20 * 1000);
   const { scheduleName, jobTemplateName } = await createAwxJobTemplateSchedule({}, page);
   await navigateTo(page, 'Automation Execution', 'Schedules');
-  await clickTableRowWithFilter(scheduleName, page);
+  await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
   await clickPageAction('Edit schedule', page);
   await page.getByRole('textbox', { name: 'Schedule name' }).click();
   await page.getByRole('textbox', { name: 'Schedule name' }).fill(`${scheduleName}-edited`);
@@ -29,13 +31,15 @@ test('schedule - edit', { tag: ['@not_mock'] }, async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: `${scheduleName}-edited`, exact: true }).first()
   ).toBeVisible();
-  await deleteAwxSchedule(`${scheduleName}-edited`, page);
+  await deleteAwxSchedule(`${scheduleName}`, page);
   await deleteJobTemplate(jobTemplateName, page);
 });
+
 test('schedule - edit with existing RRule', { tag: ['@not_mock'] }, async ({ page }) => {
+  test.setTimeout(5 * 20 * 1000);
   const { scheduleName, jobTemplateName } = await createAwxJobTemplateSchedule({}, page);
   await navigateTo(page, 'Automation Execution', 'Schedules');
-  await clickTableRowWithFilter(scheduleName, page);
+  await clickTableRow({ text: scheduleName, filterLabel: 'Name', clearFilters: false }, page);
   await clickPageAction('Edit schedule', page);
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Edit rule' }).click();

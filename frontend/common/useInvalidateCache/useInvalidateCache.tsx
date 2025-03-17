@@ -23,14 +23,20 @@ export function useClearCache() {
     }
   }, [cache]);
 
+  const INFINITE_KEY = '$inf$';
+
   const clearCacheByKey = useCallback(
     (key: string) => {
+      const keyBase = removeQueryString(key);
       for (const cacheKey of cache.keys()) {
-        if (
-          typeof cacheKey === 'string' &&
-          removeQueryString(cacheKey).startsWith(removeQueryString(key))
-        ) {
-          cache.delete(cacheKey);
+        if (typeof cacheKey === 'string') {
+          let cacheKeyBase = removeQueryString(cacheKey);
+          if (cacheKeyBase.startsWith(INFINITE_KEY)) {
+            cacheKeyBase = cacheKeyBase.slice(INFINITE_KEY.length);
+          }
+          if (cacheKeyBase.startsWith(keyBase)) {
+            cache.delete(cacheKey);
+          }
         }
       }
     },

@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import { clickPageAction } from '../../../../commands/clickPageAction';
-import { clickTableRowWithFilter } from '../../../../commands/clickTableRow';
+import { clickTableRow } from '../../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { navigateTo } from '../../../../commands/navigateTo';
 
@@ -25,7 +26,11 @@ export async function createInventory(options: { name?: string; type?: string },
   if (options.type !== 'smart') {
     await page.getByLabel('Prevent instance group').check();
   }
-  await page.getByLabel('OPA policy').fill('test/opa');
+  // Re-enable this when we have a deployment with OPA policy enabled.
+  // get feature flags from API
+  // if( featureflags includes OPA){
+  // await page.getByLabel('OPA policy').fill('test/opa');
+  // }
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
   return inventoryName;
@@ -42,7 +47,7 @@ export async function createInventorySource(
   const projectName = options.projectName ?? 'Demo Project';
   const inventoryName = await createInventory({}, page);
   await page.getByRole('tab', { name: 'Sources' }).click();
-  await page.getByRole('link', { name: 'Create source' }).click();
+  await page.getByText('Create source', { exact: true }).click();
   await page.getByPlaceholder('Enter source name').click();
   await page.getByPlaceholder('Enter source name').fill(inventorySourceName);
   await page.getByRole('button', { name: 'Select source' }).click();
@@ -58,10 +63,9 @@ export async function createInventorySource(
 
 export async function deleteInventory(inventoryName: string, page: Page) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-  await clickTableRowWithFilter(inventoryName, page);
+  await clickTableRow({ text: inventoryName }, page);
   await clickPageAction('Delete inventory', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
+  await confirmAndAssertDeletion(page);
   await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
 }
 
@@ -71,15 +75,12 @@ export async function deleteInventorySource(
   page: Page
 ) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-  await clickTableRowWithFilter(inventoryName, page);
+  await clickTableRow({ text: inventoryName }, page);
   await page.getByRole('tab', { name: 'Sources' }).click();
   await page.getByRole('link', { name: inventorySourceName }).click();
   await page.getByLabel('kebab dropdown toggle').click();
   await page.getByRole('menuitem', { name: 'Delete inventory source' }).click();
-  await page
-    .getByLabel('Yes, I confirm that I want to delete these 1 inventory sources.', { exact: true })
-    .check();
-  await page.getByRole('button', { name: 'Delete inventory sources' }).click();
+  await confirmAndAssertDeletion(page);
   await expect(
     page.getByRole('heading', { name: 'There are currently no sources added to this inventory.' })
   ).toBeVisible();

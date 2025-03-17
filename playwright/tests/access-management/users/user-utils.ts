@@ -1,10 +1,9 @@
 import { expect } from '@playwright/test';
 import { Page } from 'playwright-core';
-import { clearTableFilters } from '../../../commands/clearTableFilters';
 import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
-import { filterTableByText } from '../../../commands/filterTableByText';
 import { navigateTo } from '../../../commands/navigateTo';
 
 export async function createUser(
@@ -12,7 +11,7 @@ export async function createUser(
   page: Page
 ) {
   await navigateTo(page, 'Access Management', 'Users');
-  await page.getByRole('link', { name: 'Create user', exact: true }).click();
+  await page.getByText('Create user', { exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Create user', exact: true })).toBeVisible();
   const userName = options.userName ?? createE2EName('user', { noWhitespace: true });
   await page.getByLabel('Username').fill(userName);
@@ -26,12 +25,7 @@ export async function createUser(
 
 export async function deleteUser(userName: string, page: Page) {
   await navigateTo(page, 'Access Management', 'Users');
-  await clearTableFilters(page);
-  await filterTableByText(userName, 'contains', page, true);
-  await clickTableRow(userName, page);
-  await expect(page.getByRole('heading', { name: userName, exact: true })).toBeVisible();
+  await clickTableRow({ filterLabel: 'Username', text: userName }, page);
   await clickPageAction('Delete user', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(page.getByRole('heading', { name: 'Users', exact: true })).toBeVisible();
+  await confirmAndAssertDeletion(page);
 }
