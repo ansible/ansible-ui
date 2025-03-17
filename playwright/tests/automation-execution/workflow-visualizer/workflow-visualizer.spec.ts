@@ -7,7 +7,7 @@ import {
   navigateToVisualizer,
   removeAllWorkflowVizNodes,
   renderWFVizWithMockData,
-} from './workflow-visualizer.utils';
+} from './workflow-visualizer-utils';
 import { createAwxProject, deleteAwxProject } from '../projects/project-utils';
 import {
   createInventorySource,
@@ -393,7 +393,7 @@ test.describe('Workflow Visualizer: Edit', () => {
       await page.getByRole('option', { name: jobTemplate }).click();
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
       await page.getByRole('button', { name: 'Prompts' }).click();
-      await page.getByRole('textbox', { name: 'Select inventory' }).click();
+      await page.getByRole('button', { name: 'Inventory' }).click();
       await page.getByRole('option', { name: inventoryOne }).click();
       await page.getByRole('button', { name: 'Credentials' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).click();
@@ -652,7 +652,7 @@ test.describe('Workflow Visualizer Prompt Step', () => {
     await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
     await page.getByRole('button', { name: 'Fit to Screen' }).click();
     await expect(page.getByText('1', { exact: true })).toBeVisible();
-    await page.locator('[class*="label__background"]').first().click();
+    await page.locator('[class*="topology__node__label"]', { hasText: jtName }).click();
     await expect(page.getByRole('link', { name: jtName })).toBeVisible();
     await page.getByText('Skip tags', { exact: true }).hover();
     await page.mouse.wheel(0, 1000);

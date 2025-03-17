@@ -29,8 +29,6 @@ export async function createJobTemplate(
   await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
   await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
   if (options.PromptOnLaunch) {
-    await page.getByPlaceholder('Select inventory').fill('');
-    await page.getByPlaceholder('Select inventory').press('Backspace');
     await page.locator('#ask_inventory_on_launch').check();
     await page.locator('#ask_execution_environment_on_launch').check();
     await page.locator('#ask_credential_on_launch').check();
