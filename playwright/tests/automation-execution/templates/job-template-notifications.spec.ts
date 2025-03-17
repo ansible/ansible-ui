@@ -3,6 +3,8 @@ import { navigateTo } from '../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createSlackNotifier, deleteNotifier } from '../administration/notifiers/notifier-utils';
 import { createJobTemplate, deleteJobTemplate } from './job-template-utils';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { filterTable } from '../../../commands/filterTable';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -14,17 +16,22 @@ test.describe('Job Template - notifications tab', () => {
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
-
-      await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(jobTemplateName);
-      await page.getByRole('link', { name: jobTemplateName, exact: true }).click();
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByRole('button', { name: 'table view' }).click();
+      await clickTableRow(
+        {
+          pageTitle: 'Automation Templates',
+          text: jobTemplateName,
+          filterLabel: 'Name',
+          filterValue: jobTemplateName,
+          clearFilters: false,
+        },
+        page
+      );
       await expect(page.getByRole('heading')).toContainText(jobTemplateName);
       await page.getByRole('tab', { name: 'Notifications' }).click();
-
       await page.getByRole('link', { name: notifierName }).click();
       await expect(page.getByRole('heading')).toContainText(notifierName);
-
       await deleteJobTemplate(jobTemplateName, page);
       await deleteNotifier(page, notifierName);
     }
@@ -36,25 +43,34 @@ test.describe('Job Template - notifications tab', () => {
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
-
-      await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(jobTemplateName);
-      await page.getByRole('link', { name: jobTemplateName, exact: true }).click();
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByRole('button', { name: 'table view' }).click();
+      await clickTableRow(
+        {
+          pageTitle: 'Automation Templates',
+          text: jobTemplateName,
+          filterLabel: 'Name',
+          filterValue: jobTemplateName,
+          clearFilters: false,
+        },
+        page
+      );
       await expect(page.getByRole('heading')).toContainText(jobTemplateName);
-
       await page.getByRole('tab', { name: 'Notifications' }).click();
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(notifierName);
-
-      await page.getByRole('row', { name: notifierName }).locator('label').first().click();
+      await filterTable(
+        {
+          filterLabel: 'Name',
+          filterValue: notifierName,
+          clearFilters: false,
+        },
+        page
+      );
       await page
         .getByRole('gridcell', { name: 'Click to disable start Click' })
         .first()
         .isVisible();
       await page.getByRole('row', { name: notifierName }).locator('label').first().click();
       await page.getByRole('gridcell', { name: 'Click to enable start Click' }).first().isVisible();
-
       await deleteJobTemplate(jobTemplateName, page);
       await deleteNotifier(page, notifierName);
     }
@@ -66,17 +82,28 @@ test.describe('Job Template - notifications tab', () => {
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
-
-      await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(jobTemplateName);
-      await page.getByRole('link', { name: jobTemplateName, exact: true }).click();
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByRole('button', { name: 'table view' }).click();
+      await clickTableRow(
+        {
+          pageTitle: 'Automation Templates',
+          text: jobTemplateName,
+          filterLabel: 'Name',
+          filterValue: jobTemplateName,
+          clearFilters: false,
+        },
+        page
+      );
       await expect(page.getByRole('heading')).toContainText(jobTemplateName);
-
       await page.getByRole('tab', { name: 'Notifications' }).click();
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(notifierName);
-
+      await filterTable(
+        {
+          filterLabel: 'Name',
+          filterValue: notifierName,
+          clearFilters: false,
+        },
+        page
+      );
       await page.getByRole('row', { name: notifierName }).locator('label').nth(1).click();
       await page
         .getByRole('gridcell', { name: 'Click to disable success Click' })
@@ -87,7 +114,6 @@ test.describe('Job Template - notifications tab', () => {
         .getByRole('gridcell', { name: 'Click to enable success Click' })
         .first()
         .isVisible();
-
       await deleteJobTemplate(jobTemplateName, page);
       await deleteNotifier(page, notifierName);
     }
@@ -99,17 +125,28 @@ test.describe('Job Template - notifications tab', () => {
     async ({ page }) => {
       const notifierName = await createSlackNotifier(page);
       const jobTemplateName = await createJobTemplate({}, page);
-
-      await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(jobTemplateName);
-      await page.getByRole('link', { name: jobTemplateName, exact: true }).click();
+      await navigateTo(page, 'Automation Execution', 'Templates');
+      await page.getByRole('button', { name: 'table view' }).click();
+      await clickTableRow(
+        {
+          pageTitle: 'Automation Templates',
+          text: jobTemplateName,
+          filterLabel: 'Name',
+          filterValue: jobTemplateName,
+          clearFilters: false,
+        },
+        page
+      );
       await expect(page.getByRole('heading')).toContainText(jobTemplateName);
-
       await page.getByRole('tab', { name: 'Notifications' }).click();
-      await page.getByPlaceholder('Enter search').click();
-      await page.getByPlaceholder('Enter search').fill(notifierName);
-
+      await filterTable(
+        {
+          filterLabel: 'Name',
+          filterValue: notifierName,
+          clearFilters: false,
+        },
+        page
+      );
       await page.getByRole('row', { name: notifierName }).locator('label').nth(2).click();
       await page
         .getByRole('gridcell', { name: 'Click to disable failure Click' })
@@ -120,7 +157,6 @@ test.describe('Job Template - notifications tab', () => {
         .getByRole('gridcell', { name: 'Click to enable failure Click' })
         .first()
         .isVisible();
-
       await deleteJobTemplate(jobTemplateName, page);
       await deleteNotifier(page, notifierName);
     }

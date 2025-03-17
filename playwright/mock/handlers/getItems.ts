@@ -24,7 +24,7 @@ export function getItems(
         }
         return {
           status: 200,
-          body: { count: result.length, next: null, previous: null, results },
+          body: { count: results.length, next: null, previous: null, results },
         };
       }
     }

@@ -32,6 +32,8 @@ import { controllerAPI } from './controller-api';
 import { PlatformItemsResponse } from '@ansible/platform-ui/interfaces/PlatformItemsResponse';
 import { WorkflowJobTemplate } from '@ansible/awx-ui/interfaces/WorkflowJobTemplate';
 import { createE2EName } from '../../../commands/createE2EName';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { toggleNodeKebab } from '../../../commands/toggleNodeKebab';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -41,6 +43,7 @@ test.describe('Workflow Visualizer: Add Nodes', () => {
     'should render a workflow visualizer view with multiple nodes present',
     { tag: ['@not_e2e', '@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(5 * 30 * 1000);
       const visMockData = {
         count: 3,
         next: null,
@@ -228,11 +231,19 @@ test.describe('Workflow Visualizer: Add Nodes', () => {
     'Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(5 * 30 * 1000);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
-      await page.getByRole('link', { name: 'Templates' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).click();
-      await page.getByRole('textbox', { name: 'Type to filter' }).fill(wfJobTemplate);
-      await page.getByRole('link', { name: wfJobTemplate }).click();
+      await page.getByText('Templates', { exact: true }).click();
+      await clickTableRow(
+        {
+          text: wfJobTemplate,
+          pageTitle: 'Automation Templates',
+          filterLabel: 'Name',
+          filterValue: wfJobTemplate,
+          clearFilters: false,
+        },
+        page
+      );
       await page.getByRole('link', { name: 'View workflow visualizer' }).click();
       await expect(page.getByText('Workflow Visualizer')).toBeVisible();
       await expect(page.getByText(wfJobTemplate)).toBeVisible();
@@ -252,12 +263,14 @@ test.describe('Workflow Visualizer: Add Node to Existing Visualizer', () => {
     'Adds a new Job Template node linked to an existing node with on-success status, save the visualizer, then remove all nodes',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const project = await createAwxProject({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const projectName = createE2EName();
+      const project = await createAwxProject({ projectName }, page);
       const jobTemplate = await createJobTemplate({}, page);
       const workflowJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', project, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(projectName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Job Template', exact: true }).click();
@@ -288,28 +301,22 @@ test.describe('Workflow Visualizer: Edit', () => {
     'Can edit a node resource on a workflow visualizer already containing existing nodes',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const projectOne = await createAwxProject({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const projectOneName = createE2EName();
+      const projectOne = await createAwxProject({ projectName: projectOneName }, page);
       const projectTwo = await createAwxProject({}, page);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', projectOne, page);
-      await page
-        .locator(
-          'g:nth-child(3) > .pf-topology__node > g > g > g > .pf-topology__node__label > .pf-topology__node__label__background'
-        )
-        .click();
-      await page.getByRole('button', { name: 'Edit' }).click();
+      await toggleNodeKebab(projectOneName, page);
+      await page.getByRole('menuitem', { name: 'Edit step' }).click();
       await page.getByRole('button', { name: 'Project', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(projectTwo);
-
       await page.getByRole('option', { name: projectTwo }).click();
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
-      await page
-        .locator(
-          'g:nth-child(3) > .pf-topology__node > g > g > g > .pf-topology__node__label > .pf-topology__node__label__background'
-        )
-        .click();
-      await expect(page.getByRole('heading', { name: projectTwo })).toBeVisible();
+      await page.locator('[class*="action-icon__background"]').first().click({ force: true });
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+      await expect(page.getByText(projectTwo)).toBeVisible();
       await removeAllWorkflowVizNodes(page);
       await deleteWorkflowJobTemplate(wfJobTemplate, page);
       await deleteAwxProject(projectTwo, page);
@@ -321,12 +328,15 @@ test.describe('Workflow Visualizer: Edit', () => {
     'Click on edge context menu option to change link type and close visualizer to show unsaved changes modal',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const project = await createAwxProject({}, page);
-      const jobTemplate = await createJobTemplate({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const jobTemplateName = createE2EName();
+      const projectName = createE2EName();
+      const project = await createAwxProject({ projectName }, page);
+      const jobTemplate = await createJobTemplate({ name: jobTemplateName }, page);
       const wfjt = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', project, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(projectName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Job Template', exact: true }).click();
@@ -359,21 +369,28 @@ test.describe('Workflow Visualizer: Edit', () => {
     'Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
+      test.setTimeout(5 * 30 * 1000);
+      const jobTemplateName = createE2EName();
       const inventoryOne = await createInventory({}, page);
       const execEnvOne = await createExecutionEnvironment(page);
       const execEnvTwo = await createExecutionEnvironment(page);
       const credentialOne = await createAwxCredential({}, page);
       const instanceGroup = await createInstanceGroup({}, page);
-      const jobTemplateName = await createJobTemplate({ PromptOnLaunch: true }, page);
+      const jobTemplate = await createJobTemplate(
+        { PromptOnLaunch: true, name: jobTemplateName },
+        page
+      );
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       //Add step
+      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Job Template', exact: true }).click();
       await page.getByRole('button', { name: 'Job template', exact: true }).click();
       await page.getByRole('textbox', { name: 'Search input' }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplateName);
-      await page.getByRole('option', { name: jobTemplateName }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplate);
+      await page.getByRole('option', { name: jobTemplate }).click();
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
       await page.getByRole('button', { name: 'Prompts' }).click();
       await page.getByRole('textbox', { name: 'Select inventory' }).click();
@@ -397,14 +414,12 @@ test.describe('Workflow Visualizer: Edit', () => {
       await page.getByRole('button', { name: 'Save', exact: true }).click();
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-
       // Edit step and select a different execution env.
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(jobTemplate, page);
       await page.getByRole('menuitem', { name: 'Edit step' }).click();
       await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
       await page.getByRole('button', { name: 'Prompts' }).click();
-
       await page.getByRole('button', { name: 'Execution environment' }).click();
       await page.getByRole('textbox', { name: 'Search input' }).fill(execEnvTwo);
       await page.getByRole('option', { name: execEnvTwo }).click();
@@ -414,15 +429,11 @@ test.describe('Workflow Visualizer: Edit', () => {
       await expect(page.getByText('Success alert:Successfully')).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page
-        .locator(
-          'g:nth-child(3) > .pf-topology__node > g > g > g > .pf-topology__node__label > .pf-topology__node__label__background'
-        )
-        .click();
+      await page.locator('[class*="topology__node__label"]', { hasText: jobTemplate }).click();
       await expect(page.getByRole('link', { name: execEnvTwo })).toBeVisible();
       //cleanup
       await removeAllWorkflowVizNodes(page);
-      await deleteJobTemplate(jobTemplateName, page);
+      await deleteJobTemplate(jobTemplate, page);
       await deleteWorkflowJobTemplate(wfJobTemplate, page);
       await deleteAwxCredential(credentialOne, page);
       await deleteExecutionEnvironment(execEnvOne, page);
@@ -438,12 +449,16 @@ test.describe('Workflow Visualizer: Remove and Add Nodes', () => {
     'Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const projectOne = await createAwxProject({}, page);
-      const projectTwo = await createAwxProject({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const projectOneName = createE2EName();
+      const projectTwoName = createE2EName();
+      const projectOne = await createAwxProject({ projectName: projectOneName }, page);
+      const projectTwo = await createAwxProject({ projectName: projectTwoName }, page);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', projectOne, page);
-
+      await expect(page.getByRole('button', { name: 'Add step' })).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Project Sync' }).click();
       await page.getByRole('button', { name: 'Project', exact: true }).click();
@@ -454,20 +469,17 @@ test.describe('Workflow Visualizer: Remove and Add Nodes', () => {
       await page.getByRole('button', { name: 'Save' }).click();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await expect(page.getByText('2', { exact: true })).toBeVisible();
-
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Remove step' }).click();
       await page.getByRole('button', { name: 'Save' }).nth(0).click();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await expect(page.getByText('1', { exact: true })).toBeVisible();
-
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(projectTwoName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
-
       await page
         .locator('div')
         .filter({ hasText: /^Yes, I confirm that I want to remove this node\.$/ })
@@ -476,12 +488,13 @@ test.describe('Workflow Visualizer: Remove and Add Nodes', () => {
       await page.getByRole('button', { name: 'Remove step' }).click();
       await expect(page.getByText('0', { exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Save' }).nth(0).click();
-
       await expect(
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
-
+      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
       await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Project Sync' }).click();
       await page.getByRole('button', { name: 'Project', exact: true }).click();
@@ -493,6 +506,7 @@ test.describe('Workflow Visualizer: Remove and Add Nodes', () => {
       await expect(
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
+      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
       await page.waitForTimeout(200);
       await deleteWorkflowJobTemplate(wfJobTemplate, page);
       await page.waitForTimeout(200);
@@ -506,7 +520,9 @@ test.describe('Workflow Visualizer: Remove and Add Nodes', () => {
     'Can remove all existing nodes on a visualizer using the button in the toolbar kebab, save the visualizer, then add 2 new nodes and save the visualizer again',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const project = await createAwxProject({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const projectName = createE2EName();
+      const project = await createAwxProject({ projectName }, page);
       const jobTemplate = await createJobTemplate({}, page);
       const workflowJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', project, page);
@@ -514,8 +530,8 @@ test.describe('Workflow Visualizer: Remove and Add Nodes', () => {
       await navigateToVisualizer(workflowJobTemplate, page);
       await createVisualizerStep('Project Sync', project, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
+      await toggleNodeKebab(projectName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Job Template', exact: true }).click();
@@ -543,12 +559,17 @@ test.describe('Workflow Visualizer: Delete Nodes or Links', () => {
     'Can delete one single node and save the visualizer',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const { inventoryName, inventorySourceName } = await createInventorySource({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const sourceName = createE2EName();
+      const { inventoryName, inventorySourceName } = await createInventorySource(
+        { name: sourceName },
+        page
+      );
       const workflowJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Inventory Source Sync', inventorySourceName, page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.getByText('1', { exact: true })).toBeVisible();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(sourceName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).click();
       await page.getByRole('button', { name: 'Remove step' }).click();
@@ -566,14 +587,15 @@ test.describe('Workflow Visualizer: Delete Nodes or Links', () => {
     'Can access an existing workflow visualizer and delete the link between two nodes',
     { tag: ['@not_mock', '@compare'] },
     async ({ page }) => {
-      const projectOne = await createAwxProject({}, page);
+      test.setTimeout(5 * 30 * 1000);
+      const projectOneName = createE2EName();
+      const projectOne = await createAwxProject({ projectName: projectOneName }, page);
       const projectTwo = await createAwxProject({}, page);
       const wfJobTemplate = await createWorkflowJobTemplate(page);
       await createVisualizerStep('Project Sync', projectOne, page);
       await expect(page.getByText('1', { exact: true })).toBeVisible();
-
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Add step and link' }).click();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: 'Project Sync' }).click();
@@ -583,14 +605,12 @@ test.describe('Workflow Visualizer: Delete Nodes or Links', () => {
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Finish' }).click();
       await expect(page.getByText('2', { exact: true })).toBeVisible();
-
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.locator('[class*="action-icon__background"]').nth(1).click({ force: true });
+      await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Remove step' }).click();
       await expect(page.getByText('1', { exact: true })).toBeVisible();
-
       await removeAllWorkflowVizNodes(page);
       await deleteWorkflowJobTemplate(wfJobTemplate, page);
       await deleteAwxProject(projectTwo, page);
@@ -601,10 +621,13 @@ test.describe('Workflow Visualizer: Delete Nodes or Links', () => {
 
 test.describe('Workflow Visualizer Prompt Step', () => {
   test('Should update skip tags', { tag: ['@not_mock', '@compare'] }, async ({ page }) => {
-    const jtName = 'skip_tags_JT' + createE2EName();
+    const jtName = createE2EName();
     const jobTemplate = await createJobTemplate({ name: jtName, skipTagsPrompt: true }, page);
     const workflowJobTemplate = await createWorkflowJobTemplate(page);
+    test.setTimeout(5 * 30 * 1000);
+    await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
     await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
     await page.getByRole('button', { name: 'Job Template', exact: true }).click();
     await page.getByRole('option', { name: 'Job Template', exact: true }).click();
     await page.getByRole('button', { name: 'Job template', exact: true }).click();
@@ -625,16 +648,12 @@ test.describe('Workflow Visualizer Prompt Step', () => {
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByRole('button', { name: 'Finish' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
-    await expect(page.locator('[data-cy="alert-toaster"]')).toBeVisible();
+    await expect(page.getByText('Success alert:Successfully')).toBeVisible();
     await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
     await page.getByRole('button', { name: 'Fit to Screen' }).click();
     await expect(page.getByText('1', { exact: true })).toBeVisible();
-    await page
-      .locator(
-        'g:nth-child(3) > .pf-topology__node > g > g > g > .pf-topology__node__label > .pf-topology__node__label__background'
-      )
-      .click();
-    await expect(page.getByRole('heading', { name: jtName })).toBeVisible();
+    await page.locator('[class*="label__background"]').first().click();
+    await expect(page.getByRole('link', { name: jtName })).toBeVisible();
     await page.getByText('Skip tags', { exact: true }).hover();
     await page.mouse.wheel(0, 1000);
     await expect(

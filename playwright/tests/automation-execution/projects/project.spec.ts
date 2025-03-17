@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { setupAfter, setupBefore } from '../../../commands/setup';
-import { createAwxProject, syncAwxProject, deleteAwxProject } from './project-utils';
+import { createAwxProject, deleteAwxProject, syncAwxProject } from './project-utils';
 
 test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);

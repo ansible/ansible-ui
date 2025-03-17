@@ -58,6 +58,10 @@ export async function logApiCallResponse(response: Response) {
   if (!process.env.CI) {
     const logBody = process.env.LOG_API_BODY === 'true';
     if (logBody) {
+      if (url.searchParams.toString()) {
+        console.log(url.searchParams.toString());
+      }
+
       if (response.headers()['content-type'] === 'application/json') {
         const body = await response.body();
         console.log(

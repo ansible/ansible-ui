@@ -1,10 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { clickTableRowWithFilter } from '../../../commands/clickTableRow';
+import { clickTableRow } from '../../../commands/clickTableRow';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../commands/createE2EName';
+import { filterTable } from '../../../commands/filterTable';
 import { navigateTo } from '../../../commands/navigateTo';
-import { selectTableFilter } from '../../../commands/selectTableFilter';
-import { clearTableFilters } from '../../../commands/clearTableFilters';
-import { filterTableBySelect } from '../../../commands/filterTableBySelect';
 
 export async function createJobTemplate(
   options: {
@@ -20,11 +19,12 @@ export async function createJobTemplate(
   const jobTemplateName = options.name ?? createE2EName('job-template');
   const jobTemplateDescription = 'This is a JT description';
   const inventoryName = options.inventoryName ?? 'Demo Inventory';
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
-  await expect(
-    page.getByRole('heading', { name: 'Automation Templates', exact: true })
-  ).toBeVisible();
-  await page.getByLabel('dropdown toggle', { exact: true }).click();
+  await navigateTo(page, 'Automation Execution', 'Templates');
+  await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('button', { name: 'dropdown toggle', exact: true })).toBeVisible({
+    timeout: 5000,
+  });
+  await page.getByText('Create template', { exact: true }).click();
   await page.getByRole('menuitem', { name: 'Create job template' }).click();
   await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
   await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
@@ -82,13 +82,14 @@ export async function runJobTemplate(
   await navigateTo(page, 'Automation Execution', 'Templates');
   await page.getByLabel('table view', { exact: true }).click();
   if (options?.view === 'details') {
-    await clickTableRowWithFilter(jobTemplateName, page);
+    await clickTableRow({ text: jobTemplateName }, page);
     await expect(page.getByRole('main')).toContainText(jobTemplateName);
     await page.locator('#launch-template').click();
   } else {
-    await clearTableFilters(page);
-    await selectTableFilter('Name', page);
-    await filterTableBySelect(jobTemplateName, page);
+    await filterTable(
+      { filterLabel: 'Name', filterValue: jobTemplateName, clearFilters: true },
+      page
+    );
     await page.getByRole('row', { name: jobTemplateName }).getByLabel('Launch template').click();
   }
   if (options?.PromptOnLaunch) {
@@ -107,7 +108,7 @@ export async function runJobTemplate(
     await expect(page.locator('#instance-groups')).toContainText('default');
     await page.getByRole('button', { name: 'Finish' }).click();
   }
-  await expect(page.getByRole('main')).toContainText(jobTemplateName);
+  await expect(page.getByRole('main')).toContainText('Output');
   if (!options?.doNotWait) {
     await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 120000 });
   }
@@ -124,24 +125,20 @@ export async function deleteJobTemplate(
   page: Page,
   view?: 'list' | 'details'
 ) {
-  await navigateTo(page, 'Automation ExecutionAutomation Controller', 'Templates');
+  await navigateTo(page, 'Automation Execution', 'Templates');
   await page.getByLabel('table view', { exact: true }).click();
   if (view === 'details') {
-    await clickTableRowWithFilter(jobTemplateName, page);
-    await expect(page.getByRole('heading', { name: jobTemplateName, exact: true })).toBeVisible();
+    await clickTableRow({ text: jobTemplateName }, page);
     await page.getByLabel('kebab dropdown toggle').click();
     await page.getByRole('menuitem', { name: 'Delete template' }).click();
   } else {
-    await clearTableFilters(page);
-    await selectTableFilter('Name', page);
-    await filterTableBySelect(jobTemplateName, page);
+    await filterTable(
+      { filterLabel: 'Name', filterValue: jobTemplateName, clearFilters: true },
+      page
+    );
     await page.getByRole('row', { name: jobTemplateName }).getByLabel('Select row').click();
     await page.getByLabel('toolbar actions').click();
     await page.getByRole('menuitem', { name: 'Delete template' }).click();
   }
-  await page.getByText('Yes, I confirm that I want to').click();
-  await page.getByRole('button', { name: 'Delete template' }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Automation Templates', exact: true })
-  ).toBeVisible();
+  await confirmAndAssertDeletion(page);
 }

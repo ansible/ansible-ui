@@ -40,7 +40,7 @@ export interface IToolbarDateRangeFilterProps {
 }
 
 export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
-  const { filterValues, setFilterValues, placeholder, isRequired, defaultValue } = props;
+  const { filterValues, id, setFilterValues, placeholder, isRequired, defaultValue } = props;
 
   const selectedValue = filterValues && filterValues.length > 0 ? filterValues[0] : undefined;
   const selectedOption = props.options.find((option) => option.value === selectedValue);
@@ -84,6 +84,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     <ToolbarItem>
       <PageSingleSelect
         value={selectedOption?.value ?? ''}
+        id={id}
         onSelect={onSelectChange}
         options={props.options}
         placeholder={placeholder}
