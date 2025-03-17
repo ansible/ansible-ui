@@ -388,12 +388,10 @@ describe('Execution Environment Activity and Image tabs', () => {
             cy.get('a')
               .should('have.attr', 'href')
               .then((hrefAttr) => {
-                {
-                  typeof hrefAttr === 'string' &&
-                    expect(decodeURIComponent(hrefAttr)).to.include(
-                      `/execution-environments/${executionEnvironment.name}/images/${digest}/`
-                    );
-                }
+                typeof hrefAttr === 'string' &&
+                  expect(decodeURIComponent(hrefAttr)).to.include(
+                    `/execution-environments/${executionEnvironment.name}/images/${digest}/`
+                  );
               });
             cy.get('a span.pf-v5-c-label__text')
               .invoke('text')

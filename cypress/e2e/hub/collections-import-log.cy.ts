@@ -2,6 +2,7 @@ import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { hubAPI } from '../../support/formatApiPathForHub';
 import { randomE2Ename } from '../../support/utils';
 import { Collections } from './constants';
+import { SAAS_URL, AZURE_URL } from '../../support/constants';
 
 describe('GalaxyKit Installation Check for Collections Import Log', () => {
   before(function () {
@@ -80,10 +81,13 @@ describe('GalaxyKit Installation Check for Collections Import Log', () => {
       cy.getByDataCy('label-approval-status').should('be.visible');
       cy.getByDataCy('label-version').should('be.visible');
       cy.contains('Completed').should('be.visible');
-      cy.contains('Unsigned').should('be.visible');
-      cy.contains('1.0.0').should('be.visible');
-      // Code editor for log messages
-      cy.getByDataCy('import-log').should('be.visible');
+      cy.checkBuildType().then((buildType) => {
+        if (buildType !== SAAS_URL && buildType !== AZURE_URL) {
+          cy.contains('Unsigned').should('be.visible');
+        }
+        cy.contains('1.0.0').should('be.visible');
+        cy.getByDataCy('import-log').should('be.visible');
+      });
     });
   });
 });

@@ -87,7 +87,6 @@ describe('Execution Environments: User/Team access', () => {
     cy.clickButton(/^Remove role$/);
   });
 
-  // There's inconsistency with Users -> creating a team with an org doesn't show it under the org so skipping for time being
   it('Add a team role assignment from the Team Access tab', () => {
     cy.addEERolesToTeamsInOrganization(organization.name);
     cy.navigateTo('awx', 'execution-environments');
