@@ -1,14 +1,11 @@
 import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
-import { Settings } from '@ansible/awx-ui/interfaces/Settings';
-import { SAAS_URL } from '../../../support/constants';
-import { awxAPI } from '../../../support/formatApiPathForAwx';
+import { AZURE_URL, SAAS_URL } from '../../../support/constants';
 
 describe('If SaaS Build', () => {
   before(function () {
-    cy.requestGet<Settings>(awxAPI`/settings/system/`).then((data) => {
-      const saasBaseUrl = data.TOWER_URL_BASE;
-      const parseSaas = saasBaseUrl.split('.').slice(2).join('.').toString();
-      if (parseSaas === SAAS_URL) {
+    cy.checkBuildType().then((buildType) => {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
+        cy.log('Test/tests should not run on this deployment.');
         this.skip();
       } else {
         cy.log('Run these tests');
@@ -19,6 +16,7 @@ describe('If SaaS Build', () => {
   describe('Settings', () => {
     it('checks license compliance status', () => {
       cy.intercept('GET', '/api/controller/v2/config').as('getConfig');
+      cy.navigateTo('platform', 'overview');
       cy.wait('@getConfig')
         .its('response.body.license_info')
         .then((licenseObject: ILicenseInfo) => {
