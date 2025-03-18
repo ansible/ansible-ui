@@ -58,10 +58,11 @@ jobs:
       - id: matrix
         run: |
           SHARD_TOTAL=${{ inputs.PARALLEL_TESTS }}
-          SHARD_INDEX=$(seq -s ',' 1 $SHARD_TOTAL)
-          echo "shardIndex=[$SHARD_INDEX]" >> $GITHUB_OUTPUT
+          SHARD_INDEX=$(awk -v n=$SHARD_TOTAL 'BEGIN {printf "["; for (i=1; i<=n; i++) printf (i<n ? i "," : i ); printf "]"}')
+          echo $SHARD_INDEX
+          echo "shardIndex=$SHARD_INDEX" >> $GITHUB_OUTPUT
           echo "shardTotal=$SHARD_TOTAL" >> $GITHUB_OUTPUT
-
+          
   playwright:
     name: Playwright
     timeout-minutes: 60
@@ -75,17 +76,17 @@ jobs:
 
     steps:
     - name: Download image
-      if: ${{ inputs.PLATFORM_UI == 'http://localhost:4100' }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       uses: actions/download-artifact@v4
       with:
         name: platform-ui.tar
 
     - name: Load image
-      if: ${{ inputs.PLATFORM_UI == 'http://localhost:4100' }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       run: docker load --input platform-ui.tar
 
     - name: Run container
-      if: ${{ inputs.PLATFORM_UI == 'http://localhost:4100' }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
 
     - uses: actions/checkout@v4
@@ -144,7 +145,7 @@ jobs:
         if-no-files-found: ignore
 
     - name: Stop container
-      if: ${{ inputs.PLATFORM_UI == 'http://localhost:4100' }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       run: docker stop platform-ui
 
   playwright-report:
