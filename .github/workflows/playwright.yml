@@ -62,7 +62,7 @@ jobs:
           echo $SHARD_INDEX
           echo "shardIndex=$SHARD_INDEX" >> $GITHUB_OUTPUT
           echo "shardTotal=$SHARD_TOTAL" >> $GITHUB_OUTPUT
-          
+
   playwright:
     name: Playwright
     timeout-minutes: 60
@@ -200,7 +200,9 @@ jobs:
         paths: ${{ inputs.BROWSER }}-junit.xml
 
     - name: Merge into Allure Report
-      run: npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
+      run: |
+        export ALLURE_LABEL_owner=${{ github.actor }}
+        npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
 
     - name: Load test report history
       uses: actions/checkout@v3
