@@ -115,6 +115,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
         }));
         setStepData((prev) => {
           const prompts = prev.nodePromptsStep?.prompt;
+
           return {
             ...prev,
             nodePromptsStep: {
@@ -125,11 +126,33 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 ...launchConfigValue,
                 inventory: prompts?.inventory ?? launchConfigValue.inventory,
                 credentials: [
-                  ...(launchConfigValue.credentials ?? []),
                   ...(prompts?.credentials ?? []),
+                  ...(launchConfigValue?.credentials ?? []),
                 ],
-                skip_tags: [...launchConfigValue.skip_tags, ...(prompts?.skip_tags || [])],
-                job_tags: [...launchConfigValue.job_tags, ...(prompts?.job_tags ?? [])],
+                skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
+                job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
+                execution_environment: prompts?.execution_environment
+                  ? {
+                      id: prompts?.execution_environment?.id ?? prompts?.execution_environment,
+                      name: prompts?.execution_environment?.name ?? '',
+                    }
+                  : launchConfigValue?.execution_environment,
+                extra_vars:
+                  prompts?.extra_vars && prompts.extra_vars !== ''
+                    ? prompts.extra_vars
+                    : (launchConfigValue?.extra_vars ?? ''),
+                instance_groups: [
+                  ...(prompts?.instance_groups ?? []),
+                  ...(launchConfigValue?.instance_groups ?? []),
+                ],
+                labels: [...(prompts?.labels ?? []), ...(launchConfigValue?.labels ?? [])],
+                diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
+                forks: prompts?.forks ?? launchConfigValue?.forks,
+                limit: prompts?.limit ?? launchConfigValue?.limit,
+                verbosity: prompts?.verbosity ?? launchConfigValue?.verbosity,
+                job_slice_count: prompts?.job_slice_count ?? launchConfigValue?.job_slice_count,
+                timeout: prompts?.timeout ?? launchConfigValue?.timeout,
+                job_type: prompts?.job_type ?? launchConfigValue?.job_type,
               },
             },
           };

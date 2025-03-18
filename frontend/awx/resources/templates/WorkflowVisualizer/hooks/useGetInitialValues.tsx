@@ -131,7 +131,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         credentials: aggregateCredentials ?? (nodeCredentials || []),
         diff_mode: prompt?.diff_mode ?? (defaults?.diff_mode || false),
         execution_environment:
-          prompt?.execution_environment ?? (defaults?.execution_environment || {}),
+          prompt?.execution_environment ?? (defaults?.execution_environment || undefined),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
         forks: prompt?.forks ?? (defaults?.forks || 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
