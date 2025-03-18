@@ -36,6 +36,7 @@ jobs:
       BROWSER: ${{ matrix.project }}
       SLACK_NOTIFICATION: true
       SUBFOLDER: Nightly
+      PARALLEL_TESTS: '1'
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}    
