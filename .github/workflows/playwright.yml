@@ -3,8 +3,12 @@ name: Playwright
 on:
   workflow_call:
     inputs:
-      PLATFORM_UI:
+      PLATFORM_SERVER:
         type: string
+        required: false
+        default: "http://localhost"
+      TEST_SERVER_UI:
+        type: boolean
         required: false
       PLATFORM_USERNAME:
         type: string
@@ -33,6 +37,9 @@ on:
         type: string
         required: false
         default: chromium
+      SUBFOLDER:
+        type: string
+        required: true
     secrets:
       SLACK_WEBHOOK_URL:
         required: false
@@ -65,18 +72,18 @@ jobs:
 
     steps:
     - name: Download image
-      if: ${{ inputs.PLATFORM_UI == '' }}
+      if: ${{ inputs.TEST_SERVER_UI != true }}
       uses: actions/download-artifact@v4
       with:
         name: platform-ui.tar
 
     - name: Load image
-      if: ${{ inputs.PLATFORM_UI == '' }}
+      if: ${{ inputs.TEST_SERVER_UI != true }}
       run: docker load --input platform-ui.tar
 
     - name: Run container
-      if: ${{ inputs.PLATFORM_UI == '' }}
-      run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=http://localhost platform-ui
+      if: ${{ inputs.TEST_SERVER_UI != true }}
+      run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
 
     - uses: actions/checkout@v4
 
@@ -105,9 +112,11 @@ jobs:
 
     - name: Run Playwright tests
       working-directory: playwright
-      run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: |
+        export ALLURE_LABEL_owner=${{ github.actor }}
+        npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
-        PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
+        PLATFORM_UI: ${{ inputs.TEST_SERVER_UI }}
         PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME != '' && inputs.PLATFORM_USERNAME || 'e2e' }}
         PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD != '' && inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}
         TAGS: ${{ inputs.TAGS }}
@@ -132,7 +141,7 @@ jobs:
         if-no-files-found: ignore
 
     - name: Stop container
-      if: ${{ inputs.PLATFORM_UI == '' }}
+      if: ${{ inputs.TEST_SERVER_UI != true }}
       run: docker stop platform-ui
 
   playwright-report:
@@ -202,8 +211,11 @@ jobs:
       if: always()
       with:
         gh_pages: gh-pages
+        allure_report: allure-report
         allure_history: allure-history
         allure_results: allure-results
+        subfolder: ${{ inputs.SUBFOLDER }}
+        keep_reports: 50
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3

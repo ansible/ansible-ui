@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-exports */
 import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
+import * as os from 'node:os';
 import path from 'path';
 
 /**
@@ -30,7 +31,18 @@ const config: PlaywrightTestConfig = {
   reporter: [
     ['list'],
     ['junit', { outputFile: 'results.xml' }],
-    ['allure-playwright', { resultsDir: 'playwright/allure-results' }],
+    [
+      'allure-playwright',
+      {
+        resultsDir: 'playwright/allure-results',
+        environmentInfo: {
+          os_platform: os.platform(),
+          os_release: os.release(),
+          os_version: os.version(),
+          node_version: process.version,
+        },
+      },
+    ],
   ],
 
   // Split TAGS by comma and create a regular expression that matches any of the tags

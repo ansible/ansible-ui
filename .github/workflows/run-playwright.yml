@@ -3,10 +3,18 @@ name: Run Playwright
 on:
   workflow_dispatch:
     inputs:
-      PLATFORM_UI:
+      PLATFORM_SERVER:
         type: string
         required: true
-        description: "Server URL"
+        description: "AAP Server URL"
+      TEST_UI:
+        type: choice
+        required: true
+        description: "Test UI on"
+        default: "branch"
+        options:
+          - "branch"
+          - "server"
       PLATFORM_USERNAME:
         type: string
         required: false
@@ -39,6 +47,7 @@ on:
 
 jobs:
   platform-ui-image:
+    if: ${{ inputs.TEST_UI == 'branch' }}
     name: Platform UI Image
     uses: ./.github/workflows/image.yml
     with:
@@ -56,13 +65,15 @@ jobs:
       - platform-ui-image
     uses: ./.github/workflows/playwright.yml
     with:
-      PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
+      PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
+      TEST_SERVER_UI: ${{ inputs.TEST_UI == 'server' }}
       PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME }}
       PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD }}
       TAGS: ${{ inputs.TAGS }}
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
       PROJECT: ${{ inputs.PROJECT }}
+      SUBFOLDER: Run
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       
