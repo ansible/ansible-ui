@@ -99,6 +99,7 @@ jobs:
     with:
       PARALLEL_TESTS: 2
       NOT_TAGS: "@not_mock"
+      SUBFOLDER: PR
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
 
