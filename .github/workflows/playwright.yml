@@ -57,8 +57,10 @@ jobs:
     steps:
       - id: matrix
         run: |
-          echo "shardIndex=${{ format('[1, {0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
-          echo "shardTotal=${{ format('[{0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
+          SHARD_TOTAL=${{ inputs.PARALLEL_TESTS }}
+          SHARD_INDEX=$(seq -s ',' 1 $SHARD_TOTAL)
+          echo "shardIndex=[$SHARD_INDEX]" >> $GITHUB_OUTPUT
+          echo "shardTotal=$SHARD_TOTAL" >> $GITHUB_OUTPUT
 
   playwright:
     name: Playwright

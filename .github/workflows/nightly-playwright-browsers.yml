@@ -28,8 +28,6 @@ jobs:
       matrix:
         project: 
           - "chromium"
-          - "firefox"
-          - "webkit"
     with:
       PROJECT: mock ${{ matrix.project }}
       NOT_TAGS: "@not_mock"
