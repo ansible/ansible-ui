@@ -57,11 +57,13 @@ jobs:
     steps:
       - id: matrix
         run: |
-          SHARD_TOTAL=${{ inputs.PARALLEL_TESTS }}
-          SHARD_INDEX=$(awk -v n=$SHARD_TOTAL 'BEGIN {printf "["; for (i=1; i<=n; i++) printf (i<n ? i "," : i ); printf "]"}')
-          echo $SHARD_INDEX
-          echo "shardIndex=$SHARD_INDEX" >> $GITHUB_OUTPUT
-          echo "shardTotal=$SHARD_TOTAL" >> $GITHUB_OUTPUT
+          # SHARD_TOTAL=${{ inputs.PARALLEL_TESTS }}
+          # SHARD_INDEX=$(awk -v n=$SHARD_TOTAL 'BEGIN {printf "["; for (i=1; i<=n; i++) printf (i<n ? i "," : i ); printf "]"}')
+          # echo $SHARD_INDEX
+          # echo "shardIndex=$SHARD_INDEX" >> $GITHUB_OUTPUT
+          # echo "shardTotal=$SHARD_TOTAL" >> $GITHUB_OUTPUT
+          echo "shardIndex=${{ format('[1, {0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
+          echo "shardTotal=${{ format('[{0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
 
   playwright:
     name: Playwright
