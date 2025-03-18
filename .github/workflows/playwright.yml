@@ -7,9 +7,10 @@ on:
         type: string
         required: false
         default: "http://localhost"
-      TEST_SERVER_UI:
-        type: boolean
+      PLATFORM_UI:
+        type: string
         required: false
+        default: "http://localhost"
       PLATFORM_USERNAME:
         type: string
         required: false
@@ -72,17 +73,17 @@ jobs:
 
     steps:
     - name: Download image
-      if: ${{ inputs.TEST_SERVER_UI != true }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       uses: actions/download-artifact@v4
       with:
         name: platform-ui.tar
 
     - name: Load image
-      if: ${{ inputs.TEST_SERVER_UI != true }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       run: docker load --input platform-ui.tar
 
     - name: Run container
-      if: ${{ inputs.TEST_SERVER_UI != true }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       run: docker run -d --name platform-ui -p 4100:443 -e PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER }} platform-ui
 
     - uses: actions/checkout@v4
@@ -116,7 +117,7 @@ jobs:
         export ALLURE_LABEL_owner=${{ github.actor }}
         npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
-        PLATFORM_UI: ${{ inputs.TEST_SERVER_UI }}
+        PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
         PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME != '' && inputs.PLATFORM_USERNAME || 'e2e' }}
         PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD != '' && inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}
         TAGS: ${{ inputs.TAGS }}
@@ -141,7 +142,7 @@ jobs:
         if-no-files-found: ignore
 
     - name: Stop container
-      if: ${{ inputs.TEST_SERVER_UI != true }}
+      if: ${{ inputs.PLATFORM_UI == 'http://localhost' }}
       run: docker stop platform-ui
 
   playwright-report:
