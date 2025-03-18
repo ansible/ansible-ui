@@ -31,6 +31,7 @@ import { GatewaySettingsDetails } from '../settings/GatewaySettingsDetails';
 import { GatewaySettingsEdit } from '../settings/GatewaySettingsEdit';
 import { SubscriptionDetails } from '../settings/SubscriptionDetails';
 import { SubscriptionWizard } from '../settings/SubscriptionWizard';
+import { UIFlagsPage } from '../settings/ui-flags/UIFlagsPage';
 import { useHasAwxService, useHasEdaService, useHasHubService } from './GatewayServices';
 import { useIsManagedCloudInstall } from './GatewayUIAuth';
 import { usePlatformActiveUser } from './PlatformActiveUserProvider';
@@ -500,6 +501,12 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
     hidden:
       !awxService ||
       (!activePlatformUser?.is_superuser && !activePlatformUser?.is_platform_auditor),
+  });
+
+  settingsNav.push({
+    id: PlatformRoute.UIFlags,
+    path: 'flags',
+    element: <UIFlagsPage />,
   });
 
   settingsNav.push({
