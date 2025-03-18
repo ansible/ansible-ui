@@ -665,4 +665,97 @@ test.describe('Workflow Visualizer Prompt Step', () => {
     await deleteJobTemplate(jobTemplate, page);
     await deleteWorkflowJobTemplate(workflowJobTemplate, page);
   });
+
+  test(
+    'Should display the saved extra_vars, execution_env, inv. group in the Edit node prompt step',
+    { tag: ['@not_mock', '@compare'] },
+    async ({ page }) => {
+      const inventoryOne = await createInventory({}, page);
+      const execEnvOne = await createExecutionEnvironment(page);
+      const credentialOne = await createAwxCredential({}, page);
+      const instanceGroup = await createInstanceGroup({}, page);
+      const jobTemplateName = await createJobTemplate(
+        { PromptOnLaunch: true, extraVarsPrompt: true },
+        page
+      );
+      const wfJobTemplate = await createWorkflowJobTemplate(page);
+      //Add step
+      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('button', { name: 'Job template', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplateName);
+      await page.getByRole('option', { name: jobTemplateName.substring(0, 6) }).click();
+      await page.getByRole('button', { name: 'Next' }).nth(0).click({ force: true });
+      await page.getByRole('button', { name: 'Prompts' }).click();
+      await page.getByRole('button', { name: 'Inventory' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryOne);
+      await page.getByRole('option', { name: inventoryOne }).click();
+      await page.getByRole('button', { name: 'Credentials' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(credentialOne);
+      await page.getByRole('checkbox', { name: credentialOne }).check();
+      await page.getByRole('button', { name: 'Credentials' }).click();
+      await page.getByRole('button', { name: 'Execution environment' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(execEnvOne);
+      await page.getByRole('option', { name: execEnvOne }).click();
+      await page.getByRole('button', { name: 'Instance groups' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(instanceGroup);
+      await page.getByRole('checkbox', { name: instanceGroup }).check();
+      await page.getByRole('button', { name: 'Instance groups' }).click();
+      await page.getByRole('textbox', { name: 'Editor content' }).fill('var: test');
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
+      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+
+      // Edit step and select a different execution env.
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+      await toggleNodeKebab(jobTemplateName.substring(0, 6), page);
+      await page.getByRole('menuitem', { name: 'Edit step' }).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await page.getByRole('button', { name: 'Prompts' }).click();
+      await expect(page.getByRole('button', { name: 'Execution environment' })).toContainText(
+        execEnvOne
+      );
+      await expect(page.getByRole('button', { name: 'Instance groups' })).toContainText(
+        instanceGroup
+      );
+      await expect(
+        page.getByRole('code').locator('div').filter({ hasText: 'var: test' }).nth(4)
+      ).toBeVisible();
+      await page.getByRole('textbox', { name: 'Editor content' }).fill('newvar: newtest');
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
+      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+
+      // Check the new variables were saved
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+      await toggleNodeKebab(jobTemplateName.substring(0, 6), page);
+      await page.getByRole('menuitem', { name: 'Edit step' }).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Next' }).click({ force: true });
+      await page.getByRole('button', { name: 'Prompts' }).click();
+      await expect(
+        page.getByRole('code').locator('div').filter({ hasText: 'newvar: newtest' }).nth(4)
+      ).toBeVisible();
+
+      //cleanup
+      await removeAllWorkflowVizNodes(page);
+      await deleteJobTemplate(jobTemplateName, page);
+      await deleteWorkflowJobTemplate(wfJobTemplate, page);
+      await deleteAwxCredential(credentialOne, page);
+      await deleteExecutionEnvironment(execEnvOne, page);
+      await deleteInstanceGroup(instanceGroup, page);
+      await deleteInventory(inventoryOne, page);
+    }
+  );
 });

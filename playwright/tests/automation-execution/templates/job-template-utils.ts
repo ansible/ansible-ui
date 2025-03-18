@@ -13,6 +13,7 @@ export async function createJobTemplate(
     labels?: string[];
     PromptOnLaunch?: boolean;
     skipTagsPrompt?: boolean;
+    extraVarsPrompt?: boolean;
   },
   page: Page
 ) {
@@ -45,6 +46,9 @@ export async function createJobTemplate(
       await page.getByPlaceholder('Select or create labels').fill(label);
       await page.getByRole('option', { name: label }).click();
     }
+  }
+  if (options.extraVarsPrompt) {
+    await page.locator('#ask_variables_on_launch').check();
   }
   if (options.skipTagsPrompt) {
     await page.locator('#ask_skip_tags_on_launch').check();

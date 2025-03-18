@@ -297,6 +297,7 @@ export function useSaveVisualizer(templateId: string) {
                 job_tags: prompts?.ask_tags_on_launch,
                 timeout: prompts?.ask_timeout_on_launch,
                 verbosity: prompts?.ask_verbosity_on_launch,
+                extra_data: prompts?.ask_variables_on_launch,
               } as Record<K, boolean | undefined>;
 
               if (!promptMapper[key]) {
