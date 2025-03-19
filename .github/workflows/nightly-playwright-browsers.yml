@@ -24,10 +24,13 @@ jobs:
       - platform-ui-image
     uses: ./.github/workflows/playwright.yml
     strategy:
-      fail-fast: false
+      fail-fast: false      
       matrix:
         project: 
           - "chromium"
+          - "firefox"
+          - "webkit"
+      max-parallel: 1
     with:
       PROJECT: mock ${{ matrix.project }}
       NOT_TAGS: "@not_mock"
