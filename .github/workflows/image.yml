@@ -113,6 +113,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+        env:
+          DOCKER_BUILD_SUMMARY: false
 
       - name: Build and Load Image
         if: ${{ inputs.upload-artifact }}
