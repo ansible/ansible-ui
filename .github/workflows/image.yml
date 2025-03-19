@@ -126,7 +126,9 @@ jobs:
           platforms: linux/amd64
           tags: ${{ inputs.docker-image }}:latest
           load: true
-  
+        env:
+          DOCKER_BUILD_SUMMARY: false
+          
       - name: Save Image
         if: ${{ inputs.upload-artifact }}
         run: docker save ${{ inputs.docker-image }} > ${{ inputs.docker-image }}.tar
