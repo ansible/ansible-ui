@@ -64,6 +64,13 @@ jobs:
           # echo "shardTotal=$SHARD_TOTAL" >> $GITHUB_OUTPUT
           echo "shardIndex=${{ format('[1, {0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
           echo "shardTotal=${{ format('[{0}]', inputs.PARALLEL_TESTS) }}" >> $GITHUB_OUTPUT
+      - uses: mshick/add-pr-comment@v2
+        if: always() && inputs.SUBFOLDER == 'pull-requests'
+        with:
+          message-id: allure-summary
+          message: |
+            **Playwright Test Results Pending**
+          refresh-message-position: true
 
   playwright:
     name: Playwright
@@ -242,12 +249,13 @@ jobs:
     - name: Allure Test Results Summary Link
       if: always()
       run: |
-        SUMMARY=$'# Allure Test Results\nhttps://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}'\> Might take a few minutes to update
+        SUMMARY=$'# Allure Test Results\nhttps://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}\n> Might take a few minutes to update'
         echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
     
     - uses: mshick/add-pr-comment@v2
       if: always() && inputs.SUBFOLDER == 'pull-requests'
       with:
+        message-id: allure-summary
         message: |
           **Playwright Skipped or Canceled - No Allure Test Results**
         message-success: |
