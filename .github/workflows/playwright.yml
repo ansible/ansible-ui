@@ -150,7 +150,7 @@ jobs:
 
   playwright-report:
     name: Playwright Report
-    if: ${{ !cancelled() }}
+    if: !cancelled()
     needs: [playwright]
     runs-on: ubuntu-latest
     steps:
@@ -257,15 +257,7 @@ jobs:
       with:
         message-id: allure-summary
         message: |
-          ## Playwright Skipped or Canceled
-          No test results available
-        message-success: |
-          ## :white_check_mark: Playwright Success
-          [Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})
-          > Report webpage might take a few minutes to update
-        message-failure: |
-          ## :bangbang: Playwright Failure
-          [Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})
+          ## [Playwright Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})
           > Report webpage might take a few minutes to update
         refresh-message-position: true
 
