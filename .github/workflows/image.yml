@@ -33,6 +33,10 @@ on:
         description: 'Upload Image as Artifact'
         type: boolean
         default: false
+      skip:
+        description: 'Skip Image Build'
+        type: boolean
+        default: false
     secrets:
       QUAY_USERNAME:
         required: false
@@ -47,16 +51,20 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        if: !inputs.skip
 
       - name: Setup node
+        if: !inputs.skip
         uses: actions/setup-node@v4
         with:
           node-version: 20
           
       - name: PreCache
+        if: !inputs.skip
         run: npm version 0.0.0 --no-git-tag-version
 
       - name: Cache dependencies
+        if: !inputs.skip
         id: cache
         uses: actions/cache@v4
         with:
@@ -66,24 +74,26 @@ jobs:
           key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true' && !inputs.skip
         run: npm ci
 
       - name: NPM Build
-        if: ${{ inputs.build-script }}
+        if: inputs.build-script && !inputs.skip
         working-directory: ${{ inputs.build-directory }}
         run: npm run ${{ inputs.build-script }}
         env:
           AWX_API_PREFIX: '/api/controller/v2'
 
       - name: Set up QEMU
+        if: !inputs.skip
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
+        if: !inputs.skip
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Quay
-        if: ${{ inputs.docker-publish }}
+        if: inputs.docker-publish && !inputs.skip
         uses: docker/login-action@v3
         with:
           registry: quay.io
@@ -91,7 +101,7 @@ jobs:
           password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Image
-        if: ${{ inputs.docker-publish }}
+        if: inputs.docker-publish && !inputs.skip
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -103,7 +113,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
       - name: Build and Push Image
-        if: ${{ inputs.docker-publish }}
+        if: inputs.docker-publish && !inputs.skip
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.docker-context }}
@@ -117,7 +127,7 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
 
       - name: Build and Load Image
-        if: ${{ inputs.upload-artifact }}
+        if: inputs.upload-artifact && !inputs.skip
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.docker-context }}
@@ -130,11 +140,11 @@ jobs:
           DOCKER_BUILD_SUMMARY: false
           
       - name: Save Image
-        if: ${{ inputs.upload-artifact }}
+        if: inputs.upload-artifact && !inputs.skip
         run: docker save ${{ inputs.docker-image }} > ${{ inputs.docker-image }}.tar
 
       - name: Upload Image
-        if: ${{ inputs.upload-artifact }}
+        if: inputs.upload-artifact && !inputs.skip
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.docker-image }}.tar
