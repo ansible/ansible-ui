@@ -200,11 +200,12 @@ jobs:
     #     paths: ${{ inputs.BROWSER }}-junit.xml
 
     - name: Merge into Allure Report
+      if: !cancelled()
       run: npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
 
     - name: Load test report history
       uses: actions/checkout@v3
-      if: always()
+      if: !cancelled()
       continue-on-error: true
       with:
         ref: gh-pages
@@ -212,7 +213,7 @@ jobs:
 
     - name: Build test report
       uses: simple-elf/allure-report-action@v1.7
-      if: always()
+      if: !cancelled()
       with:
         gh_pages: gh-pages
         allure_report: allure-report
@@ -223,14 +224,14 @@ jobs:
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
-      if: always()
+      if: !cancelled()
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_branch: gh-pages
         publish_dir: allure-history
 
     - name: Add Allure Test Results to PR checks
-      if: always() && inputs.SUBFOLDER == 'pull-requests'
+      if: !cancelled() && inputs.SUBFOLDER == 'pull-requests'
       uses: guibranco/github-status-action-v2@v1
       with: 
           authToken: ${{secrets.GITHUB_TOKEN}}
