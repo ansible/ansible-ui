@@ -150,7 +150,7 @@ jobs:
 
   playwright-report:
     name: Playwright Report
-    if: !cancelled()
+    if: ${{ !cancelled() }}
     needs: [playwright]
     runs-on: ubuntu-latest
     steps:
