@@ -18,6 +18,17 @@ describe('JobOutput.cy.tsx', () => {
     cy.intercept(
       {
         method: 'GET',
+        url: awxAPI`/jobs/26/job_events/?order_by=counter&page=1&page_size=50&search=World`,
+        hostname: 'localhost',
+      },
+      {
+        fixture: 'filteredJobEvents.json',
+      }
+    );
+
+    cy.intercept(
+      {
+        method: 'GET',
         url: awxAPI`/jobs/26/job_events/children_summary/`,
         hostname: 'localhost',
       },
@@ -49,5 +60,17 @@ describe('JobOutput.cy.tsx', () => {
     cy.wait('@childrenSummary');
     cy.get('.output-grid').find('button > svg').first().click();
     cy.get('.output-grid').find('.output-grid-row').should('have.length', 5);
+  });
+
+  it('ensure filtered job output host modal displays and shows correct data', () => {
+    cy.intercept(
+      { method: 'OPTIONS', url: awxAPI`/jobs/26/job_events/` },
+      { fixture: 'jobEventsOptions.json' }
+    );
+    cy.mount(<JobOutput job={job as unknown as Job} reloadJob={() => null} />);
+    cy.get('div[id="filter-input"]').type('World');
+    cy.contains('div.output-grid-row', 'Hello World!').click();
+    cy.get('button[data-ouia-component-id="data-tab"]').click();
+    cy.get('[data-cy="code-block-value"]').should('contain.text', 'Hello World!');
   });
 });

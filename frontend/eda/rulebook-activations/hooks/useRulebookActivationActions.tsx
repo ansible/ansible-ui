@@ -3,10 +3,11 @@ import {
   PageActionSelection,
   PageActionType,
   usePageAlertToaster,
+  usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { AlertProps } from '@patternfly/react-core';
-import { CopyIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
+import { CopyIcon, PencilAltIcon, RedoIcon, TrashIcon } from '@patternfly/react-icons';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { edaAPI } from '../../common/eda-utils';
@@ -14,15 +15,17 @@ import { useEdaErrorMessageParser } from '../../common/edaErrorAdapter';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
+import { EdaRoute } from '../../main/EdaRoutes';
 import {
   useDisableRulebookActivations,
   useRestartRulebookActivations,
 } from './useControlRulebookActivations';
-import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 import { useCopyRulebookActivation } from './useCopyRulebookactivation';
+import { useDeleteRulebookActivations } from './useDeleteRulebookActivations';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
+  const pageNavigate = usePageNavigate();
   const disableActivations = useDisableRulebookActivations(view.unselectItemsAndRefresh);
   const restartActivations = useRestartRulebookActivations(view.unselectItemsAndRefresh);
   const deleteRulebookActivations = useDeleteRulebookActivations(view.unselectItemsAndRefresh);
@@ -85,13 +88,26 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
+        icon: PencilAltIcon,
+        label: t('Edit rulebook activation'),
+        isPinned: true,
+        isDisabled: (activation: EdaRulebookActivation) =>
+          !activation.is_enabled
+            ? ''
+            : t(`To edit this rulebook activation, you must first disable it.`),
+        onClick: (activation: EdaRulebookActivation) =>
+          pageNavigate(EdaRoute.EditRulebookActivation, { params: { id: activation.id } }),
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
         icon: CopyIcon,
         label: t(`Duplicate rulebook activation`),
         onClick: (activation: EdaRulebookActivation) => {
           return copyRulebookActivation(activation);
         },
         isDanger: false,
-        isPinned: true,
+        isPinned: false,
       },
       {
         type: PageActionType.Seperator,
@@ -113,6 +129,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
     enableActivation,
     disableActivations,
     restartActivations,
+    pageNavigate,
     copyRulebookActivation,
     deleteRulebookActivations,
   ]);

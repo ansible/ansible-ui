@@ -53,7 +53,7 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     job,
     isJobRunning(job.status) || isFiltered
   );
-  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent } = useJobOutput(
+  const { jobEventCount, getJobOutputEvent, queryJobOutputEvent, jobEvents } = useJobOutput(
     job,
     reloadJob,
     toolbarFilters,
@@ -142,14 +142,31 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const visibleHost = visibleItems[visibleHostIndex];
   const visibleHostCounter = typeof visibleHost === 'object' && visibleHost.counter;
 
-  const selectedRowHostData = visibleHostCounter
-    ? getJobOutputEvent(visibleHostCounter)
-    : undefined;
+  const jobEventKey = useMemo(() => {
+    return Object.keys(jobEvents).find(
+      (key: string) => jobEvents[Number(key)].counter === visibleHostCounter
+    );
+  }, [jobEvents, visibleHostCounter]);
 
-  const isHostModalOpen =
-    hostModalData?.counter &&
-    isHostEvent(getJobOutputEvent(hostModalData.counter)) &&
-    hostModalData.uuid !== hostModalData.taskUuid;
+  const selectedRowHostData = jobEventKey ? getJobOutputEvent(Number(jobEventKey)) : undefined;
+
+  const isHostModalOpen = useMemo(() => {
+    if (!hostModalData?.counter) return false;
+    const jobEventKeyHostModal = Object.keys(jobEvents).find(
+      (key: string) => jobEvents[Number(key)].counter === hostModalData?.counter
+    );
+    return (
+      jobEventKeyHostModal &&
+      isHostEvent(getJobOutputEvent(Number(jobEventKeyHostModal))) &&
+      hostModalData?.uuid !== hostModalData?.taskUuid
+    );
+  }, [
+    hostModalData?.counter,
+    hostModalData?.uuid,
+    hostModalData?.taskUuid,
+    jobEvents,
+    getJobOutputEvent,
+  ]);
 
   return (
     <>
