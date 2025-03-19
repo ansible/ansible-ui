@@ -57,7 +57,6 @@ jobs:
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
-      skip: ${{ inputs.TEST_UI == 'server' }}
     
   playwright:
     name: Playwright
