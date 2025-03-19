@@ -116,7 +116,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps ${{ inputs.BROWSER }}
 
-    - name: Run Playwright tests
+    - name: Run Playwright Tests
       working-directory: playwright
       run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
@@ -127,7 +127,7 @@ jobs:
         NOT_TAGS: ${{ inputs.NOT_TAGS }}
         AWX_API_PREFIX: '/api/controller/v2'
 
-    - name: Upload blob report to GitHub Actions Artifacts
+    - name: Upload Playwright Blob Report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
@@ -135,7 +135,8 @@ jobs:
         path: playwright/blob-report
         retention-days: 1
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload Playwright Test Results to GitHub Actions Artifacts
+      uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-${{ inputs.BROWSER }}-${{ matrix.shardIndex }}
