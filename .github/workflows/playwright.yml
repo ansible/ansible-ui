@@ -242,13 +242,13 @@ jobs:
     - name: Allure Test Results Summary Link - Success
       if: success()
       run: |
-        SUMMARY=$'# :white_check_mark: Playwright Success\n[Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
+        SUMMARY=$'## :white_check_mark: Playwright Success\n[Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
         echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
 
     - name: Allure Test Results Summary Link - Failure
       if: failure()
       run: |
-        SUMMARY=$'# :bangbang: Playwright Failure\n[Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
+        SUMMARY=$'## :bangbang: Playwright Failure\n[Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
         echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
           
     - uses: mshick/add-pr-comment@v2
@@ -256,14 +256,14 @@ jobs:
       with:
         message-id: allure-summary
         message: |
-          # Playwright Skipped or Canceled
+          ## Playwright Skipped or Canceled
           No test results available
         message-success: |
-          # :white_check_mark: Playwright Success
+          ## :white_check_mark: Playwright Success
           [Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})
           > Report webpage might take a few minutes to update
         message-failure: |
-          # :bangbang: Playwright Failure
+          ## :bangbang: Playwright Failure
           [Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})
           > Report webpage might take a few minutes to update
         refresh-message-position: true
