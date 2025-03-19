@@ -48,6 +48,7 @@ on:
 jobs:
   platform-ui-image:
     name: Platform UI Image
+    if: ${{ inputs.TEST_UI == 'branch' }}
     uses: ./.github/workflows/image.yml
     with:
       build-directory: platform
@@ -60,6 +61,7 @@ jobs:
     
   playwright:
     name: Playwright
+    if: always()
     needs:
       - platform-ui-image
     uses: ./.github/workflows/playwright.yml
