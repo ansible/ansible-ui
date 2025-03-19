@@ -14,4 +14,5 @@ export interface JobEvent extends Omit<SetRequired<SwaggerJobEvent, 'counter'>, 
       unknown
     >;
   } & Record<string, unknown>;
+  stdout?: string;
 }
