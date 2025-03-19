@@ -11,6 +11,7 @@ export enum EdaRoute {
 
   RulebookActivations = 'eda-rulebook-activations',
   CreateRulebookActivation = 'eda-create-rulebook-activation',
+  EditRulebookActivation = 'eda-edit-rulebook-activation',
   RulebookActivationPage = 'eda-rulebook-activation-page',
   RulebookActivationDetails = 'eda-rulebook-activation-details',
   RulebookActivationHistory = 'eda-rulebook-activation-history',

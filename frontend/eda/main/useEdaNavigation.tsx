@@ -75,7 +75,10 @@ import { ActivationInstanceDetails } from '../rulebook-activations/ActivationIns
 import { ActivationInstancePage } from '../rulebook-activations/ActivationInstancePage/ActivationInstancePage';
 import { EdaRulebookActivationAddTeams } from '../rulebook-activations/components/EdaRulebookActivationAddTeams';
 import { EdaRulebookActivationAddUsers } from '../rulebook-activations/components/EdaRulebookActivationAddUsers';
-import { CreateRulebookActivation } from '../rulebook-activations/RulebookActivationForm';
+import {
+  CreateRulebookActivation,
+  EditRulebookActivation,
+} from '../rulebook-activations/RulebookActivationForm';
 import { RulebookActivationDetails } from '../rulebook-activations/RulebookActivationPage/RulebookActivationDetails';
 import { RulebookActivationHistory } from '../rulebook-activations/RulebookActivationPage/RulebookActivationHistory';
 import { RulebookActivationPage } from '../rulebook-activations/RulebookActivationPage/RulebookActivationPage';
@@ -141,6 +144,11 @@ export function useEdaNavigation() {
           id: EdaRoute.CreateRulebookActivation,
           path: 'create',
           element: <CreateRulebookActivation />,
+        },
+        {
+          id: EdaRoute.EditRulebookActivation,
+          path: 'edit/:id',
+          element: <EditRulebookActivation />,
         },
         {
           id: EdaRoute.RulebookActivationInstancePage,
