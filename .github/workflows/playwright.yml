@@ -243,7 +243,13 @@ jobs:
       run: |
         SUMMARY=$'# Allure Test Results\nhttps://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}'
         echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-      
+    
+    - uses: mshick/add-pr-comment@v2
+      with:
+        message: |
+          **Allure Test Results**
+          https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}
+
     - name: Slack Success Notification
       if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
       uses: slackapi/slack-github-action@v1.27.0
