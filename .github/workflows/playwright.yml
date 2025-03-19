@@ -229,8 +229,8 @@ jobs:
         publish_branch: gh-pages
         publish_dir: allure-history
 
-    - name: Post the link to the report
-      if: always()
+    - name: Add Allure Test Results to PR checks
+      if: always() && inputs.SUBFOLDER == 'pull-requests'
       uses: guibranco/github-status-action-v2@v1
       with: 
           authToken: ${{secrets.GITHUB_TOKEN}}
@@ -238,6 +238,11 @@ jobs:
           state: 'success'
           sha: ${{ github.event.pull_request.head.sha }}
           target_url: https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}
+
+    - name: Allure Test Results Summary Link
+      run: |
+        SUMMARY=$'# Allure Test Results\nhttps://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}'
+        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
       
     - name: Slack Success Notification
       if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
