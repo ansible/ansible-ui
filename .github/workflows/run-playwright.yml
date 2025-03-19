@@ -66,7 +66,7 @@ jobs:
     uses: ./.github/workflows/playwright.yml
     with:
       PLATFORM_SERVER: ${{ inputs.PLATFORM_SERVER }}
-      PLATFORM_UI: ${{ inputs.TEST_UI == 'branch' && 'http://localhost' || inputs.PLATFORM_SERVER }}
+      PLATFORM_UI: ${{ inputs.TEST_UI == 'branch' && 'https://localhost:4100' || inputs.PLATFORM_SERVER }}
       PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME }}
       PLATFORM_PASSWORD: ${{ inputs.PLATFORM_PASSWORD }}
       TAGS: ${{ inputs.TAGS }}

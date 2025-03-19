@@ -16,6 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message-id: allure-summary
+          message: |
+            **Playwright Test Results Pending**
+          refresh-message-position: true
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
