@@ -241,15 +241,9 @@ jobs:
           target_url: https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}
 
     - name: Allure Test Results Summary Link - Success
-      if: success()
+      if: always()
       run: |
-        SUMMARY=$'## :white_check_mark: Playwright Success\n[Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
-        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-
-    - name: Allure Test Results Summary Link - Failure
-      if: failure()
-      run: |
-        SUMMARY=$'## :bangbang: Playwright Failure\n[Allure Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
+        SUMMARY=$'## [Playwright Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
         echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
           
     - uses: mshick/add-pr-comment@v2
