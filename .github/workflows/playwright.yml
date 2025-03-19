@@ -118,9 +118,7 @@ jobs:
 
     - name: Run Playwright tests
       working-directory: playwright
-      run: |
-        export ALLURE_LABEL_owner=${{ github.actor }}
-        npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: npx playwright test --project="${{ inputs.PROJECT }}" --project="global setup" --reporter=blob,line --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
         PLATFORM_UI: ${{ inputs.PLATFORM_UI }}
         PLATFORM_USERNAME: ${{ inputs.PLATFORM_USERNAME != '' && inputs.PLATFORM_USERNAME || 'e2e' }}
@@ -185,26 +183,24 @@ jobs:
         pattern: ${{ inputs.BROWSER }}-blob-report-*
         merge-multiple: true
 
-    - name: Merge into JUint Report
-      run: npx playwright merge-reports --reporter junit ./all-blob-reports > ${{ inputs.BROWSER }}-junit.xml
+    # - name: Merge into JUint Report
+    #   run: npx playwright merge-reports --reporter junit ./all-blob-reports > ${{ inputs.BROWSER }}-junit.xml
 
-    - name: Upload JUint report
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ inputs.BROWSER }}-junit-report
-        path: ${{ inputs.BROWSER }}-junit.xml
-        retention-days: 1
+    # - name: Upload JUint report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: ${{ inputs.BROWSER }}-junit-report
+    #     path: ${{ inputs.BROWSER }}-junit.xml
+    #     retention-days: 1
 
-    - name: Test Summary
-      if: always()
-      uses: test-summary/action@v2
-      with:
-        paths: ${{ inputs.BROWSER }}-junit.xml
+    # - name: Test Summary
+    #   if: always()
+    #   uses: test-summary/action@v2
+    #   with:
+    #     paths: ${{ inputs.BROWSER }}-junit.xml
 
     - name: Merge into Allure Report
-      run: |
-        export ALLURE_LABEL_owner=${{ github.actor }}
-        npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
+      run: npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
 
     - name: Load test report history
       uses: actions/checkout@v3
@@ -233,6 +229,16 @@ jobs:
         publish_branch: gh-pages
         publish_dir: allure-history
 
+    - name: Post the link to the report
+      if: always()
+      uses: Sibz/github-status-action@v1
+      with: 
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'Test report'
+          state: 'success'
+          sha: ${{ github.event.pull_request.head.sha }}
+          target_url: simple-elf.github.io/github-allure-history/${{ github.run_number }}
+      
     - name: Slack Success Notification
       if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
       uses: slackapi/slack-github-action@v1.27.0
