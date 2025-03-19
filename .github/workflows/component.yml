@@ -73,6 +73,7 @@ jobs:
           install: false
           component: true
           spec: ${{ inputs.directory }}/${{ matrix.directory }}/**/*.cy.tsx
+          publish-summary: false
         env:
           CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT: 300000
 
@@ -81,6 +82,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           command: npm run component:junit-results -- --spec ./${{ inputs.directory }}/${{ matrix.directory }}/**/*.cy.tsx
+          publish-summary: false
         env:
           install: false
           CYPRESS_INTERNAL_BROWSER_CONNECT_TIMEOUT: 300000
