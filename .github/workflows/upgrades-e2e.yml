@@ -100,6 +100,7 @@ jobs:
           parallel: false
           config-file: cypress.upgrades.config.ts
           tag: ${{ inputs.TAGS }}
+          publish-summary: false
         env:
           PLATFORM_SERVER: ${{ env.PLATFORM_SERVER }}
           PLATFORM_USERNAME: e2e
