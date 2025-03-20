@@ -134,6 +134,8 @@ describe('Workflow Visualizer', () => {
           cy.getByDataCy('node-alias').type('Test Node');
           cy.clickButton('Next');
           cy.clickButton('Finish');
+          cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
+          cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
           cy.intercept(
             'POST',
             awxAPI`/workflow_job_templates/${workflowJobTemplate.id.toString()}/workflow_nodes/`
@@ -145,8 +147,6 @@ describe('Workflow Visualizer', () => {
             'have.text',
             'Run on success'
           );
-          cy.get('g[data-id="3-unsavedNode"]').should('have.text', 'ALLTest Node');
-          cy.get(`g[data-id=${approvalNode.id}-3-unsavedNode]`).should('have.text', 'Run always');
           cy.reload();
           cy.getBy('button[id="fit-to-screen"]').click();
           cy.getByDataCy('workflow-visualizer-toolbar-close').click();
