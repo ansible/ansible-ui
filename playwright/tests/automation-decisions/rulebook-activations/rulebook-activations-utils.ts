@@ -3,6 +3,7 @@ import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 
 export async function createRulebookActivation(
   options: {
@@ -55,9 +56,5 @@ export async function deleteRulebookActivation(rulebookActivationName: string, p
     page
   );
   await clickPageAction('Delete rulebook activation', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
-    'Success'
-  );
+  await confirmAndAssertDeletion(page);
 }

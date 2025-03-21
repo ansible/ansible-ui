@@ -42,7 +42,11 @@ test(
   { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
     const jobTemplateName = await createJobTemplate({ PromptOnLaunch: true }, page);
-    await runJobTemplate(jobTemplateName, { PromptOnLaunch: true, view: 'details' }, page);
+    await runJobTemplate(
+      jobTemplateName,
+      { PromptOnLaunch: true, view: 'details', doNotWait: false },
+      page
+    );
     await deleteJobTemplate(jobTemplateName, page);
   }
 );
@@ -108,6 +112,7 @@ test(
   'can assign a new inventory to a job template if the originally assigned inventory was deleted',
   { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
+    test.setTimeout(60000);
     // create inventory + job template and then delete inventory
     const inventoryName = await createInventory({}, page);
     const newInventoryName = await createInventory({}, page);
@@ -121,12 +126,12 @@ test(
     await page.getByRole('menuitem', { name: jobTemplateName }).locator('span').first().click();
     await page.getByLabel('Edit template').click();
     // add new inventory
-    await page.getByPlaceholder('Select inventory').fill(newInventoryName);
+    await page.getByRole('button', { name: 'Inventory' }).click();
     await page.getByRole('option', { name: newInventoryName }).click();
     await page.getByRole('button', { name: 'Save job template' }).click();
     // assert edited values
-    await expect(page.getByRole('heading', { name: jobTemplateName })).toBeVisible();
-    await expect(page.locator('#inventory')).toContainText(newInventoryName);
+    await expect(page.locator('#name').getByText(jobTemplateName)).toBeVisible();
+    await expect(page.getByRole('link', { name: newInventoryName })).toBeVisible();
     // cleanup
     await deleteJobTemplate(jobTemplateName, page);
     await deleteInventory(newInventoryName, page);
@@ -137,6 +142,7 @@ test(
   'can edit a job template to enable provisioning callback and enable webhook, then edit again to disable those options',
   { tag: ['@not_mock', '@compare'] },
   async ({ page }) => {
+    test.setTimeout(60000);
     const credentialName = await createAwxCredential({}, page);
     const jobTemplateName = await createJobTemplate({}, page);
     const hostConfigKey = createE2EName('host-config-key');

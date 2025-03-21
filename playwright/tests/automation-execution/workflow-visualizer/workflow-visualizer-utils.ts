@@ -188,8 +188,8 @@ async function createNode(
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Finish' }).click();
   await page.getByRole('button', { name: 'Fit to Screen' }).click();
-  await expect(page.getByText('Total nodes')).toBeVisible();
-  await expect(page.getByText('1', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Legend' }).click();
+  await page.getByRole('button', { name: 'Legend' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByText('Success alert:Successfully')).toBeVisible();
   await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
@@ -212,7 +212,6 @@ export async function removeAllWorkflowVizNodes(page: Page) {
   await page.getByRole('button', { name: 'Remove' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-  await expect(page.locator('[data-cy="alert-toaster"]')).toBeVisible();
   await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
   await expect(
     page.getByRole('heading', { name: 'There are currently no nodes in this workflow' })

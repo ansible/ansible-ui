@@ -3,6 +3,7 @@ import { clickPageAction } from '../../../commands/clickPageAction';
 import { clickTableRow } from '../../../commands/clickTableRow';
 import { createE2EName } from '../../../commands/createE2EName';
 import { navigateTo } from '../../../commands/navigateTo';
+import { confirmAndAssertDeletion } from '../../../commands/confirmAndAssertDeletion';
 
 export async function createEdaCredential(options: { credentialName?: string }, page: Page) {
   await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
@@ -58,9 +59,5 @@ export async function deleteEdaCredential(credentialName: string, page: Page) {
     page
   );
   await clickPageAction('Delete credential', page);
-  await page.locator('#confirm').click();
-  await page.locator('#submit').click();
-  await expect(page.locator('[data-ouia-component-type="PF5/ModalContent"]')).toContainText(
-    'Success'
-  );
+  await confirmAndAssertDeletion(page);
 }

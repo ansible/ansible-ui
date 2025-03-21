@@ -97,6 +97,7 @@ test(
     await expect(page.getByText('Stopped', { exact: true })).toContainText('Stopped', {
       timeout: 15000,
     });
+    await expect(page.getByRole('heading', { name: 'E2E rulebookActivation' })).toBeVisible();
     await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
     await page.getByRole('textbox', { name: 'Description' }).click();
     await page.getByRole('textbox', { name: 'Description' }).fill('edited description');

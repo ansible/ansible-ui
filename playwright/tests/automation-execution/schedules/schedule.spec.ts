@@ -46,7 +46,8 @@ test('schedule - edit with existing RRule', { tag: ['@not_mock'] }, async ({ pag
   await page.getByRole('button', { name: 'Minutes of the hour' }).click();
   await page.getByRole('checkbox', { name: '0', exact: true }).check();
   await page.getByRole('button', { name: 'Update rule' }).click();
-  await expect(page.getByText('DTSTART;')).toContainText(/BYMINUTE=0;/);
+  await expect(page.getByRole('heading', { name: 'Schedule Rules' })).toBeVisible();
+  await expect(page.locator('[id*="text-input"]')).toContainText(/BYMINUTE=0/);
   await page.getByRole('button', { name: 'Edit rule' }).click();
   await page.getByRole('button', { name: 'Minutes of the hour' }).click();
   await page.locator('[id="\\31 "]').getByText('1').click();
@@ -54,7 +55,8 @@ test('schedule - edit with existing RRule', { tag: ['@not_mock'] }, async ({ pag
   await page.getByRole('button', { name: 'Select start day' }).click();
   await page.getByRole('option', { name: 'Friday' }).click();
   await page.getByRole('button', { name: 'Update rule' }).click();
-  await expect(page.getByText('DTSTART;')).toContainText(/WKST=FR;BYMINUTE=0,1,2;/);
+  await expect(page.getByRole('heading', { name: 'Schedule Rules' })).toBeVisible();
+  await expect(page.locator('[id*="text-input"]')).toContainText(/WKST=FR;BYMINUTE=0,1,2;/);
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.locator('#name')).toContainText(scheduleName);
