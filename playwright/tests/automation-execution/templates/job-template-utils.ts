@@ -98,7 +98,7 @@ export async function runJobTemplate(
     await expect(page.getByRole('heading', { name: 'Prompt on Launch', exact: true })).toBeVisible({
       timeout: 30000,
     });
-    await page.getByPlaceholder('Select inventory').click();
+    await page.getByRole('button', { name: 'Inventory' }).click();
     await page.getByRole('option', { name: inventoryName }).click();
     await page.getByLabel('Execution environment').click();
     await page.getByRole('option', { name: 'Control Plane Execution' }).click();

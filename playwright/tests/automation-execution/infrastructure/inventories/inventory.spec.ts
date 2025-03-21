@@ -32,6 +32,7 @@ test(
 test('inventory source - create and delete', { tag: ['@not_mock'] }, async ({ page }) => {
   const { inventorySourceName, inventoryName } = await createInventorySource({}, page);
   await deleteInventorySource(inventoryName, inventorySourceName, page);
+  await deleteInventory(inventoryName, page);
 });
 
 test(
