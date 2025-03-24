@@ -1,9 +1,9 @@
-import { SAAS_URL } from '../../../support/constants';
+import { AZURE_URL, SAAS_URL } from '../../../support/constants';
 
 describe('If SaaS Build', () => {
   before(function () {
     cy.checkBuildType().then((buildType) => {
-      if (buildType === SAAS_URL) {
+      if (buildType === SAAS_URL || buildType === AZURE_URL) {
         cy.log('Test/tests should not run on this deployment.');
         this.skip();
       } else {
