@@ -239,6 +239,12 @@ export function RulebookActivationDetails() {
             author={rulebookActivation?.created_by?.username}
           />
         </PageDetail>
+        <PageDetail label={t('Last edited')}>
+          <DateTimeCell
+            value={rulebookActivation.edited_at}
+            author={rulebookActivation?.edited_by?.username}
+          />
+        </PageDetail>
         <LastModifiedPageDetail
           value={rulebookActivation?.modified_at ? rulebookActivation?.modified_at : ''}
           author={rulebookActivation?.modified_by?.username}

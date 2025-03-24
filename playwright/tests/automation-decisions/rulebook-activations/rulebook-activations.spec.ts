@@ -3,9 +3,9 @@ import { clickTableRow } from '../../../commands/clickTableRow';
 import { expectRowToContain } from '../../../commands/expectRowToContain';
 import { setupAfter, setupBefore } from '../../../commands/setup';
 import { createEdaCredential, deleteEdaCredential } from '../credentials/credentials-utils';
+import { createEdaEventStream, deleteEdaEventStream } from '../event-streams/event-stream-utils';
 import { createEdaProject, deleteEdaProject } from '../projects/projects-utils';
 import { createRulebookActivation, deleteRulebookActivation } from './rulebook-activations-utils';
-import { createEdaEventStream, deleteEdaEventStream } from '../event-streams/event-stream-utils';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
@@ -68,6 +68,7 @@ test(
       },
       page
     );
+    await expect(page.getByRole('main')).toContainText('Last edited');
     await expect(page.locator('#description')).toContainText('edited description');
     await expect(page.locator('#enabled-option')).toContainText('Skip audit events');
     await deleteRulebookActivation(rulebookActivationName, page);
@@ -103,6 +104,7 @@ test(
     await page.getByRole('textbox', { name: 'Description' }).fill('edited description');
     await page.getByRole('checkbox', { name: 'Skip audit events' }).check();
     await page.getByRole('button', { name: 'Save rulebook activation' }).click();
+    await expect(page.getByRole('main')).toContainText('Last edited');
     await expect(page.locator('#description')).toContainText('edited description');
     await expect(page.locator('#enabled-option')).toContainText('Skip audit events');
     await deleteRulebookActivation(rulebookActivationName, page);

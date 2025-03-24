@@ -193,6 +193,8 @@ export interface ActivationRead {
   modified_at: string;
   /** @format date-time */
   restarted_at?: string | null;
+  /** @format date-time */
+  edited_at: string;
   status_message?: string | null;
   awx_token_id: number | null;
   eda_credentials?: EdaCredential[] | null;
@@ -211,6 +213,7 @@ export interface ActivationRead {
   skip_audit_events?: boolean;
   created_by?: { username?: string };
   modified_by?: { username?: string };
+  edited_by?: { username?: string };
 }
 
 export interface AuditAction {
