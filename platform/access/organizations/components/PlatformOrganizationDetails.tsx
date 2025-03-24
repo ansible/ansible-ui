@@ -16,7 +16,7 @@ import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { useAwxResource } from '../../../hooks/useAwxResource';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
@@ -126,9 +126,17 @@ function ControllerOrganizationDetails(props: { platformOrganization: PlatformOr
       )}
       {hasPolicyAsCodeFlag && (
         <PageDetail
-          label={t('OPA policy')}
+          label={t('OPA query path')}
           isEmpty={controllerOrganization?.opa_query_path === null}
-          helpText={t('The OPA policy should be in the format of {package}/{rule}.')}
+          helpText={
+            <Trans>
+              <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+              <br />
+              <p>
+                The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}`.
+              </p>
+            </Trans>
+          }
         >
           {controllerOrganization?.opa_query_path}
         </PageDetail>

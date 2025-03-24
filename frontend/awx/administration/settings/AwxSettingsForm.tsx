@@ -270,6 +270,7 @@ export function OptionActionsFormInput(props: { name: string; option: AwxSetting
           format={'object'}
           labelHelpTitle={option.label}
           labelHelp={option.help_text}
+          isRequired={option.required}
           disableCopy
           disableUpload
           disableDownload

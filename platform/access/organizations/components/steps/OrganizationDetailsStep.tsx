@@ -6,7 +6,7 @@ import { PageFormInstanceGroupSelect } from '@ansible/awx-ui/administration/inst
 import { useAwxConfig } from '@ansible/awx-ui/common/useAwxConfig';
 import { Organization as ControllerOrganization } from '@ansible/awx-ui/interfaces/Organization';
 import { Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useHasAwxService } from '../../../../main/GatewayServices';
 import { useFeatureFlag } from '@ansible/awx-ui/common/useFeatureFlags';
 
@@ -93,11 +93,19 @@ function ControllerOrganizationDetails(props: { controllerOrganization?: Control
       )}
       {hasPolicyAsCodeFlag && (
         <PageFormTextInput
-          label={t('OPA policy')}
+          label={t('OPA query path')}
           name="policy"
-          placeholder={t('Enter OPA policy link')}
-          labelHelp={t('The OPA policy should be in the format of {package}/{rule}.')}
-          labelHelpTitle={t('OPA policy')}
+          placeholder={t('Enter OPA query path')}
+          labelHelp={
+            <Trans>
+              <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+              <br />
+              <p>
+                The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+              </p>
+            </Trans>
+          }
+          labelHelpTitle={t('OPA query path')}
           helperText={t('Format must be {package}/{rule}')}
         />
       )}

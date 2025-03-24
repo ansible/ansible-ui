@@ -53,8 +53,8 @@ test(
     await page.getByLabel('Search input').click();
     await page.getByLabel('Search input').fill(instanceGroupName);
     await page.getByLabel(instanceGroupName).check();
-    // await page.getByRole('textbox', { name: 'OPA policy' }).click();
-    // await page.getByRole('textbox', { name: 'OPA policy' }).fill('test/opaEdited');
+    // await page.getByRole('textbox', { name: 'OPA query path' }).click();
+    // await page.getByRole('textbox', { name: 'OPA query path' }).fill('test/opaEdited');
     await page.getByRole('button', { name: 'Save inventory' }).click();
     await expect(page.getByLabel('Label group category').getByRole('link')).toContainText(
       instanceGroupName
@@ -81,8 +81,8 @@ test(
     await page
       .getByRole('textbox', { name: 'Editor content' })
       .fill("remote_install_path: '/opt/my_app_config''");
-    // await page.getByRole('textbox', { name: 'OPA policy' }).click();
-    // await page.getByRole('textbox', { name: 'OPA policy' }).fill('test/opaEdited');
+    // await page.getByRole('textbox', { name: 'OPA query path' }).click();
+    // await page.getByRole('textbox', { name: 'OPA query path' }).fill('test/opaEdited');
     await page.getByRole('button', { name: 'Save inventory' }).click();
     await expect(page.getByLabel('Label group category').getByRole('listitem')).toContainText(
       labelName

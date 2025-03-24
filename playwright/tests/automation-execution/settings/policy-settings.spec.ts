@@ -109,13 +109,23 @@ test.skip(
       settings.OPA_REQUEST_RETRIES.toString()
     );
     // edit values
+
+    await page.locator('#opa-auth-type-form-group-toggle').click();
+    await page.getByRole('option', { name: 'Token' }).click();
     await page.getByRole('spinbutton', { name: 'OPA Request Timeout' }).click();
     await page.getByRole('spinbutton', { name: 'OPA Request Timeout' }).fill('2.0');
     await page.getByRole('spinbutton', { name: 'OPA Request Retry Count' }).click();
     await page.getByRole('spinbutton', { name: 'OPA Request Retry Count' }).fill('3');
+    await page.getByRole('textbox', { name: 'OPA authentication token' }).fill('abc123');
+
     await page.getByRole('button', { name: 'Save' }).click();
     // assert that values have been saved
     await expect(page.locator('#opa-request-timeout')).toContainText('2');
     await expect(page.locator('#opa-request-retry-count')).toContainText('3');
+    if (page.mock.enabled) {
+      await expect(page.locator('#opa-authentication-token')).toContainText('abc123');
+    } else {
+      await expect(page.locator('#opa-authentication-token')).toContainText('$encrypted$');
+    }
   }
 );
