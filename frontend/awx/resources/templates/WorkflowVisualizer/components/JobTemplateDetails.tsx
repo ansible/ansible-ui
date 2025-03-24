@@ -272,7 +272,7 @@ export function JobTemplateDetails({
         {forks}
       </PromptDetail>
       <PageDetail
-        label={t('OPA policy')}
+        label={t('OPA query path')}
         isEmpty={!hasPolicyAsCodeFlag || !template.opa_query_path}
       >
         {template.opa_query_path}

@@ -16,7 +16,7 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AwxError } from '../../../common/AwxError';
@@ -211,8 +211,16 @@ export function TemplateDetails(props: { templateId?: string; disableScroll?: bo
         {template.forks || 0}
       </PageDetail>
       <PageDetail
-        label={t('OPA policy')}
-        helpText={template.opa_query_path}
+        label={t('OPA query path')}
+        helpText={
+          <Trans>
+            <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+            <br />
+            <p>
+              The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+            </p>
+          </Trans>
+        }
         isEmpty={!hasPolicyAsCodeFlag || !template.opa_query_path}
       >
         {template.opa_query_path}

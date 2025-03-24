@@ -29,7 +29,7 @@ export async function createInventory(options: { name?: string; type?: string },
   // Re-enable this when we have a deployment with OPA policy enabled.
   // get feature flags from API
   // if( featureflags includes OPA){
-  // await page.getByLabel('OPA policy').fill('test/opa');
+  // await page.getByLabel('OPA query path').fill('test/opa');
   // }
   await page.getByRole('button', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();

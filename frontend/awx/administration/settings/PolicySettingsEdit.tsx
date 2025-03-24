@@ -101,14 +101,20 @@ export function PolicySettingsForm(props: {
         key === 'OPA_AUTH_CLIENT_KEY'
     )
     .reduce<Record<string, AwxSettingsOptionsAction>>((acc, [key, option]) => {
-      acc[key] = option;
+      acc[key] = {
+        ...option,
+        required: true,
+      };
       return acc;
     }, {});
 
   const tokenSubFormOptions = Object.entries(props.options)
     .filter(([key]) => key === 'OPA_AUTH_TOKEN')
     .reduce<Record<string, AwxSettingsOptionsAction>>((acc, [key, option]) => {
-      acc[key] = option;
+      acc[key] = {
+        ...option,
+        required: true,
+      };
       return acc;
     }, {});
 

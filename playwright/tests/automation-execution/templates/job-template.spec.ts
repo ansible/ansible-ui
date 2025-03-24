@@ -305,8 +305,8 @@ test(
     await page.getByRole('menuitem', { name: 'Create job template' }).click();
     await page.getByPlaceholder('Enter job template name').fill(jobTemplateName);
     await page.getByPlaceholder('Enter description').fill(jobTemplateDescription);
-    // await expect(page.getByLabel('OPA policy')).toBeVisible();
-    // await page.getByLabel('OPA policy').fill('testpkg/testrule');
+    // await expect(page.getByLabel('OPA query path')).toBeVisible();
+    // await page.getByLabel('OPA query path').fill('testpkg/testrule');
     await page.getByLabel('Inventory').click();
     await page.getByRole('option', { name: inventoryName }).click();
     const projectName = 'Demo Project';

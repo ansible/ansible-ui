@@ -174,7 +174,7 @@ export function PageFormSelect<
   const toggle = (toggleRef: React.Ref<MenuToggleElement>, selected?: string) => (
     <MenuToggle
       data-cy={`${id}-form-group`}
-      id={`${id}-form-group`}
+      id={`${id}-form-group-toggle`}
       isDisabled={isDisabled || isReadOnly || isSubmitting}
       ref={toggleRef}
       onClick={onToggle}

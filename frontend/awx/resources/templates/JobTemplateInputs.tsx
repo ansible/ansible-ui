@@ -13,7 +13,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { FormSection } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../administration/instance-groups/components/PageFormInstanceGroupSelect';
@@ -168,11 +168,19 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       {hasPolicyAsCodeFlag && (
         <PageFormTextInput<JobTemplateForm>
           name="opa_query_path"
-          label={t('OPA policy')}
-          labelHelpTitle={t('OPA policy')}
-          labelHelp={t(`The OPA policy should be in the format of {package}/{rule}.`)}
+          label={t('OPA query path')}
+          labelHelpTitle={t('OPA query path')}
+          labelHelp={
+            <Trans>
+              <p>The query path for the OPA policy to evaluate prior to job execution.</p>
+              <br />
+              <p>
+                The query path should be formatted as {`{`}package{'}'}/{'{'}rule{'}'}.
+              </p>
+            </Trans>
+          }
           helperText={t('Format must be {package}/{rule}')}
-          placeholder={t('Enter OPA policy link')}
+          placeholder={t('Enter OPA query path')}
         />
       )}
       <PageFormLabelSelect
