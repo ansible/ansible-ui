@@ -51,6 +51,8 @@ describe('Inventory Sources', () => {
     it('inventory source tab - user can create an inventory and create a source from a project', () => {
       const credentialName = 'e2e-' + randomString(4);
       const executionEnvironmentName = 'e2e-' + randomString(4);
+      const inventoryFile = 'e2e-' + randomString(4);
+
       let credential: Credential;
       let executionEnvironment: ExecutionEnvironment;
 
@@ -73,7 +75,7 @@ describe('Inventory Sources', () => {
           cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
           cy.get('div#inventory-file-toggle').within(() => {
             cy.get('button').click();
-            cy.get('input[aria-label="Type to filter"]').type('Dockerfile');
+            cy.get('input[aria-label="Type to filter"]').type(inventoryFile);
           });
           cy.get('div#inventory-typeahead-select').within(() => {
             cy.get('li.pf-v5-c-menu__list-item').within(() => {
@@ -98,7 +100,7 @@ describe('Inventory Sources', () => {
           cy.getByDataCy('organization').should('contain', organization.name);
           cy.getByDataCy('execution-environment').should('contain', executionEnvironment.name);
           cy.getByDataCy('project').should('contain', project.name);
-          cy.getByDataCy('inventory-file').should('contain', 'Dockerfile');
+          cy.getByDataCy('inventory-file').should('contain', inventoryFile);
           cy.getByDataCy('verbosity').should('contain', '1 (Verbose)');
           cy.getByDataCy('cache-timeout').should('contain', '1 seconds');
           cy.getByDataCy('host-filter').should('contain', '/^test$/');
@@ -117,16 +119,34 @@ describe('Inventory Sources', () => {
       });
     });
 
-    it('can access the Edit form of an existing Source from the list view, update info, and verify the presence of edited info on the details page', () => {
-      goToSourceList(inventory.name);
-      cy.clickTableRowAction('name', inventorySource.name, 'edit-inventory-source', {
-        disableFilter: true,
+    it('Edit Source from the list view, update info, and verify the presence of edited info on the details page', () => {
+      cy.createAwxProject(
+        organization,
+        { name: 'project-' + randomString(4) },
+        'https://github.com/ansible/test-playbooks.git'
+      ).then((proj) => {
+        goToSourceList(inventory.name);
+        cy.clickTableRowAction('name', inventorySource.name, 'edit-inventory-source', {
+          disableFilter: true,
+        });
+        cy.getByDataCy('description').clear().type('mock description');
+        cy.selectAsyncSingleSelectOption('project-select', `${proj.name}`);
+        cy.get('div#inventory-file-toggle').within(() => {
+          cy.get('button[aria-label="Clear input value"]').click();
+          cy.get('input[aria-label="Type to filter"]').type('changes.py');
+        });
+        cy.get('div[id="inventory-typeahead-select"]').within(() => {
+          cy.get('ul').within(() => {
+            cy.get('button').contains('changes').click();
+          });
+        });
+        cy.getByDataCy('overwrite').check();
+        cy.clickButton(/^Save source$/);
+        cy.getByDataCy('description').should('contain', 'mock description');
+        cy.getByDataCy('inventory-file').should('contain', 'inventories/changes.py');
+        cy.getByDataCy('enabled-options').should('contain', 'Overwrite');
+        cy.deleteAwxProject(proj, { failOnStatusCode: false });
       });
-      cy.getByDataCy('description').clear().type('mock description');
-      cy.getByDataCy('overwrite').check();
-      cy.clickButton(/^Save source$/);
-      cy.getByDataCy('description').should('contain', 'mock description');
-      cy.getByDataCy('enabled-options').should('contain', 'Overwrite');
     });
   });
 
@@ -307,6 +327,7 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
   });
 
   it('can create an Amazon EC2 Inventory Source and access the Edit form from its details page', () => {
+    const inventoryFile = 'e2e-' + randomString(4);
     cy.navigateTo('awx', 'inventories');
     cy.verifyPageTitle('Inventories');
     cy.filterTableBySingleSelect('name', inventory.name);
@@ -342,7 +363,7 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.selectAsyncSingleSelectOption('project-select', `${project.name}`);
     cy.get('div#inventory-file-toggle').within(() => {
       cy.get('button').click();
-      cy.get('input[aria-label="Type to filter"]').type('Dockerfile');
+      cy.get('input[aria-label="Type to filter"]').type(inventoryFile);
     });
     cy.get('div#inventory-typeahead-select').within(() => {
       cy.get('li.pf-v5-c-menu__list-item').within(() => {
@@ -355,7 +376,7 @@ describe('Inventory Source - Source Control Type: Amazon EC2', () => {
     cy.getByDataCy('name').should('contain', 'new project');
     cy.getByDataCy('organization').should('contain', organizationEC2.name);
     cy.getByDataCy('project').should('contain', project.name);
-    cy.getByDataCy('inventory-file').should('contain', 'Dockerfile');
+    cy.getByDataCy('inventory-file').should('contain', inventoryFile);
     cy.getByDataCy('verbosity').should('contain', '1 (Verbose)');
     cy.getByDataCy('cache-timeout').should('contain', '0 seconds');
     cy.getByDataCy('host-filter').should('contain', '/^test$/');
