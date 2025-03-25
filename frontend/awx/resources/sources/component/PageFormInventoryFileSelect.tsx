@@ -9,16 +9,18 @@ import { useGet } from '../../../../common/crud/useGet';
 export function PageFormInventoryFileSelect<
   TFieldValues extends FieldValues = FieldValues,
   TFieldName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(props: {
-  watch: string;
-  name: TFieldName;
-  isRequired?: boolean;
-  additionalControls?: ReactElement;
-  labelHelp?: string | string[] | ReactNode;
-}) {
+>(
+  props: Readonly<{
+    watch: TFieldName;
+    name: TFieldName;
+    isRequired?: boolean;
+    additionalControls?: ReactElement;
+    labelHelp?: string | string[] | ReactNode;
+  }>
+) {
   const { t } = useTranslation();
-  const value = useWatch<{ [key: string]: number }>({ name: props.watch });
-  const projectId = value?.toString() ?? '';
+  const value: { id: number } = useWatch<TFieldValues, TFieldName>({ name: props.watch });
+  const projectId = value.id?.toString() ?? '';
 
   const { data: inventories, error } = useGet<Array<string>>(
     awxAPI`/projects/${projectId}/inventories/`
