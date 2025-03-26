@@ -74,7 +74,6 @@ jobs:
       NOT_TAGS: ${{ inputs.NOT_TAGS }}
       PARALLEL_TESTS: ${{ inputs.PARALLEL_TESTS }}
       PROJECT: ${{ inputs.PROJECT }}
-      SUBFOLDER: runs
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
       

@@ -14,6 +14,7 @@
     "eslint:fix": "eslint --fix .",
     "prettier": "prettier --check !**/*.scss .",
     "prettier:fix": "prettier --write .",
-    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto"
+    "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
+    "markdown": "tsx markdown.ts"
   }
 }
