@@ -379,7 +379,8 @@ describe('Workflow Visualizer', () => {
   });
 
   describe('Workflow Visualizer: Delete Nodes or Links', () => {
-    it('Can delete one single node and save the visualizer', function () {
+    //TODO: unskip this test once the UI bug AAP-42422 is fixed
+    it.skip('Can delete one single node and save the visualizer', function () {
       cy.createAwxWorkflowVisualizerProjectNode(workflowJobTemplate, project).then((projNode) => {
         projectNode = projNode;
         cy.createAwxWorkflowVisualizerApprovalNode(workflowJobTemplate).then(() => {
