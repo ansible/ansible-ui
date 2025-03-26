@@ -36,7 +36,6 @@ jobs:
       NOT_TAGS: "@not_mock"
       BROWSER: ${{ matrix.project }}
       SLACK_NOTIFICATION: true
-      SUBFOLDER: nightly
       PARALLEL_TESTS: '1'
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

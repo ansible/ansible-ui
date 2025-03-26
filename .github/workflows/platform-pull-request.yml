@@ -18,9 +18,8 @@ jobs:
     steps:
       - uses: mshick/add-pr-comment@v2
         with:
-          message-id: allure-summary
           message: |
-            ## Playwright Test Results Pending
+            [GitHub Actions Summary](https://github.com/ansible/aap-ui/actions/runs/${{ github.run_id }})
           refresh-message-position: true
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -105,7 +104,6 @@ jobs:
     with:
       PARALLEL_TESTS: 2
       NOT_TAGS: "@not_mock"
-      SUBFOLDER: pull-requests
     secrets:
       PLATFORM_PASSWORD: ${{ secrets.PLATFORM_PASSWORD }}
 

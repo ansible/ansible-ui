@@ -38,9 +38,6 @@ on:
         type: string
         required: false
         default: chromium
-      SUBFOLDER:
-        type: string
-        required: true
     secrets:
       SLACK_WEBHOOK_URL:
         required: false
@@ -140,7 +137,7 @@ jobs:
       with:
         name: playwright-${{ inputs.BROWSER }}-${{ matrix.shardIndex }}
         path: playwright/test-results
-        retention-days: 1
+        retention-days: 5
         overwrite: true
         if-no-files-found: ignore
 
@@ -149,7 +146,7 @@ jobs:
       run: docker stop platform-ui
 
   playwright-report:
-    name: Playwright Report
+    name: Playwright report
     if: ${{ !cancelled() }}
     needs: [playwright]
     runs-on: ubuntu-latest
@@ -183,6 +180,19 @@ jobs:
         pattern: ${{ inputs.BROWSER }}-blob-report-*
         merge-multiple: true
 
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+          name: |
+            platform-ui.tar
+            ${{ inputs.BROWSER }}-blob-report-*
+
+    - name: Generate Markdown Test Results
+      run: |
+        npx playwright merge-reports --reporter json ../all-blob-reports > results.json
+        npm run markdown
+        cat results.md >> $GITHUB_STEP_SUMMARY
+      working-directory: playwright
+  
     # - name: Merge into JUint Report
     #   run: npx playwright merge-reports --reporter junit ./all-blob-reports > ${{ inputs.BROWSER }}-junit.xml
 
@@ -198,62 +208,6 @@ jobs:
     #   uses: test-summary/action@v2
     #   with:
     #     paths: ${{ inputs.BROWSER }}-junit.xml
-
-    - name: Merge into Allure Report
-      if: always()
-      run: npx playwright merge-reports --reporter allure-playwright ./all-blob-reports 
-
-    - name: Load test report history
-      uses: actions/checkout@v3
-      if: always()
-      continue-on-error: true
-      with:
-        ref: gh-pages
-        path: gh-pages
-
-    - name: Build test report
-      uses: simple-elf/allure-report-action@v1.7
-      if: always()
-      with:
-        gh_pages: gh-pages
-        allure_report: allure-report
-        allure_history: allure-history
-        allure_results: allure-results
-        subfolder: ${{ inputs.SUBFOLDER }}
-        keep_reports: 50
-
-    - name: Publish test report
-      uses: peaceiris/actions-gh-pages@v3
-      if: always()
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages
-        publish_dir: allure-history
-
-    - name: Add Allure Test Results to PR checks
-      if: always() && inputs.SUBFOLDER == 'pull-requests'
-      uses: guibranco/github-status-action-v2@v1
-      with: 
-          authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'Playwright Test Results'
-          state: ${{ job.status }}
-          sha: ${{ github.event.pull_request.head.sha }}
-          target_url: https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }}
-
-    - name: Allure Test Results Summary Link - Success
-      if: always()
-      run: |
-        SUMMARY=$'## [Playwright Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})\n> Might take a few minutes to update'
-        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
-          
-    - uses: mshick/add-pr-comment@v2
-      if: always() && inputs.SUBFOLDER == 'pull-requests'
-      with:
-        message-id: allure-summary
-        message: |
-          ## [Playwright Test Results](https://fuzzy-waffle-2k2r15q.pages.github.io/${{ inputs.SUBFOLDER }}/${{ github.run_number }})
-          > Report webpage might take a few minutes to update
-        refresh-message-position: true
 
     - name: Slack Success Notification
       if: ${{ inputs.SLACK_NOTIFICATION == true && success() }}
