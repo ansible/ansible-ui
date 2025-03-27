@@ -1,0 +1,22 @@
+name: AWX UI Image
+
+on:
+  push:
+    branches:
+      - main
+      - release/*
+    tags:
+      - '*'
+
+jobs:
+  eda-ui-image:
+    name: AWX UI Image
+    uses: ./.github/workflows/image.yml
+    with:
+      build-script: build:awx
+      docker-target: awx-ui
+      docker-image: quay.io/ansible/awx-ui
+      docker-publish: true
+    secrets:
+      QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+      QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
