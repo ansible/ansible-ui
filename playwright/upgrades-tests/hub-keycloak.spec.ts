@@ -1,10 +1,9 @@
+import { Router, handleRoute } from '@ansible/aap-mock';
 import { expect, test } from '@playwright/test';
 import { login, platformUI } from '../commands/login';
 import { logout } from '../commands/logout';
 import { setupAfter } from '../commands/setup';
-import { handleRoute } from '../mock/handlers/handleRoute';
 import { mock } from '../mock/mock';
-import { Router } from '../mock/router/Router';
 import { UpgradeUserType } from './utils/constants';
 import { getUserForMigration } from './utils/getUserForMigration';
 import { randomString } from './utils/random-string';
@@ -38,7 +37,7 @@ test.beforeEach(async ({ page }) => {
   } else {
     // Mock out legacy_hub server
     const mockData = page.mock.data;
-    mockData.api.gateway.v1.ui_auth = {
+    (mockData.api.gateway.v1.ui_auth as object) = {
       show_login_form: true,
       passwords: [
         {
@@ -60,7 +59,7 @@ test.beforeEach(async ({ page }) => {
 
     const legacyHubRouter = new Router();
     legacyHubRouter.GET('/login/keycloak/', () => {
-      mockData.api.gateway.v1.legacy_auth = {
+      (mockData.api.gateway.v1.legacy_auth as object) = {
         id: 84,
         username: 'hub_keycloak_ui_user_2',
         is_authenticated: false,
@@ -101,8 +100,8 @@ test.beforeEach(async ({ page }) => {
         is_superuser: true,
         summary_fields: { resource: { ansible_id: '1' } },
       };
-      mockData.api.gateway.v1.me = [user];
-      mockData.api.gateway.v1.legacy_auth = {
+      (mockData.api.gateway.v1.me as object) = [user];
+      (mockData.api.gateway.v1.legacy_auth as object) = {
         id: user?.id,
         username: user?.username,
         is_authenticated: true,
@@ -110,8 +109,8 @@ test.beforeEach(async ({ page }) => {
         is_migrated: true,
         linked_accounts: [],
       };
-      mockData.api.controller.v2.me = [user];
-      mockData.api.gateway.v1.legacy_auth = {
+      (mockData.api.controller.v2.me as object) = [user];
+      (mockData.api.gateway.v1.legacy_auth as object) = {
         id: 84,
         username: 'mock',
         is_authenticated: false,
@@ -142,7 +141,7 @@ test.afterEach(setupAfter);
 
 test(
   'hub keycloak - Log in using Hub OIDC Keycloak account, link accounts and be directed to the Platform UI dashboard',
-  { tag: ['@upgrade', '@not_e2e'] },
+  { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
   async ({ page }) => {
     await page.goto(platformUI);
     await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
@@ -177,7 +176,7 @@ test(
 
 test(
   'hub keycloak - Link additional accounts from User Details page',
-  { tag: ['@upgrade', '@not_e2e'] },
+  { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
   async ({ page }) => {
     await page.goto(platformUI);
     await page.getByRole('link', { name: 'I have an Automation Hub account' }).click();
@@ -236,7 +235,7 @@ test.describe('Negative paths for hub Keycloak authentication', () => {
   );
   test(
     'hub keycloak - fails to authenticate with a user that does not exist',
-    { tag: ['@upgrade', '@not_e2e'] },
+    { tag: ['@upgrade', '@not_e2e', '@not_mock'] },
     async ({ page }) => {
       const nonExistentUsername = 'E2Euser ' + randomString(4);
       const erroneousPassword = 'E2Epass ' + randomString(4);

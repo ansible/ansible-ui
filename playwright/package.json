@@ -16,5 +16,8 @@
     "prettier:fix": "prettier --write .",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
     "markdown": "tsx markdown.ts"
+  },
+  "dependencies": {
+    "@ansible/aap-mock": "*"
   }
 }

@@ -65,7 +65,7 @@ jobs:
       - run: npm ci
         if: steps.cache.outputs.cache-hit != 'true'
       - uses: nrwl/nx-set-shas@v4
-      - run: npx nx affected -t ${{ matrix.script }} --base=origin/main --head=HEAD
+      - run: npx nx affected -t ${{ matrix.script }} --base=origin/main --head=HEAD --verbose
 
   component:
     name: Component

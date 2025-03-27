@@ -1,0 +1,5 @@
+
+allure-results
+node_modules
+test-results
+coverage

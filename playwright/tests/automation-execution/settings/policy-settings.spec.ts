@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 // import { setupAfter, setupBefore } from '../../../commands/setup';
 import { navigateTo } from '../../../commands/navigateTo';
 import { mockFeatureFlags } from '../../util/featureFlags';
@@ -16,10 +16,11 @@ test.skip('Policy settings: should display details', { tag: [] }, async ({ page 
 
   let settings: Record<string, string | number | boolean>;
   if (page.mock.enabled) {
-    settings = page.mock.data.api.controller.v2.settings.policyascode as Record<
-      string,
-      string | number | boolean
-    >;
+    settings = (
+      page.mock.data.api.controller.v2.settings as {
+        policyascode: Record<string, string | number | boolean>;
+      }
+    ).policyascode;
     await navigateTo(page, 'Settings', 'Policy');
   } else {
     const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
@@ -51,10 +52,11 @@ test.skip(
     });
     let settings: Record<string, string | number | boolean>;
     if (page.mock.enabled) {
-      settings = page.mock.data.api.controller.v2.settings.policyascode as Record<
-        string,
-        string | number | boolean
-      >;
+      settings = (
+        page.mock.data.api.controller.v2.settings as {
+          policyascode: Record<string, string | number | boolean>;
+        }
+      ).policyascode;
       await navigateTo(page, 'Settings', 'Policy');
     } else {
       const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
@@ -86,10 +88,11 @@ test.skip(
     });
     let settings: Record<string, string | number | boolean>;
     if (page.mock.enabled) {
-      settings = page.mock.data.api.controller.v2.settings.policyascode as Record<
-        string,
-        string | number | boolean
-      >;
+      settings = (
+        page.mock.data.api.controller.v2.settings as {
+          policyascode: Record<string, string | number | boolean>;
+        }
+      ).policyascode;
       await navigateTo(page, 'Settings', 'Policy');
     } else {
       const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
