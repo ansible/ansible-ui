@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/image.yml
     with:
       build-script: build
-      build-directory: frontend/awx-ui
+      build-directory: frontend/awx
       docker-target: awx-ui
       docker-image: quay.io/ansible/awx-ui
       docker-publish: true
